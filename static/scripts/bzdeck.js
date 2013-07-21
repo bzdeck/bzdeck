@@ -742,7 +742,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     }    
 
     if (key.endsWith('_time')) {
-      $element.textContent = new Date(value).toLocaleFormat('%Y-%m-%d %H:%M');
+      $element.textContent = (new Date(value)).toLocaleFormat('%Y-%m-%d %H:%M');
       $element.setAttribute('datetime', value);
       if (key === 'creation_time') {
         $element.itemProp.value = 'datePublished';
@@ -914,7 +914,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
         // Time
         $li = $ul.appendChild(document.createElement('li'));
         let $time = $li.appendChild(document.createElement('time'));
-        $time.textContent = new Date(att.creation_time).toLocaleFormat('%Y-%m-%d %H:%M');
+        $time.textContent = (new Date(att.creation_time)).toLocaleFormat('%Y-%m-%d %H:%M');
         $time.setAttribute('datetime', att.creation_time);
         // Person
         $li = $ul.appendChild(document.createElement('li'));
@@ -974,12 +974,12 @@ BzDeck.global.fill_template_details = function ($template, bug) {
         time = comment.creation_time;
     $entry.id = $template.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
-    $entry.dataset.time = new Date(time).getTime();
+    $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('aria-hidden', 'false')
     let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
     $name.textContent = comment.creator.real_name || comment.creator.name;
     let $time = $entry.querySelector('[itemprop="datePublished"]');
-    $time.textContent = new Date(time).toLocaleFormat('%Y-%m-%d %H:%M');
+    $time.textContent = (new Date(time)).toLocaleFormat('%Y-%m-%d %H:%M');
     $time.setAttribute('datetime', time);
     let $text = $entry.querySelector('[itemprop="text"]');
     $text.innerHTML = comment.text ? parse(sanitize(comment.text)) : '&nbsp;';
@@ -994,13 +994,13 @@ BzDeck.global.fill_template_details = function ($template, bug) {
       $entry = entries[time];
     } else {
       $entry = $entry_tmpl.cloneNode(true);
-      $entry.dataset.time = new Date(time).getTime();
+      $entry.dataset.time = (new Date(time)).getTime();
       $entry.setAttribute('aria-hidden', 'false')
       $entry.removeChild($entry.querySelector('[itemprop="text"]'));
       let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
       $name.textContent = history.changer.name;
       let $time = $entry.querySelector('[itemprop="datePublished"]');
-      $time.textContent = new Date(time).toLocaleFormat('%Y-%m-%d %H:%M');
+      $time.textContent = (new Date(time)).toLocaleFormat('%Y-%m-%d %H:%M');
       $time.setAttribute('datetime', time);
       entries[time] = $entry;
     }
@@ -1519,7 +1519,7 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
       $tabpanel = document.getElementById('tabpanel-search-TEMPLATE').cloneNode(true),
-      id_suffix = this.id = new Date().getTime();
+      id_suffix = this.id = (new Date()).getTime();
 
   // Assign unique ID
   $tabpanel.id = $tabpanel.id.replace(/TEMPLATE/, id_suffix);
