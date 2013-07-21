@@ -122,7 +122,7 @@ BzDeck.bootstrap.start = function () {
   this.button = $form.querySelector('button');
   BzDeck.global.statusbar = document.querySelector('#app-login [role="status"]');
 
-  BzDeck.bootstrap.open_database();
+  this.open_database();
 };
 
 BzDeck.bootstrap.open_database = function () {
@@ -979,7 +979,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
     $entry.id = $template.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $entry.setAttribute('aria-hidden', 'false')
+    $entry.setAttribute('aria-hidden', 'false');
     let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
     $name.textContent = comment.creator.real_name || comment.creator.name;
     let $time = $entry.querySelector('[itemprop="datePublished"]');
@@ -999,7 +999,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
     } else {
       $entry = $entry_tmpl.cloneNode();
       $entry.dataset.time = (new Date(time)).getTime();
-      $entry.setAttribute('aria-hidden', 'false')
+      $entry.setAttribute('aria-hidden', 'false');
       $entry.querySelector('[itemprop="text"]').remove();
       let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
       $name.textContent = history.changer.name;
@@ -1120,19 +1120,20 @@ BzDeck.global.parse_comment = function (str) {
 BzDeck.toolbar = {};
 
 BzDeck.toolbar.setup = function () {
-  let BGw = BriteGrid.widget;
-  let tablist = this.tablist = new BGw.TabList(document.getElementById("main-tablist"));
+  let BGw = BriteGrid.widget,
+      BGu = BriteGrid.util,
+      tablist = this.tablist = new BGw.TabList(document.getElementById("main-tablist"));
 
   let $main_menu = document.getElementById("main-menu");
   new BGw.MenuBar($main_menu);
   $main_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'change-theme': {
-        BriteGrid.util.theme.selected = event.explicitOriginalTarget.textContent;
+        BGu.theme.selected = event.explicitOriginalTarget.textContent;
         break;
       }
       case 'toggle-fullscreen': {
-        BriteGrid.util.app.toggle_fullscreen();
+        BGu.app.toggle_fullscreen();
         break;
       }
       case 'install-app': {
@@ -1153,11 +1154,11 @@ BzDeck.toolbar.setup = function () {
     $account_label.innerHTML = label;
   }
 
-  if (BriteGrid.util.app.fullscreen_enabled) {
+  if (BGu.app.fullscreen_enabled) {
     document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');
   }
 
-  BriteGrid.util.app.can_install(BzDeck.options.app.manifest, result => {
+  BGu.app.can_install(BzDeck.options.app.manifest, result => {
     if (result) {
       document.getElementById('main-menu--app--install').removeAttribute('aria-disabled');
     }
@@ -1224,7 +1225,7 @@ BzDeck.toolbar.setup = function () {
 
   // Suppress context menu
   $search_box.addEventListener('contextmenu', event => {
-    return BriteGrid.util.event.ignore(event);
+    return BGu.event.ignore(event);
   }, true); // use capture
 };
 
@@ -1236,7 +1237,7 @@ BzDeck.toolbar.quicksearch = function (event) {
     let results = bugs.filter(bug => {
       return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
               words.length === 1 && !isNaN(words[0]) && String(bug.id).contains(words[0])) && 
-             BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
+              BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
     });
 
     let data = [{
@@ -1942,7 +1943,7 @@ BzDeck.DetailsPage = function (bug_id) {
     // Open the new tab
     tablist.view.selected = tablist.view.focused = tablist.add_tab(
       'bug-' + bug_id,
-      'Bug %d'.replace('%d', bug_id),
+      'Bug %d'.replace('%d', bug_id), // l10n
       'Bug %d\n%s'.replace('%d', bug_id).replace('%s', bug ? bug.summary : 'Loading...'), // l10n
       $tabpanel,
       'next'
@@ -1974,7 +1975,7 @@ BzDeck.DetailsPage = function (bug_id) {
         BzDeck.global.fill_template($tabpanel, bug);
         let $tab = document.getElementById('tab-bug-' + bug.id);
         if ($tab) {
-          $tab.title = 'Bug %d\n%s'.replace('%d', bug.id).replace('%s', bug.summary);
+          $tab.title = 'Bug %d\n%s'.replace('%d', bug.id).replace('%s', bug.summary); // l10n
         }
       });
     }
