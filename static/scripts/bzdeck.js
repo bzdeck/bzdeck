@@ -277,13 +277,9 @@ BzDeck.bootstrap.finish = function () {
     BzDeck.core.load_subscriptions();
   }, 600000) // 10 minutes
 
-  // Sometimes CSS transition and table rebuilding conflict to cause a hang.
-  // Use timer to workaround the issue:
-  window.setTimeout(() => {
-    BzDeck.global.show_status('Loading complete.'); // l10n
-    BzDeck.session.login();
-    this.processing = false;
-  }, 1000);
+  BzDeck.global.show_status('Loading complete.'); // l10n
+  BzDeck.session.login();
+  this.processing = false;
 };
 
 /* --------------------------------------------------------------------------
