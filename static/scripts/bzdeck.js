@@ -706,7 +706,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   }
 
   if (clone) {
-    $template = $template.cloneNode(true);
+    $template = $template.cloneNode();
     $template.id = $template.id.replace(/TEMPLATE/, bug.id);
     $template.removeAttribute('aria-hidden');
     // Scrollbar
@@ -833,7 +833,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
       let $ul = $placeholder.querySelector('ul'),
           $_li = $ul.removeChild($ul.firstElementChild);
       for (let value of bug.cc) {
-        let $li = $ul.appendChild($_li.cloneNode(true));
+        let $li = $ul.appendChild($_li.cloneNode());
         $li.querySelector('[itemprop="name"]').textContent = value.name;
       }
     } else {
@@ -970,7 +970,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
       sanitize = BriteGrid.util.string.sanitize;
   // Comments
   for (let comment of bug.comments) {
-    let $entry = $entry_tmpl.cloneNode(true),
+    let $entry = $entry_tmpl.cloneNode(),
         time = comment.creation_time;
     $entry.id = $template.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
@@ -993,7 +993,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
       // Combine a comment + change(s)
       $entry = entries[time];
     } else {
-      $entry = $entry_tmpl.cloneNode(true);
+      $entry = $entry_tmpl.cloneNode();
       $entry.dataset.time = (new Date(time)).getTime();
       $entry.setAttribute('aria-hidden', 'false')
       $entry.removeChild($entry.querySelector('[itemprop="text"]'));
@@ -1518,7 +1518,7 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
 
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      $tabpanel = document.getElementById('tabpanel-search-TEMPLATE').cloneNode(true),
+      $tabpanel = document.getElementById('tabpanel-search-TEMPLATE').cloneNode(),
       id_suffix = this.id = (new Date()).getTime();
 
   // Assign unique ID
