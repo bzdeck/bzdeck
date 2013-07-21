@@ -95,6 +95,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'indexedDB' in window, // unprefixed in Firefox 16
     'onwheel' in window, // Firefox 17
     'origin' in location, // Firefox 21
+    'Notification' in window, // Firefox 22
     'remove' in Element.prototype // Firefox 23
   ];
 
@@ -694,6 +695,13 @@ BzDeck.global.install_app = function () {
 
 BzDeck.global.show_status = function (message) {
   this.statusbar.textContent = message;
+};
+
+BzDeck.global.show_notification = function (title, body) {
+  BriteGrid.util.app.show_notification(title, {
+    body: body,
+    icon: "/static/images/logo-512.png"
+  });
 };
 
 BzDeck.global.fill_template = function ($template, bug, clone = false) {
@@ -1424,11 +1432,29 @@ BzDeck.HomePage = function () {
   // Select the 'My Bugs' folder
   this.data.folder_id = 'subscriptions';
 
+  // Authorize notification
+  BriteGrid.util.app.auth_notification();
+
   // Update UI: the Unread folder on the home page
   BzDeck.model.get_all_bugs(bugs => {
-    let count = bugs.filter(bug => bug._unread === true).length,
+    let bugs = bugs.filter(bug => bug._unread),
+        num = bugs.length,
         $label = document.querySelector('[id="home-folders--unread"] label');
-    $label.textContent = count ? 'Unread (%d)'.replace('%d', count) : 'Unread'; // l10n
+    if (!num) {
+      $label.textContent = 'Unread'; // l10n
+      return;
+    }    
+    // Statusbar
+    $label.textContent = 'Unread (%d)'.replace('%d', num); // l10n
+    let status = (num > 1) ? 'You have %d unread bugs'.replace('%d', num)
+                           : 'You have 1 unread bug'; // l10n
+    BzDeck.global.show_status(status);
+    // Notification
+    let list = [];
+    for (let bug of bugs) {
+      list.push(bug.id + ' - ' + bug.summary);
+    }
+    BzDeck.global.show_notification(status, list.join('\n'));
   });
 };
 
