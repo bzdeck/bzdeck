@@ -1,0 +1,44 @@
+# Charset
+AddDefaultCharset UTF-8
+
+# MIME types
+AddType application/x-httpd-php html php
+AddType image/x-icon ico
+AddType text/cache-manifest appcache
+AddType application/javascript js
+AddType application/x-web-app-manifest+json webapp
+
+# Options
+# Note that the MultiViews option causes an error on the production server
+Options FollowSymLinks -Indexes
+RewriteEngine on
+
+# Rewrite: Force SSL
+RewriteCond %{HTTP_HOST} ^www\.bzdeck\.com$
+RewriteCond %{HTTPS} off
+RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+
+# Rewrite: API
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(\d+\.\d+|latest)/\w+ /api/proxy.php [QSA]
+
+# Rewrite: info
+RewriteRule ^about/?$       https://www.facebook.com/notes/bzdeck/introducing-bzdeck/269349649857418 [R,L]
+RewriteRule ^faq/?$         https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
+RewriteRule ^support/?$     https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
+RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.271135819678801.63434.240285432763840 [R,L]
+
+# Performance: remove ETag
+FileETag None
+
+# Performance: set Expires
+ExpiresActive On
+ExpiresDefault "access plus 5 days"
+ExpiresByType application/json "access plus 5 minutes"
+
+# Performance: use gzip (Apache 2.x)
+AddOutputFilterByType DEFLATE text/html text/cache-manifest text/css application/javascript application/x-web-app-manifest+json
+
+# Security
+Header always append X-Frame-Options DENY

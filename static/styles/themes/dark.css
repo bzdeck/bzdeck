@@ -1,0 +1,247 @@
+body {
+  color: #999;
+  background-color: #111;
+}
+
+ins, del {
+  -moz-text-decoration-color: rgba(153, 153, 153, 0.8); /* #999 */
+}
+
+:focus {
+  outline-color: #666;
+}
+
+a[role="link"] {
+  color: inherit;
+  text-decoration: underline;
+}
+
+#app-login {
+  background-image: linear-gradient(to bottom, #444, #111);
+}
+
+#app-login [role="button"] {
+  color: inherit;
+  background-image: linear-gradient(to bottom, #444, #333);
+}
+
+#app-login [role="button"]:hover,
+#app-login [role="button"]:focus {
+  background-image: linear-gradient(to bottom, #555, #333);
+}
+
+#app-login [role="button"]:active {
+  background-image: linear-gradient(to bottom, #333, #444);
+}
+
+#app-body {
+  background-color: #111;
+}
+
+[role="tab"] .close,
+[role="treeitem"][aria-expanded] + .expander,
+[role^="menuitem"][aria-checked="true"]:before,
+[role="menuitem"][aria-haspopup="true"]:after,
+[role="grid"] .grid-header [aria-sort] label:after,
+[role="columnheader"][data-type="boolean"],
+[role="gridcell"][data-type="boolean"] [role="checkbox"],
+[role="banner"] [role="search"] [role="button"],
+[aria-busy="true"]:before,
+#main-menu--app,
+[itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+  background-image: url(/static/images/themes/dark/sprite.png);
+}
+
+[role="tab"] .close:hover {
+  background-color: #333;
+}
+
+[role="option"][aria-selected="true"],
+[role="treeitem"][aria-selected="true"] {
+  color: #CCC;
+  background-color: #444;
+}
+
+[role="menu"] {
+  background: #222;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[role="menu"] [role="separator"] {
+  border-color: #333;
+}
+
+[role^="menuitem"][aria-selected="true"] {
+  color: #CCC;
+  background-color: #444;
+}
+
+[role="grid"] .grid-header {
+  background-color: #333;
+}
+
+[role="grid"] .grid-body {
+  background: #222;
+}
+
+[role="grid"] .grid-body tbody tr:nth-child(even) {
+  background: #292929;
+}
+
+[role="grid"] .grid-body tbody tr[aria-selected="true"] {
+  color: #CCC;
+  background-color: #444;
+}
+
+[role="grid"] th,
+[role="grid"] td {
+  border-color: #1C1C1C;
+}
+
+[role="grid"] [role="row"][data-severity="blocker"],
+[role="grid"] [role="row"][data-severity="critical"] {
+  /* color: red; */
+}
+
+#column-drag-image-container {
+  background-color: #222;
+}
+
+[role="textbox"] {
+  border-color: #222;
+  color: #999 !important;
+  background-color: #333 !important;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+[role="textbox"]:focus {
+  color: #333 !important;
+  background-color: #CCC !important;
+}
+
+#main-menu--app-menu:before {
+  border-bottom-color: #222;
+}
+
+#main-tablist [role="tab"] {
+  border-color: #222;
+  background-color: #333;
+}
+
+#main-tablist [role="tab"][aria-selected="true"] {
+  background-color: #444;
+}
+
+#main-tabpanels > [role="tabpanel"],
+#main-tabpanels > [role="tabpanel"] > header {
+  background-image: linear-gradient(to bottom, #444, #333);
+}
+
+#main-tabpanels > [role="tabpanel"] > div {
+  border-color: #222;
+  background-color: #333;
+}
+
+#tabpanel-home [id$="-pane"] {
+  border-color:  #111;
+  background-color: #222;
+}
+
+#tabpanel-home [id$="-pane"] h3 {
+  border-color:  #111;
+  background-color: #333;
+}
+
+#home-preview-pane {
+  background-color: #333 !important;
+}
+
+[id*="-preview-"][itemtype="http://schema.org/Article"] > header {
+  border-color:  #222;
+  background-color: #333;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box {
+  background-color: #222;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section {
+  border-color:  #111;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section h3 {
+  background-color: #333;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box {
+  border-color:  #111;
+  background-image: linear-gradient(to bottom, #444, #333);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"] {
+  border-color:  #222;
+  background-image: linear-gradient(to bottom, #444, #333);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:hover,
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:focus {
+  background-image: linear-gradient(to bottom, #555, #333);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:active {
+  background-image: linear-gradient(to bottom, #333, #444);
+}
+
+[id$="-bug-info"] {
+  background-color: #222;
+}
+
+[id$="-bug-info"] > section h3 {
+  border-color:  #111;
+  background-color: #333;
+}
+
+[id$="-bug-info"] dl > dd:not(:first-of-type),
+[id$="-bug-info"] > section > ul > li:not(:first-of-type) {
+  background-image: linear-gradient(to bottom, #111, #111 1px, #333 1px, #333 2px, transparent 2px, transparent);
+}
+
+[id$="-bug-info"] [role="button"]:hover {
+  color: #333;
+  background-color: #999;
+}
+
+[id$="-bug-timeline"] {
+  border-color:  #111;
+}
+
+[itemprop="comment"] {
+  background-color: #222;
+  box-shadow: inset -1px -1px 1px #555, inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[itemprop="comment"] header [role="button"] {
+  background-image: linear-gradient(to bottom, #444, #333);
+  box-shadow: inset -1px -1px 4px rgba(0, 0, 0, 0.5), inset -1px -1px 1px #555;
+}
+
+[itemprop="comment"] [itemprop="text"] {
+  color: #CCC;
+}
+
+[itemprop="comment"] [itemprop="text"],
+[itemprop="comment"] .changes {
+  background-image: linear-gradient(to bottom, #111, #111 1px, #333 1px, #333 2px, transparent 2px, transparent);
+}
+
+#main-tabpanels [role="tabpanel"] > footer {
+  background-image: linear-gradient(to bottom, #444, #333);
+}
+
+#tabpanel-prefs > div {
+  background-color: #222 !important;
+}
+
+#tabpanel-prefs h3 {
+  background-color: #333;
+}

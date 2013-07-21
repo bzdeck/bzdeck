@@ -1,0 +1,20 @@
+{
+  "name": "BzDeck",
+  "description": "An experimental Web application in the form of a Bugzilla client, demonstrating the modern technologies such as HTML5, CSS3, WAI-ARIA and ECMAScript Harmony.",
+  "launch_path": "/",
+  "developer": {
+    "name": "BriteGrid",
+    "url": "http://www.britegrid.com/"
+  },
+  "permissions": {
+    "storage": {
+      "description": "Required to store bug data locally",
+      "size": "unlimited"
+    }
+  },
+  "icons": {
+    "256": "/static/images/logo-256.png",
+    "512": "/static/images/logo-512.png"
+  },
+  "default_locale": "en"
+}

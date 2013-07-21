@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" manifest="/manifest.appcache">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024">
+    <meta name="description" content="An experimental Web application in the form of a Bugzilla client, demonstrating the modern technologies such as HTML5, CSS3, WAI-ARIA and ECMAScript Harmony.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="BzDeck">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:url" content="https://www.bzdeck.com/">
+    <meta property="og:image" content="https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-snc7/741145_271135929678790_451513255_o.png">
+    <meta property="og:title" content="BzDeck">
+    <meta property="og:description" content="An experimental Web application in the form of a Bugzilla client, demonstrating the modern technologies such as HTML5, CSS3, WAI-ARIA and ECMAScript Harmony.">
+    <meta property="fb:admins" content="100003919776216">
+    <meta property="fb:page_id" content="240285432763840">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@BzDeck">
+    <meta name="twitter:domain" content="BzDeck.com">
+    <meta name="twitter:url" content="https://www.bzdeck.com/">
+    <link rel="canonical" href="https://www.bzdeck.com/">
+    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/lib/britegrid/widget.css">
+    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/base.css">
+    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/themes/dark.css" title="Dark">
+    <title>BzDeck</title>
+  </head>
+  <body role="application" data-name="BzDeck">
+    <div id="app-login">
+      <div>
+        <h1>BzDeck</h1>
+        <p>BzDeck is an experimental Web application in the form of a Bugzilla client, demonstrating the modern technologies such as HTML5, CSS3, WAI-ARIA and ECMAScript Harmony.</p>
+        <form role="form" aria-hidden="true">
+          <dl>
+            <dt>Provide your Bugzilla user name to get started. (<a href="https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149" target="_blank" role="link">Why?</a>)</dt>
+            <dd><input type="email" placeholder="bugzilla@example.org" required role="textbox"><button role="button">Sign in</button></dd>
+          </dl>
+        </form>
+        <p role="status">This application requires <a href="http://www.mozilla.org/firefox/beta/" target="_blank" role="link">Firefox 18</a> with JavaScript enabled.</p>
+      </div>
+    </div>
+    <div id="app-body" hidden aria-hidden="true">
+      <header role="banner">
+        <h1 title="BzDeck">Bz</h1>
+        <div role="toolbar">
+          <ul id="toolbar--search-menu">
+            <li>
+              <ul id="main-menu" role="menubar">
+                <li role="presentation">
+                  <span id="main-menu--app" title="Application Menu" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app-menu"><label>App</label></span>
+                  <ul id="main-menu--app-menu" role="menu" aria-expanded="false">
+                    <li role="presentation">
+                      <span id="main-menu--app--account" role="menuitem" aria-disabled="true"><label>My Account</label></span>
+                    </li>
+                    <li role="separator"></li>
+<?php /*
+                    <li role="presentation">
+                      <span id="main-menu--app--theme" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app--theme-menu"><label>Theme</label></span>
+                      <ul id="main-menu--app--theme-menu" role="menu" aria-expanded="false">
+                        <li role="presentation">
+                          <span id="main-menu--app--theme--dark" role="menuitemradio" aria-checked="false" data-command="change-theme" data-theme="Dark"><label>Dark</label></span>
+                        </li>
+                      </ul>
+                    </li>
+                    <li role="presentation">
+                      <span id="main-menu--app--install" role="menuitem" aria-disabled="true" data-command="install-app"><label>Install as App</label></span>
+                    </li>
+                    <li role="separator"></li>
+*/ ?>
+                    <li role="presentation">
+                      <a id="main-menu--app--about" href="https://www.facebook.com/notes/bzdeck/introducing-bzdeck/269349649857418" role="menuitem" data-command="show-about"><label>About</label></a>
+                    </li>
+                    <li role="presentation">
+                      <a id="main-menu--app--facebook" href="https://www.facebook.com/BzDeck" role="menuitem" data-command="go-facebook"><label>Facebook</label></a>
+                    </li>
+                    <li role="presentation">
+                      <a id="main-menu--app--twitter" href="https://twitter.com/BzDeck" role="menuitem" data-command="go-twitter"><label>Twitter</label></a>
+                    </li>
+<?php /*
+                    <li role="presentation">
+                      <a id="main-menu--app--privacy" href="/privacy/" role="menuitem" data-command="show-privacy-policy"><label>Privacy Policy</label></a>
+                    </li>
+*/ ?>
+                    <li role="separator"></li>
+                    <li role="presentation">
+                      <span id="main-menu--app--logout" role="menuitem" data-command="logout"><label>Sign out</label></span>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li role="search"><input type="search" role="textbox" placeholder="Search Bugs" tabindex="1" aria-haspopup="true" aria-owns="quicksearch-dropdown"><span role="button" tabindex="0" title="Search">Go</span></li>
+          </ul>
+          <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
+        </div>
+      </header>
+      <main role="main">
+        <ul id="main-tablist" tabindex="0" role="tablist" data-removable="true" data-reorderable="false">
+          <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
+        </ul>
+        <div id="main-tabpanels" class="tabpanels">
+          <section id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
+            <header>
+              <h2>Welcome</h2>
+            </header>
+            <div>
+              <section id="home-folder-pane" tabindex="0">
+                <h3>Folders</h3>
+                <div id="home-folders-outer">
+                  <ul id="home-folders" role="tree" tabindex="0" aria-multiselectable="false"></ul>
+                </div>
+              </section><!-- end #home-folder-pane -->
+              <div id="home-list-pane">
+                <section id="home-list" role="grid" 
+                         aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true"
+                         data-selection="rows"></section>
+              </div><!-- end #home-list-pane -->
+              <div id="home-preview-pane">
+                <article id="home-preview-bug" itemscope itemtype="http://schema.org/Article" aria-hidden="true">
+                  <header>
+                    <h3 itemprop="name" data-field="summary"></h3>
+                  </header>
+                  <div id="home-preview-bug-info" tabindex="0">
+                    <dl>
+                      <dt>Filed</dt><dd><time data-field="creation_time"></time></dd>
+                      <dt>Last Modified</dt><dd><time data-field="last_change_time"></time></dd>
+                      <dt>Status</dt><dd data-field="status"></dd>
+                      <dt>Resolution</dt><dd data-field="resolution"></dd>
+                      <dt>Target Milestone</dt><dd data-field="target_milestone"></dd>
+                      <dt>Product</dt><dd data-field="product"></dd>
+                      <dt>Component</dt><dd data-field="component"></dd>
+                      <dt>Version</dt><dd data-field="version"></dd>
+                      <dt>Hardware</dt><dd data-field="platform"></dd>
+                      <dt>OS</dt><dd data-field="op_sys"></dd>
+                      <dt>Severity</dt><dd data-field="severity"></dd>
+                      <dt>Priority</dt><dd data-field="priority"></dd>
+                    </dl>
+                  </div><!-- end .bug-info -->
+                  <div id="home-preview-bug-timeline" tabindex="0">
+                    <article role="article" aria-hidden="true" itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+                      <header>
+                        <p class="meta">
+                          <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
+                          <time itemprop="datePublished"></time>
+                        </p>
+                      </header>
+                      <pre itemprop="text"></pre>
+                    </article>
+                  </div><!-- end .bug-timeline -->
+                </article><!-- end #home-preview-content -->
+              </div><!-- end #home-preview-pane -->
+            </div>
+            <footer>
+              <ul role="toolbar">
+                <li><span id="home-button-show-details" tabindex="0" role="button" aria-disabled="true">Show Details</span></li>
+              </ul>
+            </footer>
+          </section><!-- end #tabpanel-home -->
+          <section id="tabpanel-search-TEMPLATE" tabindex="0" role="tabpanel" aria-hidden="true">
+            <header>
+              <h2>Search &amp; Browse Bugs</h2>
+            </header>
+            <div>
+              <div id="search-TEMPLATE-basic-search-pane" role="search">
+                <div class="browse-box">
+                  <section id="search-TEMPLATE-browse-classification">
+                    <h3>Classification</h3>
+                    <div id="search-TEMPLATE-browse-classification-list-outer">
+                      <menu id="search-TEMPLATE-browse-classification-list" type="list" tabindex="0" role="listbox" aria-multiselectable="true"></menu>
+                    </div>
+                  </section>
+                  <section id="search-TEMPLATE-browse-product">
+                    <h3>Product</h3>
+                    <div id="search-TEMPLATE-browse-product-list-outer">
+                      <menu id="search-TEMPLATE-browse-product-list" type="list" tabindex="0" role="listbox" aria-multiselectable="true"></menu>
+                    </div>
+                  </section>
+                  <section id="search-TEMPLATE-browse-component">
+                    <h3>Component</h3>
+                    <div id="search-TEMPLATE-browse-component-list-outer">
+                      <menu id="search-TEMPLATE-browse-component-list" type="list" tabindex="0" role="listbox" aria-multiselectable="true"></menu>
+                    </div>
+                  </section>
+                  <section id="search-TEMPLATE-browse-status">
+                    <h3>Status</h3>
+                    <div id="search-TEMPLATE-browse-status-list-outer">
+                      <menu id="search-TEMPLATE-browse-status-list" type="list" tabindex="0" role="listbox" aria-multiselectable="true"></menu>
+                    </div>
+                  </section>
+                  <section id="search-TEMPLATE-browse-resolution">
+                    <h3>Resolution</h3>
+                    <div id="search-TEMPLATE-browse-resolution-list-outer">
+                      <menu id="search-TEMPLATE-browse-resolution-list" type="list" tabindex="0" role="listbox" aria-multiselectable="true"></menu>
+                    </div>
+                  </section>
+                </div><!-- end .browse-box -->
+                <div class="text-box">
+                  <section>
+                    <h3>Terms</h3>
+                    <dl>
+                      <dt>Summary</dt>
+                      <dd><input type="search" role="textbox"></dd>
+                      <dd><span role="button">Search</span></dd>
+                    </dl>
+                  </section>
+                </div><!-- end .text-box -->
+              </div><!-- end #search-TEMPLATE-basic-search-pane -->
+              <div id="search-TEMPLATE-result-pane">
+                <section id="search-TEMPLATE-result" role="grid" 
+                         aria-multiselectable="true" aria-readonly="true"
+                         data-selection="rows"></section>
+              </div><!-- end #search-TEMPLATE-result-pane -->
+              <div id="search-TEMPLATE-preview-pane" aria-hidden="true">
+                <article id="search-TEMPLATE-preview-bug" itemscope itemtype="http://schema.org/Article" aria-hidden="true">
+                  <header>
+                    <h3 itemprop="name" data-field="summary"></h3>
+                  </header>
+                  <div id="search-TEMPLATE-preview-bug-info" tabindex="0">
+                    <dl>
+                      <dt>Filed</dt><dd><time data-field="creation_time"></time></dd>
+                      <dt>Last Modified</dt><dd><time data-field="last_change_time"></time></dd>
+                      <dt>Status</dt><dd data-field="status"></dd>
+                      <dt>Resolution</dt><dd data-field="resolution"></dd>
+                      <dt>Target Milestone</dt><dd data-field="target_milestone"></dd>
+                      <dt>Product</dt><dd data-field="product"></dd>
+                      <dt>Component</dt><dd data-field="component"></dd>
+                      <dt>Version</dt><dd data-field="version"></dd>
+                      <dt>Hardware</dt><dd data-field="platform"></dd>
+                      <dt>OS</dt><dd data-field="op_sys"></dd>
+                      <dt>Severity</dt><dd data-field="severity"></dd>
+                      <dt>Priority</dt><dd data-field="priority"></dd>
+                    </dl>
+                  </div><!-- end .bug-info -->
+                  <div id="search-TEMPLATE-preview-bug-timeline" tabindex="0">
+                    <article role="article" aria-hidden="true" itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+                      <header>
+                        <p class="meta">
+                          <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
+                          <time itemprop="datePublished"></time>
+                        </p>
+                      </header>
+                      <pre itemprop="text"></pre>
+                    </article>
+                  </div><!-- end .bug-timeline -->
+                </article><!-- end #search-TEMPLATE-preview-bug -->
+              </div><!-- end #search-TEMPLATE-preview-pane -->
+              <div id="search-TEMPLATE-advanced-search-pane" aria-hidden="true">
+              </div><!-- end #search-TEMPLATE-advanced-search-pane -->
+            </div>
+            <footer>
+              <ul role="toolbar">
+                <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
+                <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-details">Show Details</span></li>
+                <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-advanced-search-pane">Advanced Search</span></li> -->
+                <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="save-search-folder">Save as Search Folder</span></li> -->
+              </ul>
+            </footer>
+          </section><!-- end #tabpanel-search-TEMPLATE -->
+          <article id="tabpanel-details-TEMPLATE" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="tab-details" itemscope itemtype="http://schema.org/Article">
+            <header>
+              <h2 itemprop="name" data-field="summary"></h2>
+            </header>
+            <div>
+              <div id="tabpanel-details-TEMPLATE-bug-info" tabindex="0">
+                <section>
+                  <h3>Status</h3>
+                  <dl>
+                    <dt>Filed</dt><dd><time data-field="creation_time"></time></dd>
+                    <dt>Last Modified</dt><dd><time data-field="last_change_time"></time></dd>
+                    <dt>Status</dt><dd data-field="status"></dd>
+                    <dt>Resolution</dt><dd data-field="resolution"></dd>
+                    <dt>Target Milestone</dt><dd data-field="target_milestone"></dd>
+                  </dl>
+                </section>
+                <section>
+                  <h3>Affected</h3>
+                  <dl>
+                    <dt>Classification</dt><dd data-field="classification"></dd>
+                    <dt>Product</dt><dd data-field="product"></dd>
+                    <dt>Component</dt><dd data-field="component"></dd>
+                    <dt>Version</dt><dd data-field="version"></dd>
+                    <dt>Hardware</dt><dd data-field="platform"></dd>
+                    <dt>OS</dt><dd data-field="op_sys"></dd>
+                  </dl>
+                </section>
+                <section>
+                  <h3>Importance</h3>
+                  <dl>
+                    <dt>Severity</dt><dd data-field="severity"></dd>
+                    <dt>Priority</dt><dd data-field="priority"></dd>
+                    <!-- Not available via API: <dt>Votes</dt><dd></dd> -->
+                  </dl>
+                </section>
+                <section>
+                  <h3>Notes</h3>
+                  <dl>
+                    <dt>Alias</dt><dd data-field="alias"></dd>
+                    <dt>Whiteboard</dt><dd data-field="whiteboard"></dd>
+                    <dt>Keywords</dt><dd data-field="keywords"></dd>
+                    <dt>URL</dt><dd data-field="url"></dd>
+                    <dt>See Also</dt><dd data-field="see_also"></dd>
+                    <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
+                  </dl>
+                </section>
+                <section>
+                  <h3>Dependencies</h3>
+                  <dl>
+                    <dt>Depends on</dt><dd data-field="depends_on"></dd>
+                    <dt>Blocks</dt><dd data-field="blocks"></dd>
+                  </dl>
+                </section>
+                <section data-field="flags" aria-hidden="true">
+                  <h3>Flags</h3>
+                </section>
+                <!--
+                <section>
+                  <h3>Project Flags</h3>
+                  <dl data-field="__project_flags__"></dl>
+                </section>
+                <section>
+                  <h3>Tracking Flags</h3>
+                  <dl data-field="__tracking_flags__"></dl>
+                </section>
+                -->
+                <section>
+                  <h3>People</h3>
+                  <dl>
+                    <dt>Reporter</dt>
+                    <dd data-field="creator"><span tabindex="0" role="button" itemprop="author" itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>Assignee</dt>
+                    <dd data-field="assigned_to"><span tabindex="0" role="button" itemprop="contributor" itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>QA Contact</dt>
+                    <dd data-field="qa_contact"><span tabindex="0" role="button" itemprop="contributor" itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>Cc</dt>
+                    <dd data-field="cc">
+                      <ul> 
+                        <li><span tabindex="0" role="button" itemtype="http://schema.org/Person"><span itemprop="name"></span></span></li>
+                      </ul>
+                    </dd>
+                  </dl>
+                </section>
+                <section data-field="attachments" aria-hidden="true">
+                  <h3>Attachments</h3>
+                </section>
+              </div><!-- end #tabpanel-details-TEMPLATE-bug-info -->
+              <div id="tabpanel-details-TEMPLATE-bug-timeline" tabindex="0">
+                <section>
+                  <h3>Comments</h3>
+                  <article role="article" aria-hidden="true" itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+                    <header>
+                      <p class="meta">
+                        <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
+                        <time itemprop="datePublished"></time>
+                      </p>
+                    </header>
+                    <pre itemprop="text"></pre>
+                  </article>
+                </section>
+              </div><!-- end #tabpanel-details-TEMPLATE-bug-timeline -->
+            </div>
+            <footer>
+              <ul role="toolbar">
+                <!-- <li><span tabindex="0" role="button" aria-disabled="true">Leave Comments</span></li> -->
+                <!-- <li><span tabindex="0" role="button" aria-disabled="true">Save Changes</span></li> -->
+              </ul>
+            </footer>
+          </article><!-- end #tabpanel-details-TEMPLATE -->
+        </div><!-- end #main-tabpanels -->
+      </main>
+      <footer role="contentinfo">
+        <p id="statusbar" role="status"></p>
+      </footer>
+    </div><!-- end #app-body -->
+    <script type="application/javascript;version=1.8" src="/static/scripts/lib/britegrid/util.js"></script>
+    <script type="application/javascript;version=1.8" src="/static/scripts/lib/britegrid/widget.js"></script>
+    <script type="application/javascript;version=1.8" src="/static/scripts/bzdeck.js?060322"></script>
+    <!-- GA -->
+    <script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-37352183-1']); _gaq.push(['_trackPageview']); </script>
+    <script type="text/javascript" src="https://ssl.google-analytics.com/ga.js" async></script>
+  </body>
+</html>

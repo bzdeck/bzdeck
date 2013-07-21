@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# Version 2013-06-03 22:00
+/?060322
+/static/styles/lib/widget.css
+/static/styles/base.css
+/static/styles/themes/dark.css
+/static/scripts/lib/util.js
+/static/scripts/lib/widget.js
+/static/scripts/bzdeck.js?060322
+/static/images/logos.png
+/static/images/themes/dark/sprite.png
+/favicon.ico
+
+NETWORK:
+/api/*
