@@ -1123,15 +1123,18 @@ BzDeck.toolbar.setup = function () {
   new BGw.MenuBar($main_menu);
   $main_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
-      case 'change-theme':
+      case 'change-theme': {
         BriteGrid.util.theme.selected = event.explicitOriginalTarget.textContent;
         break;
-      case 'install-app':
+      }
+      case 'install-app': {
         BzDeck.global.install_app();
         break;
-      case 'logout':
+      }
+      case 'logout': {
         BzDeck.session.logout();
         break;
+      }
     }
   });
 
@@ -1566,15 +1569,17 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 
   let handler = event => {
     switch (event.target.dataset.command) {
-      case 'show-details':
+      case 'show-details': {
         new BzDeck.DetailsPage(this.data.preview_id);
         break;
-      case 'show-basic-search-pane':
+      }
+      case 'show-basic-search-pane': {
         panes['basic-search'].setAttribute('aria-hidden', 'false');
         panes['preview'].setAttribute('aria-hidden', 'true');
         buttons['show-details'].data.disabled = true;
         buttons['show-basic-search-pane'].data.disabled = true;
         break;
+      }
     }
   };
 
@@ -2005,10 +2010,12 @@ window.addEventListener('keydown', event => {
         case event.DOM_VK_C: // Copy
         case event.DOM_VK_V: // Paste
         case event.DOM_VK_X: // Cut
-        case event.DOM_VK_Z: // Undo/Redo
+        case event.DOM_VK_Z: { // Undo/Redo
           break;
-        default:
+        }
+        default: {
           event.preventDefault();
+        }
       }
     }
     */
@@ -2029,9 +2036,10 @@ window.addEventListener('keydown', event => {
       case event.DOM_VK_S: // Save
       case event.DOM_VK_W: // Close Tab/Window
       case event.DOM_VK_ADD: // Zoom In
-      case event.DOM_VK_SUBTRACT: // Zoom Out
+      case event.DOM_VK_SUBTRACT: { // Zoom Out
         event.preventDefault();
         break;
+      }
     }
     return;
   }
