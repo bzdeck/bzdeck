@@ -32,7 +32,7 @@ BzDeck.options = {
     ]
   },
   app: {
-    manifest: 'manifest.webapp'
+    manifest: location.origin + '/manifest.webapp'
   },
   grid: {
     default_columns: [
@@ -94,6 +94,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'isInteger' in Number, // Firefox 16
     'indexedDB' in window, // unprefixed in Firefox 16
     'onwheel' in window, // Firefox 17
+    'origin' in location, // Firefox 21
     'remove' in Element.prototype // Firefox 23
   ];
 
@@ -682,10 +683,7 @@ BzDeck.session.logout = function () {
 BzDeck.global = {};
 
 BzDeck.global.install_app = function () {
-  let url = location.protocol + '//' + location.hostname + '/'
-          + BzDeck.options.app.manifest;
-
-  BriteGrid.util.app.install(url, event => {
+  BriteGrid.util.app.install(BzDeck.options.app.manifest, event => {
     if (event.type === 'success') {
       document.getElementById('main-menu--app--install').setAttribute('aria-disabled', 'true');
     }
@@ -1143,7 +1141,7 @@ BzDeck.toolbar.setup = function () {
     $account_label.innerHTML = label;
   }
 
-  BriteGrid.util.app.can_install(result => {
+  BriteGrid.util.app.can_install(BzDeck.options.app.manifest, result => {
     if (result) {
       document.getElementById('main-menu--app--install').removeAttribute('aria-disabled');
     }
