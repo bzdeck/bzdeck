@@ -93,6 +93,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'isInteger' in Number, // Firefox 16
     'indexedDB' in window, // unprefixed in Firefox 16
     'onwheel' in window, // Firefox 17
+    'remove' in Element.prototype // Firefox 23
   ];
 
   try {
@@ -792,7 +793,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
   // Empty timeline while keeping the template and scrollbar
   for (let $comment of $timeline.querySelectorAll('[itemprop="comment"][data-time]')) {
-    $timeline.removeChild($comment);
+    $comment.remove();
   }
 
   if (bug.comments && !bug._update_needed) {
@@ -879,7 +880,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   if ($placeholder) {
     let $dl = $placeholder.querySelector('dl');
     if ($dl) {
-      $placeholder.removeChild($dl);
+      $dl.remove();
     }
     if (!bug.attachments) {
       $placeholder.setAttribute('aria-hidden', 'true');
@@ -940,7 +941,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   if ($placeholder) {
     let $ul = $placeholder.querySelector('ul');
     if ($ul) {
-      $placeholder.removeChild($ul);
+      $ul.remove();
     }
     if (!bug.flags) {
       $placeholder.setAttribute('aria-hidden', 'true');
@@ -992,7 +993,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
       $entry = $entry_tmpl.cloneNode();
       $entry.dataset.time = (new Date(time)).getTime();
       $entry.setAttribute('aria-hidden', 'false')
-      $entry.removeChild($entry.querySelector('[itemprop="text"]'));
+      $entry.querySelector('[itemprop="text"]').remove();
       let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
       $name.textContent = history.changer.name;
       let $time = $entry.querySelector('[itemprop="datePublished"]');
