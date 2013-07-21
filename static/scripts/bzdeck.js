@@ -79,34 +79,30 @@ BzDeck.options = {
 BzDeck.bootstrap = {};
 
 BzDeck.bootstrap.check_requirements = function () {
+  let features = [
+    'explicitOriginalTarget' in Event.prototype, // Gecko specific
+    'toLocaleFormat' in Date.prototype, // Gecko specific
+    'Proxy' in window, // Firefox 4
+    'IDBObjectStore' in window, // Firefox 4
+    'mozGetAll' in IDBObjectStore.prototype, // Gecko specific; prefixed
+    'WeakMap' in window, // Firefox 6
+    'Set' in window, // Firefox 13
+    'MutationObserver' in window, // Firefox 14
+    'buttons' in MouseEvent.prototype, // Firefox 15
+    'scrollTopMax' in Element.prototype, // Firefox 16
+    'isInteger' in Number, // Firefox 16
+    'indexedDB' in window, // unprefixed in Firefox 16
+    'onwheel' in window, // Firefox 17
+  ];
+
   try {
-    // Event.explicitOriginalTarget (Gecko specific)
-    if ('explicitOriginalTarget' in Event.prototype === false) throw new Error;
-    // Date.toLocaleFormat (Gecko specific)
-    if (typeof Date.prototype.toLocaleFormat !== 'function')  throw new Error;
-    // Proxy (Firefox 4)
-    if (typeof Proxy !== 'object') throw new Error;
-    // WeakMap (Firefox 6)
-    if (typeof WeakMap !== 'function') throw new Error;
-    // Set (Firefox 13)
-    if (typeof Set !== 'function') throw new Error;
-    // for...of loop (Firefox 13)
+    // (Strict) feature detection & arrow function expression (Firefox 22)
+    if (!features.every(item => item)) {
+      throw new Error;
+    }
     // Iterator and destructuring assignment (Firefox 2)
+    // for...of loop (Firefox 13)
     for (let [key, value] of Iterator(['a', 'b', 'c'])) if (key === 1) {}
-    // MutationObserver (Firefox 14)
-    if (typeof MutationObserver !== 'function') throw new Error;
-    // MouseEvent.buttons (Firefox 15)
-    if ('buttons' in MouseEvent.prototype === false) throw new Error;
-    // Element.scrollTopMax (Firefox 16)
-    if ('scrollTopMax' in Element.prototype === false) throw new Error;
-    // Number.isInteger (Firefox 16)
-    if (typeof Number.isInteger !== 'function') throw new Error;
-    // IndexedDB (unprefixed in Firefox 16)
-    if (typeof indexedDB !== 'object') throw new Error;
-    // IDBObjectStore.getAll (Gecko specific; prefixed)
-    if (typeof IDBObjectStore.prototype.mozGetAll !== 'function') throw new Error;
-    // wheel event (Firefox 17)
-    if (typeof window.onwheel !== 'object') throw new Error;
     // Direct Proxy (Firefox 18; constructor)
     new Proxy({}, {});
   } catch (ex) {
