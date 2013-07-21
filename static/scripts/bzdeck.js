@@ -1123,6 +1123,10 @@ BzDeck.toolbar.setup = function () {
         BriteGrid.util.theme.selected = event.explicitOriginalTarget.textContent;
         break;
       }
+      case 'toggle-fullscreen': {
+        BriteGrid.util.app.toggle_fullscreen();
+        break;
+      }
       case 'install-app': {
         BzDeck.global.install_app();
         break;
@@ -1139,6 +1143,10 @@ BzDeck.toolbar.setup = function () {
         label = BzDeck.data.account.real_name ? BzDeck.data.account.real_name + '<br>' : '';
     label += BzDeck.data.account.name;
     $account_label.innerHTML = label;
+  }
+
+  if (BriteGrid.util.app.fullscreen_enabled) {
+    document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');
   }
 
   BriteGrid.util.app.can_install(BzDeck.options.app.manifest, result => {
@@ -1971,6 +1979,11 @@ window.addEventListener('contextmenu', event => {
 
 window.addEventListener('click', event => {
   let $target = event.target;
+
+  // Discard clicks on the fullscreen dialog
+  if ($target === document) {
+    return true;
+  }
 
   if ($target.mozMatchesSelector('[role="link"]')) {
     // Bug link: open in a new app tab
