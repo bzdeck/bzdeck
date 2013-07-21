@@ -82,6 +82,7 @@ BzDeck.bootstrap.check_requirements = function () {
   let features = [
     'explicitOriginalTarget' in Event.prototype, // Gecko specific
     'toLocaleFormat' in Date.prototype, // Gecko specific
+    'mozMatchesSelector' in Element.prototype, // Gecko specific; prefixed
     'Proxy' in window, // Firefox 4
     'IDBObjectStore' in window, // Firefox 4
     'mozGetAll' in IDBObjectStore.prototype, // Gecko specific; prefixed
@@ -1202,7 +1203,7 @@ BzDeck.toolbar.setup = function () {
     if (id) {
       new BzDeck.DetailsPage(id);
     }
-    if ($target.id === 'quicksearch-dropdown-more') {
+    if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
       exec_search();
     }
   });
@@ -1820,7 +1821,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
       return;
     }
     // Show the preview pane
-    if ($pane.getAttribute('aria-hidden') === 'true') {
+    if ($pane.mozMatchesSelector('[aria-hidden="true"]')) {
       BzDeck.global.show_status('');
       this.view.panes['basic-search'].setAttribute('aria-hidden', 'true');
       $pane.setAttribute('aria-hidden', 'false');
@@ -1973,7 +1974,7 @@ window.addEventListener('contextmenu', event => {
 window.addEventListener('click', event => {
   let $target = event.target;
 
-  if ($target.getAttribute('role') === 'link') {
+  if ($target.mozMatchesSelector('[role="link"]')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
       new BzDeck.DetailsPage($target.getAttribute('data-bug-id'));
@@ -1998,8 +1999,7 @@ window.addEventListener('click', event => {
 window.addEventListener('keydown', event => {
   let $target = event.target;
 
-  if ($target.localName === 'input' ||
-      $target.getAttribute('role') === 'textbox') {
+  if ($target.mozMatchesSelector('input, [role="textbox"]')) {
     /*
     if (event.metaKey || event.ctrlKey) {
       switch (event.keyCode) {
