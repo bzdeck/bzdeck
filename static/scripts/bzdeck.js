@@ -96,6 +96,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'onwheel' in window, // Firefox 17
     'origin' in location, // Firefox 21
     'Notification' in window, // Firefox 22
+    'is' in Object, // Firefox 22
     'remove' in Element.prototype // Firefox 23
   ];
 
