@@ -29,6 +29,9 @@ RewriteRule ^faq/?$         https://www.facebook.com/notes/bzdeck/bzdeck-faq/270
 RewriteRule ^support/?$     https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
 RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.271135819678801.63434.240285432763840 [R,L]
 
+# Rewrite: misc
+RewriteRule ^favicon\.ico$ /static/images/favicon.ico [L]
+
 # Performance: remove ETag
 FileETag None
 
