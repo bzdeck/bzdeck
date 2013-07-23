@@ -697,7 +697,7 @@ BzDeck.global.show_status = function (message) {
 BzDeck.global.show_notification = function (title, body) {
   BriteGrid.util.app.show_notification(title, {
     body: body,
-    icon: "/static/images/logo-512.png"
+    icon: '/static/images/logo-512.png'
   });
 };
 
@@ -1119,9 +1119,9 @@ BzDeck.toolbar = {};
 BzDeck.toolbar.setup = function () {
   let BGw = BriteGrid.widget,
       BGu = BriteGrid.util,
-      tablist = this.tablist = new BGw.TabList(document.getElementById("main-tablist"));
+      tablist = this.tablist = new BGw.TabList(document.getElementById('main-tablist'));
 
-  let $main_menu = document.getElementById("main-menu");
+  let $main_menu = document.getElementById('main-menu');
   new BGw.MenuBar($main_menu);
   $main_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
@@ -1316,7 +1316,7 @@ BzDeck.HomePage = function () {
     }
   ];
 
-  let folders = new BGw.Tree(document.getElementById("home-folders"), folder_data);
+  let folders = new BGw.Tree(document.getElementById('home-folders'), folder_data);
   folders.view = new Proxy(folders.view, {
     set: (obj, prop, value) => {
       if (prop === 'selected') {
