@@ -1435,8 +1435,8 @@ BzDeck.HomePage = function () {
 
   // Update UI: the Unread folder on the home page
   BzDeck.model.get_all_bugs(bugs => {
-    let bugs = bugs.filter(bug => bug._unread),
-        num = bugs.length,
+    bugs = bugs.filter(bug => bug._unread);
+    let num = bugs.length,
         $label = document.querySelector('[id="home-folders--unread"] label');
     if (!num) {
       $label.textContent = 'Unread'; // l10n
@@ -2029,6 +2029,8 @@ window.addEventListener('click', event => {
     $target.target = '_blank';
     return false;
   }
+
+  return true;
 });
 
 window.addEventListener('keydown', event => {
@@ -2051,7 +2053,6 @@ window.addEventListener('keydown', event => {
       }
     }
     */
-    return true;
   }
 
   if (event.metaKey || event.ctrlKey) {
@@ -2070,9 +2071,10 @@ window.addEventListener('keydown', event => {
       case event.DOM_VK_ADD: // Zoom In
       case event.DOM_VK_SUBTRACT: { // Zoom Out
         event.preventDefault();
-        break;
+        return false;
       }
     }
-    return;
   }
+
+  return true;
 });
