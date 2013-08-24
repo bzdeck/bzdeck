@@ -96,6 +96,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'onwheel' in window, // Firefox 17
     'origin' in location, // Firefox 21
     'Notification' in window, // Firefox 22
+    'HTMLTemplateElement' in window, // Firefox 22
     'is' in Object, // Firefox 22
     'remove' in Element.prototype // Firefox 23
   ];
@@ -706,30 +707,41 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     return null;
   }
 
-  if (clone) {
-    $template = $template.cloneNode();
-    $template.id = $template.id.replace(/TEMPLATE/, bug.id);
-    $template.removeAttribute('aria-hidden');
+  let $content;
+
+  if (!clone) {
+    $content = $template;
+  } else {
+    // DocumentFragment.firstElementChild returns undefined (Bug 895974)
+    // This issue will be resolved in Firefox 25. Here's a workaround:
+    $content = $template.cloneNode().firstElementChild ||
+               $template.cloneNode().querySelector('[id]');
+
+    // Assign unique IDs
+    $content.id = $content.id.replace(/TID/, bug.id);
+    for (let $element of $content.querySelectorAll('[id]')) {
+      $element.id = $element.id.replace(/TID/, bug.id);
+    }
+
     // Scrollbar
     let ScrollBar = BriteGrid.widget.ScrollBar;
     for (let suffix of ['info', 'timeline']) {
-      let $area = $template.querySelector('[id$="-bug-' + suffix + '"]');
+      let $area = $content.querySelector('[id$="-bug-' + suffix + '"]');
       if ($area) {
-        $area.id = $template.id + '-bug-' + suffix;
         new ScrollBar($area);
       }
     }
   }
 
-  $template.dataset.id = bug.id;
-  $template.setAttribute('aria-busy', 'true');
+  $content.dataset.id = bug.id;
+  $content.setAttribute('aria-busy', 'true');
 
   if (!bug.summary) {
     // The bug is being loaded
-    return $template;
+    return $content;
   }
 
-  for (let $element of $template.querySelectorAll('[data-field]')) {
+  for (let $element of $content.querySelectorAll('[data-field]')) {
     let key = $element.getAttribute('data-field'),
         value = bug[key];
 
@@ -785,11 +797,11 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     }
   }
 
-  $template.removeAttribute('aria-busy');
+  $content.removeAttribute('aria-busy');
 
-  let $timeline = $template.querySelector('[id$="-bug-timeline"]');
+  let $timeline = $content.querySelector('[id$="-bug-timeline"]');
   if (!$timeline) {
-    return $template;
+    return $content;
   }
 
   $timeline.setAttribute('aria-busy', 'true');
@@ -801,34 +813,34 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   }
 
   if (bug.comments && !bug._update_needed) {
-    this.fill_template_details($template, bug);
+    this.fill_template_details($content, bug);
   } else {
     // Load comments, history, flags and attachments' metadata
     BzDeck.core.load_bug_details(bug.id, bug => {
-      this.fill_template_details($template, bug);
+      this.fill_template_details($content, bug);
     });
   }
 
-  return $template;
+  return $content;
 };
 
-BzDeck.global.fill_template_details = function ($template, bug) {
+BzDeck.global.fill_template_details = function ($content, bug) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
-  if (!$template || Number.toInteger($template.dataset.id) !== bug.id) {
+  if (!$content || Number.toInteger($content.dataset.id) !== bug.id) {
     return;
   }
 
   let $placeholder;
 
   // dupe_of
-  $placeholder = $template.querySelector('[data-field="resolution"]');
+  $placeholder = $content.querySelector('[data-field="resolution"]');
   if ($placeholder && bug.resolution === 'DUPLICATE' && bug.dupe_of) {
     $placeholder.textContent = 'DUPLICATE of ' + bug.dupe_of;
   }
 
   // CC
-  $placeholder = $template.querySelector('[data-field="cc"]');
+  $placeholder = $content.querySelector('[data-field="cc"]');
   if ($placeholder) {
     if (Array.isArray(bug.cc)) {
       let $ul = $placeholder.querySelector('ul'),
@@ -844,7 +856,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
 
   // Depends on & Blocks
   for (let field of ['depends_on', 'blocks']) {
-    $placeholder = $template.querySelector('[data-field="' + field + '"]');
+    $placeholder = $content.querySelector('[data-field="' + field + '"]');
     if ($placeholder) {
       let $ul = $placeholder.appendChild(document.createElement('ul'));
       if (Array.isArray(bug[field])) {
@@ -864,7 +876,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   }
 
   // See Also
-  $placeholder = $template.querySelector('[data-field="see_also"]');
+  $placeholder = $content.querySelector('[data-field="see_also"]');
   if ($placeholder) {
     if (Array.isArray(bug.see_also)) {
       let $ul = $placeholder.querySelector('ul');
@@ -880,7 +892,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   }
 
   // Attachments
-  $placeholder = $template.querySelector('[data-field="attachments"]');
+  $placeholder = $content.querySelector('[data-field="attachments"]');
   if ($placeholder) {
     let $dl = $placeholder.querySelector('dl');
     if ($dl) {
@@ -941,7 +953,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   }
 
   // Flags
-  $placeholder = $template.querySelector('[data-field="flags"]');
+  $placeholder = $content.querySelector('[data-field="flags"]');
   if ($placeholder) {
     let $ul = $placeholder.querySelector('ul');
     if ($ul) {
@@ -964,8 +976,8 @@ BzDeck.global.fill_template_details = function ($template, bug) {
 
   // Timeline: comments & history
   let entries = {},
-      $timeline = $template.querySelector('[id$="-bug-timeline"]'),
-      $entry_tmpl = $template.querySelector('[itemprop="comment"]'),
+      $timeline = $content.querySelector('[id$="-bug-timeline"]'),
+      $entry_tmpl = $content.querySelector('[itemprop="comment"]'),
       field = BzDeck.data.bugzilla_config.field,
       parse = BzDeck.global.parse_comment,
       sanitize = BriteGrid.util.string.sanitize;
@@ -973,7 +985,7 @@ BzDeck.global.fill_template_details = function ($template, bug) {
   for (let comment of bug.comments) {
     let $entry = $entry_tmpl.cloneNode(),
         time = comment.creation_time;
-    $entry.id = $template.id + '-comment-' + comment.id;
+    $entry.id = $content.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('aria-hidden', 'false');
@@ -1546,17 +1558,16 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
 
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      $tabpanel = document.getElementById('tabpanel-search-TEMPLATE').cloneNode(),
+      $content = document.querySelector('template#tabpanel-search').content.cloneNode(),
       id_suffix = this.id = (new Date()).getTime();
 
-  // Assign unique ID
-  $tabpanel.id = $tabpanel.id.replace(/TEMPLATE/, id_suffix);
-  for (let $element of $tabpanel.querySelectorAll('[id]')) {
-    $element.id = $element.id.replace(/TEMPLATE/, id_suffix);
+  // Assign unique IDs
+  for (let $element of $content.querySelectorAll('[id]')) {
+    $element.id = $element.id.replace(/TID/, id_suffix);
   }
 
   this.view = {
-    tabpanel: $tabpanel,
+    tabpanel: $content.querySelector('[role="tabpanel"]'),
     buttons: {},
     panes: {}
   };
@@ -1587,7 +1598,7 @@ BzDeck.SearchPage = function () {
     'search-' + id_suffix,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
-    $tabpanel
+    this.view.tabpanel
   );
 };
 
@@ -1933,8 +1944,8 @@ BzDeck.DetailsPage = function (bug_id) {
     }
   
     // Prepare the tabpanel content
-    let $template = document.getElementById('tabpanel-details-TEMPLATE'),
-        $tabpanel = BzDeck.global.fill_template($template, bug || { id: bug_id }, true);
+    let $content = document.querySelector('template#tabpanel-details').content,
+        $tabpanel = BzDeck.global.fill_template($content, bug || { id: bug_id }, true);
     document.getElementById('main-tabpanels').appendChild($tabpanel);
   
     // Open the new tab
