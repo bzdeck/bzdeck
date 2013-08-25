@@ -8,6 +8,9 @@ CACHE MANIFEST
 /static/scripts/lib/util.js
 /static/scripts/lib/widget.js
 /static/scripts/bzdeck.js?060322
+/static/scripts/home.js?082517
+/static/scripts/search.js?082517
+/static/scripts/details.js?082517
 /static/images/logos.png
 /static/images/themes/dark/sprite.png
 /favicon.ico
