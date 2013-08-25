@@ -676,6 +676,11 @@ BzDeck.session.logout = function () {
     window.clearInterval(timer);
   }
 
+  // Delete the account data
+  BzDeck.model.db.transaction('accounts', 'readwrite')
+                 .objectStore('accounts').delete(BzDeck.data.account.id);
+  delete BzDeck.data.account;
+
   // GA
   if (_gaq) {
     _gaq.push(['_setCustomVar', 1, 'Login', 'false', 2]);
