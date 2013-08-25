@@ -273,11 +273,13 @@ BzDeck.bootstrap.setup_ui = function () {
 };
 
 BzDeck.bootstrap.finish = function () {
-  // Timers
+  // Timer to load bug details
   BzDeck.core.load_bug_details_at_intervals();
-  window.setInterval(() => {
+
+  // Timer to check for updates
+  BzDeck.core.timers.load_subscriptions = window.setInterval(() => {
     BzDeck.core.load_subscriptions();
-  }, 600000) // 10 minutes
+  }, 600000); // Call every 10 minutes
 
   BzDeck.global.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
@@ -289,6 +291,7 @@ BzDeck.bootstrap.finish = function () {
  * -------------------------------------------------------------------------- */
 
 BzDeck.core = {};
+BzDeck.core.timers = {};
 
 BzDeck.core.load_subscriptions = function () {
   this.firstrun = false;
@@ -505,7 +508,7 @@ BzDeck.core.load_bug_details_at_intervals = function () {
   BzDeck.model.get_all_bugs(bugs => {
     // Load comments, history, flags and attachments' metadata
     let queue = bugs.filter(bug => bug._update_needed).map(bug => bug.id);
-    let timer = window.setInterval(() => {
+    let timer = this.timers.load_bug_details_at_intervals = window.setInterval(() => {
       if (!queue.length) {
         // All bugs loaded
         window.clearInterval(timer);
@@ -667,6 +670,11 @@ BzDeck.session.logout = function () {
   $app_body.setAttribute('aria-hidden', 'true');
 
   BzDeck.bootstrap.form.setAttribute('aria-hidden', 'false');
+
+  // Terminate timers
+  for (let [key, timer] of Iterator(BzDeck.core.timers)) {
+    window.clearInterval(timer);
+  }
 
   // GA
   if (_gaq) {
