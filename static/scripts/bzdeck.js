@@ -1266,6 +1266,7 @@ BzDeck.toolbar.setup = function () {
 
   $search_box.addEventListener('keydown', event => {
     if (event.keyCode === event.DOM_VK_RETURN) {
+      this.search_dropdown.close();
       exec_search();
     }
   });
