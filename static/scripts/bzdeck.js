@@ -1021,7 +1021,9 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $changes.className = 'changes';
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li'));
-      $change.textContent = field[change.field_name].description + ': ';
+      // Bug 909055 - Field name mismatch in history: group vs groups
+      let _field = (change.field_name === 'groups') ? field['group'] : field[change.field_name];
+      $change.textContent = _field.description + ': ';
       if (change.removed) {
         let $del = $change.appendChild(document.createElement('del'));
         $del.textContent = change.removed;
