@@ -51,6 +51,14 @@ button {
   pointer-events: auto;
 }
 
+a[role="link"] {
+  text-decoration: underline;
+}
+
+del a[role="link"] {
+  text-decoration: none;
+}
+
 [role="tab"] {
   margin: 7px 1px 0 0;
   outline: 0;
@@ -699,30 +707,30 @@ main {
 [id$="-bug-info"] dl,
 [id$="-bug-info"] > section > ul {
   overflow: hidden;
-  padding: 4px;
+  padding: 8px;
 }
 
 [id$="-bug-info"] dl > dt {
   float: left;
   clear: both;
   width: 96px;
-  padding: 4px 8px;
+  padding: 4px;
   min-height: 16px;
   line-height: 16px;
 }
 
 [id$="-bug-info"] dl > dd,
 [id$="-bug-info"] > section > ul > li {
-  padding: 4px 8px;
+  padding: 4px;
   min-height: 16px;
   line-height: 16px;
 }
 
 [id$="-bug-info"] dl > dd {
   float: left;
-  margin-left: -112px;
-  padding-left: 112px;
-  width: calc(100% - 120px);
+  margin-left: -104px;
+  padding-left: 104px;
+  width: calc(100% - 108px);
 }
 
 [id$="-bug-info"] [role="button"] {
@@ -759,14 +767,20 @@ main {
 }
 
 [itemprop="comment"] {
+  overflow: hidden;
   margin: 12px;
-  border-radius: 8px;
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+[itemprop="comment"] > * {
   padding: 12px;
 }
 
 [itemprop="comment"] header {
   overflow: hidden;
-  padding: 0 0 8px;
+  border-bottom: 1px solid;
+  padding: 12px;
 }
 
 [itemprop="comment"] header p {
@@ -774,8 +788,8 @@ main {
 }
 
 [itemprop="comment"] header p.meta {
-  float: left;
-  width: 400px;
+  /* float: left; */
+  /* width: 400px; */
 }
 
 [itemprop="comment"] header p.tools {
@@ -809,7 +823,6 @@ main {
 }
 
 [itemprop="comment"] [itemprop="text"] {
-  padding-top: 8px;
   font-size: 12px;
   -moz-user-select: text;
   pointer-events: auto;
@@ -818,21 +831,23 @@ main {
 }
 
 [itemprop="comment"] .changes {
-  padding-top: 4px;
+  border-top: 1px solid;
+}
+
+[itemprop="comment"] header + .changes {
+  border-top: 0 none;
 }
 
 [itemprop="comment"] .changes li {
-  margin-top: 4px;
-  line-height: 1.3;
+  line-height: 1.5;
+}
+
+[itemprop="comment"] .changes li:not(:first-of-type) {
+  margin-top: 8px;
 }
 
 [itemprop="comment"] .changes ins {
   text-decoration: none;
-}
-
-[itemprop="comment"] [itemprop="text"],
-[itemprop="comment"] .changes {
-  margin-top: 8px;
 }
 
 #main-tabpanels > [role="tabpanel"][aria-busy="true"] > * {

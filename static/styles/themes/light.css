@@ -13,7 +13,6 @@ ins, del {
 
 a[role="link"] {
   color: inherit;
-  text-decoration: underline;
 }
 
 #app-login {
@@ -68,7 +67,7 @@ a[role="link"] {
 }
 
 [role="menu"] [role="separator"] {
-  border-color: #EEE;
+  border-color: #DDD;
 }
 
 [role^="menuitem"][aria-selected="true"] {
@@ -138,17 +137,17 @@ a[role="link"] {
 }
 
 #main-tabpanels > [role="tabpanel"] > div {
-  border-color: #EEE;
+  border-color: #CCC;
   background-color: #EEE;
 }
 
 #tabpanel-home [id$="-pane"] {
-  border-color:  #EEE;
-  background-color: #FFF;
+  border-color: #CCC;
+  background-color: #EEE;
 }
 
 #tabpanel-home [id$="-pane"] h3 {
-  border-color:  #EEE;
+  border-color: #CCC;
   background-color: #DDD;
 }
 
@@ -157,7 +156,7 @@ a[role="link"] {
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > header {
-  border-color:  #EEE;
+  border-color: #CCC;
   background-color: #DDD;
 }
 
@@ -166,7 +165,7 @@ a[role="link"] {
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section {
-  border-color:  #EEE;
+  border-color: #EEE;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section h3 {
@@ -174,12 +173,12 @@ a[role="link"] {
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box {
-  border-color:  #EEE;
+  border-color: #EEE;
   background-image: linear-gradient(to bottom, #CCC, #DDD);
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"] {
-  border-color:  #FFF;
+  border-color: #FFF;
   background-image: linear-gradient(to bottom, #CCC, #DDD);
 }
 
@@ -193,17 +192,17 @@ a[role="link"] {
 }
 
 [id$="-bug-info"] {
-  background-color: #FFF;
+  background-color: #EEE;
 }
 
 [id$="-bug-info"] > section h3 {
-  border-color:  #EEE;
+  border-color: #CCC;
   background-color: #DDD;
 }
 
 [id$="-bug-info"] dl > dd:not(:first-of-type),
 [id$="-bug-info"] > section > ul > li:not(:first-of-type) {
-  background-image: linear-gradient(to bottom, #FFF, #FFF 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
+  background-image: linear-gradient(to bottom, #EEE, #EEE 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
 }
 
 [id$="-bug-info"] [role="button"]:hover {
@@ -212,12 +211,18 @@ a[role="link"] {
 }
 
 [id$="-bug-timeline"] {
-  border-color:  #EEE;
+  border-color: #DDD;
 }
 
 [itemprop="comment"] {
+  border-color: #DDD;
   background-color: #FFF;
-  box-shadow: inset -1px -1px 1px #EEE, inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[itemprop="comment"] header,
+[itemprop="comment"] .changes {
+  border-color: #DDD;
+  background-color: #F9F9F9;
 }
 
 [itemprop="comment"] header [role="button"] {
@@ -227,11 +232,6 @@ a[role="link"] {
 
 [itemprop="comment"] [itemprop="text"] {
   color: #333;
-}
-
-[itemprop="comment"] [itemprop="text"],
-[itemprop="comment"] .changes {
-  background-image: linear-gradient(to bottom, #EEE, #EEE 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
 }
 
 #main-tabpanels [role="tabpanel"] > footer {

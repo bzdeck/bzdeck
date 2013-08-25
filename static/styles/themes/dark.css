@@ -13,7 +13,6 @@ ins, del {
 
 a[role="link"] {
   color: inherit;
-  text-decoration: underline;
 }
 
 #app-login {
@@ -157,7 +156,7 @@ a[role="link"] {
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > header {
-  border-color:  #222;
+  border-color:  #111;
   background-color: #333;
 }
 
@@ -203,7 +202,7 @@ a[role="link"] {
 
 [id$="-bug-info"] dl > dd:not(:first-of-type),
 [id$="-bug-info"] > section > ul > li:not(:first-of-type) {
-  background-image: linear-gradient(to bottom, #111, #111 1px, #333 1px, #333 2px, transparent 2px, transparent);
+  background-image: linear-gradient(to bottom, #222, #222 1px, #333 1px, #333 2px, transparent 2px, transparent);
 }
 
 [id$="-bug-info"] [role="button"]:hover {
@@ -212,12 +211,18 @@ a[role="link"] {
 }
 
 [id$="-bug-timeline"] {
-  border-color:  #111;
+  border-color:  #222;
 }
 
 [itemprop="comment"] {
+  border-color:  #222;
   background-color: #222;
-  box-shadow: inset -1px -1px 1px #555, inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[itemprop="comment"] header,
+[itemprop="comment"] .changes {
+  border-color: #222;
+  background-color: #292929;
 }
 
 [itemprop="comment"] header [role="button"] {
@@ -227,11 +232,6 @@ a[role="link"] {
 
 [itemprop="comment"] [itemprop="text"] {
   color: #CCC;
-}
-
-[itemprop="comment"] [itemprop="text"],
-[itemprop="comment"] .changes {
-  background-image: linear-gradient(to bottom, #111, #111 1px, #333 1px, #333 2px, transparent 2px, transparent);
 }
 
 #main-tabpanels [role="tabpanel"] > footer {
