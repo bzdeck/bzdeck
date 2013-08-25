@@ -1394,7 +1394,6 @@ window.addEventListener('keydown', event => {
   let $target = event.target;
 
   if ($target.mozMatchesSelector('input, [role="textbox"]')) {
-    /*
     if (event.metaKey || event.ctrlKey) {
       switch (event.keyCode) {
         case event.DOM_VK_A: // Select
@@ -1402,14 +1401,14 @@ window.addEventListener('keydown', event => {
         case event.DOM_VK_V: // Paste
         case event.DOM_VK_X: // Cut
         case event.DOM_VK_Z: { // Undo/Redo
-          break;
+          return true;
         }
         default: {
           event.preventDefault();
+          return false;
         }
       }
     }
-    */
   }
 
   if (event.metaKey || event.ctrlKey) {
