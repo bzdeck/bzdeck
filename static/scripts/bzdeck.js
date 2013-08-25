@@ -1640,7 +1640,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       config = BzDeck.data.bugzilla_config;
 
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new ScrollBar($outer/* , true */); // FIXME
+    new ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
