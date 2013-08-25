@@ -1371,8 +1371,11 @@ BzDeck.HomePage = function () {
   });
 
   $grid.addEventListener('dblclick', event => {
-    // Open Bug in New Tab
-    new BzDeck.DetailsPage(event.originalTarget.dataset.id);
+    let $target = event.originalTarget;
+    if ($target.mozMatchesSelector('[role="row"]')) {
+      // Open Bug in New Tab
+      new BzDeck.DetailsPage($target.dataset.id);
+    }
   });
 
   $grid.addEventListener('keydown', event => {
@@ -1802,8 +1805,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   });
 
   $grid.addEventListener('dblclick', event => {
-    // Open Bug in New Tab
-    new BzDeck.DetailsPage(event.originalTarget.dataset.id);
+    let $target = event.originalTarget;
+    if ($target.mozMatchesSelector('[role="row"]')) {
+      // Open Bug in New Tab
+      new BzDeck.DetailsPage($target.dataset.id);
+    }
   });
 
   $grid.addEventListener('keydown', event => {
