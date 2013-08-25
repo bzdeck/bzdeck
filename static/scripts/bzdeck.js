@@ -2,7 +2,7 @@
  * BzDeck Application Logic
  * Copyright © 2012 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 18
+ * Requires: Firefox 23
  */
 
 'use strict';
