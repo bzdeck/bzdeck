@@ -1059,21 +1059,31 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     }
     let $changes = $entry.appendChild(document.createElement('ul'));
     $changes.className = 'changes';
+    let generate_element = (change, how) => {
+      let $elm = document.createElement((how === 'removed') ? 'del' : 'ins');
+      if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
+        $elm.innerHTML = change[how].replace(
+          /(\d+)/g, 
+          '<a href="#bug/$1" role="link" data-bug-id="$1">$1</a>'
+        );
+      } else {
+        $elm.textContent = change[how];
+      }
+      return $elm;
+    };
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li'));
       // Bug 909055 - Field name mismatch in history: group vs groups
       let _field = (change.field_name === 'groups') ? field['group'] : field[change.field_name];
       $change.textContent = _field.description + ': ';
       if (change.removed) {
-        let $del = $change.appendChild(document.createElement('del'));
-        $del.textContent = change.removed;
+        $change.appendChild(generate_element(change, 'removed'));
       }
       if (change.removed && change.added) {
         $change.appendChild(document.createTextNode(' → '));
       }
       if (change.added) {
-        let $ins = $change.appendChild(document.createElement('ins'));
-        $ins.textContent = change.added;
+        $change.appendChild(generate_element(change, 'added'));
       }
     }
   }
