@@ -159,6 +159,7 @@ BzDeck.bootstrap.open_database = function () {
 
     this.load_config();
     this.load_account();
+    this.load_prefs();
   });
 };
 
@@ -206,6 +207,24 @@ BzDeck.bootstrap.load_account = function () {
     } else {
       this.show_login_form();
     }
+  });
+};
+
+BzDeck.bootstrap.load_prefs = function () {
+  let db = BzDeck.model.db;
+  db.transaction('prefs').objectStore('prefs').mozGetAll().addEventListener('success', event => {
+    let prefs = {};
+    for (let { key, value } of event.target.result) {
+      prefs[key] = value;
+    }
+
+    BzDeck.data.prefs = new Proxy(prefs, {
+      set: (obj, key, value) => {
+        obj[key] = value;
+        // Save the pref to DB
+        db.transaction('prefs', 'readwrite').objectStore('prefs').put({ key: key, value: value });
+      }
+    });
   });
 };
 
