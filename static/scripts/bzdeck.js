@@ -287,8 +287,16 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.toolbar.setup();
   new BzDeck.HomePage();
 
+  let BGut = BriteGrid.util.theme,
+      theme = BzDeck.data.prefs['ui.theme.selected'];
+
+  // Change the theme
+  if (theme && BGut.list.contains(theme)) {
+    BGut.selected = theme;
+  }
+
   // Preload images from CSS
-  BriteGrid.util.theme.preload_images(() => {});
+  BGut.preload_images(() => {});
 };
 
 BzDeck.bootstrap.finish = function () {
@@ -1172,7 +1180,8 @@ BzDeck.toolbar.setup = function () {
   $main_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'change-theme': {
-        BGu.theme.selected = event.explicitOriginalTarget.textContent;
+        BGu.theme.selected = BzDeck.data.prefs['ui.theme.selected']
+                           = event.explicitOriginalTarget.dataset.theme;
         break;
       }
       case 'toggle-fullscreen': {
@@ -1187,6 +1196,14 @@ BzDeck.toolbar.setup = function () {
         BzDeck.session.logout();
         break;
       }
+    }
+  });
+
+  // Do something when the app menu is opened
+  document.getElementById('main-menu--app-menu').addEventListener('MenuOpened', event => {
+    // Update selected theme
+    for (let $menu of $main_menu.querySelectorAll('[data-theme]')) {
+      $menu.setAttribute('aria-checked', $menu.dataset.theme === BGu.theme.selected);
     }
   });
 

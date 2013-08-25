@@ -4,6 +4,7 @@ CACHE MANIFEST
 /static/styles/lib/widget.css
 /static/styles/base.css
 /static/styles/themes/dark.css
+/static/styles/themes/light.css
 /static/scripts/lib/util.js
 /static/scripts/lib/widget.js
 /static/scripts/bzdeck.js?060322

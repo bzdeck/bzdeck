@@ -1,0 +1,247 @@
+body {
+  color: #666;
+  background-color: #FFF;
+}
+
+ins, del {
+  -moz-text-decoration-color: rgba(102, 102, 102, 0.8); /* #666 */
+}
+
+:focus {
+  outline-color: #999;
+}
+
+a[role="link"] {
+  color: inherit;
+  text-decoration: underline;
+}
+
+#app-login {
+  background-image: linear-gradient(to bottom, #CCC, #FFF);
+}
+
+#app-login [role="button"] {
+  color: inherit;
+  background-image: linear-gradient(to bottom, #CCC, #EEE);
+}
+
+#app-login [role="button"]:hover,
+#app-login [role="button"]:focus {
+  background-image: linear-gradient(to bottom, #EEE, #DDD);
+}
+
+#app-login [role="button"]:active {
+  background-image: linear-gradient(to bottom, #EEE, #CCC);
+}
+
+#app-body {
+  background-color: #FFF;
+}
+
+[role="tab"] .close,
+[role="treeitem"][aria-expanded] + .expander,
+[role^="menuitem"][aria-checked="true"]:before,
+[role="menuitem"][aria-haspopup="true"]:after,
+[role="grid"] .grid-header [aria-sort] label:after,
+[role="columnheader"][data-type="boolean"],
+[role="gridcell"][data-type="boolean"] [role="checkbox"],
+[role="banner"] [role="search"] [role="button"],
+[aria-busy="true"]:before,
+#main-menu--app,
+[itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+  background-image: url(/static/images/themes/light/sprite.png);
+}
+
+[role="tab"] .close:hover {
+  background-color: #EEE;
+}
+
+[role="option"][aria-selected="true"],
+[role="treeitem"][aria-selected="true"] {
+  color: #333;
+  background-color: #CCC;
+}
+
+[role="menu"] {
+  background: #FFF;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[role="menu"] [role="separator"] {
+  border-color: #EEE;
+}
+
+[role^="menuitem"][aria-selected="true"] {
+  color: #333;
+  background-color: #CCC;
+}
+
+[role="grid"] .grid-header {
+  background-color: #EEE;
+}
+
+[role="grid"] .grid-body {
+  background: #FFF;
+}
+
+[role="grid"] .grid-body tbody tr:nth-child(even) {
+  background: #F9F9F9;
+}
+
+[role="grid"] .grid-body tbody tr[aria-selected="true"] {
+  color: #333;
+  background-color: #CCC;
+}
+
+[role="grid"] th,
+[role="grid"] td {
+  border-color: #ECECEC;
+}
+
+[role="grid"] [role="row"][data-severity="blocker"],
+[role="grid"] [role="row"][data-severity="critical"] {
+  /* color: red; */
+}
+
+#column-drag-image-container {
+  background-color: #999;
+}
+
+[role="textbox"] {
+  border-color: #DDD;
+  color: #333 !important;
+  background-color: #EEE !important;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+[role="textbox"]:focus {
+  color: #666 !important;
+  background-color: #FFF !important;
+}
+
+#main-menu--app-menu:before {
+  border-bottom-color: #FFF;
+}
+
+#main-tablist [role="tab"] {
+  border-color: #DDD;
+  background-color: #EEE;
+}
+
+#main-tablist [role="tab"][aria-selected="true"] {
+  background-color: #CCC;
+}
+
+#main-tabpanels > [role="tabpanel"],
+#main-tabpanels > [role="tabpanel"] > header {
+  background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+#main-tabpanels > [role="tabpanel"] > div {
+  border-color: #EEE;
+  background-color: #EEE;
+}
+
+#tabpanel-home [id$="-pane"] {
+  border-color:  #EEE;
+  background-color: #FFF;
+}
+
+#tabpanel-home [id$="-pane"] h3 {
+  border-color:  #EEE;
+  background-color: #DDD;
+}
+
+#home-preview-pane {
+  background-color: #EEE !important;
+}
+
+[id*="-preview-"][itemtype="http://schema.org/Article"] > header {
+  border-color:  #EEE;
+  background-color: #DDD;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box {
+  background-color: #FFF;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section {
+  border-color:  #EEE;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section h3 {
+  background-color: #DDD;
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box {
+  border-color:  #EEE;
+  background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"] {
+  border-color:  #FFF;
+  background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:hover,
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:focus {
+  background-image: linear-gradient(to bottom, #EEE, #DDD);
+}
+
+[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:active {
+  background-image: linear-gradient(to bottom, #DDD, #CCC);
+}
+
+[id$="-bug-info"] {
+  background-color: #FFF;
+}
+
+[id$="-bug-info"] > section h3 {
+  border-color:  #EEE;
+  background-color: #DDD;
+}
+
+[id$="-bug-info"] dl > dd:not(:first-of-type),
+[id$="-bug-info"] > section > ul > li:not(:first-of-type) {
+  background-image: linear-gradient(to bottom, #FFF, #FFF 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
+}
+
+[id$="-bug-info"] [role="button"]:hover {
+  color: #DDD;
+  background-color: #666;
+}
+
+[id$="-bug-timeline"] {
+  border-color:  #EEE;
+}
+
+[itemprop="comment"] {
+  background-color: #FFF;
+  box-shadow: inset -1px -1px 1px #EEE, inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+[itemprop="comment"] header [role="button"] {
+  background-image: linear-gradient(to bottom, #DDD, #CCC);
+  box-shadow: inset -1px -1px 4px rgba(0, 0, 0, 0.3), inset -1px -1px 1px #EEE;
+}
+
+[itemprop="comment"] [itemprop="text"] {
+  color: #333;
+}
+
+[itemprop="comment"] [itemprop="text"],
+[itemprop="comment"] .changes {
+  background-image: linear-gradient(to bottom, #EEE, #EEE 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
+}
+
+#main-tabpanels [role="tabpanel"] > footer {
+  background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+#tabpanel-prefs > div {
+  background-color: #FFF !important;
+}
+
+#tabpanel-prefs h3 {
+  background-color: #EEE;
+}
