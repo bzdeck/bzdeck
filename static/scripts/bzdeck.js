@@ -228,24 +228,36 @@ BzDeck.bootstrap.load_prefs = function () {
   });
 };
 
-BzDeck.bootstrap.show_login_form = function () {
+BzDeck.bootstrap.show_login_form = function (firstrun = true) {
   let $form = this.form,
       $input = this.input,
       $button = this.button;
 
   $form.setAttribute('aria-hidden', 'false');
+  $input.disabled = $button.disabled = false;
+  $input.focus();
+
+  if (!firstrun) {
+    return;
+  }
+
   $form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    if (!this.processing) {
+      // User is trying to re-login
+      this.relogin = true;
+      this.processing = true;
+    }
+
     if (navigator.onLine) {
       this.validate_account();
     } else {
       BzDeck.global.show_status('You have to go online to sign in.'); // l10n
     }
-    event.preventDefault();
+
     return false;
   });
-
-  $input.disabled = $button.disabled = false;
-  $input.focus();
 
   BzDeck.global.show_status('');
 };
@@ -281,6 +293,12 @@ BzDeck.bootstrap.validate_account = function () {
 };
 
 BzDeck.bootstrap.setup_ui = function () {
+  if (this.relogin) {
+    // UI has already been set up, skip this process
+    this.finish();
+    return;
+  }
+
   BzDeck.global.show_status('Loading UI...'); // l10n
 
   // Activate widgets
@@ -696,7 +714,7 @@ BzDeck.session.logout = function () {
   $app_body.hidden = true;
   $app_body.setAttribute('aria-hidden', 'true');
 
-  BzDeck.bootstrap.form.setAttribute('aria-hidden', 'false');
+  BzDeck.bootstrap.show_login_form(false);
 
   // Terminate timers
   for (let [key, timer] of Iterator(BzDeck.core.timers)) {
