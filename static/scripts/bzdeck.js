@@ -937,11 +937,11 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   $placeholder = $content.querySelector('[data-field="see_also"]');
   if ($placeholder) {
     if (Array.isArray(bug.see_also)) {
-      let $ul = $placeholder.querySelector('ul');
+      let $ul = $placeholder.appendChild(document.createElement('ul'));
       for (let value of bug.see_also) {
         let $li = $ul.appendChild(document.createElement('li')),
             $link = $li.appendChild(document.createElement('a'));
-        $link.href = $link.text = _value;
+        $link.href = $link.text = value;
         $link.setAttribute('role', 'link');
       }
     } else {
