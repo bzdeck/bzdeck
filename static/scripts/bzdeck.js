@@ -518,34 +518,37 @@ BzDeck.core.load_bugs = function (subscriptions) {
   };
 };
 
-BzDeck.core.load_bug_details = function (bug_id, callback) {
+BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
   let query = BriteGrid.util.request.build_query({
-    include_fields: BzDeck.options.api.extra_fields.join(','),
+    id: bug_ids.join(','),
+    include_fields: 'id,' + BzDeck.options.api.extra_fields.join(','),
     exclude_fields: 'attachments.data'
   });
-  this.request('GET', 'bug/' + bug_id + '?' + query, event => {
+  this.request('GET', 'bug?' + query, event => {
     let response = event.target.responseText,
-        bug = response ? JSON.parse(response) : null;
-    if (!bug) {
+        data = response ? JSON.parse(response) : null;
+    if (!data) {
       // Give up
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
       return;
     }
-    // Store bugs in the database
-    let store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
-    store.get(bug_id).addEventListener('success', event => {
-      // Save the filled bug data
-      let _bug = event.target.result;
-      for (let [field, value] of Iterator(bug)) {
-        _bug[field] = value;
-      }
-      _bug._update_needed = false;
-      store.put(_bug);
-      // Do callback
-      if (callback) {
-        callback(_bug);
-      }
-    });
+    for (let bug of data.bugs) {
+      let _bug = bug, // Redefine the variable to make it available in the following event
+          store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
+      // Store bugs in the database
+      store.get(_bug.id).addEventListener('success', event => {
+        // Save the filled bug data
+        let bug = event.target.result;
+        for (let [field, value] of Iterator(_bug)) {
+          bug[field] = value;
+        }
+        bug._update_needed = false;
+        store.put(bug);
+        if (callback) {
+          callback(bug);
+        }
+      });
+    }
   });
 };
 
@@ -554,15 +557,14 @@ BzDeck.core.load_bug_details_at_intervals = function () {
     // Load comments, history, flags and attachments' metadata
     let queue = bugs.filter(bug => bug._update_needed).map(bug => bug.id);
     let timer = this.timers.load_bug_details_at_intervals = window.setInterval(() => {
-      if (!queue.length) {
+      if (queue.length) {
+        // Load 20 bugs each
+        this.load_bug_details(queue.splice(0, 20));
+      } else {
         // All bugs loaded
         window.clearInterval(timer);
-        return;
       }
-      this.load_bug_details(queue[0], bug => {
-        queue.splice(queue.indexOf(bug.id), 1);
-      });
-    }, 2000); // Call every 2 seconds
+    }, 5000); // Call every 5 seconds
   });
 };
 
@@ -874,7 +876,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     this.fill_template_details($content, bug);
   } else {
     // Load comments, history, flags and attachments' metadata
-    BzDeck.core.load_bug_details(bug.id, bug => {
+    BzDeck.core.load_bug_details([bug.id], bug => {
       this.fill_template_details($content, bug);
     });
   }
