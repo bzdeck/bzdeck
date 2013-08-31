@@ -59,9 +59,12 @@ del a[role="link"] {
   text-decoration: none;
 }
 
+[tabindex] {
+  outline: 0;
+}
+
 [role="tab"] {
   margin: 7px 1px 0 0;
-  outline: 0;
   border-style: solid;
   border-width: 0;
   width: 96px;
@@ -81,7 +84,6 @@ del a[role="link"] {
 
 [role="textbox"] {
   display: inline-block;
-  /* outline: 0; */
   border: 1px solid;
   padding: 4px;
   height: 16px;
@@ -379,7 +381,6 @@ del a[role="link"] {
 [role="banner"] [role="search"] [role="button"] {
   overflow: hidden;
   margin: 2px 0 2px -24px;
-  /* outline: 0; */
   width: 20px;
   height: 20px;
   background-repeat: no-repeat;
@@ -422,7 +423,6 @@ main {
   height: 100%;
   top: 0;
   bottom: 0;
-  outline: 0;
 }
 
 #main-tabpanels [role="tabpanel"] > header {
