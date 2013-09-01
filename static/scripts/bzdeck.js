@@ -1424,6 +1424,14 @@ window.addEventListener('contextmenu', event => {
   event.preventDefault();
 });
 
+window.addEventListener('dragover', event => {
+  event.preventDefault();
+});
+
+window.addEventListener('drop', event => {
+  event.preventDefault();
+});
+
 window.addEventListener('click', event => {
   let $target = event.target;
 
