@@ -234,6 +234,11 @@ a[role="link"] {
   color: #CCC;
 }
 
+[itemprop="comment"] [itemprop="text"] blockquote {
+  border-color: #666;
+  color: #666;
+}
+
 #main-tabpanels [role="tabpanel"] > footer {
   background-image: linear-gradient(to bottom, #444, #333);
 }

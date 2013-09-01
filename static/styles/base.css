@@ -824,10 +824,30 @@ main {
 
 [itemprop="comment"] [itemprop="text"] {
   font-size: 12px;
+  line-height: 1.5;
+  font-family: Consolas, monospace;
+}
+
+[itemprop="comment"] [itemprop="text"] p {
+  margin: 12px 0;
+  white-space: pre-wrap;
   -moz-user-select: text;
   pointer-events: auto;
   cursor: text;
-  line-height: 1.5;
+}
+
+[itemprop="comment"] [itemprop="text"] p:first-of-type {
+  margin-top: 0;
+}
+
+[itemprop="comment"] [itemprop="text"] p:last-of-type {
+  margin-bottom: 0;
+}
+
+[itemprop="comment"] [itemprop="text"] blockquote {
+  margin: 0;
+  border-left: 2px solid;
+  padding-left: 10px;
 }
 
 [itemprop="comment"] .changes {

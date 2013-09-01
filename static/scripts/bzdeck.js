@@ -1176,21 +1176,66 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
 }
 
 BzDeck.global.parse_comment = function (str) {
-  // Normal link
+  let blockquote = function (p) {
+    let regex = /^&gt;\s?/gm;
+
+    if (!p.match(regex)) {
+      return p;
+    }
+
+    let lines = p.split(/\n/),
+        quote = [];
+
+    for (let [i, line] of Iterator(lines)) {
+      if (line.match(regex)) {
+        // A quote start
+        quote.push(line);
+      }
+      if ((!line.match(regex) || !lines[i+1]) && quote.length) {
+        // A quote end, the next line is not a part of the quote, or no more lines
+        let quote_str = quote.join('\n'),
+            quote_repl = quote_str.replace(regex, '');
+        if (quote_repl.match(regex)) {
+          // Nested quote(s) found, do recursive processing
+          quote_repl = blockquote(quote_repl);
+        }
+        for (let p of quote_repl.split(/\n{2,}/)) {
+          quote_repl = quote_repl.replace(p, '<p>' + p + '</p>');
+        }
+        p = p.replace(quote_str, '<blockquote>' + quote_repl + '</blockquote>');
+        quote = [];
+      }
+    }
+
+    return p;
+  };
+
+  // Quotes
+  for (let p of str.split(/\n{2,}/)) {
+    str = str.replace(p, '<p>' + blockquote(p) + '</p>');
+  }
+
+  str = str.replace(/\n{2,}/gm, '');
+  str = str.replace(/\n/gm, '<br>');
+
+  // General links
   str = str.replace(
-    /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%$&amp;:\/~+#-]*[\w@?^=%$&amp;\/~+#-])?)/g,
+    /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%$&amp;:\/~+#-]*[\w@?^=%$&amp;\/~+#-])?)/gm,
     '<a href="$1" role="link">$1</a>'
   );
-  // Bug
+
+  // Bugs
   str = str.replace(
-    /Bug\s?#?(\d+)/ig,
+    /Bug\s?#?(\d+)/igm,
     '<a href="#bug/$1" role="link" data-bug-id="$1">Bug $1</a>'
   );
-  // Attachment
+
+  // Attachments
   str = str.replace(
-    /Attachment\s?#?(\d+)/ig,
+    /Attachment\s?#?(\d+)/igm,
     '<a href="#attachment/$1" role="link" data-attachment-id="$1">Attachment $1</a>'
   );
+
   return str;
 };
 
