@@ -194,8 +194,12 @@ BzDeck.HomePage = function () {
     BzDeck.global.show_status(status);
     // Notification
     let list = [];
-    for (let bug of bugs) {
+    for (let [i, bug] of Iterator(bugs)) {
       list.push(bug.id + ' - ' + bug.summary);
+      if (num > 3 && i === 2) {
+        list.push('...');
+        break;
+      }
     }
     BzDeck.global.show_notification(status, list.join('\n'));
   });
