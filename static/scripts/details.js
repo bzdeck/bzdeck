@@ -47,7 +47,7 @@ BzDeck.DetailsPage = function (bug_id) {
         include_fields: '_default,' + BzDeck.options.api.extra_fields.join(','),
         exclude_fields: 'attachments.data'
       });
-      BzDeck.core.request('GET', 'bug/' + bug_id + '?' + query, event => {
+      BzDeck.core.request('GET', 'bug/' + bug_id + query, event => {
         let response = event.target.responseText,
             bug = response ? JSON.parse(response) : null;
         if (!bug || !bug.id) {

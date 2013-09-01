@@ -403,7 +403,7 @@ BzDeck.core.load_subscriptions = function () {
     for (let [i, sub] of Iterator(subscriptions)) {
       let index = i;
       sub.query['include_fields'] = 'id,last_change_time';
-      this.request('GET', 'bug?' + build_query(sub.query), event => {
+      this.request('GET', 'bug' + build_query(sub.query), event => {
         let response = event.target.responseText,
             data = response ? JSON.parse(response) : null;
         if (!data || !Array.isArray(data.bugs)) {
@@ -492,7 +492,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
         include_fields: '_default',
         id: requesting_bugs.slice(i, i + 100).join(',')
       });
-      this.request('GET', 'bug?' + query, event => {
+      this.request('GET', 'bug' + query, event => {
         let response = event.target.responseText,
             data = response ? JSON.parse(response) : null;
         if (!data || !Array.isArray(data.bugs)) {
@@ -524,7 +524,7 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
     include_fields: 'id,' + BzDeck.options.api.extra_fields.join(','),
     exclude_fields: 'attachments.data'
   });
-  this.request('GET', 'bug?' + query, event => {
+  this.request('GET', 'bug' + query, event => {
     let response = event.target.responseText,
         data = response ? JSON.parse(response) : null;
     if (!data) {

@@ -347,7 +347,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
 
-  BzDeck.core.request('GET', 'bug?' + query, event => {
+  BzDeck.core.request('GET', 'bug' + query, event => {
     let response = event.target.responseText,
         data = response ? JSON.parse(response) : null;
     if (!data || !Array.isArray(data.bugs)) {
