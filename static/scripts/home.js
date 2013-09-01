@@ -14,51 +14,49 @@ BzDeck.HomePage = function () {
 
   let folder_data = [
     {
-      'id': '-subscriptions',
-      'label': 'My Bugs',
+      'id': 'home-folders--subscriptions',
+      'label': 'All Bugs',
       'selected': true,
-      'data': { 'id': 'subscriptions' },
-      'sub': [
-        {
-          'id': '-subscriptions--cc',
-          'label': 'CCed',
-          'data': { 'id': 'subscriptions/cc' }
-        },
-        {
-          'id': '-subscription--reported',
-          'label': 'Reported',
-          'data': { 'id': 'subscriptions/reported' }
-        },
-        {
-          'id': '-subscription--assigned',
-          'label': 'Assigned',
-          'data': { 'id': 'subscriptions/assigned' }
-        },
-        {
-          'id': '-subscription--qa',
-          'label': 'QA Contact',
-          'data': { 'id': 'subscriptions/qa' }
-        }
-      ]
+      'data': { 'id': 'subscriptions' }
     },
     {
-      'id': '-recent',
+      'id': 'home-folders--subscriptions--cc',
+      'label': 'CCed',
+      'data': { 'id': 'subscriptions/cc' }
+    },
+    {
+      'id': 'home-folders--subscription--reported',
+      'label': 'Reported',
+      'data': { 'id': 'subscriptions/reported' }
+    },
+    {
+      'id': 'home-folders--subscription--assigned',
+      'label': 'Assigned',
+      'data': { 'id': 'subscriptions/assigned' }
+    },
+    {
+      'id': 'home-folders--subscription--qa',
+      'label': 'QA Contact',
+      'data': { 'id': 'subscriptions/qa' }
+    },
+    {
+      'id': 'home-folders--recent',
       'label': 'Recent',
       'data': { 'id': 'recent' }
     },
     {
-      'id': '-starred',
+      'id': 'home-folders--starred',
       'label': 'Starred',
       'data': { 'id': 'starred' }
     },
     {
-      'id': '-unread',
+      'id': 'home-folders--unread',
       'label': 'Unread',
       'data': { 'id': 'unread' }
     }
   ];
 
-  let folders = new BGw.Tree(document.getElementById('home-folders'), folder_data);
+  let folders = new BGw.ListBox(document.getElementById('home-folders'), folder_data);
   folders.view = new Proxy(folders.view, {
     set: (obj, prop, value) => {
       if (prop === 'selected') {

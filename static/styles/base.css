@@ -487,6 +487,10 @@ main {
   top: 0 !important;
 }
 
+#home-folders [role="option"] {
+  padding: 0 12px;
+}
+
 #home-list-pane {
   right: 0;
   left: 160px;
