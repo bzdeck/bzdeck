@@ -1220,7 +1220,7 @@ BzDeck.global.parse_comment = function (str) {
 
   // General links
   str = str.replace(
-    /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%$&amp;:\/~+#-]*[\w@?^=%$&amp;\/~+#-])?)/gm,
+    /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
     '<a href="$1" role="link">$1</a>'
   );
 
