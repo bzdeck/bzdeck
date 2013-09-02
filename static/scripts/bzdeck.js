@@ -475,6 +475,8 @@ BzDeck.core.load_bugs = function (subscriptions) {
       _retrieve();
     } else if (boot) {
       BzDeck.bootstrap.setup_ui();
+    } else {
+      BzDeck.global.show_status('No bugs to download'); // l10n
     }
   };
 
