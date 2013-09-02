@@ -41,18 +41,19 @@ BzDeck.SearchPage = function () {
     }
   });
 
-  this.setup_basic_search_pane();
-  this.setup_result_pane();
-  this.setup_preview_pane();
-  this.setup_toolbar();
-
-  // Add tab
-  tablist.view.selected = tablist.view.focused = tablist.add_tab(
+  let tab = tablist.add_tab(
     'search-' + id_suffix,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
     this.view.tabpanel
   );
+
+  this.setup_basic_search_pane();
+  this.setup_result_pane();
+  this.setup_preview_pane();
+  this.setup_toolbar();
+
+  tablist.view.selected = tablist.view.focused = tab;
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
