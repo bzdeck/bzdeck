@@ -230,7 +230,7 @@ del a[role="link"] {
   width: 128px;
   height: 128px;
   text-indent: -99999px;
-  background: url(/static/images/logos.png) no-repeat;
+  background: url(/static/images/logo/icon-128.png) no-repeat;
 }
 
 #app-login div > *:not(h1) {
@@ -293,7 +293,7 @@ del a[role="link"] {
   width: 40px;
   height: 40px;
   text-indent: -99999px;
-  background: url(/static/images/logos.png) no-repeat -128px 0;
+  background: url(/static/images/logo/icon-32.png) no-repeat center;
 }
 
 [role="banner"] [role="toolbar"] {

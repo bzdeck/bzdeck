@@ -11,7 +11,8 @@ CACHE MANIFEST
 /static/scripts/home.js?082517
 /static/scripts/search.js?082517
 /static/scripts/details.js?082517
-/static/images/logos.png
+/static/images/logo/icon-32.png
+/static/images/logo/icon-128.png
 /static/images/themes/dark/sprite.png
 /favicon.ico
 
