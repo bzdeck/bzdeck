@@ -37,37 +37,37 @@ BzDeck.options = {
   grid: {
     default_columns: [
       // Custom
-      { id: '_starred', type: 'boolean', label: 'Starred' },
-      { id: '_unread', type: 'boolean', label: 'Unread', hidden: true },
+      { id: '_starred', type: 'boolean' },
+      { id: '_unread', type: 'boolean', hidden: true },
       // Name
-      { id: 'id', type: 'integer', label: 'ID' },
-      { id: 'alias', label: 'Alias', hidden: true },
-      { id: 'summary', label: 'Summary' },
+      { id: 'id', type: 'integer' },
+      { id: 'alias', hidden: true },
+      { id: 'summary' },
       // Status
-      { id: 'status', label: 'Status', hidden: true },
-      { id: 'resolution', label: 'Resolution', hidden: true },
-      { id: 'target_milestone', label: 'Target Milestone', hidden: true },
+      { id: 'status', hidden: true },
+      { id: 'resolution', hidden: true },
+      { id: 'target_milestone', hidden: true },
       // Affected
-      { id: 'classification', label: 'Classification', hidden: true },
-      { id: 'product', label: 'Product' },
-      { id: 'component', label: 'Component' },
-      { id: 'version', label: 'Version', hidden: true },
-      { id: 'platform', label: 'Hardware', hidden: true },
-      { id: 'op_sys', label: 'OS', hidden: true },
+      { id: 'classification', hidden: true },
+      { id: 'product' },
+      { id: 'component' },
+      { id: 'version', hidden: true },
+      { id: 'platform', hidden: true },
+      { id: 'op_sys', hidden: true },
       // Importance
-      { id: 'severity', label: 'Severity', hidden: true },
-      { id: 'priority', label: 'Priority', hidden: true },
+      { id: 'severity', hidden: true },
+      { id: 'priority', hidden: true },
       // Notes
-      { id: 'whiteboard', label: 'Whiteboard', hidden: true },
-      { id: 'keywords', label: 'Keywords', hidden: true },
-      { id: 'url', label: 'url', hidden: true },
+      { id: 'whiteboard', hidden: true },
+      { id: 'keywords', hidden: true },
+      { id: 'url', hidden: true },
       // People
-      { id: 'creator', label: 'Reporter', hidden: true },
-      { id: 'assigned_to', label: 'Assignee', hidden: true },
-      { id: 'qa_contact', label: 'QA Contact', hidden: true },
+      { id: 'creator', hidden: true },
+      { id: 'assigned_to', hidden: true },
+      { id: 'qa_contact', hidden: true },
       // Dates
-      { id: 'creation_time', type: 'time', label: 'Filed', hidden: true },
-      { id: 'last_change_time', type: 'time', label: 'Last Modified' },
+      { id: 'creation_time', type: 'time', hidden: true },
+      { id: 'last_change_time', type: 'time' },
     ]
   }
 };

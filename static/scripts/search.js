@@ -234,16 +234,49 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] 
             = this.view.tabpanel.querySelector('[id$="-result-pane"]'),
-      $grid = $pane.querySelector('[role="grid"]');
+      $grid = $pane.querySelector('[role="grid"]'),
+      prefs = BzDeck.data.prefs,
+      columns = prefs['search.list.columns'] || BzDeck.options.grid.default_columns,
+      field = BzDeck.data.bugzilla_config.field;
 
   this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
-    columns: BzDeck.options.grid.default_columns
+    columns: columns.map(col => {
+      // Add labels
+      switch (col.id) {
+        case '_starred': {
+          col.label = 'Starred';
+          break;
+        }
+        case '_unread': {
+          col.label = 'Unread';
+          break;
+        }
+        default: {
+          col.label = field[col.id].description;
+        }
+      }
+      return col;
+    })
   },
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: { key:'id', order:'ascending' }
+    sort_conditions: prefs['search.list.sort_conditions'] || { key:'id', order:'ascending' }
+  });
+
+  $grid.addEventListener('Sorted', event => {
+    prefs['search.list.sort_conditions'] = event.detail.conditions;
+  });
+
+  $grid.addEventListener('ColumnModified', event => {
+    prefs['search.list.columns'] = event.detail.columns.map(col => {
+      return {
+        id: col.id,
+        type: col.type || 'string',
+        hidden: col.hidden || false
+      };
+    });
   });
 
   $grid.addEventListener('Selected', event => {

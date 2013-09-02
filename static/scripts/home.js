@@ -73,15 +73,49 @@ BzDeck.HomePage = function () {
 
   this.view = {};
 
-  let $grid = document.getElementById('home-list');
+  let $grid = document.getElementById('home-list'),
+      prefs = BzDeck.data.prefs,
+      columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
+      field = BzDeck.data.bugzilla_config.field;
+
   this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
-    columns: BzDeck.options.grid.default_columns
+    columns: columns.map(col => {
+      // Add labels
+      switch (col.id) {
+        case '_starred': {
+          col.label = 'Starred';
+          break;
+        }
+        case '_unread': {
+          col.label = 'Unread';
+          break;
+        }
+        default: {
+          col.label = field[col.id].description;
+        }
+      }
+      return col;
+    })
   },
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: { key:'id', order:'ascending' }
+    sort_conditions: prefs['home.list.sort_conditions'] || { key:'id', order:'ascending' }
+  });
+
+  $grid.addEventListener('Sorted', event => {
+    prefs['home.list.sort_conditions'] = event.detail.conditions;
+  });
+
+  $grid.addEventListener('ColumnModified', event => {
+    prefs['home.list.columns'] = event.detail.columns.map(col => {
+      return {
+        id: col.id,
+        type: col.type || 'string',
+        hidden: col.hidden || false
+      };
+    });
   });
 
   $grid.addEventListener('Selected', event => {
