@@ -205,14 +205,16 @@ del a[role="link"] {
 #app-login {
   position: absolute;
   left: 0;
+  z-index: 200;
   width: 100%;
   height: 100%;
-  transition: left 1s;
+  opacity: 1;
+  transition: opacity 1.5s;
 }
 
 #app-login[hidden] {
   display: block;
-  left: -100%;
+  opacity: 0;
 }
 
 #app-login div {
@@ -273,12 +275,10 @@ del a[role="link"] {
   z-index: 100;
   width: 100%;
   height: 100%;
-  transition: left 1s;
 }
 
 #app-body[hidden] {
   display: block;
-  left: 100%;
 }
 
 [role="banner"] {
