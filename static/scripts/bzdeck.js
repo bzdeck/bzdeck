@@ -345,14 +345,11 @@ BzDeck.core.load_subscriptions = function () {
 
   BzDeck.model.get_all_subscriptions(subscriptions => {
     if (subscriptions.length) {
-      // List all cached bugs to check the last modified dates
       BzDeck.model.get_all_bugs(bugs => {
-        let ids = bugs.map(bug => bug.id);
-        for (let i = 0, len = ids.length; i < len; i += 100) {
-          subscriptions.push({
-            query: { id: ids.slice(i, i + 100).join(',') }
-          });
-        };
+        // List all starred bugs to check the last modified dates
+        subscriptions.push({
+          query: { id: bugs.filter(bug => bug._starred).map(bug => bug.id).join(',') }
+        });
         _retrieve(subscriptions);
       });
       return;
