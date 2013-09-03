@@ -1,16 +1,16 @@
 CACHE MANIFEST
 # Version 2013-06-03 22:00
-/?060322
-/static/styles/lib/widget.css
-/static/styles/base.css
-/static/styles/themes/dark.css
-/static/styles/themes/light.css
-/static/scripts/lib/util.js
-/static/scripts/lib/widget.js
-/static/scripts/bzdeck.js?060322
-/static/scripts/home.js?082517
-/static/scripts/search.js?082517
-/static/scripts/details.js?082517
+/?090221
+/static/styles/lib/widget.css?090221
+/static/styles/base.css?090221
+/static/styles/themes/dark.css?090221
+/static/styles/themes/light.css?090221
+/static/scripts/lib/util.js?090221
+/static/scripts/lib/widget.js?090221
+/static/scripts/bzdeck.js?090221
+/static/scripts/home.js?090221
+/static/scripts/search.js?090221
+/static/scripts/details.js?090221
 /static/images/logo/icon-32.png
 /static/images/logo/icon-128.png
 /static/images/themes/dark/sprite.png
