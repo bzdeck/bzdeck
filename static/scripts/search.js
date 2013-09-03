@@ -325,6 +325,13 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
       }
     }
   }, true); // use capture
+
+  $pane.addEventListener('transitionend', event => {
+    let selected = this.view.grid.view.selected;
+    if (event.propertyName === 'bottom' && selected.length) {
+      this.view.grid.ensure_row_visibility(selected[selected.length - 1]);
+    }
+  });
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
