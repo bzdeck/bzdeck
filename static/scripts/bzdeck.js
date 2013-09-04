@@ -319,7 +319,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
 BzDeck.bootstrap.finish = function () {
   // Timer to load bug details
-  BzDeck.core.load_bug_details_at_intervals();
+  // BzDeck.core.load_bug_details_at_intervals();
 
   // Timer to check for updates
   BzDeck.core.timers.load_subscriptions = window.setInterval(() => {
