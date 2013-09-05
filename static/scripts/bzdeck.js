@@ -398,7 +398,7 @@ BzDeck.core.load_subscriptions = function () {
   
     // Load bug list from Bugzilla
     for (let [i, sub] of Iterator(subscriptions)) {
-      let index = i;
+      let index = i; // Redefine the variable to make it available in the following event
       sub.query['include_fields'] = 'id,last_change_time';
       this.request('GET', 'bug' + build_query(sub.query), event => {
         let response = event.target.responseText,
@@ -409,15 +409,11 @@ BzDeck.core.load_subscriptions = function () {
           return;
         }
         // One subscription data loaded; update database with the bug list
-        let sub = subscriptions[index];
-        sub.bugs = data.bugs;
-        if (sub.id) {
-          BzDeck.model.db.transaction('subscriptions', 'readwrite')
-                         .objectStore('subscriptions').put(sub);
-        }
+        subscriptions[index].bugs = data.bugs;
         loaded++;
         if (loaded === len) {
           // All subscription data loaded
+          BzDeck.model.save_subscriptions(subscriptions);
           this.load_bugs(subscriptions);
         }
       });
@@ -627,6 +623,7 @@ BzDeck.core.request = function (method, query, callback) {
  * -------------------------------------------------------------------------- */
 
 BzDeck.model = {};
+BzDeck.model.cache = {};
 
 BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
   let store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
@@ -662,6 +659,13 @@ BzDeck.model.get_all_bugs = function (callback) {
 };
 
 BzDeck.model.get_subscription_by_id = function (id, callback) {
+  let cache = this.cache.subscriptions;
+
+  if (cache) {
+    callback(cache.get(id));
+    return;
+  }
+
   let store = this.db.transaction('subscriptions').objectStore('subscriptions');
 
   store.get(id).addEventListener('success', event => {
@@ -670,11 +674,34 @@ BzDeck.model.get_subscription_by_id = function (id, callback) {
 };
 
 BzDeck.model.get_all_subscriptions = function (callback) {
+  let cache = this.cache.subscriptions;
+
+  if (cache) {
+    callback([...cache].map(item => item[1])); // Convert Map to Array
+    return;
+  }
+
   let store = this.db.transaction('subscriptions').objectStore('subscriptions');
 
   store.mozGetAll().addEventListener('success', event => {
     callback(event.target.result);
   });
+};
+
+BzDeck.model.save_subscriptions = function (subscriptions) {
+  let store = this.db.transaction('subscriptions', 'readwrite').objectStore('subscriptions'),
+      cache = this.cache.subscriptions;
+
+  if (!cache) {
+    cache = this.cache.subscriptions = new Map();
+  }
+
+  for (let sub of subscriptions) {
+    if (sub.id) {
+      store.put(sub);
+      cache.set(sub.id, sub);
+    }
+  }
 };
 
 /* --------------------------------------------------------------------------
