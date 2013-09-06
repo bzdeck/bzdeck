@@ -400,15 +400,10 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
         status = '';
     if (num > 0) {
       // Save data
-      let store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
-      for (let bug of data.bugs) {
-        let _bug = bug;
-        store.get(bug.id).addEventListener('success', event => {
-          if (!event.target.result) {
-            store.put(_bug);
-          }
-        });
-      }
+      BzDeck.model.get_all_bugs(bugs => {
+        let saved_ids = new Set(bugs.map(bug => bug.id));
+        BzDeck.model.save_bugs(data.bugs.filter(bug => !saved_ids.has(bug.id)));
+      });
       // Show results
       BzDeck.global.update_grid_data(this.view.grid, data.bugs);
       if (num > 1) {

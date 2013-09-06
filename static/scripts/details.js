@@ -55,7 +55,7 @@ BzDeck.DetailsPage = function (bug_id) {
           return;
         }
         // Save in DB
-        BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs').put(bug);
+        BzDeck.model.save_bug(bug);
         // Update UI
         BzDeck.global.show_status('');
         BzDeck.global.fill_template($tabpanel, bug);

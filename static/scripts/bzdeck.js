@@ -480,7 +480,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = () => {
-    let loaded = 0;
+    let loaded_bugs = [];
     // Load 10 bugs each request
     for (let i = 0, len = requesting_bugs.length; i < len; i += 100) {
       let query = BriteGrid.util.request.build_query({
@@ -495,17 +495,15 @@ BzDeck.core.load_bugs = function (subscriptions) {
           BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
           return;
         }
-        // Store bugs in the database
-        let store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
         for (let bug of data.bugs) {
           bug._update_needed = true; // Flag to update details
-          store.put(bug);
           // If the session is firstrun, mark all bugs read
           this.toggle_unread(bug.id, !this.firstrun);
-          loaded++;
         }
+        loaded_bugs = loaded_bugs.concat(data.bugs);
         // Finally load the UI modules
-        if (boot && loaded === len) {
+        if (boot && loaded_bugs.length === len) {
+          BzDeck.model.save_bugs(loaded_bugs);
           BzDeck.bootstrap.setup_ui();
         }
       });
@@ -527,18 +525,14 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
       return;
     }
-    for (let bug of data.bugs) {
-      let _bug = bug, // Redefine the variable to make it available in the following event
-          store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
-      // Store bugs in the database
-      store.get(_bug.id).addEventListener('success', event => {
-        // Save the filled bug data
-        let bug = event.target.result;
+    for (let _bug of data.bugs) {
+      BzDeck.model.get_bug_by_id(_bug.id, bug => {
         for (let [field, value] of Iterator(_bug)) {
           bug[field] = value;
         }
         bug._update_needed = false;
-        store.put(bug);
+        // Save the filled bug data
+        BzDeck.model.save_bug(bug);
         if (callback) {
           callback(bug);
         }
@@ -565,12 +559,10 @@ BzDeck.core.load_bug_details_at_intervals = function () {
 
 BzDeck.core.toggle_star = function (bug_id, value) {
   // Save in DB
-  let store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
-  store.get(bug_id).addEventListener('success', event => {
-    let bug = event.target.result;
+  BzDeck.model.get_bug_by_id(bug_id, bug => {
     if (bug) {
       bug._starred = value;
-      store.put(bug);
+      BzDeck.model.save_bug(bug);
     }
   });
 
@@ -579,12 +571,10 @@ BzDeck.core.toggle_star = function (bug_id, value) {
 
 BzDeck.core.toggle_unread = function (bug_id, value) {
   // Save in DB
-  let store = BzDeck.model.db.transaction('bugs', 'readwrite').objectStore('bugs');
-  store.get(bug_id).addEventListener('success', event => {
-    let bug = event.target.result;
+  BzDeck.model.get_bug_by_id(bug_id, bug => {
     if (bug) {
       bug._unread = value;
-      store.put(bug);
+      BzDeck.model.save_bug(bug);
     }
   });
 
@@ -626,12 +616,29 @@ BzDeck.model = {};
 BzDeck.model.cache = {};
 
 BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
-  let store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
+  let cache = this.cache.bugs,
+      store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
+
+  if (cache) {
+    let bug = cache.get(id);
+    if (bug) {
+      if (record_time) {
+        bug._last_viewed = Date.now();
+        cache.set(id, bug);
+        store.put(bug);
+      }
+      callback(bug);
+      return;
+    }
+  }
 
   store.get(id).addEventListener('success', event => {
     let bug = event.target.result;
     if (bug && record_time) {
       bug._last_viewed = Date.now();
+      if (cache) {
+        cache.set(id, bug);
+      }
       store.put(bug); // Save
     }
     callback(bug);
@@ -639,23 +646,55 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
 };
 
 BzDeck.model.get_bugs_by_ids = function (ids, callback) {
-  let store = this.db.transaction('bugs').objectStore('bugs');
+  let cache = this.cache.bugs;
 
-  store.mozGetAll().addEventListener('success', event => {
-    let bugs = event.target.result; // array of Bug
-    if (bugs.length) {
-      bugs = bugs.filter(bug => ids.indexOf(bug.id) > -1)
-    }
-    callback(bugs);
+  if (cache) {
+    callback([...cache].map(item => item[1]).filter(bug => ids.indexOf(bug.id) > -1));
+    return;
+  }
+
+  this.db.transaction('bugs').objectStore('bugs')
+         .mozGetAll().addEventListener('success', event => {
+    callback(event.target.result.filter(bug => ids.indexOf(bug.id) > -1));
   });
 };
 
 BzDeck.model.get_all_bugs = function (callback) {
-  let store = this.db.transaction('bugs').objectStore('bugs');
+  let cache = this.cache.bugs;
 
-  store.mozGetAll().addEventListener('success', event => {
-    callback(event.target.result); // array of Bug
+  if (cache) {
+    callback([...cache].map(item => item[1])); // Convert Map to Array
+    return;
+  }
+
+  this.db.transaction('bugs').objectStore('bugs')
+         .mozGetAll().addEventListener('success', event => {
+    let bugs = event.target.result; // array of Bug
+    callback(bugs);
+    if (bugs && !cache) {
+      this.cache.bugs = new Map(bugs.map(bug => [bug.id, bug]));
+    }
   });
+};
+
+BzDeck.model.save_bug = function (bug) {
+  this.save_bugs([bug]);
+};
+
+BzDeck.model.save_bugs = function (bugs) {
+  let cache = this.cache.bugs,
+      store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
+
+  if (!cache) {
+    cache = this.cache.bugs = new Map();
+  }
+
+  for (let bug of bugs) {
+    if (bug.id) {
+      cache.set(bug.id, bug);
+      store.put(bug);
+    }
+  }
 };
 
 BzDeck.model.get_subscription_by_id = function (id, callback) {
