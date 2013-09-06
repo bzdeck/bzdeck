@@ -349,9 +349,10 @@ BzDeck.core.load_subscriptions = function () {
     if (subscriptions.length) {
       BzDeck.model.get_all_bugs(bugs => {
         // List all starred bugs to check the last modified dates
-        subscriptions.push({
-          query: { id: bugs.filter(bug => bug._starred).map(bug => bug.id).join(',') }
-        });
+        let ids = bugs.filter(bug => bug._starred).map(bug => bug.id);
+        if (ids.length) {
+          subscriptions.push({ query: { id: ids.join(',') } });
+        }
         _retrieve(subscriptions);
       });
       return;
