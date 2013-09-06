@@ -353,7 +353,7 @@ BzDeck.core.load_subscriptions = function () {
         if (ids.length) {
           subscriptions.push({ query: { id: ids.join(',') } });
         }
-        _retrieve(subscriptions);
+        this.fetch_subscriptions(subscriptions);
       });
       return;
     }
@@ -384,44 +384,45 @@ BzDeck.core.load_subscriptions = function () {
       query['email1_' + field] = 1;
       subscriptions.push({ id: name, query: query });
     }
-    _retrieve(subscriptions);
-  });  
 
-  let _retrieve = subscriptions => {
-    if (!navigator.onLine) {
-      // Skip loading the latest subscription data
-      this.load_bugs(subscriptions);
-      return;
-    }
-  
-    let build_query = BriteGrid.util.request.build_query,
-        loaded = 0,
-        len = Object.keys(subscriptions).length,
-        last_change_time = {};
-  
-    // Load bug list from Bugzilla
-    for (let [i, sub] of Iterator(subscriptions)) {
-      let index = i; // Redefine the variable to make it available in the following event
-      sub.query['include_fields'] = 'id,last_change_time';
-      this.request('GET', 'bug' + build_query(sub.query), event => {
-        let response = event.target.responseText,
-            data = response ? JSON.parse(response) : null;
-        if (!data || !Array.isArray(data.bugs)) {
-          // Give up
-          BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
-          return;
-        }
-        // One subscription data loaded; update database with the bug list
-        subscriptions[index].bugs = data.bugs;
-        loaded++;
-        if (loaded === len) {
-          // All subscription data loaded
-          BzDeck.model.save_subscriptions(subscriptions);
-          this.load_bugs(subscriptions);
-        }
-      });
-    }
-  };
+    this.fetch_subscriptions(subscriptions);
+  });  
+};
+
+BzDeck.core.fetch_subscriptions = function (subscriptions) {
+  if (!navigator.onLine) {
+    // Skip loading the latest subscription data
+    this.load_bugs(subscriptions);
+    return;
+  }
+
+  let build_query = BriteGrid.util.request.build_query,
+      loaded = 0,
+      len = Object.keys(subscriptions).length,
+      last_change_time = {};
+
+  // Load bug list from Bugzilla
+  for (let [i, sub] of Iterator(subscriptions)) {
+    let index = i; // Redefine the variable to make it available in the following event
+    sub.query['include_fields'] = 'id,last_change_time';
+    this.request('GET', 'bug' + build_query(sub.query), event => {
+      let response = event.target.responseText,
+          data = response ? JSON.parse(response) : null;
+      if (!data || !Array.isArray(data.bugs)) {
+        // Give up
+        BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+        return;
+      }
+      // One subscription data loaded; update database with the bug list
+      subscriptions[index].bugs = data.bugs;
+      loaded++;
+      if (loaded === len) {
+        // All subscription data loaded
+        BzDeck.model.save_subscriptions(subscriptions);
+        this.load_bugs(subscriptions);
+      }
+    });
+  }
 };
 
 BzDeck.core.load_bugs = function (subscriptions) {
