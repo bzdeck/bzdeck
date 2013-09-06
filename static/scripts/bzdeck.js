@@ -504,13 +504,14 @@ BzDeck.core.load_bugs = function (subscriptions) {
         for (let bug of data.bugs) {
           bug._update_needed = true; // Flag to update details
           // If the session is firstrun, mark all bugs read
-          this.toggle_unread(bug.id, !this.firstrun);
+          bug._unread = !this.firstrun;
         }
         loaded_bugs = loaded_bugs.concat(data.bugs);
         // Finally load the UI modules
         if (boot && loaded_bugs.length === len) {
           BzDeck.model.save_bugs(loaded_bugs);
           BzDeck.bootstrap.setup_ui();
+          BzDeck.core.toggle_unread_ui();
         }
       });
     }
@@ -581,12 +582,15 @@ BzDeck.core.toggle_star = function (bug_id, value) {
 BzDeck.core.toggle_unread = function (bug_id, value) {
   // Save in DB
   BzDeck.model.get_bug_by_id(bug_id, bug => {
-    if (bug) {
+    if (bug && bug._unread !== value) {
       bug._unread = value;
       BzDeck.model.save_bug(bug);
+      this.toggle_unread_ui();
     }
   });
+};
 
+BzDeck.core.toggle_unread_ui = function () {
   // Update UI: the Unread folder on the home page
   BzDeck.model.get_all_bugs(bugs => {
     let count = bugs.filter(bug => bug._unread === true).length,
