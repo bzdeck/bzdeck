@@ -433,29 +433,31 @@ BzDeck.core.load_bugs = function (subscriptions) {
   BzDeck.global.show_status('Loading bugs...'); // l10n
 
   // Step 1: look for bugs in the local storage
-  BzDeck.model.get_all_bugs(bugs => {
-    for (let bug of bugs) {
-      cached_time[bug.id] = bug.last_change_time;
-    }
-
-    if (Object.keys(cached_time).length > 0) {
-      if (navigator.onLine) {
-        _list();
-      } else if (boot) {
-        // Skip loading the latest bug data
-        BzDeck.bootstrap.setup_ui();
+  let _get = () => {
+    BzDeck.model.get_all_bugs(bugs => {
+      for (let bug of bugs) {
+        cached_time[bug.id] = bug.last_change_time;
       }
-      return;
-    }
-
-    if (!navigator.onLine) {
-      // Offline; give up
-      BzDeck.global.show_status('You have to go online to load data.'); // l10n
-    }
-
-    // No cache available; try to retrieve bugs anyway
-    _list();
-  });
+  
+      if (Object.keys(cached_time).length > 0) {
+        if (navigator.onLine) {
+          _list();
+        } else if (boot) {
+          // Skip loading the latest bug data
+          BzDeck.bootstrap.setup_ui();
+        }
+        return;
+      }
+  
+      if (!navigator.onLine) {
+        // Offline; give up
+        BzDeck.global.show_status('You have to go online to load data.'); // l10n
+      }
+  
+      // No cache available; try to retrieve bugs anyway
+      _list();
+    });
+  };
 
   // Step 2: determine which bugs should be loaded from Bugzilla
   let _list = () => {
@@ -513,6 +515,9 @@ BzDeck.core.load_bugs = function (subscriptions) {
       });
     }
   };
+
+  // Start processing
+  _get();
 };
 
 BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
