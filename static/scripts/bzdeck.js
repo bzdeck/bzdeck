@@ -315,6 +315,8 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Preload images from CSS
   BGut.preload_images(() => {});
+
+  this.finish();
 };
 
 BzDeck.bootstrap.finish = function () {

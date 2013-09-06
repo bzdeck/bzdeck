@@ -198,12 +198,6 @@ BzDeck.HomePage = function () {
     }
   });
 
-  $grid.addEventListener('Rebuilt', event => {
-    if (BzDeck.bootstrap.processing) {
-      BzDeck.bootstrap.finish();
-    }
-  });
-
   // Select the 'My Bugs' folder
   this.data.folder_id = 'subscriptions';
 
