@@ -51,6 +51,10 @@ a[role="link"] {
   background-image: url(/static/images/themes/light/sprite.png);
 }
 
+[role="button"][data-command^="nav-"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 240, 20, 160);
+}
+
 [role="tab"] .close:hover {
   background-color: #EEE;
 }
@@ -237,6 +241,11 @@ a[role="link"] {
 [itemprop="comment"] [itemprop="text"] blockquote {
   border-color: #999;
   color: #999;
+}
+
+#main-tabpanels [role="tabpanel"] > header [role="toolbar"],
+#main-tabpanels [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
+  border-color: #CCC;
 }
 
 #main-tabpanels [role="tabpanel"] > footer {

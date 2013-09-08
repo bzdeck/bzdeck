@@ -136,7 +136,7 @@ BzDeck.HomePage = function () {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      new BzDeck.DetailsPage($target.dataset.id);
+      new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
     }
   });
 
@@ -175,14 +175,26 @@ BzDeck.HomePage = function () {
       button = this.view.details_button = new BriteGrid.widget.Button($button);
 
   $button.addEventListener('Pressed', event => {
-    new BzDeck.DetailsPage(this.data.preview_id);
+    new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
   });
 
   this.data = new Proxy({
+    bug_list: [],
     folder_id: null,
     preview_id: null
   },
   {
+    get: (obj, prop) => {
+      if (prop === 'bug_list') {
+        // Return a sorted bug list
+        let bugs = {};
+        for (let bug of obj[prop]) {
+          bugs[bug.id] = bug;
+        }
+        return this.view.grid.data.rows.map(row => bugs[row.data.id]);
+      }
+      return obj[prop];
+    },
     set: (obj, prop, newval) => {
       let oldval = obj[prop];
       if (oldval === newval) {
@@ -266,10 +278,12 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
 
   let update_list = () => {
     if (bugs.length) {
+      this.data.bug_list = bugs;
       // If bugs provided, just update view
       BzDeck.global.update_grid_data(grid, bugs);
     } else {
       BzDeck.model.get_bugs_by_ids(ids, bugs => {
+        this.data.bug_list = bugs;
         BzDeck.global.update_grid_data(grid, bugs);
       });
     }

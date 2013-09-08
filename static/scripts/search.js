@@ -26,9 +26,21 @@ BzDeck.SearchPage = function () {
   };
 
   this.data = new Proxy({
+    bug_list: [],
     preview_id: null
   },
   {
+    get: (obj, prop) => {
+      if (prop === 'bug_list') {
+        // Return a sorted bug list
+        let bugs = {};
+        for (let bug of obj[prop]) {
+          bugs[bug.id] = bug;
+        }
+        return this.view.grid.data.rows.map(row => bugs[row.data.id]);
+      }
+      return obj[prop];
+    },
     set: (obj, prop, newval) => {
       let oldval = obj[prop];
       if (oldval === newval) {
@@ -63,7 +75,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
     switch (event.target.dataset.command) {
       case 'show-details': {
-        new BzDeck.DetailsPage(this.data.preview_id);
+        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
         break;
       }
       case 'show-basic-search-pane': {
@@ -292,7 +304,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      new BzDeck.DetailsPage($target.dataset.id);
+      new BzDeck.DetailsPage(Number.toInteger($target.dataset.id), this.data.bug_list);
     }
   });
 
@@ -399,6 +411,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
     let num = data.bugs.length,
         status = '';
     if (num > 0) {
+      this.data.bug_list = data.bugs;
       // Save data
       BzDeck.model.get_all_bugs(bugs => {
         let saved_ids = new Set(bugs.map(bug => bug.id));

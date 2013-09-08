@@ -1003,7 +1003,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           $li.textContent = value;
           $li.setAttribute('role', 'button');
           $li.addEventListener('Pressed', event => {
-            new BzDeck.DetailsPage(event.explicitOriginalTarget.textContent);
+            new BzDeck.DetailsPage(Number.toInteger(event.explicitOriginalTarget.textContent));
           });
           new BriteGrid.widget.Button($li);
         }
@@ -1430,7 +1430,7 @@ BzDeck.toolbar.setup = function () {
     let $target = event.explicitOriginalTarget,
         id = $target.dataset.id;
     if (id) {
-      new BzDeck.DetailsPage(id);
+      new BzDeck.DetailsPage(Number.toInteger(id));
     }
     if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
       exec_search();
@@ -1521,7 +1521,7 @@ window.addEventListener('click', event => {
   if ($target.mozMatchesSelector('[role="link"]')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      new BzDeck.DetailsPage($target.getAttribute('data-bug-id'));
+      new BzDeck.DetailsPage(Number.toInteger($target.getAttribute('data-bug-id')));
       event.preventDefault();
       return false;
     }
