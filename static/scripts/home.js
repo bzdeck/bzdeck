@@ -14,10 +14,25 @@ BzDeck.HomePage = function () {
 
   let folder_data = [
     {
-      'id': 'home-folders--subscriptions',
-      'label': 'All Bugs',
+      'id': 'home-folders--inbox',
+      'label': 'Inbox',
       'selected': true,
-      'data': { 'id': 'subscriptions' }
+      'data': { 'id': 'inbox' }
+    },
+    {
+      'id': 'home-folders--starred',
+      'label': 'Starred',
+      'data': { 'id': 'starred' }
+    },
+    {
+      'id': 'home-folders--unread',
+      'label': 'Unread',
+      'data': { 'id': 'unread' }
+    },
+    {
+      'id': 'home-folders--important',
+      'label': 'Important',
+      'data': { 'id': 'important' }
     },
     {
       'id': 'home-folders--subscriptions--cc',
@@ -40,19 +55,9 @@ BzDeck.HomePage = function () {
       'data': { 'id': 'subscriptions/qa' }
     },
     {
-      'id': 'home-folders--recent',
-      'label': 'Recent',
-      'data': { 'id': 'recent' }
-    },
-    {
-      'id': 'home-folders--starred',
-      'label': 'Starred',
-      'data': { 'id': 'starred' }
-    },
-    {
-      'id': 'home-folders--unread',
-      'label': 'Unread',
-      'data': { 'id': 'unread' }
+      'id': 'home-folders--subscriptions',
+      'label': 'All Bugs',
+      'data': { 'id': 'subscriptions' }
     }
   ];
 
@@ -210,8 +215,8 @@ BzDeck.HomePage = function () {
     }
   });
 
-  // Select the 'My Bugs' folder
-  this.data.folder_id = 'subscriptions';
+  // Select the 'Inbox' folder
+  this.data.folder_id = 'inbox';
 
   // Authorize notification
   BriteGrid.util.app.auth_notification();
@@ -270,61 +275,64 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 };
 
 BzDeck.HomePage.prototype.open_folder = function (folder_id) {
-  let ids = [],
-      bugs = [],
-      grid = this.view.grid;
-
   this.data.preview_id = null;
 
-  let update_list = () => {
-    if (bugs.length) {
-      this.data.bug_list = bugs;
-      // If bugs provided, just update view
-      BzDeck.global.update_grid_data(grid, bugs);
-    } else {
-      BzDeck.model.get_bugs_by_ids(ids, bugs => {
-        this.data.bug_list = bugs;
-        BzDeck.global.update_grid_data(grid, bugs);
-      });
-    }
+  let update_list = bugs => {
+    this.data.bug_list = bugs;
+    BzDeck.global.update_grid_data(this.view.grid, bugs);
   };
+
+  let get_subscribed_bugs = callback => {
+    BzDeck.model.get_all_subscriptions(subscriptions => {
+      let ids = [];
+      for (let sub of subscriptions) {
+        // Remove duplicates
+        ids = ids.concat(sub.bugs.map(bug => bug.id).filter(id => ids.indexOf(id) === -1));
+      }
+      BzDeck.model.get_bugs_by_ids(ids, bugs => {
+        callback(bugs);
+      });
+    });
+  };
+
+  if (folder_id === 'inbox') {
+    get_subscribed_bugs(bugs => {
+      bugs.reverse((a, b) => a.last_change_time > b.last_change_time);
+      update_list(bugs.slice(0, 50)); // Recent 50 bugs
+    });
+  }
 
   if (folder_id.match(/^subscriptions\/(.*)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
-      ids = sub.bugs.map(bug => bug.id);
-      update_list();
+      BzDeck.model.get_bugs_by_ids(sub.bugs.map(bug => bug.id), bugs => {
+        update_list(bugs);
+      });
     });
   }
 
   if (folder_id === 'subscriptions') {
-    BzDeck.model.get_all_subscriptions(subscriptions => {
-      for (let sub of subscriptions) {
-        ids = ids.concat(sub.bugs.map(bug => bug.id).filter(id => ids.indexOf(id) === -1));
-      }
-      update_list();
+    get_subscribed_bugs(bugs => {
+      update_list(bugs);
     });
   }
 
   if (folder_id === 'starred') {
-    BzDeck.model.get_all_bugs(_bugs => {
-      bugs = _bugs.filter(bug => bug._starred === true);
-      update_list();
+    // Starred bugs may include non-subscribed bugs, so get ALL bugs
+    BzDeck.model.get_all_bugs(bugs => {
+      update_list(bugs.filter(bug => bug._starred));
     });
   }
 
   if (folder_id === 'unread') {
-    BzDeck.model.get_all_bugs(_bugs => {
-      bugs = _bugs.filter(bug => bug._unread === true);
-      update_list();
+    // Unread bugs may include non-subscribed bugs, so get ALL bugs
+    BzDeck.model.get_all_bugs(bugs => {
+      update_list(bugs.filter(bug => bug._unread));
     });
   }
 
-  if (folder_id === 'recent') {
-    BzDeck.model.get_all_bugs(_bugs => {
-      bugs = _bugs.filter(bug => bug._last_viewed);
-      bugs.sort((a, b) => a._last_viewed > b._last_viewed);
-      bugs = bugs.slice(0, 100); // Recent 100 bugs
-      update_list();
+  if (folder_id === 'important') {
+    get_subscribed_bugs(bugs => {
+      update_list(bugs.filter(bug => ['blocker', 'critical', 'major'].indexOf(bug.severity) > -1));
     });
   }
 };
