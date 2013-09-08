@@ -1360,12 +1360,17 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  if (BzDeck.data.account) { // For testing
-    let $account_label = document.querySelector('#main-menu--app--account label'),
-        label = BzDeck.data.account.real_name ? BzDeck.data.account.real_name + '<br>' : '';
-    label += BzDeck.data.account.name;
-    $account_label.innerHTML = label;
-  }
+  // Account label & avatar
+  let account = BzDeck.data.account,
+      account_label = (account.real_name ? '<strong>' + account.real_name + '</strong>' : '&nbsp;')
+                    + '<br>' + account.name,
+      account_img = new Image();
+  document.querySelector('#main-menu--app--account label').innerHTML = account_label;
+  account_img.addEventListener('load', event => {
+    document.styleSheets[1].insertRule('#main-menu--app--account label:before '
+      + '{ background-image: url(' + event.target.src + ') !important }', 0);
+  });
+  account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
   if (BGu.app.fullscreen_enabled) {
     document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');

@@ -126,6 +126,10 @@ a[role="link"] {
   border-bottom-color: #222;
 }
 
+#main-menu--app--account label:before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 28, 192, 50, 168);
+}
+
 #main-tablist [role="tab"] {
   border-color: #222;
   background-color: #333;

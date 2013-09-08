@@ -7,6 +7,7 @@ CACHE MANIFEST
 /static/styles/themes/light.css?090221
 /static/scripts/lib/util.js?090221
 /static/scripts/lib/widget.js?090221
+/static/scripts/lib/crypto/md5.min.js
 /static/scripts/bzdeck.js?090600
 /static/scripts/home.js?090600
 /static/scripts/search.js?090600
