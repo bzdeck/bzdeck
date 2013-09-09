@@ -1332,9 +1332,8 @@ BzDeck.toolbar.setup = function () {
   new BGw.MenuBar($main_menu);
   $main_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
-      case 'change-theme': {
-        BGu.theme.selected = BzDeck.data.prefs['ui.theme.selected']
-                           = event.explicitOriginalTarget.dataset.theme;
+      case 'show-settings': {
+        new BzDeck.SettingsPage();
         break;
       }
       case 'toggle-fullscreen': {
@@ -1354,10 +1353,6 @@ BzDeck.toolbar.setup = function () {
 
   // Do something when the app menu is opened
   document.getElementById('main-menu--app-menu').addEventListener('MenuOpened', event => {
-    // Update selected theme
-    for (let $menu of $main_menu.querySelectorAll('[data-theme]')) {
-      $menu.setAttribute('aria-checked', $menu.dataset.theme === BGu.theme.selected);
-    }
   });
 
   // Account label & avatar

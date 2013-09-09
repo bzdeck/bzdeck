@@ -45,6 +45,7 @@ a[role="link"] {
 [role="columnheader"][data-type="boolean"],
 [role="gridcell"][data-type="boolean"] [role="checkbox"],
 [role="banner"] [role="search"] [role="button"],
+[role="radio"][aria-checked="true"],
 [aria-busy="true"]:before,
 #main-menu--app,
 [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
@@ -256,10 +257,14 @@ a[role="link"] {
   background-image: linear-gradient(to bottom, #444, #333);
 }
 
-#tabpanel-prefs > div {
+#tabpanel-settings > div {
   background-color: #222 !important;
 }
 
-#tabpanel-prefs h3 {
+#tabpanel-settings > div > section h3 {
   background-color: #333;
+}
+
+#tabpanel-settings > div > section > section {
+  border-color: #333;
 }

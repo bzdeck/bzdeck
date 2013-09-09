@@ -240,6 +240,27 @@
         </footer>
       </article><!-- end #tabpanel-details-TID -->
     </template><!-- end #tabpanel-details -->
+    <template id="tabpanel-settings-template">
+      <section id="tabpanel-settings" tabindex="0" role="tabpanel" aria-labelledby="tab-settings">
+        <header>
+          <h2>Settings</h2>
+        </header>
+        <div>
+          <section>
+            <h3>User Interface</h3>
+            <section>
+              <h4>Theme</h4>
+              <ul id="setting-theme" role="radiogroup" data-pref="ui.theme.selected">
+                <li><span id="setting-theme-dark" tabindex="0" role="radio" aria-labelledby="setting-theme-dark-label" data-value="Dark"></span> <label id="setting-theme-dark-label">Dark</label></li>
+                <li><span id="setting-theme-light" tabindex="0" role="radio" aria-labelledby="setting-theme-light-label" data-value="Light"></span> <label id="setting-theme-light-label">Light</label></li>
+              </ul>
+            </section>
+          </section>
+        </div>
+        <footer>
+        </footer>
+      </section><!-- end #tabpanel-settings -->
+    </template><!-- end #tabpanel-settings-template -->
   </head>
   <body role="application" data-name="BzDeck">
     <div id="app-login">
@@ -270,15 +291,7 @@
                     </li>
                     <li role="separator"></li>
                     <li role="presentation">
-                      <span id="main-menu--app--theme" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app--theme-menu"><label>Theme</label></span>
-                      <ul id="main-menu--app--theme-menu" role="menu" aria-expanded="false">
-                        <li role="presentation">
-                          <span id="main-menu--app--theme--dark" role="menuitemradio" aria-checked="false" data-command="change-theme" data-theme="Dark"><label>Dark</label></span>
-                        </li>
-                        <li role="presentation">
-                          <span id="main-menu--app--theme--light" role="menuitemradio" aria-checked="false" data-command="change-theme" data-theme="Light"><label>Light</label></span>
-                        </li>
-                      </ul>
+                      <span id="main-menu--app--settings" role="menuitem" data-command="show-settings"><label>Settings</label></span>
                     </li>
                     <li role="presentation">
                       <span id="main-menu--app--fullscreen" role="menuitem" aria-disabled="true" data-command="toggle-fullscreen"><label>Full Screen</label></span>
@@ -389,6 +402,7 @@
     <script type="application/javascript;version=1.8" src="/static/scripts/home.js?090600"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/search.js?090600"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/details.js?090600"></script>
+    <script type="application/javascript;version=1.8" src="/static/scripts/settings.js?090820"></script>
     <!-- GA -->
     <script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-37352183-1']); _gaq.push(['_trackPageview']); </script>
     <script type="text/javascript" src="https://ssl.google-analytics.com/ga.js" async></script>

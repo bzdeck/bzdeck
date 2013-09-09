@@ -203,6 +203,11 @@ del a[role="link"] {
   transform: rotate(180deg);
 }
 
+[role="radio"][aria-checked="true"] {
+  background-repeat: no-repeat;
+  background-position: -40px 0;
+}
+
 [aria-busy="true"]:before {
   display: block;
   position: absolute;
@@ -957,19 +962,60 @@ main {
   padding: 8px 16px;
 }
 
-#tabpanel-prefs > div {
+#tabpanel-settings > div {
+  right: 0;
+  left: 0;
   overflow: hidden;
+  padding: 0 40px;
+  width: auto !important;
+  -moz-column-count: 2;
+  -moz-column-gap: 40px;
 }
 
-#tabpanel-prefs section {
-  margin: 40px;
+#tabpanel-settings > div > section {
+  margin: 40px 0;
+  page-break-inside: avoid;
 }
 
-#tabpanel-prefs h3 {
-  margin-bottom: 16px;
+#tabpanel-settings > div > section h3 {
   padding: 8px;
   font-size: 12px;
   font-weight: bold;
+}
+
+#tabpanel-settings > div > section > section {
+  border-bottom: 1px solid;
+  padding: 16px 8px;
+}
+
+#tabpanel-settings > div > section > section:last-of-type {
+  border: 0 none;
+}
+
+#tabpanel-settings > div > section > section h4 {
+  float: left;
+  width: calc(50% - 1em);
+  font-weight: bold;
+}
+
+#tabpanel-settings > div > section > section > ul {
+  margin-left: 50%;
+}
+
+#tabpanel-settings > div > section > section li {
+  line-height: 18px;
+}
+
+#tabpanel-settings > div > section > section li [role="radio"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+}
+
+#tabpanel-settings > div > section > section li [role="radio"] + label {
+  height: 18px;
+  line-height: 18px;
 }
 
 [role="contentinfo"] {
