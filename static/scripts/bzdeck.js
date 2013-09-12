@@ -301,12 +301,18 @@ BzDeck.bootstrap.setup_ui = function () {
 
   BzDeck.global.show_status('Loading UI...'); // l10n
 
+  let date = BriteGrid.util.i18n.options.date,
+      prefs = BzDeck.data.prefs,
+      theme = prefs['ui.theme.selected'],
+      BGut = BriteGrid.util.theme;
+
+  // Date options
+  date.timezone = prefs['ui.date.timezone'] || 'local';
+  date.format = prefs['ui.date.format'] || 'relative';
+
   // Activate widgets
   BzDeck.toolbar.setup();
   new BzDeck.HomePage();
-
-  let BGut = BriteGrid.util.theme,
-      theme = BzDeck.data.prefs['ui.theme.selected'];
 
   // Change the theme
   if (theme && BGut.list.contains(theme)) {
@@ -893,8 +899,8 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     }    
 
     if (key.endsWith('_time')) {
-      $element.textContent = (new Date(value)).toLocaleFormat('%Y-%m-%d %H:%M');
-      $element.setAttribute('datetime', value);
+      $element.textContent = BriteGrid.util.i18n.format_date(value);
+      $element.dateTime = value;
       if (key === 'creation_time') {
         $element.itemProp.value = 'datePublished';
       }
@@ -969,7 +975,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     return;
   }
 
-  let $placeholder;
+  let $placeholder,
+      i18n = BriteGrid.util.i18n;
 
   // dupe_of
   $placeholder = $content.querySelector('[data-field="resolution"]');
@@ -1065,8 +1072,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
         // Time
         $li = $ul.appendChild(document.createElement('li'));
         let $time = $li.appendChild(document.createElement('time'));
-        $time.textContent = (new Date(att.creation_time)).toLocaleFormat('%Y-%m-%d %H:%M');
-        $time.setAttribute('datetime', att.creation_time);
+        $time.textContent = i18n.format_date(att.creation_time);
+        $time.dateTime = att.creation_time;
         // Person
         $li = $ul.appendChild(document.createElement('li'));
         $li.itemScope = true;
@@ -1130,8 +1137,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
     $name.textContent = comment.creator.real_name || comment.creator.name;
     let $time = $entry.querySelector('[itemprop="datePublished"]');
-    $time.textContent = (new Date(time)).toLocaleFormat('%Y-%m-%d %H:%M');
-    $time.setAttribute('datetime', time);
+    $time.textContent = i18n.format_date(time);
+    $time.dateTime = time;
     let $text = $entry.querySelector('[itemprop="text"]');
     $text.innerHTML = comment.text ? parse(sanitize(comment.text)) : '&nbsp;';
     entries[time] = $entry;
@@ -1151,8 +1158,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       let $name = $entry.querySelector('[itemprop="author"] [itemprop="name"]');
       $name.textContent = history.changer.name;
       let $time = $entry.querySelector('[itemprop="datePublished"]');
-      $time.textContent = (new Date(time)).toLocaleFormat('%Y-%m-%d %H:%M');
-      $time.setAttribute('datetime', time);
+      $time.textContent = i18n.format_date(time);
+      $time.dateTime = time;
       entries[time] = $entry;
     }
     let $changes = $entry.appendChild(document.createElement('ul'));

@@ -179,7 +179,7 @@ del a[role="link"] {
 }
 
 /* TEMP */
-[role="grid"] col { width: 11em; }
+[role="grid"] col { width: 13em; }
 [role="grid"] col[data-id="id"] { width: 5em; }
 [role="grid"] col[data-id="summary"] { width: auto; }
 [role="grid"] col[data-id="_starred"], 

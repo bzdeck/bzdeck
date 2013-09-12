@@ -47,4 +47,26 @@ BzDeck.SettingsPage = function () {
     });
     new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
   }
+
+  let setup_date_setting = function (id, default_value) {
+    let $rgroup = document.getElementById(id),
+        pref = $rgroup.dataset.pref,
+        i18n = BriteGrid.util.i18n;
+    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
+      $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
+    }
+    $rgroup.addEventListener('Selected', event => {
+      prefs[pref] = i18n.options.date[pref.replace('ui.date.', '')]
+                  = event.detail.items[0].dataset.value;
+      // Update timezone & format on the current view
+      for (let $element of document.querySelectorAll('[datetime]')) {
+        $element.textContent = i18n.format_date($element.dateTime);
+      }
+    });
+    new BriteGrid.widget.RadioGroup($rgroup);
+  };
+
+  // Timezone & Date Format
+  setup_date_setting('setting-date-timezone', 'local');
+  setup_date_setting('setting-date-format', 'relative');
 };
