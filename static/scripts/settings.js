@@ -35,6 +35,18 @@ BzDeck.SettingsPage = function () {
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
 
+  let setup_radiogroup = function (id, default_value) {
+    let $rgroup = document.getElementById(id),
+        pref = $rgroup.dataset.pref;
+    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
+      $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
+    }
+    $rgroup.addEventListener('Selected', event => {
+      prefs[pref] = event.detail.items[0].dataset.value;
+    });
+    new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
+  };
+
   // Theme
   $rgroup = $tabpanel.querySelector('#setting-theme');
   if ($rgroup) {
@@ -69,4 +81,7 @@ BzDeck.SettingsPage = function () {
   // Timezone & Date Format
   setup_date_setting('setting-date-timezone', 'local');
   setup_date_setting('setting-date-format', 'relative');
+
+  // Timeline
+  setup_radiogroup('setting-timeline-order', 'ascending');
 };

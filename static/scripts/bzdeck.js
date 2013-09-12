@@ -976,6 +976,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
 
   let $placeholder,
+      prefs = BzDeck.data.prefs,
       i18n = BriteGrid.util.i18n;
 
   // dupe_of
@@ -1197,7 +1198,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   for (let [time, template] of Iterator(entries)) {
     _entries.push({ time: time, element: template });
   }
-  _entries.sort((a, b) => a.time > b.time);
+  let sort_order = prefs['ui.timeline.sort.order'] || 'ascending';
+  _entries.sort((a, b) => (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
   // Append to the timeline
   for (let entry of _entries) {
     $timeline.appendChild(entry.element);
