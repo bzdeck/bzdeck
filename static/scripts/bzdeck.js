@@ -842,7 +842,7 @@ BzDeck.global.show_status = function (message) {
 BzDeck.global.show_notification = function (title, body) {
   BriteGrid.util.app.show_notification(title, {
     body: body,
-    icon: '/static/images/logo-512.png'
+    icon: '/static/images/logo/icon-256.png'
   });
 };
 
