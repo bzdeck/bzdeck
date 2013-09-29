@@ -1,6 +1,6 @@
 {
   "name": "BzDeck",
-  "description": "An experimental Web application in the form of a Bugzilla client, demonstrating the modern technologies such as HTML5, CSS3, WAI-ARIA and ECMAScript Harmony.",
+  "description": "A useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA.",
   "launch_path": "/",
   "developer": {
     "name": "BriteGrid",
