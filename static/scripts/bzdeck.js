@@ -1337,6 +1337,18 @@ BzDeck.toolbar.setup = function () {
       BGu = BriteGrid.util,
       tablist = this.tablist = new BGw.TabList(document.getElementById('main-tablist'));
 
+  // Change the window title when a new tab is selected
+  tablist.view = new Proxy(tablist.view, {
+    set: (obj, prop, value) => {
+      if (prop === 'selected') {
+        value = (Array.isArray(value)) ? value : [value];
+        document.title = value[0].title.replace('\n', ' – ') + ' | BzDeck'; // l10n
+      }
+
+      obj[prop] = value;
+    }
+  });
+
   let $main_menu = document.getElementById('main-menu');
   new BGw.MenuBar($main_menu);
   $main_menu.addEventListener('MenuItemSelected', event => {

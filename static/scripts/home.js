@@ -12,7 +12,7 @@ let BzDeck = BzDeck || {};
 BzDeck.HomePage = function () {
   let BGw = BriteGrid.widget;
 
-  let folder_data = [
+  let folder_data = this.folder_data = [
     {
       'id': 'home-folders--inbox',
       'label': 'Inbox',
@@ -294,6 +294,13 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
       });
     });
   };
+
+  // Change the window title and the tab label
+  let folder_label = this.folder_data.filter(folder => folder.data.id === folder_id)[0].label;
+  document.title = folder_label + ' | BzDeck'; // l10n
+  document.querySelector('#tab-home').title = folder_label;
+  document.querySelector('#tab-home label').textContent = folder_label;
+  document.querySelector('#tabpanel-home h2').textContent = folder_label;
 
   if (folder_id === 'inbox') {
     get_subscribed_bugs(bugs => {
