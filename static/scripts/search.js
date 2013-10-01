@@ -75,7 +75,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
     switch (event.target.dataset.command) {
       case 'show-details': {
-        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
         break;
       }
       case 'show-basic-search-pane': {
@@ -304,7 +304,8 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      new BzDeck.DetailsPage(Number.toInteger($target.dataset.id), this.data.bug_list);
+      let id = Number.toInteger($target.dataset.id);
+      BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
     }
   });
 

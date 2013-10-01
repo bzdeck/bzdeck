@@ -61,7 +61,7 @@ BzDeck.HomePage = function () {
     }
   ];
 
-  let folders = new BGw.ListBox(document.getElementById('home-folders'), folder_data);
+  let folders = this.folders = new BGw.ListBox(document.getElementById('home-folders'), folder_data);
   folders.view = new Proxy(folders.view, {
     set: (obj, prop, value) => {
       if (prop === 'selected') {
@@ -141,7 +141,7 @@ BzDeck.HomePage = function () {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+      BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
     }
   });
 
@@ -180,7 +180,7 @@ BzDeck.HomePage = function () {
       button = this.view.details_button = new BriteGrid.widget.Button($button);
 
   $button.addEventListener('Pressed', event => {
-    new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+    BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
   });
 
   this.data = new Proxy({
@@ -301,6 +301,12 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
   document.querySelector('#tab-home').title = folder_label;
   document.querySelector('#tab-home label').textContent = folder_label;
   document.querySelector('#tabpanel-home h2').textContent = folder_label;
+
+  // Save history
+  let hash = '#' + folder_id;
+  if (location.hash !== hash) {
+    history.pushState({}, folder_label, hash);
+  }
 
   if (folder_id === 'inbox') {
     get_subscribed_bugs(bugs => {

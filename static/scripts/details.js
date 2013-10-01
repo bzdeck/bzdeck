@@ -19,7 +19,8 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
   }
 
   this.data = {
-    id: id
+    id: id,
+    bug_list: bug_list
   };
 
   this.view = {
@@ -121,7 +122,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
 
   let navigate = function (id) {
     tablist.close_tab($current_tab);
-    new BzDeck.DetailsPage(id, bug_list);
+    BzDeck.detailspage = new BzDeck.DetailsPage(id, bug_list);
   };
 
   if (prev) {

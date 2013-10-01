@@ -312,7 +312,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Activate widgets
   BzDeck.toolbar.setup();
-  new BzDeck.HomePage();
+  BzDeck.homepage = new BzDeck.HomePage();
 
   // Change the theme
   if (theme && BGut.list.contains(theme)) {
@@ -1011,7 +1011,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           $li.textContent = value;
           $li.setAttribute('role', 'button');
           $li.addEventListener('Pressed', event => {
-            new BzDeck.DetailsPage(Number.toInteger(event.explicitOriginalTarget.textContent));
+            let id = Number.toInteger(event.explicitOriginalTarget.textContent);
+            BzDeck.detailspage = new BzDeck.DetailsPage(id);
           });
           new BriteGrid.widget.Button($li);
         }
@@ -1342,7 +1343,15 @@ BzDeck.toolbar.setup = function () {
     set: (obj, prop, value) => {
       if (prop === 'selected') {
         value = (Array.isArray(value)) ? value : [value];
-        document.title = value[0].title.replace('\n', ' – ') + ' | BzDeck'; // l10n
+        let hash = '#' + value[0].id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
+            title = value[0].title.replace('\n', ' – ');
+        if (hash === '#home') {
+          hash = '#' + BzDeck.homepage.data.folder_id;
+        }
+        if (location.hash !== hash) {
+          history.pushState({}, title, hash);
+        }
+        document.title = title + ' | BzDeck'; // l10n
       }
 
       obj[prop] = value;
@@ -1451,7 +1460,7 @@ BzDeck.toolbar.setup = function () {
     let $target = event.explicitOriginalTarget,
         id = $target.dataset.id;
     if (id) {
-      new BzDeck.DetailsPage(Number.toInteger(id));
+      BzDeck.detailspage = new BzDeck.DetailsPage(Number.toInteger(id));
     }
     if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
       exec_search();
@@ -1542,7 +1551,8 @@ window.addEventListener('click', event => {
   if ($target.mozMatchesSelector('[role="link"]')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      new BzDeck.DetailsPage(Number.toInteger($target.getAttribute('data-bug-id')));
+      let id = Number.toInteger($target.getAttribute('data-bug-id'));
+      BzDeck.detailspage = new BzDeck.DetailsPage(id);
       event.preventDefault();
       return false;
     }
@@ -1606,4 +1616,52 @@ window.addEventListener('keydown', event => {
   }
 
   return true;
+});
+
+window.addEventListener("popstate", event => {
+  let hash = location.hash.substr(1),
+      tabs = BzDeck.toolbar.tablist.view,
+      folders = BzDeck.homepage.folders.view,
+      matched;
+
+  if (hash.match(/^bug\/(\d+)$/)) {
+    let bug_id = Number.toInteger(RegExp.$1);
+    matched = tabs.members.filter(tab => tab.id === 'tab-details-' + bug_id)[0];
+    if (matched) {
+      tabs.selected = matched;
+      return;
+    }
+
+    let bug_list = BzDeck.detailspage.data.bug_list;
+    if (bug_list.length) {
+      let bugs = bug_list.map(bug => bug.id),
+          index = bugs.indexOf(BzDeck.detailspage.data.id);
+      if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
+        // Back or Forward navigation
+        BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.tab);
+        BzDeck.detailspage = new BzDeck.DetailsPage(bug_id, bug_list);
+        return;
+      }
+    }
+
+    BzDeck.detailspage = new BzDeck.DetailsPage(bug_id);
+    return;
+  }
+
+  matched = folders.members.filter(folder => folder.dataset.id === hash)[0];
+  if (matched) {
+    tabs.selected = document.querySelector('#tab-home');
+    folders.selected = matched;
+    return;
+  }
+
+  matched = tabs.members.filter(tab => tab.id === 'tab-' + hash)[0];
+  if (matched) {
+    tabs.selected = matched;
+    return;
+  }
+
+  // Fallback
+  tabs.selected = document.querySelector('#tab-home');
+  folders.selected = document.querySelector('#home-folders--inbox');
 });
