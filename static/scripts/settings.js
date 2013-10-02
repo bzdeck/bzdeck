@@ -35,14 +35,15 @@ BzDeck.SettingsPage = function () {
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
 
-  let setup_radiogroup = function (id, default_value) {
+  let setup_radiogroup = function (id, default_value, callback = function (value) {}) {
     let $rgroup = document.getElementById(id),
         pref = $rgroup.dataset.pref;
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
     }
     $rgroup.addEventListener('Selected', event => {
-      prefs[pref] = event.detail.items[0].dataset.value;
+      let value = prefs[pref] = event.detail.items[0].dataset.value;
+      callback(value);
     });
     new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
   };
@@ -84,4 +85,7 @@ BzDeck.SettingsPage = function () {
 
   // Timeline
   setup_radiogroup('setting-timeline-order', 'ascending');
+  setup_radiogroup('setting-timeline-font-family', 'monospace', function (value) {
+    document.documentElement.setAttribute('data-setting-timeline-font-family', value);
+  });
 };

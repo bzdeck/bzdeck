@@ -908,6 +908,12 @@ main {
   font-size: 12px;
   line-height: 1.6;
   font-family: Consolas, monospace;
+  letter-spacing: -.02ex;
+}
+
+:root[data-setting-timeline-font-family="proportional"] [itemprop="comment"] [itemprop="text"] {
+  font-family: inherit;
+  letter-spacing: normal;
 }
 
 [itemprop="comment"] [itemprop="text"] p {

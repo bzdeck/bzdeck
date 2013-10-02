@@ -309,6 +309,10 @@ BzDeck.bootstrap.setup_ui = function () {
   date.timezone = prefs['ui.date.timezone'] || 'local';
   date.format = prefs['ui.date.format'] || 'relative';
 
+  // Font option
+  document.documentElement.setAttribute('data-setting-timeline-font-family',
+                                        prefs['ui.timeline.font.family'] || 'monospace');
+
   // Activate widgets
   BzDeck.toolbar.setup();
   BzDeck.homepage = new BzDeck.HomePage();
