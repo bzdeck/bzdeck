@@ -47,8 +47,7 @@ a[role="link"] {
 [role="banner"] [role="search"] [role="button"],
 [role="radio"][aria-checked="true"],
 [aria-busy="true"]:before,
-#main-menu--app,
-[itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+#main-menu--app {
   background-image: url(/static/images/themes/light/sprite.png);
 }
 
@@ -68,7 +67,7 @@ a[role="link"] {
 
 [role="menu"] {
   background: #FFF;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 .4rem rgba(0, 0, 0, 0.5);
 }
 
 [role="menu"] [role="separator"] {
@@ -89,12 +88,12 @@ a[role="link"] {
 }
 
 [role="grid"] .grid-body tbody tr:nth-child(even) {
-  background: #F9F9F9;
+  background-color: #F9F9F9;
 }
 
 [role="grid"] .grid-body tbody tr[aria-selected="true"] {
   color: #333;
-  background-color: #CCC;
+  background-color: #CCC !important;
 }
 
 [role="grid"] th,
@@ -115,7 +114,7 @@ a[role="link"] {
   border-color: #DDD;
   color: #333 !important;
   background-color: #EEE !important;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 .2rem rgba(0, 0, 0, 0.2);
 }
 
 [role="textbox"]:focus {
@@ -127,6 +126,7 @@ a[role="link"] {
   border-bottom-color: #FFF;
 }
 
+[itemprop="comment"] header [itemprop="author"] [itemprop="image"],
 #main-menu--app--account label:before {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 28, 192, 50, 168);
 }
@@ -231,12 +231,12 @@ a[role="link"] {
 [itemprop="comment"] header,
 [itemprop="comment"] .changes {
   border-color: #CCC;
-  background-color: #DDD;
+  background-color: #EEE;
 }
 
 [itemprop="comment"] header [role="button"] {
   background-image: linear-gradient(to bottom, #DDD, #CCC);
-  box-shadow: inset -1px -1px 4px rgba(0, 0, 0, 0.3), inset -1px -1px 1px #EEE;
+  box-shadow: inset -1px -1px .4rem rgba(0, 0, 0, 0.3), inset -1px -1px 1px #EEE;
 }
 
 [itemprop="comment"] [itemprop="text"] {
@@ -283,11 +283,11 @@ a[role="link"] {
 }
 
 [id^="tabpanel-details-"][role="tablist"] {
-  background-color: #EEE;
+  background-color: #FFF;
 }
 
 [id^="tabpanel-details-"][role="tablist"] [role="tab"] {
-  background-color: #F9F9F9;
+  background-color: #EEE;
 }
 
 [id^="tabpanel-details-"][role="tablist"] [role="tab"][aria-selected="true"] {
@@ -305,3 +305,56 @@ a[role="link"] {
 #tabpanel-settings > div > section > section {
   border-color: #EEE;
 }
+
+/* --------------------------------------------------------------------------
+ * Mobile Support
+ * -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 640px) {
+
+#sidebar > div {
+  background-color: #EEE;
+}
+
+#sidebar h2 {
+  border-color: #999;
+}
+
+#sidebar [role="option"],
+#sidebar [role="menuitem"] {
+  border-color: #E9E9E9;
+}
+
+#main-tabpanels > [id^="tabpanel-details-"] > header {
+  background-color: #FFF;
+}
+
+[itemprop="comment"] header {
+  background-color: #DDD;
+}
+
+[role="grid"] .grid-body tbody tr {
+  border-color: #CCC;
+}
+
+[role="grid"] .grid-body tbody tr:nth-child(even) {
+  background-color: transparent;
+}
+
+[role="grid"] .grid-body tbody tr[data-unread="true"] {
+  background-color: #F9F9F9;
+}
+
+.bug-timeline h2 {
+  background-color: #FFF;
+}
+
+.bug-history tbody tr {
+  border-color: #F9F9F9;
+}
+
+.bug-history tbody th {
+  background-color: #F9F9F9;
+}
+
+} /* end @media */

@@ -3,16 +3,15 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  font-size: 1.1rem;
   font-family: "Lucida Grande", sans-serif;
-  font-size: 11px;
-  line-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-size: 100%;
   font-weight: normal;
-  line-height: 100%;
+  line-height: 1;
 }
 
 dl, dt, dd {
@@ -33,7 +32,6 @@ p {
 pre {
   margin: 0;
   font-family: Consolas, monospace;
-  font-size: 11px;
   white-space: pre-wrap;
 }
 
@@ -64,16 +62,16 @@ del a[role="link"] {
 }
 
 [role="tab"] {
-  margin: 7px 1px 0 0;
+  margin: .7rem .1rem 0 0;
   border-style: solid;
   border-width: 0;
-  width: 96px;
-  height: 17px;
-  line-height: 16px;
+  width: 9.6rem;
+  height: 1.7rem;
+  line-height: 1.6rem;
 }
 
 [role="tab"] .close {
-  border-radius: 2px;
+  border-radius: .2rem;
   background-repeat: no-repeat;
   background-position: -62px -2px;
 }
@@ -91,18 +89,19 @@ del a[role="link"] {
 
 [role="textbox"] {
   display: inline-block;
-  border: 1px solid;
-  padding: 4px;
-  height: 16px;
-  line-height: 16px;
+  border: .1rem solid;
+  padding: .4rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
   pointer-events: auto;
   -moz-user-select: text;
   background-color: transparent;
+  background-image: none; /* Suppress the default style on Firefox for mobile */
 }
 
 [role="grid"] th,
 [role="grid"] td {
-  border-right: 1px solid;
+  border-right: .1rem solid;
 }
 
 [role="grid"] th:last-child,
@@ -182,7 +181,7 @@ del a[role="link"] {
 }
 
 [role="grid"] .grid-body {
-  height: calc(100% - 20px);
+  height: calc(100% - 2rem);
 }
 
 /* TEMP */
@@ -190,7 +189,7 @@ del a[role="link"] {
 [role="grid"] col[data-id="id"] { width: 5em; }
 [role="grid"] col[data-id="summary"] { width: auto; }
 [role="grid"] col[data-id="_starred"], 
-[role="grid"] col[data-id="_unread"] { width: 18px; }
+[role="grid"] col[data-id="_unread"] { width: 1.8rem; }
 
 [role="grid"] [role="row"][data-unread="true"] {
   font-weight: bold;
@@ -220,9 +219,9 @@ del a[role="link"] {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: -16px 0 0 -16px;
-  width: 32px;
-  height: 32px;
+  margin: -1.6rem 0 0 -1.6rem;
+  width: 3.2rem;
+  height: 3.2rem;
   background-repeat: no-repeat;
   background-position: -124px -24px;
   content: 'Loading...';
@@ -235,9 +234,10 @@ del a[role="link"] {
 }
 
 #app-login {
-  position: absolute;
+  position: fixed;
   left: 0;
   z-index: 200;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   opacity: 1;
@@ -253,56 +253,58 @@ del a[role="link"] {
   position: absolute;
   top: 50%;
   left: 50%;
-  margin: -64px 0 0 -240px;
-  width: 480px;
-  height: 128px;
+  margin: -6.4rem 0 0 -24rem;
+  width: 48rem;
+  height: 12.8rem;
 }
 
 #app-login h1 {
   overflow: hidden;
   float: left;
-  width: 128px;
-  height: 128px;
+  width: 12.8rem;
+  height: 12.8rem;
   text-indent: -99999px;
   background: url(/static/images/logo/icon-128.png) no-repeat;
+  background-size: cover;
 }
 
 #app-login div > *:not(h1) {
-  margin-left: 144px;
+  margin-left: 14.4rem;
 }
 
 #app-login p {
-  margin-top: 4px;
-  line-height: 150%;
+  margin-top: .4rem;
+  line-height: 1.5;
 }
 
 #app-login dt,
 #app-login dd,
 #app-login [role="status"] {
-  margin-top: 16px;
+  margin-top: 1.2rem;
+  line-height: 1.5;
 }
 
 #app-login input {
-  margin-right: 8px;
-  width: 240px;
+  margin-right: .8rem;
+  width: calc(100% - 8.8rem);
 }
 
 #app-login button {
-  width: 72px;
+  width: 7.2rem;
 }
 
 #app-login input,
 #app-login button {
+  display: inline-block;
   outline: 0 !important;
   border: 0;
-  border-radius: 4px;
-  padding: 4px;
-  font-size: 12px;
-  line-height: 14px;
+  border-radius: .4rem;
+  padding: .4rem;
+  font-size: 1.2rem;
 }
 
 #app-body {
-  position: absolute;
+  position: fixed;
   left: 0;
   z-index: 100;
   width: 100%;
@@ -313,26 +315,47 @@ del a[role="link"] {
   display: block;
 }
 
+#app-login[hidden] *,
+#app-body[hidden] * {
+  pointer-events: none;
+}
+
 [role="banner"] {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 40px;
+  height: 4rem;
 }
 
 [role="banner"] h1 {
   position: absolute;
+  left: 0;
   overflow: hidden;
-  width: 40px;
-  height: 40px;
-  text-indent: -99999px;
+  padding: 1rem 0 1rem 4rem;
+  width: 0;
+  height: 2rem;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  font-weight: bold;
+}
+
+[role="banner"] h1:before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
   background: url(/static/images/logo/icon-32.png) no-repeat center;
+  content: '';
 }
 
 [role="banner"] [role="toolbar"] {
   position: absolute;
   right: 0;
-  left: 40px;
-  height: 40px;
+  left: 4rem;
+  height: 4rem;
 }
 
 [role="banner"] [role="toolbar"] > ul {
@@ -340,17 +363,17 @@ del a[role="link"] {
 }
 
 [role="banner"] [role="toolbar"] [id^="toolbar--"] {
-  height: 40px;
+  height: 4rem;
 }
 
 #toolbar--search-menu {
   right: 0;
-  width: 320px;
+  width: 32rem;
 }
 
 [role="banner"] [role="toolbar"] [id^="toolbar--"] > li {
-  width: 40px;
-  height: 40px;
+  width: 4rem;
+  height: 4rem;
 }
 
 #toolbar--search-menu > li {
@@ -365,8 +388,8 @@ del a[role="link"] {
 #main-menu--app {
   overflow: hidden;
   padding: 0;
-  width: 40px;
-  height: 40px;
+  width: 4rem;
+  height: 4rem;
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: 0 -20px;
@@ -376,62 +399,63 @@ del a[role="link"] {
 #main-menu--app-menu {
   z-index: 100;
   right: 0;
-  margin: 4px;
+  margin: .4rem;
 }
 
 #main-menu--app-menu:before {
   display: block;
   position: absolute;
-  top: -16px;
-  right: 8px;
-  margin-left: -4px;
-  border: 8px solid transparent;
+  top: -1.6rem;
+  right: .8rem;
+  margin-left: -.4rem;
+  border: .8rem solid transparent;
   width: 0;
   height: 0;
   content: '';
 }
 
 #main-menu--app--account {
-  padding: 0 8px;
+  padding: 0 .8rem;
+  height: auto;
   opacity: 1;
 }
 
 #main-menu--app--account label {
-  padding-left: 36px;
+  padding-left: calc(3em + .8rem);
 }
 
 #main-menu--app--account label:before {
   display: block;
   float: left;
-  margin: 3px 4px 0 -36px;
-  border-radius: 2px;
-  width: 30px;
-  height: 30px;
+  margin: .3rem .4rem 0 calc(-3em + -.8rem);
+  border-radius: .2rem;
+  width: 3em;
+  height: 3em;
   background-repeat: no-repeat;
   background-size: contain;
   content: '';
 }
 
 [role="banner"] [role="search"] {
-  margin: 8px;
-  width: 196px !important;
-  height: 24px !important;
+  margin: .8rem;
+  width: 19.6rem !important;
+  height: 2.4rem !important;
 }
 
 [role="banner"] [role="search"] [role="textbox"] {
   border: 0;
-  border-radius: 32px;
-  padding: 4px 28px 4px 8px;
-  height: 16px;
-  width: 160px;
-  line-height: 16px;
+  border-radius: 3.2rem;
+  padding: .4rem 2.8rem .4rem .8rem;
+  height: 1.6rem;
+  width: calc(100% - 2.8rem - .8rem);
+  line-height: 1.6rem;
 }
 
 [role="banner"] [role="search"] [role="button"] {
   overflow: hidden;
-  margin: 2px 0 2px -24px;
-  width: 20px;
-  height: 20px;
+  margin: .2rem 0 .2rem -2.4rem;
+  width: 2rem;
+  height: 2rem;
   background-repeat: no-repeat;
   background-position: -80px 0;
   text-indent: -99999px;
@@ -439,47 +463,47 @@ del a[role="link"] {
 
 #quicksearch-dropdown {
   position: absolute;
-  top: 40px;
-  max-width: 400px;
-  right: 4px;
+  top: 4rem;
+  max-width: 40rem;
+  right: .4rem;
 }
 
 main {
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
 }
 
 #main-tablist {
   position: absolute;
-  height: 40px;
-  top: 8px;
-  left: 40px;
-  right: 280px;
-  height: 32px;
+  height: 4rem;
+  top: .8rem;
+  left: 4rem;
+  right: 28rem;
+  height: 3.2rem;
 }
 
 #main-tabpanels {
   position: absolute;
   width: 100%;
-  top: 40px;
+  top: 4rem;
   bottom: 0;
 }
 
 #main-tabpanels > [role="tabpanel"] > header {
   position: absolute;
   top: 0;
+  right: 0;
   left: 0;
-  width: 100%;
-  height: 32px;
+  height: 3.2rem;
 }
 
 #main-tabpanels > [role="tabpanel"] > header h2 {
-  margin: 8px 80px 8px 16px;
-  font-size: 14px;
-  line-height: 16px;
-  font-weight: bold;
   overflow: hidden;
+  margin: .8rem 8rem .8rem 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  font-weight: bold;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -487,22 +511,22 @@ main {
 #main-tabpanels > [role="tabpanel"] > header [role="toolbar"] {
   display: block;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: .5rem;
+  right: .5rem;
   overflow: hidden;
-  border: 1px solid;
-  border-radius: 4px;
+  border: .1rem solid;
+  border-radius: .4rem;
 }
 
 #main-tabpanels > [role="tabpanel"] > header [role="toolbar"] li {
   display: block;
   float: left;
-  width: 24px;
-  height: 20px;
+  width: 2.4rem;
+  height: 2rem;
 }
 
 #main-tabpanels > [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
-  border-right: 1px solid;
+  border-right: .1rem solid;
 }
 
 #main-tabpanels > [role="tabpanel"] > header [role="toolbar"] [role="button"] {
@@ -515,9 +539,9 @@ main {
 #main-tabpanels > [role="tabpanel"] > div {
   position: absolute;
   border-style: solid;
-  border-width: 1px 0;
-  top: 32px;
-  bottom: 32px;
+  border-width: .1rem 0;
+  top: 3.2rem;
+  bottom: 3.2rem;
   width: 100%;
 }
 
@@ -527,24 +551,24 @@ main {
 }
 
 #tabpanel-home [id$="-pane"] > h3 {
-  height: 24px;
-  line-height: 24px;
-  border-bottom: 1px solid;
-  padding: 0 8px;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  border-bottom: .1rem solid;
+  padding: 0 .8rem;
 }
 
 #tabpanel-home [id$="-pane"] [id$="-outer"] {
   position: absolute;
-  top: 25px;
+  top: 2.5rem;
   bottom: 0;
   width: 100%;
   overflow: hidden;
 }
 
 #home-folder-pane {
-  width: 160px;
+  width: 16rem;
   height: 100%;
-  border-right: 1px solid;
+  border-right: .1rem solid;
 }
 
 #home-folder-pane h3 {
@@ -557,37 +581,37 @@ main {
 }
 
 #home-folders [role="option"] {
-  padding: 0 12px;
+  padding: 0 1.2rem;
 }
 
 #home-list-pane {
   right: 0;
-  left: 160px;
-  height: 216px;
-  border-right: 1px solid;
+  left: 16rem;
+  height: 21.6rem;
+  border-right: .1rem solid;
 }
 
 #home-list [role="option"] {
-  padding: 4px;
-  height: 32px;
-  line-height: 16px;
+  padding: .4rem;
+  height: 3.2rem;
+  line-height: 1.6rem;
 }
 
 #home-list [role="option"] .star {
   display: inline-block;
   float: left;
-  width: 24px;
-  height: 32px;
+  width: 2.4rem;
+  height: 3.2rem;
 }
 
 #home-list [role="option"] .star:before {
   display: inline-block;
   float: left;
-  width: 24px;
-  height: 32px;
-  font-size: 24px;
-  line-height: 32px;
-  text-indent: 4px;
+  width: 2.4rem;
+  height: 3.2rem;
+  font-size: 2.4rem;
+  line-height: 3.2rem;
+  text-indent: .4rem;
   content: '☆';
 }
 
@@ -601,34 +625,34 @@ main {
 }
 
 #home-preview-pane {
-  top: 216px;
+  top: 21.6rem;
   right: 0;
   bottom: 0;
-  left: 160px;
+  left: 16rem;
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > header {
   position: absolute;
   top: 0;
-  border-bottom: 1px solid;
+  border-bottom: .1rem solid;
   width: 100%;
-  height: 28px;
+  height: 2.8rem;
   -moz-box-sizing: border-box;
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > header h3 {
-  margin: 4px 8px;
-  height: 20px;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 20px;
   overflow: hidden;
+  margin: .4rem .8rem;
+  height: 2rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 2rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > div {
-  top: 28px;
+  top: 2.8rem;
 }
 
 [id^="tabpanel-search-"] > div {
@@ -649,11 +673,11 @@ main {
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] {
   top: 0;
-  height: 220px;
+  height: 22rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"][aria-hidden="true"] {
-  top: -220px;
+  top: -22rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box {
@@ -662,9 +686,9 @@ main {
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section {
   float: left;
-  border-right: 1px solid;
-  width: calc(20% - 1px);
-  height: 162px;
+  border-right: .1rem solid;
+  width: calc(20% - .1rem);
+  height: 16.2rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section:last-of-type {
@@ -673,19 +697,19 @@ main {
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section h3 {
-  height: 18px;
-  line-height: 18px;
-  padding: 0 4px;
+  height: 1.8rem;
+  line-height: 1.8rem;
+  padding: 0 .4rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section > div {
   position: relative;
   overflow: hidden;
-  height: 144px;
+  height: 14.4rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box [role="listbox"] {
-  height: 144px;
+  height: 14.4rem;
   pointer-events: auto;
 }
 
@@ -696,14 +720,14 @@ main {
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box {
   position: relative;
   overflow: hidden;
-  border-width: 1px 0;
+  border-width: .1rem 0;
   border-style: solid;
   -moz-box-sizing: border-box;
-  height: 58px;
+  height: 5.8rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box section {
-  margin: 16px;
+  margin: 1.6rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box h3 {
@@ -718,7 +742,7 @@ main {
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box dt,
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box dd {
   display: inline-block;
-  margin: 0 4px;
+  margin: 0 .4rem;
   vertical-align: middle;
 }
 
@@ -727,37 +751,37 @@ main {
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="textbox"] {
-  width: 240px;
+  width: 24rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"] {
   display: inline-block;
-  border: 1px solid;
-  border-radius: 32px;
-  padding: 4px 16px;
-  height: 16px;
-  line-height: 16px;
+  border: .1rem solid;
+  border-radius: 3.2rem;
+  padding: .4rem 1.6rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
 }
 
 [id^="tabpanel-search-"] [id$="-result-pane"] {
-  top: 220px;
+  top: 22rem;
   bottom: 0;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"][aria-hidden="true"] + [id$="-result-pane"] {
   top: 0;
-  bottom: calc(100% - 240px);
-  height: 240px;
+  bottom: calc(100% - 24rem);
+  height: 24rem;
 }
 
 [id^="tabpanel-search-"] [id$="-preview-pane"] {
-  top: 240px;
+  top: 24rem;
   bottom: 0;
 }
 
 [id^="tabpanel-search-"] [id$="-preview-pane"][aria-hidden="true"] {
   top: 100%;
-  bottom: -240px;
+  bottom: -24rem;
 }
 
 .bug-info {
@@ -769,57 +793,57 @@ main {
 }
 
 [id$="-preview-pane"] .bug-info {
-  width: 320px;
+  width: 32rem;
 }
 
 .bug-info > section h3 {
-  height: 24px;
-  line-height: 24px;
-  border-bottom: 1px solid;
-  padding: 0 12px;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  border-bottom: .1rem solid;
+  padding: 0 1.2rem;
 }
 
 .bug-info dl,
 .bug-info > section > ul {
   overflow: hidden;
-  padding: 12px;
+  padding: 1.2rem;
 }
 
 .bug-info dl > dt {
   float: left;
   clear: both;
-  width: 96px;
-  padding: 4px 0;
-  min-height: 16px;
-  line-height: 16px;
+  width: 10rem;
+  padding: .4rem 0;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
 }
 
 .bug-info dl > dd,
 .bug-info > section > ul > li {
-  padding: 4px 0;
-  min-height: 16px;
-  line-height: 16px;
+  padding: .4rem 0;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
 }
 
 .bug-info dl > dd {
   float: left;
-  margin-left: -96px;
-  padding-left: 96px;
-  width: calc(100% - 96px);
+  margin-left: -10rem;
+  padding-left: 11rem;
+  width: calc(100% - 11rem);
 }
 
 .bug-info [role="button"] {
   display: inline-block;
   overflow: hidden;
-  padding: 2px 4px;
+  padding: .2rem .4rem;
   max-width: 100%;
-  line-height: 100%;
+  line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .bug-info [role="button"]:hover {
-  border-radius: 2px;
+  border-radius: .2rem;
 }
 
 .bug-timeline {
@@ -833,8 +857,8 @@ main {
 
 [id$="-preview-pane"] .bug-timeline {
   right: 0;
-  left: 320px;
-  border-left: 1px solid;
+  left: 32rem;
+  border-left: .1rem solid;
   width: auto;
 }
 
@@ -847,22 +871,22 @@ main {
 
 [itemprop="comment"] {
   overflow: hidden;
-  margin: 12px;
-  border: 1px solid;
-  border-radius: 4px;
+  margin: 1.2rem;
+  border: .1rem solid;
+  border-radius: .4rem;
 }
 
 [itemprop="comment"] > * {
-  padding: 12px;
+  padding: 1.2rem;
 }
 
 [itemprop="comment"] header {
   overflow: hidden;
-  border-bottom: 1px solid;
+  border-bottom: .1rem solid;
 }
 
 [itemprop="comment"] header p {
-  line-height: 14px;
+  line-height: 1.5rem;
 }
 
 [itemprop="comment"] header p.meta {
@@ -871,17 +895,18 @@ main {
 
 [itemprop="comment"] header p > * {
   display: block;
-  padding: 0 .8px;
+  padding: 0 .8rem;
 }
 
 [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
   display: inline-block;
   float: left;
-  margin: 0 8px 0 0;
-  width: 24px;
-  height: 24px;
+  margin: 0 .8rem 0 -.8rem;
+  width: 3rem;
+  height: 3rem;
   background-repeat: no-repeat;
-  background-position: -168px -28px;
+  background-position: center;
+  background-size: cover;
 }
 
 [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
@@ -898,14 +923,14 @@ main {
 
 [itemprop="comment"] header [role="button"] {
   display: inline-block;
-  margin: 0 0 0 8px;
-  border-radius: 4px;
-  padding: 0 12px;
-  font-size: 11px;
+  margin: 0 0 0 .8rem;
+  border-radius: .4rem;
+  padding: 0 1rem;
+  font-size: 1.1rem;
 }
 
 [itemprop="comment"] [itemprop="text"] {
-  font-size: 12px;
+  font-size: 1.2rem;
   line-height: 1.6;
   font-family: Consolas, monospace;
   letter-spacing: -.02ex;
@@ -917,7 +942,7 @@ main {
 }
 
 [itemprop="comment"] [itemprop="text"] p {
-  margin: 12px 0;
+  margin: 1.2rem 0;
   white-space: pre-wrap;
   -moz-user-select: text;
   pointer-events: auto;
@@ -934,12 +959,12 @@ main {
 
 [itemprop="comment"] [itemprop="text"] blockquote {
   margin: 0;
-  border-left: 2px solid;
-  padding-left: 10px;
+  border-left: .2rem solid;
+  padding-left: 1rem;
 }
 
 [itemprop="comment"] .changes {
-  border-top: 1px solid;
+  border-top: .1rem solid;
 }
 
 [itemprop="comment"] header + .changes {
@@ -951,7 +976,7 @@ main {
 }
 
 [itemprop="comment"] .changes li:not(:first-of-type) {
-  margin-top: 8px;
+  margin-top: .8rem;
 }
 
 [itemprop="comment"] .changes ins {
@@ -960,22 +985,22 @@ main {
 
 .bug-attachments [itemprop="associatedMedia"] {
   overflow: hidden;
-  margin: 12px;
-  border: 1px solid;
-  border-radius: 4px;
+  margin: 1.2rem;
+  border: .1rem solid;
+  border-radius: .4rem;
 }
 
 .bug-attachments [itemprop="associatedMedia"] h4 {
-  padding: 12px;
-  border-bottom: 1px solid;
+  padding: .8rem 1.2rem;
+  border-bottom: .1rem solid;
 }
 
 .bug-attachments [itemprop="associatedMedia"] > ul {
-  padding: 12px;
+  padding: 1.2rem;
 }
 
 .bug-attachments [itemprop="associatedMedia"] li {
-  margin: 4px 0;
+  margin: .4rem 0;
 }
 
 .bug-attachments [itemprop="associatedMedia"] li:first-of-type {
@@ -987,7 +1012,7 @@ main {
 }
 
 .bug-history table {
-  margin: 12px;
+  margin: 1.2rem;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -1003,8 +1028,8 @@ main {
 .bug-history thead th,
 .bug-history tbody th,
 .bug-history tbody td {
-  border: 1px solid;
-  padding: 4px 8px;
+  border: .1rem solid;
+  padding: .4rem .8rem;
   line-height: 1.5;
   text-align: left;
   vertical-align: top;
@@ -1019,7 +1044,7 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 32px;
+  height: 3.2rem;
 }
 
 #main-tabpanels > [role="tabpanel"] > footer ul {
@@ -1029,7 +1054,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > footer [role="toolbar"] li {
   display: inline-block;
-  padding: 8px 16px;
+  padding: .8rem 1.6rem;
 }
 
 [id^="tabpanel-details-"][role="tablist"] {
@@ -1037,33 +1062,33 @@ main {
   top: 0;
   right: 0;
   left: 0;
-  padding: 8px;
-  height: 24px;
+  padding: .8rem;
+  height: 2.4rem;
   text-align: center;
 }
 
 [id^="tabpanel-details-"][role="tablist"] [role="tab"] {
   float: none;
-  margin: 0 0 0 -4px;
+  margin: 0 0 0 -.4rem;
   border-radius: 0;
-  height: 16px;
+  height: 1.6rem;
   text-align: center;
 }
 
 [id^="tabpanel-details-"][role="tablist"] [role="tab"]:not([aria-hidden="true"]):first-of-type {
   margin-right: 0;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: .4rem;
+  border-bottom-left-radius: .4rem;
 }
 
 [id^="tabpanel-details-"][role="tablist"] [role="tab"]:not([aria-hidden="true"]):last-of-type {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-top-right-radius: .4rem;
+  border-bottom-right-radius: .4rem;
 }
  
 [id^="tabpanel-details-"].tabpanels {
   position: absolute;
-  top: 40px;
+  top: 4rem;
   right: 0;
   bottom: 0;
   left: 0;
@@ -1073,26 +1098,26 @@ main {
   right: 0;
   left: 0;
   overflow: hidden;
-  padding: 0 40px;
+  padding: 0 4rem;
   width: auto !important;
   -moz-column-count: 2;
-  -moz-column-gap: 40px;
+  -moz-column-gap: 4rem;
 }
 
 #tabpanel-settings > div > section {
-  margin: 40px 0;
+  margin: 4rem 0;
   page-break-inside: avoid;
 }
 
 #tabpanel-settings > div > section h3 {
-  padding: 8px;
-  font-size: 12px;
+  padding: .8rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
 #tabpanel-settings > div > section > section {
-  border-bottom: 1px solid;
-  padding: 16px 8px;
+  border-bottom: .1rem solid;
+  padding: 1.6rem .8rem;
 }
 
 #tabpanel-settings > div > section > section:last-of-type {
@@ -1110,32 +1135,32 @@ main {
 }
 
 #tabpanel-settings > div > section > section li {
-  line-height: 18px;
+  line-height: 1.8rem;
 }
 
 #tabpanel-settings > div > section > section li [role="radio"] {
   margin: 0;
-  width: 18px;
-  height: 18px;
-  line-height: 18px;
+  width: 1.8rem;
+  height: 1.8rem;
+  line-height: 1.8rem;
 }
 
 #tabpanel-settings > div > section > section li [role="radio"] + label {
-  height: 18px;
-  line-height: 18px;
+  height: 1.8rem;
+  line-height: 1.8rem;
 }
 
 [role="contentinfo"] {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
-  height: 32px;
-  width: 560px;
+  height: 3.2rem;
+  width: 56rem;
 }
 
 [role="contentinfo"] [role="status"] {
-  margin: 8px;
-  line-height: 16px;
+  margin: .8rem;
+  line-height: 1.6rem;
 }
 
 @keyframes throbber {
@@ -1154,12 +1179,12 @@ main {
 @media screen and (min-width: 980px) {
 
 [id^="tabpanel-details-"] > div > .bug-info {
-  width: 320px;
+  width: 32rem;
 }
 
 [id^="tabpanel-details-"][role="tablist"],
 [id^="tabpanel-details-"].tabpanels {
-  left: 320px;
+  left: 32rem;
 }
 
 } /* end @media */

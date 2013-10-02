@@ -47,8 +47,7 @@ a[role="link"] {
 [role="banner"] [role="search"] [role="button"],
 [role="radio"][aria-checked="true"],
 [aria-busy="true"]:before,
-#main-menu--app,
-[itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+#main-menu--app {
   background-image: url(/static/images/themes/dark/sprite.png);
 }
 
@@ -68,7 +67,7 @@ a[role="link"] {
 
 [role="menu"] {
   background: #222;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 .4rem rgba(0, 0, 0, 0.5);
 }
 
 [role="menu"] [role="separator"] {
@@ -89,12 +88,12 @@ a[role="link"] {
 }
 
 [role="grid"] .grid-body tbody tr:nth-child(even) {
-  background: #292929;
+  background-color: #292929;
 }
 
 [role="grid"] .grid-body tbody tr[aria-selected="true"] {
   color: #CCC;
-  background-color: #444;
+  background-color: #444 !important;
 }
 
 [role="grid"] th,
@@ -115,7 +114,7 @@ a[role="link"] {
   border-color: #222;
   color: #999 !important;
   background-color: #333 !important;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 .2rem rgba(0, 0, 0, 0.2);
 }
 
 [role="textbox"]:focus {
@@ -127,6 +126,7 @@ a[role="link"] {
   border-bottom-color: #222;
 }
 
+[itemprop="comment"] header [itemprop="author"] [itemprop="image"],
 #main-menu--app--account label:before {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 28, 192, 50, 168);
 }
@@ -236,7 +236,7 @@ a[role="link"] {
 
 [itemprop="comment"] header [role="button"] {
   background-image: linear-gradient(to bottom, #444, #333);
-  box-shadow: inset -1px -1px 4px rgba(0, 0, 0, 0.5), inset -1px -1px 1px #555;
+  box-shadow: inset -1px -1px .4rem rgba(0, 0, 0, 0.5), inset -1px -1px 1px #555;
 }
 
 [itemprop="comment"] [itemprop="text"] {
@@ -305,3 +305,56 @@ a[role="link"] {
 #tabpanel-settings > div > section > section {
   border-color: #333;
 }
+
+/* --------------------------------------------------------------------------
+ * Mobile Support
+ * -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 640px) {
+
+#sidebar > div {
+  background-color: #333;
+}
+
+#sidebar h2 {
+  border-color: #666;
+}
+
+#sidebar [role="option"],
+#sidebar [role="menuitem"] {
+  border-color: #393939;
+}
+
+#main-tabpanels > [id^="tabpanel-details-"] > header {
+  background-color: #222;
+}
+
+[itemprop="comment"] header {
+  background-color: #333;
+}
+
+[role="grid"] .grid-body tbody tr {
+  border-color: #444;
+}
+
+[role="grid"] .grid-body tbody tr:nth-child(even) {
+  background-color: transparent;
+}
+
+[role="grid"] .grid-body tbody tr[data-unread="true"] {
+  background-color: #292929;
+}
+
+.bug-timeline h2 {
+  background-color: #222;
+}
+
+.bug-history tbody tr {
+  border-color: #333;
+}
+
+.bug-history tbody th {
+  background-color: #333;
+}
+
+} /* end @media */

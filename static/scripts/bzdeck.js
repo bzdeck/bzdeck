@@ -877,9 +877,11 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       new BGw.TabList($tablist);
     }
 
-    // Scrollbar
-    for (let $area of $content.querySelectorAll('.scrollable')) {
-      new BGw.ScrollBar($area);
+    // Use custom scrollbar on desktop
+    if (BriteGrid.widget.mode.layout === 'desktop') {
+      for (let $area of $content.querySelectorAll('.scrollable')) {
+        new BGw.ScrollBar($area);
+      }
     }
   }
 
@@ -1245,6 +1247,11 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   let sort_order = prefs['ui.timeline.sort.order'] || 'ascending';
   _entries.sort((a, b) => (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
   let $parent = $timeline.querySelector('section') || $timeline;
+  // Mobile compact layout: insert bug summary
+  if (BriteGrid.widget.mode.layout === 'mobile') {
+    $parent.insertBefore(document.createElement('h2'), $parent.firstElementChild)
+           .textContent = bug.summary;
+  }
   // Append to the timeline
   for (let entry of _entries) {
     $parent.appendChild(entry.element);
@@ -1380,6 +1387,7 @@ BzDeck.toolbar = {};
 BzDeck.toolbar.setup = function () {
   let BGw = BriteGrid.widget,
       BGu = BriteGrid.util,
+      mobile = BriteGrid.widget.mode.layout === 'mobile',
       tablist = this.tablist = new BGw.TabList(document.getElementById('main-tablist'));
 
   // Change the window title when a new tab is selected
@@ -1396,15 +1404,17 @@ BzDeck.toolbar.setup = function () {
           history.pushState({}, title, hash);
         }
         document.title = title + ' | BzDeck'; // l10n
+        document.querySelector('[role="banner"] h1').textContent = value[0].textContent;
       }
 
       obj[prop] = value;
     }
   });
 
-  let $main_menu = document.getElementById('main-menu');
-  new BGw.MenuBar($main_menu);
-  $main_menu.addEventListener('MenuItemSelected', event => {
+  new BGw.MenuBar(document.querySelector('#main-menu'));
+  let $app_menu = document.querySelector('#main-menu--app-menu');
+
+  $app_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'show-settings': {
         new BzDeck.SettingsPage();
@@ -1426,7 +1436,7 @@ BzDeck.toolbar.setup = function () {
   });
 
   // Do something when the app menu is opened
-  document.getElementById('main-menu--app-menu').addEventListener('MenuOpened', event => {
+  $app_menu.addEventListener('MenuOpened', event => {
   });
 
   // Account label & avatar
@@ -1441,7 +1451,8 @@ BzDeck.toolbar.setup = function () {
   });
   account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
-  if (BGu.app.fullscreen_enabled) {
+  // Somehow scroll doesn't work in the fullscreen mode on mobile
+  if (BGu.app.fullscreen_enabled && !mobile) {
     document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');
   }
 
@@ -1477,6 +1488,15 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
+  window.addEventListener('mousedown', event => {
+    if (mobile) {
+      let $banner = document.querySelector('[role="banner"]');
+      if ($banner.classList.contains('search')) {
+        $banner.classList.remove('search');
+      }
+    }
+  });
+
   $search_box.addEventListener('input', event => {
     this.quicksearch(event);
   });
@@ -1488,6 +1508,10 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
+  $search_box.addEventListener('mousedown', event => {
+    event.stopPropagation();
+  });
+
   $search_button.addEventListener('keydown', event => {
     if (event.keyCode === event.DOM_VK_RETURN ||
         event.keyCode === event.DOM_VK_SPACE) {
@@ -1496,7 +1520,18 @@ BzDeck.toolbar.setup = function () {
   });
 
   $search_button.addEventListener('mousedown', event => {
-    exec_search();
+    event.stopPropagation();
+    if (mobile) {
+      let $banner = document.querySelector('[role="banner"]');
+      if (!$banner.classList.contains('search')) {
+        $banner.classList.add('search');
+        $search_box.focus();
+      } else if ($search_box.value) {
+        exec_search();
+      }
+    } else {
+      exec_search();
+    }
   });
 
   $search_dropdown.addEventListener('MenuItemSelected', event => {
@@ -1508,6 +1543,9 @@ BzDeck.toolbar.setup = function () {
     }
     if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
       exec_search();
+    }
+    if (mobile) {
+      document.querySelector('[role="banner"]').classList.remove('search');
     }
   });
 
@@ -1527,6 +1565,7 @@ BzDeck.toolbar.quicksearch = function (event) {
               words.length === 1 && !isNaN(words[0]) && String(bug.id).contains(words[0])) && 
               BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
     });
+    results.reverse();
 
     let data = [{
       id: 'quicksearch-dropdown-header',
@@ -1550,6 +1589,7 @@ BzDeck.toolbar.quicksearch = function (event) {
 
     let dropdown = this.search_dropdown;
     dropdown.build(data);
+    dropdown.view.container.scrollTop = 0;
     dropdown.open();
   });
 };
@@ -1564,6 +1604,42 @@ window.addEventListener('DOMContentLoaded', event => {
     BzDeck.global.statusbar = document.querySelector('#app-login [role="status"]');
     BzDeck.bootstrap.setup_ui();
     return;
+  }
+
+  // Mobile Support
+  if (BriteGrid.widget.mode.layout === 'mobile') {
+    let $banner = document.querySelector('[role="banner"]'),
+        $sidebar = document.querySelector('#sidebar'),
+        $app_menu = document.querySelector('#main-menu--app-menu');
+
+    document.querySelector('#sidebar-account')
+            .appendChild(document.querySelector('#main-menu--app--account'));
+    document.querySelector('#sidebar-folders')
+            .appendChild(document.querySelector('#home-folders'));
+    document.querySelector('#sidebar-menu')
+            .appendChild($app_menu);
+
+    $app_menu.removeAttribute('aria-hidden');
+    $app_menu.removeAttribute('aria-expanded');
+    $app_menu.addEventListener('MenuClosed', event => {
+      // Keep the menu open
+      $app_menu.removeAttribute('aria-expanded');
+    });
+
+    $sidebar.addEventListener('click', event => {
+      $sidebar.setAttribute('aria-hidden', $sidebar.getAttribute('aria-hidden') !== 'true');
+    });
+
+    document.querySelector('[role="banner"] h1').addEventListener('click', event => {
+      let tabs = BzDeck.toolbar.tablist.view,
+          $tab_home = document.querySelector('#tab-home');
+      if (tabs.selected[0] === $tab_home) {
+        document.querySelector('#sidebar > div').scrollTop = 0;
+        $sidebar.setAttribute('aria-hidden', $sidebar.getAttribute('aria-hidden') !== 'true');
+      } else {
+        tabs.selected = $tab_home;
+      }
+    });
   }
 
   BzDeck.bootstrap.processing = true;

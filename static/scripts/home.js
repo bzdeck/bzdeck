@@ -72,13 +72,17 @@ BzDeck.HomePage = function () {
     }
   });
 
-  new BGw.ScrollBar(document.getElementById('home-folders-outer'));
-  new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
-  new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
+  // Use custom scrollbar on desktop
+  if (BriteGrid.widget.mode.layout === 'desktop') {
+    new BGw.ScrollBar(document.getElementById('home-folders-outer'));
+    new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
+    new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
+  }
 
   this.view = {};
 
   let $grid = document.getElementById('home-list'),
+      mobile = BriteGrid.widget.mode.layout === 'mobile',
       prefs = BzDeck.data.prefs,
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
@@ -106,7 +110,9 @@ BzDeck.HomePage = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: prefs['home.list.sort_conditions'] || { key:'id', order:'ascending' }
+    sort_conditions: (mobile) ? { key: 'last_change_time', order: 'descending' }
+                              : prefs['home.list.sort_conditions'] ||
+                                { key: 'id', order: 'ascending' }
   });
 
   $grid.addEventListener('Sorted', event => {
@@ -128,6 +134,10 @@ BzDeck.HomePage = function () {
     if (ids.length) {
       // Show Bug in Preview Pane
       this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
+      // Mobile compact layout
+      if (mobile) {
+        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+      }
       // Mark as Read
       let data = this.view.grid.data;
       for (let $item of event.detail.items) {
@@ -202,7 +212,8 @@ BzDeck.HomePage = function () {
     },
     set: (obj, prop, newval) => {
       let oldval = obj[prop];
-      if (oldval === newval) {
+      // On mobile, the same folder can be selected
+      if (!mobile && oldval === newval) {
         return;
       }
       if (prop === 'folder_id') {
@@ -295,9 +306,17 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
     });
   };
 
+  // Mobile compact layout
+  if (BriteGrid.widget.mode.layout === 'mobile' &&
+      BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
+    // Select the home tab
+    BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
+  }
+
   // Change the window title and the tab label
   let folder_label = this.folder_data.filter(folder => folder.data.id === folder_id)[0].label;
   document.title = folder_label + ' | BzDeck'; // l10n
+  document.querySelector('[role="banner"] h1').textContent = folder_label;
   document.querySelector('#tab-home').title = folder_label;
   document.querySelector('#tab-home label').textContent = folder_label;
   document.querySelector('#tabpanel-home h2').textContent = folder_label;

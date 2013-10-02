@@ -3,6 +3,7 @@ CACHE MANIFEST
 /?090221
 /static/styles/lib/widget.css?090221
 /static/styles/base.css?090221
+/static/styles/mobile.css?100201
 /static/styles/themes/dark.css?090221
 /static/styles/themes/light.css?090221
 /static/scripts/lib/util.js?090221

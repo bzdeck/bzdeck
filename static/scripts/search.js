@@ -46,7 +46,7 @@ BzDeck.SearchPage = function () {
       if (oldval === newval) {
         return;
       }
-      if (prop === 'preview_id') {
+      if (prop === 'preview_id' && BriteGrid.widget.mode.layout !== 'mobile') {
         this.show_preview(oldval, newval);
       }
       obj[prop] = newval;
@@ -66,6 +66,7 @@ BzDeck.SearchPage = function () {
   this.setup_toolbar();
 
   tablist.view.selected = tablist.view.focused = tab;
+  this.view.tabpanel.focus();
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
@@ -97,11 +98,13 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let $pane = this.view.panes['basic-search'] 
             = this.view.tabpanel.querySelector('[id$="-basic-search-pane"]'),
-      ScrollBar = BriteGrid.widget.ScrollBar,
       config = BzDeck.data.bugzilla_config;
 
-  for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new ScrollBar($outer, true);
+  // Use custom scrollbar on desktop
+  if (BriteGrid.widget.mode.layout === 'desktop') {
+    for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
+      new BriteGrid.widget.ScrollBar($outer, true);
+    }
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -248,6 +251,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] 
             = this.view.tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
+      mobile = BriteGrid.widget.mode.layout === 'mobile',
       prefs = BzDeck.data.prefs,
       columns = prefs['search.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
@@ -275,7 +279,9 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: prefs['search.list.sort_conditions'] || { key:'id', order:'ascending' }
+    sort_conditions: (mobile) ? { key: 'last_change_time', order: 'descending' }
+                              : prefs['home.list.sort_conditions'] ||
+                                { key: 'id', order: 'ascending' }
   });
 
   $grid.addEventListener('Sorted', event => {
@@ -293,10 +299,14 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   });
 
   $grid.addEventListener('Selected', event => {
-    // Show Bug in Preview Pane
     let ids = event.detail.ids;
     if (ids.length) {
+      // Show Bug in Preview Pane
       this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
+      // Mobile compact layout
+      if (mobile) {
+        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+      }
     }
   });
 
@@ -351,9 +361,12 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let $pane = this.view.panes['preview'] 
             = this.view.tabpanel.querySelector('[id$="-preview-pane"]');
 
-  let ScrollBar = BriteGrid.widget.ScrollBar;
-  new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
-  new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+  // Use custom scrollbar on desktop
+  if (BriteGrid.widget.mode.layout === 'desktop') {
+    let ScrollBar = BriteGrid.widget.ScrollBar;
+    new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
+    new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+  }
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
