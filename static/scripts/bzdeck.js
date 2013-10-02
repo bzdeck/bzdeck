@@ -86,6 +86,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'Proxy' in window, // Firefox 4
     'IDBObjectStore' in window, // Firefox 4
     'mozGetAll' in IDBObjectStore.prototype, // Gecko specific; prefixed
+    'matchMedia' in window, // Firefox 6
     'WeakMap' in window, // Firefox 6
     'Set' in window, // Firefox 13
     'MutationObserver' in window, // Firefox 14
@@ -851,7 +852,8 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     return null;
   }
 
-  let $content;
+  let $content,
+      BGw = BriteGrid.widget;
 
   if (!clone) {
     $content = $template;
@@ -863,17 +865,20 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
     // Assign unique IDs
     $content.id = $content.id.replace(/TID/, bug.id);
-    for (let $element of $content.querySelectorAll('[id]')) {
-      $element.id = $element.id.replace(/TID/, bug.id);
+    for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
+      for (let $element of $content.querySelectorAll('[' + attr +']')) {
+        $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, bug.id));
+      }
+    }
+
+    // TabList
+    for (let $tablist of $content.querySelectorAll('[role="tablist"]')) {
+      new BGw.TabList($tablist);
     }
 
     // Scrollbar
-    let ScrollBar = BriteGrid.widget.ScrollBar;
-    for (let suffix of ['info', 'timeline']) {
-      let $area = $content.querySelector('[id$="-bug-' + suffix + '"]');
-      if ($area) {
-        new ScrollBar($area);
-      }
+    for (let $area of $content.querySelectorAll('.scrollable')) {
+      new BGw.ScrollBar($area);
     }
   }
 
@@ -917,7 +922,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
         $li.textContent = _value;
         $li.setAttribute('role', 'button');
         $li.itemProp.value = 'keywords';
-        new BriteGrid.widget.Button($li);
+        new BGw.Button($li);
       }
       continue;
     }
@@ -943,7 +948,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
   $content.removeAttribute('aria-busy');
 
-  let $timeline = $content.querySelector('[id$="-bug-timeline"]');
+  let $timeline = $content.querySelector('.bug-timeline');
   if (!$timeline) {
     return $content;
   }
@@ -976,6 +981,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
 
   let $placeholder,
+      conf_field = BzDeck.data.bugzilla_config.field,
       prefs = BzDeck.data.prefs,
       i18n = BriteGrid.util.i18n;
 
@@ -1040,62 +1046,49 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
   // Attachments
   $placeholder = $content.querySelector('[data-field="attachments"]');
-  if ($placeholder) {
-    let $dl = $placeholder.querySelector('dl');
-    if ($dl) {
-      $dl.remove();
+  if ($placeholder && bug.attachments && bug.attachments.length) {
+    let $tab = $content.querySelector('[role="tab"][id$="-tab-attachments"]');
+    if ($tab) {
+      $tab.setAttribute('aria-hidden', 'false');
     }
-    if (!bug.attachments) {
-      $placeholder.setAttribute('aria-hidden', 'true');
-    } else {
-      $dl = document.createElement('dl');
-      for (let att of bug.attachments) {
-        let $dt = $dl.appendChild(document.createElement('dt')),
-            $link;
-        if (att.is_obsolete) {
-          let $del = $dt.appendChild(document.createElement('del'));
-          $link = $del.appendChild(document.createElement('a'));
-        } else {
-          $link = $dt.appendChild(document.createElement('a'));
-        }
-        $link.href = '#attachment/' + att.id;
-        $link.setAttribute('role', 'link');
-        $link.setAttribute('data-attachment-id', att.id);
-        $link.textContent = att.description;
-        let $dd = $dl.appendChild(document.createElement('dd')),
-            $ul = $dd.appendChild(document.createElement('ul')),
-            $li;
-        // Size
-        $li = $ul.appendChild(document.createElement('li'));
-        $li.textContent = (att.size / 1024).toFixed(2) + ' KB'; // l10n
-        // Type
-        $li = $ul.appendChild(document.createElement('li'));
-        $li.textContent = att.is_patch ? 'patch' : att.content_type; // l10n
-        // Time
-        $li = $ul.appendChild(document.createElement('li'));
-        let $time = $li.appendChild(document.createElement('time'));
-        $time.textContent = i18n.format_date(att.creation_time);
-        $time.dateTime = att.creation_time;
-        // Person
-        $li = $ul.appendChild(document.createElement('li'));
-        $li.itemScope = true;
-        $li.itemType.value = 'http://schema.org/Person';
-        let $span = $li.appendChild(document.createElement('span'));
-        $span.itemProp.value = 'name';
-        $span.itemValue = att.attacher.name;
-        // Flags
-        if (!att.flags) {
-          $li = $ul.appendChild(document.createElement('li'));
-          $li.textContent = 'No Flags'; // l10n
-          continue;
-        }
-        for (let flag of att.flags) {
-          $li = $ul.appendChild(document.createElement('li'));
-          $li.textContent = flag.setter.name + ': ' + flag.name + flag.status;
-        }
+    for (let $section of $placeholder.querySelectorAll('section[data-attachment-id]')) {
+      $section.remove();
+    }
+    let $entry_tmpl = $placeholder.querySelector('[itemprop="associatedMedia"]');
+    for (let att of bug.attachments) {
+      let $entry = $placeholder.appendChild($entry_tmpl.cloneNode());
+      $entry.dataset.attachmentId = att.id;
+      $entry.setAttribute('aria-hidden', 'false');
+      let $link = $entry.querySelector('[itemprop="url"]');
+      $link.href = '#attachment/' + att.id;
+      $link.dataset.attachmentId = att.id;
+      let $title = $link.querySelector('[itemprop="name"]');
+      if (att.is_obsolete) {
+        let $_title = document.createElement('del');
+        $_title.itemProp.value = 'name';
+        $link.replaceChild($_title, $title);
+        $title = $_title;
       }
-      $placeholder.appendChild($dl);
-      $placeholder.removeAttribute('aria-hidden');
+      $title.itemValue = att.description;
+      let $size = $entry.querySelector('[itemprop="contentSize"]');
+      $size.itemValue = (att.size / 1024).toFixed(2) + ' KB'; // l10n
+      let $format = $entry.querySelector('[itemprop="encodingFormat"]')
+      $format.itemValue = att.is_patch ? 'patch' : att.content_type; // l10n
+      let $time = $entry.querySelector('[itemprop="uploadDate"]');
+      $time.itemValue = i18n.format_date(att.creation_time);
+      $time.dateTime = att.creation_time;
+      let $creator = $entry.querySelector('[itemprop="creator"] [itemprop="name"]');
+      $creator.itemValue = att.attacher.name;
+      let $flags = $entry.querySelector('.flags');
+      if (att.flags) {
+        for (let flag of att.flags) {
+          let $flag = $flags.appendChild(document.createElement('li'));
+          $flag.textContent = flag.setter.name + ': ' + flag.name + flag.status;
+        }
+      } else {
+        let $flag = $flags.appendChild(document.createElement('li'));
+        $flag.textContent = 'No Flags'; // l10n
+      }
     }
   }
 
@@ -1119,13 +1112,61 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     }
   }
 
+  // History
+  $placeholder = $content.querySelector('[data-field="history"]');
+  if ($placeholder && bug.history && bug.history.length) {
+    let $tab = $content.querySelector('[role="tab"][id$="-tab-history"]');
+    if ($tab) {
+      $tab.setAttribute('aria-hidden', 'false');
+    }
+    let $tbody = $placeholder.querySelector('tbody');
+    let change_cell_content = function (field, content) {
+      if (['blocks', 'depends_on'].indexOf(field) > -1) {
+        return content.replace(/(\d+)/g, '<a href="#bug/$1" role="link" data-bug-id="$1">$1</a>');
+      }
+      return content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+    }
+    for (let history of bug.history) {
+      for (let [i, change] of Iterator(history.changes)) {
+        let $row = $tbody.insertRow(-1);
+        if (i === 0) {
+          // When
+          let $cell_when = $row.appendChild(document.createElement('th')),
+              $time = $cell_when.appendChild(document.createElement('time'));
+          $time.datetime = history.change_time;
+          $time.textContent = i18n.format_date(history.change_time);
+          $cell_when.dataset.item = 'when';
+          // Who
+          let $cell_who = $row.insertCell(-1);
+          $cell_who.innerHTML = history.changer.name.replace('@', '&#8203;@');
+          $cell_who.dataset.item = 'who';
+          $cell_who.rowSpan = $cell_when.rowSpan = history.changes.length;
+        }
+        // What
+        // Bug 909055 - Field name mismatch in history: group vs groups
+        let _field = conf_field[change.field_name] ||
+                     conf_field[change.field_name.replace(/s$/, '')];
+        let $cell_what = $row.insertCell(-1);
+        $cell_what.textContent = _field.description;
+        $cell_what.dataset.item = 'what';
+        // Removed
+        let $cell_removed = $row.insertCell(-1);
+        $cell_removed.innerHTML = change_cell_content(change.field_name, change.removed);
+        $cell_removed.dataset.item = 'removed';
+        // Added
+        let $cell_added = $row.insertCell(-1);
+        $cell_added.innerHTML = change_cell_content(change.field_name, change.added);
+        $cell_added.dataset.item = 'added';
+      }
+    }
+  }
+
   // TODO: Show Project Flags and Tracking Flags
 
   // Timeline: comments & history
   let entries = {},
-      $timeline = $content.querySelector('[id$="-bug-timeline"]'),
+      $timeline = $content.querySelector('.bug-timeline'),
       $entry_tmpl = $content.querySelector('[itemprop="comment"]'),
-      field = BzDeck.data.bugzilla_config.field,
       parse = BzDeck.global.parse_comment,
       sanitize = BriteGrid.util.string.sanitize;
   // Comments
@@ -1146,7 +1187,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     entries[time] = $entry;
   }
   // Changes
-  for (let history of bug.history) {
+  for (let history of (bug.history || [])) {
     let $entry,
         time = history.change_time;
     if (time in entries) {
@@ -1181,7 +1222,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li'));
       // Bug 909055 - Field name mismatch in history: group vs groups
-      let _field = (change.field_name === 'groups') ? field['group'] : field[change.field_name];
+      let _field = conf_field[change.field_name] ||
+                   conf_field[change.field_name.replace(/s$/, '')];
       $change.textContent = _field.description + ': ';
       if (change.removed) {
         $change.appendChild(generate_element(change, 'removed'));
@@ -1201,9 +1243,10 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
   let sort_order = prefs['ui.timeline.sort.order'] || 'ascending';
   _entries.sort((a, b) => (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
+  let $parent = $timeline.querySelector('section') || $timeline;
   // Append to the timeline
   for (let entry of _entries) {
-    $timeline.appendChild(entry.element);
+    $parent.appendChild(entry.element);
   }
 
   $timeline.scrollTop = 0;

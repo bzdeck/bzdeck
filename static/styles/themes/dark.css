@@ -200,26 +200,26 @@ a[role="link"] {
   background-image: linear-gradient(to bottom, #333, #444);
 }
 
-[id$="-bug-info"] {
+.bug-info {
   background-color: #222;
 }
 
-[id$="-bug-info"] > section h3 {
+.bug-info > section h3 {
   border-color:  #111;
   background-color: #333;
 }
 
-[id$="-bug-info"] dl > dd:not(:first-of-type),
-[id$="-bug-info"] > section > ul > li:not(:first-of-type) {
+.bug-info dl > dd:not(:first-of-type),
+.bug-info > section > ul > li:not(:first-of-type) {
   background-image: linear-gradient(to bottom, #222, #222 1px, #333 1px, #333 2px, transparent 2px, transparent);
 }
 
-[id$="-bug-info"] [role="button"]:hover {
+.bug-info [role="button"]:hover {
   color: #333;
   background-color: #999;
 }
 
-[id$="-bug-timeline"] {
+[id$="-preview-pane"] .bug-timeline {
   border-color:  #222;
 }
 
@@ -248,6 +248,31 @@ a[role="link"] {
   color: #666;
 }
 
+.bug-attachments [itemprop="associatedMedia"] {
+  border-color:  #222;
+  background-color: #222;
+}
+
+.bug-attachments [itemprop="associatedMedia"] h4 {
+  border-color: #222;
+  background-color: #333;
+}
+
+.bug-history thead th {
+  background-color: #333;
+}
+
+.bug-history tbody th,
+.bug-history tbody td {
+  background-color: #222;
+}
+
+.bug-history thead th,
+.bug-history tbody th,
+.bug-history tbody td {
+  border-color: #292929;
+}
+
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"],
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
   border-color: #222;
@@ -255,6 +280,18 @@ a[role="link"] {
 
 #main-tabpanels [role="tabpanel"] > footer {
   background-image: linear-gradient(to bottom, #444, #333);
+}
+
+[id^="tabpanel-details-"][role="tablist"] {
+  background-color: #222;
+}
+
+[id^="tabpanel-details-"][role="tablist"] [role="tab"] {
+  background-color: #333;
+}
+
+[id^="tabpanel-details-"][role="tablist"] [role="tab"][aria-selected="true"] {
+  background-color: #292929;
 }
 
 #tabpanel-settings > div {

@@ -54,6 +54,14 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     document.getElementById('main-tabpanels').appendChild($tabpanel);
   }
 
+  // Desktop Layout
+  if (window.matchMedia("(min-width: 980px)").matches) {
+    $tabpanel.querySelector('[id$="-tab-info"]').setAttribute('aria-hidden', 'true');
+    let $info_tp = $tabpanel.querySelector('[id$="-tabpanel-info"]');
+    $info_tp.removeAttribute('aria-hidden');
+    $tabpanel.querySelector('div').appendChild($info_tp);
+  }
+
   this.view.tabpanel = $tabpanel;
   $tabpanel.setAttribute('aria-hidden', 'false');
 

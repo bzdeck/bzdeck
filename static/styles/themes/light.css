@@ -200,38 +200,38 @@ a[role="link"] {
   background-image: linear-gradient(to bottom, #DDD, #CCC);
 }
 
-[id$="-bug-info"] {
+.bug-info {
   background-color: #EEE;
 }
 
-[id$="-bug-info"] > section h3 {
+.bug-info > section h3 {
   border-color: #CCC;
   background-color: #DDD;
 }
 
-[id$="-bug-info"] dl > dd:not(:first-of-type),
-[id$="-bug-info"] > section > ul > li:not(:first-of-type) {
+.bug-info dl > dd:not(:first-of-type),
+.bug-info > section > ul > li:not(:first-of-type) {
   background-image: linear-gradient(to bottom, #EEE, #EEE 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
 }
 
-[id$="-bug-info"] [role="button"]:hover {
+.bug-info [role="button"]:hover {
   color: #DDD;
   background-color: #666;
 }
 
-[id$="-bug-timeline"] {
+[id$="-preview-pane"] .bug-timeline {
   border-color: #DDD;
 }
 
 [itemprop="comment"] {
-  border-color: #DDD;
+  border-color: #CCC;
   background-color: #FFF;
 }
 
 [itemprop="comment"] header,
 [itemprop="comment"] .changes {
-  border-color: #DDD;
-  background-color: #F9F9F9;
+  border-color: #CCC;
+  background-color: #DDD;
 }
 
 [itemprop="comment"] header [role="button"] {
@@ -248,6 +248,31 @@ a[role="link"] {
   color: #999;
 }
 
+.bug-attachments [itemprop="associatedMedia"] {
+  border-color:  #CCC;
+  background-color: #FFF;
+}
+
+.bug-attachments [itemprop="associatedMedia"] h4 {
+  border-color: #CCC;
+  background-color: #DDD;
+}
+
+.bug-history thead th {
+  background-color: #DDD;
+}
+
+.bug-history tbody th,
+.bug-history tbody td {
+  background-color: #FFF;
+}
+
+.bug-history thead th,
+.bug-history tbody th,
+.bug-history tbody td {
+  border-color: #CCC;
+}
+
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"],
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
   border-color: #CCC;
@@ -255,6 +280,18 @@ a[role="link"] {
 
 #main-tabpanels [role="tabpanel"] > footer {
   background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+[id^="tabpanel-details-"][role="tablist"] {
+  background-color: #EEE;
+}
+
+[id^="tabpanel-details-"][role="tablist"] [role="tab"] {
+  background-color: #F9F9F9;
+}
+
+[id^="tabpanel-details-"][role="tablist"] [role="tab"][aria-selected="true"] {
+  background-color: #DDD;
 }
 
 #tabpanel-settings > div {
