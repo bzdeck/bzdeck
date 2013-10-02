@@ -63,13 +63,13 @@ BzDeck.HomePage = function () {
 
   let folders = this.folders = new BGw.ListBox(document.getElementById('home-folders'), folder_data);
   folders.view = new Proxy(folders.view, {
-    set: (obj, prop, value) => {
+    set: function (obj, prop, value) {
       if (prop === 'selected') {
         let $folder = Array.isArray(value) ? value[0] : value;
         this.data.folder_id = $folder.dataset.id;
       }
       obj[prop] = value;
-    }
+    }.bind(this)
   });
 
   // Use custom scrollbar on desktop
@@ -89,7 +89,7 @@ BzDeck.HomePage = function () {
 
   this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
-    columns: columns.map(col => {
+    columns: columns.map(function (col) {
       // Add labels
       switch (col.id) {
         case '_starred': {
@@ -115,12 +115,12 @@ BzDeck.HomePage = function () {
                                 { key: 'id', order: 'ascending' }
   });
 
-  $grid.addEventListener('Sorted', event => {
+  $grid.addEventListener('Sorted', function (event) {
     prefs['home.list.sort_conditions'] = event.detail.conditions;
   });
 
-  $grid.addEventListener('ColumnModified', event => {
-    prefs['home.list.columns'] = event.detail.columns.map(col => {
+  $grid.addEventListener('ColumnModified', function (event) {
+    prefs['home.list.columns'] = event.detail.columns.map(function (col) {
       return {
         id: col.id,
         type: col.type || 'string',
@@ -129,7 +129,7 @@ BzDeck.HomePage = function () {
     });
   });
 
-  $grid.addEventListener('Selected', event => {
+  $grid.addEventListener('Selected', function (event) {
     let ids = event.detail.ids;
     if (ids.length) {
       // Show Bug in Preview Pane
@@ -145,17 +145,17 @@ BzDeck.HomePage = function () {
         _data._unread = false;
       }
     }
-  });
+  }.bind(this));
 
-  $grid.addEventListener('dblclick', event => {
+  $grid.addEventListener('dblclick', function (event) {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
       BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
     }
-  });
+  }.bind(this));
 
-  $grid.addEventListener('keydown', event => {
+  $grid.addEventListener('keydown', function (event) {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,
@@ -183,15 +183,15 @@ BzDeck.HomePage = function () {
         _data._starred = _data._starred !== true;
       }
     }
-  }, true); // use capture
+  }.bind(this), true); // use capture
 
   // Show Details button
   let $button = document.getElementById('home-button-show-details'),
       button = this.view.details_button = new BriteGrid.widget.Button($button);
 
-  $button.addEventListener('Pressed', event => {
+  $button.addEventListener('Pressed', function (event) {
     BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
-  });
+  }.bind(this));
 
   this.data = new Proxy({
     bug_list: [],
@@ -199,18 +199,18 @@ BzDeck.HomePage = function () {
     preview_id: null
   },
   {
-    get: (obj, prop) => {
+    get: function (obj, prop) {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
         for (let bug of obj[prop]) {
           bugs[bug.id] = bug;
         }
-        return this.view.grid.data.rows.map(row => bugs[row.data.id]);
+        return this.view.grid.data.rows.map(function (row) bugs[row.data.id]);
       }
       return obj[prop];
-    },
-    set: (obj, prop, newval) => {
+    }.bind(this),
+    set: function (obj, prop, newval) {
       let oldval = obj[prop];
       // On mobile, the same folder can be selected
       if (!mobile && oldval === newval) {
@@ -223,7 +223,7 @@ BzDeck.HomePage = function () {
         this.show_preview(oldval, newval);
       }
       obj[prop] = newval;
-    }
+    }.bind(this)
   });
 
   // Select the 'Inbox' folder
@@ -233,8 +233,8 @@ BzDeck.HomePage = function () {
   BriteGrid.util.app.auth_notification();
 
   // Update UI: the Unread folder on the home page
-  BzDeck.model.get_all_bugs(bugs => {
-    bugs = bugs.filter(bug => bug._unread);
+  BzDeck.model.get_all_bugs(function (bugs) {
+    bugs = bugs.filter(function (bug) bug._unread);
     let num = bugs.length,
         $label = document.querySelector('[id="home-folders--unread"] label');
     if (!num) {
@@ -272,7 +272,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, bug => {
+  BzDeck.model.get_bug_by_id(newval, function (bug) {
     if (!bug) {
       $template.setAttribute('aria-hidden', 'true');
       button.data.disabled = true;
@@ -288,19 +288,20 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 BzDeck.HomePage.prototype.open_folder = function (folder_id) {
   this.data.preview_id = null;
 
-  let update_list = bugs => {
+  let update_list = function (bugs) {
     this.data.bug_list = bugs;
     BzDeck.global.update_grid_data(this.view.grid, bugs);
-  };
+  }.bind(this);
 
-  let get_subscribed_bugs = callback => {
-    BzDeck.model.get_all_subscriptions(subscriptions => {
+  let get_subscribed_bugs = function (callback) {
+    BzDeck.model.get_all_subscriptions(function (subscriptions) {
       let ids = [];
       for (let sub of subscriptions) {
         // Remove duplicates
-        ids = ids.concat(sub.bugs.map(bug => bug.id).filter(id => ids.indexOf(id) === -1));
+        ids = ids.concat(sub.bugs.map(function (bug) bug.id)
+                                 .filter(function (id) ids.indexOf(id) === -1));
       }
-      BzDeck.model.get_bugs_by_ids(ids, bugs => {
+      BzDeck.model.get_bugs_by_ids(ids, function (bugs) {
         callback(bugs);
       });
     });
@@ -314,7 +315,8 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
   }
 
   // Change the window title and the tab label
-  let folder_label = this.folder_data.filter(folder => folder.data.id === folder_id)[0].label;
+  let folder_label = this.folder_data
+                         .filter(function (folder) folder.data.id === folder_id)[0].label;
   document.title = folder_label + ' | BzDeck'; // l10n
   document.querySelector('[role="banner"] h1').textContent = folder_label;
   document.querySelector('#tab-home').title = folder_label;
@@ -328,43 +330,44 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id === 'inbox') {
-    get_subscribed_bugs(bugs => {
-      bugs.reverse((a, b) => a.last_change_time > b.last_change_time);
+    get_subscribed_bugs(function (bugs) {
+      bugs.reverse(function (a, b) a.last_change_time > b.last_change_time);
       update_list(bugs.slice(0, 50)); // Recent 50 bugs
     });
   }
 
   if (folder_id.match(/^subscriptions\/(.*)/)) {
-    BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
-      BzDeck.model.get_bugs_by_ids(sub.bugs.map(bug => bug.id), bugs => {
+    BzDeck.model.get_subscription_by_id(RegExp.$1, function (sub) {
+      BzDeck.model.get_bugs_by_ids(sub.bugs.map(function (bug) bug.id), function (bugs) {
         update_list(bugs);
       });
     });
   }
 
   if (folder_id === 'subscriptions') {
-    get_subscribed_bugs(bugs => {
+    get_subscribed_bugs(function (bugs) {
       update_list(bugs);
     });
   }
 
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
-    BzDeck.model.get_all_bugs(bugs => {
-      update_list(bugs.filter(bug => bug._starred));
+    BzDeck.model.get_all_bugs(function (bugs) {
+      update_list(bugs.filter(function (bug) bug._starred));
     });
   }
 
   if (folder_id === 'unread') {
     // Unread bugs may include non-subscribed bugs, so get ALL bugs
-    BzDeck.model.get_all_bugs(bugs => {
-      update_list(bugs.filter(bug => bug._unread));
+    BzDeck.model.get_all_bugs(function (bugs) {
+      update_list(bugs.filter(function (bug) bug._unread));
     });
   }
 
   if (folder_id === 'important') {
-    get_subscribed_bugs(bugs => {
-      update_list(bugs.filter(bug => ['blocker', 'critical', 'major'].indexOf(bug.severity) > -1));
+    get_subscribed_bugs(function (bugs) {
+      update_list(bugs.filter(
+        function (bug) ['blocker', 'critical', 'major'].indexOf(bug.severity) > -1));
     });
   }
 };

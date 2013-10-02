@@ -11,7 +11,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      existing_tab = tablist.view.members.filter(tab => tab.id === 'tab-settings')[0];
+      existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-settings')[0];
 
   if (existing_tab) {
     tablist.view.selected = tablist.view.focused = existing_tab;
@@ -41,7 +41,7 @@ BzDeck.SettingsPage = function () {
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
     }
-    $rgroup.addEventListener('Selected', event => {
+    $rgroup.addEventListener('Selected', function (event) {
       let value = prefs[pref] = event.detail.items[0].dataset.value;
       callback(value);
     });
@@ -55,7 +55,7 @@ BzDeck.SettingsPage = function () {
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.setAttribute('aria-checked', $radio.dataset.value === BriteGrid.util.theme.selected);
     }
-    $rgroup.addEventListener('Selected', event => {
+    $rgroup.addEventListener('Selected', function (event) {
       BriteGrid.util.theme.selected = prefs[pref] = event.detail.items[0].dataset.value;
     });
     new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
@@ -68,7 +68,7 @@ BzDeck.SettingsPage = function () {
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
     }
-    $rgroup.addEventListener('Selected', event => {
+    $rgroup.addEventListener('Selected', function (event) {
       prefs[pref] = i18n.options.date[pref.replace('ui.date.', '')]
                   = event.detail.items[0].dataset.value;
       // Update timezone & format on the current view

@@ -101,8 +101,8 @@ BzDeck.bootstrap.check_requirements = function () {
   ];
 
   try {
-    // (Strict) feature detection & arrow function expression (Firefox 22)
-    if (!features.every(item => item)) {
+    // (Strict) feature detection
+    if (!features.every(function (item) item)) {
       throw new Error;
     }
     // Iterator and destructuring assignment (Firefox 2)
@@ -129,12 +129,12 @@ BzDeck.bootstrap.start = function () {
 BzDeck.bootstrap.open_database = function () {
   let req = indexedDB.open('BzDeck'); // Version 1
 
-  req.addEventListener('error', event => {
+  req.addEventListener('error', function (event) {
     BzDeck.global.show_status('ERROR: Cannot open the database.'); // l10n
   });
 
   // The database is created or upgraded
-  req.addEventListener('upgradeneeded', event => {
+  req.addEventListener('upgradeneeded', function (event) {
     let db = BzDeck.model.db = event.target.result,
         stores = {
           // Bugzilla data
@@ -153,26 +153,26 @@ BzDeck.bootstrap.open_database = function () {
     }    
   });
 
-  req.addEventListener('success', event => {
+  req.addEventListener('success', function (event) {
     BzDeck.model.db = event.target.result;
 
     this.load_config();
     this.load_account();
     this.load_prefs();
-  });
+  }.bind(this));
 };
 
 BzDeck.bootstrap.load_config = function () {
   let store = BzDeck.model.db.transaction('bugzilla').objectStore('bugzilla');
 
-  store.get('config').addEventListener('success', event => {
+  store.get('config').addEventListener('success', function (event) {
     let result = event.target.result;
     if (result) {
       // Cache found
       BzDeck.data.bugzilla_config = result.value;
     } else if (navigator.onLine) {
       // Load the Bugzilla config in background
-      BzDeck.core.request('GET', 'configuration?cached_ok=1', event => {
+      BzDeck.core.request('GET', 'configuration?cached_ok=1', function (event) {
         let response = event.target.responseText,
             data = response ? JSON.parse(response) : null;
         if (event.type === 'error' || !data || !data.version) {
@@ -186,18 +186,18 @@ BzDeck.bootstrap.load_config = function () {
           BzDeck.model.db.transaction('bugzilla', 'readwrite')
                          .objectStore('bugzilla').add({ key: 'config', value: data });
         }
-      });
+      }.bind(this));
     } else {
       // Offline; give up
       BzDeck.global.show_status('You have to go online to load data.'); // l10n
     }
-  });
+  }.bind(this));
 };
 
 BzDeck.bootstrap.load_account = function () {
   let store = BzDeck.model.db.transaction('accounts').objectStore('accounts');
 
-  store.openCursor().addEventListener('success', event => {
+  store.openCursor().addEventListener('success', function (event) {
     let cursor = event.target.result;
     if (cursor) {
       // Cache found (the first entry)
@@ -206,19 +206,20 @@ BzDeck.bootstrap.load_account = function () {
     } else {
       this.show_login_form();
     }
-  });
+  }.bind(this));
 };
 
 BzDeck.bootstrap.load_prefs = function () {
   let db = BzDeck.model.db;
-  db.transaction('prefs').objectStore('prefs').mozGetAll().addEventListener('success', event => {
+  db.transaction('prefs').objectStore('prefs').mozGetAll()
+    .addEventListener('success', function (event) {
     let prefs = {};
     for (let { key, value } of event.target.result) {
       prefs[key] = value;
     }
 
     BzDeck.data.prefs = new Proxy(prefs, {
-      set: (obj, key, value) => {
+      set: function (obj, key, value) {
         obj[key] = value;
         // Save the pref to DB
         db.transaction('prefs', 'readwrite').objectStore('prefs').put({ key: key, value: value });
@@ -240,7 +241,7 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
     return;
   }
 
-  $form.addEventListener('submit', event => {
+  $form.addEventListener('submit', function (event) {
     event.preventDefault();
 
     if (!this.processing) {
@@ -256,7 +257,7 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
     }
 
     return false;
-  });
+  }.bind(this));
 
   BzDeck.global.show_status('');
 };
@@ -268,7 +269,7 @@ BzDeck.bootstrap.validate_account = function () {
   BzDeck.global.show_status('Confirming account...'); // l10n
   $input.disabled = $button.disabled = true;
 
-  BzDeck.core.request('GET', 'user/' + encodeURIComponent($input.value), event => {
+  BzDeck.core.request('GET', 'user/' + encodeURIComponent($input.value), function (event) {
     let response = event.target.responseText,
         data = response ? JSON.parse(response) : null;
 
@@ -323,7 +324,7 @@ BzDeck.bootstrap.setup_ui = function () {
   }
 
   // Preload images from CSS
-  BGut.preload_images(() => {});
+  BGut.preload_images(function () {});
 
   this.finish();
 };
@@ -333,7 +334,7 @@ BzDeck.bootstrap.finish = function () {
   // BzDeck.core.load_bug_details_at_intervals();
 
   // Timer to check for updates
-  BzDeck.core.timers.load_subscriptions = window.setInterval(() => {
+  BzDeck.core.timers.load_subscriptions = window.setInterval(function () {
     BzDeck.core.load_subscriptions();
   }, 600000); // Call every 10 minutes
 
@@ -354,16 +355,16 @@ BzDeck.core.load_subscriptions = function () {
 
   BzDeck.global.show_status('Checking for new bugs...'); // l10n
 
-  BzDeck.model.get_all_subscriptions(subscriptions => {
+  BzDeck.model.get_all_subscriptions(function (subscriptions) {
     if (subscriptions.length) {
-      BzDeck.model.get_all_bugs(bugs => {
+      BzDeck.model.get_all_bugs(function (bugs) {
         // List all starred bugs to check the last modified dates
-        let ids = bugs.filter(bug => bug._starred).map(bug => bug.id);
+        let ids = bugs.filter(function (bug) bug._starred).map(function (bug) bug.id);
         if (ids.length) {
           subscriptions.push({ query: { id: ids.join(',') } });
         }
         this.fetch_subscriptions(subscriptions);
-      });
+      }.bind(this));
       return;
     }
 
@@ -395,7 +396,7 @@ BzDeck.core.load_subscriptions = function () {
     }
 
     this.fetch_subscriptions(subscriptions);
-  });  
+  }.bind(this));  
 };
 
 BzDeck.core.fetch_subscriptions = function (subscriptions) {
@@ -414,7 +415,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
   for (let [i, sub] of Iterator(subscriptions)) {
     let index = i; // Redefine the variable to make it available in the following event
     sub.query['include_fields'] = 'id,last_change_time';
-    this.request('GET', 'bug' + build_query(sub.query), event => {
+    this.request('GET', 'bug' + build_query(sub.query), function (event) {
       let response = event.target.responseText,
           data = response ? JSON.parse(response) : null;
       if (!data || !Array.isArray(data.bugs)) {
@@ -430,7 +431,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
         BzDeck.model.save_subscriptions(subscriptions);
         this.load_bugs(subscriptions);
       }
-    });
+    }.bind(this));
   }
 };
 
@@ -442,8 +443,8 @@ BzDeck.core.load_bugs = function (subscriptions) {
   BzDeck.global.show_status('Loading bugs...'); // l10n
 
   // Step 1: look for bugs in the local storage
-  let _get = () => {
-    BzDeck.model.get_all_bugs(bugs => {
+  let _get = function () {
+    BzDeck.model.get_all_bugs(function (bugs) {
       for (let bug of bugs) {
         cached_time[bug.id] = bug.last_change_time;
       }
@@ -469,7 +470,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
   };
 
   // Step 2: determine which bugs should be loaded from Bugzilla
-  let _list = () => {
+  let _list = function () {
     for (let sub of subscriptions) {
       for (let bug of sub.bugs) {
         let cache = cached_time[bug.id];
@@ -494,7 +495,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
   }
 
   // Step 3: load the listed bugs from Bugzilla
-  let _retrieve = () => {
+  let _retrieve = function () {
     let loaded_bugs = [];
     // Load 10 bugs each request
     for (let i = 0, len = requesting_bugs.length; i < len; i += 100) {
@@ -502,7 +503,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
         include_fields: '_default',
         id: requesting_bugs.slice(i, i + 100).join(',')
       });
-      this.request('GET', 'bug' + query, event => {
+      this.request('GET', 'bug' + query, function (event) {
         let response = event.target.responseText,
             data = response ? JSON.parse(response) : null;
         if (!data || !Array.isArray(data.bugs)) {
@@ -522,9 +523,9 @@ BzDeck.core.load_bugs = function (subscriptions) {
           BzDeck.bootstrap.setup_ui();
           BzDeck.core.toggle_unread_ui();
         }
-      });
+      }.bind(this));
     }
-  };
+  }.bind(this);
 
   // Start processing
   _get();
@@ -536,7 +537,7 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
     include_fields: 'id,' + BzDeck.options.api.extra_fields.join(','),
     exclude_fields: 'attachments.data'
   });
-  this.request('GET', 'bug' + query, event => {
+  this.request('GET', 'bug' + query, function (event) {
     let response = event.target.responseText,
         data = response ? JSON.parse(response) : null;
     if (!data) {
@@ -545,7 +546,7 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
       return;
     }
     for (let _bug of data.bugs) {
-      BzDeck.model.get_bug_by_id(_bug.id, bug => {
+      BzDeck.model.get_bug_by_id(_bug.id, function (bug) {
         for (let [field, value] of Iterator(_bug)) {
           bug[field] = value;
         }
@@ -561,10 +562,10 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
 };
 
 BzDeck.core.load_bug_details_at_intervals = function () {
-  BzDeck.model.get_all_bugs(bugs => {
+  BzDeck.model.get_all_bugs(function (bugs) {
     // Load comments, history, flags and attachments' metadata
-    let queue = bugs.filter(bug => bug._update_needed).map(bug => bug.id);
-    let timer = this.timers.load_bug_details_at_intervals = window.setInterval(() => {
+    let queue = bugs.filter(function (bug) bug._update_needed).map(function (bug) bug.id);
+    let timer = this.timers.load_bug_details_at_intervals = window.setInterval(function () {
       if (queue.length) {
         // Load 20 bugs each
         this.load_bug_details(queue.splice(0, 20));
@@ -572,13 +573,13 @@ BzDeck.core.load_bug_details_at_intervals = function () {
         // All bugs loaded
         window.clearInterval(timer);
       }
-    }, 5000); // Call every 5 seconds
-  });
+    }.bind(this), 5000); // Call every 5 seconds
+  }.bind(this));
 };
 
 BzDeck.core.toggle_star = function (bug_id, value) {
   // Save in DB
-  BzDeck.model.get_bug_by_id(bug_id, bug => {
+  BzDeck.model.get_bug_by_id(bug_id, function (bug) {
     if (bug) {
       bug._starred = value;
       BzDeck.model.save_bug(bug);
@@ -590,19 +591,19 @@ BzDeck.core.toggle_star = function (bug_id, value) {
 
 BzDeck.core.toggle_unread = function (bug_id, value) {
   // Save in DB
-  BzDeck.model.get_bug_by_id(bug_id, bug => {
+  BzDeck.model.get_bug_by_id(bug_id, function (bug) {
     if (bug && bug._unread !== value) {
       bug._unread = value;
       BzDeck.model.save_bug(bug);
       this.toggle_unread_ui();
     }
-  });
+  }.bind(this));
 };
 
 BzDeck.core.toggle_unread_ui = function () {
   // Update UI: the Unread folder on the home page
-  BzDeck.model.get_all_bugs(bugs => {
-    let count = bugs.filter(bug => bug._unread === true).length,
+  BzDeck.model.get_all_bugs(function (bugs) {
+    let count = bugs.filter(function (bug) bug._unread).length,
         $label = document.querySelector('[id="home-folders--unread"] label');
     if ($label) {
       $label.textContent = count ? 'Unread (%d)'.replace('%d', count) : 'Unread'; // l10n
@@ -624,8 +625,8 @@ BzDeck.core.request = function (method, query, callback) {
   xhr.open(method, url + query, true);
   xhr.setRequestHeader('Accept', 'application/json');
   xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.addEventListener('load', event => callback(event));
-  xhr.addEventListener('error', event => callback(event));
+  xhr.addEventListener('load', function (event) callback(event));
+  xhr.addEventListener('error', function (event) callback(event));
   xhr.send(null);
 };
 
@@ -653,7 +654,7 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
     }
   }
 
-  store.get(id).addEventListener('success', event => {
+  store.get(id).addEventListener('success', function (event) {
     let bug = event.target.result;
     if (bug && record_time) {
       bug._last_viewed = Date.now();
@@ -670,13 +671,14 @@ BzDeck.model.get_bugs_by_ids = function (ids, callback) {
   let cache = this.cache.bugs;
 
   if (cache) {
-    callback([...cache].map(item => item[1]).filter(bug => ids.indexOf(bug.id) > -1));
+    callback([...cache].map(function (item) item[1])
+                       .filter(function (bug) ids.indexOf(bug.id) > -1));
     return;
   }
 
   this.db.transaction('bugs').objectStore('bugs')
-         .mozGetAll().addEventListener('success', event => {
-    callback(event.target.result.filter(bug => ids.indexOf(bug.id) > -1));
+         .mozGetAll().addEventListener('success', function (event) {
+    callback(event.target.result.filter(function (bug) ids.indexOf(bug.id) > -1));
   });
 };
 
@@ -684,18 +686,18 @@ BzDeck.model.get_all_bugs = function (callback) {
   let cache = this.cache.bugs;
 
   if (cache) {
-    callback([...cache].map(item => item[1])); // Convert Map to Array
+    callback([...cache].map(function (item) item[1])); // Convert Map to Array
     return;
   }
 
   this.db.transaction('bugs').objectStore('bugs')
-         .mozGetAll().addEventListener('success', event => {
+         .mozGetAll().addEventListener('success', function (event) {
     let bugs = event.target.result; // array of Bug
     callback(bugs);
     if (bugs && !cache) {
-      this.cache.bugs = new Map(bugs.map(bug => [bug.id, bug]));
+      this.cache.bugs = new Map(bugs.map(function (bug) [bug.id, bug]));
     }
-  });
+  }.bind(this));
 };
 
 BzDeck.model.save_bug = function (bug) {
@@ -728,7 +730,7 @@ BzDeck.model.get_subscription_by_id = function (id, callback) {
 
   let store = this.db.transaction('subscriptions').objectStore('subscriptions');
 
-  store.get(id).addEventListener('success', event => {
+  store.get(id).addEventListener('success', function (event) {
     callback(event.target.result);
   });
 };
@@ -737,13 +739,13 @@ BzDeck.model.get_all_subscriptions = function (callback) {
   let cache = this.cache.subscriptions;
 
   if (cache) {
-    callback([...cache].map(item => item[1])); // Convert Map to Array
+    callback([...cache].map(function (item) item[1])); // Convert Map to Array
     return;
   }
 
   let store = this.db.transaction('subscriptions').objectStore('subscriptions');
 
-  store.mozGetAll().addEventListener('success', event => {
+  store.mozGetAll().addEventListener('success', function (event) {
     callback(event.target.result);
   });
 };
@@ -828,7 +830,7 @@ BzDeck.session.logout = function () {
 BzDeck.global = {};
 
 BzDeck.global.install_app = function () {
-  BriteGrid.util.app.install(BzDeck.options.app.manifest, event => {
+  BriteGrid.util.app.install(BzDeck.options.app.manifest, function (event) {
     if (event.type === 'success') {
       document.getElementById('main-menu--app--install').setAttribute('aria-disabled', 'true');
     }
@@ -968,9 +970,9 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     this.fill_template_details($content, bug);
   } else {
     // Load comments, history, flags and attachments' metadata
-    BzDeck.core.load_bug_details([bug.id], bug => {
+    BzDeck.core.load_bug_details([bug.id], function (bug) {
       this.fill_template_details($content, bug);
-    });
+    }.bind(this));
   }
 
   return $content;
@@ -1019,7 +1021,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           let $li = $ul.appendChild(document.createElement('li'));
           $li.textContent = value;
           $li.setAttribute('role', 'button');
-          $li.addEventListener('Pressed', event => {
+          $li.addEventListener('Pressed', function (event) {
             let id = Number.toInteger(event.explicitOriginalTarget.textContent);
             BzDeck.detailspage = new BzDeck.DetailsPage(id);
           });
@@ -1210,7 +1212,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     }
     let $changes = $entry.appendChild(document.createElement('ul'));
     $changes.className = 'changes';
-    let generate_element = (change, how) => {
+    let generate_element = function (change, how) {
       let $elm = document.createElement((how === 'removed') ? 'del' : 'ins');
       if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
         $elm.innerHTML = change[how].replace(
@@ -1245,7 +1247,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     _entries.push({ time: time, element: template });
   }
   let sort_order = prefs['ui.timeline.sort.order'] || 'ascending';
-  _entries.sort((a, b) => (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
+  _entries.sort(function (a, b) (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
   let $parent = $timeline.querySelector('section') || $timeline;
   // Mobile compact layout: insert bug summary
   if (BriteGrid.widget.mode.layout === 'mobile') {
@@ -1294,13 +1296,13 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
       row.data[field] = value;
     }
     row.data = new Proxy(row.data, {
-      set: (obj, prop, value) => {
+      set: function (obj, prop, value) {
         if (prop === '_starred') {
           BzDeck.core.toggle_star(obj.id, value);
         }
         if (prop === '_unread') {
           BzDeck.core.toggle_unread(obj.id, value);
-          let row = grid.data.rows.filter(row => row.data.id === obj.id)[0];
+          let row = grid.data.rows.filter(function (row) row.data.id === obj.id)[0];
           if (row && row.element) {
             row.element.dataset.unread = value;
           }
@@ -1392,7 +1394,7 @@ BzDeck.toolbar.setup = function () {
 
   // Change the window title when a new tab is selected
   tablist.view = new Proxy(tablist.view, {
-    set: (obj, prop, value) => {
+    set: function (obj, prop, value) {
       if (prop === 'selected') {
         value = (Array.isArray(value)) ? value : [value];
         let hash = '#' + value[0].id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
@@ -1414,7 +1416,7 @@ BzDeck.toolbar.setup = function () {
   new BGw.MenuBar(document.querySelector('#main-menu'));
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
-  $app_menu.addEventListener('MenuItemSelected', event => {
+  $app_menu.addEventListener('MenuItemSelected', function (event) {
     switch (event.detail.command) {
       case 'show-settings': {
         new BzDeck.SettingsPage();
@@ -1436,7 +1438,7 @@ BzDeck.toolbar.setup = function () {
   });
 
   // Do something when the app menu is opened
-  $app_menu.addEventListener('MenuOpened', event => {
+  $app_menu.addEventListener('MenuOpened', function (event) {
   });
 
   // Account label & avatar
@@ -1445,7 +1447,7 @@ BzDeck.toolbar.setup = function () {
                     + '<br>' + account.name,
       account_img = new Image();
   document.querySelector('#main-menu--app--account label').innerHTML = account_label;
-  account_img.addEventListener('load', event => {
+  account_img.addEventListener('load', function (event) {
     document.styleSheets[1].insertRule('#main-menu--app--account label:before '
       + '{ background-image: url(' + event.target.src + ') !important }', 0);
   });
@@ -1456,7 +1458,7 @@ BzDeck.toolbar.setup = function () {
     document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');
   }
 
-  BGu.app.can_install(BzDeck.options.app.manifest, result => {
+  BGu.app.can_install(BzDeck.options.app.manifest, function (result) {
     if (result) {
       document.getElementById('main-menu--app--install').removeAttribute('aria-disabled');
     }
@@ -1468,7 +1470,7 @@ BzDeck.toolbar.setup = function () {
 
   this.search_dropdown = new BriteGrid.widget.Menu($search_dropdown);
 
-  let exec_search = () => {
+  let exec_search = function () {
     let page = new BzDeck.SearchPage(),
         terms = $search_box.value;
     if (terms) {
@@ -1481,14 +1483,14 @@ BzDeck.toolbar.setup = function () {
     }
   };
 
-  window.addEventListener('keydown', event => {
+  window.addEventListener('keydown', function (event) {
     if (event.keyCode === event.DOM_VK_K && (event.metaKey || event.ctrlKey)) {
       $search_box.focus();
       event.preventDefault();
     }
   });
 
-  window.addEventListener('mousedown', event => {
+  window.addEventListener('mousedown', function (event) {
     if (mobile) {
       let $banner = document.querySelector('[role="banner"]');
       if ($banner.classList.contains('search')) {
@@ -1497,29 +1499,29 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  $search_box.addEventListener('input', event => {
+  $search_box.addEventListener('input', function (event) {
     this.quicksearch(event);
-  });
+  }.bind(this));
 
-  $search_box.addEventListener('keydown', event => {
+  $search_box.addEventListener('keydown', function (event) {
     if (event.keyCode === event.DOM_VK_RETURN) {
       this.search_dropdown.close();
       exec_search();
     }
-  });
+  }.bind(this));
 
-  $search_box.addEventListener('mousedown', event => {
+  $search_box.addEventListener('mousedown', function (event) {
     event.stopPropagation();
   });
 
-  $search_button.addEventListener('keydown', event => {
+  $search_button.addEventListener('keydown', function (event) {
     if (event.keyCode === event.DOM_VK_RETURN ||
         event.keyCode === event.DOM_VK_SPACE) {
       exec_search();
     }
   });
 
-  $search_button.addEventListener('mousedown', event => {
+  $search_button.addEventListener('mousedown', function (event) {
     event.stopPropagation();
     if (mobile) {
       let $banner = document.querySelector('[role="banner"]');
@@ -1534,7 +1536,7 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  $search_dropdown.addEventListener('MenuItemSelected', event => {
+  $search_dropdown.addEventListener('MenuItemSelected', function (event) {
     // Show the bug or search results
     let $target = event.explicitOriginalTarget,
         id = $target.dataset.id;
@@ -1550,18 +1552,18 @@ BzDeck.toolbar.setup = function () {
   });
 
   // Suppress context menu
-  $search_box.addEventListener('contextmenu', event => {
+  $search_box.addEventListener('contextmenu', function (event) {
     return BGu.event.ignore(event);
   }, true); // use capture
 };
 
 BzDeck.toolbar.quicksearch = function (event) {
   let words = event.target.value.replace(/\s{2,}/, ' ').split(' ')
-                                .map(word => word.toLowerCase());
+                                .map(function (word) word.toLowerCase());
 
-  BzDeck.model.get_all_bugs(bugs => {
-    let results = bugs.filter(bug => {
-      return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
+  BzDeck.model.get_all_bugs(function (bugs) {
+    let results = bugs.filter(function (bug) {
+      return (words.every(function (word) bug.summary.toLowerCase().contains(word)) ||
               words.length === 1 && !isNaN(words[0]) && String(bug.id).contains(words[0])) && 
               BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
     });
@@ -1591,14 +1593,14 @@ BzDeck.toolbar.quicksearch = function (event) {
     dropdown.build(data);
     dropdown.view.container.scrollTop = 0;
     dropdown.open();
-  });
+  }.bind(this));
 };
 
 /* --------------------------------------------------------------------------
  * Events
  * -------------------------------------------------------------------------- */
 
-window.addEventListener('DOMContentLoaded', event => {
+window.addEventListener('DOMContentLoaded', function (event) {
   let test = false;
   if (test) {
     BzDeck.global.statusbar = document.querySelector('#app-login [role="status"]');
@@ -1621,16 +1623,16 @@ window.addEventListener('DOMContentLoaded', event => {
 
     $app_menu.removeAttribute('aria-hidden');
     $app_menu.removeAttribute('aria-expanded');
-    $app_menu.addEventListener('MenuClosed', event => {
+    $app_menu.addEventListener('MenuClosed', function (event) {
       // Keep the menu open
       $app_menu.removeAttribute('aria-expanded');
     });
 
-    $sidebar.addEventListener('click', event => {
+    $sidebar.addEventListener('click', function (event) {
       $sidebar.setAttribute('aria-hidden', $sidebar.getAttribute('aria-hidden') !== 'true');
     });
 
-    document.querySelector('[role="banner"] h1').addEventListener('click', event => {
+    document.querySelector('[role="banner"] h1').addEventListener('click', function (event) {
       let tabs = BzDeck.toolbar.tablist.view,
           $tab_home = document.querySelector('#tab-home');
       if (tabs.selected[0] === $tab_home) {
@@ -1648,19 +1650,19 @@ window.addEventListener('DOMContentLoaded', event => {
   }
 });
 
-window.addEventListener('contextmenu', event => {
+window.addEventListener('contextmenu', function (event) {
   event.preventDefault();
 });
 
-window.addEventListener('dragover', event => {
+window.addEventListener('dragover', function (event) {
   event.preventDefault();
 });
 
-window.addEventListener('drop', event => {
+window.addEventListener('drop', function (event) {
   event.preventDefault();
 });
 
-window.addEventListener('click', event => {
+window.addEventListener('click', function (event) {
   let $target = event.target;
 
   // Discard clicks on the fullscreen dialog
@@ -1693,7 +1695,7 @@ window.addEventListener('click', event => {
   return true;
 });
 
-window.addEventListener('keydown', event => {
+window.addEventListener('keydown', function (event) {
   let $target = event.target;
 
   if ($target.mozMatchesSelector('input, [role="textbox"]')) {
@@ -1738,7 +1740,7 @@ window.addEventListener('keydown', event => {
   return true;
 });
 
-window.addEventListener("popstate", event => {
+window.addEventListener("popstate", function (event) {
   let hash = location.hash.substr(1),
       tabs = BzDeck.toolbar.tablist.view,
       folders = BzDeck.homepage.folders.view,
@@ -1746,7 +1748,7 @@ window.addEventListener("popstate", event => {
 
   if (hash.match(/^bug\/(\d+)$/)) {
     let bug_id = Number.toInteger(RegExp.$1);
-    matched = tabs.members.filter(tab => tab.id === 'tab-details-' + bug_id)[0];
+    matched = tabs.members.filter(function (tab) tab.id === 'tab-details-' + bug_id)[0];
     if (matched) {
       tabs.selected = matched;
       return;
@@ -1754,7 +1756,7 @@ window.addEventListener("popstate", event => {
 
     let bug_list = BzDeck.detailspage.data.bug_list;
     if (bug_list.length) {
-      let bugs = bug_list.map(bug => bug.id),
+      let bugs = bug_list.map(function (bug) bug.id),
           index = bugs.indexOf(BzDeck.detailspage.data.id);
       if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
         // Back or Forward navigation
@@ -1768,14 +1770,14 @@ window.addEventListener("popstate", event => {
     return;
   }
 
-  matched = folders.members.filter(folder => folder.dataset.id === hash)[0];
+  matched = folders.members.filter(function (folder) folder.dataset.id === hash)[0];
   if (matched) {
     tabs.selected = document.querySelector('#tab-home');
     folders.selected = matched;
     return;
   }
 
-  matched = tabs.members.filter(tab => tab.id === 'tab-' + hash)[0];
+  matched = tabs.members.filter(function (tab) tab.id === 'tab-' + hash)[0];
   if (matched) {
     tabs.selected = matched;
     return;

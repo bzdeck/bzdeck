@@ -30,18 +30,18 @@ BzDeck.SearchPage = function () {
     preview_id: null
   },
   {
-    get: (obj, prop) => {
+    get: function (obj, prop) {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
         for (let bug of obj[prop]) {
           bugs[bug.id] = bug;
         }
-        return this.view.grid.data.rows.map(row => bugs[row.data.id]);
+        return this.view.grid.data.rows.map(function (row) bugs[row.data.id]);
       }
       return obj[prop];
-    },
-    set: (obj, prop, newval) => {
+    }.bind(this),
+    set: function (obj, prop, newval) {
       let oldval = obj[prop];
       if (oldval === newval) {
         return;
@@ -50,7 +50,7 @@ BzDeck.SearchPage = function () {
         this.show_preview(oldval, newval);
       }
       obj[prop] = newval;
-    }
+    }.bind(this)
   });
 
   let tab = tablist.add_tab(
@@ -73,7 +73,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let buttons = this.view.buttons,
       panes = this.view.panes;
 
-  let handler = event => {
+  let handler = function (event) {
     switch (event.target.dataset.command) {
       case 'show-details': {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -87,7 +87,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
         break;
       }
     }
-  };
+  }.bind(this);
 
   for (let $button of this.view.tabpanel.querySelectorAll('footer [role="button"]')) {
     buttons[$button.dataset.command] = new BriteGrid.widget.Button($button);
@@ -113,7 +113,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-  $classification_list.addEventListener('Selected', event => {
+  $classification_list.addEventListener('Selected', function (event) {
     let products = [],
         components = [];
     for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
@@ -136,7 +136,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     }
   });
 
-  $product_list.addEventListener('Selected', event => {
+  $product_list.addEventListener('Selected', function (event) {
     let components = [];
     for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
       components = components.concat(Object.keys(config.product[$option.textContent].component));
@@ -215,7 +215,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
       $button = $pane.querySelector('.text-box [role="button"]');
 
-  $button.addEventListener('Pressed', event => {
+  $button.addEventListener('Pressed', function (event) {
     let query = {};
 
     let map = {
@@ -242,7 +242,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     }
 
     this.exec_search(query);
-  });
+  }.bind(this));
 
   new BriteGrid.widget.Button($button);
 };
@@ -258,7 +258,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
   this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
-    columns: columns.map(col => {
+    columns: columns.map(function (col) {
       // Add labels
       switch (col.id) {
         case '_starred': {
@@ -284,12 +284,12 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
                                 { key: 'id', order: 'ascending' }
   });
 
-  $grid.addEventListener('Sorted', event => {
+  $grid.addEventListener('Sorted', function (event) {
     prefs['search.list.sort_conditions'] = event.detail.conditions;
   });
 
-  $grid.addEventListener('ColumnModified', event => {
-    prefs['search.list.columns'] = event.detail.columns.map(col => {
+  $grid.addEventListener('ColumnModified', function (event) {
+    prefs['search.list.columns'] = event.detail.columns.map(function (col) {
       return {
         id: col.id,
         type: col.type || 'string',
@@ -298,7 +298,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     });
   });
 
-  $grid.addEventListener('Selected', event => {
+  $grid.addEventListener('Selected', function (event) {
     let ids = event.detail.ids;
     if (ids.length) {
       // Show Bug in Preview Pane
@@ -308,18 +308,18 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
     }
-  });
+  }.bind(this));
 
-  $grid.addEventListener('dblclick', event => {
+  $grid.addEventListener('dblclick', function (event) {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
       let id = Number.toInteger($target.dataset.id);
       BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
     }
-  });
+  }.bind(this));
 
-  $grid.addEventListener('keydown', event => {
+  $grid.addEventListener('keydown', function (event) {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,
@@ -347,14 +347,14 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         _data._starred = _data._starred !== true;
       }
     }
-  }, true); // use capture
+  }.bind(this), true); // use capture
 
-  $pane.addEventListener('transitionend', event => {
+  $pane.addEventListener('transitionend', function (event) {
     let selected = this.view.grid.view.selected;
     if (event.propertyName === 'bottom' && selected.length) {
       this.view.grid.ensure_row_visibility(selected[selected.length - 1]);
     }
-  });
+  }.bind(this));
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
@@ -378,7 +378,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, bug => {
+  BzDeck.model.get_bug_by_id(newval, function (bug) {
     if (!bug) {
       // Unknown bug
       $template.setAttribute('aria-hidden', 'true');
@@ -395,7 +395,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     // Fill the content
     BzDeck.global.fill_template($template, bug);
     $template.setAttribute('aria-hidden', 'false');
-  });
+  }.bind(this));
 };
 
 BzDeck.SearchPage.prototype.exec_search = function (query) {
@@ -414,7 +414,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
 
-  BzDeck.core.request('GET', 'bug' + query, event => {
+  BzDeck.core.request('GET', 'bug' + query, function (event) {
     let response = event.target.responseText,
         data = response ? JSON.parse(response) : null;
     if (!data || !Array.isArray(data.bugs)) {
@@ -427,9 +427,9 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
     if (num > 0) {
       this.data.bug_list = data.bugs;
       // Save data
-      BzDeck.model.get_all_bugs(bugs => {
-        let saved_ids = new Set(bugs.map(bug => bug.id));
-        BzDeck.model.save_bugs(data.bugs.filter(bug => !saved_ids.has(bug.id)));
+      BzDeck.model.get_all_bugs(function (bugs) {
+        let saved_ids = new Set(bugs.map(function (bug) bug.id));
+        BzDeck.model.save_bugs(data.bugs.filter(function (bug) !saved_ids.has(bug.id)));
       });
       // Show results
       BzDeck.global.update_grid_data(this.view.grid, data.bugs);
@@ -443,5 +443,5 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
     }
     $grid_body.removeAttribute('aria-busy');
     BzDeck.global.show_status(status);
-  });
+  }.bind(this));
 };
