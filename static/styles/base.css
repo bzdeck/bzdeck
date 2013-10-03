@@ -1,3 +1,7 @@
+template {
+  display: none; /* backward compatibility */
+}
+
 body {
   overflow: hidden;
   position: absolute;

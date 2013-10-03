@@ -2,7 +2,7 @@
  * BzDeck Details Page
  * Copyright © 2013 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 23
+ * Requires: Firefox 18
  */
 
 'use strict';
@@ -83,8 +83,9 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 };
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
+  let $template = document.querySelector('template#tabpanel-details');
   return BzDeck.global.fill_template(
-    document.querySelector('template#tabpanel-details').content,
+    $template.content || $template,
     bug, true
   );
 };

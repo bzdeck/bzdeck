@@ -2,7 +2,7 @@
  * BzDeck Home Page
  * Copyright © 2013 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 23
+ * Requires: Firefox 18
  */
 
 'use strict';

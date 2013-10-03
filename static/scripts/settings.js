@@ -2,7 +2,7 @@
  * BzDeck Settings Page
  * Copyright © 2013 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 23
+ * Requires: Firefox 18
  */
 
 'use strict';
@@ -18,10 +18,19 @@ BzDeck.SettingsPage = function () {
     return;
   }
 
-  let $content = document.querySelector('#tabpanel-settings-template').content.cloneNode(),
+  let $template = document.querySelector('#tabpanel-settings-template'),
+      $content = ($template.content || $template).cloneNode(),
       $tabpanel = $content.querySelector('[role="tabpanel"]'),
       $rgroup,
+      id_suffix = this.id = (new Date()).getTime(),
       prefs = BzDeck.data.prefs;
+
+  // Assign unique IDs to support older browsers where HTMLTemplateElement is not implemented
+  for (let attr of ['id', 'aria-labelledby']) {
+    for (let $element of $content.querySelectorAll('[' + attr +']')) {
+      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, id_suffix));
+    }
+  }
 
   let tab = tablist.add_tab(
     'settings',
@@ -36,7 +45,7 @@ BzDeck.SettingsPage = function () {
   // A modern preference system is needed.
 
   let setup_radiogroup = function (id, default_value, callback = function (value) {}) {
-    let $rgroup = document.getElementById(id),
+    let $rgroup = $tabpanel.querySelector('[id$="{id}"]'.replace('{id}', id)),
         pref = $rgroup.dataset.pref;
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
@@ -49,7 +58,7 @@ BzDeck.SettingsPage = function () {
   };
 
   // Theme
-  $rgroup = $tabpanel.querySelector('#setting-theme');
+  $rgroup = $tabpanel.querySelector('[id$="setting-theme"]');
   if ($rgroup) {
     let pref = $rgroup.dataset.pref;
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
@@ -62,7 +71,7 @@ BzDeck.SettingsPage = function () {
   }
 
   let setup_date_setting = function (id, default_value) {
-    let $rgroup = document.getElementById(id),
+    let $rgroup = $tabpanel.querySelector('[id$="{id}"]'.replace('{id}', id)),
         pref = $rgroup.dataset.pref,
         i18n = BriteGrid.util.i18n;
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
@@ -72,7 +81,7 @@ BzDeck.SettingsPage = function () {
       prefs[pref] = i18n.options.date[pref.replace('ui.date.', '')]
                   = event.detail.items[0].dataset.value;
       // Update timezone & format on the current view
-      for (let $element of document.querySelectorAll('[datetime]')) {
+      for (let $element of document.querySelectorAll('time')) {
         $element.textContent = i18n.format_date($element.dateTime);
       }
     });

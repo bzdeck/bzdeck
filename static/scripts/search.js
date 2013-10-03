@@ -2,7 +2,7 @@
  * BzDeck Search Page
  * Copyright © 2013 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 23
+ * Requires: Firefox 18
  */
 
 'use strict';
@@ -11,7 +11,8 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      $content = document.querySelector('template#tabpanel-search').content.cloneNode(),
+      $template = document.querySelector('template#tabpanel-search'),
+      $content = ($template.content || $template).cloneNode(),
       id_suffix = this.id = (new Date()).getTime();
 
   // Assign unique IDs

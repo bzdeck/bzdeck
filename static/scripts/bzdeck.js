@@ -2,7 +2,7 @@
  * BzDeck Application Logic
  * Copyright © 2012 BriteGrid. All rights reserved.
  * Using: ECMAScript Harmony
- * Requires: Firefox 23
+ * Requires: Firefox 18
  */
 
 'use strict';
@@ -30,7 +30,7 @@ BzDeck.options = {
     ]
   },
   app: {
-    manifest: location.origin + '/manifest.webapp'
+    manifest: (location.origin || location.protocol + '//' + location.host) + '/manifest.webapp'
   },
   grid: {
     default_columns: [
@@ -93,11 +93,6 @@ BzDeck.bootstrap.check_requirements = function () {
     'isInteger' in Number, // Firefox 16
     'indexedDB' in window, // unprefixed in Firefox 16
     'onwheel' in window, // Firefox 17
-    'origin' in location, // Firefox 21
-    'Notification' in window, // Firefox 22
-    'HTMLTemplateElement' in window, // Firefox 22
-    'is' in Object, // Firefox 22
-    'remove' in Element.prototype // Firefox 23
   ];
 
   try {
