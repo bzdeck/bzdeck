@@ -399,6 +399,10 @@ a[role="link"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?20131004), 32, 192, 96, 128) !important;
 }
 
+[id^="tabpanel-details-"].tabpanels {
+  background-color: #FFF;
+}
+
 .bug-timeline h2 {
   background-color: #FFF;
 }

@@ -62,6 +62,21 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     $tabpanel.querySelector('div').appendChild($info_tp);
   }
 
+  // Hide tabs when scrolled down
+  if (BriteGrid.widget.mode.layout === 'mobile') {
+    let $tabs = $tabpanel.querySelector('[role="tablist"]');
+    for (let $_tabpanel of $tabpanel.querySelectorAll('[role="tabpanel"]')) {
+      let scroll_top = $_tabpanel.scrollTop;
+      $_tabpanel.addEventListener('scroll', function (event) {
+        let value = String(event.target.scrollTop - scroll_top > 0);
+        if ($tabs.getAttribute('aria-hidden') !== value) {
+          $tabs.setAttribute('aria-hidden', value);
+        }
+        scroll_top = event.target.scrollTop;
+      });
+    }
+  }
+
   this.view.tabpanel = $tabpanel;
   $tabpanel.setAttribute('aria-hidden', 'false');
 

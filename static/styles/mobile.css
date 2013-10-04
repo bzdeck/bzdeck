@@ -380,9 +380,28 @@ main {
   font-size: 1rem;
 }
 
+[id^="tabpanel-details-"][role="tablist"] {
+  z-index: 100;
+  transition: top .4s;
+}
+
+[id^="tabpanel-details-"][role="tablist"][aria-hidden="true"] {
+  display: block;
+  top: -4rem;
+  transition-duration: .8s;
+}
+
 [id^="tabpanel-details-"][role="tablist"] [role="tab"] {
   padding: .4rem 1rem;
   width: auto;
+}
+
+[id^="tabpanel-details-"].tabpanels {
+  top: 0;
+}
+
+[id^="tabpanel-details-"].tabpanels > [role="tabpanel"] {
+  padding-top: 4rem;
 }
 
 #tabpanel-settings > div {
@@ -408,46 +427,6 @@ main {
   top: 0;
   height: 100% !important;
 }
-
-/* --------------------------------------------------------------------------
- * Landscape mode
- * -------------------------------------------------------------------------- */
-
-@media (min-device-width: 361px) and (max-device-width: 640px) {
-
-[id^="tabpanel-details-"][role="tablist"] {
-  right: 0;
-  bottom: 0;
-  left: auto;
-  width: 10.4rem;
-  height: auto;
-}
-
-[id^="tabpanel-details-"].tabpanels {
-  top: 0;
-  right: 12rem;
-}
-
-[id^="tabpanel-details-"][role="tablist"] [role="tab"]:not([aria-hidden="true"]) {
-  display: block;
-  margin: 0;
-}
-
-[id^="tabpanel-details-"][role="tablist"] [role="tab"]:not([aria-hidden="true"]):first-of-type {
-  border-top-right-radius: .4rem;
-  border-bottom-left-radius: 0;
-}
-
-[id^="tabpanel-details-"][role="tablist"] [role="tab"]:not([aria-hidden="true"]):last-of-type {
-  border-top-right-radius: 0;
-  border-bottom-left-radius: .4rem;
-}
-
-.bug-timeline h2 {
-  padding-top: 1.2rem;
-}
-
-} /* end @media */
 
 /* --------------------------------------------------------------------------
  * Portrait mode
