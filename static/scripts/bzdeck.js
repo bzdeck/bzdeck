@@ -1396,6 +1396,9 @@ BzDeck.toolbar.setup = function () {
             title = value[0].title.replace('\n', ' – ');
         if (hash === '#home') {
           hash = '#' + BzDeck.homepage.data.folder_id;
+          document.documentElement.setAttribute('data-current-tab', 'home');
+        } else {
+          document.documentElement.setAttribute('data-current-tab', hash);
         }
         if (location.hash !== hash) {
           history.pushState({}, title, hash);
@@ -1624,7 +1627,9 @@ window.addEventListener('DOMContentLoaded', function (event) {
     });
 
     $sidebar.addEventListener('click', function (event) {
-      $sidebar.setAttribute('aria-hidden', $sidebar.getAttribute('aria-hidden') !== 'true');
+      let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+      document.documentElement.setAttribute('data-sidebar-hidden', hidden);
+      $sidebar.setAttribute('aria-hidden', hidden);
     });
 
     document.querySelector('[role="banner"] h1').addEventListener('click', function (event) {
@@ -1632,12 +1637,16 @@ window.addEventListener('DOMContentLoaded', function (event) {
           $tab_home = document.querySelector('#tab-home');
       if (tabs.selected[0] === $tab_home) {
         document.querySelector('#sidebar > div').scrollTop = 0;
-        $sidebar.setAttribute('aria-hidden', $sidebar.getAttribute('aria-hidden') !== 'true');
+        let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+        document.documentElement.setAttribute('data-sidebar-hidden', hidden);
+        $sidebar.setAttribute('aria-hidden', hidden);
       } else {
         tabs.selected = $tab_home;
       }
     });
   }
+
+  document.documentElement.setAttribute('data-current-tab', 'home');
 
   BzDeck.bootstrap.processing = true;
   if (BzDeck.bootstrap.check_requirements()) {
@@ -1743,6 +1752,8 @@ window.addEventListener("popstate", function (event) {
 
   if (hash.match(/^bug\/(\d+)$/)) {
     let bug_id = Number.toInteger(RegExp.$1);
+    document.documentElement.setAttribute('data-current-tab', 'bug/' + bug_id);
+
     matched = tabs.members.filter(function (tab) tab.id === 'tab-details-' + bug_id)[0];
     if (matched) {
       tabs.selected = matched;
@@ -1767,6 +1778,7 @@ window.addEventListener("popstate", function (event) {
 
   matched = folders.members.filter(function (folder) folder.dataset.id === hash)[0];
   if (matched) {
+    document.documentElement.setAttribute('data-current-tab', 'home');
     tabs.selected = document.querySelector('#tab-home');
     folders.selected = matched;
     return;
@@ -1774,11 +1786,13 @@ window.addEventListener("popstate", function (event) {
 
   matched = tabs.members.filter(function (tab) tab.id === 'tab-' + hash)[0];
   if (matched) {
+    document.documentElement.setAttribute('data-current-tab', hash);
     tabs.selected = matched;
     return;
   }
 
   // Fallback
+  document.documentElement.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#home-folders--inbox');
 });

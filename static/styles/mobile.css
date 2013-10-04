@@ -28,7 +28,25 @@
 }
 
 [role="banner"] h1 {
+  padding-left: 4.5rem;
   width: auto;
+  background-position: 1rem .5rem;
+}
+
+[role="banner"] h1:before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: .8rem;
+  height: 4rem;
+  background-position: 0 50%;
+  transition: background-position .4s ease .2s;
+  content: '';
+}
+
+:root[data-sidebar-hidden="false"] [role="banner"] h1:before {
+  background-position: -.2rem 50%;
 }
 
 [role="banner"].search h1 {
@@ -40,7 +58,7 @@
 }
 
 [role="banner"].search [role="toolbar"] {
-  left: 4rem;
+  left: 4.5rem;
 }
 
 #toolbar--search-menu {
@@ -64,11 +82,12 @@
 }
 
 [role="banner"] [role="search"] {
+  margin-left: 0;
   width: 4rem !important;
 }
 
 [role="banner"].search [role="search"] {
-  width: calc(100% - 1.6rem) !important;
+  width: calc(100% - .8rem) !important;
 }
 
 #quicksearch-dropdown {
@@ -110,7 +129,7 @@
   left: 0;
   overflow: auto;
   max-width: calc(360px - 4rem);
-  transition: all .3s;
+  transition: all .4s ease .1s; /* Set transition-delay to avoid conflict with setAttribute on <html> */
 }
 #sidebar[aria-hidden="true"] > div {
   right: 100%;

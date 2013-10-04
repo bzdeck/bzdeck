@@ -357,6 +357,14 @@ a[role="link"] {
 
 @media screen and (max-width: 640px) {
 
+[role="banner"] h1:before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png?2013100412), 0, 384, 32, 368);
+}
+
+:root[data-current-tab="home"] [role="banner"] h1:before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png?2013100412), 0, 368, 32, 352);
+}
+
 #sidebar > div {
   background-color: #333;
 }
