@@ -281,14 +281,6 @@ main {
   height: 2.4rem;
 }
 
-[role="grid"] td[data-id="_starred"] [role="checkbox"] {
-  background-position: -88px -28px !important;
-}
-
-[role="grid"] td[data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-position: -48px -28px !important;
-}
-
 #main-tabpanels [role="tabpanel"] > header,
 #main-tabpanels [role="tabpanel"] > footer {
   display: none;
