@@ -1,20 +1,20 @@
 CACHE MANIFEST
-# Version 2013-09-06 00:00
-/?090221
-/static/styles/lib/widget.css?090221
-/static/styles/base.css?090221
-/static/styles/mobile.css?100201
-/static/styles/themes/dark.css?090221
-/static/styles/themes/light.css?090221
-/static/scripts/lib/util.js?090221
-/static/scripts/lib/widget.js?090221
+# Version 2013-10-04 12:00
+/?2013100412
+/static/styles/lib/widget.css?2013100412
+/static/styles/base.css?2013100412
+/static/styles/mobile.css?2013100412
+/static/styles/themes/dark.css?2013100412
+/static/styles/themes/light.css?2013100412
+/static/scripts/lib/util.js?2013100412
+/static/scripts/lib/widget.js?2013100412
 /static/scripts/lib/crypto/md5.min.js
-/static/scripts/bzdeck.js?090600
-/static/scripts/home.js?090600
-/static/scripts/search.js?090600
-/static/scripts/details.js?090600
-/static/scripts/settings.js?090820
+/static/scripts/bzdeck.js?2013100412
+/static/scripts/home.js?2013100412
+/static/scripts/search.js?2013100412
+/static/scripts/details.js?2013100412
+/static/scripts/settings.js?2013100412
 /static/images/logo/icon-256.png
-/static/images/themes/dark/sprite.png?20131004
-/static/images/themes/light/sprite.png?20131004
+/static/images/themes/dark/sprite.png?2013100412
+/static/images/themes/light/sprite.png?2013100412
 /favicon.ico
