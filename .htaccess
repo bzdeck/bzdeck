@@ -21,6 +21,7 @@ RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
 # Rewrite: info
 RewriteRule ^about/?$       https://www.facebook.com/notes/bzdeck/introducing-bzdeck/269349649857418 [R,L]
 RewriteRule ^faq/?$         https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
+RewriteRule ^privacy/?$     https://marketplace.firefox.com/app/bzdeck/privacy [R,L]
 RewriteRule ^support/?$     https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
 RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.271135819678801.63434.240285432763840 [R,L]
 
