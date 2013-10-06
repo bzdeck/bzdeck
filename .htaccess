@@ -34,6 +34,7 @@ FileETag None
 # Performance: set Expires
 ExpiresActive On
 ExpiresDefault "access plus 5 days"
+ExpiresByType text/cache-manifest "access plus 0 seconds"
 
 # Performance: use gzip (Apache 2.x)
 AddOutputFilterByType DEFLATE text/html text/cache-manifest text/css application/javascript application/x-web-app-manifest+json
