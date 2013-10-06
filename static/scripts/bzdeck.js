@@ -1453,12 +1453,12 @@ BzDeck.toolbar.setup = function () {
 
   // Somehow scroll doesn't work in the fullscreen mode on mobile
   if (BGu.app.fullscreen_enabled && !mobile) {
-    document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-disabled');
+    document.getElementById('main-menu--app--fullscreen').removeAttribute('aria-hidden');
   }
 
   BGu.app.can_install(BzDeck.options.app.manifest, function (result) {
     if (result) {
-      document.getElementById('main-menu--app--install').removeAttribute('aria-disabled');
+      document.getElementById('main-menu--app--install').removeAttribute('aria-hidden');
     }
   });
 
