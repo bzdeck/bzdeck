@@ -617,6 +617,8 @@ main {
   line-height: 2rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+  pointer-events: auto;
+  -moz-user-select: text;
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > div {
