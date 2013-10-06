@@ -46,7 +46,7 @@
 }
 
 :root[data-sidebar-hidden="false"] [role="banner"] h1:before {
-  background-position: -.2rem 50%;
+  background-position: -.4rem 50%;
 }
 
 [role="banner"].search h1 {
@@ -73,21 +73,36 @@
   display: none;
 }
 
-#toolbar--search-menu input {
-  visibility: hidden;
-}
-
-[role="banner"].search #toolbar--search-menu input {
-  visibility: visible;
-}
-
 [role="banner"] [role="search"] {
-  margin-left: 0;
-  width: 4rem !important;
+  margin: .6rem .6rem .6rem 0;
+  width: 2.8rem !important;
+  height: 2.8rem !important;
 }
 
 [role="banner"].search [role="search"] {
-  width: calc(100% - .8rem) !important;
+  width: calc(100% - .6rem) !important;
+}
+
+[role="banner"] [role="search"] [role="textbox"] {
+  display: none;
+  border-radius: .8rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+[role="banner"].search [role="search"] [role="textbox"] {
+  display: block;
+}
+
+[role="banner"] [role="search"] [role="button"] {
+  margin: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+[role="banner"].search [role="search"] [role="button"] {
+  margin-left: -2.6em;
 }
 
 #quicksearch-dropdown {
@@ -109,7 +124,7 @@
   left: 0;
   overflow: hidden;
   width: 100%;
-  z-index: 100;
+  z-index: 200;
   background-color: rgba(0, 0, 0, .3);
   transition: background-color .3s;
   pointer-events: auto;
@@ -137,7 +152,7 @@
 }
 
 #sidebar > div > section:not(:last-of-type) {
-  margin-bottom: 1.6rem;
+  margin-bottom: 2rem;
 }
 
 #sidebar h2 {
@@ -172,7 +187,7 @@
 }
 
 #sidebar-account #main-menu--app--account {
-  height: auto;
+  padding: 1.2rem;
 }
 
 #sidebar-account #main-menu--app--account label {
@@ -245,6 +260,11 @@ main {
   height: 100%;
 }
 
+[role="grid"] .grid-body tbody tr[aria-selected="true"] {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
 [role="grid"] table,
 [role="grid"] tbody,
 [role="grid"] tr {
@@ -296,8 +316,12 @@ main {
   position: absolute;
   top: 2.4rem;
   right: .8rem;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+[role="grid"] td[data-id="_starred"] [role="checkbox"] {
+  background-size: 64%;
 }
 
 #main-tabpanels [role="tabpanel"] > header,
@@ -391,10 +415,6 @@ main {
   padding-top: .5rem;
 }
 
-[itemprop="comment"] [itemprop="text"] {
-  font-size: 1.1rem;
-}
-
 [itemprop="comment"] .changes {
   font-size: 1rem;
 }
@@ -434,8 +454,13 @@ main {
   margin: .8rem 0;
 }
 
-#tabpanel-settings > div > section > section {
+#tabpanel-settings > div > section > section h4 {
   font-size: 1.2rem;
+}
+
+#tabpanel-settings > div > section > section li {
+  margin: .8rem 0;
+  font-size: 1.4rem;
 }
 
 [id^="tabpanel-search-"] [id$="-basic-search-pane"] {

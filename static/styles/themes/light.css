@@ -112,7 +112,7 @@ a[role="link"] {
 
 [role="grid"] .grid-body tbody tr[aria-selected="true"] {
   color: #333;
-  background-color: #CCC !important;
+  background-color: #CCC;
 }
 
 [role="grid"] th,
@@ -400,7 +400,6 @@ a[role="link"] {
 
 [role="gridcell"][data-id="_starred"] [role="checkbox"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 128, 96, 64) !important;
-  background-size: 72%;
 }
 
 [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {

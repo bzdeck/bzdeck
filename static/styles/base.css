@@ -314,9 +314,8 @@ del a[role="link"] {
   background-image: url(/static/images/logo/icon-256.png);
   background-size: 3rem;
   background-position: .5rem .5rem;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   line-height: 2rem;
-  font-weight: bold;
 }
 
 [role="banner"] [role="toolbar"] {
@@ -381,22 +380,25 @@ del a[role="link"] {
 }
 
 #main-menu--app--account {
-  padding: 0 .8rem;
+  padding: .4rem .8rem;
   height: auto;
   opacity: 1;
 }
 
 #main-menu--app--account label {
-  padding-left: calc(3em + .8rem);
+  padding-left: 4.4rem;
+  height: 3.6rem;
+  line-height: 1.8rem;
 }
 
 #main-menu--app--account label:before {
   display: block;
   float: left;
-  margin: .3rem .4rem 0 calc(-3em + -.8rem);
+  margin: 0 .4rem 0 -4.4rem;
   border-radius: .2rem;
-  width: 3em;
-  height: 3em;
+  width: 3.6rem;
+  height: 3.6rem;
+  background-position: left top;
   content: '';
 }
 
@@ -407,20 +409,22 @@ del a[role="link"] {
 }
 
 [role="banner"] [role="search"] [role="textbox"] {
+  float: left;
   border: 0;
   border-radius: 3.2rem;
-  padding: .4rem 2.8rem .4rem .8rem;
+  padding: .4rem 3.2rem .4rem .8rem;
   height: 1.6rem;
-  width: calc(100% - 2.8rem - .8rem);
+  width: calc(100% - 4rem);
   line-height: 1.6rem;
 }
 
 [role="banner"] [role="search"] [role="button"] {
+  float: right;
   overflow: hidden;
-  margin: .2rem 0 .2rem -2.4rem;
-  width: 2rem;
-  height: 2rem;
-  background-size: 80%;
+  margin: 0 .4rem 0 -2.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-size: 72%;
   text-indent: -99999px;
 }
 
@@ -1065,7 +1069,7 @@ main {
 }
 
 #tabpanel-settings > div > section {
-  margin: 4rem 0;
+  margin-top: 4rem;
   page-break-inside: avoid;
 }
 
@@ -1095,19 +1099,20 @@ main {
 }
 
 #tabpanel-settings > div > section > section li {
-  line-height: 1.8rem;
+  margin: .4rem 0;
+  line-height: 1;
 }
 
 #tabpanel-settings > div > section > section li [role="radio"] {
   margin: 0;
   width: 1.8rem;
   height: 1.8rem;
-  line-height: 1.8rem;
+  line-height: 1.5;
 }
 
 #tabpanel-settings > div > section > section li [role="radio"] + label {
   height: 1.8rem;
-  line-height: 1.8rem;
+  line-height: 1.5;
 }
 
 [role="contentinfo"] {
