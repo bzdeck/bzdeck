@@ -1750,6 +1750,10 @@ window.addEventListener("popstate", function (event) {
       folders = BzDeck.homepage.folders.view,
       matched;
 
+  // Hide sidebar
+  document.documentElement.setAttribute('data-sidebar-hidden', 'true');
+  document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+
   if (hash.match(/^bug\/(\d+)$/)) {
     let bug_id = Number.toInteger(RegExp.$1);
     document.documentElement.setAttribute('data-current-tab', 'bug/' + bug_id);
