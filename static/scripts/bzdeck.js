@@ -22,7 +22,9 @@ BzDeck.data = {};
 BzDeck.options = {
   api: {
     vertion: 1.3,
-    endpoint: 'https://api-dev.bugzilla.mozilla.org/',
+    // Cross-origin XHR fails if instantiated from Offline Cache (Bug 687758)
+    // Use local proxy temporarily to workaround the issue:
+    endpoint: '/api/', // https://api-dev.bugzilla.mozilla.org/
     extra_fields: [
       'attachments', 'blocks', 'cc', 'comments', 'depends_on', 'dupe_of', 'flags', 'groups',
       'history', 'is_cc_accessible', 'is_confirmed', 'is_creator_accessible', 'see_also',
@@ -618,8 +620,9 @@ BzDeck.core.request = function (method, query, callback) {
       api = BzDeck.options.api,
       url = api.endpoint + api.vertion + '/';
   xhr.open(method, url + query, true);
-  xhr.setRequestHeader('Accept', 'application/json');
-  xhr.setRequestHeader('Content-Type', 'application/json');
+  // The following headers abort request. Commented out on 2013-07-20
+  // xhr.setRequestHeader('Accept', 'application/json');
+  // xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.addEventListener('load', function (event) callback(event));
   xhr.addEventListener('error', function (event) callback(event));
   xhr.send(null);
