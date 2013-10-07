@@ -169,10 +169,8 @@ BzDeck.bootstrap.load_config = function () {
       BzDeck.data.bugzilla_config = result.value;
     } else if (navigator.onLine) {
       // Load the Bugzilla config in background
-      BzDeck.core.request('GET', 'configuration?cached_ok=1', function (event) {
-        let response = event.target.responseText,
-            data = response ? JSON.parse(response) : null;
-        if (event.type === 'error' || !data || !data.version) {
+      BzDeck.core.request('GET', 'configuration?cached_ok=1', function (data) {
+        if (!data || !data.version) {
           // Give up
           BzDeck.global.show_status('ERROR: Bugzilla configuration could not be loaded. \
             The instance might be offline.'); // l10n
@@ -266,11 +264,8 @@ BzDeck.bootstrap.validate_account = function () {
   BzDeck.global.show_status('Confirming account...'); // l10n
   $input.disabled = $button.disabled = true;
 
-  BzDeck.core.request('GET', 'user/' + encodeURIComponent($input.value), function (event) {
-    let response = event.target.responseText,
-        data = response ? JSON.parse(response) : null;
-
-    if (event.type === 'error' || !data) { 
+  BzDeck.core.request('GET', 'user/' + encodeURIComponent($input.value), function (data) {
+    if (!data) { 
       // Network error?
       BzDeck.global.show_status('ERROR: Failed to sign in.'); // l10n
       $input.disabled = $button.disabled = false;
@@ -412,9 +407,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
   for (let [i, sub] of Iterator(subscriptions)) {
     let index = i; // Redefine the variable to make it available in the following event
     sub.query['include_fields'] = 'id,last_change_time';
-    this.request('GET', 'bug' + build_query(sub.query), function (event) {
-      let response = event.target.responseText,
-          data = response ? JSON.parse(response) : null;
+    this.request('GET', 'bug' + build_query(sub.query), function (data) {
       if (!data || !Array.isArray(data.bugs)) {
         // Give up
         BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -500,9 +493,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
         include_fields: '_default',
         id: requesting_bugs.slice(i, i + 100).join(',')
       });
-      this.request('GET', 'bug' + query, function (event) {
-        let response = event.target.responseText,
-            data = response ? JSON.parse(response) : null;
+      this.request('GET', 'bug' + query, function (data) {
         if (!data || !Array.isArray(data.bugs)) {
           // Give up
           BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -534,9 +525,7 @@ BzDeck.core.load_bug_details = function (bug_ids, callback = null) {
     include_fields: 'id,' + BzDeck.options.api.extra_fields.join(','),
     exclude_fields: 'attachments.data'
   });
-  this.request('GET', 'bug' + query, function (event) {
-    let response = event.target.responseText,
-        data = response ? JSON.parse(response) : null;
+  this.request('GET', 'bug' + query, function (data) {
     if (!data) {
       // Give up
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -617,14 +606,18 @@ BzDeck.core.request = function (method, query, callback) {
   }
 
   let xhr = new XMLHttpRequest(),
-      api = BzDeck.options.api,
-      url = api.endpoint + api.vertion + '/';
-  xhr.open(method, url + query, true);
+      api = BzDeck.options.api;
+  xhr.open(method, api.endpoint + api.vertion + '/' + query, true);
   // The following headers abort request. Commented out on 2013-07-20
   // xhr.setRequestHeader('Accept', 'application/json');
   // xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.addEventListener('load', function (event) callback(event));
-  xhr.addEventListener('error', function (event) callback(event));
+  xhr.addEventListener('load', function (event) {
+    let text = event.target.responseText;
+    callback(text ? JSON.parse(text) : null);
+  });
+  xhr.addEventListener('error', function (event) {
+    callback(null);
+  });
   xhr.send(null);
 };
 

@@ -183,10 +183,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
     exclude_fields: 'attachments.data'
   });
 
-  BzDeck.core.request('GET', 'bug/' + id + query, function (event) {
-    let response = event.target.responseText,
-        bug = response ? JSON.parse(response) : null;
-
+  BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
     if (!bug || !bug.id) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
       return;
@@ -214,10 +211,7 @@ BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
     exclude_fields: 'attachments.data'
   });
 
-  BzDeck.core.request('GET', 'bug/' + id + query, function (event) {
-    let response = event.target.responseText,
-        bug = response ? JSON.parse(response) : null;
-
+  BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
     if (bug && bug.id) {
       BzDeck.model.save_bug(bug);
     }
