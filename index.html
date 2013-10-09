@@ -416,18 +416,20 @@
               <h2>Welcome</h2>
             </header>
             <div>
-              <section id="home-folder-pane" tabindex="0">
+              <section id="home-folder-pane" tabindex="0" role="region">
                 <h3>Folders</h3>
                 <div id="home-folders-outer">
                   <ul id="home-folders" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
                 </div>
               </section><!-- end #home-folder-pane -->
-              <div id="home-list-pane">
+              <div id="home-list-pane" role="region">
                 <section id="home-list" role="grid" 
                          aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true"
                          data-selection="rows"></section>
               </div><!-- end #home-list-pane -->
-              <div id="home-preview-pane">
+              <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator"
+                   aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
+              <div id="home-preview-pane" role="region" aria-expanded="true">
                 <article id="home-preview-bug" itemscope itemtype="http://schema.org/Article" aria-hidden="true">
                   <header>
                     <h3 itemprop="name" data-field="summary"></h3>

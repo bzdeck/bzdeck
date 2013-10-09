@@ -556,6 +556,7 @@ main {
   right: 0;
   left: 16rem;
   height: 21.6rem;
+  min-height: 8rem;
   border-right: .1rem solid;
 }
 
@@ -592,11 +593,19 @@ main {
   font-weight: bold;
 }
 
+#home-preview-splitter {
+  top: 21.6rem;
+  right: 0;
+  left: 16rem;
+  width: auto;
+}
+
 #home-preview-pane {
   top: 21.6rem;
   right: 0;
   bottom: 0;
   left: 16rem;
+  min-height: 8rem;
 }
 
 [id*="-preview-"][itemtype="http://schema.org/Article"] > header {

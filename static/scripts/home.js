@@ -10,7 +10,10 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.HomePage = function () {
-  let BGw = BriteGrid.widget;
+  let BGw = BriteGrid.widget,
+      layout = BGw.mode.layout,
+      mobile = layout === 'mobile',
+      prefs = BzDeck.data.prefs;
 
   let folder_data = this.folder_data = [
     {
@@ -72,8 +75,25 @@ BzDeck.HomePage = function () {
     }.bind(this)
   });
 
+  // A movable splitter between the thread pane and preview pane
+  let $splitter = document.querySelector('#home-preview-splitter');
+  if ($splitter) {
+    let splitter = new BGw.Splitter($splitter),
+        pref_name = 'ui.home.preview.splitter.position';
+    if (mobile) {
+      $splitter.setAttribute('aria-hidden', 'true');
+    } else {
+      if (prefs[pref_name]) {
+        splitter.data.position = prefs[pref_name];
+      }
+      $splitter.addEventListener('Resized', function (event) {
+        prefs[pref_name] = event.detail.position;
+      });
+    }
+  }
+
   // Use custom scrollbar on desktop
-  if (BriteGrid.widget.mode.layout === 'desktop') {
+  if (layout === 'desktop') {
     new BGw.ScrollBar(document.getElementById('home-folders-outer'));
     new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
     new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
@@ -82,7 +102,6 @@ BzDeck.HomePage = function () {
   this.view = {};
 
   let $grid = document.getElementById('home-list'),
-      mobile = BriteGrid.widget.mode.layout === 'mobile',
       prefs = BzDeck.data.prefs,
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
