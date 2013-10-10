@@ -45,8 +45,7 @@ a[role="link"] {
   background-color: #EEE;
 }
 
-[role="option"][aria-selected="true"],
-[role="treeitem"][aria-selected="true"] {
+:-moz-any([role="option"], [role="treeitem"])[aria-selected="true"] {
   color: #333;
   background-color: #CCC;
 }
@@ -106,17 +105,17 @@ a[role="link"] {
   background: #FFF;
 }
 
-[role="grid"] .grid-body tbody tr:nth-child(even) {
+[role="grid"] .grid-body [role="row"]:nth-child(even) {
   background-color: #F9F9F9;
 }
 
-[role="grid"] .grid-body tbody tr[aria-selected="true"] {
+[role="grid"] .grid-body [role="row"][aria-selected="true"] {
   color: #333;
   background-color: #CCC;
 }
 
-[role="grid"] th,
-[role="grid"] td {
+[role="grid"] [role="columnheader"],
+[role="grid"] [role="gridcell"] {
   border-color: #ECECEC;
 }
 
@@ -183,6 +182,10 @@ a[role="link"] {
 
 #main-tablist [role="tab"][aria-selected="true"] {
   background-color: #CCC;
+}
+
+#main-tabpanels {
+  border-color: #CCC;
 }
 
 #main-tabpanels > [role="tabpanel"],
@@ -290,7 +293,7 @@ a[role="link"] {
 
 [itemprop="comment"] [itemprop="text"] blockquote {
   border-color: #999;
-  color: #999;
+  color: #666;
 }
 
 .bug-attachments [itemprop="associatedMedia"] {
@@ -357,6 +360,10 @@ a[role="link"] {
 
 @media screen and (max-width: 640px) {
 
+:-moz-any([role="option"], [role="menuitem"], [role="treeitem"]):-moz-any(:active, [aria-selected="true"]) {
+  background-color: #CCC;
+}
+
 [role="banner"] h1:before {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 384, 32, 368);
 }
@@ -386,16 +393,26 @@ a[role="link"] {
   background-color: #DDD;
 }
 
-[role="grid"] .grid-body tbody tr {
+[role="grid"] .grid-body [role="row"] {
   border-color: #CCC;
 }
 
-[role="grid"] .grid-body tbody tr:nth-child(even) {
+[role="grid"] .grid-body [role="row"]:nth-child(even),
+[role="grid"] .grid-body [role="row"][aria-selected="true"] {
+  color: inherit;
   background-color: transparent;
 }
 
-[role="grid"] .grid-body tbody tr[data-unread="true"] {
-  background-color: #F9F9F9;
+[role="grid"] .grid-body [role="row"]:active {
+  background-color: #CCC;
+}
+
+[role="grid"] .grid-body [role="row"][data-unread="true"] {
+  background-color: #DDD;
+}
+
+[role="grid"] .grid-body [role="gridcell"][data-id="summary"] {
+  color: #333;
 }
 
 [role="gridcell"][data-id="_starred"] [role="checkbox"] {
