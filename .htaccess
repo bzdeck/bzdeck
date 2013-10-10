@@ -36,9 +36,12 @@ RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
 # Performance: remove ETag
 FileETag None
 
+# Performance: set Cache-Control
+Header always append Cache-Control private
+
 # Performance: set Expires
 ExpiresActive On
-ExpiresDefault "access plus 5 days"
+ExpiresDefault "access plus 1 day"
 ExpiresByType application/json "access plus 5 minutes"
 ExpiresByType text/cache-manifest "access plus 0 seconds"
 

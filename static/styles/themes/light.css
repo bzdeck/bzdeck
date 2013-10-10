@@ -38,7 +38,7 @@ a[role="link"] {
 }
 
 [role="tab"] .close {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 96, 32, 64);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 96, 32, 64);
 }
 
 [role="tab"] .close:hover {
@@ -52,7 +52,7 @@ a[role="link"] {
 }
 
 [role="treeitem"][aria-expanded] + .expander {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 32, 32, 0);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 32, 32, 0);
 }
 
 [role="menu"] {
@@ -70,28 +70,28 @@ a[role="link"] {
 }
 
 [role="menuitem"][aria-haspopup="true"]:after {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 32, 32, 0);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 32, 32, 0);
 }
 
 [role^="menuitem"][aria-checked="true"]:before,
 [role="radio"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 64, 32, 32);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 64, 32, 32);
 }
 
 [role="toolbar"] [role="button"][data-command="nav-back"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 256, 32, 224);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 256, 32, 224);
 }
 
 [role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 320, 32, 288);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 320, 32, 288);
 }
 
 [role="toolbar"] [role="button"][data-command="nav-forward"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 288, 32, 256);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 288, 32, 256);
 }
 
 [role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 352, 32, 320);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 352, 32, 320);
 }
 
 [role="grid"] .grid-header {
@@ -99,7 +99,7 @@ a[role="link"] {
 }
 
 [role="grid"] .grid-header [aria-sort] label:after {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 32, 32, 0);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 32, 32, 0);
 }
 
 [role="grid"] .grid-body {
@@ -126,17 +126,17 @@ a[role="link"] {
 }
 
 [role="gridcell"][data-type="boolean"][aria-readonly="false"] [aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 160, 32, 128);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 160, 32, 128);
 }
 
 [role="columnheader"][data-id="_starred"],
 [role="gridcell"][data-id="_starred"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 192, 32, 160);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 192, 32, 160);
 }
 
 [role="columnheader"][data-id="_unread"],
 [role="gridcell"][data-id="_unread"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 224, 32, 192);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 224, 32, 192);
 }
 
 #column-drag-image-container {
@@ -156,15 +156,15 @@ a[role="link"] {
 }
 
 [role="banner"] [role="search"] [role="button"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 128, 32, 96);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 128, 32, 96);
 }
 
 [aria-busy="true"]:before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 256, 96, 192);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 256, 96, 192);
 }
 
 #main-menu--app {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 64, 96, 0);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 64, 96, 0);
 }
 
 #main-menu--app-menu:before {
@@ -173,7 +173,7 @@ a[role="link"] {
 
 [itemprop="comment"] header [itemprop="author"] [itemprop="image"],
 #main-menu--app--account label:before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 320, 96, 256);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 320, 96, 256);
 }
 
 #main-tablist [role="tab"] {
@@ -358,11 +358,11 @@ a[role="link"] {
 @media screen and (max-width: 640px) {
 
 [role="banner"] h1:before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 384, 32, 368);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 384, 32, 368);
 }
 
 :root[data-current-tab="home"] [role="banner"] h1:before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 0, 368, 32, 352);
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 368, 32, 352);
 }
 
 #sidebar > div {
@@ -399,11 +399,11 @@ a[role="link"] {
 }
 
 [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 128, 96, 64) !important;
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 128, 96, 64) !important;
 }
 
 [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png?2013100412), 32, 192, 96, 128) !important;
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 192, 96, 128) !important;
 }
 
 [id^="tabpanel-details-"].tabpanels {

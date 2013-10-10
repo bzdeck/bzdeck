@@ -1,22 +1,22 @@
 CACHE MANIFEST
-# Version 2013100611
-/?2013100603
-/static/styles/lib/britegrid/widget.css?2013100603
-/static/styles/base.css?2013100603
-/static/styles/mobile.css?2013100603
-/static/styles/themes/dark.css?2013100603
-/static/styles/themes/light.css?2013100603
-/static/scripts/lib/britegrid/util.js?2013100412
-/static/scripts/lib/britegrid/widget.js?2013100412
+# 2013-10-09 22:00
+/
+/static/styles/lib/britegrid/widget.css
+/static/styles/base.css
+/static/styles/mobile.css
+/static/styles/themes/dark.css
+/static/styles/themes/light.css
+/static/scripts/lib/britegrid/util.js
+/static/scripts/lib/britegrid/widget.js
 /static/scripts/lib/crypto/md5.min.js
-/static/scripts/bzdeck.js?2013100603
-/static/scripts/home.js?2013100412
-/static/scripts/search.js?2013100412
-/static/scripts/details.js?2013100412
-/static/scripts/settings.js?2013100412
+/static/scripts/bzdeck.js
+/static/scripts/home.js
+/static/scripts/search.js
+/static/scripts/details.js
+/static/scripts/settings.js
 /static/images/logo/icon-256.png
-/static/images/themes/dark/sprite.png?2013100412
-/static/images/themes/light/sprite.png?2013100412
+/static/images/themes/dark/sprite.png
+/static/images/themes/light/sprite.png
 /favicon.ico
 
 NETWORK:
