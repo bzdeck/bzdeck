@@ -477,10 +477,8 @@ BzDeck.core.load_bugs = function (subscriptions) {
     }
   };
 
-  let default_fields = this.default_fields = [];
-  for (let column of BzDeck.options.grid.default_columns) if (!column.id.startsWith('_')) {
-    default_fields.push(column.id);
-  }
+  let default_fields = BzDeck.options.api.default_fields = BzDeck.options.grid.default_columns
+        .map(function (column) column.id).filter(function (name) !name.startsWith('_'));
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = function () {
@@ -488,7 +486,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
     // Load 10 bugs each request
     for (let i = 0, len = requesting_bugs.length; i < len; i += 100) {
       let query = BriteGrid.util.request.build_query({
-        include_fields: '_default',
+        include_fields: default_fields.join(','),
         id: requesting_bugs.slice(i, i + 100).join(',')
       });
       this.request('GET', 'bug' + query, function (data) {

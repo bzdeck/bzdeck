@@ -178,8 +178,9 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
   BzDeck.global.show_status('Loading...'); // l10n
 
+  let api = BzDeck.options.api;
   let query = BriteGrid.util.request.build_query({
-    include_fields: '_default,' + BzDeck.options.api.extra_fields.join(','),
+    include_fields: Array.concat(api.default_fields, api.extra_fields).join(','),
     exclude_fields: 'attachments.data'
   });
 
@@ -206,8 +207,9 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 };
 
 BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
+  let api = BzDeck.options.api;
   let query = BriteGrid.util.request.build_query({
-    include_fields: '_default,' + BzDeck.options.api.extra_fields.join(','),
+    include_fields: Array.concat(api.default_fields, api.extra_fields).join(','),
     exclude_fields: 'attachments.data'
   });
 

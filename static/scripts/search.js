@@ -406,7 +406,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   }
 
   // Specify fields
-  query['include_fields'] = '_default';
+  query['include_fields'] = BzDeck.options.api.default_fields.join(',');
   query = BriteGrid.util.request.build_query(query);
 
   BzDeck.global.show_status('Loading...'); // l10n
