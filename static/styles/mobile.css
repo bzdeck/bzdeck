@@ -1,5 +1,5 @@
-.scrollable {
-  overflow: auto !important;
+:root[data-device-touch-enabled="true"] .scrollable {
+  overflow: auto !important; /* use native scrollbar */
 }
 
 #app-login div {
@@ -13,9 +13,9 @@
 
 #app-login h1 {
   float: none;
-  width: 8rem;
-  height: 8rem;
   margin-bottom: 1.2rem;
+  width: 4rem;
+  height: 4rem;
 }
 
 #app-login div > *:not(h1) {
@@ -118,6 +118,7 @@
 }
 
 #sidebar {
+  display: block;
   position: fixed;
   top: 4rem;
   bottom: 0;
@@ -129,7 +130,7 @@
   transition: background-color .3s;
   pointer-events: auto;
 }
-  
+
 #sidebar[aria-hidden="true"] {
   display: block;
   background-color: rgba(0, 0, 0, 0);
@@ -142,9 +143,13 @@
   right: 4em;
   bottom: 0;
   left: 0;
-  overflow: auto;
+  overflow: hidden;
   max-width: calc(360px - 4rem);
   transition: all .4s ease .1s; /* Set transition-delay to avoid conflict with setAttribute on <html> */
+}
+
+:root[data-device-touch-enabled="true"] #sidebar > div {
+  overflow: auto; /* use native scrollbar */
 }
 
 #sidebar[aria-hidden="true"] > div {
@@ -225,6 +230,21 @@ main {
 
 #main-tabpanels > [role="tabpanel"] {
   overflow: auto;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity .6s, transform .6s;
+}
+
+#main-tabpanels > [role="tabpanel"][aria-hidden="true"] {
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(.95);
+  transition: opacity .6s;
+}
+
+#main-tabpanels > [role="tabpanel"][aria-hidden="true"] * {
+  pointer-events: none;
 }
 
 #main-tabpanels > [role="tabpanel"][aria-busy="true"] {
@@ -332,6 +352,7 @@ main {
   bottom: 0;
 }
 
+#home-preview-splitter,
 #home-preview-pane {
   display: none;
 }
@@ -348,6 +369,7 @@ main {
 }
 
 .bug-timeline h2 {
+  display: block;
   padding: 0 1.2rem 1.2rem;
   font-size: 1.4rem;
   line-height: 2rem;
@@ -478,25 +500,12 @@ main {
 
 @media (max-width: 360px) {
 
-#tabpanel-settings > div > section > section h4 {
-  float: none;
+  #tabpanel-settings > div > section > section h4 {
+    float: none;
+  }
+
+  #tabpanel-settings > div > section > section > ul {
+    margin: .8rem 0 0;
+  }
+
 }
-
-#tabpanel-settings > div > section > section > ul {
-  margin: .8rem 0 0;
-}
-
-} /* end @media */
-
-/* --------------------------------------------------------------------------
- * Small screen
- * -------------------------------------------------------------------------- */
-
-@media (max-width: 320px) {
-
-#app-login h1 {
-  width: 4rem;
-  height: 4rem;
-}
-
-} /* end @media */

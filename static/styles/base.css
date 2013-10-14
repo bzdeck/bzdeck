@@ -89,7 +89,8 @@ del a[role="link"] {
   background-size: 56%;
 }
 
-.tabpanels > [role="tabpanel"] {
+.tabpanels > [role="tabpanel"],
+[role="tabpanel"] > .tabpanel-content {
   position: absolute;
   overflow: hidden;
   width: 100%;
@@ -436,6 +437,10 @@ del a[role="link"] {
   right: .4rem;
 }
 
+#sidebar {
+  display: none;
+}
+
 main {
   position: fixed;
   width: 100%;
@@ -771,10 +776,6 @@ main {
   pointer-events: auto;
 }
 
-[id$="-preview-pane"] .bug-info {
-  width: 32rem;
-}
-
 .bug-info > section h3 {
   height: 2.4rem;
   line-height: 2.4rem;
@@ -783,32 +784,38 @@ main {
 }
 
 .bug-info dl,
-.bug-info > section > ul {
+.bug-info section > ul {
   overflow: hidden;
   padding: 1.2rem;
 }
 
-.bug-info dl > dt {
+.bug-info dt,
+.bug-info dd,
+.bug-info section > ul > li {
+  padding: .4rem 0;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.bug-info dt,
+.bug-info dd {
   float: left;
+}
+
+.bug-info dt {
   clear: both;
   width: 10rem;
-  padding: .4rem 0;
-  min-height: 1.6rem;
-  line-height: 1.6rem;
 }
 
-.bug-info dl > dd,
-.bug-info > section > ul > li {
-  padding: .4rem 0;
-  min-height: 1.6rem;
-  line-height: 1.6rem;
-}
-
-.bug-info dl > dd {
-  float: left;
+.bug-info dd {
   margin-left: -10rem;
   padding-left: 11rem;
   width: calc(100% - 11rem);
+}
+
+.bug-info section > ul > li:not(:last-of-type),
+.bug-info dd:not(:last-of-type) {
+  border-bottom: .1rem solid;
 }
 
 .bug-info [role="button"] {
@@ -839,6 +846,10 @@ main {
   left: 32rem;
   border-left: .1rem solid;
   width: auto;
+}
+
+.bug-timeline h2 {
+  display: none;
 }
 
 .bug-timeline h3,
@@ -1038,6 +1049,11 @@ main {
   -moz-user-select: text;
 }
 
+[id^="tabpanel-details-"][role="tabpanel"] > div > .bug-info {
+  border-right: .1rem solid;
+  -moz-box-sizing: border-box;
+}
+
 [id^="tabpanel-details-"][role="tablist"] {
   position: absolute;
   top: 0;
@@ -1066,7 +1082,7 @@ main {
   border-top-right-radius: .4rem;
   border-bottom-right-radius: .4rem;
 }
- 
+
 [id^="tabpanel-details-"].tabpanels {
   position: absolute;
   top: 4rem;
@@ -1158,15 +1174,86 @@ main {
  * Desktop Layout
  * -------------------------------------------------------------------------- */
 
-@media screen and (min-width: 980px) {
+@media (min-width: 641px) and (max-width: 799px) {
 
-[id^="tabpanel-details-"] > div > .bug-info {
-  width: 32rem;
+  #home-preview-bug-info {
+    display: none;
+  }
+
+  #home-preview-bug-timeline {
+    left: 0;
+  }
+
+  [id^="tabpanel-details-"].bug-info {
+    width: 22rem;
+  }
+
+  [id^="tabpanel-details-"].bug-info dt {
+    float: none;
+    padding-bottom: 0;
+    width: 100%;
+  }
+
+  [id^="tabpanel-details-"].bug-info dd {
+    float: none;
+    margin-left: 0;
+    padding-left: 0;
+    width: 100%;
+  }
+
+  [id^="tabpanel-details-"][role="tablist"],
+  [id^="tabpanel-details-"].tabpanels {
+    left: 22rem;
+  }
+
 }
 
-[id^="tabpanel-details-"][role="tablist"],
-[id^="tabpanel-details-"].tabpanels {
-  left: 32rem;
+@media (min-width: 800px) {
+
+  [id^="tabpanel-details-"].bug-info {
+    width: 32rem;
+  }
+
+  [id^="tabpanel-details-"][role="tablist"],
+  [id^="tabpanel-details-"].tabpanels {
+    left: 32rem;
+  }
+
 }
 
-} /* end @media */
+@media (min-width: 800px) and (max-width: 979px) {
+
+  #home-preview-bug-info {
+    width: 22rem;
+  }
+
+  #home-preview-bug-info dt {
+    float: none;
+    padding-bottom: 0;
+    width: 100%;
+  }
+
+  #home-preview-bug-info dd {
+    float: none;
+    margin-left: 0;
+    padding-left: 0;
+    width: 100%;
+  }
+
+  #home-preview-bug-timeline {
+    left: 22rem;
+  }
+
+}
+
+@media (min-width: 980px) {
+
+  #home-preview-bug-info {
+    width: 32rem;
+  }
+
+  #home-preview-bug-timeline {
+    left: 32rem;
+  }
+
+}

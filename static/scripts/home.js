@@ -11,8 +11,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.HomePage = function () {
   let BGw = BriteGrid.widget,
-      layout = BGw.mode.layout,
-      mobile = layout === 'mobile',
+      mobile_mql = BriteGrid.util.device.mobile.mql,
       prefs = BzDeck.data.prefs;
 
   let folder_data = this.folder_data = [
@@ -80,24 +79,18 @@ BzDeck.HomePage = function () {
   if ($splitter) {
     let splitter = new BGw.Splitter($splitter),
         pref_name = 'ui.home.preview.splitter.position';
-    if (mobile) {
-      $splitter.setAttribute('aria-hidden', 'true');
-    } else {
-      if (prefs[pref_name]) {
-        splitter.data.position = prefs[pref_name];
-      }
-      $splitter.addEventListener('Resized', function (event) {
-        prefs[pref_name] = event.detail.position;
-      });
+    if (prefs[pref_name]) {
+      splitter.data.position = prefs[pref_name];
     }
+    $splitter.addEventListener('Resized', function (event) {
+      prefs[pref_name] = event.detail.position;
+    });
   }
 
-  // Use custom scrollbar on desktop
-  if (layout === 'desktop') {
-    new BGw.ScrollBar(document.getElementById('home-folders-outer'));
-    new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
-    new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
-  }
+  // Custom scrollbar
+  new BGw.ScrollBar(document.getElementById('home-folders-outer'));
+  new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
+  new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
 
   this.view = {};
 
@@ -106,7 +99,7 @@ BzDeck.HomePage = function () {
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  this.view.grid = new BriteGrid.widget.Grid($grid, {
+  let grid = this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -129,9 +122,18 @@ BzDeck.HomePage = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: (mobile) ? { key: 'last_change_time', order: 'descending' }
-                              : prefs['home.list.sort_conditions'] ||
-                                { key: 'id', order: 'ascending' }
+    sort_conditions: (mobile_mql.matches) ? { key: 'last_change_time', order: 'descending' }
+                                          : prefs['home.list.sort_conditions'] ||
+                                            { key: 'id', order: 'ascending' }
+  });
+
+  mobile_mql.addListener(function (mql) {
+    if (mql.matches) {
+      // Force to change the sort condition when switched to the mobile layout
+      let cond = grid.options.sort_conditions;
+      cond.key = 'last_change_time'; // Chenge the key
+      cond.key = 'last_change_time'; // Chenge the order to descending
+    }
   });
 
   $grid.addEventListener('Sorted', function (event) {
@@ -154,7 +156,7 @@ BzDeck.HomePage = function () {
       // Show Bug in Preview Pane
       this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
       // Mobile compact layout
-      if (mobile) {
+      if (mobile_mql.matches) {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
       // Mark as Read
@@ -232,7 +234,7 @@ BzDeck.HomePage = function () {
     set: function (obj, prop, newval) {
       let oldval = obj[prop];
       // On mobile, the same folder can be selected
-      if (!mobile && oldval === newval) {
+      if (!mobile_mql.matches && oldval === newval) {
         return;
       }
       if (prop === 'folder_id') {
@@ -327,7 +329,7 @@ BzDeck.HomePage.prototype.open_folder = function (folder_id) {
   };
 
   // Mobile compact layout
-  if (BriteGrid.widget.mode.layout === 'mobile' &&
+  if (BriteGrid.util.device.mobile.mql.matches &&
       BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];

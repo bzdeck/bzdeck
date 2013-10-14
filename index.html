@@ -158,84 +158,86 @@
                 </article>
               </section>
             </div><!-- end #tabpanel-details-TID-tabpanel-timeline -->
-            <div id="tabpanel-details-TID-tabpanel-info" class="bug-info scrollable" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="tabpanel-details-TID-tab-info">
-              <section>
-                <h3>Status</h3>
-                <dl>
-                  <dt>Filed</dt><dd><time data-field="creation_time"></time></dd>
-                  <dt>Last Modified</dt><dd><time data-field="last_change_time"></time></dd>
-                  <dt>Status</dt><dd data-field="status"></dd>
-                  <dt>Resolution</dt><dd data-field="resolution"></dd>
-                  <dt>Target Milestone</dt><dd data-field="target_milestone"></dd>
-                </dl>
-              </section>
-              <section>
-                <h3>Affected</h3>
-                <dl>
-                  <dt>Classification</dt><dd data-field="classification"></dd>
-                  <dt>Product</dt><dd data-field="product"></dd>
-                  <dt>Component</dt><dd data-field="component"></dd>
-                  <dt>Version</dt><dd data-field="version"></dd>
-                  <dt>Hardware</dt><dd data-field="platform"></dd>
-                  <dt>OS</dt><dd data-field="op_sys"></dd>
-                </dl>
-              </section>
-              <section>
-                <h3>Importance</h3>
-                <dl>
-                  <dt>Severity</dt><dd data-field="severity"></dd>
-                  <dt>Priority</dt><dd data-field="priority"></dd>
-                  <!-- Not available via API: <dt>Votes</dt><dd></dd> -->
-                </dl>
-              </section>
-              <section>
-                <h3>Notes</h3>
-                <dl>
-                  <dt>Alias</dt><dd data-field="alias"></dd>
-                  <dt>Whiteboard</dt><dd data-field="whiteboard"></dd>
-                  <dt>Keywords</dt><dd data-field="keywords"></dd>
-                  <dt>URL</dt><dd data-field="url"></dd>
-                  <dt>See Also</dt><dd data-field="see_also"></dd>
-                  <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
-                </dl>
-              </section>
-              <section>
-                <h3>Dependencies</h3>
-                <dl>
-                  <dt>Depends on</dt><dd data-field="depends_on"></dd>
-                  <dt>Blocks</dt><dd data-field="blocks"></dd>
-                </dl>
-              </section>
-              <section data-field="flags" aria-hidden="true">
-                <h3>Flags</h3>
-              </section>
-              <!--
-              <section>
-                <h3>Project Flags</h3>
-                <dl data-field="__project_flags__"></dl>
-              </section>
-              <section>
-                <h3>Tracking Flags</h3>
-                <dl data-field="__tracking_flags__"></dl>
-              </section>
-              -->
-              <section>
-                <h3>People</h3>
-                <dl>
-                  <dt>Reporter</dt>
-                  <dd data-field="creator"><span tabindex="0" role="button" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
-                  <dt>Assignee</dt>
-                  <dd data-field="assigned_to"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
-                  <dt>QA Contact</dt>
-                  <dd data-field="qa_contact"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
-                  <dt>Cc</dt>
-                  <dd data-field="cc">
-                    <ul> 
-                      <li><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></li>
-                    </ul>
-                  </dd>
-                </dl>
-              </section>
+            <div id="tabpanel-details-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="tabpanel-details-TID-tab-info">
+              <div id="tabpanel-details-TID-info" class="tabpanel-content scrollable bug-info" tabindex="0">
+                <section>
+                  <h3>Status</h3>
+                  <dl>
+                    <dt>Filed</dt><dd><time data-field="creation_time"></time></dd>
+                    <dt>Last Modified</dt><dd><time data-field="last_change_time"></time></dd>
+                    <dt>Status</dt><dd data-field="status"></dd>
+                    <dt>Resolution</dt><dd data-field="resolution"></dd>
+                    <dt>Target Milestone</dt><dd data-field="target_milestone"></dd>
+                  </dl>
+                </section>
+                <section>
+                  <h3>Affected</h3>
+                  <dl>
+                    <dt>Classification</dt><dd data-field="classification"></dd>
+                    <dt>Product</dt><dd data-field="product"></dd>
+                    <dt>Component</dt><dd data-field="component"></dd>
+                    <dt>Version</dt><dd data-field="version"></dd>
+                    <dt>Hardware</dt><dd data-field="platform"></dd>
+                    <dt>OS</dt><dd data-field="op_sys"></dd>
+                  </dl>
+                </section>
+                <section>
+                  <h3>Importance</h3>
+                  <dl>
+                    <dt>Severity</dt><dd data-field="severity"></dd>
+                    <dt>Priority</dt><dd data-field="priority"></dd>
+                    <!-- Not available via API: <dt>Votes</dt><dd></dd> -->
+                  </dl>
+                </section>
+                <section>
+                  <h3>Notes</h3>
+                  <dl>
+                    <dt>Alias</dt><dd data-field="alias"></dd>
+                    <dt>Whiteboard</dt><dd data-field="whiteboard"></dd>
+                    <dt>Keywords</dt><dd data-field="keywords"></dd>
+                    <dt>URL</dt><dd data-field="url"></dd>
+                    <dt>See Also</dt><dd data-field="see_also"></dd>
+                    <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
+                  </dl>
+                </section>
+                <section>
+                  <h3>Dependencies</h3>
+                  <dl>
+                    <dt>Depends on</dt><dd data-field="depends_on"></dd>
+                    <dt>Blocks</dt><dd data-field="blocks"></dd>
+                  </dl>
+                </section>
+                <section data-field="flags" aria-hidden="true">
+                  <h3>Flags</h3>
+                </section>
+                <!--
+                <section>
+                  <h3>Project Flags</h3>
+                  <dl data-field="__project_flags__"></dl>
+                </section>
+                <section>
+                  <h3>Tracking Flags</h3>
+                  <dl data-field="__tracking_flags__"></dl>
+                </section>
+                -->
+                <section>
+                  <h3>People</h3>
+                  <dl>
+                    <dt>Reporter</dt>
+                    <dd data-field="creator"><span tabindex="0" role="button" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>Assignee</dt>
+                    <dd data-field="assigned_to"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>QA Contact</dt>
+                    <dd data-field="qa_contact"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                    <dt>Cc</dt>
+                    <dd data-field="cc">
+                      <ul> 
+                        <li><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></li>
+                      </ul>
+                    </dd>
+                  </dl>
+                </section>
+              </div><!-- end .bug-info -->
             </div><!-- end #tabpanel-details-TID-tabpanel-info -->
             <div id="tabpanel-details-TID-tabpanel-attachments" class="bug-attachments scrollable" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="tabpanel-details-TID-tab-attachments">
               <section data-field="attachments">

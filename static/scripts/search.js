@@ -47,7 +47,7 @@ BzDeck.SearchPage = function () {
       if (oldval === newval) {
         return;
       }
-      if (prop === 'preview_id' && BriteGrid.widget.mode.layout !== 'mobile') {
+      if (prop === 'preview_id' && !BriteGrid.util.device.mobile.mql.matches) {
         this.show_preview(oldval, newval);
       }
       obj[prop] = newval;
@@ -101,11 +101,9 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
             = this.view.tabpanel.querySelector('[id$="-basic-search-pane"]'),
       config = BzDeck.data.bugzilla_config;
 
-  // Use custom scrollbar on desktop
-  if (BriteGrid.widget.mode.layout === 'desktop') {
-    for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-      new BriteGrid.widget.ScrollBar($outer, true);
-    }
+  // Custom scrollbar
+  for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
+    new BriteGrid.widget.ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -252,12 +250,12 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] 
             = this.view.tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
-      mobile = BriteGrid.widget.mode.layout === 'mobile',
+      mobile_mql = BriteGrid.util.device.mobile.mql,
       prefs = BzDeck.data.prefs,
       columns = prefs['search.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  this.view.grid = new BriteGrid.widget.Grid($grid, {
+  let grid = this.view.grid = new BriteGrid.widget.Grid($grid, {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -280,9 +278,18 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: (mobile) ? { key: 'last_change_time', order: 'descending' }
-                              : prefs['home.list.sort_conditions'] ||
-                                { key: 'id', order: 'ascending' }
+    sort_conditions: (mobile_mql.matches) ? { key: 'last_change_time', order: 'descending' }
+                                          : prefs['home.list.sort_conditions'] ||
+                                            { key: 'id', order: 'ascending' }
+  });
+
+  // Force to change the sort condition when switched to the mobile layout
+  mobile_mql.addListener(function (mql) {
+    if (mql.matches) {
+      let cond = grid.options.sort_conditions;
+      cond.key = 'last_change_time';
+      cond.order = 'descending';
+    }
   });
 
   $grid.addEventListener('Sorted', function (event) {
@@ -305,7 +312,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
       // Show Bug in Preview Pane
       this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
       // Mobile compact layout
-      if (mobile) {
+      if (mobile_mql.matches) {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
     }
@@ -362,12 +369,10 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let $pane = this.view.panes['preview'] 
             = this.view.tabpanel.querySelector('[id$="-preview-pane"]');
 
-  // Use custom scrollbar on desktop
-  if (BriteGrid.widget.mode.layout === 'desktop') {
-    let ScrollBar = BriteGrid.widget.ScrollBar;
-    new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
-    new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
-  }
+  // Custom scrollbar
+  let ScrollBar = BriteGrid.widget.ScrollBar;
+  new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
+  new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {

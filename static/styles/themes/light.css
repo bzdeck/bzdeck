@@ -257,9 +257,9 @@ a[role="link"] {
   background-color: #DDD;
 }
 
-.bug-info dl > dd:not(:first-of-type),
-.bug-info > section > ul > li:not(:first-of-type) {
-  background-image: linear-gradient(to bottom, #EEE, #EEE 1px, #DDD 1px, #DDD 2px, transparent 2px, transparent);
+.bug-info section > ul > li:not(:last-of-type),
+.bug-info dd:not(:last-of-type) {
+  border-color: #DDD;
 }
 
 .bug-info [role="button"]:hover {
@@ -328,6 +328,10 @@ a[role="link"] {
 
 #main-tabpanels [role="tabpanel"] > footer {
   background-image: linear-gradient(to bottom, #CCC, #DDD);
+}
+
+[id^="tabpanel-details-"][role="tabpanel"] > div > .bug-info {
+  border-color: #CCC;
 }
 
 [id^="tabpanel-details-"][role="tablist"] {

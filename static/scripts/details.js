@@ -54,27 +54,42 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     document.getElementById('main-tabpanels').appendChild($tabpanel);
   }
 
-  // Desktop Layout
-  if (window.matchMedia("(min-width: 980px)").matches) {
-    $tabpanel.querySelector('[id$="-tab-info"]').setAttribute('aria-hidden', 'true');
-    let $info_tp = $tabpanel.querySelector('[id$="-tabpanel-info"]');
-    $info_tp.removeAttribute('aria-hidden');
-    $tabpanel.querySelector('div').appendChild($info_tp);
-  }
+  let mobile_mql = BriteGrid.util.device.mobile.mql,
+      $tablist = $tabpanel.querySelector('[role="tablist"]'),
+      _tablist = new BriteGrid.widget.TabList($tablist),
+      $info_tab = $tabpanel.querySelector('[id$="-tab-info"]'),
+      $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
+      $bug_info = $tabpanel.querySelector('.bug-info');
 
-  // Hide tabs when scrolled down
-  if (BriteGrid.widget.mode.layout === 'mobile') {
-    let $tabs = $tabpanel.querySelector('[role="tablist"]');
-    for (let $_tabpanel of $tabpanel.querySelectorAll('[role="tabpanel"]')) {
-      let scroll_top = $_tabpanel.scrollTop;
-      $_tabpanel.addEventListener('scroll', function (event) {
+  let mobile_mql_listener = function (mql) {
+    if (mql.matches) { // Mobile
+      $info_tab.setAttribute('aria-hidden', 'false');
+      $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
+    } else { // Desktop
+      if (_tablist.view.selected[0] === $info_tab) {
+        _tablist.view.selected = _tablist.view.focused = $timeline_tab;
+      }
+      $info_tab.setAttribute('aria-hidden', 'true');
+      $tabpanel.querySelector('div').appendChild($bug_info);
+      $tablist.removeAttribute('aria-hidden');
+    }
+  };
+
+  mobile_mql.addListener(mobile_mql_listener);
+  mobile_mql_listener(mobile_mql);
+
+  // Hide tabs when scrolled down on mobile
+  for (let $_tabpanel of $tabpanel.querySelectorAll('[role="tabpanel"]')) {
+    let scroll_top = $_tabpanel.scrollTop;
+    $_tabpanel.addEventListener('scroll', function (event) {
+      if (mobile_mql.matches) {
         let value = String(event.target.scrollTop - scroll_top > 0);
-        if ($tabs.getAttribute('aria-hidden') !== value) {
-          $tabs.setAttribute('aria-hidden', value);
+        if ($tablist.getAttribute('aria-hidden') !== value) {
+          $tablist.setAttribute('aria-hidden', value);
         }
         scroll_top = event.target.scrollTop;
-      });
-    }
+      }
+    });
   }
 
   this.view.tabpanel = $tabpanel;
