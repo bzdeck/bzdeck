@@ -395,19 +395,20 @@
           <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
         </div>
       </header>
-      <aside id="sidebar" role="complementary" aria-hidden="true">
+      <aside id="sidebar" tabindex="0" role="complementary">
         <div>
           <section id="sidebar-account">
             <h2>Account</h2>
-          </section>
+          </section><!-- end #sidebar-account -->
           <section id="sidebar-folders">
             <h2>Bugs</h2>
-          </section>
+            <ul id="sidebar-folder-list" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
+          </section><!-- end #sidebar-folders -->
           <section id="sidebar-menu">
             <h2>Menu</h2>
-          </section>
+          </section><!-- end #sidebar-menu -->
         </div>
-      </aside>
+      </aside><!-- end #sidebar -->
       <main role="main">
         <ul id="main-tablist" tabindex="0" role="tablist" data-removable="true" data-reorderable="false">
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
@@ -418,12 +419,6 @@
               <h2>Welcome</h2>
             </header>
             <div>
-              <section id="home-folder-pane" tabindex="0" role="region">
-                <h3>Folders</h3>
-                <div id="home-folders-outer">
-                  <ul id="home-folders" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
-                </div>
-              </section><!-- end #home-folder-pane -->
               <div id="home-list-pane" role="region">
                 <section id="home-list" role="grid" 
                          aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true"

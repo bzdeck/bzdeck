@@ -305,9 +305,9 @@ BzDeck.bootstrap.setup_ui = function () {
                                         prefs['ui.timeline.font.family'] || 'monospace');
 
   // Activate widgets
+  BzDeck.homepage = new BzDeck.HomePage();
   BzDeck.toolbar.setup();
   BzDeck.sidebar.setup();
-  BzDeck.homepage = new BzDeck.HomePage();
 
   // Change the theme
   if (theme && BGut.list.contains(theme)) {
@@ -584,10 +584,10 @@ BzDeck.core.toggle_unread = function (bug_id, value) {
 };
 
 BzDeck.core.toggle_unread_ui = function () {
-  // Update UI: the Unread folder on the home page
+  // Update UI: the Unread folder on the sidebar
   BzDeck.model.get_all_bugs(function (bugs) {
     let count = bugs.filter(function (bug) bug._unread).length,
-        $label = document.querySelector('[id="home-folders--unread"] label');
+        $label = document.querySelector('[id="sidebar-folders--unread"] label');
     if ($label) {
       $label.textContent = count ? 'Unread (%d)'.replace('%d', count) : 'Unread'; // l10n
     }
@@ -1377,7 +1377,7 @@ BzDeck.toolbar.setup = function () {
         let hash = '#' + value[0].id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
             title = value[0].title.replace('\n', ' – ');
         if (hash === '#home') {
-          hash = '#' + BzDeck.homepage.data.folder_id;
+          hash = '#' + BzDeck.sidebar.data.folder_id;
           document.documentElement.setAttribute('data-current-tab', 'home');
         } else {
           document.documentElement.setAttribute('data-current-tab', hash);
@@ -1616,28 +1616,232 @@ BzDeck.toolbar.quicksearch = function (event) {
 BzDeck.sidebar = {};
 
 BzDeck.sidebar.setup = function () {
-  let mobile_mql = BriteGrid.util.device.mobile.mql,
+  let BGw = BriteGrid.widget,
+      mobile_mql = BriteGrid.util.device.mobile.mql,
+      $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
   let mobile_mql_listener = function (mql) {
     document.querySelector(mql.matches ? '#sidebar-account' : '#main-menu--app-menu li')
             .appendChild(document.querySelector('#main-menu--app--account'));
-    document.querySelector(mql.matches ? '#sidebar-folders' : '#home-folders-outer')
-            .appendChild(document.querySelector('#home-folders'));
     document.querySelector(mql.matches ? '#sidebar-menu' : '#main-menu li')
             .appendChild(document.querySelector('#main-menu--app-menu'));
+
+    $root.setAttribute('data-sidebar-hidden', mql.matches);
+    $sidebar.setAttribute('aria-hidden', mql.matches);
   };
 
   mobile_mql.addListener(mobile_mql_listener);
   mobile_mql_listener(mobile_mql);
 
-  new BriteGrid.widget.ScrollBar($sidebar.querySelector('div'));
+  new BGw.ScrollBar($sidebar.querySelector('div'));
 
   $sidebar.addEventListener('click', function (event) {
-    let hidden = $sidebar.getAttribute('aria-hidden') !== 'true' || !mobile_mql.matches;
-    document.documentElement.setAttribute('data-sidebar-hidden', hidden);
-    $sidebar.setAttribute('aria-hidden', hidden);
+    if (mobile_mql.matches) {
+      let hidden = $sidebar.getAttribute('aria-hidden') !== 'true' || !mobile_mql.matches;
+      $root.setAttribute('data-sidebar-hidden', hidden);
+      $sidebar.setAttribute('aria-hidden', hidden);
+    }
   });
+
+  this.folder_data = [
+    {
+      'id': 'sidebar-folders--inbox',
+      'label': 'Inbox',
+      'selected': true,
+      'data': { 'id': 'inbox' }
+    },
+    {
+      'id': 'sidebar-folders--starred',
+      'label': 'Starred',
+      'data': { 'id': 'starred' }
+    },
+    {
+      'id': 'sidebar-folders--unread',
+      'label': 'Unread',
+      'data': { 'id': 'unread' }
+    },
+    {
+      'id': 'sidebar-folders--important',
+      'label': 'Important',
+      'data': { 'id': 'important' }
+    },
+    {
+      'id': 'sidebar-folders--subscriptions--cc',
+      'label': 'CCed',
+      'data': { 'id': 'subscriptions/cc' }
+    },
+    {
+      'id': 'sidebar-folders--subscription--reported',
+      'label': 'Reported',
+      'data': { 'id': 'subscriptions/reported' }
+    },
+    {
+      'id': 'sidebar-folders--subscription--assigned',
+      'label': 'Assigned',
+      'data': { 'id': 'subscriptions/assigned' }
+    },
+    {
+      'id': 'sidebar-folders--subscription--qa',
+      'label': 'QA Contact',
+      'data': { 'id': 'subscriptions/qa' }
+    },
+    {
+      'id': 'sidebar-folders--subscriptions',
+      'label': 'All Bugs',
+      'data': { 'id': 'subscriptions' }
+    }
+  ];
+
+  let folders = this.folders
+              = new BGw.ListBox(document.getElementById('sidebar-folder-list'), this.folder_data);
+
+  folders.view = new Proxy(folders.view, {
+    set: function (obj, prop, value) {
+      if (prop === 'selected') {
+        let $folder = Array.isArray(value) ? value[0] : value;
+        this.data.folder_id = $folder.dataset.id;
+      }
+      obj[prop] = value;
+    }.bind(this)
+  });
+
+  this.data = new Proxy({
+    folder_id: null,
+  },
+  {
+    set: function (obj, prop, newval) {
+      let oldval = obj[prop];
+      // On mobile, the same folder can be selected
+      if (!mobile_mql.matches && oldval === newval) {
+        return;
+      }
+      if (prop === 'folder_id') {
+        this.open_folder(newval);
+      }
+      obj[prop] = newval;
+    }.bind(this)
+  });
+
+  // Select the 'Inbox' folder
+  this.data.folder_id = 'inbox';
+
+  // Authorize notification
+  BriteGrid.util.app.auth_notification();
+
+  // Update UI: the Unread folder on the sidebar
+  BzDeck.model.get_all_bugs(function (bugs) {
+    bugs = bugs.filter(function (bug) bug._unread);
+    let num = bugs.length,
+        $label = document.querySelector('[id="sidebar-folders--unread"] label');
+    if (!num) {
+      $label.textContent = 'Unread'; // l10n
+      return;
+    }    
+    // Statusbar
+    $label.textContent = 'Unread (%d)'.replace('%d', num); // l10n
+    let status = (num > 1) ? 'You have %d unread bugs'.replace('%d', num)
+                           : 'You have 1 unread bug'; // l10n
+    BzDeck.global.show_status(status);
+    // Notification
+    let list = [];
+    for (let [i, bug] of Iterator(bugs)) {
+      list.push(bug.id + ' - ' + bug.summary);
+      if (num > 3 && i === 2) {
+        list.push('...');
+        break;
+      }
+    }
+    BzDeck.global.show_notification(status, list.join('\n'));
+  });
+};
+
+BzDeck.sidebar.open_folder = function (folder_id) {
+  let home = BzDeck.homepage;
+  home.data.preview_id = null;
+
+  let update_list = function (bugs) {
+    home.data.bug_list = bugs;
+    BzDeck.global.update_grid_data(home.view.grid, bugs);
+  };
+
+  let get_subscribed_bugs = function (callback) {
+    BzDeck.model.get_all_subscriptions(function (subscriptions) {
+      let ids = [];
+      for (let sub of subscriptions) {
+        // Remove duplicates
+        ids = ids.concat(sub.bugs.map(function (bug) bug.id)
+                                 .filter(function (id) ids.indexOf(id) === -1));
+      }
+      BzDeck.model.get_bugs_by_ids(ids, function (bugs) {
+        callback(bugs);
+      });
+    });
+  };
+
+  // Mobile compact layout
+  if (BriteGrid.util.device.mobile.mql.matches &&
+      BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
+    // Select the home tab
+    BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
+  }
+
+  // Change the window title and the tab label
+  let folder_label = this.folder_data
+                         .filter(function (folder) folder.data.id === folder_id)[0].label;
+  document.title = folder_label + ' | BzDeck'; // l10n
+  document.querySelector('[role="banner"] h1').textContent = folder_label;
+  document.querySelector('#tab-home').title = folder_label;
+  document.querySelector('#tab-home label').textContent = folder_label;
+  document.querySelector('#tabpanel-home h2').textContent = folder_label;
+
+  // Save history
+  let hash = '#' + folder_id;
+  if (location.hash !== hash) {
+    history.pushState({}, folder_label, hash);
+  }
+
+  if (folder_id === 'inbox') {
+    get_subscribed_bugs(function (bugs) {
+      bugs.reverse(function (a, b) a.last_change_time > b.last_change_time);
+      update_list(bugs.slice(0, 50)); // Recent 50 bugs
+    });
+  }
+
+  if (folder_id.match(/^subscriptions\/(.*)/)) {
+    BzDeck.model.get_subscription_by_id(RegExp.$1, function (sub) {
+      BzDeck.model.get_bugs_by_ids(sub.bugs.map(function (bug) bug.id), function (bugs) {
+        update_list(bugs);
+      });
+    });
+  }
+
+  if (folder_id === 'subscriptions') {
+    get_subscribed_bugs(function (bugs) {
+      update_list(bugs);
+    });
+  }
+
+  if (folder_id === 'starred') {
+    // Starred bugs may include non-subscribed bugs, so get ALL bugs
+    BzDeck.model.get_all_bugs(function (bugs) {
+      update_list(bugs.filter(function (bug) bug._starred));
+    });
+  }
+
+  if (folder_id === 'unread') {
+    // Unread bugs may include non-subscribed bugs, so get ALL bugs
+    BzDeck.model.get_all_bugs(function (bugs) {
+      update_list(bugs.filter(function (bug) bug._unread));
+    });
+  }
+
+  if (folder_id === 'important') {
+    get_subscribed_bugs(function (bugs) {
+      update_list(bugs.filter(
+        function (bug) ['blocker', 'critical', 'major'].indexOf(bug.severity) > -1));
+    });
+  }
 };
 
 /* --------------------------------------------------------------------------
@@ -1744,12 +1948,14 @@ window.addEventListener('keydown', function (event) {
 window.addEventListener("popstate", function (event) {
   let hash = location.hash.substr(1),
       tabs = BzDeck.toolbar.tablist.view,
-      folders = BzDeck.homepage.folders.view,
+      folders = BzDeck.sidebar.folders.view,
       matched;
 
   // Hide sidebar
-  document.documentElement.setAttribute('data-sidebar-hidden', 'true');
-  document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+  if (BriteGrid.util.device.mobile.mql.matches) {
+    document.documentElement.setAttribute('data-sidebar-hidden', 'true');
+    document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+  }
 
   if (hash.match(/^bug\/(\d+)$/)) {
     let bug_id = Number.toInteger(RegExp.$1);
@@ -1795,5 +2001,5 @@ window.addEventListener("popstate", function (event) {
   // Fallback
   document.documentElement.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
-  folders.selected = document.querySelector('#home-folders--inbox');
+  folders.selected = document.querySelector('#sidebar-folders--inbox');
 });

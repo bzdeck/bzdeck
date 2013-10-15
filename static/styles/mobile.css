@@ -118,32 +118,24 @@
 }
 
 #sidebar {
-  display: block;
   position: fixed;
   top: 4rem;
   bottom: 0;
-  left: 0;
-  overflow: hidden;
+  border-right: 0 none;
   width: 100%;
-  z-index: 200;
-  background-color: rgba(0, 0, 0, .3);
+  background-color: rgba(0, 0, 0, .3) !important;
   transition: background-color .3s;
   pointer-events: auto;
 }
 
 #sidebar[aria-hidden="true"] {
   display: block;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0) !important;
   pointer-events: none;
 }
 
 #sidebar > div {
-  position: absolute;
-  top: 0;
   right: 4em;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
   max-width: calc(360px - 4rem);
   transition: all .4s ease .1s; /* Set transition-delay to avoid conflict with setAttribute on <html> */
 }
@@ -162,6 +154,7 @@
 }
 
 #sidebar h2 {
+  position: static;
   border-bottom: .2rem solid;
   padding: .4rem 1.2rem;
   font-weight: bold;
@@ -260,8 +253,8 @@ main {
   border: 0;
 }
 
-#home-folder-pane {
-  display: none;
+#main-tabpanels > #tabpanel-home > div {
+  left: 0;
 }
 
 #main-tablist {

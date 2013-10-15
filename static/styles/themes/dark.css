@@ -162,6 +162,11 @@ a[role="link"] {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 256, 96, 192);
 }
 
+#sidebar {
+  border-color: #111;
+  background-color: #222;
+}
+
 #main-menu--app {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 64, 96, 0);
 }
@@ -189,12 +194,13 @@ a[role="link"] {
 }
 
 #main-tabpanels > [role="tabpanel"],
-#main-tabpanels > [role="tabpanel"] > header {
+#main-tabpanels > [role="tabpanel"] > header,
+#main-tabpanels > [role="tabpanel"] > footer {
+  border-color: #222;
   background-image: linear-gradient(to bottom, #444, #333);
 }
 
 #main-tabpanels > [role="tabpanel"] > div {
-  border-color: #222;
   background-color: #333;
 }
 
@@ -324,10 +330,6 @@ a[role="link"] {
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"],
 #main-tabpanels [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
   border-color: #222;
-}
-
-#main-tabpanels [role="tabpanel"] > footer {
-  background-image: linear-gradient(to bottom, #444, #333);
 }
 
 [id^="tabpanel-details-"][role="tabpanel"] > div > .bug-info {
