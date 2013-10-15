@@ -20,10 +20,8 @@ BzDeck.SettingsPage = function () {
 
   let $template = document.querySelector('#tabpanel-settings-template'),
       $content = ($template.content || $template).cloneNode(),
-      $tabpanel = $content.querySelector('[role="tabpanel"]'),
-      $rgroup,
-      id_suffix = this.id = (new Date()).getTime(),
-      prefs = BzDeck.data.prefs;
+      $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]'),
+      id_suffix = this.id = (new Date()).getTime();
 
   // Assign unique IDs to support older browsers where HTMLTemplateElement is not implemented
   for (let attr of ['id', 'aria-labelledby']) {
@@ -43,58 +41,61 @@ BzDeck.SettingsPage = function () {
 
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
+  this.activate_radiogroups();
+};
 
-  let setup_radiogroup = function (id, default_value, callback = function (value) {}) {
-    let $rgroup = $tabpanel.querySelector('[id$="{id}"]'.replace('{id}', id)),
-        pref = $rgroup.dataset.pref;
-    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
-      $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
+BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
+  let $root = document.documentElement, // <html>
+      i18n = BriteGrid.util.i18n,
+      activate = this.activate_radiogroup.bind(this);
+
+  let update_date_format = function (option, value) {
+    i18n.options.date[option] = value;
+    // Update timezone & format on the current view
+    for (let $element of document.querySelectorAll('time')) {
+      $element.textContent = i18n.format_date($element.dateTime);
     }
-    $rgroup.addEventListener('Selected', function (event) {
-      let value = prefs[pref] = event.detail.items[0].dataset.value;
-      callback(value);
-    });
-    new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
   };
 
   // Theme
-  $rgroup = $tabpanel.querySelector('[id$="setting-theme"]');
-  if ($rgroup) {
-    let pref = $rgroup.dataset.pref;
-    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
-      $radio.setAttribute('aria-checked', $radio.dataset.value === BriteGrid.util.theme.selected);
-    }
-    $rgroup.addEventListener('Selected', function (event) {
-      BriteGrid.util.theme.selected = prefs[pref] = event.detail.items[0].dataset.value;
-    });
-    new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
-  }
-
-  let setup_date_setting = function (id, default_value) {
-    let $rgroup = $tabpanel.querySelector('[id$="{id}"]'.replace('{id}', id)),
-        pref = $rgroup.dataset.pref,
-        i18n = BriteGrid.util.i18n;
-    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
-      $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
-    }
-    $rgroup.addEventListener('Selected', function (event) {
-      prefs[pref] = i18n.options.date[pref.replace('ui.date.', '')]
-                  = event.detail.items[0].dataset.value;
-      // Update timezone & format on the current view
-      for (let $element of document.querySelectorAll('time')) {
-        $element.textContent = i18n.format_date($element.dateTime);
-      }
-    });
-    new BriteGrid.widget.RadioGroup($rgroup);
-  };
+  activate('theme', 'Dark', function (value) BriteGrid.util.theme.selected = value);
 
   // Timezone & Date Format
-  setup_date_setting('setting-date-timezone', 'local');
-  setup_date_setting('setting-date-format', 'relative');
+  activate('date-timezone', 'local', function (value) update_date_format('timezone', value));
+  activate('date-format', 'relative', function (value) update_date_format('format', value));
 
   // Timeline
-  setup_radiogroup('setting-timeline-order', 'ascending');
-  setup_radiogroup('setting-timeline-font-family', 'monospace', function (value) {
-    document.documentElement.setAttribute('data-setting-timeline-font-family', value);
+  activate('timeline-order', 'ascending', function (value) {
+    for (let $timeline of document.querySelectorAll('[id$="preview-bug-timeline"], \
+                                                     [id$="tabpanel-timeline"] > section')) {
+      $timeline.setAttribute('aria-busy', 'true');
+      for (let $comment of [...$timeline.querySelectorAll('article[data-time]')].reverse()) {
+        $timeline.appendChild($comment);
+      }
+      $timeline.removeAttribute('aria-busy');
+    }
   });
+  activate('timeline-font-family', 'monospace', function (value) {
+    $root.setAttribute('data-timeline-font-family', value);
+  });
+};
+
+BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value, callback) {
+  let $rgroup = this.$tabpanel.querySelector('[id$="-setting-{id}"]'.replace('{id}', id)),
+      prefs = BzDeck.data.prefs,
+      pref = $rgroup.dataset.pref;
+
+  for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
+    $radio.tabIndex = 0;
+    $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
+  }
+
+  $rgroup.addEventListener('Selected', function (event) {
+    let value = prefs[pref] = event.detail.items[0].dataset.value;
+    if (callback) {
+      callback(value);
+    }
+  });
+
+  new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
 };

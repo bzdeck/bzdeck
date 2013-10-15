@@ -938,7 +938,7 @@ main {
   letter-spacing: -.02ex;
 }
 
-:root[data-setting-timeline-font-family="proportional"] [itemprop="comment"] [itemprop="text"] {
+:root[data-timeline-font-family="proportional"] [itemprop="comment"] [itemprop="text"] {
   font-family: inherit;
   letter-spacing: normal;
 }
@@ -1154,14 +1154,13 @@ main {
 
 #tabpanel-settings > div > section > section li [role="radio"] {
   margin: 0;
-  width: 1.8rem;
-  height: 1.8rem;
-  line-height: 1.5;
+  line-height: 1.8rem;
 }
 
-#tabpanel-settings > div > section > section li [role="radio"] + label {
+#tabpanel-settings > div > section > section li [role="radio"]:before {
+  width: 1.8rem;
   height: 1.8rem;
-  line-height: 1.5;
+  background-size: 80%;
 }
 
 [role="contentinfo"] {

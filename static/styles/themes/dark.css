@@ -73,7 +73,7 @@ a[role="link"] {
 }
 
 [role^="menuitem"][aria-checked="true"]:before,
-[role="radio"][aria-checked="true"] {
+[role="radio"][aria-checked="true"]:before {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 64, 32, 32);
 }
 

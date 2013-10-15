@@ -301,7 +301,7 @@ BzDeck.bootstrap.setup_ui = function () {
   date.format = prefs['ui.date.format'] || 'relative';
 
   // Font option
-  document.documentElement.setAttribute('data-setting-timeline-font-family',
+  document.documentElement.setAttribute('data-timeline-font-family',
                                         prefs['ui.timeline.font.family'] || 'monospace');
 
   // Activate widgets
