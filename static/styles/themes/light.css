@@ -110,8 +110,8 @@ a[role="link"] {
 }
 
 [role="grid"] .grid-body [role="row"][aria-selected="true"] {
-  color: #333;
-  background-color: #CCC;
+  color: #333 !important;
+  background-color: #CCC !important;
 }
 
 [role="grid"] [role="columnheader"],
@@ -140,6 +140,35 @@ a[role="link"] {
 
 #column-drag-image-container {
   background-color: #999;
+}
+
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
+  border-color: #DDD;
+}
+
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:nth-child(even) {
+  color: inherit;
+  background-color: transparent;
+}
+
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:active {
+  background-color: #CCC;
+}
+
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="true"] {
+  background-color: #DDD;
+}
+
+:root[data-home-layout="vertical"] #home-list .grid-body [role="gridcell"][data-id="summary"] {
+  color: #333;
+}
+
+:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 128, 96, 64) !important;
+}
+
+:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 192, 96, 128) !important;
 }
 
 [role="textbox"] {
@@ -399,34 +428,9 @@ a[role="link"] {
   background-color: #DDD;
 }
 
-[role="grid"] .grid-body [role="row"] {
-  border-color: #CCC;
-}
-
-[role="grid"] .grid-body [role="row"]:nth-child(even),
-[role="grid"] .grid-body [role="row"][aria-selected="true"] {
-  color: inherit;
-  background-color: transparent;
-}
-
-[role="grid"] .grid-body [role="row"]:active {
-  background-color: #CCC;
-}
-
-[role="grid"] .grid-body [role="row"][data-unread="true"] {
-  background-color: #DDD;
-}
-
-[role="grid"] .grid-body [role="gridcell"][data-id="summary"] {
-  color: #333;
-}
-
-[role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 128, 96, 64) !important;
-}
-
-[role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 192, 96, 128) !important;
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][aria-selected="true"] {
+  color: inherit !important;
+  background-color: transparent !important;
 }
 
 [id^="tabpanel-details-"].tabpanels {

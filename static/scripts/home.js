@@ -17,13 +17,17 @@ BzDeck.HomePage = function () {
   // A movable splitter between the thread pane and preview pane
   let $splitter = document.querySelector('#home-preview-splitter');
   if ($splitter) {
-    let splitter = new BGw.Splitter($splitter),
-        pref_name = 'ui.home.preview.splitter.position';
-    if (prefs[pref_name]) {
-      splitter.data.position = prefs[pref_name];
+    let splitter = this.preview_splitter = new BGw.Splitter($splitter),
+        pref_prefix = 'ui.home.preview.splitter.position.',
+        pref = prefs[pref_prefix + splitter.data.orientation];
+    if (pref) {
+      splitter.data.position = pref;
     }
     $splitter.addEventListener('Resized', function (event) {
-      prefs[pref_name] = event.detail.position;
+      let position = event.detail.position;
+      if (position) {
+        prefs[pref_prefix + splitter.data.orientation] = position;
+      }
     });
   }
 
@@ -35,6 +39,7 @@ BzDeck.HomePage = function () {
 
   let $grid = document.getElementById('home-list'),
       prefs = BzDeck.data.prefs,
+      vertical = mobile_mql.matches || prefs['ui.home.layout'] === 'vertical',
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
@@ -61,19 +66,16 @@ BzDeck.HomePage = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: (mobile_mql.matches) ? { key: 'last_change_time', order: 'descending' }
-                                          : prefs['home.list.sort_conditions'] ||
-                                            { key: 'id', order: 'ascending' }
+    sort_conditions: (vertical) ? { key: 'last_change_time', order: 'descending' }
+                                : prefs['home.list.sort_conditions'] ||
+                                  { key: 'id', order: 'ascending' }
   });
 
+  this.change_layout(prefs['ui.home.layout']);
+
   mobile_mql.addListener(function (mql) {
-    if (mql.matches) {
-      // Force to change the sort condition when switched to the mobile layout
-      let cond = grid.options.sort_conditions;
-      cond.key = 'last_change_time'; // Chenge the key
-      cond.key = 'last_change_time'; // Chenge the order to descending
-    }
-  });
+    this.change_layout(prefs['ui.home.layout'], true);
+  }.bind(this));
 
   $grid.addEventListener('Sorted', function (event) {
     prefs['home.list.sort_conditions'] = event.detail.conditions;
@@ -94,8 +96,8 @@ BzDeck.HomePage = function () {
     if (ids.length) {
       // Show Bug in Preview Pane
       this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
-      // Mobile compact layout
-      if (mobile_mql.matches) {
+      // Mobile compact layout or Vertical View
+      if (window.matchMedia('(max-width: 799px)').matches) {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
       // Mark as Read
@@ -203,4 +205,29 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     $template.setAttribute('aria-hidden', 'false');
     button.data.disabled = false;
   });
+};
+
+BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
+  let vertical = BriteGrid.util.device.mobile.mql.matches || pref === 'vertical',
+      grid = this.view.grid;
+
+  document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
+  grid.options.adjust_scrollbar = !vertical;
+
+  let splitter = this.preview_splitter;
+  if (splitter) {
+    let orientation = vertical ? 'vertical' : 'horizontal',
+        pref = BzDeck.data.prefs['ui.home.preview.splitter.position.' + orientation];
+    splitter.data.orientation = orientation;
+    if (pref) {
+      splitter.data.position = pref;
+    }
+  }  
+
+  if (vertical && sort_grid) {
+    // Force to change the sort condition when switched to the mobile layout
+    let cond = grid.options.sort_conditions;
+    cond.key = 'last_change_time';
+    cond.order = 'descending';
+  }
 };

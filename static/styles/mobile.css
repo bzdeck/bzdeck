@@ -266,73 +266,8 @@ main {
 }
 
 #home-list-pane {
-  left: 0;
-  height: 100%;
-}
-
-.grid-header {
-  display: none;
-}
-
-.grid-body {
-  overflow: auto;
-  height: 100%;
-}
-
-[role="grid"] table,
-[role="grid"] tbody,
-[role="row"] {
-  display: block;
-}
-
-[role="row"] {
-  position: relative;
-  border-bottom: .1rem solid;
-  padding: 1rem 4rem 1rem .8rem;
-  font-weight: normal;
-}
-
-[role="gridcell"] {
-  display: none;
-  border: 0;
-  height: auto;
-  line-height: 1.2;
-}
-
-[role="gridcell"] label {
-  white-space: normal;
-}
-
-[role="gridcell"]:-moz-any([data-id="id"], [data-id="summary"], [data-id="last_change_time"], [data-id="_starred"]) {
-  display: block;
-}
-
-[role="gridcell"][data-id="summary"] {
-  margin-top: .4rem;
-  font-size: 1.2rem;
-  line-height: 1.5;
-}
-
-[role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
-  font-weight: bold;
-}
-
-[role="gridcell"][data-id="last_change_time"] {
-  position: absolute;
-  top: 1rem;
-  right: .8rem;
-}
-
-[role="gridcell"][data-id="_starred"] {
-  position: absolute;
-  top: 2.4rem;
-  right: .8rem;
-  width: 2.8rem;
-  height: 2.8rem;
-}
-
-[role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-size: 64%;
+  right: 0 !important;
+  width: auto !important;
 }
 
 #main-tabpanels [role="tabpanel"] > header,

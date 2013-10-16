@@ -64,6 +64,9 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('date-timezone', 'local', function (value) update_date_format('timezone', value));
   activate('date-format', 'relative', function (value) update_date_format('format', value));
 
+  // Home
+  activate('home-layout', 'classic', function (value) BzDeck.homepage.change_layout(value, true));
+
   // Timeline
   activate('timeline-order', 'ascending', function (value) {
     for (let $timeline of document.querySelectorAll('[id$="preview-bug-timeline"], \
