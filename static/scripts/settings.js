@@ -11,7 +11,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      $existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-settings')[0];
+      $existing_tab = document.querySelector('#tab-settings');
 
   if ($existing_tab) {
     tablist.view.selected = tablist.view.$focused = $existing_tab;
@@ -21,7 +21,7 @@ BzDeck.SettingsPage = function () {
   let $template = document.querySelector('#tabpanel-settings-template'),
       $content = ($template.content || $template).cloneNode(),
       $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]'),
-      id_suffix = this.id = (new Date()).getTime();
+      id_suffix = this.id = Date.now();
 
   // Assign unique IDs to support older browsers where HTMLTemplateElement is not implemented
   for (let attr of ['id', 'aria-labelledby']) {
@@ -51,6 +51,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
   let update_date_format = function (option, value) {
     i18n.options.date[option] = value;
+
     // Update timezone & format on the current view
     for (let $element of document.querySelectorAll('time')) {
       $element.textContent = i18n.format_date($element.dateTime,
@@ -73,9 +74,11 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     for (let $timeline of document.querySelectorAll('[id$="preview-bug-timeline"], \
                                                      [id$="tabpanel-timeline"] > section')) {
       $timeline.setAttribute('aria-busy', 'true');
+
       for (let $comment of [...$timeline.querySelectorAll('article[data-time]')].reverse()) {
         $timeline.appendChild($comment);
       }
+
       $timeline.removeAttribute('aria-busy');
     }
   });
@@ -94,9 +97,9 @@ BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value,
     $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
   }
 
-  let rgroup = new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
-  rgroup.bind('Selected', function (event) {
+  (new BriteGrid.widget.RadioGroup($rgroup)).bind('Selected', function (event) {
     let value = prefs[pref] = event.detail.items[0].dataset.value;
+
     if (callback) {
       callback(value);
     }

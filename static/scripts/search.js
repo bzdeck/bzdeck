@@ -13,7 +13,7 @@ BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
       $template = document.querySelector('template#tabpanel-search'),
       $content = ($template.content || $template).cloneNode(),
-      id_suffix = this.id = (new Date()).getTime();
+      id_suffix = this.id = Date.now();
 
   // Assign unique IDs
   for (let $element of $content.querySelectorAll('[id]')) {
@@ -35,21 +35,27 @@ BzDeck.SearchPage = function () {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
+
         for (let bug of obj[prop]) {
           bugs[bug.id] = bug;
         }
-        return this.view.grid.data.rows.map(function (row) bugs[row.data.id]);
+
+        return [bugs[row.data.id] for (row of this.view.grid.data.rows)];
       }
+
       return obj[prop];
     }.bind(this),
     set: function (obj, prop, newval) {
       let oldval = obj[prop];
+
       if (oldval === newval) {
         return;
       }
+
       if (prop === 'preview_id' && !BriteGrid.util.device.mobile.mql.matches) {
         this.show_preview(oldval, newval);
       }
+
       obj[prop] = newval;
     }.bind(this)
   });
@@ -80,6 +86,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
         break;
       }
+
       case 'show-basic-search-pane': {
         panes['basic-search'].setAttribute('aria-hidden', 'false');
         panes['preview'].setAttribute('aria-hidden', 'true');
@@ -97,7 +104,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
-  let $pane = this.view.panes['basic-search'] 
+  let $pane = this.view.panes['basic-search']
             = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
       config = BzDeck.data.bugzilla_config;
 
@@ -112,61 +119,49 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-  let classifications = Object.keys(config.classification),
-      classification_list_id_prefix = $classification_list.id + 'item-';
-  classifications.sort();
-  for (let [index, value] of Iterator(classifications)) {
-    classifications[index] = {
-      id: classification_list_id_prefix + index,
+  let classifications = Object.keys(config.classification).sort().map(function (value, index) {
+    return {
+      id: $classification_list.id + 'item-' + index,
       label: value
     };
-  }
+  });
 
-  let products = [],
-      product_list_id_prefix = $product_list.id + 'item-',
-      components = [],
-      component_list_id_prefix = $component_list.id + 'item-';
-  for (let [key, value] of Iterator(config.product)) {
-    products.push(key);
-    for (let [key, value] of Iterator(value.component)) {
-      if (components.indexOf(key) === -1) {
-        components.push(key);
-      }
-    }
-  }
-  products.sort();
-  for (let [index, value] of Iterator(products)) {
-    products[index] = {
-      id: product_list_id_prefix + index,
+  let products = Object.keys(config.product).sort().map(function (value, index) {
+    return {
+      id: $product_list.id + 'item-' + index,
       label: value
     };
+  });
+
+  let components = [];
+
+  for (let [key, { component: cs }] of Iterator(config.product)) {
+    components.push.apply(components,
+                          [c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
+    // Fx27: components.push(...[c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
   }
-  components.sort();
-  for (let [index, value] of Iterator(components)) {
-    components[index] = {
-      id: component_list_id_prefix + index,
+
+  components = components.sort().map(function (value, index) {
+    return {
+      id: $component_list.id + 'item-' + index,
       label: value
     };
-  }
+  });
 
-  let statuses = [],
-      status_list_id_prefix = $status_list.id + 'item-';
-  for (let [index, value] of Iterator(config.field.status.values)) {
-    statuses.push({
-      id: status_list_id_prefix + index,
+  let statuses = config.field.status.values.map(function (value, index) {
+    return {
+      id: $status_list.id + 'item-' + index,
       label: value
-    });
-  };
+    };
+  });
 
-  let resolutions = [],
-      resolution_list_id_prefix = $resolution_list.id + 'item-';
-  for (let [key, value] of Iterator(config.field.resolution.values)) {
-    resolutions.push({
-      id: resolution_list_id_prefix + key,
+  let resolutions = config.field.resolution.values.map(function (value, index) {
+    return {
+      id: $resolution_list.id + 'item-' + index,
       label: value || '---',
       selected: !value // Select '---' to search open bugs
-    });
-  };
+    };
+  });
 
   let ListBox = BriteGrid.widget.ListBox,
       classification_list = new ListBox($classification_list, classifications),
@@ -178,36 +173,45 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   classification_list.bind('Selected', function (event) {
     let products = [],
         components = [];
+
     for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
-      products = products.concat(config.classification[$option.textContent].products);
+      products.push.apply(products, config.classification[$option.textContent].products);
+      // Fx27: products.push(...config.classification[$option.textContent].products);
     }
+
     for (let product of products) {
-      components = components.concat(Object.keys(config.product[product].component));
+      components.push.apply(components, Object.keys(config.product[product].component));
+      // Fx27: components.push(...Object.keys(config.product[product].component));
     }
+
     // Narrow down the product list
     for (let $option of $product_list.querySelectorAll('[role="option"]')) {
-      let state = products.length && products.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
       $option.setAttribute('aria-selected', 'false');
+      $option.setAttribute('aria-disabled',
+                           products.length && products.indexOf($option.textContent) === -1);
     }
+
     // Narrow down the component list
     for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      let state = components.length && components.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
       $option.setAttribute('aria-selected', 'false');
+      $option.setAttribute('aria-disabled',
+                           components.length && components.indexOf($option.textContent) === -1);
     }
   });
 
   product_list.bind('Selected', function (event) {
     let components = [];
+
     for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
-      components = components.concat(Object.keys(config.product[$option.textContent].component));
+      components.push.apply(components, Object.keys(config.product[$option.textContent].component));
+      // Fx27: components.push(...Object.keys(config.product[$option.textContent].component));
     }
+
     // Narrow down the component list
     for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      let state = components.length && components.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
       $option.setAttribute('aria-selected', 'false');
+      $option.setAttribute('aria-disabled',
+                           components.length && components.indexOf($option.textContent) === -1);
     }
   });
 
@@ -215,21 +219,18 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       button = new BriteGrid.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
   button.bind('Pressed', function (event) {
-    let query = {};
-
-    let map = {
-      classification: $classification_list,
-      product: $product_list,
-      component: $component_list,
-      status: $status_list,
-      resolution: $resolution_list
-    };
+    let query = {},
+        map = {
+          classification: $classification_list,
+          product: $product_list,
+          component: $component_list,
+          status: $status_list,
+          resolution: $resolution_list
+        };
 
     for (let [name, list] of Iterator(map)) {
-      let values = [];
-      for (let $option of list.querySelectorAll('[aria-selected="true"]')) {
-        values.push($option.textContent);
-      }
+      let values = [$opt.textContent for ($opt of list.querySelectorAll('[aria-selected="true"]'))];
+
       if (values.length) {
         query[name] = values;
       }
@@ -245,7 +246,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
-  let $pane = this.view.panes['result'] 
+  let $pane = this.view.panes['result']
             = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
       mobile_mql = BriteGrid.util.device.mobile.mql,
@@ -262,14 +263,17 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
           col.label = 'Starred';
           break;
         }
+
         case '_unread': {
           col.label = 'Unread';
           break;
         }
+
         default: {
           col.label = field[col.id].description;
         }
       }
+
       return col;
     })
   },
@@ -306,9 +310,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
   grid.bind('Selected', function (event) {
     let ids = event.detail.ids;
+
     if (ids.length) {
       // Show Bug in Preview Pane
-      this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
+      this.data.preview_id = parseInt(ids[ids.length - 1]);
+
       // Mobile compact layout
       if (mobile_mql.matches) {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -318,10 +324,10 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
   grid.bind('dblclick', function (event) {
     let $target = event.originalTarget;
+
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      let id = Number.toInteger($target.dataset.id);
-      BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
+      BzDeck.detailspage = new BzDeck.DetailsPage(parseInt($target.dataset.id), this.data.bug_list);
     }
   }.bind(this));
 
@@ -331,14 +337,17 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         view = this.view.grid.view,
         members = view.members,
         index = members.indexOf(view.$focused);
+
     // [B] Select previous bug
     if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
       view.selected = view.$focused = members[index - 1];
     }
+
     // [F] Select next bug
     if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
       view.selected = view.$focused = members[index + 1];
     }
+
     // [M] toggle read
     if (!modifiers && event.keyCode === event.DOM_VK_M) {
       for (let $item of view.selected) {
@@ -346,6 +355,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         _data._unread = _data._unread !== true;
       }
     }
+
     // [S] toggle star
     if (!modifiers && event.keyCode === event.DOM_VK_S) {
       for (let $item of view.selected) {
@@ -357,6 +367,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
   $pane.addEventListener('transitionend', function (event) {
     let selected = this.view.grid.view.selected;
+
     if (event.propertyName === 'bottom' && selected.length) {
       this.view.grid.ensure_row_visibility(selected[selected.length - 1]);
     }
@@ -364,11 +375,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
-  let $pane = this.view.panes['preview'] 
+  let ScrollBar = BriteGrid.widget.ScrollBar,
+      $pane = this.view.panes['preview']
             = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
 
   // Custom scrollbar
-  let ScrollBar = BriteGrid.widget.ScrollBar;
   new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
   new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
 };
@@ -388,6 +399,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
       $template.setAttribute('aria-hidden', 'true');
       return;
     }
+
     // Show the preview pane
     if ($pane.mozMatchesSelector('[aria-hidden="true"]')) {
       BzDeck.global.show_status('');
@@ -396,6 +408,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
       this.view.buttons['show-details'].data.disabled = false;
       this.view.buttons['show-basic-search-pane'].data.disabled = false;
     }
+
     // Fill the content
     BzDeck.global.fill_template($template, bug);
     $template.setAttribute('aria-hidden', 'false');
@@ -409,7 +422,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   }
 
   // Specify fields
-  query['include_fields'] = BzDeck.options.api.default_fields.join(',');
+  query['include_fields'] = BzDeck.options.api.default_fields.join();
   query = BriteGrid.util.request.build_query(query);
 
   BzDeck.global.show_status('Loading...'); // l10n
@@ -422,27 +435,29 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
     if (!data || !Array.isArray(data.bugs)) {
       $grid_body.removeAttribute('aria-busy');
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+
       return;
     }
+
     let num = data.bugs.length,
         status = '';
+
     if (num > 0) {
       this.data.bug_list = data.bugs;
+
       // Save data
       BzDeck.model.get_all_bugs(function (bugs) {
-        let saved_ids = new Set(bugs.map(function (bug) bug.id));
-        BzDeck.model.save_bugs(data.bugs.filter(function (bug) !saved_ids.has(bug.id)));
+        let saved_ids = new Set([id for ({ id } of bugs)]);
+        BzDeck.model.save_bugs([bug for (bug of data.bugs) if (!saved_ids.has(bug.id))]);
       });
+
       // Show results
       BzDeck.global.update_grid_data(this.view.grid, data.bugs);
-      if (num > 1) {
-        status = '%d bugs found.'.replace('%d', num); // l10n
-      } else {
-        status = '1 bug found.'; // l10n
-      }
+      status = (num > 1) ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
     } else {
       status = 'Zarro Boogs found.'; // l10n
     }
+
     $grid_body.removeAttribute('aria-busy');
     BzDeck.global.show_status(status);
   }.bind(this));

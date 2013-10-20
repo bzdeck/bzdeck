@@ -11,10 +11,11 @@ let BzDeck = BzDeck || {};
 
 BzDeck.DetailsPage = function (id, bug_list = []) {
   let tablist = BzDeck.toolbar.tablist,
-      $existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-details-' + id)[0];
+      $existing_tab = document.querySelector('#tab-details-' + id);
 
   if ($existing_tab) {
     tablist.view.selected = tablist.view.$focused = $existing_tab;
+
     return;
   }
 
@@ -29,7 +30,8 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
   };
 
   if (bug_list.length) {
-    this.open(bug_list.filter(function (bug) bug.id === id)[0], bug_list);
+    this.open([bug for (bug of bug_list) if (bug.id === id)][0], bug_list);
+
     return;
   }
 
@@ -46,12 +48,12 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
 
 BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   // If there is an existing tabpanel, reuse it
-  let $tabpanel = document.getElementById('tabpanel-details-' + bug.id);
+  let $tabpanel = document.querySelector('#tabpanel-details-' + bug.id);
 
   // Or prep a new one
   if (!$tabpanel) {
     $tabpanel = this.prep_tabpanel(bug);
-    document.getElementById('main-tabpanels').appendChild($tabpanel);
+    document.querySelector('#main-tabpanels').appendChild($tabpanel);
   }
 
   let mobile_mql = BriteGrid.util.device.mobile.mql,
@@ -65,14 +67,17 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     if (mql.matches) { // Mobile
       $info_tab.setAttribute('aria-hidden', 'false');
       $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
-    } else { // Desktop
-      if (_tablist.view.selected[0] === $info_tab) {
-        _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
-      }
-      $info_tab.setAttribute('aria-hidden', 'true');
-      $tabpanel.querySelector('div').appendChild($bug_info);
-      $tablist.removeAttribute('aria-hidden');
+
+      return;
     }
+
+    if (_tablist.view.selected[0] === $info_tab) {
+      _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
+    }
+
+    $info_tab.setAttribute('aria-hidden', 'true');
+    $tabpanel.querySelector('div').appendChild($bug_info);
+    $tablist.removeAttribute('aria-hidden');
   };
 
   mobile_mql.addListener(mobile_mql_listener);
@@ -81,12 +86,15 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   // Hide tabs when scrolled down on mobile
   for (let $_tabpanel of $tabpanel.querySelectorAll('[role="tabpanel"]')) {
     let scroll_top = $_tabpanel.scrollTop;
+
     $_tabpanel.addEventListener('scroll', function (event) {
       if (mobile_mql.matches) {
         let value = String(event.target.scrollTop - scroll_top > 0);
+
         if ($tablist.getAttribute('aria-hidden') !== value) {
           $tablist.setAttribute('aria-hidden', value);
         }
+
         scroll_top = event.target.scrollTop;
       }
     });
@@ -96,14 +104,15 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   $tabpanel.setAttribute('aria-hidden', 'false');
 
   // Open a new tab
-  let tablist = BzDeck.toolbar.tablist;
-  let $tab = this.view.$tab = tablist.add_tab(
-    'details-' + bug.id,
-    'Bug %d'.replace('%d', bug.id), // l10n
-    this.get_tab_title(bug),
-    $tabpanel,
-    'next'
-  );
+  let tablist = BzDeck.toolbar.tablist,
+      $tab = this.view.$tab = tablist.add_tab(
+        'details-' + bug.id,
+        'Bug %d'.replace('%d', bug.id), // l10n
+        this.get_tab_title(bug),
+        $tabpanel,
+        'next'
+      );
+
   tablist.view.selected = tablist.view.$focused = $tab;
 
   // Set Back & Forward navigation
@@ -114,6 +123,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let $template = document.querySelector('template#tabpanel-details');
+
   return BzDeck.global.fill_template(
     $template.content || $template,
     bug, true
@@ -133,14 +143,14 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
-      bugs = bug_list.map(function (bug) bug.id),
+      bugs = [id for ({ id } of bug_list)],
       index = bugs.indexOf(this.data.id),
       prev = bugs[index - 1],
       next = bugs[index + 1],
       set_keybind = BriteGrid.util.event.set_keybind;
 
   let preload = function (id) {
-    if (document.getElementById('tabpanel-details-' + id)) {
+    if (document.querySelector('#tabpanel-details-' + id)) {
       return;
     }
 
@@ -148,7 +158,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       let $tabpanel = this.prep_tabpanel(bug);
 
       $tabpanel.setAttribute('aria-hidden', 'true');
-      document.getElementById('main-tabpanels').insertBefore(
+      document.querySelector('#main-tabpanels').insertBefore(
         $tabpanel,
         (id === prev) ? $current_tabpanel : $current_tabpanel.nextElementSibling
       );
@@ -188,27 +198,29 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
 BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
     BzDeck.global.show_status('You have to go online to load a bug.'); // l10n
+
     return;
   }
 
   BzDeck.global.show_status('Loading...'); // l10n
 
-  let api = BzDeck.options.api;
-  let query = BriteGrid.util.request.build_query({
-    include_fields: Array.concat(api.default_fields, api.extra_fields).join(','),
-    exclude_fields: 'attachments.data'
-  });
+  let api = BzDeck.options.api,
+      query = BriteGrid.util.request.build_query({
+        include_fields: [...api.default_fields, ...api.extra_fields].join(),
+        exclude_fields: 'attachments.data'
+      });
 
   BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
     if (!bug || !bug.id) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+
       return;
     }
 
     // Save in DB
     BzDeck.model.save_bug(bug);
 
-    let $tab = document.getElementById('tab-details-' + id),
+    let $tab = document.querySelector('#tab-details-' + id),
         $tabpanel = this.view.$tabpanel;
 
     // Check if the tabpanel still exists
@@ -222,11 +234,11 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 };
 
 BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
-  let api = BzDeck.options.api;
-  let query = BriteGrid.util.request.build_query({
-    include_fields: Array.concat(api.default_fields, api.extra_fields).join(','),
-    exclude_fields: 'attachments.data'
-  });
+  let api = BzDeck.options.api,
+      query = BriteGrid.util.request.build_query({
+        include_fields: [...api.default_fields, ...api.extra_fields].join(),
+        exclude_fields: 'attachments.data'
+      });
 
   BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
     if (bug && bug.id) {

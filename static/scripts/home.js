@@ -20,11 +20,14 @@ BzDeck.HomePage = function () {
                  = new BGw.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.',
         pref = prefs[prefix + splitter.data.orientation];
+
     if (pref) {
       splitter.data.position = pref;
     }
+
     splitter.bind('Resized', function (event) {
       let position = event.detail.position;
+
       if (position) {
         prefs[prefix + splitter.data.orientation] = position;
       }
@@ -32,8 +35,8 @@ BzDeck.HomePage = function () {
   }
 
   // Custom scrollbar
-  new BGw.ScrollBar(document.getElementById('home-preview-bug-info'));
-  new BGw.ScrollBar(document.getElementById('home-preview-bug-timeline'));
+  new BGw.ScrollBar(document.querySelector('#home-preview-bug-info'));
+  new BGw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
 
   this.view = {};
 
@@ -42,8 +45,7 @@ BzDeck.HomePage = function () {
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  let grid = this.view.grid
-           = new BriteGrid.widget.Grid(document.querySelector('#home-list'), {
+  let grid = this.view.grid = new BriteGrid.widget.Grid(document.querySelector('#home-list'), {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -52,14 +54,17 @@ BzDeck.HomePage = function () {
           col.label = 'Starred';
           break;
         }
+
         case '_unread': {
           col.label = 'Unread';
           break;
         }
+
         default: {
           col.label = field[col.id].description;
         }
       }
+
       return col;
     })
   },
@@ -93,24 +98,28 @@ BzDeck.HomePage = function () {
 
   grid.bind('Selected', function (event) {
     let ids = event.detail.ids;
+
     if (ids.length) {
       // Show Bug in Preview Pane
-      this.data.preview_id = Number.toInteger(ids[ids.length - 1]);
+      this.data.preview_id = parseInt(ids[ids.length - 1]);
+
       // Mobile compact layout or Vertical View
       if (window.matchMedia('(max-width: 799px)').matches) {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
-      // Mark as Read
+
       let data = this.view.grid.data;
+
+      // Mark as Read
       for (let $item of event.detail.items) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-        _data._unread = false;
+        data.rows[$item.sectionRowIndex].data._unread = false;
       }
     }
   }.bind(this));
 
   grid.bind('dblclick', function (event) {
     let $target = event.originalTarget;
+
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
       BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -123,14 +132,17 @@ BzDeck.HomePage = function () {
         view = this.view.grid.view,
         members = view.members,
         index = members.indexOf(view.$focused);
+
     // [B] Select previous bug
     if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
       view.selected = view.$focused = members[index - 1];
     }
+
     // [F] Select next bug
     if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
       view.selected = view.$focused = members[index + 1];
     }
+
     // [M] toggle read
     if (!modifiers && event.keyCode === event.DOM_VK_M) {
       for (let $item of view.selected) {
@@ -138,6 +150,7 @@ BzDeck.HomePage = function () {
         _data._unread = _data._unread !== true;
       }
     }
+
     // [S] toggle star
     if (!modifiers && event.keyCode === event.DOM_VK_S) {
       for (let $item of view.selected) {
@@ -164,26 +177,31 @@ BzDeck.HomePage = function () {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
+
         for (let bug of obj[prop]) {
           bugs[bug.id] = bug;
         }
-        return this.view.grid.data.rows.map(function (row) bugs[row.data.id]);
+
+        return [bugs[row.data.id] for (row of this.view.grid.data.rows)];
       }
+
       return obj[prop];
     }.bind(this),
     set: function (obj, prop, newval) {
       let oldval = obj[prop];
+
       if (prop === 'preview_id') {
         this.show_preview(oldval, newval);
       }
+
       obj[prop] = newval;
     }.bind(this)
   });
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
-  let $pane = document.getElementById('home-preview-pane'),
-      $template = document.getElementById('home-preview-bug'),
+  let $pane = document.querySelector('#home-preview-pane'),
+      $template = document.querySelector('#home-preview-bug'),
       button = this.view.details_button;
 
   // Remove the current preview if exists
@@ -191,6 +209,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
   if (!newval) {
     $template.setAttribute('aria-hidden', 'true');
     button.data.disabled = true;
+
     return;
   }
 
@@ -198,8 +217,10 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     if (!bug) {
       $template.setAttribute('aria-hidden', 'true');
       button.data.disabled = true;
+
       return;
     }
+
     // Fill the content
     BzDeck.global.fill_template($template, bug);
     $template.setAttribute('aria-hidden', 'false');
@@ -209,20 +230,22 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = BriteGrid.util.device.mobile.mql.matches || pref === 'vertical',
-      grid = this.view.grid;
+      grid = this.view.grid,
+      splitter = this.preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
   grid.options.adjust_scrollbar = !vertical;
 
-  let splitter = this.preview_splitter;
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
         pref = BzDeck.data.prefs['ui.home.preview.splitter.position.' + orientation];
+
     splitter.data.orientation = orientation;
+
     if (pref) {
       splitter.data.position = pref;
     }
-  }  
+  }
 
   if (vertical && sort_grid) {
     // Force to change the sort condition when switched to the mobile layout
