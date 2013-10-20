@@ -21,7 +21,7 @@ BzDeck.SearchPage = function () {
   }
 
   this.view = {
-    tabpanel: $content.querySelector('[role="tabpanel"]'),
+    $tabpanel: $content.querySelector('[role="tabpanel"]'),
     buttons: {},
     panes: {}
   };
@@ -54,11 +54,11 @@ BzDeck.SearchPage = function () {
     }.bind(this)
   });
 
-  let tab = tablist.add_tab(
+  let $tab = tablist.add_tab(
     'search-' + id_suffix,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
-    this.view.tabpanel
+    this.view.$tabpanel
   );
 
   this.setup_basic_search_pane();
@@ -66,8 +66,8 @@ BzDeck.SearchPage = function () {
   this.setup_preview_pane();
   this.setup_toolbar();
 
-  tablist.view.selected = tablist.view.focused = tab;
-  this.view.tabpanel.focus();
+  tablist.view.selected = tablist.view.$focused = $tab;
+  this.view.$tabpanel.focus();
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
@@ -90,7 +90,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
     }
   }.bind(this);
 
-  for (let $button of this.view.tabpanel.querySelectorAll('footer [role="button"]')) {
+  for (let $button of this.view.$tabpanel.querySelectorAll('footer [role="button"]')) {
     buttons[$button.dataset.command] = new BriteGrid.widget.Button($button);
     $button.addEventListener('Pressed', handler.bind(this));
   }
@@ -98,7 +98,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 
 BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let $pane = this.view.panes['basic-search'] 
-            = this.view.tabpanel.querySelector('[id$="-basic-search-pane"]'),
+            = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
       config = BzDeck.data.bugzilla_config;
 
   // Custom scrollbar
@@ -248,7 +248,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] 
-            = this.view.tabpanel.querySelector('[id$="-result-pane"]'),
+            = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
       mobile_mql = BriteGrid.util.device.mobile.mql,
       prefs = BzDeck.data.prefs,
@@ -332,14 +332,14 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         data = this.view.grid.data,
         view = this.view.grid.view,
         members = view.members,
-        index = members.indexOf(view.focused);
+        index = members.indexOf(view.$focused);
     // [B] Select previous bug
     if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
-      view.selected = view.focused = members[index - 1];
+      view.selected = view.$focused = members[index - 1];
     }
     // [F] Select next bug
     if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
-      view.selected = view.focused = members[index + 1];
+      view.selected = view.$focused = members[index + 1];
     }
     // [M] toggle read
     if (!modifiers && event.keyCode === event.DOM_VK_M) {
@@ -367,7 +367,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let $pane = this.view.panes['preview'] 
-            = this.view.tabpanel.querySelector('[id$="-preview-pane"]');
+            = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
 
   // Custom scrollbar
   let ScrollBar = BriteGrid.widget.ScrollBar;

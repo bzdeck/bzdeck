@@ -113,10 +113,10 @@ BzDeck.bootstrap.check_requirements = function () {
 };
 
 BzDeck.bootstrap.start = function () {
-  let $form = this.form = document.querySelector('#app-login form');
-  this.input = $form.querySelector('input');
-  this.button = $form.querySelector('button');
-  BzDeck.global.statusbar = document.querySelector('#app-login [role="status"]');
+  let $form = this.$form = document.querySelector('#app-login form');
+  this.$input = $form.querySelector('input');
+  this.$button = $form.querySelector('button');
+  BzDeck.global.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.open_database();
 };
@@ -172,7 +172,7 @@ BzDeck.bootstrap.load_config = function () {
           // Give up
           BzDeck.global.show_status('ERROR: Bugzilla configuration could not be loaded. \
             The instance might be offline.'); // l10n
-          this.input.disabled = this.button.disabled = true;
+          this.$input.disabled = this.$button.disabled = true;
         } else {
           // The config is loaded successfully
           BzDeck.data.bugzilla_config = data;
@@ -222,9 +222,9 @@ BzDeck.bootstrap.load_prefs = function () {
 };
 
 BzDeck.bootstrap.show_login_form = function (firstrun = true) {
-  let $form = this.form,
-      $input = this.input,
-      $button = this.button;
+  let $form = this.$form,
+      $input = this.$input,
+      $button = this.$button;
 
   $form.setAttribute('aria-hidden', 'false');
   $input.disabled = $button.disabled = false;
@@ -256,8 +256,8 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
 };
 
 BzDeck.bootstrap.validate_account = function () {
-  let $input = this.input,
-      $button = this.button;
+  let $input = this.$input,
+      $button = this.$button;
 
   BzDeck.global.show_status('Confirming account...'); // l10n
   $input.disabled = $button.disabled = true;
@@ -762,7 +762,7 @@ BzDeck.session.login = function () {
   let $app_login = document.getElementById('app-login'),
       $app_body = document.getElementById('app-body');
 
-  BzDeck.global.statusbar = document.getElementById('statusbar');
+  BzDeck.global.$statusbar = document.getElementById('statusbar');
 
   $app_login.hidden = true;
   $app_login.setAttribute('aria-hidden', 'true');
@@ -782,7 +782,7 @@ BzDeck.session.logout = function () {
   let $app_login = document.getElementById('app-login'),
       $app_body = document.getElementById('app-body');
 
-  BzDeck.global.statusbar = $app_login.querySelector('[role="status"]');
+  BzDeck.global.$statusbar = $app_login.querySelector('[role="status"]');
   BzDeck.global.show_status('You have logged out.'); // l10n
 
   $app_login.hidden = false;
@@ -826,7 +826,7 @@ BzDeck.global.install_app = function () {
 };
 
 BzDeck.global.show_status = function (message) {
-  this.statusbar.textContent = message;
+  this.$statusbar.textContent = message;
 };
 
 BzDeck.global.show_notification = function (title, body) {
@@ -1222,8 +1222,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
   // Sort by time
   let _entries = [];
-  for (let [time, template] of Iterator(entries)) {
-    _entries.push({ time: time, element: template });
+  for (let [time, $template] of Iterator(entries)) {
+    _entries.push({ time: time, $element: $template });
   }
   let sort_order = prefs['ui.timeline.sort.order'] || 'ascending';
   _entries.sort(function (a, b) (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
@@ -1233,7 +1233,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
          .textContent = bug.summary;
   // Append to the timeline
   for (let entry of _entries) {
-    $parent.appendChild(entry.element);
+    $parent.appendChild(entry.$element);
   }
 
   $timeline.scrollTop = 0;
@@ -1243,7 +1243,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
 BzDeck.global.update_grid_data = function (grid, bugs) {
   let rows = [],
-      row_id_prefix = grid.view.container.id + '-row-';
+      row_id_prefix = grid.view.$container.id + '-row-';
 
   // build table
   for (let bug of bugs) {
@@ -1280,8 +1280,8 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
         if (prop === '_unread') {
           BzDeck.core.toggle_unread(obj.id, value);
           let row = grid.data.rows.filter(function (row) row.data.id === obj.id)[0];
-          if (row && row.element) {
-            row.element.dataset.unread = value;
+          if (row && row.$element) {
+            row.$element.dataset.unread = value;
           }
         }
         obj[prop] = value;
@@ -1367,7 +1367,8 @@ BzDeck.toolbar.setup = function () {
   let BGw = BriteGrid.widget,
       BGu = BriteGrid.util,
       mobile_mql = BriteGrid.util.device.mobile.mql,
-      tablist = this.tablist = new BGw.TabList(document.getElementById('main-tablist'));
+      tablist = this.tablist = new BGw.TabList(document.getElementById('main-tablist')),
+      $root = document.documentElement; // <html>
 
   // Change the window title when a new tab is selected
   tablist.view = new Proxy(tablist.view, {
@@ -1378,9 +1379,9 @@ BzDeck.toolbar.setup = function () {
             title = value[0].title.replace('\n', ' – ');
         if (hash === '#home') {
           hash = '#' + BzDeck.sidebar.data.folder_id;
-          document.documentElement.setAttribute('data-current-tab', 'home');
+          $root.setAttribute('data-current-tab', 'home');
         } else {
-          document.documentElement.setAttribute('data-current-tab', hash);
+          $root.setAttribute('data-current-tab', hash);
         }
         if (location.hash !== hash) {
           history.pushState({}, title, hash);
@@ -1449,7 +1450,7 @@ BzDeck.toolbar.setup = function () {
       if (tabs.selected[0] === $tab_home) {
         document.querySelector('#sidebar > div').scrollTop = 0;
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
-        document.documentElement.setAttribute('data-sidebar-hidden', hidden);
+        $root.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
       } else {
         tabs.selected = $tab_home;
@@ -1457,19 +1458,19 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  document.documentElement.setAttribute('data-current-tab', 'home');
+  $root.setAttribute('data-current-tab', 'home');
 
   // Account label & avatar
   let account = BzDeck.data.account,
       account_label = (account.real_name ? '<strong>' + account.real_name + '</strong>' : '&nbsp;')
                     + '<br>' + account.name,
-      account_img = new Image();
+      $account_img = new Image();
   document.querySelector('#main-menu--app--account label').innerHTML = account_label;
-  account_img.addEventListener('load', function (event) {
+  $account_img.addEventListener('load', function (event) {
     document.styleSheets[1].insertRule('#main-menu--app--account label:before '
       + '{ background-image: url(' + event.target.src + ') !important }', 0);
   });
-  account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
+  $account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
   BGu.app.can_install(BzDeck.options.app.manifest, function (result) {
     if (result) {
@@ -1604,7 +1605,7 @@ BzDeck.toolbar.quicksearch = function (event) {
 
     let dropdown = this.search_dropdown;
     dropdown.build(data);
-    dropdown.view.container.scrollTop = 0;
+    dropdown.view.$container.scrollTop = 0;
     dropdown.open();
   }.bind(this));
 };
@@ -1949,17 +1950,18 @@ window.addEventListener("popstate", function (event) {
   let hash = location.hash.substr(1),
       tabs = BzDeck.toolbar.tablist.view,
       folders = BzDeck.sidebar.folders.view,
-      matched;
+      matched,
+      $root = document.documentElement; // <html>
 
   // Hide sidebar
   if (BriteGrid.util.device.mobile.mql.matches) {
-    document.documentElement.setAttribute('data-sidebar-hidden', 'true');
+    $root.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
 
   if (hash.match(/^bug\/(\d+)$/)) {
     let bug_id = Number.toInteger(RegExp.$1);
-    document.documentElement.setAttribute('data-current-tab', 'bug/' + bug_id);
+    $root.setAttribute('data-current-tab', 'bug/' + bug_id);
 
     matched = tabs.members.filter(function (tab) tab.id === 'tab-details-' + bug_id)[0];
     if (matched) {
@@ -1973,7 +1975,7 @@ window.addEventListener("popstate", function (event) {
           index = bugs.indexOf(BzDeck.detailspage.data.id);
       if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
         // Back or Forward navigation
-        BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.tab);
+        BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.$tab);
         BzDeck.detailspage = new BzDeck.DetailsPage(bug_id, bug_list);
         return;
       }
@@ -1983,23 +1985,23 @@ window.addEventListener("popstate", function (event) {
     return;
   }
 
-  matched = folders.members.filter(function (folder) folder.dataset.id === hash)[0];
+  matched = folders.members.filter(function ($folder) $folder.dataset.id === hash)[0];
   if (matched) {
-    document.documentElement.setAttribute('data-current-tab', 'home');
+    $root.setAttribute('data-current-tab', 'home');
     tabs.selected = document.querySelector('#tab-home');
     folders.selected = matched;
     return;
   }
 
-  matched = tabs.members.filter(function (tab) tab.id === 'tab-' + hash)[0];
+  matched = tabs.members.filter(function ($tab) $tab.id === 'tab-' + hash)[0];
   if (matched) {
-    document.documentElement.setAttribute('data-current-tab', hash);
+    $root.setAttribute('data-current-tab', hash);
     tabs.selected = matched;
     return;
   }
 
   // Fallback
-  document.documentElement.setAttribute('data-current-tab', 'home');
+  $root.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#sidebar-folders--inbox');
 });

@@ -11,10 +11,10 @@ let BzDeck = BzDeck || {};
 
 BzDeck.DetailsPage = function (id, bug_list = []) {
   let tablist = BzDeck.toolbar.tablist,
-      existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-details-' + id)[0];
+      $existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-details-' + id)[0];
 
-  if (existing_tab) {
-    tablist.view.selected = tablist.view.focused = existing_tab;
+  if ($existing_tab) {
+    tablist.view.selected = tablist.view.$focused = $existing_tab;
     return;
   }
 
@@ -24,8 +24,8 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
   };
 
   this.view = {
-    tab: null,
-    tabpanel: null
+    $tab: null,
+    $tabpanel: null
   };
 
   if (bug_list.length) {
@@ -67,7 +67,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
       $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
     } else { // Desktop
       if (_tablist.view.selected[0] === $info_tab) {
-        _tablist.view.selected = _tablist.view.focused = $timeline_tab;
+        _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
       }
       $info_tab.setAttribute('aria-hidden', 'true');
       $tabpanel.querySelector('div').appendChild($bug_info);
@@ -92,19 +92,19 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     });
   }
 
-  this.view.tabpanel = $tabpanel;
+  this.view.$tabpanel = $tabpanel;
   $tabpanel.setAttribute('aria-hidden', 'false');
 
   // Open a new tab
   let tablist = BzDeck.toolbar.tablist;
-  let $tab = this.view.tab = tablist.add_tab(
+  let $tab = this.view.$tab = tablist.add_tab(
     'details-' + bug.id,
     'Bug %d'.replace('%d', bug.id), // l10n
     this.get_tab_title(bug),
     $tabpanel,
     'next'
   );
-  tablist.view.selected = tablist.view.focused = $tab;
+  tablist.view.selected = tablist.view.$focused = $tab;
 
   // Set Back & Forward navigation
   if (bug_list.length) {
@@ -127,8 +127,8 @@ BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
 
 BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   let tablist = BzDeck.toolbar.tablist,
-      $current_tab = this.view.tab,
-      $current_tabpanel = this.view.tabpanel,
+      $current_tab = this.view.$tab,
+      $current_tabpanel = this.view.$tabpanel,
       Button = BriteGrid.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
@@ -167,7 +167,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (prev) {
     preload(prev);
     btn_back.data.disabled = false;
-    btn_back.view.button.addEventListener('Pressed', function (event) navigate(prev));
+    btn_back.view.$button.addEventListener('Pressed', function (event) navigate(prev));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'B', '', function (event) navigate(prev));
   } else {
@@ -177,7 +177,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (next) {
     preload(next);
     btn_forward.data.disabled = false;
-    btn_forward.view.button.addEventListener('Pressed', function (event) navigate(next));
+    btn_forward.view.$button.addEventListener('Pressed', function (event) navigate(next));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'F', '', function (event) navigate(next));
   } else {
@@ -209,7 +209,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
     BzDeck.model.save_bug(bug);
 
     let $tab = document.getElementById('tab-details-' + id),
-        $tabpanel = this.view.tabpanel;
+        $tabpanel = this.view.$tabpanel;
 
     // Check if the tabpanel still exists
     if ($tabpanel) {

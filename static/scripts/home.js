@@ -122,14 +122,14 @@ BzDeck.HomePage = function () {
         data = this.view.grid.data,
         view = this.view.grid.view,
         members = view.members,
-        index = members.indexOf(view.focused);
+        index = members.indexOf(view.$focused);
     // [B] Select previous bug
     if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
-      view.selected = view.focused = members[index - 1];
+      view.selected = view.$focused = members[index - 1];
     }
     // [F] Select next bug
     if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
-      view.selected = view.focused = members[index + 1];
+      view.selected = view.$focused = members[index + 1];
     }
     // [M] toggle read
     if (!modifiers && event.keyCode === event.DOM_VK_M) {

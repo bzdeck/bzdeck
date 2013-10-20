@@ -11,10 +11,10 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-settings')[0];
+      $existing_tab = tablist.view.members.filter(function (tab) tab.id === 'tab-settings')[0];
 
-  if (existing_tab) {
-    tablist.view.selected = tablist.view.focused = existing_tab;
+  if ($existing_tab) {
+    tablist.view.selected = tablist.view.$focused = $existing_tab;
     return;
   }
 
@@ -30,14 +30,14 @@ BzDeck.SettingsPage = function () {
     }
   }
 
-  let tab = tablist.add_tab(
+  let $tab = tablist.add_tab(
     'settings',
     'Settings', // l10n
     'Settings', // l10n
     $tabpanel
   );
 
-  tablist.view.selected = tablist.view.focused = tab;
+  tablist.view.selected = tablist.view.$focused = $tab;
 
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
