@@ -53,7 +53,8 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     i18n.options.date[option] = value;
     // Update timezone & format on the current view
     for (let $element of document.querySelectorAll('time')) {
-      $element.textContent = i18n.format_date($element.dateTime);
+      $element.textContent = i18n.format_date($element.dateTime,
+                                              $element.dataset.simple === 'true');
     }
   };
 
