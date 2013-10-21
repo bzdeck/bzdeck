@@ -18,11 +18,6 @@ RewriteCond %{HTTP_HOST} ^www\.bzdeck\.com$
 RewriteCond %{HTTPS} off
 RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
 
-# Rewrite: API
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/(\d+\.\d+|latest)/\w+ /api/proxy.php [QSA]
-
 # Rewrite: info
 RewriteRule ^about/?$       https://www.facebook.com/notes/bzdeck/introducing-bzdeck/269349649857418 [R,L]
 RewriteRule ^faq/?$         https://www.facebook.com/notes/bzdeck/bzdeck-faq/270685673057149 [R,L]
@@ -42,7 +37,6 @@ Header always append Cache-Control private
 # Performance: set Expires
 ExpiresActive On
 ExpiresDefault "access plus 1 day"
-ExpiresByType application/json "access plus 5 minutes"
 ExpiresByType text/cache-manifest "access plus 0 seconds"
 
 # Performance: use gzip (Apache 2.x)

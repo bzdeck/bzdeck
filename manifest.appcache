@@ -18,6 +18,3 @@ CACHE MANIFEST
 /static/images/themes/dark/sprite.png
 /static/images/themes/light/sprite.png
 /favicon.ico
-
-NETWORK:
-/api/*
