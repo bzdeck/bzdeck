@@ -94,12 +94,11 @@ BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value,
     $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
   }
 
-  $rgroup.addEventListener('Selected', function (event) {
+  let rgroup = new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
+  rgroup.bind('Selected', function (event) {
     let value = prefs[pref] = event.detail.items[0].dataset.value;
     if (callback) {
       callback(value);
     }
   });
-
-  new BriteGrid.widget.RadioGroup($rgroup); // Activate the widget
 };

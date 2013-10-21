@@ -167,7 +167,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (prev) {
     preload(prev);
     btn_back.data.disabled = false;
-    btn_back.view.$button.addEventListener('Pressed', function (event) navigate(prev));
+    btn_back.bind('Pressed', function (event) navigate(prev));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'B', '', function (event) navigate(prev));
   } else {
@@ -177,7 +177,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (next) {
     preload(next);
     btn_forward.data.disabled = false;
-    btn_forward.view.$button.addEventListener('Pressed', function (event) navigate(next));
+    btn_forward.bind('Pressed', function (event) navigate(next));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'F', '', function (event) navigate(next));
   } else {

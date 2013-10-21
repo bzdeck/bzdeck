@@ -91,8 +91,8 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   }.bind(this);
 
   for (let $button of this.view.$tabpanel.querySelectorAll('footer [role="button"]')) {
-    buttons[$button.dataset.command] = new BriteGrid.widget.Button($button);
-    $button.addEventListener('Pressed', handler.bind(this));
+    let button = buttons[$button.dataset.command] = new BriteGrid.widget.Button($button);
+    button.bind('Pressed', handler);
   }
 };
 
@@ -111,42 +111,6 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $component_list = $pane.querySelector('[id$="-browse-component-list"]'),
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
-
-  $classification_list.addEventListener('Selected', function (event) {
-    let products = [],
-        components = [];
-    for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
-      products = products.concat(config.classification[$option.textContent].products);
-    }
-    for (let product of products) {
-      components = components.concat(Object.keys(config.product[product].component));
-    }
-    // Narrow down the product list
-    for (let $option of $product_list.querySelectorAll('[role="option"]')) {
-      let state = products.length && products.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
-      $option.setAttribute('aria-selected', 'false');
-    }
-    // Narrow down the component list
-    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      let state = components.length && components.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
-      $option.setAttribute('aria-selected', 'false');
-    }
-  });
-
-  $product_list.addEventListener('Selected', function (event) {
-    let components = [];
-    for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
-      components = components.concat(Object.keys(config.product[$option.textContent].component));
-    }
-    // Narrow down the component list
-    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      let state = components.length && components.indexOf($option.textContent) === -1;
-      $option.setAttribute('aria-disabled', state);
-      $option.setAttribute('aria-selected', 'false');
-    }
-  });
 
   let classifications = Object.keys(config.classification),
       classification_list_id_prefix = $classification_list.id + 'item-';
@@ -204,17 +168,53 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     });
   };
 
-  let ListBox = BriteGrid.widget.ListBox;
-  new ListBox($classification_list, classifications);
-  new ListBox($product_list, products);
-  new ListBox($component_list, components);
-  new ListBox($status_list, statuses);
-  new ListBox($resolution_list, resolutions);
+  let ListBox = BriteGrid.widget.ListBox,
+      classification_list = new ListBox($classification_list, classifications),
+      product_list = new ListBox($product_list, products),
+      component_list = new ListBox($component_list, components),
+      status_list = new ListBox($status_list, statuses),
+      resolution_list = new ListBox($resolution_list, resolutions);
+
+  classification_list.bind('Selected', function (event) {
+    let products = [],
+        components = [];
+    for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
+      products = products.concat(config.classification[$option.textContent].products);
+    }
+    for (let product of products) {
+      components = components.concat(Object.keys(config.product[product].component));
+    }
+    // Narrow down the product list
+    for (let $option of $product_list.querySelectorAll('[role="option"]')) {
+      let state = products.length && products.indexOf($option.textContent) === -1;
+      $option.setAttribute('aria-disabled', state);
+      $option.setAttribute('aria-selected', 'false');
+    }
+    // Narrow down the component list
+    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
+      let state = components.length && components.indexOf($option.textContent) === -1;
+      $option.setAttribute('aria-disabled', state);
+      $option.setAttribute('aria-selected', 'false');
+    }
+  });
+
+  product_list.bind('Selected', function (event) {
+    let components = [];
+    for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
+      components = components.concat(Object.keys(config.product[$option.textContent].component));
+    }
+    // Narrow down the component list
+    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
+      let state = components.length && components.indexOf($option.textContent) === -1;
+      $option.setAttribute('aria-disabled', state);
+      $option.setAttribute('aria-selected', 'false');
+    }
+  });
 
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
-      $button = $pane.querySelector('.text-box [role="button"]');
+      button = new BriteGrid.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
-  $button.addEventListener('Pressed', function (event) {
+  button.bind('Pressed', function (event) {
     let query = {};
 
     let map = {
@@ -242,8 +242,6 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
     this.exec_search(query);
   }.bind(this));
-
-  new BriteGrid.widget.Button($button);
 };
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
@@ -292,11 +290,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     }
   });
 
-  $grid.addEventListener('Sorted', function (event) {
+  grid.bind('Sorted', function (event) {
     prefs['search.list.sort_conditions'] = event.detail.conditions;
   });
 
-  $grid.addEventListener('ColumnModified', function (event) {
+  grid.bind('ColumnModified', function (event) {
     prefs['search.list.columns'] = event.detail.columns.map(function (col) {
       return {
         id: col.id,
@@ -306,7 +304,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     });
   });
 
-  $grid.addEventListener('Selected', function (event) {
+  grid.bind('Selected', function (event) {
     let ids = event.detail.ids;
     if (ids.length) {
       // Show Bug in Preview Pane
@@ -318,7 +316,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     }
   }.bind(this));
 
-  $grid.addEventListener('dblclick', function (event) {
+  grid.bind('dblclick', function (event) {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
@@ -327,7 +325,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     }
   }.bind(this));
 
-  $grid.addEventListener('keydown', function (event) {
+  grid.bind('keydown', function (event) {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,

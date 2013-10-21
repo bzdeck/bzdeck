@@ -15,18 +15,18 @@ BzDeck.HomePage = function () {
       prefs = BzDeck.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
-  let $splitter = document.querySelector('#home-preview-splitter');
-  if ($splitter) {
-    let splitter = this.preview_splitter = new BGw.Splitter($splitter),
-        pref_prefix = 'ui.home.preview.splitter.position.',
-        pref = prefs[pref_prefix + splitter.data.orientation];
+  {
+    let splitter = this.preview_splitter
+                 = new BGw.Splitter(document.querySelector('#home-preview-splitter')),
+        prefix = 'ui.home.preview.splitter.position.',
+        pref = prefs[prefix + splitter.data.orientation];
     if (pref) {
       splitter.data.position = pref;
     }
-    $splitter.addEventListener('Resized', function (event) {
+    splitter.bind('Resized', function (event) {
       let position = event.detail.position;
       if (position) {
-        prefs[pref_prefix + splitter.data.orientation] = position;
+        prefs[prefix + splitter.data.orientation] = position;
       }
     });
   }
@@ -37,13 +37,13 @@ BzDeck.HomePage = function () {
 
   this.view = {};
 
-  let $grid = document.getElementById('home-list'),
-      prefs = BzDeck.data.prefs,
+  let prefs = BzDeck.data.prefs,
       vertical = mobile_mql.matches || prefs['ui.home.layout'] === 'vertical',
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  let grid = this.view.grid = new BriteGrid.widget.Grid($grid, {
+  let grid = this.view.grid
+           = new BriteGrid.widget.Grid(document.querySelector('#home-list'), {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -77,11 +77,11 @@ BzDeck.HomePage = function () {
     this.change_layout(prefs['ui.home.layout'], true);
   }.bind(this));
 
-  $grid.addEventListener('Sorted', function (event) {
+  grid.bind('Sorted', function (event) {
     prefs['home.list.sort_conditions'] = event.detail.conditions;
   });
 
-  $grid.addEventListener('ColumnModified', function (event) {
+  grid.bind('ColumnModified', function (event) {
     prefs['home.list.columns'] = event.detail.columns.map(function (col) {
       return {
         id: col.id,
@@ -91,7 +91,7 @@ BzDeck.HomePage = function () {
     });
   });
 
-  $grid.addEventListener('Selected', function (event) {
+  grid.bind('Selected', function (event) {
     let ids = event.detail.ids;
     if (ids.length) {
       // Show Bug in Preview Pane
@@ -109,7 +109,7 @@ BzDeck.HomePage = function () {
     }
   }.bind(this));
 
-  $grid.addEventListener('dblclick', function (event) {
+  grid.bind('dblclick', function (event) {
     let $target = event.originalTarget;
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
@@ -117,7 +117,7 @@ BzDeck.HomePage = function () {
     }
   }.bind(this));
 
-  $grid.addEventListener('keydown', function (event) {
+  grid.bind('keydown', function (event) {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,
@@ -148,10 +148,10 @@ BzDeck.HomePage = function () {
   }.bind(this), true); // use capture
 
   // Show Details button
-  let $button = document.getElementById('home-button-show-details'),
-      button = this.view.details_button = new BriteGrid.widget.Button($button);
+  let button = this.view.details_button
+             = new BriteGrid.widget.Button(document.querySelector('#home-button-show-details'));
 
-  $button.addEventListener('Pressed', function (event) {
+  button.bind('Pressed', function (event) {
     BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
   }.bind(this));
 
