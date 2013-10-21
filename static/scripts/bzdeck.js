@@ -1382,7 +1382,7 @@ BzDeck.toolbar.setup = function () {
           hash = '#' + BzDeck.sidebar.data.folder_id;
           $root.setAttribute('data-current-tab', 'home');
         } else {
-          $root.setAttribute('data-current-tab', hash);
+          $root.setAttribute('data-current-tab', hash.substr(1));
         }
         if (location.hash !== hash) {
           history.pushState({}, title, hash);
