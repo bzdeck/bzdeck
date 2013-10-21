@@ -1229,8 +1229,9 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   _entries.sort(function (a, b) (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
   let $parent = $timeline.querySelector('section') || $timeline;
   // Mobile compact layout: insert bug summary
-  $parent.insertBefore(document.createElement('h2'), $parent.firstElementChild)
-         .textContent = bug.summary;
+  let $summary = $parent.querySelector('h2') ||
+                 $parent.insertBefore(document.createElement('h2'), $parent.firstElementChild);
+  $summary.textContent = bug.summary;
   // Append to the timeline
   for (let entry of _entries) {
     $parent.appendChild(entry.$element);
