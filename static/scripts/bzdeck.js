@@ -1759,12 +1759,20 @@ BzDeck.sidebar.setup = function () {
 };
 
 BzDeck.sidebar.open_folder = function (folder_id) {
-  let home = BzDeck.homepage;
+  let home = BzDeck.homepage,
+      grid = home.view.grid;
+
   home.data.preview_id = null;
 
   let update_list = function (bugs) {
     home.data.bug_list = bugs;
-    BzDeck.global.update_grid_data(home.view.grid, bugs);
+    BzDeck.global.update_grid_data(grid, bugs);
+
+    // Select the first bug on the list automatically when a folder is opened
+    if (bugs.length && !BriteGrid.util.device.mobile.mql.matches) {
+      // TODO: Remember the last selected bug for each folder
+      // grid.view.selected = grid.view.focused = grid.view.members[0];
+    }
   };
 
   let get_subscribed_bugs = function (callback) {
