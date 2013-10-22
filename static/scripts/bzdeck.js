@@ -1813,7 +1813,8 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
   if (folder_id === 'inbox') {
     get_subscribed_bugs(function (bugs) {
-      bugs.reverse(function (a, b) a.last_change_time > b.last_change_time);
+      bugs.sort(function (a, b) (new Date(b.last_change_time)).getTime()
+                              - (new Date(a.last_change_time)).getTime());
       update_list(bugs.slice(0, 50)); // Recent 50 bugs
     });
   }
