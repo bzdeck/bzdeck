@@ -1345,13 +1345,13 @@ BzDeck.global.parse_comment = function (str) {
 
   // Bugs
   str = str.replace(
-    /Bug\s?#?(\d+)/igm,
+    /Bug\s#?(\d+)/igm,
     '<a href="#bug/$1" role="link" data-bug-id="$1">Bug $1</a>'
   );
 
   // Attachments
   str = str.replace(
-    /Attachment\s?#?(\d+)/igm,
+    /Attachment\s#?(\d+)/igm,
     '<a href="#attachment/$1" role="link" data-attachment-id="$1">Attachment $1</a>'
   );
 
