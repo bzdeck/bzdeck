@@ -107,7 +107,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   let tablist = BzDeck.toolbar.tablist,
       $tab = this.view.$tab = tablist.add_tab(
         'details-' + bug.id,
-        'Bug %d'.replace('%d', bug.id), // l10n
+        bug.id,
         this.get_tab_title(bug),
         $tabpanel,
         'next'
