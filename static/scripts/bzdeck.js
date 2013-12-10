@@ -858,8 +858,8 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   } else {
     // DocumentFragment.firstElementChild returns undefined (Bug 895974)
     // This issue will be resolved in Firefox 25. Here's a workaround:
-    $content = $template.cloneNode().firstElementChild ||
-               $template.cloneNode().querySelector('[id]');
+    $content = $template.cloneNode(true).firstElementChild ||
+               $template.cloneNode(true).querySelector('[id]');
 
     // Assign unique IDs
     $content.id = $content.id.replace(/TID/, bug.id);
@@ -921,7 +921,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       $_li.itemProp.value = 'keywords';
 
       for (let _value of value) {
-        let $li = $ul.appendChild($_li.cloneNode());
+        let $li = $ul.appendChild($_li.cloneNode(true));
         $li.textContent = _value;
         new BGw.Button($li);
       }
@@ -1008,7 +1008,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           $_li = $ul.removeChild($ul.firstElementChild);
 
       for (let value of bug.cc) {
-        let $li = $ul.appendChild($_li.cloneNode());
+        let $li = $ul.appendChild($_li.cloneNode(true));
         $li.querySelector('[itemprop="name"]').textContent = value.name;
       }
     } else {
@@ -1077,7 +1077,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     let $entry_tmpl = $placeholder.querySelector('[itemprop="associatedMedia"]');
 
     for (let att of bug.attachments) {
-      let $entry = $placeholder.appendChild($entry_tmpl.cloneNode());
+      let $entry = $placeholder.appendChild($entry_tmpl.cloneNode(true));
       $entry.dataset.attachmentId = att.id;
       $entry.setAttribute('aria-hidden', 'false');
 
@@ -1211,7 +1211,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
   // Comments
   for (let comment of bug.comments) {
-    let $entry = $entry_tmpl.cloneNode(),
+    let $entry = $entry_tmpl.cloneNode(true),
         time = comment.creation_time;
 
     $entry.id = $content.id + '-comment-' + comment.id;
@@ -1239,7 +1239,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       // Combine a comment + change(s)
       $entry = entries[time];
     } else {
-      $entry = $entry_tmpl.cloneNode();
+      $entry = $entry_tmpl.cloneNode(true);
       $entry.dataset.time = (new Date(time)).getTime();
       $entry.setAttribute('aria-hidden', 'false');
       $entry.querySelector('[itemprop="text"]').remove();

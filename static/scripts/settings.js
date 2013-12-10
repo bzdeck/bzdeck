@@ -19,7 +19,7 @@ BzDeck.SettingsPage = function () {
   }
 
   let $template = document.querySelector('#tabpanel-settings-template'),
-      $content = ($template.content || $template).cloneNode(),
+      $content = ($template.content || $template).cloneNode(true),
       $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]'),
       id_suffix = this.id = Date.now();
 

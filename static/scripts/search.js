@@ -12,7 +12,7 @@ let BzDeck = BzDeck || {};
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
       $template = document.querySelector('template#tabpanel-search'),
-      $content = ($template.content || $template).cloneNode(),
+      $content = ($template.content || $template).cloneNode(true),
       id_suffix = this.id = Date.now();
 
   // Assign unique IDs
