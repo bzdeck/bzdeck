@@ -133,16 +133,6 @@ BzDeck.HomePage = function () {
         members = view.members,
         index = members.indexOf(view.$focused);
 
-    // [B] Select previous bug
-    if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
-      view.selected = view.$focused = members[index - 1];
-    }
-
-    // [F] Select next bug
-    if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
-      view.selected = view.$focused = members[index + 1];
-    }
-
     // [M] toggle read
     if (!modifiers && event.keyCode === event.DOM_VK_M) {
       for (let $item of view.selected) {
@@ -234,7 +224,6 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
       splitter = this.preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
-  grid.options.adjust_scrollbar = !vertical;
 
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
