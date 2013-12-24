@@ -116,8 +116,8 @@ BzDeck.bootstrap.check_requirements = function () {
 
 BzDeck.bootstrap.start = function () {
   this.$form = document.querySelector('#app-login form');
-  this.$input = this.$form.querySelector('input');
-  this.$button = this.$form.querySelector('button');
+  this.$input = this.$form.querySelector('[role="textbox"]');
+  this.$button = this.$form.querySelector('[role="button"]');
   BzDeck.global.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.open_database();
@@ -777,9 +777,7 @@ BzDeck.session.login = function () {
 
   BzDeck.global.$statusbar = document.querySelector('#statusbar');
 
-  $app_login.hidden = true;
   $app_login.setAttribute('aria-hidden', 'true');
-  $app_body.hidden = false;
   $app_body.removeAttribute('aria-hidden');
 
   // TODO: focus handling
@@ -797,9 +795,7 @@ BzDeck.session.logout = function () {
   BzDeck.global.$statusbar = $app_login.querySelector('[role="status"]');
   BzDeck.global.show_status('You have logged out.'); // l10n
 
-  $app_login.hidden = false;
   $app_login.removeAttribute('aria-hidden');
-  $app_body.hidden = true;
   $app_body.setAttribute('aria-hidden', 'true');
 
   BzDeck.bootstrap.show_login_form(false);
@@ -1157,7 +1153,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
     let change_cell_content = function (field, content) {
       if (['blocks', 'depends_on'].indexOf(field) > -1) {
-        return content.replace(/(\d+)/g, '<a href="#bug/$1" role="link" data-bug-id="$1">$1</a>');
+        return content.replace(/(\d+)/g, '<a href="#bug/$1" data-bug-id="$1">$1</a>');
       }
 
       return content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
@@ -1262,7 +1258,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
         $elm.innerHTML = change[how].replace(
           /(\d+)/g,
-          '<a href="#bug/$1" role="link" data-bug-id="$1">$1</a>'
+          '<a href="#bug/$1" data-bug-id="$1">$1</a>'
         );
       } else {
         $elm.textContent = change[how];
@@ -1422,19 +1418,19 @@ BzDeck.global.parse_comment = function (str) {
   // General links
   str = str.replace(
     /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
-    '<a href="$1" role="link">$1</a>'
+    '<a href="$1">$1</a>'
   );
 
   // Bugs
   str = str.replace(
     /Bug\s#?(\d+)/igm,
-    '<a href="#bug/$1" role="link" data-bug-id="$1">Bug $1</a>' // l10n
+    '<a href="#bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
   );
 
   // Attachments
   str = str.replace(
     /Attachment\s#?(\d+)/igm,
-    '<a href="#attachment/$1" role="link" data-attachment-id="$1">Attachment $1</a>' // l10n
+    '<a href="#attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
   );
 
   return str;
@@ -1451,7 +1447,8 @@ BzDeck.toolbar.setup = function () {
       BGu = BriteGrid.util,
       mobile_mql = BriteGrid.util.device.mobile.mql,
       tablist = this.tablist = new BGw.TabList(document.querySelector('#main-tablist')),
-      $root = document.documentElement; // <html>
+      $root = document.documentElement, // <html>
+      $sidebar = document.querySelector('#sidebar');
 
   // Change the window title when a new tab is selected
   tablist.view = new Proxy(tablist.view, {
@@ -1513,6 +1510,9 @@ BzDeck.toolbar.setup = function () {
     if (mobile_mql.matches) {
       // Keep the menu open
       $app_menu.removeAttribute('aria-expanded');
+      // Hide the sidebar
+      $root.setAttribute('data-sidebar-hidden', 'true');
+      $sidebar.setAttribute('aria-hidden', 'true');
     }
   });
 
@@ -1529,7 +1529,6 @@ BzDeck.toolbar.setup = function () {
   mobile_mql_listener(mobile_mql);
 
   let tabs = BzDeck.toolbar.tablist.view,
-      $sidebar = document.querySelector('#sidebar'),
       $tab_home = document.querySelector('#tab-home');
 
   document.querySelector('[role="banner"] h1').addEventListener('click', function (event) {
@@ -1552,13 +1551,12 @@ BzDeck.toolbar.setup = function () {
   let account = BzDeck.data.account,
       account_label = (account.real_name ? '<strong>' + account.real_name + '</strong>' : '&nbsp;')
                     + '<br>' + account.name,
+      $account_label = document.querySelector('#main-menu--app--account label'),
       $account_img = new Image();
 
-  document.querySelector('#main-menu--app--account label').innerHTML = account_label;
-
+  $account_label.innerHTML = account_label;
   $account_img.addEventListener('load', function (event) {
-    document.styleSheets[1].insertRule('#main-menu--app--account label:before '
-      + '{ background-image: url(' + event.target.src + ') !important }', 0);
+    $account_label.style.backgroundImage = 'url(' + event.target.src + ')';
   });
   $account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
@@ -1997,7 +1995,7 @@ window.addEventListener('click', function (event) {
     return true;
   }
 
-  if ($target.mozMatchesSelector('[role="link"]')) {
+  if ($target.mozMatchesSelector(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.detailspage = new BzDeck.DetailsPage(parseInt($target.getAttribute('data-bug-id')));

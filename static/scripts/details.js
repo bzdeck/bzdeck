@@ -84,10 +84,10 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   mobile_mql_listener(mobile_mql);
 
   // Hide tabs when scrolled down on mobile
-  for (let $_tabpanel of $tabpanel.querySelectorAll('[role="tabpanel"]')) {
-    let scroll_top = $_tabpanel.scrollTop;
+  for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] div')) {
+    let scroll_top = $tabpanel_content.scrollTop;
 
-    $_tabpanel.addEventListener('scroll', function (event) {
+    $tabpanel_content.addEventListener('scroll', function (event) {
       if (mobile_mql.matches) {
         let value = String(event.target.scrollTop - scroll_top > 0);
 

@@ -1,452 +1,639 @@
+/*
+ * Dark Color Palette
+ *
+ * Note:
+ * Foreground Colors should have odd values like *3*3*3 or *B*B*B
+ * Background Colors should have even values like *4*4*4 or *C*C*C
+ *
+ * Swatches:
+ * Foreground: #BBB, #939393, #838383, #C3C3C3, #FBFBFB
+ * Background: #1C1C1C, #3C3C3C, #343434, #303030, #222, #282828, #202020, #FCFCFC
+ * Accent: #1A608F
+ *
+ * Application Foreground Color: #939393
+ * Application Background Color: #282828
+ * Application Header Border Color: #1C1C1C
+ * Application Header Foreground Color: #C3C3C3
+ * Application Header Background Color: #1C1C1C
+ * Secondary Application Header Foreground Color: #838383
+ * Secondary Application Header Background Color: #3C3C3C
+ *
+ * Region Border Color: #343434
+ * Region Background Color: #222
+ * Region Header Border Color: #3C3C3C
+ * Region Header Foreground Color: #C3C3C3
+ * Region Header Background Color: #3C3C3C
+ * Secondary Region Background Color: #282828
+ * Secondary Region Border Color: #303030
+ * Secondary Region Header Border Color: #343434
+ * Secondary Region Header Foreground Color: #C3C3C3
+ * Secondary Region Header Background Color: #343434
+ *
+ * Button Border Color: #303030
+ * Button Foreground Color: #939393
+ * Button Background Color: #222
+ * Disabled Button Border Color: (Unchanged)
+ * Disabled Button Foreground Color: #838383
+ * Disabled Button Background Color: (Unchanged)
+ * Hovered Button Border Color: (Unchanged)
+ * Hovered Button Foreground Color: (Unchanged)
+ * Hovered Button Background Color: (Unchanged)
+ * Pressed Button Border Color: (Unchanged)
+ * Pressed Button Foreground Color: #C3C3C3
+ * Pressed Button Background Color: #303030
+ * Alternate Button Border Color: #3C3C3C
+ * Alternate Button Foreground Color: #C3C3C3
+ * Alternate Button Background Color: #343434
+ * Alternate Disabled Button Border Color: (Unchanged)
+ * Alternate Disabled Button Foreground Color: #939393
+ * Alternate Disabled Button Background Color: #3C3C3C
+ * Alternate Hovered Button Border Color: (Unchanged)
+ * Alternate Hovered Button Foreground Color: (Unchanged)
+ * Alternate Hovered Button Background Color: (Unchanged)
+ * Alternate Pressed Button Border Color: (Unchanged)
+ * Alternate Pressed Button Foreground Color: #C3C3C3
+ * Alternate Pressed Button Background Color: #343434
+ *
+ * Tab Border Color: #303030
+ * Tab Foreground Color: #939393
+ * Tab Background Color: #222
+ * Selected Tab Border Color: (Unchanged)
+ * Selected Tab Foreground Color: #BBB
+ * Selected Tab Background Color: #303030
+ * Hovered Tab Border Color: (Unchanged)
+ * Hovered Tab Foreground Color: (Unchanged)
+ * Hovered Tab Background Color: (Unchanged)
+ *
+ * Textbox Border Color: #303030
+ * Textbox Foreground Color: #939393
+ * Textbox Background Color: #303030
+ * Disabled Textbox Border Color: (Unchanged)
+ * Disabled Textbox Foreground Color: #838383
+ * Disabled Textbox Background Color: (Unchanged)
+ * Active Textbox Border Color: (Unchanged)
+ * Active Textbox Foreground Color: #BBB
+ * Active Textbox Background Color: #FCFCFC
+ *
+ * Grid Border Color: #303030
+ * Grid Foreground Color: #939393
+ * Grid Background Color: #202020
+ * Grid Header Foreground Color: #939393
+ * Grid Header Background Color: #282828
+ * Selected Grid Header Foreground Color: #939393
+ * Selected Grid Header Background Color: #282828
+ * Grid Even Row Background Color: #282828
+ *
+ * Control Border Color: #303030
+ * Control Foreground Color: #939393
+ * Control Background Color: #202020
+ * Control Shadow Color: #1C1C1C
+ * Selected Control Foreground Color: #FBFBFB
+ * Selected Control Background Color: #1A608F
+ * Inactive Selected Control Foreground Color: #BBB
+ * Inactive Selected Control Background Color: #303030
+ * Disabled Control Foreground Color: #838383
+ * Focused Control Outline Color: #303030
+ *
+ * Content Foreground Color: #BBB
+ * Content Background Color: #202020
+ * Secondary Content Foreground Color: #939393
+ *
+ * Selected Text Foreground Color: (Unchanged)
+ * Selected Text Background Color: #1A608F
+ * Inactive Selected Text Foreground Color: (Unchanged)
+ * Inactive Selected Text Background Color: #222
+ * Hyperlink Text Foreground Color: #1A608F
+ */ 
+
+/* ----------------------------------------------------------------------------------------------
+ * General
+ * ---------------------------------------------------------------------------------------------- */
+
 body {
-  color: #999;
-  background-color: #111;
+  color: #939393; /* Application Foreground Color */
+  background-color: #282828; /* Application Background Color */
+}
+
+table {
+  color: #939393; /* Grid Foreground Color */
+  background-color: #202020; /* Grid Background Color */
+}
+
+thead {
+  background-color: #282828; /* Grid Header Background Color */
+}
+
+th {
+  border-color: #303030; /* Grid Border Color */
+  color: #939393; /* Grid Header Foreground Color */
+  background-color: #282828; /* Grid Header Background Color */
+}
+
+td {
+  border-color: #303030; /* Grid Border Color */
 }
 
 ins, del {
-  -moz-text-decoration-color: rgba(153, 153, 153, 0.8); /* #999 */
+  -moz-text-decoration-color: rgba(83, 83, 83, .8); /* Secondary Content Foreground Color */
 }
 
 :focus {
-  outline-color: #666;
+  outline-color: #303030; /* Focused Control Outline Color */
 }
 
-a[role="link"] {
-  color: inherit;
+a {
+  color: #1A608F; /* Hyperlink Text Foreground Color */
 }
 
-#app-login {
-  background-image: linear-gradient(to bottom, #444, #111);
+::-moz-selection {
+  background-color: rgba(35, 131, 195, .3); /* Selected Text Background Color */
 }
 
-#app-login [role="button"] {
-  color: inherit;
-  background-image: linear-gradient(to bottom, #444, #333);
+::-moz-selection:-moz-window-inactive {
+  background-color: #222; /* Inactive Selected Text Background Color; Doesn't work (Bug 706209) */
 }
 
-#app-login [role="button"]:hover,
-#app-login [role="button"]:focus {
-  background-image: linear-gradient(to bottom, #555, #333);
+/* ----------------------------------------------------------------------------------------------
+ * Widgets
+ * ---------------------------------------------------------------------------------------------- */
+
+[role="button"] {
+  border-color: #303030; /* Button Border Color */
+  color: #939393; /* Button Foreground Color */
+  background-color: #222; /* Button Background Color */
 }
 
-#app-login [role="button"]:active {
-  background-image: linear-gradient(to bottom, #333, #444);
+[role="button"][aria-disabled="true"] {
+  color: #838383; /* Disabled Button Foreground Color */
 }
 
-#app-body {
-  background-color: #111;
+[role="button"]:not([aria-disabled="true"]):active {
+  color: #C3C3C3; /* Pressed Button Foreground Color */
+  background-color: #303030; /* Pressed Button Background Color */
 }
 
-[role="tab"] .close {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 96, 32, 64);
+[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="true"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 256, 32, 224);
 }
 
-[role="tab"] .close:hover {
-  background-color: #333;
+[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="false"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 256, 64, 224);
 }
 
-:-moz-any([role="option"], [role="treeitem"])[aria-selected="true"] {
-  color: #CCC;
-  background-color: #444;
+[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="true"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 288, 32, 256);
+}
+
+[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="false"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 288, 64, 256);
+}
+
+[role="columnheader"] {
+  border-color: #303030; /* Grid Border Color */
+  color: #939393; /* Grid Header Foreground Color */
+  background-color: #282828; /* Grid Header Background Color */
+}
+
+[role="columnheader"][aria-sort] {
+  color: #939393; /* Selected Grid Header Foreground Color */
+  background-color: #282828; /* Selected Grid Header Background Color */
+}
+
+[role="columnheader"][aria-sort] label::after {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
+}
+
+.grid-body {
+  color: #939393; /* Grid Foreground Color */
+  background-color: #202020; /* Grid Background Color */
+}
+
+.grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+  background-color: #282828; /* Grid Even Row Background Color */
+}
+
+[role="gridcell"][data-type="boolean"] [aria-checked="false"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 160, 32, 128);
+}
+
+[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-type="boolean"] [aria-checked="false"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 160, 64, 128);
+}
+
+#column-drag-image-container {
+  background-color: #343434; /* Secondary Region Header Background Color */
+}
+
+[role="menu"] {
+  background-color: #202020; /* Control Background Color */
+  box-shadow: 0 0 .4rem rgba(68, 68, 68, .8); /* Control Shadow Color */
+}
+
+[role="menu"] [role="separator"] {
+  border-color: #303030; /* Control Border Color */
+}
+
+:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"]) {
+  color: #939393; /* Control Foreground Color */
+}
+
+:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-disabled="true"] {
+  color: #838383; /* Disabled Control Foreground Color */
+}
+
+:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-selected="true"] {
+  color: #BBB; /* Inactive Selected Control Foreground Color */
+  background-color: #303030; /* Inactive Selected Control Background Color */
+}
+
+[aria-activedescendant] :-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-selected="true"] {
+  color: #FBFBFB; /* Selected Control Foreground Color */
+  background-color: #1A608F; /* Selected Control Background Color */
+}
+
+[role="menuitem"][aria-haspopup="true"]::after {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
+}
+
+:-moz-any([role^="menuitem"], [role="radio"])[aria-checked="true"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 64, 32, 32);
 }
 
 [role="treeitem"][aria-expanded] + .expander {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
 }
 
-[role="menu"] {
-  background: #222;
-  box-shadow: 0 0 .4rem rgba(0, 0, 0, 0.5);
+[role="listbox"] {
+  background-color: #202020; /* Grid Background Color */
 }
 
-[role="menu"] [role="separator"] {
-  border-color: #333;
-}
-
-[role^="menuitem"][aria-selected="true"] {
-  color: #CCC;
-  background-color: #444;
-}
-
-[role="menuitem"][aria-haspopup="true"]:after {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
-}
-
-[role^="menuitem"][aria-checked="true"]:before,
-[role="radio"][aria-checked="true"]:before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 64, 32, 32);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 256, 32, 224);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 320, 32, 288);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 288, 32, 256);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 352, 32, 320);
-}
-
-[role="grid"] .grid-header {
-  background-color: #333;
-}
-
-[role="grid"] .grid-header [aria-sort] label:after {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
-}
-
-[role="grid"] .grid-body {
-  background: #222;
-}
-
-[role="grid"] .grid-body [role="row"]:nth-child(even) {
-  background-color: #292929;
-}
-
-[role="grid"] .grid-body [role="row"][aria-selected="true"] {
-  color: #CCC !important;
-  background-color: #444 !important;
-}
-
-[role="grid"] [role="columnheader"],
-[role="grid"] [role="gridcell"] {
-  border-color: #1C1C1C;
-}
-
-[role="grid"] [role="row"][data-severity="blocker"],
-[role="grid"] [role="row"][data-severity="critical"] {
-  /* color: red; */
-}
-
-[role="gridcell"][data-type="boolean"][aria-readonly="false"] [aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 160, 32, 128);
-}
-
-[role="columnheader"][data-id="_starred"],
-[role="gridcell"][data-id="_starred"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 192, 32, 160);
-}
-
-[role="columnheader"][data-id="_unread"],
-[role="gridcell"][data-id="_unread"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 224, 32, 192);
-}
-
-#column-drag-image-container {
-  background-color: #222;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
-  border-color: #1C1C1C;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:nth-child(even) {
-  color: inherit;
-  background-color: transparent;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:active {
-  background-color: #444;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="true"] {
-  background-color: #333;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="gridcell"][data-id="summary"] {
-  color: #CCC;
-}
-
-:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 128, 96, 64) !important;
-}
-
-:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 192, 96, 128) !important;
+[role="scrollbar"] {
+  background-color: #343434; /* Secondary Region Header Background Color */
 }
 
 [role="textbox"] {
-  border-color: #222;
-  color: #999 !important;
-  background-color: #333 !important;
-  box-shadow: inset 0 0 .2rem rgba(0, 0, 0, 0.2);
+  border-color: #303030; /* Textbox Border Color */
+  color: #939393; /* Textbox Foreground Color */
+  background-color: #303030; /* Textbox Background Color */
+  box-shadow: inset 0 0 .4rem rgba(68, 68, 68, .4); /* Control Shadow Color */
+}
+
+[role="textbox"]:-moz-placeholder, /* For Firefox 18 */
+[role="textbox"]::-moz-placeholder {
+  color: #939393; /* Textbox Foreground Color */
+}
+
+[role="textbox"][aria-disabled="true"] {
+  color: #838383; /* Disabled Textbox Foreground Color */
 }
 
 [role="textbox"]:focus {
-  color: #333 !important;
-  background-color: #CCC !important;
+  color: #434343; /* Active Textbox Foreground Color, same as the Light theme */
+  background-color: #FCFCFC; /* Active Textbox Background Color, same as the Light theme */
+}
+
+[aria-busy="true"]::before {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 256, 128, 192);
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * App Log-in
+ * ---------------------------------------------------------------------------------------------- */
+
+#app-login {
+  background-color: #282828; /* Application Background Color */
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * App Body
+ * ---------------------------------------------------------------------------------------------- */
+
+#app-body {
+  background-color: #282828; /* Application Background Color */
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Global Header
+ * ---------------------------------------------------------------------------------------------- */
+
+[role="banner"] {
+  color: #C3C3C3; /* Application Header Foreground Color */
+  background-color: #1C1C1C; /* Application Header Background Color */
+}
+
+#main-menu--app {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 64, 128, 0);
+}
+
+#main-menu--app[aria-selected="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 64, 192, 0);
+}
+
+#main-menu--app-menu::before {
+  border-bottom-color: #202020; /* Control Background Color */
+}
+
+[role="banner"] [role="search"] [role="textbox"] {
+  border-color: #1C1C1C; /* Application Header Background Color */
 }
 
 [role="banner"] [role="search"] [role="button"] {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 128, 32, 96);
 }
 
-[aria-busy="true"]:before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 256, 96, 192);
+[role="banner"] [role="search"]:focus + [role="button"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 128, 32, 96); /* Use the Light theme asset */
 }
+
+/* ----------------------------------------------------------------------------------------------
+ * Global Sidebar
+ * ---------------------------------------------------------------------------------------------- */
 
 #sidebar {
-  border-color: #111;
-  background-color: #222;
+  border-color: #343434; /* Region Border Color */
+  background-color: #222; /* Region Background Color */
 }
 
-#main-menu--app {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 64, 96, 0);
-}
-
-#main-menu--app-menu:before {
-  border-bottom-color: #222;
-}
-
-[itemprop="comment"] header [itemprop="author"] [itemprop="image"],
-#main-menu--app--account label:before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 320, 96, 256);
-}
+/* ----------------------------------------------------------------------------------------------
+ * Main
+ * ---------------------------------------------------------------------------------------------- */
 
 #main-tablist [role="tab"] {
-  border-color: #222;
-  background-color: #333;
+  border-color: #3C3C3C; /* Region Header Border Color */
+  color: #838383; /* Secondary Application Header Foreground Color */
+  background-color: #1C1C1C; /* Application Header Background Color */
 }
 
 #main-tablist [role="tab"][aria-selected="true"] {
-  background-color: #444;
+  color: #C3C3C3; /* Region Header Foreground Color */
+  background-color: #3C3C3C; /* Region Header Background Color */
+}
+
+#main-tablist [role="tab"][aria-selected="false"]:hover {
+  color: #C3C3C3; /* Region Header Foreground Color */
+  background-color: #343434; /* Secondary Region Header Background Color */
+}
+
+#main-tablist [role="tab"] .close {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 96, 32, 64) !important;
+}
+
+#main-tablist [role="tab"] .close:hover {
+  background-color: #3C3C3C; /* Secondary Application Header Background Color */
 }
 
 #main-tabpanels {
-  border-color: #222;
+  background-color: #222; /* Region Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"],
-#main-tabpanels > [role="tabpanel"] > header,
-#main-tabpanels > [role="tabpanel"] > footer {
-  border-color: #222;
-  background-image: linear-gradient(to bottom, #444, #333);
+#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
+  border-color: #3C3C3C; /* Region Header Border Color */
+  color: #C3C3C3; /* Region Header Foreground Color */
+  background-color: #3C3C3C; /* Region Header Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > div {
-  background-color: #333;
+#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"] {
+  border-color: #3C3C3C; /* Alternate Button Border Color */
+  color: #C3C3C3; /* Alternate Button Foreground Color */
+  background-color: #343434; /* Alternate Button Background Color */
 }
 
-#tabpanel-home [id$="-pane"] {
-  border-color:  #111;
-  background-color: #222;
+#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"]:active {
+  color: #C3C3C3; /* Alternate Pressed Button Foreground Color */
+  background-color: #343434; /* Alternate Pressed Button Background Color */
 }
 
-#tabpanel-home [id$="-pane"] h3 {
-  border-color:  #111;
-  background-color: #333;
+#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"][aria-disabled="true"] {
+  color: #939393; /* Alternate Disabled Button Foreground Color */
+  background-color: #3C3C3C; /* Alternate Disabled Button Background Color */
 }
 
-#home-preview-pane {
-  background-color: #333 !important;
+/* ----------------------------------------------------------------------------------------------
+ * Home
+ * ---------------------------------------------------------------------------------------------- */
+
+:root[data-home-layout="vertical"] #home-preview-pane {
+  border-color: #343434; /* Region Border Color */
 }
 
-[id*="-preview-"][itemtype="http://schema.org/Article"] > header {
-  border-color:  #111;
-  background-color: #333;
+.bug-list [role="columnheader"][data-id="_starred"] label,
+.bug-list [role="gridcell"][data-id="_starred"] [aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 192, 32, 160);
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box {
-  background-color: #222;
+.bug-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 192, 64, 160);
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section {
-  border-color:  #111;
+.bug-list [role="columnheader"][data-id="_unread"] label,
+.bug-list [role="gridcell"][data-id="_unread"] [aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 224, 32, 192);
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .browse-box section h3 {
-  background-color: #333;
+.bug-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_unread"] [aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 224, 64, 192);
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box {
-  border-color:  #111;
-  background-image: linear-gradient(to bottom, #444, #333);
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
+  border-color: #303030; /* Grid Border Color */
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"] {
-  border-color:  #222;
-  background-image: linear-gradient(to bottom, #444, #333);
+:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
+  background-color: #282828; /* Secondary Region Background Color */
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:hover,
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:focus {
-  background-image: linear-gradient(to bottom, #555, #333);
+:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64) !important;
 }
 
-[id^="tabpanel-search-"] [id$="-basic-search-pane"] .text-box [role="button"]:active {
-  background-image: linear-gradient(to bottom, #333, #444);
+:root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 128, 192, 64) !important;
+}
+
+:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128) !important;
+}
+
+:root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 192, 192, 128) !important;
+}
+
+article[id$="preview-bug"] > header {
+  border-color: #3C3C3C; /* Region Header Border Color */
+  color: #C3C3C3; /* Region Header Foreground Color */
+  background-color: #3C3C3C; /* Region Header Background Color */
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Details
+ * ---------------------------------------------------------------------------------------------- */
+
+[id|="bug"][role="tablist"] {
+  background-color: #222; /* Region Background Color */
+}
+
+[id|="bug"][role="tablist"] [role="tab"] {
+  border-color: #303030; /* Tab Border Color */
+  color: #939393; /* Tab Foreground Color */
+  background-color: #222; /* Tab Background Color */
+}
+
+[id|="bug"][role="tablist"] [role="tab"][aria-selected="true"] {
+  color: #BBB; /* Selected Tab Foreground Color */
+  background-color: #303030; /* Selected Tab Background Color */
 }
 
 .bug-info {
-  background-color: #222;
+  border-color: #343434; /* Region Border Color */
 }
 
-.bug-info > section h3 {
-  border-color:  #111;
-  background-color: #333;
+.bug-info h3 {
+  color: #C3C3C3; /* Secondary Region Header Foreground Color */
+  background-color: #343434; /* Secondary Region Header Background Color */
 }
 
-.bug-info section > ul > li:not(:last-of-type),
-.bug-info dd:not(:last-of-type) {
-  border-color: #333;
+.bug-info section > ul > li,
+.bug-info dd {
+  border-color: #303030; /* Control Border Color */
 }
 
-.bug-info [role="button"]:hover {
-  color: #333;
-  background-color: #999;
+.bug-timeline article {
+  border-color: #303030; /* Secondary Region Border Color */
 }
 
-[id$="-preview-pane"] .bug-timeline {
-  border-color:  #222;
+.bug-timeline article header,
+.bug-timeline article .changes {
+  background-color: #282828; /* Secondary Region Background Color */
 }
 
-[itemprop="comment"] {
-  border-color:  #222;
-  background-color: #222;
+.bug-timeline article header [itemprop="author"] [itemprop="image"],
+#main-menu--app--account label {
+  color: #939393; /* Control Foreground Color */
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 320, 128, 256);
 }
 
-[itemprop="comment"] header,
-[itemprop="comment"] .changes {
-  border-color: #222;
-  background-color: #292929;
+.bug-timeline article [itemprop="text"] {
+  color: #BBB; /* Content Foreground Color */
+  background-color: #202020; /* Content Background Color */
 }
 
-[itemprop="comment"] header [role="button"] {
-  background-image: linear-gradient(to bottom, #444, #333);
-  box-shadow: inset -1px -1px .4rem rgba(0, 0, 0, 0.5), inset -1px -1px 1px #555;
+.bug-timeline article [itemprop="text"] blockquote {
+  border-color: #343434; /* Region Border Color */
+  color: #939393; /* Secondary Content Foreground Color */
 }
 
-[itemprop="comment"] [itemprop="text"] {
-  color: #CCC;
+.bug-attachments section {
+  border-color: #303030; /* Secondary Region Border Color */
+  background-color: #202020; /* Content Background Color */
 }
 
-[itemprop="comment"] [itemprop="text"] blockquote {
-  border-color: #666;
-  color: #999;
+.bug-attachments section h4 {
+  background-color: #282828; /* Secondary Region Background Color */
 }
 
-.bug-attachments [itemprop="associatedMedia"] {
-  border-color:  #222;
-  background-color: #222;
+/* ----------------------------------------------------------------------------------------------
+ * Search
+ * ---------------------------------------------------------------------------------------------- */
+
+[id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section {
+  border-color: #303030; /* Control Border Color */
 }
 
-.bug-attachments [itemprop="associatedMedia"] h4 {
-  border-color: #222;
-  background-color: #333;
+[id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section > h3 {
+  border-color: #303030; /* Grid Border Color */
+  background-color: #282828; /* Grid Header Background Color */
 }
 
-.bug-history thead th {
-  background-color: #333;
+[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box {
+  border-color: #3C3C3C; /* Region Header Border Color */
+  color: #C3C3C3; /* Region Header Foreground Color */
+  background-color: #3C3C3C; /* Region Header Background Color */
 }
 
-.bug-history tbody th,
-.bug-history tbody td {
-  background-color: #222;
+[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="textbox"] {
+  border-color: #3C3C3C; /* Region Header Background Color */
 }
 
-.bug-history thead th,
-.bug-history tbody th,
-.bug-history tbody td {
-  border-color: #292929;
+[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"] {
+  border-color: #3C3C3C; /* Alternate Button Border Color */
+  color: #C3C3C3; /* Alternate Button Foreground Color */
+  background-color: #343434; /* Alternate Button Background Color */
 }
 
-#main-tabpanels [role="tabpanel"] > header [role="toolbar"],
-#main-tabpanels [role="tabpanel"] > header [role="toolbar"] li:first-of-type {
-  border-color: #222;
+[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"]:active {
+  color: #C3C3C3; /* Alternate Pressed Button Foreground Color */
+  background-color: #343434; /* Alternate Pressed Button Background Color */
 }
 
-[id^="tabpanel-details-"][role="tabpanel"] > div > .bug-info {
-  border-color: #222;
+/* ----------------------------------------------------------------------------------------------
+ * Settings
+ * ---------------------------------------------------------------------------------------------- */
+
+#tabpanel-settings > section > div > section h3 {
+  color: #C3C3C3; /* Secondary Region Header Foreground Color */
+  background-color: #343434; /* Secondary Region Header Background Color */
 }
 
-[id^="tabpanel-details-"][role="tablist"] {
-  background-color: #222;
+#tabpanel-settings > section > div > section > section {
+  border-color: #303030; /* Secondary Region Border Color */
 }
 
-[id^="tabpanel-details-"][role="tablist"] [role="tab"] {
-  background-color: #333;
+/* ----------------------------------------------------------------------------------------------
+ * Global Footer
+ * ---------------------------------------------------------------------------------------------- */
+
+#app-body > footer {
+  color: #C3C3C3; /* Region Header Foreground Color */
 }
 
-[id^="tabpanel-details-"][role="tablist"] [role="tab"][aria-selected="true"] {
-  background-color: #292929;
-}
-
-#tabpanel-settings > div {
-  background-color: #222 !important;
-}
-
-#tabpanel-settings > div > section h3 {
-  background-color: #333;
-}
-
-#tabpanel-settings > div > section > section {
-  border-color: #333;
-}
-
-/* --------------------------------------------------------------------------
+/* ----------------------------------------------------------------------------------------------
  * Mobile Support
- * -------------------------------------------------------------------------- */
+ * ---------------------------------------------------------------------------------------------- */
 
 @media screen and (max-width: 640px) {
 
-:-moz-any([role="option"], [role="menuitem"], [role="treeitem"]):-moz-any(:active, [aria-selected="true"]) {
-  background-color: #444;
-}
+  :-moz-any([role="option"], [role="menuitem"], [role="treeitem"])[aria-selected="true"] {
+    color: #BBB !important; /* Inactive Selected Control Foreground Color */
+    background-color: #303030 !important; /* Inactive Selected Control Background Color */
+  }
 
-[role="banner"] h1:before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 384, 32, 368);
-}
+  #app-login header {
+    color: #C3C3C3; /* Application Header Foreground Color */
+    background-color: #1C1C1C; /* Application Header Background Color */
+  }
 
-:root[data-current-tab="home"] [role="banner"] h1:before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 368, 32, 352);
-}
+  [role="banner"] h1::before {
+    background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 320, 32, 304);
+  }
 
-#sidebar > div {
-  background-color: #333;
-}
+  :root[data-current-tab="home"] [role="banner"] h1::before {
+    background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 304, 32, 288);
+  }
 
-#sidebar h2 {
-  border-color: #666;
-}
+  [role="banner"]:not(.search) [role="search"] [role="button"] {
+    background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 128, 64, 96);
+  }
 
-#sidebar [role="option"],
-#sidebar [role="menuitem"] {
-  border-color: #393939;
-}
+  #sidebar > div {
+    background-color: #222; /* Region Background Color */
+  }
 
-#main-tabpanels > [id^="tabpanel-details-"] > header {
-  background-color: #222;
-}
+  #sidebar h2 {
+    border-color: #343434; /* Region Border Color */
+  }
 
-[itemprop="comment"] header {
-  background-color: #333;
-}
+  #sidebar [role="option"],
+  #sidebar [role="menuitem"] {
+    border-color: #303030; /* Control Border Color */
+  }
 
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][aria-selected="true"] {
-  color: inherit !important;
-  background-color: transparent !important;
-}
+  #home-list .grid-body [role="row"][data-unread="false"] {
+    background-color: #282828 !important; /* Secondary Region Background Color */
+  }
 
-[id^="tabpanel-details-"].tabpanels {
-  background-color: #222;
-}
+  #home-list .grid-body [role="row"]:active {
+    color: #BBB !important; /* Inactive Selected Control Foreground Color */
+    background-color: #303030 !important; /* Inactive Selected Control Background Color */
+  }
 
-.bug-timeline h2 {
-  background-color: #222;
 }
-
-.bug-history tbody tr {
-  border-color: #333;
-}
-
-.bug-history tbody th {
-  background-color: #333;
-}
-
-} /* end @media */
