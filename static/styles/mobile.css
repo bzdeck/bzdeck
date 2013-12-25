@@ -226,17 +226,6 @@ main {
 
 #main-tabpanels > [role="tabpanel"] {
   overflow: auto;
-  opacity: 1;
-  transform: scale(1);
-  transition-property: opacity, transform;
-  transition-duration: .6s;
-}
-
-#main-tabpanels > [role="tabpanel"][aria-hidden="true"] {
-  display: block;
-  opacity: 0;
-  transform: scale(.95);
-  transition-property: opacity;
 }
 
 #main-tabpanels > [role="tabpanel"][aria-hidden="true"] * {
