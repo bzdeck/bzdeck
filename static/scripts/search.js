@@ -52,7 +52,7 @@ BzDeck.SearchPage = function () {
         return;
       }
 
-      if (prop === 'preview_id' && !BriteGrid.util.device.mobile.mql.matches) {
+      if (prop === 'preview_id' && !FlareTail.util.device.mobile.mql.matches) {
         this.show_preview(oldval, newval);
       }
 
@@ -98,7 +98,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   }.bind(this);
 
   for (let $button of this.view.$tabpanel.querySelectorAll('footer [role="button"]')) {
-    let button = buttons[$button.dataset.command] = new BriteGrid.widget.Button($button);
+    let button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
     button.bind('Pressed', handler);
   }
 };
@@ -110,7 +110,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new BriteGrid.widget.ScrollBar($outer, true);
+    new FlareTail.widget.ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -163,7 +163,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     };
   });
 
-  let ListBox = BriteGrid.widget.ListBox,
+  let ListBox = FlareTail.widget.ListBox,
       classification_list = new ListBox($classification_list, classifications),
       product_list = new ListBox($product_list, products),
       component_list = new ListBox($component_list, components),
@@ -216,7 +216,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   });
 
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
-      button = new BriteGrid.widget.Button($pane.querySelector('.text-box [role="button"]'));
+      button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
   button.bind('Pressed', function (event) {
     let query = {},
@@ -249,12 +249,12 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result']
             = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
-      mobile_mql = BriteGrid.util.device.mobile.mql,
+      mobile_mql = FlareTail.util.device.mobile.mql,
       prefs = BzDeck.data.prefs,
       columns = prefs['search.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  let grid = this.view.grid = new BriteGrid.widget.Grid($grid, {
+  let grid = this.view.grid = new FlareTail.widget.Grid($grid, {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -375,7 +375,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
-  let ScrollBar = BriteGrid.widget.ScrollBar,
+  let ScrollBar = FlareTail.widget.ScrollBar,
       $pane = this.view.panes['preview']
             = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
 
@@ -423,7 +423,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
 
   // Specify fields
   query['include_fields'] = BzDeck.options.api.default_fields.join();
-  query = BriteGrid.util.request.build_query(query);
+  query = FlareTail.util.request.build_query(query);
 
   BzDeck.global.show_status('Loading...'); // l10n
   BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body

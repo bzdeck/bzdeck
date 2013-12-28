@@ -56,9 +56,9 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     document.querySelector('#main-tabpanels').appendChild($tabpanel);
   }
 
-  let mobile_mql = BriteGrid.util.device.mobile.mql,
+  let mobile_mql = FlareTail.util.device.mobile.mql,
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
-      _tablist = new BriteGrid.widget.TabList($tablist),
+      _tablist = new FlareTail.widget.TabList($tablist),
       $info_tab = $tabpanel.querySelector('[id$="-tab-info"]'),
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
@@ -139,7 +139,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   let tablist = BzDeck.toolbar.tablist,
       $current_tab = this.view.$tab,
       $current_tabpanel = this.view.$tabpanel,
-      Button = BriteGrid.widget.Button,
+      Button = FlareTail.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
@@ -147,7 +147,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       index = bugs.indexOf(this.data.id),
       prev = bugs[index - 1],
       next = bugs[index + 1],
-      set_keybind = BriteGrid.util.event.set_keybind;
+      set_keybind = FlareTail.util.event.set_keybind;
 
   let preload = function (id) {
     if (document.querySelector('#tabpanel-details-' + id)) {
@@ -205,7 +205,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   BzDeck.global.show_status('Loading...'); // l10n
 
   let api = BzDeck.options.api,
-      query = BriteGrid.util.request.build_query({
+      query = FlareTail.util.request.build_query({
         include_fields: [...api.default_fields, ...api.extra_fields].join(),
         exclude_fields: 'attachments.data'
       });
@@ -235,7 +235,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
 BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
   let api = BzDeck.options.api,
-      query = BriteGrid.util.request.build_query({
+      query = FlareTail.util.request.build_query({
         include_fields: [...api.default_fields, ...api.extra_fields].join(),
         exclude_fields: 'attachments.data'
       });

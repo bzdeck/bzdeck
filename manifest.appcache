@@ -1,13 +1,13 @@
 CACHE MANIFEST
-# 2013-10-09 22:00
+# 2013-12-27 23:00
 /
-/static/styles/lib/britegrid/widget.css
+/static/styles/lib/flaretail/widget.css
 /static/styles/base.css
 /static/styles/mobile.css
 /static/styles/themes/dark.css
 /static/styles/themes/light.css
-/static/scripts/lib/britegrid/util.js
-/static/scripts/lib/britegrid/widget.js
+/static/scripts/lib/flaretail/util.js
+/static/scripts/lib/flaretail/widget.js
 /static/scripts/lib/crypto/md5.min.js
 /static/scripts/bzdeck.js
 /static/scripts/home.js

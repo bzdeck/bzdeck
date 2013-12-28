@@ -305,10 +305,10 @@ BzDeck.bootstrap.setup_ui = function () {
 
   BzDeck.global.show_status('Loading UI...'); // l10n
 
-  let date = BriteGrid.util.i18n.options.date,
+  let date = FlareTail.util.i18n.options.date,
       prefs = BzDeck.data.prefs,
       theme = prefs['ui.theme.selected'],
-      BGut = BriteGrid.util.theme;
+      FTut = FlareTail.util.theme;
 
   // Date options
   date.timezone = prefs['ui.date.timezone'] || 'local';
@@ -324,12 +324,12 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.sidebar.setup();
 
   // Change the theme
-  if (theme && BGut.list.contains(theme)) {
-    BGut.selected = theme;
+  if (theme && FTut.list.contains(theme)) {
+    FTut.selected = theme;
   }
 
   // Preload images from CSS
-  BGut.preload_images(function () {});
+  FTut.preload_images(function () {});
 
   this.finish();
 };
@@ -387,7 +387,7 @@ BzDeck.core.load_subscriptions = function () {
         fields = { cc: 'cc', reported: 'creator', assigned: 'assigned_to', qa: 'qa_contact' };
 
     for (let [name, field] of Iterator(fields)) {
-      let query = BriteGrid.util.object.clone(_query);
+      let query = FlareTail.util.object.clone(_query);
 
       query['email1_' + field] = 1;
       subscriptions.push({ id: name, query: query });
@@ -413,7 +413,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
     let index = i; // Redefine the variable to make it available in the following event
     sub.query['include_fields'] = 'id,last_change_time';
 
-    this.request('GET', 'bug' + BriteGrid.util.request.build_query(sub.query), function (data) {
+    this.request('GET', 'bug' + FlareTail.util.request.build_query(sub.query), function (data) {
       if (!data || !Array.isArray(data.bugs)) {
         // Give up
         BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -502,7 +502,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
     for (let i = 0, len = requesting_bugs.length; i < len; i += 100) {
       query.id = requesting_bugs.slice(i, i + 100).join();
 
-      this.request('GET', 'bug' + BriteGrid.util.request.build_query(query), function (data) {
+      this.request('GET', 'bug' + FlareTail.util.request.build_query(query), function (data) {
         if (!data || !Array.isArray(data.bugs)) {
           // Give up
           BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -539,7 +539,7 @@ BzDeck.core.load_bug_details = function (ids, callback = null) {
     exclude_fields: 'attachments.data'
   };
 
-  this.request('GET', 'bug' + BriteGrid.util.request.build_query(query), function (data) {
+  this.request('GET', 'bug' + FlareTail.util.request.build_query(query), function (data) {
     if (!data) {
       // Give up
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -823,7 +823,7 @@ BzDeck.session.logout = function () {
 BzDeck.global = {};
 
 BzDeck.global.install_app = function () {
-  BriteGrid.util.app.install(BzDeck.options.app.manifest, function (event) {
+  FlareTail.util.app.install(BzDeck.options.app.manifest, function (event) {
     if (event.type === 'success') {
       document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true');
     }
@@ -835,7 +835,7 @@ BzDeck.global.show_status = function (message) {
 };
 
 BzDeck.global.show_notification = function (title, body) {
-  BriteGrid.util.app.show_notification(title, {
+  FlareTail.util.app.show_notification(title, {
     body: body,
     icon: '/static/images/logo/icon-256.png'
   });
@@ -847,7 +847,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   }
 
   let $content,
-      BGw = BriteGrid.widget;
+      FTw = FlareTail.widget;
 
   if (!clone) {
     $content = $template;
@@ -868,7 +868,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
     // Custom scrollbar
     for (let $area of $content.querySelectorAll('.scrollable')) {
-      new BGw.ScrollBar($area);
+      new FTw.ScrollBar($area);
     }
   }
 
@@ -895,7 +895,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     }
 
     if (key.endsWith('_time')) {
-      $element.textContent = BriteGrid.util.i18n.format_date(value);
+      $element.textContent = FlareTail.util.i18n.format_date(value);
       $element.dateTime = value;
 
       if (key === 'creation_time') {
@@ -919,7 +919,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       for (let _value of value) {
         let $li = $ul.appendChild($_li.cloneNode(true));
         $li.textContent = _value;
-        new BGw.Button($li);
+        new FTw.Button($li);
       }
 
       continue;
@@ -986,7 +986,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   let $placeholder,
       conf_field = BzDeck.data.bugzilla_config.field,
       prefs = BzDeck.data.prefs,
-      i18n = BriteGrid.util.i18n;
+      i18n = FlareTail.util.i18n;
 
   // dupe_of
   $placeholder = $content.querySelector('[data-field="resolution"]');
@@ -1025,7 +1025,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           $li.textContent = value;
           $li.setAttribute('role', 'button');
 
-          (new BriteGrid.widget.Button($li)).bind('Pressed', function (event) {
+          (new FlareTail.widget.Button($li)).bind('Pressed', function (event) {
             BzDeck.detailspage = new BzDeck.DetailsPage(
               parseInt(event.explicitOriginalTarget.textContent)
             );
@@ -1203,7 +1203,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $timeline = $content.querySelector('.bug-timeline'),
       $entry_tmpl = $content.querySelector('[itemprop="comment"]'),
       parse = BzDeck.global.parse_comment,
-      sanitize = BriteGrid.util.string.sanitize;
+      sanitize = FlareTail.util.string.sanitize;
 
   // Comments
   for (let comment of bug.comments) {
@@ -1443,10 +1443,10 @@ BzDeck.global.parse_comment = function (str) {
 BzDeck.toolbar = {};
 
 BzDeck.toolbar.setup = function () {
-  let BGw = BriteGrid.widget,
-      BGu = BriteGrid.util,
-      mobile_mql = BriteGrid.util.device.mobile.mql,
-      tablist = this.tablist = new BGw.TabList(document.querySelector('#main-tablist')),
+  let FTw = FlareTail.widget,
+      FTu = FlareTail.util,
+      mobile_mql = FlareTail.util.device.mobile.mql,
+      tablist = this.tablist = new FTw.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -1478,7 +1478,7 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  new BGw.MenuBar(document.querySelector('#main-menu'));
+  new FTw.MenuBar(document.querySelector('#main-menu'));
 
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
@@ -1490,7 +1490,7 @@ BzDeck.toolbar.setup = function () {
       }
 
       case 'toggle-fullscreen': {
-        BGu.app.toggle_fullscreen();
+        FTu.app.toggle_fullscreen();
         break;
       }
 
@@ -1520,7 +1520,7 @@ BzDeck.toolbar.setup = function () {
     $app_menu.setAttribute('aria-expanded', mql.matches);
 
     // Somehow scroll doesn't work in the fullscreen mode on mobile
-    if (BGu.app.fullscreen_enabled && !mql.matches) {
+    if (FTu.app.fullscreen_enabled && !mql.matches) {
       document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
     }
   };
@@ -1560,7 +1560,7 @@ BzDeck.toolbar.setup = function () {
   });
   $account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
-  BGu.app.can_install(BzDeck.options.app.manifest, function (result) {
+  FTu.app.can_install(BzDeck.options.app.manifest, function (result) {
     if (result) {
       document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
     }
@@ -1570,7 +1570,7 @@ BzDeck.toolbar.setup = function () {
       $search_button = document.querySelector('[role="banner"] [role="search"] [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
-  this.search_dropdown = new BriteGrid.widget.Menu($search_dropdown);
+  this.search_dropdown = new FlareTail.widget.Menu($search_dropdown);
 
   let exec_search = function () {
     let page = new BzDeck.SearchPage(),
@@ -1661,7 +1661,7 @@ BzDeck.toolbar.setup = function () {
 
   // Suppress context menu
   $search_box.addEventListener('contextmenu', function (event) {
-    return BGu.event.ignore(event);
+    return FTu.event.ignore(event);
   }, true); // use capture
 };
 
@@ -1712,8 +1712,8 @@ BzDeck.toolbar.quicksearch = function (event) {
 BzDeck.sidebar = {};
 
 BzDeck.sidebar.setup = function () {
-  let BGw = BriteGrid.widget,
-      mobile_mql = BriteGrid.util.device.mobile.mql,
+  let FTw = FlareTail.widget,
+      mobile_mql = FlareTail.util.device.mobile.mql,
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -1730,7 +1730,7 @@ BzDeck.sidebar.setup = function () {
   mobile_mql.addListener(mobile_mql_listener);
   mobile_mql_listener(mobile_mql);
 
-  new BGw.ScrollBar($sidebar.querySelector('div'));
+  new FTw.ScrollBar($sidebar.querySelector('div'));
 
   $sidebar.addEventListener('click', function (event) {
     if (mobile_mql.matches) {
@@ -1790,7 +1790,7 @@ BzDeck.sidebar.setup = function () {
   ];
 
   let folders = this.folders
-              = new BGw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
+              = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
 
   folders.view = new Proxy(folders.view, {
     set: function (obj, prop, value) {
@@ -1827,7 +1827,7 @@ BzDeck.sidebar.setup = function () {
   this.data.folder_id = 'inbox';
 
   // Authorize notification
-  BriteGrid.util.app.auth_notification();
+  FlareTail.util.app.auth_notification();
 
   // Update UI: the Unread folder on the sidebar
   BzDeck.model.get_all_bugs(function (bugs) {
@@ -1874,7 +1874,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     BzDeck.global.update_grid_data(grid, bugs);
 
     // Select the first bug on the list automatically when a folder is opened
-    if (bugs.length && !BriteGrid.util.device.mobile.mql.matches) {
+    if (bugs.length && !FlareTail.util.device.mobile.mql.matches) {
       // TODO: Remember the last selected bug for each folder
       // grid.view.selected = grid.view.focused = grid.view.members[0];
     }
@@ -1897,7 +1897,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   };
 
   // Mobile compact layout
-  if (BriteGrid.util.device.mobile.mql.matches &&
+  if (FlareTail.util.device.mobile.mql.matches &&
       BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
@@ -2080,7 +2080,7 @@ window.addEventListener('popstate', function (event) {
       $root = document.documentElement; // <html>
 
   // Hide sidebar
-  if (BriteGrid.util.device.mobile.mql.matches) {
+  if (FlareTail.util.device.mobile.mql.matches) {
     $root.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }

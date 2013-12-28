@@ -46,7 +46,7 @@ BzDeck.SettingsPage = function () {
 
 BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   let $root = document.documentElement, // <html>
-      i18n = BriteGrid.util.i18n,
+      i18n = FlareTail.util.i18n,
       activate = this.activate_radiogroup.bind(this);
 
   let update_date_format = function (option, value) {
@@ -60,7 +60,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   };
 
   // Theme
-  activate('theme', 'Dark', function (value) BriteGrid.util.theme.selected = value);
+  activate('theme', 'Dark', function (value) FlareTail.util.theme.selected = value);
 
   // Timezone & Date Format
   activate('date-timezone', 'local', function (value) update_date_format('timezone', value));
@@ -97,7 +97,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value,
     $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
   }
 
-  (new BriteGrid.widget.RadioGroup($rgroup)).bind('Selected', function (event) {
+  (new FlareTail.widget.RadioGroup($rgroup)).bind('Selected', function (event) {
     let value = prefs[pref] = event.detail.items[0].dataset.value;
 
     if (callback) {

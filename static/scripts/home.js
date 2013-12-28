@@ -10,14 +10,14 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.HomePage = function () {
-  let BGw = BriteGrid.widget,
-      mobile_mql = BriteGrid.util.device.mobile.mql,
+  let FTw = FlareTail.widget,
+      mobile_mql = FlareTail.util.device.mobile.mql,
       prefs = BzDeck.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
   {
     let splitter = this.preview_splitter
-                 = new BGw.Splitter(document.querySelector('#home-preview-splitter')),
+                 = new FTw.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.',
         pref = prefs[prefix + splitter.data.orientation];
 
@@ -35,8 +35,8 @@ BzDeck.HomePage = function () {
   }
 
   // Custom scrollbar
-  new BGw.ScrollBar(document.querySelector('#home-preview-bug-info'));
-  new BGw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+  new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
+  new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
 
   this.view = {};
 
@@ -45,7 +45,7 @@ BzDeck.HomePage = function () {
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
-  let grid = this.view.grid = new BriteGrid.widget.Grid(document.querySelector('#home-list'), {
+  let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
     rows: [],
     columns: columns.map(function (col) {
       // Add labels
@@ -152,7 +152,7 @@ BzDeck.HomePage = function () {
 
   // Show Details button
   let button = this.view.details_button
-             = new BriteGrid.widget.Button(document.querySelector('#home-button-show-details'));
+             = new FlareTail.widget.Button(document.querySelector('#home-button-show-details'));
 
   button.bind('Pressed', function (event) {
     BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -219,7 +219,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 };
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
-  let vertical = BriteGrid.util.device.mobile.mql.matches || pref === 'vertical',
+  let vertical = FlareTail.util.device.mobile.mql.matches || pref === 'vertical',
       grid = this.view.grid,
       splitter = this.preview_splitter;
 
