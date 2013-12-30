@@ -181,7 +181,9 @@ BzDeck.HomePage = function () {
       let oldval = obj[prop];
 
       if (prop === 'preview_id') {
-        this.show_preview(oldval, newval);
+        FlareTail.util.event.async(function () {
+          this.show_preview(oldval, newval);
+        }.bind(this));
       }
 
       obj[prop] = newval;

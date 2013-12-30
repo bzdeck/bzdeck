@@ -331,6 +331,12 @@ BzDeck.bootstrap.setup_ui = function () {
   // Preload images from CSS
   FTut.preload_images(function () {});
 
+  // Authorize a notification
+  FlareTail.util.app.auth_notification();
+
+  // Update UI & Show a notification
+  BzDeck.core.toggle_unread_ui(true);
+
   this.finish();
 };
 
@@ -486,7 +492,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
     } else if (boot) {
       BzDeck.bootstrap.setup_ui();
     } else {
-      BzDeck.global.show_status('No bugs to download'); // l10n
+      BzDeck.global.show_status('No new bugs to download'); // l10n
     }
   };
 
@@ -520,9 +526,9 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
         // Finally load the UI modules
         if (boot && loaded_bugs.length === len) {
-          BzDeck.model.save_bugs(loaded_bugs);
-          BzDeck.bootstrap.setup_ui();
-          BzDeck.core.toggle_unread_ui();
+          BzDeck.model.save_bugs(loaded_bugs, function(bugs) {
+            BzDeck.bootstrap.setup_ui();
+          });
         }
       }.bind(this));
     }
@@ -570,10 +576,17 @@ BzDeck.core.toggle_star = function (id, value) {
     if (bug) {
       bug._starred = value;
       BzDeck.model.save_bug(bug);
+      this.toggle_star_ui();
     }
-  });
+  }.bind(this));
+};
 
-  // TODO: Update UI if needed
+BzDeck.core.toggle_star_ui = function () {
+  BzDeck.model.get_all_bugs(function (bugs) {
+    FlareTail.util.event.dispatch(window, 'UI:toggle_star', { detail: {
+      bugs: [bug for (bug of bugs) if (bug._starred)]
+    }});
+  });
 };
 
 BzDeck.core.toggle_unread = function (id, value) {
@@ -587,18 +600,13 @@ BzDeck.core.toggle_unread = function (id, value) {
   }.bind(this));
 };
 
-BzDeck.core.toggle_unread_ui = function () {
-  // Update UI: the Unread folder on the sidebar
+BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs(function (bugs) {
-    let count = [bug for (bug of bugs) if (bug._unread)].length,
-        $label = document.querySelector('#sidebar-folders--unread label');
-
-    if ($label) {
-      $label.textContent = count ? 'Unread (%d)'.replace('%d', count) : 'Unread'; // l10n
-    }
+    FlareTail.util.event.dispatch(window, 'UI:toggle_unread', { detail: {
+      loaded: loaded,
+      bugs: [bug for (bug of bugs) if (bug._unread)]
+    }});
   });
-
-  // Update UI: other widgets, FIXME
 };
 
 BzDeck.core.request = function (method, query, callback) {
@@ -703,13 +711,18 @@ BzDeck.model.get_all_bugs = function (callback) {
   }.bind(this));
 };
 
-BzDeck.model.save_bug = function (bug) {
-  this.save_bugs([bug]);
+BzDeck.model.save_bug = function (bug, callback) {
+  this.save_bugs([bug], callback);
 };
 
-BzDeck.model.save_bugs = function (bugs) {
+BzDeck.model.save_bugs = function (bugs, callback = function () {}) {
   let cache = this.cache.bugs,
-      store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
+      transaction = this.db.transaction('bugs', 'readwrite'),
+      store = transaction.objectStore('bugs');
+
+  transaction.addEventListener('complete', function () {
+    callback(bugs);
+  });
 
   if (!cache) {
     cache = this.cache.bugs = new Map();
@@ -1451,31 +1464,24 @@ BzDeck.toolbar.setup = function () {
       $sidebar = document.querySelector('#sidebar');
 
   // Change the window title when a new tab is selected
-  tablist.view = new Proxy(tablist.view, {
-    set: function (obj, prop, value) {
-      if (prop === 'selected') {
-        value = (Array.isArray(value)) ? value : [value];
+  tablist.bind('Selected', function (event) {
+    let $tab = event.detail.items[0],
+        hash = '#' + $tab.id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
+        title = $tab.title.replace('\n', ' – ');
 
-        let hash = '#' + value[0].id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
-            title = value[0].title.replace('\n', ' – ');
-
-        if (hash === '#home') {
-          hash = '#' + BzDeck.sidebar.data.folder_id;
-          $root.setAttribute('data-current-tab', 'home');
-        } else {
-          $root.setAttribute('data-current-tab', hash.substr(1));
-        }
-
-        if (location.hash !== hash) {
-          history.pushState({}, title, hash);
-        }
-
-        document.title = title + ' | BzDeck'; // l10n
-        document.querySelector('[role="banner"] h1').textContent = value[0].textContent;
-      }
-
-      obj[prop] = value;
+    if (hash === '#home') {
+      hash = '#' + BzDeck.sidebar.data.folder_id;
+      $root.setAttribute('data-current-tab', 'home');
+    } else {
+      $root.setAttribute('data-current-tab', hash.substr(1));
     }
+
+    if (location.hash !== hash) {
+      history.pushState({}, title, hash);
+    }
+
+    document.title = title + ' | BzDeck'; // l10n
+    document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
   });
 
   new FTw.MenuBar(document.querySelector('#main-menu'));
@@ -1792,16 +1798,9 @@ BzDeck.sidebar.setup = function () {
   let folders = this.folders
               = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
 
-  folders.view = new Proxy(folders.view, {
-    set: function (obj, prop, value) {
-      if (prop === 'selected') {
-        let $folder = Array.isArray(value) ? value[0] : value;
-        this.data.folder_id = $folder.dataset.id;
-      }
-
-      obj[prop] = value;
-    }.bind(this)
-  });
+  folders.bind('Selected', function (event) {
+    this.data.folder_id = event.detail.ids[0];
+  }.bind(this));
 
   this.data = new Proxy({
     folder_id: null,
@@ -1825,42 +1824,6 @@ BzDeck.sidebar.setup = function () {
 
   // Select the 'Inbox' folder
   this.data.folder_id = 'inbox';
-
-  // Authorize notification
-  FlareTail.util.app.auth_notification();
-
-  // Update UI: the Unread folder on the sidebar
-  BzDeck.model.get_all_bugs(function (bugs) {
-    bugs = [bug for (bug of bugs) if (bug._unread)];
-
-    let num = bugs.length,
-        list = [],
-        $label = document.querySelector('#sidebar-folders--unread label');
-
-    if (!num) {
-      $label.textContent = 'Unread'; // l10n
-      return;
-    }
-
-    $label.textContent = 'Unread (%d)'.replace('%d', num); // l10n
-
-    // Statusbar
-    let status = (num > 1) ? 'You have %d unread bugs'.replace('%d', num)
-                           : 'You have 1 unread bug'; // l10n
-
-    BzDeck.global.show_status(status);
-
-    // Notification
-    for (let [i, bug] of Iterator(bugs)) {
-      list.push(bug.id + ' - ' + bug.summary);
-      if (num > 3 && i === 2) {
-        list.push('...');
-        break;
-      }
-    }
-
-    BzDeck.global.show_notification(status, list.join('\n'));
-  });
 };
 
 BzDeck.sidebar.open_folder = function (folder_id) {
@@ -1871,7 +1834,9 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
   let update_list = function (bugs) {
     home.data.bug_list = bugs;
-    BzDeck.global.update_grid_data(grid, bugs);
+    FlareTail.util.event.async(function () {
+      BzDeck.global.update_grid_data(grid, bugs);
+    });
 
     // Select the first bug on the list automatically when a folder is opened
     if (bugs.length && !FlareTail.util.device.mobile.mql.matches) {
@@ -1960,6 +1925,14 @@ BzDeck.sidebar.open_folder = function (folder_id) {
       let severities = ['blocker', 'critical', 'major'];
       update_list([bug for (bug of bugs) if (severities.indexOf(bug.severity) > -1)]);
     });
+  }
+};
+
+BzDeck.sidebar.toggle_unread_ui = function (num) {
+  let $label = document.querySelector('#sidebar-folders--unread label');
+
+  if ($label) {
+    $label.textContent = num ? 'Unread (%d)'.replace('%d', num) : 'Unread'; // l10n
   }
 };
 
@@ -2140,4 +2113,31 @@ window.addEventListener('popstate', function (event) {
   $root.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#sidebar-folders--inbox');
+});
+
+window.addEventListener('UI:toggle_unread', function (event) {
+  let bugs = event.detail.bugs,
+      num = bugs.length;
+
+  // Update the sidebar Unread folder
+  BzDeck.sidebar.toggle_unread_ui(num);
+
+  if (!event.detail.loaded) {
+    return;
+  }
+
+  if (num === 0) {
+    BzDeck.global.show_status('No new bugs to download'); // l10n
+    return;
+  }
+
+  bugs.sort(function (a, b) (new Date(b.last_change_time)).getTime()
+                          - (new Date(a.last_change_time)).getTime());
+
+  let status = (num > 1) ? 'You have %d unread bugs'.replace('%d', num)
+                         : 'You have 1 unread bug', // l10n
+      extract = [(bug.id + ' - ' + bug.summary) for (bug of bugs.slice(0, 3))].join('\n');
+
+  BzDeck.global.show_status(status);
+  BzDeck.global.show_notification(status, extract);
 });

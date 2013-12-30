@@ -53,7 +53,9 @@ BzDeck.SearchPage = function () {
       }
 
       if (prop === 'preview_id' && !FlareTail.util.device.mobile.mql.matches) {
-        this.show_preview(oldval, newval);
+        FlareTail.util.event.async(function () {
+          this.show_preview(oldval, newval);
+        }.bind(this));
       }
 
       obj[prop] = newval;
@@ -426,7 +428,10 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   query = FlareTail.util.request.build_query(query);
 
   BzDeck.global.show_status('Loading...'); // l10n
-  BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body
+
+  FlareTail.util.event.async(function () {
+    BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body
+  }.bind(this));
 
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
@@ -452,7 +457,10 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
       });
 
       // Show results
-      BzDeck.global.update_grid_data(this.view.grid, data.bugs);
+      FlareTail.util.event.async(function () {
+        BzDeck.global.update_grid_data(this.view.grid, data.bugs);
+      }.bind(this));
+
       status = (num > 1) ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
     } else {
       status = 'Zarro Boogs found.'; // l10n
