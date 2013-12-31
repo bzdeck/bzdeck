@@ -15,13 +15,16 @@
   },
   "icons": {
     "16": "/static/images/logo/icon-16.png",
-    "30": "/static/images/logo/icon-fxos-30.png",
     "32": "/static/images/logo/icon-32.png",
     "48": "/static/images/logo/icon-48.png",
-    "60": "/static/images/logo/icon-fxos-60.png",
     "64": "/static/images/logo/icon-64.png",
     "128": "/static/images/logo/icon-128.png",
-    "256": "/static/images/logo/icon-256.png"
+    "256": "/static/images/logo/icon-256.png",
+    "512": "/static/images/logo/icon-512.png",
+    "30": "/static/images/logo/icon-fxos-30.png",
+    "60": "/static/images/logo/icon-fxos-60.png",
+    "90": "/static/images/logo/icon-fxos-90.png",
+    "120": "/static/images/logo/icon-fxos-120.png"
   },
   "default_locale": "en"
 }
