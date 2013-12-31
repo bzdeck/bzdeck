@@ -301,8 +301,8 @@ main {
 }
 
 [id|="bug"][role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > .scrollable {
+  -moz-box-sizing: border-box;
   padding-top: 4rem;
-  height: calc(100% - 4rem);
 }
 
 .bug-timeline h2 {

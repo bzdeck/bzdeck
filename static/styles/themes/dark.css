@@ -268,7 +268,7 @@ a {
 }
 
 [role="scrollbar"] {
-  background-color: #343434; /* Secondary Region Header Background Color */
+  background-color: #939393; /* Application Foreground Color */
 }
 
 [role="textbox"] {
@@ -446,6 +446,7 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64) !important;
 }
 
+:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"],
 :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 128, 192, 64) !important;
 }
@@ -454,6 +455,7 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128) !important;
 }
 
+:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"],
 :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 192, 192, 128) !important;
 }
@@ -628,12 +630,21 @@ article[id$="preview-bug"] > header {
   }
 
   #home-list .grid-body [role="row"][data-unread="false"] {
-    background-color: #282828 !important; /* Secondary Region Background Color */
+    color: #939393 !important; /* Control Foreground Color */
+    background-color: transparent !important;
   }
 
   #home-list .grid-body [role="row"]:active {
-    color: #BBB !important; /* Inactive Selected Control Foreground Color */
-    background-color: #303030 !important; /* Inactive Selected Control Background Color */
+    color: #FBFBFB !important; /* Selected Control Foreground Color */
+    background-color: #1A608F !important; /* Selected Control Background Color */
+  }
+
+  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+    background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64) !important;
+  }
+
+  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+    background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128) !important;
   }
 
 }

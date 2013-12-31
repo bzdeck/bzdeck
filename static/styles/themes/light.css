@@ -7,27 +7,27 @@
  *
  * Swatches:
  * Foreground: #434343, #636363, #B3B3B3, #E3E3E3, #FBFBFB
- * Background: #747474, #848484, #9C9C9C, #CCC, #E4E4E4, #F4F4F4, #FCFCFC
+ * Background: #545454, #646464, #7C7C7C, #CCC, #E4E4E4, #F4F4F4, #FCFCFC
  * Accent: #2383C3
  *
  * Application Foreground Color: #636363
  * Application Background Color: #F4F4F4
- * Application Header Border Color: #747474
+ * Application Header Border Color: #545454
  * Application Header Foreground Color: #E3E3E3
- * Application Header Background Color: #747474
+ * Application Header Background Color: #545454
  * Secondary Application Header Foreground Color: #B3B3B3
- * Secondary Application Header Background Color: #848484
+ * Secondary Application Header Background Color: #646464
  *
- * Region Border Color: #9C9C9C
+ * Region Border Color: #7C7C7C
  * Region Background Color: #E4E4E4
- * Region Header Border Color: #848484
+ * Region Header Border Color: #646464
  * Region Header Foreground Color: #E3E3E3
- * Region Header Background Color: #848484
+ * Region Header Background Color: #646464
  * Secondary Region Background Color: #F4F4F4
  * Secondary Region Border Color: #CCC
- * Secondary Region Header Border Color: #9C9C9C
+ * Secondary Region Header Border Color: #7C7C7C
  * Secondary Region Header Foreground Color: #E3E3E3
- * Secondary Region Header Background Color: #9C9C9C
+ * Secondary Region Header Background Color: #7C7C7C
  *
  * Button Border Color: #CCC
  * Button Foreground Color: #636363
@@ -41,18 +41,18 @@
  * Pressed Button Border Color: (Unchanged)
  * Pressed Button Foreground Color: #E3E3E3
  * Pressed Button Background Color: #CCC
- * Alternate Button Border Color: #848484
+ * Alternate Button Border Color: #646464
  * Alternate Button Foreground Color: #E3E3E3
- * Alternate Button Background Color: #9C9C9C
+ * Alternate Button Background Color: #7C7C7C
  * Alternate Disabled Button Border Color: (Unchanged)
  * Alternate Disabled Button Foreground Color: #636363
- * Alternate Disabled Button Background Color: #848484
+ * Alternate Disabled Button Background Color: #646464
  * Alternate Hovered Button Border Color: (Unchanged)
  * Alternate Hovered Button Foreground Color: (Unchanged)
  * Alternate Hovered Button Background Color: (Unchanged)
  * Alternate Pressed Button Border Color: (Unchanged)
  * Alternate Pressed Button Foreground Color: #E3E3E3
- * Alternate Pressed Button Background Color: #9C9C9C
+ * Alternate Pressed Button Background Color: #7C7C7C
  *
  * Tab Border Color: #CCC
  * Tab Foreground Color: #636363
@@ -86,7 +86,7 @@
  * Control Border Color: #CCC
  * Control Foreground Color: #636363
  * Control Background Color: #FCFCFC
- * Control Shadow Color: #747474
+ * Control Shadow Color: #545454
  * Selected Control Foreground Color: #FBFBFB
  * Selected Control Background Color: #2383C3
  * Inactive Selected Control Foreground Color: #434343
@@ -221,7 +221,7 @@ a {
 }
 
 #column-drag-image-container {
-  background-color: #9C9C9C; /* Secondary Region Header Background Color */
+  background-color: #7C7C7C; /* Secondary Region Header Background Color */
 }
 
 [role="menu"] {
@@ -268,7 +268,7 @@ a {
 }
 
 [role="scrollbar"] {
-  background-color: #9C9C9C; /* Secondary Region Header Background Color */
+  background-color: #636363; /* Application Foreground Color */
 }
 
 [role="textbox"] {
@@ -318,7 +318,7 @@ a {
 
 [role="banner"] {
   color: #E3E3E3; /* Application Header Foreground Color */
-  background-color: #747474; /* Application Header Background Color */
+  background-color: #545454; /* Application Header Background Color */
 }
 
 #main-menu--app {
@@ -334,7 +334,7 @@ a {
 }
 
 [role="banner"] [role="search"] [role="textbox"] {
-  border-color: #747474; /* Application Header Background Color */
+  border-color: #545454; /* Application Header Background Color */
 }
 
 [role="banner"] [role="search"] [role="button"] {
@@ -350,7 +350,7 @@ a {
  * ---------------------------------------------------------------------------------------------- */
 
 #sidebar {
-  border-color: #9C9C9C; /* Region Border Color */
+  border-color: #7C7C7C; /* Region Border Color */
   background-color: #E4E4E4; /* Region Background Color */
 }
 
@@ -359,19 +359,19 @@ a {
  * ---------------------------------------------------------------------------------------------- */
 
 #main-tablist [role="tab"] {
-  border-color: #848484; /* Region Header Border Color */
+  border-color: #646464; /* Region Header Border Color */
   color: #B3B3B3; /* Secondary Application Header Foreground Color */
-  background-color: #747474; /* Application Header Background Color */
+  background-color: #545454; /* Application Header Background Color */
 }
 
 #main-tablist [role="tab"][aria-selected="true"] {
   color: #E3E3E3; /* Region Header Foreground Color */
-  background-color: #848484; /* Region Header Background Color */
+  background-color: #646464; /* Region Header Background Color */
 }
 
 #main-tablist [role="tab"][aria-selected="false"]:hover {
   color: #E3E3E3; /* Region Header Foreground Color */
-  background-color: #9C9C9C; /* Secondary Region Header Background Color */
+  background-color: #7C7C7C; /* Secondary Region Header Background Color */
 }
 
 #main-tablist [role="tab"] .close {
@@ -379,7 +379,7 @@ a {
 }
 
 #main-tablist [role="tab"] .close:hover {
-  background-color: #848484; /* Secondary Application Header Background Color */
+  background-color: #646464; /* Secondary Application Header Background Color */
 }
 
 #main-tabpanels {
@@ -387,25 +387,25 @@ a {
 }
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
-  border-color: #848484; /* Region Header Border Color */
+  border-color: #646464; /* Region Header Border Color */
   color: #E3E3E3; /* Region Header Foreground Color */
-  background-color: #848484; /* Region Header Background Color */
+  background-color: #646464; /* Region Header Background Color */
 }
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"] {
-  border-color: #848484; /* Alternate Button Border Color */
+  border-color: #646464; /* Alternate Button Border Color */
   color: #E3E3E3; /* Alternate Button Foreground Color */
-  background-color: #9C9C9C; /* Alternate Button Background Color */
+  background-color: #7C7C7C; /* Alternate Button Background Color */
 }
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"]:active {
   color: #E3E3E3; /* Alternate Pressed Button Foreground Color */
-  background-color: #9C9C9C; /* Alternate Pressed Button Background Color */
+  background-color: #7C7C7C; /* Alternate Pressed Button Background Color */
 }
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"][aria-disabled="true"] {
   color: #636363; /* Alternate Disabled Button Foreground Color */
-  background-color: #848484; /* Alternate Disabled Button Background Color */
+  background-color: #646464; /* Alternate Disabled Button Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -413,7 +413,7 @@ a {
  * ---------------------------------------------------------------------------------------------- */
 
 :root[data-home-layout="vertical"] #home-preview-pane {
-  border-color: #9C9C9C; /* Region Border Color */
+  border-color: #7C7C7C; /* Region Border Color */
 }
 
 .bug-list [role="columnheader"][data-id="_starred"] label,
@@ -446,6 +446,7 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 128, 128, 64) !important;
 }
 
+:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"],
 :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 128, 192, 64) !important;
 }
@@ -454,14 +455,15 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 192, 128, 128) !important;
 }
 
+:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"],
 :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 192, 192, 128) !important;
 }
 
 article[id$="preview-bug"] > header {
-  border-color: #848484; /* Region Header Border Color */
+  border-color: #646464; /* Region Header Border Color */
   color: #E3E3E3; /* Region Header Foreground Color */
-  background-color: #848484; /* Region Header Background Color */
+  background-color: #646464; /* Region Header Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -484,12 +486,12 @@ article[id$="preview-bug"] > header {
 }
 
 .bug-info {
-  border-color: #9C9C9C; /* Region Border Color */
+  border-color: #7C7C7C; /* Region Border Color */
 }
 
 .bug-info h3 {
   color: #E3E3E3; /* Secondary Region Header Foreground Color */
-  background-color: #9C9C9C; /* Secondary Region Header Background Color */
+  background-color: #7C7C7C; /* Secondary Region Header Background Color */
 }
 
 .bug-info section > ul > li,
@@ -518,7 +520,7 @@ article[id$="preview-bug"] > header {
 }
 
 .bug-timeline article [itemprop="text"] blockquote {
-  border-color: #9C9C9C; /* Region Border Color */
+  border-color: #7C7C7C; /* Region Border Color */
   color: #636363; /* Secondary Content Foreground Color */
 }
 
@@ -545,24 +547,24 @@ article[id$="preview-bug"] > header {
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .text-box {
-  border-color: #848484; /* Region Header Border Color */
+  border-color: #646464; /* Region Header Border Color */
   color: #E3E3E3; /* Region Header Foreground Color */
-  background-color: #848484; /* Region Header Background Color */
+  background-color: #646464; /* Region Header Background Color */
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="textbox"] {
-  border-color: #848484; /* Region Header Background Color */
+  border-color: #646464; /* Region Header Background Color */
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"] {
-  border-color: #848484; /* Alternate Button Border Color */
+  border-color: #646464; /* Alternate Button Border Color */
   color: #E3E3E3; /* Alternate Button Foreground Color */
-  background-color: #9C9C9C; /* Alternate Button Background Color */
+  background-color: #7C7C7C; /* Alternate Button Background Color */
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"]:active {
   color: #E3E3E3; /* Alternate Pressed Button Foreground Color */
-  background-color: #9C9C9C; /* Alternate Pressed Button Background Color */
+  background-color: #7C7C7C; /* Alternate Pressed Button Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -571,7 +573,7 @@ article[id$="preview-bug"] > header {
 
 #tabpanel-settings > section > div > section h3 {
   color: #E3E3E3; /* Secondary Region Header Foreground Color */
-  background-color: #9C9C9C; /* Secondary Region Header Background Color */
+  background-color: #7C7C7C; /* Secondary Region Header Background Color */
 }
 
 #tabpanel-settings > section > div > section > section {
@@ -599,7 +601,7 @@ article[id$="preview-bug"] > header {
 
   #app-login header {
     color: #E3E3E3; /* Application Header Foreground Color */
-    background-color: #747474; /* Application Header Background Color */
+    background-color: #545454; /* Application Header Background Color */
   }
 
   [role="banner"] h1::before {
@@ -619,7 +621,7 @@ article[id$="preview-bug"] > header {
   }
 
   #sidebar h2 {
-    border-color: #9C9C9C; /* Region Border Color */
+    border-color: #7C7C7C; /* Region Border Color */
   }
 
   #sidebar [role="option"],
@@ -628,12 +630,21 @@ article[id$="preview-bug"] > header {
   }
 
   #home-list .grid-body [role="row"][data-unread="false"] {
-    background-color: #F4F4F4 !important; /* Secondary Region Background Color */
+    color: #636363 !important; /* Control Foreground Color */
+    background-color: transparent !important;
   }
 
   #home-list .grid-body [role="row"]:active {
-    color: #434343 !important; /* Inactive Selected Control Foreground Color */
-    background-color: #CCC !important; /* Inactive Selected Control Background Color */
+    color: #FBFBFB !important; /* Selected Control Foreground Color */
+    background-color: #2383C3 !important; /* Selected Control Background Color */
+  }
+
+  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 128, 128, 64) !important;
+  }
+
+  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 192, 128, 128) !important;
   }
 
 }
