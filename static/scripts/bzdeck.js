@@ -1,8 +1,6 @@
 /**
  * BzDeck Application Logic
- * Copyright © 2012 BriteGrid. All rights reserved.
- * Using: ECMAScript Harmony
- * Requires: Firefox 18
+ * Copyright © 2014 Kohei Yoshino. All rights reserved.
  */
 
 'use strict';

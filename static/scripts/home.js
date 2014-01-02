@@ -1,8 +1,6 @@
 /**
  * BzDeck Home Page
- * Copyright © 2013 BriteGrid. All rights reserved.
- * Using: ECMAScript Harmony
- * Requires: Firefox 18
+ * Copyright © 2014 Kohei Yoshino. All rights reserved.
  */
 
 'use strict';
