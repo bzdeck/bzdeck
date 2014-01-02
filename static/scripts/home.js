@@ -226,6 +226,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
       splitter = this.preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
+  grid.options.adjust_scrollbar = !vertical;
 
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
