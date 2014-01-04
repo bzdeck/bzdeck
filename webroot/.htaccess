@@ -1,5 +1,6 @@
 # Charset
 AddDefaultCharset UTF-8
+AddCharset UTF-8 appcache css js webapp
 
 # MIME types
 AddType application/x-httpd-php html php
