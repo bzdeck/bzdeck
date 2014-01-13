@@ -379,9 +379,12 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
       $pane = this.view.panes['preview']
             = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
 
-  // Custom scrollbar
+  // Custom scrollbar (info)
   new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
-  new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+
+  // Custom scrollbar (timeline)
+  let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+  scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {

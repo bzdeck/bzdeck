@@ -879,7 +879,13 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
     // Custom scrollbar
     for (let $area of $content.querySelectorAll('.scrollable')) {
-      new FTw.ScrollBar($area);
+      let scrollbar = new FTw.ScrollBar($area);
+
+      if ($area.classList.contains('bug-timeline')) {
+        scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
+      }
+
+      $area.tabIndex = 0;
     }
   }
 
@@ -1379,6 +1385,33 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
     return row;
   }));
 }
+
+BzDeck.global.navigate_timeline_with_key = function (event) {
+  // this = a binded Scrollbar widget
+  let key = event.keyCode;
+
+  if (event.currentTarget !== this.view.$owner ||
+      [event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].indexOf(key) === -1) {
+    this.scroll_with_keyboard(event); // Use default handler
+    return false;
+  }
+
+  let shift = key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey,
+      $timeline = event.currentTarget,
+      comments = [...$timeline.querySelectorAll('[itemprop="comment"][data-time]')],
+      timeline_top = Math.round($timeline.getBoundingClientRect().top);
+
+  for (let $comment of shift ? comments.reverse() : comments) {
+    let top = Math.round($comment.getBoundingClientRect().top) - timeline_top;
+
+    if (shift && top < 0 || !shift && top > 0) {
+      $timeline.scrollTop += top;
+      break;
+    }
+  }
+
+  return FlareTail.util.event.ignore(event);
+};
 
 BzDeck.global.parse_comment = function (str) {
   let blockquote = function (p) {

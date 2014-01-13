@@ -32,9 +32,12 @@ BzDeck.HomePage = function () {
     });
   }
 
-  // Custom scrollbar
+  // Custom scrollbar (info)
   new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
-  new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+
+  // Custom scrollbar (timeline)
+  let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+  scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
 
   this.view = {};
 
