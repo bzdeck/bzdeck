@@ -344,6 +344,9 @@ BzDeck.bootstrap.finish = function () {
     BzDeck.core.load_subscriptions();
   }, 600000); // Call every 10 minutes
 
+  // Register the app for an activity on Firefox OS
+  BzDeck.global.register_activity_handler();
+
   BzDeck.global.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
   this.processing = false;
@@ -850,6 +853,34 @@ BzDeck.global.show_notification = function (title, body) {
     body: body,
     icon: '/static/images/logo/icon-256.png'
   });
+};
+
+BzDeck.global.register_activity_handler = function () {
+  // Match BMO's bug detail pages.
+  // TODO: Implement a handler for attachments
+  let re = /^https?:\/\/(?:bugzilla\.mozilla\.org\/show_bug\.cgi\?id=|bugzil\.la\/)(\d+)$/;
+
+  // Not implemented yet on Firefox OS nor Firefox for Android
+  if (typeof navigator.mozRegisterActivityHandler === 'function') {
+    navigator.mozRegisterActivityHandler({
+      name: 'view',
+      filters: {
+        type: 'url',
+        url: {
+          required: true,
+          regexp: re
+        }
+      }
+    });
+  }
+
+  if (typeof navigator.mozSetMessageHandler === 'function') {
+    navigator.mozSetMessageHandler('activity', function (req) {
+      if (req.source.url.match(re)) {
+        BzDeck.detailspage = new BzDeck.DetailsPage(parseInt(RegExp.$1));
+      }
+    });
+  }
 };
 
 BzDeck.global.fill_template = function ($template, bug, clone = false) {
