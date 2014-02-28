@@ -321,6 +321,9 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.toolbar.setup();
   BzDeck.sidebar.setup();
 
+  // Check the requested URL to open the specific folder or tab if needed
+  FlareTail.util.event.dispatch(window, 'popstate');
+
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
     FTut.selected = theme;
@@ -1126,7 +1129,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $entry.setAttribute('aria-hidden', 'false');
 
       let $link = $entry.querySelector('[itemprop="url"]');
-      $link.href = '#attachment/' + att.id;
+      $link.href = '/bug/' + bug.id + '/attachment/' + att.id;
       $link.dataset.attachmentId = att.id;
 
       let $title = $link.querySelector('[itemprop="name"]');
@@ -1201,7 +1204,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
     let change_cell_content = function (field, content) {
       if (['blocks', 'depends_on'].indexOf(field) > -1) {
-        return content.replace(/(\d+)/g, '<a href="#bug/$1" data-bug-id="$1">$1</a>');
+        return content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');
       }
 
       return content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
@@ -1306,7 +1309,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
         $elm.innerHTML = change[how].replace(
           /(\d+)/g,
-          '<a href="#bug/$1" data-bug-id="$1">$1</a>'
+          '<a href="/bug/$1" data-bug-id="$1">$1</a>'
         );
       } else {
         $elm.textContent = change[how];
@@ -1499,13 +1502,13 @@ BzDeck.global.parse_comment = function (str) {
   // Bugs
   str = str.replace(
     /Bug\s#?(\d+)/igm,
-    '<a href="#bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
+    '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
   );
 
   // Attachments
   str = str.replace(
     /Attachment\s#?(\d+)/igm,
-    '<a href="#attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
+    '<a href="/attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
   );
 
   return str;
@@ -1528,18 +1531,25 @@ BzDeck.toolbar.setup = function () {
   // Change the window title when a new tab is selected
   tablist.bind('Selected', function (event) {
     let $tab = event.detail.items[0],
-        hash = '#' + $tab.id.replace(/^tab-(.+)/, '$1').replace(/^details-/, 'bug/'),
+        sidebar = BzDeck.sidebar.data,
+        path = $tab.id.replace(/^tab-(.+)/, '$1'),
         title = $tab.title.replace('\n', ' – ');
 
-    if (hash === '#home') {
-      hash = '#' + BzDeck.sidebar.data.folder_id;
-      $root.setAttribute('data-current-tab', 'home');
+    if (path === 'home') {
+      if (!sidebar.folder_id) {
+        sidebar.folder_id = 'inbox';
+      }
+
+      path = 'home/' + sidebar.folder_id;
     } else {
-      $root.setAttribute('data-current-tab', hash.substr(1));
+      path = path.replace(/^details-/, 'bug/').replace(/^(search)-/, '$1/');
     }
 
-    if (location.hash !== hash) {
-      history.pushState({}, title, hash);
+    $root.setAttribute('data-current-tab', path.split('/')[0]);
+    path = '/' + path;
+
+    if (location.pathname !== path) {
+      history.pushState({}, title, path);
     }
 
     document.title = title + ' | BzDeck'; // l10n
@@ -1831,29 +1841,29 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'important' }
     },
     {
-      'id': 'sidebar-folders--subscriptions--cc',
+      'id': 'sidebar-folders--cc',
       'label': 'CCed',
-      'data': { 'id': 'subscriptions/cc' }
+      'data': { 'id': 'cc' }
     },
     {
-      'id': 'sidebar-folders--subscription--reported',
+      'id': 'sidebar-folders--reported',
       'label': 'Reported',
-      'data': { 'id': 'subscriptions/reported' }
+      'data': { 'id': 'reported' }
     },
     {
-      'id': 'sidebar-folders--subscription--assigned',
+      'id': 'sidebar-folders--assigned',
       'label': 'Assigned',
-      'data': { 'id': 'subscriptions/assigned' }
+      'data': { 'id': 'assigned' }
     },
     {
-      'id': 'sidebar-folders--subscription--qa',
+      'id': 'sidebar-folders--qa',
       'label': 'QA Contact',
-      'data': { 'id': 'subscriptions/qa' }
+      'data': { 'id': 'qa' }
     },
     {
-      'id': 'sidebar-folders--subscriptions',
+      'id': 'sidebar-folders--all',
       'label': 'All Bugs',
-      'data': { 'id': 'subscriptions' }
+      'data': { 'id': 'all' }
     }
   ];
 
@@ -1883,9 +1893,6 @@ BzDeck.sidebar.setup = function () {
       obj[prop] = newval;
     }.bind(this)
   });
-
-  // Select the 'Inbox' folder
-  this.data.folder_id = 'inbox';
 };
 
 BzDeck.sidebar.open_folder = function (folder_id) {
@@ -1939,11 +1946,11 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     = document.querySelector('#tab-home label').textContent
     = document.querySelector('#tabpanel-home h2').textContent = folder_label;
 
-  let hash = '#' + folder_id;
+  let path = '/home/' + folder_id;
 
   // Save history
-  if (location.hash !== hash) {
-    history.pushState({}, folder_label, hash);
+  if (location.pathname !== path) {
+    history.pushState({}, folder_label, path);
   }
 
   if (folder_id === 'inbox') {
@@ -1954,7 +1961,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^subscriptions\/(.*)/)) {
+  if (folder_id.match(/^(cc|reported|assigned|qa)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, function (sub) {
       BzDeck.model.get_bugs_by_ids([id for ({ id } of sub.bugs)], function (bugs) {
         update_list(bugs);
@@ -1962,7 +1969,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id === 'subscriptions') {
+  if (folder_id === 'all') {
     get_subscribed_bugs(function (bugs) {
       update_list(bugs);
     });
@@ -2108,10 +2115,11 @@ window.addEventListener('keydown', function (event) {
 });
 
 window.addEventListener('popstate', function (event) {
-  let hash = location.hash.substr(1),
+  let path = location.pathname.substr(1).replace('/', '-'),
       tabs = BzDeck.toolbar.tablist.view,
       folders = BzDeck.sidebar.folders.view,
-      matched,
+      $tab,
+      $folder,
       $root = document.documentElement; // <html>
 
   // Hide sidebar
@@ -2120,53 +2128,55 @@ window.addEventListener('popstate', function (event) {
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
 
-  if (hash.match(/^bug\/(\d+)$/)) {
-    let bug_id = parseInt(RegExp.$1);
+  if (path.match(/^bug-(\d+)$/)) {
+    let bug_id = parseInt(RegExp.$1),
+        bug_list = [];
 
-    $root.setAttribute('data-current-tab', 'bug/' + bug_id);
-    matched = document.querySelector('#tab-details-' + bug_id);
+    $root.setAttribute('data-current-tab', 'bug');
+    $tab = document.querySelector('#tab-details-' + bug_id);
 
-    if (matched) {
-      tabs.selected = matched;
+    if ($tab) {
+      tabs.selected = $tab;
 
       return;
     }
 
-    let bug_list = BzDeck.detailspage.data.bug_list;
+    if (BzDeck.detailspage) {
+      bug_list = BzDeck.detailspage.data.bug_list;
 
-    if (bug_list.length) {
-      let bugs = [id for ({ id } of bug_list)],
-          index = bugs.indexOf(BzDeck.detailspage.data.id);
+      if (bug_list.length) {
+        let bugs = [id for ({ id } of bug_list)],
+            index = bugs.indexOf(BzDeck.detailspage.data.id);
 
-      if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
-        // Back or Forward navigation
-        BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.$tab);
-        BzDeck.detailspage = new BzDeck.DetailsPage(bug_id, bug_list);
-
-        return;
+        if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
+          // Back or Forward navigation
+          BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.$tab);
+        }
       }
     }
 
-    BzDeck.detailspage = new BzDeck.DetailsPage(bug_id);
+    BzDeck.detailspage = new BzDeck.DetailsPage(bug_id, bug_list);
 
     return;
   }
 
-  matched = [$folder for ($folder of folders.members) if ($folder.dataset.id === hash)][0];
+  if (path.match(/^home-(\w+)/)) {
+    $folder = document.querySelector('#sidebar-folders--' + RegExp.$1);
 
-  if (matched) {
-    $root.setAttribute('data-current-tab', 'home');
-    tabs.selected = document.querySelector('#tab-home');
-    folders.selected = matched;
+    if ($folder) {
+      $root.setAttribute('data-current-tab', 'home');
+      tabs.selected = document.querySelector('#tab-home');
+      folders.selected = $folder;
 
-    return;
+      return;
+    }
   }
 
-  matched = document.querySelector('#tab-' + hash);
+  $tab = document.querySelector('#tab-' + path);
 
-  if (matched) {
-    $root.setAttribute('data-current-tab', hash);
-    tabs.selected = matched;
+  if ($tab) {
+    $root.setAttribute('data-current-tab', path);
+    tabs.selected = $tab;
 
     return;
   }
