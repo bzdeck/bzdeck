@@ -9,8 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SearchPage = function () {
   let tablist = BzDeck.toolbar.tablist,
-      $template = document.querySelector('template#tabpanel-search'),
-      $content = ($template.content || $template).cloneNode(true),
+      $content = document.querySelector('template#tabpanel-search').content.cloneNode(true),
       id_suffix = this.id = Date.now();
 
   // Assign unique IDs
@@ -29,7 +28,7 @@ BzDeck.SearchPage = function () {
     preview_id: null
   },
   {
-    get: function (obj, prop) {
+    get: (obj, prop) => {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
@@ -42,8 +41,8 @@ BzDeck.SearchPage = function () {
       }
 
       return obj[prop];
-    }.bind(this),
-    set: function (obj, prop, newval) {
+    },
+    set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
       if (oldval === newval) {
@@ -51,13 +50,13 @@ BzDeck.SearchPage = function () {
       }
 
       if (prop === 'preview_id' && !FlareTail.util.device.mobile.mql.matches) {
-        FlareTail.util.event.async(function () {
+        FlareTail.util.event.async(() => {
           this.show_preview(oldval, newval);
-        }.bind(this));
+        });
       }
 
       obj[prop] = newval;
-    }.bind(this)
+    }
   });
 
   let $tab = tablist.add_tab(
@@ -80,7 +79,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let buttons = this.view.buttons,
       panes = this.view.panes;
 
-  let handler = function (event) {
+  let handler = event => {
     switch (event.target.dataset.command) {
       case 'show-details': {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -95,7 +94,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
         break;
       }
     }
-  }.bind(this);
+  };
 
   for (let $button of this.view.$tabpanel.querySelectorAll('footer [role="button"]')) {
     let button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
@@ -119,14 +118,14 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-  let classifications = Object.keys(config.classification).sort().map(function (value, index) {
+  let classifications = Object.keys(config.classification).sort().map((value, index) => {
     return {
       id: $classification_list.id + 'item-' + index,
       label: value
     };
   });
 
-  let products = Object.keys(config.product).sort().map(function (value, index) {
+  let products = Object.keys(config.product).sort().map((value, index) => {
     return {
       id: $product_list.id + 'item-' + index,
       label: value
@@ -141,21 +140,21 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     // Fx27: components.push(...[c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
   }
 
-  components = components.sort().map(function (value, index) {
+  components = components.sort().map((value, index) => {
     return {
       id: $component_list.id + 'item-' + index,
       label: value
     };
   });
 
-  let statuses = config.field.status.values.map(function (value, index) {
+  let statuses = config.field.status.values.map((value, index) => {
     return {
       id: $status_list.id + 'item-' + index,
       label: value
     };
   });
 
-  let resolutions = config.field.resolution.values.map(function (value, index) {
+  let resolutions = config.field.resolution.values.map((value, index) => {
     return {
       id: $resolution_list.id + 'item-' + index,
       label: value || '---',
@@ -170,7 +169,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       status_list = new ListBox($status_list, statuses),
       resolution_list = new ListBox($resolution_list, resolutions);
 
-  classification_list.bind('Selected', function (event) {
+  classification_list.bind('Selected', event => {
     let products = [],
         components = [];
 
@@ -199,7 +198,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     }
   });
 
-  product_list.bind('Selected', function (event) {
+  product_list.bind('Selected', event => {
     let components = [];
 
     for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
@@ -218,7 +217,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
       button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
-  button.bind('Pressed', function (event) {
+  button.bind('Pressed', event => {
     let query = {},
         map = {
           classification: $classification_list,
@@ -242,7 +241,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     }
 
     this.exec_search(query);
-  }.bind(this));
+  });
 };
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
@@ -256,7 +255,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
   let grid = this.view.grid = new FlareTail.widget.Grid($grid, {
     rows: [],
-    columns: columns.map(function (col) {
+    columns: columns.map(col => {
       // Add labels
       switch (col.id) {
         case '_starred': {
@@ -286,7 +285,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   });
 
   // Force to change the sort condition when switched to the mobile layout
-  mobile_mql.addListener(function (mql) {
+  mobile_mql.addListener(mql => {
     if (mql.matches) {
       let cond = grid.options.sort_conditions;
       cond.key = 'last_change_time';
@@ -294,12 +293,12 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     }
   });
 
-  grid.bind('Sorted', function (event) {
+  grid.bind('Sorted', event => {
     prefs['search.list.sort_conditions'] = event.detail.conditions;
   });
 
-  grid.bind('ColumnModified', function (event) {
-    prefs['search.list.columns'] = event.detail.columns.map(function (col) {
+  grid.bind('ColumnModified', event => {
+    prefs['search.list.columns'] = event.detail.columns.map(col => {
       return {
         id: col.id,
         type: col.type || 'string',
@@ -308,7 +307,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     });
   });
 
-  grid.bind('Selected', function (event) {
+  grid.bind('Selected', event => {
     let ids = event.detail.ids;
 
     if (ids.length) {
@@ -320,18 +319,18 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
     }
-  }.bind(this));
+  });
 
-  grid.bind('dblclick', function (event) {
+  grid.bind('dblclick', event => {
     let $target = event.originalTarget;
 
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
       BzDeck.detailspage = new BzDeck.DetailsPage(parseInt($target.dataset.id), this.data.bug_list);
     }
-  }.bind(this));
+  });
 
-  grid.bind('keydown', function (event) {
+  grid.bind('keydown', event => {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,
@@ -363,15 +362,15 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
         _data._starred = _data._starred !== true;
       }
     }
-  }.bind(this), true); // use capture
+  }, true); // use capture
 
-  $pane.addEventListener('transitionend', function (event) {
+  $pane.addEventListener('transitionend', event => {
     let selected = this.view.grid.view.selected;
 
     if (event.propertyName === 'bottom' && selected.length) {
       this.view.grid.ensure_row_visibility(selected[selected.length - 1]);
     }
-  }.bind(this));
+  });
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
@@ -396,7 +395,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, function (bug) {
+  BzDeck.model.get_bug_by_id(newval, bug => {
     if (!bug) {
       // Unknown bug
       $template.setAttribute('aria-hidden', 'true');
@@ -415,7 +414,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     // Fill the content
     BzDeck.global.fill_template($template, bug);
     $template.setAttribute('aria-hidden', 'false');
-  }.bind(this));
+  });
 };
 
 BzDeck.SearchPage.prototype.exec_search = function (query) {
@@ -430,14 +429,14 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
 
   BzDeck.global.show_status('Loading...'); // l10n
 
-  FlareTail.util.event.async(function () {
+  FlareTail.util.event.async(() => {
     BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body
-  }.bind(this));
+  });
 
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
 
-  BzDeck.core.request('GET', 'bug' + query, function (data) {
+  BzDeck.core.request('GET', 'bug' + query, data => {
     if (!data || !Array.isArray(data.bugs)) {
       $grid_body.removeAttribute('aria-busy');
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -452,15 +451,15 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
       this.data.bug_list = data.bugs;
 
       // Save data
-      BzDeck.model.get_all_bugs(function (bugs) {
+      BzDeck.model.get_all_bugs(bugs => {
         let saved_ids = new Set([id for ({ id } of bugs)]);
         BzDeck.model.save_bugs([bug for (bug of data.bugs) if (!saved_ids.has(bug.id))]);
       });
 
       // Show results
-      FlareTail.util.event.async(function () {
+      FlareTail.util.event.async(() => {
         BzDeck.global.update_grid_data(this.view.grid, data.bugs);
-      }.bind(this));
+      });
 
       status = num > 1 ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
     } else {
@@ -469,5 +468,5 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
 
     $grid_body.removeAttribute('aria-busy');
     BzDeck.global.show_status(status);
-  }.bind(this));
+  });
 };

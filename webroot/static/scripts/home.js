@@ -23,7 +23,7 @@ BzDeck.HomePage = function () {
       splitter.data.position = pref;
     }
 
-    splitter.bind('Resized', function (event) {
+    splitter.bind('Resized', event => {
       let position = event.detail.position;
 
       if (position) {
@@ -48,7 +48,7 @@ BzDeck.HomePage = function () {
 
   let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
     rows: [],
-    columns: columns.map(function (col) {
+    columns: columns.map(col => {
       // Add labels
       switch (col.id) {
         case '_starred': {
@@ -79,16 +79,16 @@ BzDeck.HomePage = function () {
 
   this.change_layout(prefs['ui.home.layout']);
 
-  mobile_mql.addListener(function (mql) {
+  mobile_mql.addListener(mql => {
     this.change_layout(prefs['ui.home.layout'], true);
-  }.bind(this));
+  });
 
-  grid.bind('Sorted', function (event) {
+  grid.bind('Sorted', event => {
     prefs['home.list.sort_conditions'] = event.detail.conditions;
   });
 
-  grid.bind('ColumnModified', function (event) {
-    prefs['home.list.columns'] = event.detail.columns.map(function (col) {
+  grid.bind('ColumnModified', event => {
+    prefs['home.list.columns'] = event.detail.columns.map(col => {
       return {
         id: col.id,
         type: col.type || 'string',
@@ -97,7 +97,7 @@ BzDeck.HomePage = function () {
     });
   });
 
-  grid.bind('Selected', function (event) {
+  grid.bind('Selected', event => {
     let ids = event.detail.ids;
 
     if (ids.length) {
@@ -116,18 +116,18 @@ BzDeck.HomePage = function () {
         data.rows[$item.sectionRowIndex].data._unread = false;
       }
     }
-  }.bind(this));
+  });
 
-  grid.bind('dblclick', function (event) {
+  grid.bind('dblclick', event => {
     let $target = event.originalTarget;
 
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
       BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
     }
-  }.bind(this));
+  });
 
-  grid.bind('keydown', function (event) {
+  grid.bind('keydown', event => {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
         data = this.view.grid.data,
         view = this.view.grid.view,
@@ -149,22 +149,22 @@ BzDeck.HomePage = function () {
         _data._starred = _data._starred !== true;
       }
     }
-  }.bind(this), true); // use capture
+  }, true); // use capture
 
   // Show Details button
   let button = this.view.details_button
              = new FlareTail.widget.Button(document.querySelector('#home-button-show-details'));
 
-  button.bind('Pressed', function (event) {
+  button.bind('Pressed', event => {
     BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
-  }.bind(this));
+  });
 
   this.data = new Proxy({
     bug_list: [],
     preview_id: null
   },
   {
-    get: function (obj, prop) {
+    get: (obj, prop) => {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
@@ -177,18 +177,18 @@ BzDeck.HomePage = function () {
       }
 
       return obj[prop];
-    }.bind(this),
-    set: function (obj, prop, newval) {
+    },
+    set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
       if (prop === 'preview_id') {
-        FlareTail.util.event.async(function () {
+        FlareTail.util.event.async(() => {
           this.show_preview(oldval, newval);
-        }.bind(this));
+        });
       }
 
       obj[prop] = newval;
-    }.bind(this)
+    }
   });
 };
 
@@ -206,7 +206,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, function (bug) {
+  BzDeck.model.get_bug_by_id(newval, bug => {
     if (!bug) {
       $template.setAttribute('aria-hidden', 'true');
       button.data.disabled = true;

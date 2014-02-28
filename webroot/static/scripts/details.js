@@ -33,7 +33,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(id, function (bug) {
+  BzDeck.model.get_bug_by_id(id, bug => {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
       this.fetch_bug(id);
@@ -41,7 +41,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     }
 
     this.open(bug);
-  }.bind(this));
+  });
 };
 
 BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
@@ -61,7 +61,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
 
-  let mobile_mql_listener = function (mql) {
+  let mobile_mql_listener = mql => {
     if (mql.matches) { // Mobile
       $info_tab.setAttribute('aria-hidden', 'false');
       $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
@@ -82,7 +82,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   mobile_mql_listener(mobile_mql);
 
   // Scroll a tabpanel to top when the tab is selected
-  _tablist.bind('Selected', function (event) {
+  _tablist.bind('Selected', event => {
     document.querySelector('#' + event.detail.items[0].getAttribute('aria-controls')
                                + ' > .scrollable').scrollTop = 0;
   });
@@ -91,7 +91,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] div')) {
     let scroll_top = $tabpanel_content.scrollTop;
 
-    $tabpanel_content.addEventListener('scroll', function (event) {
+    $tabpanel_content.addEventListener('scroll', event => {
       if (mobile_mql.matches) {
         let value = String(event.target.scrollTop - scroll_top > 0);
 
@@ -126,12 +126,8 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 };
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
-  let $template = document.querySelector('template#tabpanel-details');
-
-  return BzDeck.global.fill_template(
-    $template.content || $template,
-    bug, true
-  );
+  return BzDeck.global.fill_template(document.querySelector('template#tabpanel-details').content,
+                                     bug, true);
 };
 
 BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
@@ -153,12 +149,12 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       next = bugs[index + 1],
       set_keybind = FlareTail.util.event.set_keybind;
 
-  let preload = function (id) {
+  let preload = id => {
     if (document.querySelector('#tabpanel-details-' + id)) {
       return;
     }
 
-    BzDeck.model.get_bug_by_id(id, function (bug) {
+    BzDeck.model.get_bug_by_id(id, bug => {
       let $tabpanel = this.prep_tabpanel(bug);
 
       $tabpanel.setAttribute('aria-hidden', 'true');
@@ -170,10 +166,10 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       if (!bug.comments) {
         this.prefetch_bug(id);
       }
-    }.bind(this));
-  }.bind(this); // Why this is needed?
+    });
+  };
 
-  let navigate = function (id) {
+  let navigate = id => {
     tablist.close_tab($current_tab);
     BzDeck.detailspage = new BzDeck.DetailsPage(id, bug_list);
   };
@@ -181,9 +177,9 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (prev) {
     preload(prev);
     btn_back.data.disabled = false;
-    btn_back.bind('Pressed', function (event) navigate(prev));
+    btn_back.bind('Pressed', event => navigate(prev));
     // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'B', '', function (event) navigate(prev));
+    // set_keybind($tabpanel, 'B', '', event => navigate(prev));
   } else {
     btn_back.data.disabled = true;
   }
@@ -191,9 +187,9 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (next) {
     preload(next);
     btn_forward.data.disabled = false;
-    btn_forward.bind('Pressed', function (event) navigate(next));
+    btn_forward.bind('Pressed', event => navigate(next));
     // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'F', '', function (event) navigate(next));
+    // set_keybind($tabpanel, 'F', '', event => navigate(next));
   } else {
     btn_forward.data.disabled = true;
   }
@@ -214,7 +210,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
         exclude_fields: 'attachments.data'
       });
 
-  BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
+  BzDeck.core.request('GET', 'bug/' + id + query, bug => {
     if (!bug || !bug.id) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
 
@@ -234,7 +230,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
       BzDeck.global.fill_template($tabpanel, bug);
       $tab.title = this.get_tab_title(bug);
     }
-  }.bind(this));
+  });
 };
 
 BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
@@ -244,7 +240,7 @@ BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
         exclude_fields: 'attachments.data'
       });
 
-  BzDeck.core.request('GET', 'bug/' + id + query, function (bug) {
+  BzDeck.core.request('GET', 'bug/' + id + query, bug => {
     if (bug && bug.id) {
       BzDeck.model.save_bug(bug);
     }

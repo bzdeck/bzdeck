@@ -16,17 +16,8 @@ BzDeck.SettingsPage = function () {
     return;
   }
 
-  let $template = document.querySelector('#tabpanel-settings-template'),
-      $content = ($template.content || $template).cloneNode(true),
-      $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]'),
-      id_suffix = this.id = Date.now();
-
-  // Assign unique IDs to support older browsers where HTMLTemplateElement is not implemented
-  for (let attr of ['id', 'aria-labelledby']) {
-    for (let $element of $content.querySelectorAll('[' + attr +']')) {
-      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, id_suffix));
-    }
-  }
+  let $content = document.querySelector('#tabpanel-settings-template').content.cloneNode(true),
+      $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]');
 
   let $tab = tablist.add_tab(
     'settings',
@@ -47,7 +38,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
       i18n = FlareTail.util.i18n,
       activate = this.activate_radiogroup.bind(this);
 
-  let update_date_format = function (option, value) {
+  let update_date_format = (option, value) => {
     i18n.options.date[option] = value;
 
     // Update timezone & format on the current view
@@ -58,17 +49,17 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   };
 
   // Theme
-  activate('theme', 'Dark', function (value) FlareTail.util.theme.selected = value);
+  activate('theme', 'Dark', value => FlareTail.util.theme.selected = value);
 
   // Timezone & Date Format
-  activate('date-timezone', 'local', function (value) update_date_format('timezone', value));
-  activate('date-format', 'relative', function (value) update_date_format('format', value));
+  activate('date-timezone', 'local', value => update_date_format('timezone', value));
+  activate('date-format', 'relative', value => update_date_format('format', value));
 
   // Home
-  activate('home-layout', 'classic', function (value) BzDeck.homepage.change_layout(value, true));
+  activate('home-layout', 'classic', value => BzDeck.homepage.change_layout(value, true));
 
   // Timeline
-  activate('timeline-order', 'ascending', function (value) {
+  activate('timeline-order', 'ascending', value => {
     for (let $timeline of document.querySelectorAll('[id$="preview-bug-timeline"], \
                                                      [id$="tabpanel-timeline"] > section')) {
       $timeline.setAttribute('aria-busy', 'true');
@@ -80,13 +71,13 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
       $timeline.removeAttribute('aria-busy');
     }
   });
-  activate('timeline-font-family', 'monospace', function (value) {
+  activate('timeline-font-family', 'monospace', value => {
     $root.setAttribute('data-timeline-font-family', value);
   });
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value, callback) {
-  let $rgroup = this.$tabpanel.querySelector('[id$="-setting-{id}"]'.replace('{id}', id)),
+  let $rgroup = this.$tabpanel.querySelector('#tabpanel-settings-setting-' + id),
       prefs = BzDeck.data.prefs,
       pref = $rgroup.dataset.pref;
 
@@ -95,7 +86,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value,
     $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
   }
 
-  (new FlareTail.widget.RadioGroup($rgroup)).bind('Selected', function (event) {
+  (new FlareTail.widget.RadioGroup($rgroup)).bind('Selected', event => {
     let value = prefs[pref] = event.detail.items[0].dataset.value;
 
     if (callback) {
