@@ -10,8 +10,8 @@ AddType application/javascript js
 AddType application/x-web-app-manifest+json webapp
 
 # Options
-# Note that the MultiViews option causes an error on the production server
-Options FollowSymLinks -Indexes
+# Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
+Options SymLinksIfOwnerMatch -Indexes
 RewriteEngine on
 
 # Rewrite: Force SSL
