@@ -247,11 +247,8 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
       this.processing = true;
     }
 
-    if (navigator.onLine) {
-      this.validate_account();
-    } else {
-      BzDeck.global.show_status('You have to go online to sign in.'); // l10n
-    }
+    navigator.onLine ? this.validate_account()
+                     : BzDeck.global.show_status('You have to go online to sign in.'); // l10n
 
     event.preventDefault();
 
@@ -1304,7 +1301,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $changes.className = 'changes';
 
     let generate_element = function (change, how) {
-      let $elm = document.createElement((how === 'removed') ? 'del' : 'ins');
+      let $elm = document.createElement(how === 'removed' ? 'del' : 'ins');
 
       if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
         $elm.innerHTML = change[how].replace(
@@ -1350,7 +1347,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
   // Sort by time
   entries = [{ time: key, $element: value } for ([key, value] of [...Iterator(entries)])]
-    .sort(function (a, b) (sort_order === 'descending') ? a.time < b.time : a.time > b.time);
+    .sort(function (a, b) sort_order === 'descending' ? a.time < b.time : a.time > b.time);
 
   // Append to the timeline
   for (let entry of entries) {
@@ -2206,8 +2203,8 @@ window.addEventListener('UI:toggle_unread', function (event) {
   bugs.sort(function (a, b) (new Date(b.last_change_time)).getTime()
                           - (new Date(a.last_change_time)).getTime());
 
-  let status = (num > 1) ? 'You have %d unread bugs'.replace('%d', num)
-                         : 'You have 1 unread bug', // l10n
+  let status = num > 1 ? 'You have %d unread bugs'.replace('%d', num)
+                       : 'You have 1 unread bug', // l10n
       extract = [(bug.id + ' - ' + bug.summary) for (bug of bugs.slice(0, 3))].join('\n');
 
   BzDeck.global.show_status(status);

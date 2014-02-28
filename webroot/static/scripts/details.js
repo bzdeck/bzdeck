@@ -164,7 +164,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       $tabpanel.setAttribute('aria-hidden', 'true');
       document.querySelector('#main-tabpanels').insertBefore(
         $tabpanel,
-        (id === prev) ? $current_tabpanel : $current_tabpanel.nextElementSibling
+        id === prev ? $current_tabpanel : $current_tabpanel.nextElementSibling
       );
 
       if (!bug.comments) {

@@ -72,9 +72,9 @@ BzDeck.HomePage = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: (vertical) ? { key: 'last_change_time', order: 'descending' }
-                                : prefs['home.list.sort_conditions'] ||
-                                  { key: 'id', order: 'ascending' }
+    sort_conditions: vertical ? { key: 'last_change_time', order: 'descending' }
+                              : prefs['home.list.sort_conditions'] ||
+                                { key: 'id', order: 'ascending' }
   });
 
   this.change_layout(prefs['ui.home.layout']);

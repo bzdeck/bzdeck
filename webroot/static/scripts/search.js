@@ -280,9 +280,9 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: (mobile_mql.matches) ? { key: 'last_change_time', order: 'descending' }
-                                          : prefs['home.list.sort_conditions'] ||
-                                            { key: 'id', order: 'ascending' }
+    sort_conditions: mobile_mql.matches ? { key: 'last_change_time', order: 'descending' }
+                                        : prefs['home.list.sort_conditions'] ||
+                                          { key: 'id', order: 'ascending' }
   });
 
   // Force to change the sort condition when switched to the mobile layout
@@ -462,7 +462,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
         BzDeck.global.update_grid_data(this.view.grid, data.bugs);
       }.bind(this));
 
-      status = (num > 1) ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
+      status = num > 1 ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
     } else {
       status = 'Zarro Boogs found.'; // l10n
     }
