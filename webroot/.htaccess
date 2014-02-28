@@ -27,6 +27,7 @@ RewriteRule ^support/?$     https://www.facebook.com/notes/bzdeck/bzdeck-faq/270
 RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.271135819678801.63434.240285432763840 [R,L]
 
 # Rewrite: misc
+RewriteRule ^static/(scripts|styles)/lib/flaretail/(\w+)\.(js|css)$ /static/$1/lib/flaretail/flaretail.$2.$3 [L]
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
 
 # Performance: remove ETag
