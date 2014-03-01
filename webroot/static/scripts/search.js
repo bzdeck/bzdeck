@@ -391,6 +391,7 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   // Custom scrollbar (timeline)
   let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
   scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+  scrollbar.onscroll_extend = BzDeck.global.handle_timeline_scroll.bind(scrollbar);
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {

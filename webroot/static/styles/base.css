@@ -962,9 +962,15 @@ article[id$="preview-bug"] > div {
 }
 
 .bug-timeline article {
+  position: relative;
   overflow: hidden;
   border-width: .1rem 0 0;
   border-style: solid;
+  padding-top: 5.4rem;
+}
+
+.bug-timeline article:nth-of-type(2) {
+  border-width: 0;
 }
 
 .bug-timeline article > * {
@@ -972,7 +978,14 @@ article[id$="preview-bug"] > div {
 }
 
 .bug-timeline article header {
+  position: absolute;
+  top: 0;
   overflow: hidden;
+  width: 100%;
+}
+
+.bug-timeline article header.sticky {
+  position: fixed;
 }
 
 .bug-timeline article header .meta {

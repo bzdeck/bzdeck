@@ -922,6 +922,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 
       if ($area.classList.contains('bug-timeline')) {
         scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+        scrollbar.onscroll_extend = BzDeck.global.handle_timeline_scroll.bind(scrollbar);
       }
 
       $area.tabIndex = 0;
@@ -1470,6 +1471,32 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   }
 
   return FlareTail.util.event.ignore(event);
+};
+
+BzDeck.global.handle_timeline_scroll = function (event) {
+  // this = a binded Scrollbar widget
+  let $timeline = this.view.$owner;
+
+  // Sticky Header
+  for (let $article of $timeline.querySelectorAll('article[data-time]')) {
+    let $header = $article.querySelector('header'),
+        [tst, aot, aoh] = [$timeline.scrollTop, $article.offsetTop, $article.offsetHeight];
+
+    if (tst >= aot && tst < aot + aoh) {
+      if (!$header.classList.contains('sticky')) {
+        $header.classList.add('sticky');
+        $header.style.setProperty('top', $timeline.getBoundingClientRect().top + 'px');
+      }
+    } else {
+      if ($header.classList.contains('sticky')) {
+        $header.classList.remove('sticky');
+        $header.style.removeProperty('top');
+      }
+    }
+  }
+
+  // The default behavior
+  this.onscroll(event);
 };
 
 BzDeck.global.parse_comment = function (str) {

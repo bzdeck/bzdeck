@@ -323,6 +323,10 @@ main {
   display: none;
 }
 
+.bug-timeline article {
+  padding-top: 4rem;
+}
+
 .bug-timeline article header {
   padding: 0;
 }
