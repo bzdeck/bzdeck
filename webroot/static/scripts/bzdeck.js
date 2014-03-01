@@ -911,12 +911,18 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       }
     }
 
+    // Star on the header
+    let $star_checkbox = $content.querySelector('[role="checkbox"][data-field="_starred"]');
+    (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
+      BzDeck.core.toggle_star(bug.id, event.detail.checked);
+    });
+
     // Custom scrollbar
     for (let $area of $content.querySelectorAll('.scrollable')) {
       let scrollbar = new FTw.ScrollBar($area);
 
       if ($area.classList.contains('bug-timeline')) {
-        scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
+        scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
       }
 
       $area.tabIndex = 0;
@@ -939,8 +945,8 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       continue; // BzDeck.global.fill_template_details
     }
 
-    if (key === 'summary') {
-      $element.textContent = 'Bug ' + bug.id + ' - ' + bug.summary;
+    if (key === 'id') {
+      $element.textContent = 'Bug ' + bug.id + ' - '; // l10n
 
       continue;
     }
@@ -986,6 +992,12 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       let $link = $element.appendChild(document.createElement('a'));
       $link.href = $link.text = value;
       $link.setAttribute('role', 'link');
+
+      continue;
+    }
+
+    if (key === '_starred') {
+      $element.setAttribute('aria-checked', value ? 'true' : 'false');
 
       continue;
     }
@@ -1341,12 +1353,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
 
   let sort_order = prefs['ui.timeline.sort.order'] || 'ascending',
-      // Mobile compact layout: insert bug summary
-      $parent = $timeline.querySelector('section') || $timeline,
-      $summary = $parent.querySelector('h2') ||
-                 $parent.insertBefore(document.createElement('h2'), $parent.firstElementChild);
-
-  $summary.textContent = bug.summary;
+      $parent = $timeline.querySelector('section') || $timeline;
 
   // Sort by time
   entries = [{ time: key, $element: value } for ([key, value] of [...Iterator(entries)])]
@@ -1420,9 +1427,28 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
   }));
 }
 
-BzDeck.global.navigate_timeline_with_key = function (event) {
+BzDeck.global.handle_timeline_keydown = function (event) {
   // this = a binded Scrollbar widget
-  let key = event.keyCode;
+  let key = event.keyCode,
+      modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
+
+  // [M] toggle read or [S] toggle star
+  if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].indexOf(key) > -1) {
+    let $parent = this.view.$owner.parentElement,
+        bug_id = parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
+
+    BzDeck.model.get_bug_by_id(bug_id, bug => {
+      if (key === event.DOM_VK_M) {
+        BzDeck.core.toggle_unread(bug_id, !bug._unread);
+      }
+
+      if (key === event.DOM_VK_S) {
+        BzDeck.core.toggle_star(bug_id, !bug._starred);
+      }
+    });
+
+    return FlareTail.util.event.ignore(event);
+  }
 
   if (event.currentTarget !== this.view.$owner ||
       [event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].indexOf(key) === -1) {
@@ -2184,6 +2210,38 @@ window.addEventListener('popstate', event => {
   $root.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#sidebar-folders--inbox');
+});
+
+window.addEventListener('UI:toggle_star', event => {
+  let ids = new Set([bug.id for (bug of event.detail.bugs)]);
+
+  // Homepage thread
+  for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
+    $row.querySelector('[data-id="_starred"] [role="checkbox"]')
+        .setAttribute('aria-checked', ids.has(parseInt($row.dataset.id)));
+  }
+
+  // Homepage preview
+  document.querySelector('#home-preview-bug > header > [role="checkbox"]')
+          .setAttribute('aria-checked', ids.has(BzDeck.homepage.data.preview_id))
+
+  // Details panels
+  for (let $panel of document.querySelectorAll('[id^="tabpanel-details"][role="tabpanel"]')) {
+    $panel.querySelector('[role="checkbox"][data-field="_starred"]')
+          .setAttribute('aria-checked', ids.has(parseInt($panel.dataset.id)));
+  }
+
+  // Search preview
+  for (let $preview of document.querySelectorAll('[id$="preview-bug"][role="article"]')) {
+    $preview.querySelector('[role="checkbox"][data-field="_starred"]')
+            .setAttribute('aria-checked', ids.has(parseInt($preview.dataset.id)));
+  }
+
+  // Search thread
+  for (let $row of document.querySelectorAll('[id*="result-row"]')) {
+    $row.querySelector('[data-id="_starred"] [role="checkbox"]')
+        .setAttribute('aria-checked', ids.has(parseInt($row.dataset.id)));
+  }
 });
 
 window.addEventListener('UI:toggle_unread', event => {

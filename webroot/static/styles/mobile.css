@@ -272,12 +272,8 @@ main {
  * Details
  * ---------------------------------------------------------------------------------------------- */
 
-[id|="tabpanel-details"][role="tabpanel"] > article > header {
-  left: -9999rem !important; /* Hide the header */
-}
-
 [id|="tabpanel-details"][role="tabpanel"] > article > div {
-  top: 0 !important; /* Hide the header */
+  top: 0 !important;
 }
 
 [id|="bug"][role="tablist"] {
@@ -310,12 +306,21 @@ main {
   padding-top: 4rem;
 }
 
-.bug-timeline h2 {
+.bug-timeline > header h2 {
   display: block;
-  padding: 0 1.2rem 1.2rem;
+  padding: 0 1.2rem 1.2rem 3rem;
   font-size: 1.4rem;
   line-height: 2rem;
   font-weight: 500;
+}
+
+.bug-timeline > header [role="checkbox"] {
+  margin-top: -.2rem !important;
+}
+
+.bug-timeline > header h2 [data-field="id"],
+.bug-timeline > header [role="toolbar"] {
+  display: none;
 }
 
 .bug-timeline article header {

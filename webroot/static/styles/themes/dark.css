@@ -413,6 +413,14 @@ a {
   background-color: #3C3C3C; /* Alternate Disabled Button Background Color */
 }
 
+#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64);
+}
+
+#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128);
+}
+
 /* ----------------------------------------------------------------------------------------------
  * Home
  * ---------------------------------------------------------------------------------------------- */
@@ -469,6 +477,14 @@ article[id$="preview-bug"] > header {
   border-color: #3C3C3C; /* Region Header Border Color */
   color: #C3C3C3; /* Region Header Foreground Color */
   background-color: #3C3C3C; /* Region Header Background Color */
+}
+
+article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="false"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64);
+}
+
+article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128);
 }
 
 /* ----------------------------------------------------------------------------------------------

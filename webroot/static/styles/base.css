@@ -516,9 +516,19 @@ main {
   height: 3.2rem;
 }
 
+#main-tabpanels > [role="tabpanel"] header > [role="checkbox"] {
+  float: left;
+  margin: .3rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-position: center;
+  background-size: 72%;
+  background-repeat: no-repeat;
+}
+
 #main-tabpanels > [role="tabpanel"] > * > header > h2 {
   overflow: hidden;
-  padding: 0 8rem 0 1.2rem;
+  padding: 0 8rem 0 .4rem;
   font-size: 1.4rem;
   line-height: 3rem;
   font-weight: 500;
@@ -746,14 +756,14 @@ main {
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] {
   position: absolute;
-  top: 2.2rem;
+  top: 2.4rem;
   right: .8rem;
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-size: 64%;
+  background-size: 72%;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"] label {
@@ -768,9 +778,19 @@ article[id$="preview-bug"] > header {
   height: 3.0rem;
 }
 
+article[id$="preview-bug"] > header > [role="checkbox"] {
+  float: left;
+  margin: .3rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-position: center;
+  background-size: 72%;
+  background-repeat: no-repeat;
+}
+
 article[id$="preview-bug"] > header > h3 {
   overflow: hidden;
-  padding: 0 1.2rem;
+  padding: 0 .4rem;
   font-size: 1.4rem;
   line-height: 3rem;
   font-weight: 500;

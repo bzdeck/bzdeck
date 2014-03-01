@@ -57,12 +57,16 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   let mobile_mql = FlareTail.util.device.mobile.mql,
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       _tablist = new FlareTail.widget.TabList($tablist),
+      $article = $tabpanel.querySelector('article'),
+      $header = $tabpanel.querySelector('header'),
+      $timeline = $tabpanel.querySelector('.bug-timeline'),
       $info_tab = $tabpanel.querySelector('[id$="-tab-info"]'),
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
 
   let mobile_mql_listener = mql => {
     if (mql.matches) { // Mobile
+      $timeline.insertBefore($header, $timeline.firstElementChild);
       $info_tab.setAttribute('aria-hidden', 'false');
       $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
 
@@ -73,8 +77,9 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
       _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
     }
 
+    $article.insertBefore($header, $article.firstElementChild);
     $info_tab.setAttribute('aria-hidden', 'true');
-    $tabpanel.querySelector('div').appendChild($bug_info);
+    $tabpanel.querySelector('header + div').appendChild($bug_info);
     $tablist.removeAttribute('aria-hidden');
   };
 

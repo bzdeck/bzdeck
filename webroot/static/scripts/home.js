@@ -32,12 +32,18 @@ BzDeck.HomePage = function () {
     });
   }
 
+  // Star on the header
+  let $star_checkbox = document.querySelector('#home-preview-bug header [data-field="_starred"]');
+  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
+    BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
+  });
+
   // Custom scrollbar (info)
   new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
 
   // Custom scrollbar (timeline)
   let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
-  scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
+  scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
 
   this.view = {};
 

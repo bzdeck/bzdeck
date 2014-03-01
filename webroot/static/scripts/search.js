@@ -374,16 +374,23 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
-  let ScrollBar = FlareTail.widget.ScrollBar,
+  let FTw = FlareTail.widget,
+      ScrollBar = FTw.ScrollBar,
       $pane = this.view.panes['preview']
             = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
+
+  // Star on the header
+  let $star_checkbox = $pane.querySelector('[role="checkbox"][data-field="_starred"]');
+  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
+    BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
+  });
 
   // Custom scrollbar (info)
   new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
 
   // Custom scrollbar (timeline)
   let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
-  scrollbar.onkeydown_extend = BzDeck.global.navigate_timeline_with_key.bind(scrollbar);
+  scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
