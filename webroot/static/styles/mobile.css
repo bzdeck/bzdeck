@@ -162,7 +162,7 @@
   border-bottom-width: .2rem;
   border-bottom-style: solid;
   padding: .4rem 1.2rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 #sidebar [role="option"],
@@ -315,7 +315,7 @@ main {
   padding: 0 1.2rem 1.2rem;
   font-size: 1.4rem;
   line-height: 2rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .bug-timeline article header {

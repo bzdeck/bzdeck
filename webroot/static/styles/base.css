@@ -4,24 +4,6 @@
  */
 
 /* ----------------------------------------------------------------------------------------------
- * Fonts
- * ---------------------------------------------------------------------------------------------- */
-
-@font-face {
-  font-family: "Fira Sans";
-  font-weight: normal;
-  font-style: normal;
-  src: local("Fira Sans Regular");
-}
-
-@font-face {
-  font-family: "Fira Sans";
-  font-weight: bold;
-  font-style: normal;
-  src: local("Fira Sans Medium");
-}
-
-/* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
 
@@ -31,8 +13,7 @@ body {
   width: 100%;
   height: 100%;
   font-size: 1.1rem;
-  /* Note: Fira Sans was called Feura Sans in older Firefox OS */
-  font-family: "Feura Sans", "Fira Sans", "Roboto", "Lucida Grande", sans-serif;
+  font-family: "Lucida Grande", "Fira Sans", "Fira Sans OT", Roboto, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -540,7 +521,7 @@ main {
   padding: 0 8rem 0 1.2rem;
   font-size: 1.4rem;
   line-height: 3rem;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -685,7 +666,7 @@ main {
 }
 
 .bug-list [role="row"][data-unread="true"] {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .bug-list [role="columnheader"]:-moz-any([data-id="_starred"], [data-id="_unread"]) label {
@@ -749,7 +730,7 @@ main {
 }
 
 :root[data-home-layout="vertical"] #home-list [role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
@@ -792,7 +773,7 @@ article[id$="preview-bug"] > header > h3 {
   padding: 0 1.2rem;
   font-size: 1.4rem;
   line-height: 3rem;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
   pointer-events: auto;
@@ -998,7 +979,7 @@ article[id$="preview-bug"] > div {
 .bug-timeline article header [itemprop="author"] [itemprop="name"] {
   display: block;
   overflow: hidden;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
