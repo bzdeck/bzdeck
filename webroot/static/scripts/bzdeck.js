@@ -76,7 +76,6 @@ BzDeck.bootstrap = {};
 
 BzDeck.bootstrap.check_requirements = function () {
   let features = [
-    'explicitOriginalTarget' in Event.prototype, // Gecko specific
     'toLocaleFormat' in Date.prototype, // Gecko specific
     'mozMatchesSelector' in Element.prototype, // Gecko specific; prefixed
     'Proxy' in window, // Firefox 4
@@ -1090,7 +1089,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
           (new FlareTail.widget.Button($li)).bind('Pressed', event => {
             BzDeck.detailspage = new BzDeck.DetailsPage(
-              parseInt(event.explicitOriginalTarget.textContent)
+              parseInt(event.target.textContent)
             );
           });
         }
@@ -1747,7 +1746,7 @@ BzDeck.toolbar.setup = function () {
 
   $search_dropdown.addEventListener('MenuItemSelected', event => {
     // Show the bug or search results
-    let $target = event.explicitOriginalTarget,
+    let $target = event.detail.target,
         id = $target.dataset.id;
 
     if (id) {
