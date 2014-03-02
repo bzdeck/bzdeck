@@ -60,12 +60,11 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
   // Timeline
   activate('timeline-order', 'ascending', value => {
-    for (let $timeline of document.querySelectorAll('[id$="preview-bug-timeline"], \
-                                                     [id$="tabpanel-timeline"] > section')) {
+    for (let $timeline of document.querySelectorAll('.bug-timeline')) {
       $timeline.setAttribute('aria-busy', 'true');
 
       for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"]')].reverse()) {
-        $timeline.appendChild($comment);
+        $comment.parentElement.appendChild($comment);
       }
 
       $timeline.removeAttribute('aria-busy');
