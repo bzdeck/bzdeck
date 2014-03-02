@@ -1957,12 +1957,6 @@ BzDeck.sidebar.open_folder = function (folder_id) {
       BzDeck.global.update_grid_data(grid, bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
-
-    // Select the first bug on the list automatically when a folder is opened
-    if (bugs.length && !FlareTail.util.device.mobile.mql.matches) {
-      // TODO: Remember the last selected bug for each folder
-      // grid.view.selected = grid.view.focused = grid.view.members[0];
-    }
   };
 
   let get_subscribed_bugs = callback => {

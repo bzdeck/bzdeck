@@ -127,6 +127,14 @@ BzDeck.HomePage = function () {
     }
   });
 
+  grid.bind('Rebuilt', event => {
+    // Select the first bug on the list automatically when a folder is opened
+    // TODO: Remember the last selected bug for each folder
+    if (grid.data.rows.length && !window.matchMedia('(max-width: 799px)').matches) {
+      grid.view.selected = grid.view.focused = grid.view.members[0];
+    }
+  });
+
   grid.bind('dblclick', event => {
     let $target = event.originalTarget;
 
