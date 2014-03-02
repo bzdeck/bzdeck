@@ -486,6 +486,7 @@ main {
   opacity: 1;
 }
 
+#tab-home:only-child,
 #tab-home .close {
   display: none;
 }
