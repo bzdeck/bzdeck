@@ -1955,6 +1955,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     home.data.bug_list = bugs;
     FlareTail.util.event.async(() => {
       BzDeck.global.update_grid_data(grid, bugs);
+      document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 
     // Select the first bug on the list automatically when a folder is opened

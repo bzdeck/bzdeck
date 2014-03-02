@@ -435,7 +435,11 @@
               </header>
               <div>
                 <div id="home-list-pane" role="region">
-                  <section id="home-list" class="bug-list" role="grid" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows"></section>
+                  <section id="home-list" class="bug-list" role="grid" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
+                    <footer aria-hidden="true">
+                      <div role="status"><span>No bugs found in this folder.</span></div>
+                    </footer>
+                  </section>
                 </div><!-- end #home-list-pane -->
                 <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator" aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
                 <div id="home-preview-pane" role="region" aria-expanded="true">

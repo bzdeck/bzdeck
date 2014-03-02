@@ -447,6 +447,10 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 224, 64, 192);
 }
 
+.bug-list > footer {
+  background-color: #E4E4E4; /* Region Background Color */
+}
+
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
   border-color: #CCC; /* Grid Border Color */
 }
