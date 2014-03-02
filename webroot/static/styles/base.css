@@ -537,6 +537,14 @@ main {
   text-overflow: ellipsis;
 }
 
+#main-tabpanels > [role="tabpanel"] > * > header > h2 [data-field="id"]:before {
+  content: 'Bug '
+}
+
+#main-tabpanels > [role="tabpanel"] > * > header > h2 [data-field="id"]:after {
+  content: ' - '
+}
+
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] {
   display: inline-block;
   position: absolute;
@@ -820,6 +828,14 @@ article[id$="preview-bug"] > header > h3 {
   text-overflow: ellipsis;
   pointer-events: auto;
   -moz-user-select: text;
+}
+
+article[id$="preview-bug"] > header > h3 [data-field="id"]:before {
+  content: 'Bug '
+}
+
+article[id$="preview-bug"] > header > h3 [data-field="id"]:after {
+  content: ' - '
 }
 
 article[id$="preview-bug"] > div {

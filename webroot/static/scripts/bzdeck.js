@@ -945,12 +945,6 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       continue; // BzDeck.global.fill_template_details
     }
 
-    if (key === 'id') {
-      $element.textContent = 'Bug ' + bug.id + ' - '; // l10n
-
-      continue;
-    }
-
     if (key.endsWith('_time')) {
       $element.textContent = FlareTail.util.i18n.format_date(value);
       $element.dateTime = value;
