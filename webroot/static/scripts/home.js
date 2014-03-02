@@ -243,7 +243,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 };
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
-  let vertical = FlareTail.util.device.mobile.mql.matches || pref === 'vertical',
+  let vertical = FlareTail.util.device.mobile.mql.matches || !pref || pref === 'vertical',
       grid = this.view.grid,
       splitter = this.preview_splitter;
 

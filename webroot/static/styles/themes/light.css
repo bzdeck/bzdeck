@@ -306,7 +306,8 @@ a {
  * ---------------------------------------------------------------------------------------------- */
 
 #app-login {
-  background-color: #F4F4F4; /* Application Background Color */
+  color: #E3E3E3; /* Application Header Foreground Color */
+  background-color: #545454; /* Application Header Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------

@@ -49,14 +49,14 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   };
 
   // Theme
-  activate('theme', 'Dark', value => FlareTail.util.theme.selected = value);
+  activate('theme', 'Light', value => FlareTail.util.theme.selected = value);
 
   // Timezone & Date Format
   activate('date-timezone', 'local', value => update_date_format('timezone', value));
   activate('date-format', 'relative', value => update_date_format('format', value));
 
   // Home
-  activate('home-layout', 'classic', value => BzDeck.homepage.change_layout(value, true));
+  activate('home-layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
 
   // Timeline
   activate('timeline-order', 'ascending', value => {
