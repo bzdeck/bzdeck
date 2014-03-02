@@ -1124,7 +1124,7 @@ article[id$="preview-bug"] > .bug-timeline {
 .bug-history table {
   margin: 0 1.2rem;
   border-collapse: collapse;
-  width: auto;
+  width: calc(100% - 2.4rem);
   table-layout: fixed;
 }
 
