@@ -649,6 +649,8 @@ main {
   top: 21.6rem;
   bottom: 0;
   width: 100%;
+  border-width: .1rem 0 0 0;
+  border-style: solid;
   min-height: 8rem;
 }
 
@@ -660,7 +662,6 @@ main {
   min-width: 36rem;
   background-color: transparent !important;
   border-width: 0 0 0 .1rem;
-  border-style: solid;
 }
 
 .bug-list col[data-id="id"][data-hidden="false"] {

@@ -425,7 +425,7 @@ a {
  * Home
  * ---------------------------------------------------------------------------------------------- */
 
-:root[data-home-layout="vertical"] #home-preview-pane {
+#home-preview-pane {
   border-color: #7C7C7C; /* Region Border Color */
 }
 
