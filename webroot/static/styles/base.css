@@ -813,7 +813,7 @@ article[id$="preview-bug"] > div {
   display: none;
 }
 
-#home-preview-bug-timeline {
+article[id$="preview-bug"] > .bug-timeline {
   right: 0;
   width: auto;
 }
