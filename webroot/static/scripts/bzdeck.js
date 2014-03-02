@@ -1023,7 +1023,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   BzDeck.global.show_status('Loading...'); // l10n
 
   // Empty timeline while keeping the template and scrollbar
-  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"][data-time]')) {
+  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"]')) {
     $comment.remove();
   }
 
@@ -1264,19 +1264,18 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   // Timeline: comments & history
   let entries = {},
       $timeline = $content.querySelector('.bug-timeline'),
-      $entry_tmpl = $content.querySelector('[itemprop="comment"]'),
+      $entry_tmpl = document.querySelector('template#timeline-comment').content,
       parse = BzDeck.global.parse_comment,
       sanitize = FlareTail.util.string.sanitize;
 
   // Comments
   for (let comment of bug.comments) {
-    let $entry = $entry_tmpl.cloneNode(true),
+    let $entry = $entry_tmpl.cloneNode(true).firstElementChild,
         time = comment.creation_time;
 
     $entry.id = $content.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $entry.setAttribute('aria-hidden', 'false');
     $entry.querySelector('[itemprop="author"] [itemprop="name"]')
           .textContent = comment.creator.real_name || comment.creator.name;
     $entry.querySelector('[itemprop="text"]')
@@ -1298,9 +1297,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       // Combine a comment + change(s)
       $entry = entries[time];
     } else {
-      $entry = $entry_tmpl.cloneNode(true);
+      $entry = $entry_tmpl.cloneNode(true).firstElementChild;
       $entry.dataset.time = (new Date(time)).getTime();
-      $entry.setAttribute('aria-hidden', 'false');
       $entry.querySelector('[itemprop="text"]').remove();
       $entry.querySelector('[itemprop="author"] [itemprop="name"]')
             .textContent = history.changer.name;
@@ -1458,7 +1456,7 @@ BzDeck.global.handle_timeline_keydown = function (event) {
 
   let shift = key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey,
       $timeline = event.currentTarget,
-      comments = [...$timeline.querySelectorAll('[itemprop="comment"][data-time]')],
+      comments = [...$timeline.querySelectorAll('[itemprop="comment"]')],
       timeline_top = Math.round($timeline.getBoundingClientRect().top);
 
   for (let $comment of shift ? comments.reverse() : comments) {
@@ -1478,9 +1476,9 @@ BzDeck.global.handle_timeline_scroll = function (event) {
   let $timeline = this.view.$owner;
 
   // Sticky Header
-  for (let $article of $timeline.querySelectorAll('article[data-time]')) {
-    let $header = $article.querySelector('header'),
-        [tst, aot, aoh] = [$timeline.scrollTop, $article.offsetTop, $article.offsetHeight];
+  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"]')) {
+    let $header = $comment.querySelector('header'),
+        [tst, aot, aoh] = [$timeline.scrollTop, $comment.offsetTop, $comment.offsetHeight];
 
     if (tst >= aot && tst < aot + aoh) {
       if (!$header.classList.contains('sticky')) {

@@ -323,24 +323,24 @@ main {
   display: none;
 }
 
-.bug-timeline article {
+.bug-timeline [itemprop="comment"] {
   padding-top: 4rem;
 }
 
-.bug-timeline article header {
+.bug-timeline [itemprop="comment"] header {
   padding: 0;
 }
 
-.bug-timeline article header [itemprop="author"] [itemprop="image"] {
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
   width: 4rem;
   height: 4rem;
 }
 
-.bug-timeline article header [itemprop="author"] [itemprop="name"] {
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
   padding-top: .5rem;
 }
 
-.bug-timeline article .changes {
+.bug-timeline [itemprop="comment"] .changes {
   font-size: 1rem;
 }
 

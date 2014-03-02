@@ -64,7 +64,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
                                                      [id$="tabpanel-timeline"] > section')) {
       $timeline.setAttribute('aria-busy', 'true');
 
-      for (let $comment of [...$timeline.querySelectorAll('article[data-time]')].reverse()) {
+      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"]')].reverse()) {
         $timeline.appendChild($comment);
       }
 

@@ -520,27 +520,27 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   border-color: #303030; /* Control Border Color */
 }
 
-.bug-timeline article {
+.bug-timeline [itemprop="comment"] {
   border-color: #303030; /* Secondary Region Border Color */
 }
 
-.bug-timeline article header,
-.bug-timeline article .changes {
+.bug-timeline [itemprop="comment"] header,
+.bug-timeline [itemprop="comment"] .changes {
   background-color: #282828; /* Secondary Region Background Color */
 }
 
-.bug-timeline article header [itemprop="author"] [itemprop="image"],
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"],
 #main-menu--app--account label {
   color: #939393; /* Control Foreground Color */
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 320, 128, 256);
 }
 
-.bug-timeline article [itemprop="text"] {
+.bug-timeline [itemprop="comment"] [itemprop="text"] {
   color: #BBB; /* Content Foreground Color */
   background-color: #202020; /* Content Background Color */
 }
 
-.bug-timeline article [itemprop="text"] blockquote {
+.bug-timeline [itemprop="comment"] [itemprop="text"] blockquote {
   border-color: #343434; /* Region Border Color */
   color: #939393; /* Secondary Content Foreground Color */
 }

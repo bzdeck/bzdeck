@@ -101,17 +101,7 @@
                     <dt>Priority</dt><dd data-field="priority"></dd>
                   </dl>
                 </div><!-- end .bug-info -->
-                <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0">
-                  <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article" aria-hidden="true">
-                    <header>
-                      <p class="meta">
-                        <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
-                        <time itemprop="datePublished"></time>
-                      </p>
-                    </header>
-                    <div itemprop="text"></div>
-                  </article>
-                </div><!-- end .bug-timeline -->
+                <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0"></div>
               </article><!-- end #search-TID-preview-bug -->
             </div><!-- end #search-TID-preview-pane -->
             <div id="search-TID-advanced-search-pane" aria-hidden="true">
@@ -151,15 +141,6 @@
                 <div class="scrollable bug-timeline">
                   <section>
                     <h3>Comments</h3>
-                    <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article" aria-hidden="true">
-                      <header>
-                        <p class="meta">
-                          <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
-                          <time itemprop="datePublished"></time>
-                        </p>
-                      </header>
-                      <div itemprop="text"></div>
-                    </article>
                   </section>
                 </div>
               </div><!-- end #bug-TID-tabpanel-timeline -->
@@ -359,6 +340,17 @@
         </section>
       </div><!-- end #tabpanel-settings -->
     </template><!-- end #tabpanel-settings-template -->
+    <template id="timeline-comment">
+      <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
+        <header>
+          <p class="meta">
+            <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
+            <time itemprop="datePublished"></time>
+          </p>
+        </header>
+        <div itemprop="text"></div>
+      </article>
+    </template><!-- end #timeline-comment -->
   </head>
   <body role="application" data-name="BzDeck">
     <section id="app-login">
@@ -468,17 +460,7 @@
                         <dt>Priority</dt><dd data-field="priority"></dd>
                       </dl>
                     </div><!-- end .bug-info -->
-                    <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0">
-                      <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article" aria-hidden="true">
-                        <header>
-                          <p class="meta">
-                            <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
-                            <time itemprop="datePublished"></time>
-                          </p>
-                        </header>
-                        <div itemprop="text"></div>
-                      </article>
-                    </div><!-- end .bug-timeline -->
+                    <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0"></div>
                   </article><!-- end #home-preview-content -->
                 </div><!-- end #home-preview-pane -->
               </div>

@@ -961,7 +961,7 @@ article[id$="preview-bug"] > div {
   left: -9999rem;
 }
 
-.bug-timeline article {
+.bug-timeline [itemprop="comment"] {
   position: relative;
   overflow: hidden;
   border-width: .1rem 0 0;
@@ -969,36 +969,36 @@ article[id$="preview-bug"] > div {
   padding-top: 5.4rem;
 }
 
-.bug-timeline article:nth-of-type(2) {
+.bug-timeline [itemprop="comment"]:first-of-type {
   border-width: 0;
 }
 
-.bug-timeline article > * {
+.bug-timeline [itemprop="comment"] > * {
   padding: 1.2rem;
 }
 
-.bug-timeline article header {
+.bug-timeline [itemprop="comment"] header {
   position: absolute;
   top: 0;
   overflow: hidden;
   width: 100%;
 }
 
-.bug-timeline article header.sticky {
+.bug-timeline [itemprop="comment"] header.sticky {
   position: fixed;
 }
 
-.bug-timeline article header .meta {
+.bug-timeline [itemprop="comment"] header .meta {
   overflow: hidden;
   line-height: 1.5rem;
 }
 
-.bug-timeline article header .meta > * {
+.bug-timeline [itemprop="comment"] header .meta > * {
   display: block;
   padding: 0 .8rem;
 }
 
-.bug-timeline article header [itemprop="author"] [itemprop="image"] {
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
   display: inline-block;
   float: left;
   margin: 0 .8rem 0 -.8rem;
@@ -1009,7 +1009,7 @@ article[id$="preview-bug"] > div {
   background-repeat: no-repeat;
 }
 
-.bug-timeline article header [itemprop="author"] [itemprop="name"] {
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
   display: block;
   overflow: hidden;
   font-weight: 500;
@@ -1017,19 +1017,19 @@ article[id$="preview-bug"] > div {
   text-overflow: ellipsis;
 }
 
-.bug-timeline article [itemprop="text"] {
+.bug-timeline [itemprop="comment"] [itemprop="text"] {
   font-size: 1.2rem;
   line-height: 1.6;
   font-family: Consolas, monospace;
   letter-spacing: -.02ex;
 }
 
-:root[data-timeline-font-family="proportional"] .bug-timeline article [itemprop="text"] {
+:root[data-timeline-font-family="proportional"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
   font-family: inherit;
   letter-spacing: normal;
 }
 
-.bug-timeline article [itemprop="text"] p {
+.bug-timeline [itemprop="comment"] [itemprop="text"] p {
   margin: 1.2rem 0;
   white-space: pre-wrap;
   -moz-user-select: text;
@@ -1037,35 +1037,35 @@ article[id$="preview-bug"] > div {
   cursor: text;
 }
 
-.bug-timeline article [itemprop="text"] p:first-of-type {
+.bug-timeline [itemprop="comment"] [itemprop="text"] p:first-of-type {
   margin-top: 0;
 }
 
-.bug-timeline article [itemprop="text"] p:last-of-type {
+.bug-timeline [itemprop="comment"] [itemprop="text"] p:last-of-type {
   margin-bottom: 0;
 }
 
-.bug-timeline article [itemprop="text"] blockquote {
+.bug-timeline [itemprop="comment"] [itemprop="text"] blockquote {
   margin: 0;
   border-width: 0 0 0 .2rem;
   border-style: solid;
   padding-left: 1rem;
 }
 
-.bug-timeline article .changes li {
+.bug-timeline [itemprop="comment"] .changes li {
   margin-top: .8rem;
   line-height: 1.5;
 }
 
-.bug-timeline article .changes li:first-of-type {
+.bug-timeline [itemprop="comment"] .changes li:first-of-type {
   margin-top: 0;
 }
 
-.bug-timeline article .changes ins {
+.bug-timeline [itemprop="comment"] .changes ins {
   text-decoration: none;
 }
 
-.bug-timeline article .changes a {
+.bug-timeline [itemprop="comment"] .changes a {
   color: inherit;
 }
 
