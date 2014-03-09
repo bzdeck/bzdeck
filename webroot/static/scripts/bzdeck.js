@@ -322,6 +322,7 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.homepage = new BzDeck.HomePage();
   BzDeck.toolbar.setup();
   BzDeck.sidebar.setup();
+  BzDeck.DetailsPage.swipe.init();
 
   // Check the requested URL to open the specific folder or tab if needed
   FlareTail.util.event.dispatch(window, 'popstate');

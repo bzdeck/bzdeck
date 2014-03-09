@@ -105,7 +105,7 @@ BzDeck.HomePage = function () {
 
       // Mobile compact layout or Vertical View
       if (window.matchMedia('(max-width: 799px)').matches) {
-        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
 
       let data = this.view.grid.data;

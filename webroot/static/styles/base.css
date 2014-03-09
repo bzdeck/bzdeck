@@ -498,6 +498,10 @@ main {
   bottom: 0;
 }
 
+#main-tabpanels > [id^="tabpanel-details"] {
+  transition: left .5s;
+}
+
 #main-tabpanels > [role="tabpanel"][aria-busy="true"] {
   overflow: hidden;
 }

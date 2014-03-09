@@ -306,7 +306,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
       // Mobile compact layout
       if (mobile_mql.matches) {
-        new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
     }
   });

@@ -54,7 +54,26 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     document.querySelector('#main-tabpanels').appendChild($tabpanel);
   }
 
-  let mobile_mql = FlareTail.util.device.mobile.mql,
+  this.view.$tabpanel = $tabpanel;
+  $tabpanel.setAttribute('aria-hidden', 'false');
+
+  let tablist = BzDeck.toolbar.tablist;
+
+  // Open a new tab
+  this.view.$tab = tablist.view.selected = tablist.view.$focused = tablist.add_tab(
+    'details-' + bug.id, bug.id, this.get_tab_title(bug), $tabpanel, 'next'
+  );
+
+  // Set Back & Forward navigation
+  if (bug_list.length) {
+    this.setup_navigation($tabpanel, bug_list);
+  }
+};
+
+BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
+  let $template = document.querySelector('template#tabpanel-details'),
+      $tabpanel = BzDeck.global.fill_template($template.content, bug, true),
+      mobile_mql = FlareTail.util.device.mobile.mql,
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       _tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
@@ -109,30 +128,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
     });
   }
 
-  this.view.$tabpanel = $tabpanel;
-  $tabpanel.setAttribute('aria-hidden', 'false');
-
-  // Open a new tab
-  let tablist = BzDeck.toolbar.tablist,
-      $tab = this.view.$tab = tablist.add_tab(
-        'details-' + bug.id,
-        bug.id,
-        this.get_tab_title(bug),
-        $tabpanel,
-        'next'
-      );
-
-  tablist.view.selected = tablist.view.$focused = $tab;
-
-  // Set Back & Forward navigation
-  if (bug_list.length) {
-    this.setup_navigation($tabpanel, bug_list);
-  }
-};
-
-BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
-  return BzDeck.global.fill_template(document.querySelector('template#tabpanel-details').content,
-                                     bug, true);
+  return $tabpanel;
 };
 
 BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
@@ -141,9 +137,7 @@ BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
 };
 
 BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
-  let tablist = BzDeck.toolbar.tablist,
-      $current_tab = this.view.$tab,
-      $current_tabpanel = this.view.$tabpanel,
+  let $current_tabpanel = this.view.$tabpanel,
       Button = FlareTail.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
@@ -174,17 +168,12 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
     });
   };
 
-  let navigate = id => {
-    tablist.close_tab($current_tab);
-    BzDeck.detailspage = new BzDeck.DetailsPage(id, bug_list);
-  };
-
   if (prev) {
     preload(prev);
     btn_back.data.disabled = false;
-    btn_back.bind('Pressed', event => navigate(prev));
+    btn_back.bind('Pressed', event => this.navigate(prev));
     // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'B', '', event => navigate(prev));
+    // set_keybind($tabpanel, 'B', '', event => this.navigate(prev));
   } else {
     btn_back.data.disabled = true;
   }
@@ -192,9 +181,9 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   if (next) {
     preload(next);
     btn_forward.data.disabled = false;
-    btn_forward.bind('Pressed', event => navigate(next));
+    btn_forward.bind('Pressed', event => this.navigate(next));
     // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'F', '', event => navigate(next));
+    // set_keybind($tabpanel, 'F', '', event => this.navigate(next));
   } else {
     btn_forward.data.disabled = true;
   }
@@ -250,4 +239,149 @@ BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
       BzDeck.model.save_bug(bug);
     }
   });
+};
+
+BzDeck.DetailsPage.prototype.navigate = function (id) {
+  BzDeck.toolbar.tablist.close_tab(this.view.$tab);
+  BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
+};
+
+/* ----------------------------------------------------------------------------------------------
+ * Swipe navigation
+ * ---------------------------------------------------------------------------------------------- */
+
+BzDeck.DetailsPage.swipe = {};
+
+BzDeck.DetailsPage.swipe.init = function () {
+  let $tabpanels = document.querySelector('#main-tabpanels');
+
+  $tabpanels.addEventListener('touchstart', this);
+  $tabpanels.addEventListener('touchmove', this);
+  $tabpanels.addEventListener('touchend', this);
+};
+
+BzDeck.DetailsPage.swipe.handleEvent = function (event) {
+  let touch,
+      delta;
+
+  if (!BzDeck.toolbar.tablist.view.selected[0].id.startsWith('tab-details') ||
+      !BzDeck.detailspage || !BzDeck.detailspage.data || !BzDeck.detailspage.data.bug_list.length) {
+    return;
+  }
+
+  if (event.type.startsWith('touch')) {
+    if (this.transitioning || event.changedTouches.length > 1) {
+      return;
+    }
+
+    touch = event.changedTouches[0];
+  }
+
+  if (event.type === 'touchstart') {
+    let bugs = [bug.id for (bug of BzDeck.detailspage.data.bug_list)],
+        index = bugs.indexOf(BzDeck.detailspage.data.id);
+
+    this.startX = touch.pageX;
+    this.startY = touch.pageY;
+    this.$target = BzDeck.detailspage.view.$tabpanel;
+    this.$sticky_header = this.$target.querySelector('header.sticky');
+    this.$prev = document.querySelector('#tabpanel-details-' + bugs[index - 1]),
+    this.$next = document.querySelector('#tabpanel-details-' + bugs[index + 1]);
+    this.$sibling = null;
+
+    if (this.$prev) {
+      this.$prev.style.display = 'block';
+      this.$prev.style.left = '-100%';
+    }
+
+    if (this.$next) {
+      this.$next.style.display = 'block';
+      this.$next.style.left = '100%';
+    }
+  }
+
+  if (event.type === 'touchmove' || event.type === 'touchend') {
+    delta = touch.pageX - this.startX;
+
+    // Exclude vertical swipe
+    this.qualified = Math.abs(delta) > Math.abs(touch.pageY - this.startY);
+
+    if (this.$prev && delta > 0) {
+      this.$sibling = this.$prev;
+    }
+
+    if (this.$next && delta < 0) {
+      this.$sibling = this.$next;
+    }
+
+    if (!this.$sibling) {
+      return;
+    }
+  }
+
+  if (event.type === 'touchmove' && this.qualified) {
+    this.$target.style.left = delta + 'px';
+    this.$sibling.style.left = 'calc(' + (this.$sibling === this.$prev ? '-' : '') + '100% + '
+                                       + delta + 'px)';
+
+    if (this.$sticky_header && !this.sticky_header_repositioned) {
+      this.$sticky_header.classList.remove('sticky');
+      this.sticky_header_repositioned = true;
+    }
+  }
+
+  let cleanup = () => {
+    if (!this.transitioning) {
+      return;
+    }
+
+    this.$target.removeEventListener('transitionend', this);
+    this.$target.removeAttribute('style');
+
+    if (this.$prev) {
+      this.$prev.removeAttribute('style');
+    }
+
+    if (this.$next) {
+      this.$next.removeAttribute('style');
+    }
+
+    if (this.qualified && this.$sibling) {
+      BzDeck.detailspage.navigate(parseInt(this.$sibling.dataset.id));
+    }
+
+    if (this.$sticky_header) {
+      this.$sticky_header.classList.add('sticky');
+    }
+
+    delete this.startX;
+    delete this.startY;
+    delete this.qualified;
+    delete this.transitioning;
+    delete this.sticky_header_repositioned;
+    delete this.$target;
+    delete this.$sticky_header;
+    delete this.$prev;
+    delete this.$next;
+    delete this.$sibling;
+  };
+
+  if (event.type === 'touchend') {
+    this.transitioning = true;
+    this.$target.addEventListener('transitionend', this);
+
+    if (this.qualified) {
+      this.$target.style.left = delta > 0 ? '100%' : '-100%';
+      this.$sibling.style.left = '0';
+    } else {
+      cleanup();
+    }
+
+    // Sometimes the transitionend event doesn't get called. We should cleanup anyway.
+    window.setTimeout(() => cleanup(), 600);
+  }  
+
+  if (event.type === 'transitionend' && event.propertyName === 'left') {
+    cleanup();
+  }
 };
