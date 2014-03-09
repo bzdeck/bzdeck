@@ -1644,7 +1644,8 @@ BzDeck.toolbar.setup = function () {
 
     // Somehow scroll doesn't work in the fullscreen mode on mobile
     if (FTu.app.fullscreen_enabled && !mql.matches) {
-      document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
+      // Bug 779324, fullscreen requests from a custom event doesn't work
+      // document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
     }
   };
 
