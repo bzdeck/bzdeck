@@ -905,6 +905,11 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     // Assign unique IDs
     $content.id = $content.id.replace(/TID/, bug.id);
 
+    if ($content.hasAttribute('aria-labelledby')) {
+      $content.setAttribute('aria-labelledby',
+                            $content.getAttribute('aria-labelledby').replace(/TID/, bug.id));
+    }
+
     for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
       for (let $element of $content.querySelectorAll('[' + attr +']')) {
         $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, bug.id));
