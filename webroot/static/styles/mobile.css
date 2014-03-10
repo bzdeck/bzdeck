@@ -363,6 +363,7 @@ main {
 
 .bug-history table {
   margin: 0;
+  width: 100%;
 }
 
 .bug-history thead {
