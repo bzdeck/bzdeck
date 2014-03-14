@@ -51,7 +51,8 @@ BzDeck.HomePage = function () {
   this.view = {};
 
   let prefs = BzDeck.data.prefs,
-      vertical = mobile_mql.matches || prefs['ui.home.layout'] === 'vertical',
+      layout_pref = prefs['ui.home.layout'],
+      vertical = mobile_mql.matches || !layout_pref || layout_pref === 'vertical',
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
