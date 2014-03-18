@@ -135,9 +135,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let components = [];
 
   for (let [key, { component: cs }] of Iterator(config.product)) {
-    components.push.apply(components,
-                          [c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
-    // Fx27: components.push(...[c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
+    components.push(...[c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
   }
 
   components = components.sort().map((value, index) => {
@@ -174,13 +172,11 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
         components = [];
 
     for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
-      products.push.apply(products, config.classification[$option.textContent].products);
-      // Fx27: products.push(...config.classification[$option.textContent].products);
+      products.push(...config.classification[$option.textContent].products);
     }
 
     for (let product of products) {
-      components.push.apply(components, Object.keys(config.product[product].component));
-      // Fx27: components.push(...Object.keys(config.product[product].component));
+      components.push(...Object.keys(config.product[product].component));
     }
 
     // Narrow down the product list
@@ -202,8 +198,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     let components = [];
 
     for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
-      components.push.apply(components, Object.keys(config.product[$option.textContent].component));
-      // Fx27: components.push(...Object.keys(config.product[$option.textContent].component));
+      components.push(...Object.keys(config.product[$option.textContent].component));
     }
 
     // Narrow down the component list
@@ -302,7 +297,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
     if (ids.length) {
       // Show Bug in Preview Pane
-      this.data.preview_id = parseInt(ids[ids.length - 1]);
+      this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
       // Mobile compact layout
       if (mobile_mql.matches) {
@@ -316,7 +311,8 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 
     if ($target.mozMatchesSelector('[role="row"]')) {
       // Open Bug in New Tab
-      BzDeck.detailspage = new BzDeck.DetailsPage(parseInt($target.dataset.id), this.data.bug_list);
+      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt($target.dataset.id),
+                                                  this.data.bug_list);
     }
   });
 

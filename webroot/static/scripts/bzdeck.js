@@ -86,6 +86,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'Set' in window, // Firefox 13
     'MutationObserver' in window, // Firefox 14
     'buttons' in MouseEvent.prototype, // Firefox 15
+    'isNaN' in Number, // Firefox 15
     'scrollTopMax' in Element.prototype, // Firefox 16
     'isInteger' in Number, // Firefox 16
     'indexedDB' in window, // unprefixed in Firefox 16
@@ -95,6 +96,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'HTMLTemplateElement' in window, // Firefox 22
     'Notification' in window, // Firefox 22
     'remove' in Element.prototype, // Firefox 23
+    'parseInt' in Number, // Firefox 25
     'createTBody' in HTMLTableElement.prototype // Firefox 25
   ];
 
@@ -110,6 +112,9 @@ BzDeck.bootstrap.check_requirements = function () {
 
     // Direct Proxy (Firefox 18; constructor)
     new Proxy({}, {});
+
+    // Spread operation in function calls (Firefox 27)
+    [0, 1, 2].push(...[3, 4, 5]);
   } catch (ex) {
     return false;
   }
@@ -528,8 +533,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
           bug._unread = !this.firstrun; // If the session is firstrun, mark all bugs read
         }
 
-        loaded_bugs.push.apply(loaded_bugs, data.bugs);
-        // Fx27: loaded_bugs.push(...data.bugs);
+        loaded_bugs.push(...data.bugs);
 
         // Finally load the UI modules
         if (boot && loaded_bugs.length === len) {
@@ -883,7 +887,7 @@ BzDeck.global.register_activity_handler = function () {
   if (typeof navigator.mozSetMessageHandler === 'function') {
     navigator.mozSetMessageHandler('activity', req => {
       if (req.source.url.match(re)) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(parseInt(RegExp.$1));
+        BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(RegExp.$1));
       }
     });
   }
@@ -1042,7 +1046,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
 BzDeck.global.fill_template_details = function ($content, bug) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
-  if (!$content || parseInt($content.dataset.id) !== bug.id) {
+  if (!$content || Number.parseInt($content.dataset.id) !== bug.id) {
     return;
   }
 
@@ -1090,7 +1094,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
           (new FlareTail.widget.Button($li)).bind('Pressed', event => {
             BzDeck.detailspage = new BzDeck.DetailsPage(
-              parseInt(event.target.textContent)
+              Number.parseInt(event.target.textContent)
             );
           });
         }
@@ -1433,7 +1437,7 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   // [M] toggle read or [S] toggle star
   if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].indexOf(key) > -1) {
     let $parent = this.view.$owner.parentElement,
-        bug_id = parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
+        bug_id = Number.parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
 
     BzDeck.model.get_bug_by_id(bug_id, bug => {
       if (key === event.DOM_VK_M) {
@@ -1776,7 +1780,7 @@ BzDeck.toolbar.setup = function () {
         id = $target.dataset.id;
 
     if (id) {
-      BzDeck.detailspage = new BzDeck.DetailsPage(parseInt(id));
+      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(id));
     }
 
     if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
@@ -1800,7 +1804,7 @@ BzDeck.toolbar.quicksearch = function (event) {
   BzDeck.model.get_all_bugs(bugs => {
     let results = bugs.filter(bug => {
       return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
-              words.length === 1 && !isNaN(words[0]) && String(bug.id).contains(words[0])) &&
+              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0])) &&
               BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
     });
 
@@ -1966,8 +1970,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
       for (let sub of subscriptions) {
         // Remove duplicates
-        ids.push.apply(ids, [id for ({ id } of sub.bugs) if (ids.indexOf(id) === -1)]);
-        // Fx27: ids.push(...[id for ({ id } of sub.bugs) if (ids.indexOf(id) === -1)]);
+        ids.push(...[id for ({ id } of sub.bugs) if (ids.indexOf(id) === -1)]);
       }
 
       BzDeck.model.get_bugs_by_ids(ids, bugs => {
@@ -2085,7 +2088,9 @@ window.addEventListener('click', event => {
   if ($target.mozMatchesSelector(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      BzDeck.detailspage = new BzDeck.DetailsPage(parseInt($target.getAttribute('data-bug-id')));
+      BzDeck.detailspage = new BzDeck.DetailsPage(
+        Number.parseInt($target.getAttribute('data-bug-id'))
+      );
 
       event.preventDefault();
 
@@ -2174,7 +2179,7 @@ window.addEventListener('popstate', event => {
   }
 
   if (path.match(/^bug-(\d+)$/)) {
-    let bug_id = parseInt(RegExp.$1),
+    let bug_id = Number.parseInt(RegExp.$1),
         bug_list = [];
 
     $root.setAttribute('data-current-tab', 'bug');
@@ -2238,7 +2243,7 @@ window.addEventListener('UI:toggle_star', event => {
   // Homepage thread
   for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
     $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-        .setAttribute('aria-checked', ids.has(parseInt($row.dataset.id)));
+        .setAttribute('aria-checked', ids.has(Number.parseInt($row.dataset.id)));
   }
 
   // Homepage preview
@@ -2248,19 +2253,19 @@ window.addEventListener('UI:toggle_star', event => {
   // Details panels
   for (let $panel of document.querySelectorAll('[id^="tabpanel-details"][role="tabpanel"]')) {
     $panel.querySelector('[role="checkbox"][data-field="_starred"]')
-          .setAttribute('aria-checked', ids.has(parseInt($panel.dataset.id)));
+          .setAttribute('aria-checked', ids.has(Number.parseInt($panel.dataset.id)));
   }
 
   // Search preview
   for (let $preview of document.querySelectorAll('[id$="preview-bug"][role="article"]')) {
     $preview.querySelector('[role="checkbox"][data-field="_starred"]')
-            .setAttribute('aria-checked', ids.has(parseInt($preview.dataset.id)));
+            .setAttribute('aria-checked', ids.has(Number.parseInt($preview.dataset.id)));
   }
 
   // Search thread
   for (let $row of document.querySelectorAll('[id*="result-row"]')) {
     $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-        .setAttribute('aria-checked', ids.has(parseInt($row.dataset.id)));
+        .setAttribute('aria-checked', ids.has(Number.parseInt($row.dataset.id)));
   }
 });
 

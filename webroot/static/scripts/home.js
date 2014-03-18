@@ -102,7 +102,7 @@ BzDeck.HomePage = function () {
 
     if (ids.length) {
       // Show Bug in Preview Pane
-      this.data.preview_id = parseInt(ids[ids.length - 1]);
+      this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
       // Mobile compact layout or Vertical View
       if (window.matchMedia('(max-width: 799px)').matches) {

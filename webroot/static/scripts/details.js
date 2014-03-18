@@ -347,7 +347,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
     }
 
     if (this.qualified && this.$sibling) {
-      BzDeck.detailspage.navigate(parseInt(this.$sibling.dataset.id));
+      BzDeck.detailspage.navigate(Number.parseInt(this.$sibling.dataset.id));
     }
 
     if (this.$sticky_header) {

@@ -283,7 +283,6 @@ a {
   box-shadow: inset 0 0 .4rem rgba(68, 68, 68, .4); /* Control Shadow Color */
 }
 
-[role="textbox"]:-moz-placeholder, /* For Firefox 18 */
 [role="textbox"]::-moz-placeholder {
   color: #939393; /* Textbox Foreground Color */
 }
