@@ -49,7 +49,7 @@ BzDeck.SearchPage = function () {
         return;
       }
 
-      if (prop === 'preview_id' && !FlareTail.util.device.mobile.mql.matches) {
+      if (prop === 'preview_id' && !FlareTail.util.device.type.startsWith('mobile')) {
         FlareTail.util.event.async(() => {
           this.show_preview(oldval, newval);
         });
@@ -243,7 +243,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result']
             = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
-      mobile_mql = FlareTail.util.device.mobile.mql,
+      mobile = FlareTail.util.device.type.startsWith('mobile'),
       prefs = BzDeck.data.prefs,
       columns = prefs['search.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
@@ -264,19 +264,17 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   {
     sortable: true,
     reorderable: true,
-    sort_conditions: mobile_mql.matches ? { key: 'last_change_time', order: 'descending' }
-                                        : prefs['home.list.sort_conditions'] ||
-                                          { key: 'id', order: 'ascending' }
+    sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
+                            : prefs['home.list.sort_conditions'] ||
+                              { key: 'id', order: 'ascending' }
   });
 
   // Force to change the sort condition when switched to the mobile layout
-  mobile_mql.addListener(mql => {
-    if (mql.matches) {
-      let cond = grid.options.sort_conditions;
-      cond.key = 'last_change_time';
-      cond.order = 'descending';
-    }
-  });
+  if (mobile) {
+    let cond = grid.options.sort_conditions;
+    cond.key = 'last_change_time';
+    cond.order = 'descending';
+  }
 
   grid.bind('Sorted', event => {
     prefs['search.list.sort_conditions'] = event.detail.conditions;
@@ -300,7 +298,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
       this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
       // Mobile compact layout
-      if (mobile_mql.matches) {
+      if (mobile) {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
     }

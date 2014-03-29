@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.HomePage = function () {
   let FTw = FlareTail.widget,
-      mobile_mql = FlareTail.util.device.mobile.mql,
+      mobile = FlareTail.util.device.type.startsWith('mobile'),
       prefs = BzDeck.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
@@ -52,7 +52,7 @@ BzDeck.HomePage = function () {
 
   let prefs = BzDeck.data.prefs,
       layout_pref = prefs['ui.home.layout'],
-      vertical = mobile_mql.matches || !layout_pref || layout_pref === 'vertical',
+      vertical = mobile || !layout_pref || layout_pref === 'vertical',
       columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
       field = BzDeck.data.bugzilla_config.field;
 
@@ -79,10 +79,6 @@ BzDeck.HomePage = function () {
 
   this.change_layout(prefs['ui.home.layout']);
 
-  mobile_mql.addListener(mql => {
-    this.change_layout(prefs['ui.home.layout'], true);
-  });
-
   grid.bind('Sorted', event => {
     prefs['home.list.sort_conditions'] = event.detail.conditions;
   });
@@ -104,8 +100,7 @@ BzDeck.HomePage = function () {
       // Show Bug in Preview Pane
       this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
-      // Mobile compact layout or Vertical View
-      if (window.matchMedia('(max-width: 799px)').matches) {
+      if (mobile) {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
       }
 
@@ -121,7 +116,7 @@ BzDeck.HomePage = function () {
   grid.bind('Rebuilt', event => {
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder
-    if (grid.data.rows.length && !window.matchMedia('(max-width: 799px)').matches) {
+    if (grid.data.rows.length && !mobile) {
       grid.view.selected = grid.view.focused = grid.view.members[0];
     }
   });
@@ -234,7 +229,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 };
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
-  let vertical = FlareTail.util.device.mobile.mql.matches || !pref || pref === 'vertical',
+  let vertical = FlareTail.util.device.type.startsWith('mobile') || !pref || pref === 'vertical',
       grid = this.view.grid,
       splitter = this.preview_splitter;
 

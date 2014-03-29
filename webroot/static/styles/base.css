@@ -290,31 +290,91 @@ col[data-hidden="false"] {
   height: 4rem;
 }
 
+:root[data-device-type|="mobile"] [role="banner"] {
+  pointer-events: auto;
+}
+
 [role="banner"] h1 {
   position: absolute;
   overflow: hidden;
-  padding: 1rem 0 1rem 4rem;
-  width: 0;
   height: 2rem;
   background-image: url(/static/images/logo/icon-256.png);
-  background-position: .4rem .4rem;
   background-size: 3.2rem;
   background-repeat: no-repeat;
   font-size: 1.6rem;
   line-height: 2rem;
 }
 
+:root[data-device-type="desktop"] [role="banner"] h1 {
+  padding: 1rem 0 1rem 4rem;
+  width: 0;
+  background-position: .4rem .4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"] h1 {
+  padding: 1rem 0 1rem 4.5rem;
+  width: auto;
+  background-position: 1rem .4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"].search h1 {
+  width: 0;
+}
+
+:root[data-device-type|="mobile"] [role="banner"] h1::before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: .8rem;
+  height: 4rem;
+  background-position: 0 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: background-position .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  content: "";
+}
+
+:root[data-sidebar-hidden="false"] [role="banner"] h1::before {
+  background-position: -.4rem 50%;
+}
+
+:root[data-device-type="mobile-tablet"][data-current-tab="home"] [role="banner"] h1::before {
+  background-image: none;
+}
+
 [role="banner"] [role="toolbar"] {
   position: absolute;
   right: 0;
-  width: 24.4rem;
   height: 4rem;
+}
+
+:root[data-device-type="desktop"] [role="banner"] [role="toolbar"] {
+  width: 24.4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"] [role="toolbar"] {
+  width: 8rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"].search [role="toolbar"] {
+  left: 4.5rem;
+  width: auto;
 }
 
 #toolbar--search-menu {
   position: absolute;
   right: 0;
   height: 4rem;
+}
+
+:root[data-device-type|="mobile"] #toolbar--search-menu {
+  width: 4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"].search #toolbar--search-menu {
+  left: 0;
+  width: auto;
 }
 
 #toolbar--search-menu > li {
@@ -324,6 +384,10 @@ col[data-hidden="false"] {
 #toolbar--search-menu > li:first-of-type {
   width: 4rem;
   height: 4rem;
+}
+
+:root[data-device-type|="mobile"] #toolbar--search-menu > li:first-of-type {
+  display: none;
 }
 
 #main-menu--app {
@@ -375,9 +439,22 @@ col[data-hidden="false"] {
 
 [role="banner"] [role="search"] {
   position: relative;
+}
+
+:root[data-device-type="desktop"] [role="banner"] [role="search"] {
   margin: .8rem 0;
   width: 19.6rem;
   height: 2.4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"] [role="search"] {
+  margin: .6rem .6rem .6rem 0;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"].search [role="search"] {
+  width: calc(100% - .6rem);
 }
 
 [role="banner"] [role="search"] [role="textbox"] {
@@ -389,6 +466,16 @@ col[data-hidden="false"] {
   height: 100%;
 }
 
+:root[data-device-type|="mobile"] [role="banner"] [role="search"] [role="textbox"] {
+  display: none;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"].search [role="search"] [role="textbox"] {
+  display: block;
+}
+
 [role="banner"] [role="search"] [role="button"] {
   position: absolute;
   overflow: hidden;
@@ -396,8 +483,6 @@ col[data-hidden="false"] {
   border-width: 0;
   border-radius: 0;
   padding: 0;
-  width: 2.4rem;
-  height: 2.4rem;
   background-color: transparent !important;
   background-position: center;
   background-size: 72%;
@@ -405,10 +490,35 @@ col[data-hidden="false"] {
   text-indent: -9999rem;
 }
 
+:root[data-device-type="desktop"] [role="banner"] [role="search"] [role="button"] {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+:root[data-device-type|="mobile"] [role="banner"] [role="search"] [role="button"] {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
 #quicksearch-dropdown {
   top: 4rem;
   right: .4rem;
+}
+
+:root[data-device-type="desktop"] #quicksearch-dropdown {
   max-width: 40rem;
+}
+
+:root[data-device-type|="mobile"] #quicksearch-dropdown {
+  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: 20rem;
+}
+
+:root[data-device-type|="mobile"] #quicksearch-dropdown [role="menuitem"] {
+  padding: .4rem 1.2rem;
+  font-size: 1.2rem;
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -416,41 +526,139 @@ col[data-hidden="false"] {
  * ---------------------------------------------------------------------------------------------- */
 
 #sidebar {
-  position: absolute;
   top: 4rem;
-  bottom: 3.2rem;
   z-index: 200;
   overflow: hidden;
   -moz-box-sizing: border-box;
   border-width: 0 .1rem 0 0;
   border-style: solid;
+}
+
+:root[data-device-type="desktop"] #sidebar {
+  position: absolute;
+  bottom: 3.2rem;
   width: 16rem;
 }
 
+:root[data-device-type="mobile-phone"] #sidebar {
+  position: fixed;
+  bottom: 0;
+  border-right-width: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .3) !important;
+  transition: background-color .3s;
+  pointer-events: auto;
+}
+
+:root[data-device-type="mobile-tablet"] #sidebar {
+  position: absolute;
+  bottom: 0;
+  width: 24rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar[aria-hidden="true"] {
+  display: block;
+  background-color: rgba(0, 0, 0, 0) !important;
+  pointer-events: none;
+}
+
 :root:not([data-current-tab="home"]) #sidebar {
-  display: none;
+  display: none !important;
 }
 
 #sidebar > div {
   position: absolute;
-  right: 0;
   left: 0;
   overflow: hidden;
   height: 100%;
 }
 
-#sidebar h2 {
+:root:not([data-device-type="mobile-phone"]) #sidebar > div {
+  right: 0;
+}
+
+:root[data-device-type="mobile-phone"] #sidebar > div {
+  right: 4em;
+  max-width: calc(360px - 4rem);
+  transition: all .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+}
+
+:root[data-device-type="mobile-phone"] #sidebar[aria-hidden="true"] > div {
+  right: 100%;
+  left: calc(-360px + 4rem);
+}
+
+:root[data-device-type|="mobile"] #sidebar > div > section:not(:last-of-type) {
+  margin-bottom: 2rem;
+}
+
+:root[data-device-type="desktop"] #sidebar h2 {
   position: absolute;
   left: -9999rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar h2 {
+  position: static;
+  border-bottom-width: .2rem;
+  border-bottom-style: solid;
+  padding: .4rem 1.2rem;
+  font-weight: 500;
 }
 
 #sidebar-folder-list {
   background: transparent;
 }
 
-#sidebar [role="option"] {
+:root[data-device-type="desktop"] #sidebar [role="option"] {
   padding: .4rem 1.2rem;
   font-size: 1.2rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar :-moz-any([role="option"], [role="menuitem"]) {
+  border-bottom-width: .1rem;
+  border-bottom-style: solid;
+  padding: .8rem 1.2rem;
+  height: 1.5em;
+  font-size: 1.4rem;
+  line-height: 1.5;
+}
+
+:root[data-device-type|="mobile"] #sidebar [role="menuitem"][aria-selected="true"] {
+  color: inherit;
+  background-color: transparent;
+}
+
+:root[data-device-type|="mobile"] #sidebar [role="option"]:last-of-type,
+:root[data-device-type|="mobile"] #sidebar [role="presentation"]:last-of-type [role="menuitem"],
+:root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account {
+  border-bottom-width: 0;
+}
+
+:root[data-device-type|="mobile"] #sidebar-account h2 {
+  position: absolute;
+  left: -9999rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account {
+  padding: 1.2rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account label {
+  font-size: 1.2rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar-menu #main-menu--app-menu {
+  position: relative;
+  margin: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+:root[data-device-type|="mobile"] #sidebar-menu #main-menu--app-menu::before,
+:root[data-device-type|="mobile"] #sidebar-menu [role="separator"] {
+  display: none;
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -459,9 +667,16 @@ col[data-hidden="false"] {
 
 main {
   position: fixed;
-  top: 0;
   bottom: 0;
   width: 100%;
+}
+
+:root[data-device-type="desktop"] main {
+  top: 0;
+}
+
+:root[data-device-type|="mobile"] main {
+  top: 4rem;
 }
 
 #main-tablist {
@@ -470,6 +685,10 @@ main {
   z-index: 200;
   right: 24.4rem;
   height: 4rem;
+}
+
+:root[data-device-type|="mobile"] #main-tablist {
+  display: none;
 }
 
 #main-tablist [role="tab"] {
@@ -494,12 +713,27 @@ main {
 #main-tabpanels {
   position: absolute;
   width: 100%;
-  top: 4rem;
   bottom: 0;
+}
+
+:root[data-device-type="desktop"] #main-tabpanels {
+  top: 4rem;
+}
+
+:root[data-device-type|="mobile"] #main-tabpanels {
+  top: 0;
 }
 
 #main-tabpanels > [id^="tabpanel-details"] {
   transition: left .5s;
+}
+
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] {
+  overflow: auto;
+}
+
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"][aria-hidden="true"] * {
+  pointer-events: none;
 }
 
 #main-tabpanels > [role="tabpanel"][aria-busy="true"] {
@@ -549,6 +783,10 @@ main {
   content: ' - '
 }
 
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
+  left: -9999rem;
+}
+
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] {
   display: inline-block;
   position: absolute;
@@ -581,6 +819,10 @@ main {
   border-bottom-right-radius: 0;
 }
 
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] {
+  display: none !important;
+}
+
 #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] > li {
   width: 2.4rem;
 }
@@ -605,10 +847,19 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > div {
   position: absolute;
-  top: 0; /* Usually hide the header */
   right: 0;
-  bottom: 3.2rem;
   left: 0;
+  overflow: hidden;
+}
+
+:root[data-device-type="desktop"] #main-tabpanels > [role="tabpanel"] > * > div {
+  top: 0; /* Usually hide the header */
+  bottom: 3.2rem;
+}
+
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > div {
+  top: 0;
+  bottom: 0;
 }
 
 #main-tabpanels > [role="tabpanel"] > * > footer {
@@ -629,8 +880,16 @@ main {
  * Home
  * ---------------------------------------------------------------------------------------------- */
 
-#main-tabpanels > #tabpanel-home > section > div {
+:root[data-device-type="desktop"] #main-tabpanels > #tabpanel-home > section > div {
   left: 16rem; /* A space for the sidebar */
+}
+
+:root[data-device-type="mobile-tablet"] #main-tabpanels > #tabpanel-home > section > div {
+  left: 24rem; /* A space for the sidebar */
+}
+
+:root[data-device-type="mobile-phone"] #main-tabpanels > #tabpanel-home > section > div {
+  left: 0;
 }
 
 #home-list-pane {
@@ -644,6 +903,10 @@ main {
   width: 36rem;
   min-width: 24rem;
   height: 100%;
+}
+
+:root[data-device-type|="mobile"] #home-list-pane {
+  width: 100% !important;
 }
 
 #home-preview-splitter {
@@ -677,6 +940,10 @@ main {
   border-width: 0 0 0 .1rem;
 }
 
+:root[data-device-type|="mobile"] :-moz-any(#home-preview-splitter, #home-preview-pane) {
+  display: none;
+}
+
 .bug-list col[data-id="id"][data-hidden="false"] {
   width: 5em;
 }
@@ -691,6 +958,10 @@ main {
 
 .bug-list [role="row"][data-unread="true"] {
   font-weight: 500;
+}
+
+:root[data-device-type|="mobile"] .bug-list [role="row"][data-unread="true"] {
+  background-color: transparent !important;
 }
 
 .bug-list [role="columnheader"]:-moz-any([data-id="_starred"], [data-id="_unread"]) label {
@@ -872,13 +1143,21 @@ article[id$="preview-bug"] > .bug-timeline {
   left: 0 !important; /* Show the header */
 }
 
+:root[data-device-type|="mobile"] [id|="tabpanel-details"][role="tabpanel"] > article > header {
+  height: 0 !important;
+}
+
 [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 {
   pointer-events: auto;
   -moz-user-select: text;
 }
 
-[id|="tabpanel-details"][role="tabpanel"] > article > div {
+:root[data-device-type="desktop"] [id|="tabpanel-details"][role="tabpanel"] > article > div {
   top: 3.2rem !important; /* Show the header */
+}
+
+:root[data-device-type|="mobile"] [id|="tabpanel-details"][role="tabpanel"] > article > div {
+  top: 0 !important;
 }
 
 [id|="bug"][role="tablist"] {
@@ -892,6 +1171,17 @@ article[id$="preview-bug"] > .bug-timeline {
   word-spacing: -1rem; /* Remove spaces between tabs */
 }
 
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] {
+  z-index: 100;
+  transition: top .4s;
+}
+
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"][aria-hidden="true"] {
+  display: block;
+  top: -4rem;
+  transition-duration: .8s;
+}
+
 [id|="bug"][role="tablist"] [role="tab"] {
   float: none;
   margin: 0;
@@ -899,6 +1189,11 @@ article[id$="preview-bug"] > .bug-timeline {
   border-radius: 0;
   height: 2.4rem;
   word-spacing: normal;
+}
+
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] [role="tab"] {
+  padding: .4rem 1rem;
+  width: auto;
 }
 
 [id|="bug"][role="tablist"] [role="tab"]:first-of-type {
@@ -916,14 +1211,34 @@ article[id$="preview-bug"] > .bug-timeline {
   left: 0;
 }
 
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] [role="tab"] label {
+  position: static;
+}
+
 [id|="bug"][role="tablist"] ~ div {
   position: absolute;
   bottom: 0;
 }
 
 [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
-  top: 4rem;
   right: 0;
+}
+
+:root[data-device-type="desktop"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
+  top: 4rem;
+}
+
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
+  top: 0;
+}
+
+:root[data-device-type="mobile-phone"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
+  left: 0;
+}
+
+:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > .scrollable {
+  -moz-box-sizing: border-box;
+  padding-top: 4rem;
 }
 
 [id|="bug"][role="tablist"] ~ .bug-info {
@@ -1003,12 +1318,36 @@ article[id$="preview-bug"] > .bug-timeline {
   left: -9999rem;
 }
 
+:root[data-device-type|="mobile"] .bug-timeline > header h2 {
+  display: block;
+  padding: 0 1.2rem 1.2rem 3rem;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  font-weight: 500;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline > header [role="checkbox"] {
+  margin-top: -.2rem !important;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline > header h2 [data-field="id"],
+:root[data-device-type|="mobile"] .bug-timeline > header [role="toolbar"] {
+  display: none;
+}
+
 .bug-timeline [itemprop="comment"] {
   position: relative;
   overflow: hidden;
   border-width: .1rem 0 0;
   border-style: solid;
+}
+
+:root[data-device-type="desktop"] .bug-timeline [itemprop="comment"] {
   padding-top: 5.4rem;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] {
+  padding-top: 4rem;
 }
 
 .bug-timeline [itemprop="comment"]:first-of-type {
@@ -1024,6 +1363,10 @@ article[id$="preview-bug"] > .bug-timeline {
   top: 0;
   overflow: hidden;
   width: 100%;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] header {
+  padding: 0;
 }
 
 .bug-timeline [itemprop="comment"] header.sticky {
@@ -1044,11 +1387,19 @@ article[id$="preview-bug"] > .bug-timeline {
   display: inline-block;
   float: left;
   margin: 0 .8rem 0 -.8rem;
-  width: 3rem;
-  height: 3rem;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+:root[data-device-type="desktop"] .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+  width: 3rem;
+  height: 3rem;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+  width: 4rem;
+  height: 4rem;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
@@ -1057,6 +1408,10 @@ article[id$="preview-bug"] > .bug-timeline {
   font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
+  padding-top: .5rem;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
@@ -1094,6 +1449,10 @@ article[id$="preview-bug"] > .bug-timeline {
   padding-left: 1rem;
 }
 
+:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] .changes {
+  font-size: 1rem;
+}
+
 .bug-timeline [itemprop="comment"] .changes li {
   margin-top: .8rem;
   line-height: 1.5;
@@ -1113,8 +1472,16 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-attachments section {
   overflow: hidden;
-  border-width: 0 0 .1rem;
   border-style: solid;
+}
+
+:root[data-device-type="desktop"] .bug-attachments section {
+  border-width: 0 0 .1rem;
+}
+
+:root[data-device-type|="mobile"] .bug-attachments section {
+  margin: 0;
+  border-width: 0;
 }
 
 .bug-attachments section:last-of-type {
@@ -1142,25 +1509,79 @@ article[id$="preview-bug"] > .bug-timeline {
   margin-bottom: 0;
 }
 
+:root[data-device-type|="mobile"] .bug-history > section {
+  padding: 0;
+}
+
+:root[data-device-type|="mobile"] .bug-history :-moz-any(table, tbody, tr, th, td) {
+  display: block;
+}
+
 .bug-history table {
-  margin: 0 1.2rem;
   border-collapse: collapse;
-  width: calc(100% - 2.4rem);
   table-layout: fixed;
+}
+
+:root[data-device-type="desktop"] .bug-history table {
+  margin: 0 1.2rem;
+  width: calc(100% - 2.4rem);
+}
+
+:root[data-device-type|="mobile"] .bug-history table {
+  margin: 0;
+  width: 100%;
+}
+
+:root[data-device-type|="mobile"] .bug-history thead {
+  display: none;
 }
 
 .bug-history thead th {
   width: 20%;
 }
 
-.bug-history th,
-.bug-history td {
+:root[data-device-type|="mobile"] .bug-history tr {
+  border-top-width: .1rem
+  border-top-style: solid;
+}
+
+.bug-history :-moz-any(th, td) {
   border-width: .1rem;
   border-style: solid;
   padding: .2rem .4rem;
   line-height: 1.5;
   text-align: left;
   vertical-align: top;
+}
+
+:root[data-device-type|="mobile"] .bug-history th {
+  border-width: 0;
+  padding: .4rem 1.2rem;
+}
+
+:root[data-device-type|="mobile"] .bug-history td {
+  border-width: .1rem 0 0;
+  padding: .4rem 1.2rem;
+}
+
+:root[data-device-type|="mobile"] .bug-history td:first-of-type {
+  border-width: 0;
+}
+
+:root[data-device-type|="mobile"] .bug-history td[data-item="who"]::before {
+  content: "Who: ";
+}
+
+:root[data-device-type|="mobile"] .bug-history td[data-item="what"]::before {
+  content: "What: ";
+}
+
+:root[data-device-type|="mobile"] .bug-history td[data-item="removed"]::before {
+  content: "Removed: ";
+}
+
+:root[data-device-type|="mobile"] .bug-history td[data-item="added"]::before {
+  content: "Added: ";
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -1182,6 +1603,10 @@ article[id$="preview-bug"] > .bug-timeline {
 [id|="tabpanel-search"] [id$="basic-search-pane"] {
   top: 0;
   height: 22rem;
+}
+
+:root[data-device-type|="mobile"] [id|="tabpanel-search"] [id$="basic-search-pane"] {
+  display: none; /* TEMP */
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"][aria-hidden="true"] {
@@ -1273,8 +1698,15 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [id|="tabpanel-search"] [id$="result-pane"] {
-  top: 22rem;
   bottom: 0;
+}
+
+:root[data-device-type="desktop"] [id|="tabpanel-search"] [id$="result-pane"] {
+  top: 22rem;
+}
+
+:root[data-device-type|="mobile"] [id|="tabpanel-search"] [id$="result-pane"] {
+  top: 0;
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"][aria-hidden="true"] + [id$="result-pane"] {
@@ -1297,16 +1729,27 @@ article[id$="preview-bug"] > .bug-timeline {
  * Settings
  * ---------------------------------------------------------------------------------------------- */
 
-#tabpanel-settings > section > div {
+:root[data-device-type="desktop"] #tabpanel-settings > section > div {
   overflow: hidden;
   padding: 0 4rem;
   -moz-column-count: 2;
   -moz-column-gap: 4rem;
 }
 
-#tabpanel-settings > section > div > section {
+:root[data-device-type|="mobile"] #tabpanel-settings > section > div {
+  overflow: auto;
+  padding: 0;
+  pointer-events: auto;
+  -moz-column-count: auto;
+}
+
+:root[data-device-type="desktop"] #tabpanel-settings > section > div > section {
   margin-top: 4rem;
   page-break-inside: avoid;
+}
+
+:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section {
+  margin: 0;
 }
 
 #tabpanel-settings > section > div > section > h3 {
@@ -1330,12 +1773,21 @@ article[id$="preview-bug"] > .bug-timeline {
   width: calc(50% - 1em);
 }
 
+:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > h4 {
+  font-size: 1.2rem;
+}
+
 #tabpanel-settings > section > div > section > section > ul {
   margin-left: 50%;
 }
 
-#tabpanel-settings > section > div > section > section li {
+:root[data-device-type="desktop"] #tabpanel-settings > section > div > section > section li {
   margin: .4rem 0;
+}
+
+:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section li {
+  margin: .8rem 0;
+  font-size: 1.4rem;
 }
 
 #tabpanel-settings > section > div > section > section li [role="radio"] {
@@ -1359,6 +1811,10 @@ article[id$="preview-bug"] > .bug-timeline {
   bottom: 0;
   height: 3.2rem;
   width: 56rem;
+}
+
+:root[data-device-type|="mobile"] #app-body > footer {
+  display: none;
 }
 
 #app-body > footer [role="status"] {
@@ -1386,7 +1842,7 @@ article[id$="preview-bug"] > .bug-timeline {
  * Desktop Layout
  * ---------------------------------------------------------------------------------------------- */
 
-@media (min-width: 641px) and (max-width: 799px) {
+@media (min-width: 641px) and (max-width: 800px) {
 
   :root[data-home-layout="vertical"] #home-list-pane {
     width: 100% !important;
@@ -1407,7 +1863,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
   [id|="bug"].bug-info,
   [id^="search"].bug-info {
-    width: 22rem;
+    width: 24rem;
   }
 
   [id|="bug"].bug-info dt,
@@ -1428,12 +1884,12 @@ article[id$="preview-bug"] > .bug-timeline {
   [id|="bug"][role="tablist"],
   [id|="bug"][id$="tabpanels"],
   [id^="search"].bug-timeline {
-    left: 22rem;
+    left: 24rem;
   }
 
 }
 
-@media (min-width: 800px) {
+@media (min-width: 801px) {
 
   [id|="bug"].bug-info,
   [id^="search"].bug-info {
@@ -1448,7 +1904,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 }
 
-@media (min-width: 800px) and (max-width: 979px) {
+@media (min-width: 801px) and (max-width: 980px) {
 
   #home-preview-bug-info {
     width: 22rem;
@@ -1473,7 +1929,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 }
 
-@media (min-width: 980px) {
+@media (min-width: 981px) {
 
   #home-preview-bug-info {
     width: 32rem;
@@ -1481,6 +1937,61 @@ article[id$="preview-bug"] > .bug-timeline {
 
   #home-preview-bug-timeline {
     left: 32rem;
+  }
+
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Mobile
+ * ---------------------------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+
+  :root[data-device-type|="mobile"] #app-login header {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4rem;
+  }
+
+  :root[data-device-type|="mobile"] #app-login h1 {
+    background-position: 1rem .4rem;
+    background-size: 3.2rem;
+  }
+
+  :root[data-device-type|="mobile"] #app-login div {
+    top: 4rem;
+    left: 0;
+    padding: 2.4rem;
+    width: auto;
+  }
+
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Mobile, Portrait Mode
+ * ---------------------------------------------------------------------------------------------- */
+
+@media (max-width: 360px) {
+
+  :root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > h4 {
+    float: none;
+  }
+
+  :root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > ul {
+    margin: .8rem 0 0;
+  }
+
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Mobile, Small Display
+ * ---------------------------------------------------------------------------------------------- */
+
+@media (max-device-height: 480px) {
+
+  :root[data-device-type|="mobile"] #app-login div > p:first-of-type {
+    display: none;
   }
 
 }

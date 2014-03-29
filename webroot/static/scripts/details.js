@@ -73,7 +73,8 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let $template = document.querySelector('template#tabpanel-details'),
       $tabpanel = BzDeck.global.fill_template($template.content, bug, true),
-      mobile_mql = FlareTail.util.device.mobile.mql,
+      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      phone = FlareTail.util.device.type === 'mobile-phone',
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       _tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
@@ -83,27 +84,22 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
 
-  let mobile_mql_listener = mql => {
-    if (mql.matches) { // Mobile
-      $timeline.insertBefore($header, $timeline.firstElementChild);
-      $info_tab.setAttribute('aria-hidden', 'false');
-      $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
+  if (mobile) {
+    $timeline.insertBefore($header, $timeline.firstElementChild);
+  }
 
-      return;
-    }
-
+  if (phone) {
+    $info_tab.setAttribute('aria-hidden', 'false');
+    $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
+  } else {
     if (_tablist.view.selected[0] === $info_tab) {
       _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
     }
 
-    $article.insertBefore($header, $article.firstElementChild);
     $info_tab.setAttribute('aria-hidden', 'true');
-    $tabpanel.querySelector('header + div').appendChild($bug_info);
+    $tabpanel.querySelector('article > div').appendChild($bug_info);
     $tablist.removeAttribute('aria-hidden');
-  };
-
-  mobile_mql.addListener(mobile_mql_listener);
-  mobile_mql_listener(mobile_mql);
+  }
 
   // Scroll a tabpanel to top when the tab is selected
   _tablist.bind('Selected', event => {
@@ -113,18 +109,20 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 
   // Hide tabs when scrolled down on mobile
   for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] div')) {
+    if (!mobile || !phone && $tabpanel_content.classList.contains('bug-info')) {
+      continue;
+    }
+
     let scroll_top = $tabpanel_content.scrollTop;
 
     $tabpanel_content.addEventListener('scroll', event => {
-      if (mobile_mql.matches) {
-        let value = String(event.target.scrollTop - scroll_top > 0);
+      let value = String(event.target.scrollTop - scroll_top > 0);
 
-        if ($tablist.getAttribute('aria-hidden') !== value) {
-          $tablist.setAttribute('aria-hidden', value);
-        }
-
-        scroll_top = event.target.scrollTop;
+      if ($tablist.getAttribute('aria-hidden') !== value) {
+        $tablist.setAttribute('aria-hidden', value);
       }
+
+      scroll_top = event.target.scrollTop;
     });
   }
 

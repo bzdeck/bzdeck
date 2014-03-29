@@ -309,6 +309,11 @@ a {
   background-color: #545454; /* Application Header Background Color */
 }
 
+:root[data-device-type|="mobile"] #app-login header {
+  color: #E3E3E3; /* Application Header Foreground Color */
+  background-color: #545454; /* Application Header Background Color */
+}
+
 /* ----------------------------------------------------------------------------------------------
  * App Body
  * ---------------------------------------------------------------------------------------------- */
@@ -324,6 +329,14 @@ a {
 [role="banner"] {
   color: #E3E3E3; /* Application Header Foreground Color */
   background-color: #545454; /* Application Header Background Color */
+}
+
+:root[data-device-type|="mobile"] [role="banner"] h1::before {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 320, 32, 304);
+}
+
+:root[data-device-type="mobile-phone"][data-current-tab="home"] [role="banner"] h1::before {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 304, 32, 288);
 }
 
 #main-menu--app {
@@ -346,6 +359,10 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 128, 32, 96);
 }
 
+:root[data-device-type|="mobile"] [role="banner"]:not(.search) [role="search"] [role="button"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 128, 64, 96);
+}
+
 [role="banner"] [role="search"]:focus + [role="button"] {
   /* Unchanged */
 }
@@ -357,6 +374,18 @@ a {
 #sidebar {
   border-color: #7C7C7C; /* Region Border Color */
   background-color: #E4E4E4; /* Region Background Color */
+}
+
+:root[data-device-type|="mobile"] #sidebar > div {
+  background-color: #E4E4E4; /* Region Background Color */
+}
+
+:root[data-device-type|="mobile"] #sidebar h2 {
+  border-color: #7C7C7C; /* Region Border Color */
+}
+
+:root[data-device-type|="mobile"] #sidebar :-moz-any([role="option"], [role="menuitem"]) {
+  border-color: #CCC; /* Control Border Color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -421,6 +450,16 @@ a {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 192, 192, 128);
 }
 
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"],
+:root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 128, 128, 64) !important;
+}
+
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"],
+:root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 192, 128, 128) !important;
+}
+
 /* ----------------------------------------------------------------------------------------------
  * Home
  * ---------------------------------------------------------------------------------------------- */
@@ -453,6 +492,16 @@ a {
 
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
   border-color: #CCC; /* Grid Border Color */
+}
+
+:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"] {
+  color: #636363 !important; /* Control Foreground Color */
+  background-color: transparent !important;
+}
+
+:root[data-device-type|="mobile"] #home-list .grid-body [role="row"]:active {
+  color: #FBFBFB !important; /* Selected Control Foreground Color */
+  background-color: #2383C3 !important; /* Selected Control Background Color */
 }
 
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
@@ -611,67 +660,4 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 
 #app-body > footer {
   color: #E3E3E3; /* Region Header Foreground Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Mobile Support
- * ---------------------------------------------------------------------------------------------- */
-
-@media screen and (max-width: 640px) {
-
-  :-moz-any([role="option"], [role="menuitem"], [role="treeitem"])[aria-selected="true"] {
-    color: #434343 !important; /* Inactive Selected Control Foreground Color */
-    background-color: #CCC !important; /* Inactive Selected Control Background Color */
-  }
-
-  #app-login header {
-    color: #E3E3E3; /* Application Header Foreground Color */
-    background-color: #545454; /* Application Header Background Color */
-  }
-
-  [role="banner"] h1::before {
-    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 320, 32, 304);
-  }
-
-  :root[data-current-tab="home"] [role="banner"] h1::before {
-    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 304, 32, 288);
-  }
-
-  [role="banner"]:not(.search) [role="search"] [role="button"] {
-    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 128, 64, 96);
-  }
-
-  #sidebar > div {
-    background-color: #E4E4E4; /* Region Background Color */
-  }
-
-  #sidebar h2 {
-    border-color: #7C7C7C; /* Region Border Color */
-  }
-
-  #sidebar [role="option"],
-  #sidebar [role="menuitem"] {
-    border-color: #CCC; /* Control Border Color */
-  }
-
-  #home-list .grid-body [role="row"][data-unread="false"] {
-    color: #636363 !important; /* Control Foreground Color */
-    background-color: transparent !important;
-  }
-
-  #home-list .grid-body [role="row"]:active {
-    color: #FBFBFB !important; /* Selected Control Foreground Color */
-    background-color: #2383C3 !important; /* Selected Control Background Color */
-  }
-
-  #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"],
-  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 128, 128, 64) !important;
-  }
-
-  #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"],
-  :root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-    background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 192, 128, 128) !important;
-  }
-
 }

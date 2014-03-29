@@ -1577,7 +1577,8 @@ BzDeck.toolbar = {};
 BzDeck.toolbar.setup = function () {
   let FTw = FlareTail.widget,
       FTu = FlareTail.util,
-      mobile_mql = FlareTail.util.device.mobile.mql,
+      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      phone = FlareTail.util.device.type === 'mobile-phone',
       tablist = this.tablist = new FTw.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
@@ -1639,7 +1640,7 @@ BzDeck.toolbar.setup = function () {
   });
 
   $app_menu.addEventListener('MenuClosed', event => {
-    if (mobile_mql.matches) {
+    if (mobile) {
       // Keep the menu open
       $app_menu.removeAttribute('aria-expanded');
       // Hide the sidebar
@@ -1648,25 +1649,20 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  let mobile_mql_listener = mql => {
-    $app_menu.setAttribute('aria-expanded', mql.matches);
+  $app_menu.setAttribute('aria-expanded', mobile);
 
-    // Somehow scroll doesn't work in the fullscreen mode on mobile
-    if (FTu.app.fullscreen_enabled && !mql.matches) {
-      // Bug 779324, fullscreen requests from a custom event doesn't work
-      // document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
-    }
-  };
-
-  mobile_mql.addListener(mobile_mql_listener);
-  mobile_mql_listener(mobile_mql);
+  // Somehow scroll doesn't work in the fullscreen mode on mobile
+  if (FTu.app.fullscreen_enabled && !mobile) {
+    // Bug 779324, fullscreen requests from a custom event doesn't work
+    // document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
+  }
 
   let tabs = BzDeck.toolbar.tablist.view,
       $tab_home = document.querySelector('#tab-home');
 
   document.querySelector('[role="banner"] h1').addEventListener('click', event => {
-    if (mobile_mql.matches) {
-      if (tabs.selected[0] === $tab_home) {
+    if (mobile) {
+      if (phone && tabs.selected[0] === $tab_home) {
         document.querySelector('#sidebar > div').scrollTop = 0;
 
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
@@ -1727,7 +1723,7 @@ BzDeck.toolbar.setup = function () {
   });
 
   window.addEventListener('mousedown', event => {
-    if (mobile_mql.matches) {
+    if (mobile) {
       let $banner = document.querySelector('[role="banner"]');
 
       if ($banner.classList.contains('search')) {
@@ -1760,7 +1756,7 @@ BzDeck.toolbar.setup = function () {
   $search_button.addEventListener('mousedown', event => {
     event.stopPropagation();
 
-    if (mobile_mql.matches) {
+    if (mobile) {
       let $banner = document.querySelector('[role="banner"]');
 
       if (!$banner.classList.contains('search')) {
@@ -1787,7 +1783,7 @@ BzDeck.toolbar.setup = function () {
       exec_search();
     }
 
-    if (mobile_mql.matches) {
+    if (mobile) {
       document.querySelector('[role="banner"]').classList.remove('search');
     }
   });
@@ -1846,28 +1842,26 @@ BzDeck.sidebar = {};
 
 BzDeck.sidebar.setup = function () {
   let FTw = FlareTail.widget,
-      mobile_mql = FlareTail.util.device.mobile.mql,
+      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      phone = FlareTail.util.device.type === 'mobile-phone',
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
-  let mobile_mql_listener = mql => {
-    document.querySelector(mql.matches ? '#sidebar-account' : '#main-menu--app-menu li')
+  if (mobile) {
+    document.querySelector('#sidebar-account')
             .appendChild(document.querySelector('#main-menu--app--account'));
-    document.querySelector(mql.matches ? '#sidebar-menu' : '#main-menu li')
+    document.querySelector('#sidebar-menu')
             .appendChild(document.querySelector('#main-menu--app-menu'));
+  }
 
-    $root.setAttribute('data-sidebar-hidden', mql.matches);
-    $sidebar.setAttribute('aria-hidden', mql.matches);
-  };
-
-  mobile_mql.addListener(mobile_mql_listener);
-  mobile_mql_listener(mobile_mql);
+  $root.setAttribute('data-sidebar-hidden', phone);
+  $sidebar.setAttribute('aria-hidden', phone);
 
   new FTw.ScrollBar($sidebar.querySelector('div'));
 
   $sidebar.addEventListener('click', event => {
-    if (mobile_mql.matches) {
-      let hidden = $sidebar.getAttribute('aria-hidden') !== 'true' || !mobile_mql.matches;
+    if (phone) {
+      let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
       $root.setAttribute('data-sidebar-hidden', hidden);
       $sidebar.setAttribute('aria-hidden', hidden);
     }
@@ -1937,7 +1931,7 @@ BzDeck.sidebar.setup = function () {
       let oldval = obj[prop];
 
       // On mobile, the same folder can be selected
-      if (!mobile_mql.matches && oldval === newval) {
+      if (!mobile && oldval === newval) {
         return;
       }
 
@@ -1980,7 +1974,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   };
 
   // Mobile compact layout
-  if (FlareTail.util.device.mobile.mql.matches &&
+  if (FlareTail.util.device.type.startsWith('mobile') &&
       BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
@@ -2173,7 +2167,7 @@ window.addEventListener('popstate', event => {
       $root = document.documentElement; // <html>
 
   // Hide sidebar
-  if (FlareTail.util.device.mobile.mql.matches) {
+  if (FlareTail.util.device.type.startsWith('mobile')) {
     $root.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
