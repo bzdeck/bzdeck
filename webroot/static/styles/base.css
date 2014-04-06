@@ -556,6 +556,16 @@ col[data-hidden="false"] {
   width: 24rem;
 }
 
+:root[data-device-type="mobile-tablet"] #sidebar::after {
+  position: absolute;
+  right: 0;
+  z-index: 100;
+  width: .8rem;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, .2));
+  content: "";
+}
+
 :root[data-device-type|="mobile"] #sidebar[aria-hidden="true"] {
   display: block;
   background-color: rgba(0, 0, 0, 0) !important;
@@ -1161,14 +1171,14 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [id|="bug"][role="tablist"] {
+  display: table;
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
-  padding: .8rem;
-  height: 2.4rem;
-  text-align: center;
-  word-spacing: -1rem; /* Remove spaces between tabs */
+  width: 100%;
+  height: 3.2rem;
+  table-layout: fixed;
 }
 
 :root[data-device-type|="mobile"] [id|="bug"][role="tablist"] {
@@ -1177,34 +1187,30 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type|="mobile"] [id|="bug"][role="tablist"][aria-hidden="true"] {
-  display: block;
+  display: table;
   top: -4rem;
   transition-duration: .8s;
 }
 
 [id|="bug"][role="tablist"] [role="tab"] {
+  display: table-cell;
   float: none;
   margin: 0;
-  border-width: .1rem .1rem .1rem 0;
+  border-width: .1rem 0 .1rem .1rem;
   border-radius: 0;
-  height: 2.4rem;
-  word-spacing: normal;
-}
-
-:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] [role="tab"] {
-  padding: .4rem 1rem;
+  padding: .6rem .4rem;
   width: auto;
+  height: 2.4rem;
+  text-align: center;
+  vertical-align: middle;
 }
 
 [id|="bug"][role="tablist"] [role="tab"]:first-of-type {
-  border-left-width: .1rem;
-  border-top-left-radius: .4rem;
-  border-bottom-left-radius: .4rem;
+  border-left-width: 0;
 }
 
-[id|="bug"][role="tablist"] [role="tab"]:not([aria-hidden="true"]):last-of-type { /* It doesn't work as intended */
-  border-top-right-radius: .4rem;
-  border-bottom-right-radius: .4rem;
+[id|="bug"][role="tablist"] [role="tab"][aria-hidden="true"] {
+  display: none;
 }
 
 [id|="bug"][role="tablist"] [role="tab"] label {
@@ -1225,7 +1231,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type="desktop"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
-  top: 4rem;
+  top: 3.2rem;
 }
 
 :root[data-device-type|="mobile"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] {
@@ -1236,9 +1242,19 @@ article[id$="preview-bug"] > .bug-timeline {
   left: 0;
 }
 
+:root[data-device-type="mobile-tablet"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"]::before {
+  position: absolute;
+  left: -.8rem;
+  z-index: 100;
+  width: .8rem;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, .2));
+  content: "";
+}
+
 :root[data-device-type|="mobile"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > .scrollable {
   -moz-box-sizing: border-box;
-  padding-top: 4rem;
+  padding-top: 3.2rem;
 }
 
 [id|="bug"][role="tablist"] ~ .bug-info {
@@ -1318,9 +1334,13 @@ article[id$="preview-bug"] > .bug-timeline {
   left: -9999rem;
 }
 
+:root[data-device-type|="mobile"] .bug-timeline > header {
+  padding: 1.2rem 0;
+}
+
 :root[data-device-type|="mobile"] .bug-timeline > header h2 {
   display: block;
-  padding: 0 1.2rem 1.2rem 3rem;
+  padding: 0 1.2rem 0 3rem;
   font-size: 1.4rem;
   line-height: 2rem;
   font-weight: 500;
@@ -1523,7 +1543,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type="desktop"] .bug-history table {
-  margin: 0 1.2rem;
+  margin: 1.2rem;
   width: calc(100% - 2.4rem);
 }
 
@@ -1887,6 +1907,10 @@ article[id$="preview-bug"] > .bug-timeline {
     left: 24rem;
   }
 
+  [id|="bug"][role="tablist"] {
+    width: calc(100% - 24rem);
+  }
+
 }
 
 @media (min-width: 801px) {
@@ -1900,6 +1924,10 @@ article[id$="preview-bug"] > .bug-timeline {
   [id|="bug"][id$="tabpanels"],
   [id^="search"].bug-timeline {
     left: 32rem;
+  }
+
+  [id|="bug"][role="tablist"] {
+    width: calc(100% - 32rem);
   }
 
 }
@@ -1987,6 +2015,14 @@ article[id$="preview-bug"] > .bug-timeline {
 /* ----------------------------------------------------------------------------------------------
  * Mobile, Small Display
  * ---------------------------------------------------------------------------------------------- */
+
+@media (max-width: 320px) {
+
+  [id|="bug"][role="tablist"] {
+    table-layout: auto;
+  }
+
+}
 
 @media (max-device-height: 480px) {
 
