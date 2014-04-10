@@ -108,8 +108,10 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       config = BzDeck.data.bugzilla_config;
 
   // Custom scrollbar
-  for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new FlareTail.widget.ScrollBar($outer, true);
+  if (!FlareTail.util.device.touch.enabled) {
+    for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
+      new FlareTail.widget.ScrollBar($outer, true);
+    }
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -369,13 +371,14 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
 
-  // Custom scrollbar (info)
-  new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
+  if (!FlareTail.util.device.touch.enabled) {
+    // Custom scrollbar (info)
+    new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
 
-  // Custom scrollbar (timeline)
-  let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
-  scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
-  scrollbar.onscroll_extend = BzDeck.global.handle_timeline_scroll.bind(scrollbar);
+    // Custom scrollbar (timeline)
+    let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+    scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+  }
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {

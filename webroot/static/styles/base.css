@@ -1357,17 +1357,8 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline [itemprop="comment"] {
   position: relative;
-  overflow: hidden;
   border-width: .1rem 0 0;
   border-style: solid;
-}
-
-:root[data-device-type="desktop"] .bug-timeline [itemprop="comment"] {
-  padding-top: 5.4rem;
-}
-
-:root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] {
-  padding-top: 4rem;
 }
 
 .bug-timeline [itemprop="comment"]:first-of-type {
@@ -1379,18 +1370,13 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 .bug-timeline [itemprop="comment"] header {
-  position: absolute;
+  position: sticky;
   top: 0;
   overflow: hidden;
-  width: 100%;
 }
 
 :root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] header {
   padding: 0;
-}
-
-.bug-timeline [itemprop="comment"] header.sticky {
-  position: fixed;
 }
 
 .bug-timeline [itemprop="comment"] header .meta {
@@ -1435,6 +1421,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
+  overflow: hidden;
   font-size: 1.2rem;
   line-height: 1.6;
   font-family: Consolas, monospace;

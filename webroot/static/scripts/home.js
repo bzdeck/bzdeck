@@ -29,8 +29,6 @@ BzDeck.HomePage = function () {
       if (position) {
         prefs[prefix + splitter.data.orientation] = position;
       }
-
-      this.reposition_sticky_comment_header();
     });
   }
 
@@ -40,13 +38,14 @@ BzDeck.HomePage = function () {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
 
-  // Custom scrollbar (info)
-  new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
+  if (!FlareTail.util.device.touch.enabled) {
+    // Custom scrollbar (info)
+    new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
 
-  // Custom scrollbar (timeline)
-  let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
-  scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
-  scrollbar.onscroll_extend = BzDeck.global.handle_timeline_scroll.bind(scrollbar);
+    // Custom scrollbar (timeline)
+    let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+    scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+  }
 
   this.view = {};
 
@@ -193,10 +192,6 @@ BzDeck.HomePage = function () {
       obj[prop] = newval;
     }
   });
-
-  window.addEventListener('resize', event => {
-    this.reposition_sticky_comment_header();
-  });
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
@@ -252,17 +247,5 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
     let cond = grid.options.sort_conditions;
     cond.key = 'last_change_time';
     cond.order = 'descending';
-  }
-
-  this.reposition_sticky_comment_header();
-};
-
-BzDeck.HomePage.prototype.reposition_sticky_comment_header = function () {
-  let $timeline = document.querySelector('#home-preview-bug-timeline'),
-      $header = $timeline.querySelector('header.sticky'),
-      top = $timeline.getBoundingClientRect().top;
-
-  if ($header) {
-    top > 0 ? $header.style.top = top + 'px' : $header.classList.remove('sticky');
   }
 };

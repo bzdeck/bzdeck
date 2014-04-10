@@ -113,13 +113,15 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
       continue;
     }
 
-    let scroll_top = $tabpanel_content.scrollTop;
+    let scroll_top = $tabpanel_content.scrollTop,
+        tablist_hidden = false;
 
     $tabpanel_content.addEventListener('scroll', event => {
-      let value = String(event.target.scrollTop - scroll_top > 0);
+      let value = event.target.scrollTop - scroll_top > 0;
 
-      if ($tablist.getAttribute('aria-hidden') !== value) {
-        $tablist.setAttribute('aria-hidden', value);
+      if (tablist_hidden !== value) {
+        tablist_hidden = value;
+        $tablist.setAttribute('aria-hidden', String(value));
       }
 
       scroll_top = event.target.scrollTop;
@@ -276,33 +278,39 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
   }
 
   if (event.type === 'touchstart') {
-    let bugs = [bug.id for (bug of BzDeck.detailspage.data.bug_list)],
-        index = bugs.indexOf(BzDeck.detailspage.data.id);
-
     this.startX = touch.pageX;
     this.startY = touch.pageY;
-    this.$target = BzDeck.detailspage.view.$tabpanel;
-    this.$sticky_header = this.$target.querySelector('header.sticky');
-    this.$prev = document.querySelector('#tabpanel-details-' + bugs[index - 1]),
-    this.$next = document.querySelector('#tabpanel-details-' + bugs[index + 1]);
-    this.$sibling = null;
-
-    if (this.$prev) {
-      this.$prev.style.display = 'block';
-      this.$prev.style.left = '-100%';
-    }
-
-    if (this.$next) {
-      this.$next.style.display = 'block';
-      this.$next.style.left = '100%';
-    }
+    this.initialized = false;
   }
 
   if (event.type === 'touchmove' || event.type === 'touchend') {
     delta = touch.pageX - this.startX;
 
     // Exclude vertical swipe
-    this.qualified = Math.abs(delta) > Math.abs(touch.pageY - this.startY);
+    if (Math.abs(delta) < Math.abs(touch.pageY - this.startY)) {
+      return;
+    }
+
+    if (!this.initialized) {
+      let bugs = [bug.id for (bug of BzDeck.detailspage.data.bug_list)],
+          index = bugs.indexOf(BzDeck.detailspage.data.id);
+
+      this.initialized = true;
+      this.$target = BzDeck.detailspage.view.$tabpanel;
+      this.$prev = document.querySelector('#tabpanel-details-' + bugs[index - 1]),
+      this.$next = document.querySelector('#tabpanel-details-' + bugs[index + 1]);
+      this.$sibling = null;
+
+      if (this.$prev) {
+        this.$prev.style.display = 'block';
+        this.$prev.style.left = '-100%';
+      }
+
+      if (this.$next) {
+        this.$next.style.display = 'block';
+        this.$next.style.left = '100%';
+      }
+    }
 
     if (this.$prev && delta > 0) {
       this.$sibling = this.$prev;
@@ -317,15 +325,10 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
     }
   }
 
-  if (event.type === 'touchmove' && this.qualified) {
+  if (event.type === 'touchmove') {
     this.$target.style.left = delta + 'px';
     this.$sibling.style.left = 'calc(' + (this.$sibling === this.$prev ? '-' : '') + '100% + '
                                        + delta + 'px)';
-
-    if (this.$sticky_header && !this.sticky_header_repositioned) {
-      this.$sticky_header.classList.remove('sticky');
-      this.sticky_header_repositioned = true;
-    }
   }
 
   let cleanup = () => {
@@ -344,21 +347,15 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
       this.$next.removeAttribute('style');
     }
 
-    if (this.qualified && this.$sibling) {
+    if (this.$sibling) {
       BzDeck.detailspage.navigate(Number.parseInt(this.$sibling.dataset.id));
-    }
-
-    if (this.$sticky_header) {
-      this.$sticky_header.classList.add('sticky');
     }
 
     delete this.startX;
     delete this.startY;
-    delete this.qualified;
+    delete this.initialized;
     delete this.transitioning;
-    delete this.sticky_header_repositioned;
     delete this.$target;
-    delete this.$sticky_header;
     delete this.$prev;
     delete this.$next;
     delete this.$sibling;
@@ -367,13 +364,8 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
   if (event.type === 'touchend') {
     this.transitioning = true;
     this.$target.addEventListener('transitionend', this);
-
-    if (this.qualified) {
-      this.$target.style.left = delta > 0 ? '100%' : '-100%';
-      this.$sibling.style.left = '0';
-    } else {
-      cleanup();
-    }
+    this.$target.style.left = delta > 0 ? '100%' : '-100%';
+    this.$sibling.style.left = '0';
 
     // Sometimes the transitionend event doesn't get called. We should cleanup anyway.
     window.setTimeout(() => cleanup(), 600);

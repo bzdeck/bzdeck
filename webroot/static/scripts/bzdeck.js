@@ -926,13 +926,14 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       BzDeck.core.toggle_star(bug.id, event.detail.checked);
     });
 
-    // Custom scrollbar
     for (let $area of $content.querySelectorAll('.scrollable')) {
-      let scrollbar = new FTw.ScrollBar($area);
+      // Custom scrollbar
+      if (!FlareTail.util.device.touch.enabled) {
+        let scrollbar = new FTw.ScrollBar($area);
 
-      if ($area.classList.contains('bug-timeline')) {
-        scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
-        scrollbar.onscroll_extend = BzDeck.global.handle_timeline_scroll.bind(scrollbar);
+        if ($area.classList.contains('bug-timeline')) {
+          scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+        }
       }
 
       $area.tabIndex = 0;
@@ -1475,32 +1476,6 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   return FlareTail.util.event.ignore(event);
 };
 
-BzDeck.global.handle_timeline_scroll = function (event) {
-  // this = a binded Scrollbar widget
-  let $timeline = this.view.$owner;
-
-  // Sticky Header
-  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"]')) {
-    let $header = $comment.querySelector('header'),
-        [tst, aot, aoh] = [$timeline.scrollTop, $comment.offsetTop, $comment.offsetHeight];
-
-    if (tst >= aot && tst < aot + aoh) {
-      if (!$header.classList.contains('sticky')) {
-        $header.classList.add('sticky');
-        $header.style.setProperty('top', $timeline.getBoundingClientRect().top + 'px');
-      }
-    } else {
-      if ($header.classList.contains('sticky')) {
-        $header.classList.remove('sticky');
-        $header.style.removeProperty('top');
-      }
-    }
-  }
-
-  // The default behavior
-  this.onscroll(event);
-};
-
 BzDeck.global.parse_comment = function (str) {
   let blockquote = p => {
     let regex = /^&gt;\s?/gm;
@@ -1857,7 +1832,9 @@ BzDeck.sidebar.setup = function () {
   $root.setAttribute('data-sidebar-hidden', phone);
   $sidebar.setAttribute('aria-hidden', phone);
 
-  new FTw.ScrollBar($sidebar.querySelector('div'));
+  if (!FlareTail.util.device.touch.enabled) {
+    new FTw.ScrollBar($sidebar.querySelector('div'));
+  }
 
   $sidebar.addEventListener('click', event => {
     if (phone) {
