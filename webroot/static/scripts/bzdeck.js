@@ -2277,7 +2277,13 @@ window.addEventListener('UI:toggle_star', event => {
 
 window.addEventListener('UI:toggle_unread', event => {
   let bugs = event.detail.bugs,
+      ids = new Set([bug.id for (bug of bugs)]),
       num = bugs.length;
+
+  // Homepage thread
+  for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
+    $row.setAttribute('data-unread', ids.has(Number.parseInt($row.dataset.id)));
+  }
 
   // Update the sidebar Unread folder
   BzDeck.sidebar.toggle_unread_ui(num);
