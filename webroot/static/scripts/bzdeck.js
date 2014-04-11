@@ -19,8 +19,7 @@ BzDeck.data = {};
 
 BzDeck.options = {
   api: {
-    vertion: 1.3,
-    endpoint: 'https://api-dev.bugzilla.mozilla.org/',
+    endpoint: 'https://api-dev.bugzilla.mozilla.org/latest/',
     extra_fields: [
       'attachments', 'blocks', 'cc', 'comments', 'depends_on', 'dupe_of', 'flags', 'groups',
       'history', 'is_cc_accessible', 'is_confirmed', 'is_creator_accessible', 'see_also',
@@ -630,7 +629,7 @@ BzDeck.core.request = function (method, query, callback) {
   let xhr = new XMLHttpRequest(),
       api = BzDeck.options.api;
 
-  xhr.open(method, api.endpoint + api.vertion + '/' + query, true);
+  xhr.open(method, api.endpoint + query, true);
   xhr.setRequestHeader('Accept', 'application/json');
   xhr.addEventListener('load', event => {
     let text = event.target.responseText;
