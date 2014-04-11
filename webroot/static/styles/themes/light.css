@@ -577,8 +577,8 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   border-color: #CCC; /* Secondary Region Border Color */
 }
 
-.bug-timeline [itemprop="comment"] header,
 .bug-timeline [itemprop="comment"] .changes {
+  border-color: #CCC; /* Secondary Region Border Color */
   background-color: #F4F4F4; /* Secondary Region Background Color */
 }
 
@@ -588,6 +588,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 320, 128, 256);
 }
 
+.bug-timeline [itemprop="comment"] header,
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
   color: #434343; /* Content Foreground Color */
   background-color: #FCFCFC; /* Content Background Color */
@@ -598,13 +599,17 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   color: #636363; /* Secondary Content Foreground Color */
 }
 
-.bug-attachments section {
+.bug-attachments [itemprop="associatedMedia"] {
   border-color: #CCC; /* Secondary Region Border Color */
   background-color: #FCFCFC; /* Content Background Color */
 }
 
-.bug-attachments section h4 {
+.bug-attachments [itemprop="associatedMedia"] h4 {
   background-color: #F4F4F4; /* Secondary Region Background Color */
+}
+
+.bug-history tr {
+  background-color: #FCFCFC; /* Grid Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------

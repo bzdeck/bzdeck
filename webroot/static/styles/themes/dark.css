@@ -574,8 +574,8 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   border-color: #303030; /* Secondary Region Border Color */
 }
 
-.bug-timeline [itemprop="comment"] header,
 .bug-timeline [itemprop="comment"] .changes {
+  border-color: #303030; /* Secondary Region Border Color */
   background-color: #282828; /* Secondary Region Background Color */
 }
 
@@ -585,6 +585,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 320, 128, 256);
 }
 
+.bug-timeline [itemprop="comment"] header,
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
   color: #BBB; /* Content Foreground Color */
   background-color: #202020; /* Content Background Color */
@@ -595,13 +596,17 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   color: #939393; /* Secondary Content Foreground Color */
 }
 
-.bug-attachments section {
+.bug-attachments [itemprop="associatedMedia"] {
   border-color: #303030; /* Secondary Region Border Color */
   background-color: #202020; /* Content Background Color */
 }
 
-.bug-attachments section h4 {
+.bug-attachments [itemprop="associatedMedia"] h4 {
   background-color: #282828; /* Secondary Region Background Color */
+}
+
+.bug-history tr {
+  background-color: #202020; /* Grid Background Color */
 }
 
 /* ----------------------------------------------------------------------------------------------

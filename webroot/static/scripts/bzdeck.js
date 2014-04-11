@@ -1276,15 +1276,26 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   // Comments
   for (let comment of bug.comments) {
     let $entry = $entry_tmpl.cloneNode(true).firstElementChild,
+        author = comment.creator,
         time = comment.creation_time;
 
     $entry.id = $content.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.querySelector('[itemprop="author"] [itemprop="name"]')
-          .textContent = comment.creator.real_name || comment.creator.name;
+          .textContent = author.real_name || author.name;
     $entry.querySelector('[itemprop="text"]')
           .innerHTML = comment.text ? parse(sanitize(comment.text)) : '&nbsp;';
+
+    // Set the user's avatar if author.real_name is the email address
+    if (author.real_name.contains('@')) {
+      let ($avatar = new Image()) {
+        $avatar.addEventListener('load', event => {
+          $entry.querySelector('[itemprop="author"] [itemprop="image"]').src = $avatar.src;
+        });
+        $avatar.src = 'https://www.gravatar.com/avatar/' + md5(author.real_name) + '?d=404';
+      }
+    }
 
     let $time = $entry.querySelector('[itemprop="datePublished"]');
     $time.textContent = i18n.format_date(time);
@@ -1296,6 +1307,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   // Changes
   for (let history of (bug.history || [])) {
     let $entry,
+        author = history.changer,
         time = history.change_time;
 
     if (time in entries) {
@@ -1305,14 +1317,21 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $entry = $entry_tmpl.cloneNode(true).firstElementChild;
       $entry.dataset.time = (new Date(time)).getTime();
       $entry.querySelector('[itemprop="text"]').remove();
-      $entry.querySelector('[itemprop="author"] [itemprop="name"]')
-            .textContent = history.changer.name;
+      $entry.querySelector('[itemprop="author"] [itemprop="name"]').textContent = author.name;
 
       let $time = $entry.querySelector('[itemprop="datePublished"]');
       $time.textContent = i18n.format_date(time);
       $time.dateTime = time;
 
       entries[time] = $entry;
+    }
+
+    // Set the user's avatar assuming author.name is the email address
+    let ($avatar = new Image()) {
+      $avatar.addEventListener('load', event => {
+        $entry.querySelector('[itemprop="author"] [itemprop="image"]').src = $avatar.src;
+      });
+      $avatar.src = 'https://www.gravatar.com/avatar/' + md5(author.name) + '?d=404';
     }
 
     let $changes = $entry.appendChild(document.createElement('ul'));
