@@ -1458,6 +1458,18 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   let key = event.keyCode,
       modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
 
+  // [B] previous bug or [F] next bug
+  if (document.documentElement.getAttribute('data-current-tab') === 'home' &&
+      !modifiers && [event.DOM_VK_B, event.DOM_VK_F].indexOf(key) > -1) {
+    let (_event = document.createEvent("KeyboardEvent")) {
+      _event.initKeyEvent('keydown', true, true, null, false, false, false, false, key, 0);
+      document.querySelector('#home-list').dispatchEvent(_event);
+      this.view.$owner.focus();
+    }
+
+    return FlareTail.util.event.ignore(event);
+  }
+
   // [M] toggle read or [S] toggle star
   if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].indexOf(key) > -1) {
     let $parent = this.view.$owner.parentElement,
@@ -1479,7 +1491,7 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   if (event.currentTarget !== this.view.$owner ||
       [event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].indexOf(key) === -1) {
     this.scroll_with_keyboard(event); // Use default handler
-    return false;
+    return FlareTail.util.event.ignore(event);
   }
 
   let shift = key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey,
