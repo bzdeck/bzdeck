@@ -1245,9 +1245,11 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           $cell_who.rowSpan = $cell_when.rowSpan = history.changes.length;
         }
 
-        // Bug 909055 - Field name mismatch in history: group vs groups
         let _field = conf_field[change.field_name] ||
-                     conf_field[change.field_name.replace(/s$/, '')],
+                     // Bug 909055 - Field name mismatch in history: group vs groups
+                     conf_field[change.field_name.replace(/s$/, '')] ||
+                     // If the Bugzilla config is outdated, the field name can be null
+                     change.field_name,
             $cell_what = $row.insertCell(-1),
             $cell_removed = $row.insertCell(-1),
             $cell_added = $row.insertCell(-1);
@@ -1356,7 +1358,9 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       let $change = $changes.appendChild(document.createElement('li')),
           _field = conf_field[change.field_name] ||
                    // Bug 909055 - Field name mismatch in history: group vs groups
-                   conf_field[change.field_name.replace(/s$/, '')];
+                   conf_field[change.field_name.replace(/s$/, '')] ||
+                   // If the Bugzilla config is outdated, the field name can be null
+                   change.field_name;
 
       $change.textContent = _field.description + ': ';
 
