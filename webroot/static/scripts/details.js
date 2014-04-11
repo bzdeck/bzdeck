@@ -286,12 +286,12 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
   if (event.type === 'touchmove' || event.type === 'touchend') {
     delta = touch.pageX - this.startX;
 
-    // Exclude vertical swipe
-    if (Math.abs(delta) < Math.abs(touch.pageY - this.startY)) {
-      return;
-    }
-
     if (!this.initialized) {
+      // Exclude minor or vertical scroll
+      if (Math.abs(delta) < 35 || Math.abs(delta) < Math.abs(touch.pageY - this.startY)) {
+        return;
+      }
+
       let bugs = [bug.id for (bug of BzDeck.detailspage.data.bug_list)],
           index = bugs.indexOf(BzDeck.detailspage.data.id);
 
