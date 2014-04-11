@@ -1616,7 +1616,7 @@ BzDeck.toolbar.setup = function () {
       history.pushState({}, title, path);
     }
 
-    document.title = title + ' | BzDeck'; // l10n
+    document.title = title;
     document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
   });
 
@@ -1994,7 +1994,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   // Change the window title and the tab label
   let folder_label = [f for (f of this.folder_data) if (f.data.id === folder_id)][0].label;
 
-  document.title = folder_label + ' | BzDeck'; // l10n
+  document.title = folder_label;
   document.querySelector('[role="banner"] h1').textContent
     = document.querySelector('#tab-home').title
     = document.querySelector('#tab-home label').textContent
