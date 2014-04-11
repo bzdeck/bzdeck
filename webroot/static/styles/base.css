@@ -612,7 +612,7 @@ col[data-hidden="false"] {
   border-bottom-width: .2rem;
   border-bottom-style: solid;
   padding: .4rem 1.2rem;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 #sidebar-folder-list {
@@ -780,7 +780,7 @@ main {
   padding: 0 8rem 0 .4rem;
   font-size: 1.4rem;
   line-height: 3rem;
-  font-weight: 500;
+  font-weight: bold;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -967,7 +967,7 @@ main {
 }
 
 .bug-list [role="row"][data-unread="true"] {
-  font-weight: 500;
+  font-weight: bold;
 }
 
 :root[data-device-type|="mobile"] .bug-list [role="row"][data-unread="true"] {
@@ -1055,7 +1055,7 @@ main {
 }
 
 :root[data-home-layout="vertical"] #home-list [role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
-  font-weight: 500;
+  font-weight: bold;
 }
 
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
@@ -1108,7 +1108,7 @@ article[id$="preview-bug"] > header > h3 {
   padding: 0 .4rem;
   font-size: 1.4rem;
   line-height: 3rem;
-  font-weight: 500;
+  font-weight: bold;
   white-space: nowrap;
   text-overflow: ellipsis;
   pointer-events: auto;
@@ -1369,7 +1369,7 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 0 0 0 3rem;
   font-size: 1.4rem;
   line-height: 2rem;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 :root[data-device-type|="mobile"] .bug-timeline > header [role="checkbox"] {
@@ -1438,7 +1438,7 @@ article[id$="preview-bug"] > .bug-timeline {
   display: block;
   overflow: hidden;
   padding-top: .5rem;
-  font-weight: 500;
+  font-weight: bold;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
