@@ -1464,6 +1464,11 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   let key = event.keyCode,
       modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
 
+  // [Tab] move focus
+  if (key === event.DOM_VK_TAB) {
+    return true;
+  }
+
   // [B] previous bug or [F] next bug
   if (document.documentElement.getAttribute('data-current-tab') === 'home' &&
       !modifiers && [event.DOM_VK_B, event.DOM_VK_F].indexOf(key) > -1) {
