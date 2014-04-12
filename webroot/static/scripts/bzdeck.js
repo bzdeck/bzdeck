@@ -374,6 +374,11 @@ BzDeck.core.load_subscriptions = function () {
   BzDeck.global.show_status('Checking for new bugs...'); // l10n
 
   BzDeck.model.get_all_subscriptions(subscriptions => {
+    let email = BzDeck.data.account.name,
+        _query = { email1: email, email1_type: 'equals_any', resolution: '---' },
+        fields = { cc: 'cc', reported: 'creator', assigned: 'assigned_to', qa: 'qa_contact' },
+        needinfo_sub = { id: 'needinfo', query: { quicksearch: 'needinfo?' + email }};
+
     if (subscriptions.length) {
       BzDeck.model.get_all_bugs(bugs => {
         // List all starred bugs to check the last modified dates
@@ -381,6 +386,11 @@ BzDeck.core.load_subscriptions = function () {
 
         if (ids.length) {
           subscriptions.push({ query: { id: ids.join() } });
+        }
+
+        // needinfo? migration
+        if ([sub.id for (sub of subscriptions)].indexOf('needinfo') === -1) {
+          subscriptions.push(needinfo_sub);
         }
 
         this.fetch_subscriptions(subscriptions);
@@ -399,10 +409,6 @@ BzDeck.core.load_subscriptions = function () {
       return;
     }
 
-    let email = BzDeck.data.account.name,
-        _query = { email1: email, email1_type: 'equals_any', resolution: '---' },
-        fields = { cc: 'cc', reported: 'creator', assigned: 'assigned_to', qa: 'qa_contact' };
-
     for (let [name, field] of Iterator(fields)) {
       let query = FlareTail.util.object.clone(_query);
 
@@ -410,6 +416,7 @@ BzDeck.core.load_subscriptions = function () {
       subscriptions.push({ id: name, query: query });
     }
 
+    subscriptions.push(needinfo_sub);
     this.fetch_subscriptions(subscriptions);
   });
 };
@@ -1896,9 +1903,9 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'unread' }
     },
     {
-      'id': 'sidebar-folders--important',
-      'label': 'Important',
-      'data': { 'id': 'important' }
+      'id': 'sidebar-folders--needinfo',
+      'label': 'Need Info',
+      'data': { 'id': 'needinfo' }
     },
     {
       'id': 'sidebar-folders--cc',
@@ -1919,6 +1926,11 @@ BzDeck.sidebar.setup = function () {
       'id': 'sidebar-folders--qa',
       'label': 'QA Contact',
       'data': { 'id': 'qa' }
+    },
+    {
+      'id': 'sidebar-folders--important',
+      'label': 'Important',
+      'data': { 'id': 'important' }
     },
     {
       'id': 'sidebar-folders--all',
@@ -2014,7 +2026,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^(cc|reported|assigned|qa)/)) {
+  if (folder_id.match(/^(cc|reported|assigned|qa|needinfo)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
       BzDeck.model.get_bugs_by_ids([id for ({ id } of sub.bugs)], bugs => {
         update_list(bugs);
