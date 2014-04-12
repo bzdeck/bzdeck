@@ -572,11 +572,17 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 
 .bug-timeline [itemprop="comment"] {
   border-color: #303030; /* Secondary Region Border Color */
+  color: #BBB; /* Content Foreground Color */
+  background-color: #202020; /* Content Background Color */
 }
 
 .bug-timeline [itemprop="comment"] .changes {
   border-color: #303030; /* Secondary Region Border Color */
   background-color: #282828; /* Secondary Region Background Color */
+}
+
+.bug-timeline [itemprop="comment"] header {
+  background-color: #202020; /* Content Background Color */
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"],
@@ -585,14 +591,17 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 320, 128, 256);
 }
 
-.bug-timeline [itemprop="comment"] header,
-.bug-timeline [itemprop="comment"] [itemprop="text"] {
-  color: #BBB; /* Content Foreground Color */
-  background-color: #202020; /* Content Background Color */
-}
-
 .bug-timeline [itemprop="comment"] [itemprop="text"] blockquote {
   border-color: #343434; /* Region Border Color */
+  color: #939393; /* Secondary Content Foreground Color */
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+  border-color: #303030; /* Secondary Region Border Color */
+  background-color: #282828; /* Secondary Region Background Color */
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
   color: #939393; /* Secondary Content Foreground Color */
 }
 

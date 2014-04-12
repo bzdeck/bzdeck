@@ -329,6 +329,11 @@ BzDeck.bootstrap.setup_ui = function () {
     $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : true);
   }
 
+  // Timeline: Attachments
+  let (value = prefs['ui.timeline.display_attachments_inline']) {
+    $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
+  }
+
   // Activate widgets
   BzDeck.homepage = new BzDeck.HomePage();
   BzDeck.toolbar.setup();
@@ -1292,7 +1297,9 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   for (let comment of bug.comments) {
     let $entry = $entry_tmpl.cloneNode(true).firstElementChild,
         author = comment.creator,
-        time = comment.creation_time;
+        time = comment.creation_time,
+        text = comment.raw_text ||
+               (comment.text || '').replace(/^Created\ attachment\ \d+\n.+(?:\n\n)?/m, '');
 
     $entry.id = $content.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
@@ -1300,7 +1307,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $entry.querySelector('[itemprop="author"] [itemprop="name"]')
           .textContent = author.real_name || author.name;
     $entry.querySelector('[itemprop="text"]')
-          .innerHTML = comment.text ? parse(sanitize(comment.text)) : '&nbsp;';
+          .innerHTML = text ? parse(sanitize(text)) : '';
 
     // Set the user's avatar if author.real_name is the email address
     if (author.real_name.contains('@')) {
@@ -1317,6 +1324,53 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $time.dateTime = time;
 
     entries[time] = $entry;
+  }
+
+  // Attachments
+  for (let attachment of bug.attachments || []) {
+    let $entry = entries[attachment.creation_time],
+        $attachment = $entry.appendChild(document.createElement('aside')),
+        $caption = $attachment.appendChild(document.createElement('h5'));
+
+    $attachment.itemScope = true;
+    $attachment.itemProp.value = 'associatedMedia';
+    $attachment.itemType.value = 'http://schema.org/MediaObject';
+
+    let $desc = $caption.appendChild(document.createElement('a'));
+    $desc.itemProp.value = 'description';
+    $desc.href = '/attachment/' + attachment.id;
+    $desc.textContent = attachment.description;
+    $desc.setAttribute('data-attachment-id', attachment.id);
+
+    let $encoding = $attachment.appendChild(document.createElement('meta'));
+    $encoding.itemProp.value = 'encodingFormat';
+    $encoding.content = attachment.content_type;
+
+    let $name = $attachment.appendChild(document.createElement('meta'));
+    $name.itemProp.value = 'name';
+    $name.content = attachment.file_name;
+
+    let $url = $attachment.appendChild(document.createElement('meta')),
+        // TODO: load the attachment data via API
+        url = $url.content = 'https://bug' + bug.id + '.bugzilla.mozilla.org/'
+                           + 'attachment.cgi?id=' + attachment.id;
+    $url.itemProp.value = 'contentURL';
+
+    if (attachment.content_type.startsWith('image/')) {
+      let $outer = $attachment.appendChild(document.createElement('div')),
+          $img = $outer.appendChild(document.createElement('img'));
+
+      $outer.setAttribute('aria-busy', 'true');
+      $img.addEventListener('load', event => {
+        $outer.removeAttribute('aria-busy');
+        // Force the scrollbar to resize
+        FlareTail.util.event.dispatch(window, 'resize');
+      });
+
+      if (prefs['ui.timeline.display_attachments_inline'] !== false) {
+        $img.src = url;
+      }
+    }
   }
 
   // Changes

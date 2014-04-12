@@ -4,6 +4,17 @@
  */
 
 /* ----------------------------------------------------------------------------------------------
+ * Fonts
+ * ---------------------------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/static/fonts/fontawesome-webfont.woff?v=4.0.3) format('woff');
+}
+
+/* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
 
@@ -1410,6 +1421,7 @@ article[id$="preview-bug"] > .bug-timeline {
 .bug-timeline [itemprop="comment"] header {
   position: sticky;
   top: 0;
+  z-index: 100;
   overflow: hidden;
 }
 
@@ -1482,6 +1494,78 @@ article[id$="preview-bug"] > .bug-timeline {
   border-width: 0 0 0 .2rem;
   border-style: solid;
   padding-left: 1rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+  border-width: .1rem;
+  border-style: solid;
+  padding: 0 !important;
+}
+
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+  margin: 0 .8rem .8rem;
+}
+
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+  margin: 0 1.2rem 1.2rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+  line-height: 1.8rem;
+}
+
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+  padding: .8rem .8rem .8rem 3.4rem;
+}
+
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+  padding: 1.2rem 1.2rem 1.2rem 4.2rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+  float: left;
+  font-size: 2.4rem;
+  font-family: FontAwesome;
+  content: '\f0c6'; /* fa-paperclip */
+}
+
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+  margin-left: -2.6rem;
+}
+
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+  margin-left: -3rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+  position: relative;
+  text-align: center;
+}
+
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+  padding: 0 .8rem .8rem;
+}
+
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+  padding: 0 1.2rem 1.2rem;
+}
+
+:root[data-timeline-display-attachments-inline="false"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] {
+  height: 10rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] img {
+  max-width: 100%;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] img {
+  opacity: 0;
 }
 
 .bug-timeline [itemprop="comment"] .changes {

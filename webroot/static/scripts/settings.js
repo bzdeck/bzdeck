@@ -78,6 +78,21 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     // Force the scrollbar to resize
     FlareTail.util.event.dispatch(window, 'resize');
   });
+  activate('timeline-display-attachments-inline', true, value => {
+    $root.setAttribute('data-timeline-display-attachments-inline', String(value));
+
+    if (value === true) {
+      // Show images
+      for (let $attachment of document.querySelectorAll('[itemprop="associatedMedia"]')) {
+        let $img = $attachment.querySelector('img');
+
+        if ($img && !$img.src) {
+          $img.parentElement.setAttribute('aria-busy', 'true');
+          $img.src = $attachment.querySelector('[itemprop="contentURL"]').content;
+        }
+      }
+    }
+  });
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value, callback) {
