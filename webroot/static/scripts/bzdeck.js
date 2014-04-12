@@ -312,15 +312,22 @@ BzDeck.bootstrap.setup_ui = function () {
   let date = FlareTail.util.i18n.options.date,
       prefs = BzDeck.data.prefs,
       theme = prefs['ui.theme.selected'],
-      FTut = FlareTail.util.theme;
+      FTut = FlareTail.util.theme,
+      $root = document.documentElement;
 
   // Date options
   date.timezone = prefs['ui.date.timezone'] || 'local';
   date.format = prefs['ui.date.format'] || 'relative';
 
-  // Font option
-  document.documentElement.setAttribute('data-timeline-font-family',
-                                        prefs['ui.timeline.font.family'] || 'monospace');
+  // Timeline: Font
+  let (value = prefs['ui.timeline.font.family']) {
+    $root.setAttribute('data-timeline-font-family', value || 'monospace');
+  }
+
+  // Timeline: Changes
+  let (value = prefs['ui.timeline.show_cc_changes']) {
+    $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : true);
+  }
 
   // Activate widgets
   BzDeck.homepage = new BzDeck.HomePage();
@@ -1360,6 +1367,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       return $elm;
     };
 
+    $entry.dataset.changes = [change.field_name for (change of history.changes)].join(' ');
+
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li')),
           _field = conf_field[change.field_name] ||
@@ -1369,6 +1378,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
                    change.field_name;
 
       $change.textContent = _field.description + ': ';
+      $change.setAttribute('data-change-field', change.field_name);
 
       if (change.removed) {
         $change.appendChild(generate_element(change, 'removed'));

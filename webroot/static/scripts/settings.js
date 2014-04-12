@@ -73,20 +73,30 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('timeline-font-family', 'monospace', value => {
     $root.setAttribute('data-timeline-font-family', value);
   });
+  activate('timeline-show-cc-changes', true, value => {
+    $root.setAttribute('data-timeline-show-cc-changes', String(value));
+    // Force the scrollbar to resize
+    FlareTail.util.event.dispatch(window, 'resize');
+  });
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value, callback) {
   let $rgroup = this.$tabpanel.querySelector('#tabpanel-settings-setting-' + id),
       prefs = BzDeck.data.prefs,
-      pref = $rgroup.dataset.pref;
+      pref = $rgroup.dataset.pref,
+      type = $rgroup.dataset.type || 'string',
+      value = prefs[pref] !== undefined ? prefs[pref] : default_value;
 
   for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
     $radio.tabIndex = 0;
-    $radio.setAttribute('aria-checked', $radio.dataset.value === (prefs[pref] || default_value));
+    $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
   }
 
   (new FlareTail.widget.RadioGroup($rgroup)).bind('Selected', event => {
-    let value = prefs[pref] = event.detail.items[0].dataset.value;
+    let _value = event.detail.items[0].dataset.value,
+        value = type === 'boolean' ? _value === 'true' : _value;
+
+    prefs[pref] = value;
 
     if (callback) {
       callback(value);

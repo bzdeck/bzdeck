@@ -1403,6 +1403,10 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 1.2rem;
 }
 
+:root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"] {
+  display: none;
+}
+
 .bug-timeline [itemprop="comment"] header {
   position: sticky;
   top: 0;
@@ -1485,17 +1489,25 @@ article[id$="preview-bug"] > .bug-timeline {
   border-style: solid;
 }
 
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] .changes {
+  padding: 0 .8rem;
+}
+
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] .changes {
+  padding: .4rem 1.2rem;
+}
+
 :root[data-device-type|="mobile"] .bug-timeline [itemprop="comment"] .changes {
   font-size: 1rem;
 }
 
 .bug-timeline [itemprop="comment"] .changes li {
-  margin-top: .8rem;
+  margin: .8rem 0;
   line-height: 1.5;
 }
 
-.bug-timeline [itemprop="comment"] .changes li:first-of-type {
-  margin-top: 0;
+:root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"] .changes li[data-change-field="cc"] {
+  display: none;
 }
 
 .bug-timeline [itemprop="comment"] .changes ins {
