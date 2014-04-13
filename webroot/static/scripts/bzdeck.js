@@ -1457,7 +1457,16 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
   // Append to the timeline
   for (let entry of entries) {
-    $parent.appendChild(entry.$element);
+    let $entry = $parent.appendChild(entry.$element);
+
+    // Click to collapse/expand comments
+    // TODO: Save the state in DB
+    $entry.setAttribute('aria-expanded', 'true');
+    $entry.addEventListener('click', event => {
+      $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
+      // Force the scrollbar to resize
+      FlareTail.util.event.dispatch(window, 'resize');
+    });
   }
 
   $timeline.scrollTop = 0;

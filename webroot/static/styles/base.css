@@ -1459,6 +1459,14 @@ article[id$="preview-bug"] > .bug-timeline {
   text-overflow: ellipsis;
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] {
+  display: block;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header ~ * {
+  display: none;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
   overflow: hidden;
   padding-top: 0 !important;
