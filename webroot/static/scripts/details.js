@@ -168,8 +168,17 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
     });
   };
 
+  let change_button_tooltip = (id, button) => {
+    let bug = [bug for (bug of bug_list) if (bug.id === id)][0];
+
+    if (bug) {
+      button.view.$button.title = 'Bug ' + bug.id + '\n' + bug.summary; // l10n
+    }
+  };
+
   if (prev) {
     preload(prev);
+    change_button_tooltip(prev, btn_back);
     btn_back.data.disabled = false;
     btn_back.bind('Pressed', event => this.navigate(prev));
     // TODO: Add keyboard shortcut
@@ -180,6 +189,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
 
   if (next) {
     preload(next);
+    change_button_tooltip(next, btn_forward);
     btn_forward.data.disabled = false;
     btn_forward.bind('Pressed', event => this.navigate(next));
     // TODO: Add keyboard shortcut

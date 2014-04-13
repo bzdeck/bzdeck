@@ -81,7 +81,7 @@
             <div id="search-TID-preview-pane" aria-hidden="true">
               <article id="search-TID-preview-bug" itemscope itemtype="http://schema.org/Article" role="article" aria-hidden="true">
                 <header>
-                  <div role="checkbox" aria-checked="false" data-field="_starred"></div>
+                  <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                   <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
                 </header>
                 <div id="search-TID-preview-bug-info" class="bug-info" tabindex="0">
@@ -108,8 +108,8 @@
           </div>
           <footer>
             <ul role="toolbar">
-              <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
-              <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-details">Show Details</span></li>
+              <li><span title="Show the query pane to search again" role="button" tabindex="0" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
+              <li><span title="Open the selected bug in a tab" role="button" tabindex="0" aria-disabled="true" data-command="show-details">Show Details</span></li>
               <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-advanced-search-pane">Advanced Search</span></li> -->
               <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="save-search-folder">Save as Search Folder</span></li> -->
             </ul>
@@ -121,11 +121,11 @@
       <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
         <article itemscope itemtype="http://schema.org/Article" role="article">
           <header>
-            <div role="checkbox" aria-checked="false" data-field="_starred"></div>
+            <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
             <h2 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h2>
             <ul role="toolbar">
-              <li><span role="button" tabindex="0" aria-disabled="true" data-command="nav-back">Back</span></li>
-              <li><span role="button" tabindex="0" aria-disabled="true" data-command="nav-forward">Forward</span></li>
+              <li><span title="Show the previous bug" role="button" tabindex="0" aria-disabled="true" data-command="nav-back">Back</span></li>
+              <li><span title="Show the next bug" role="button" tabindex="0" aria-disabled="true" data-command="nav-forward">Forward</span></li>
             </ul>
           </header>
           <div>
@@ -364,7 +364,7 @@
       <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
         <header>
           <p class="meta">
-            <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span></span>
+            <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
             <time itemprop="datePublished"></time>
           </p>
         </header>
@@ -424,7 +424,7 @@
                 </li>
               </ul>
             </li>
-            <li role="search"><input type="search" role="textbox" placeholder="Search Bugs" tabindex="1" aria-haspopup="true" aria-owns="quicksearch-dropdown"><span role="button" tabindex="0" title="Search">Go</span></li>
+            <li title="Search Bugs" role="search"><input type="search" role="textbox" placeholder="Search Bugs" tabindex="1" aria-haspopup="true" aria-owns="quicksearch-dropdown"><span role="button" tabindex="0" title="Search">Go</span></li>
           </ul>
           <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
         </div>
@@ -465,7 +465,7 @@
                 <div id="home-preview-pane" role="region" aria-expanded="true">
                   <article id="home-preview-bug" itemscope itemtype="http://schema.org/Article" role="article" aria-hidden="true">
                     <header>
-                      <div role="checkbox" aria-checked="false" data-field="_starred"></div>
+                      <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                       <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
                     </header>
                     <div id="home-preview-bug-info" class="bug-info" tabindex="0">
@@ -490,7 +490,7 @@
               </div>
               <footer>
                 <ul role="toolbar">
-                  <li><span id="home-button-show-details" tabindex="0" role="button" aria-disabled="true">Show Details</span></li>
+                  <li><span id="home-button-show-details" title="Open the selected bug in a tab" tabindex="0" role="button" aria-disabled="true">Show Details</span></li>
                 </ul>
               </footer>
             </section>

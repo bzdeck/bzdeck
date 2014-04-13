@@ -705,7 +705,8 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
 };
 
 BzDeck.model.get_bugs_by_ids = function (ids, callback) {
-  let cache = this.cache.bugs;
+  let cache = this.cache.bugs,
+      ids = [...ids]; // Accept both an Array and a Set as the first argument
 
   if (cache) {
     callback([bug for ([id, bug] of [...cache]) if (ids.indexOf(id) > -1)]);
@@ -761,6 +762,23 @@ BzDeck.model.save_bugs = function (bugs, callback = () => {}) {
     cache.set(bug.id, bug);
     store.put(bug);
   }
+};
+
+BzDeck.model.fetch_bugs_by_ids = function (ids, callback) {
+  let query = { id: [...ids].join(), include_fields: BzDeck.options.api.default_fields.join() };
+
+  if (!query.id.length) {
+    return;
+  }
+
+  BzDeck.core.request('GET', 'bug' + FlareTail.util.request.build_query(query), data => {
+    if (data && Array.isArray(data.bugs)) {
+      this.save_bugs(data.bugs);
+      callback(data.bugs);
+    } else {
+      callback([]);
+    }
+  });
 };
 
 BzDeck.model.get_subscription_by_id = function (id, callback) {
@@ -966,6 +984,9 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     return $content;
   }
 
+  let products = BzDeck.data.bugzilla_config.product,
+      strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
+
   for (let $element of $content.querySelectorAll('[data-field]')) {
     let key = $element.getAttribute('data-field'),
         value = bug[key];
@@ -1003,6 +1024,18 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       }
 
       continue;
+    }
+
+    if (key === 'product') {
+      try {
+        $element.title = strip_tags(products[bug.product].description);
+      } catch (ex) {} // The product has been renamed or removed
+    }
+
+    if (key === 'component') {
+      try {
+        $element.title = strip_tags(products[bug.product].component[bug.component].description);
+      } catch (ex) {} // The product or component has been renamed or removed
     }
 
     if (['creator', 'assigned_to', 'qa_contact'].indexOf(key) > -1) {
@@ -1110,6 +1143,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           let $li = $ul.appendChild(document.createElement('li'));
           $li.textContent = value;
           $li.setAttribute('role', 'button');
+          $li.setAttribute('data-bug-id', value);
 
           (new FlareTail.widget.Button($li)).bind('Pressed', event => {
             BzDeck.detailspage = new BzDeck.DetailsPage(
@@ -1296,6 +1330,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   // Comments
   for (let comment of bug.comments) {
     let $entry = $entry_tmpl.cloneNode(true).firstElementChild,
+        $author = $entry.querySelector('[itemprop="author"]'),
         author = comment.creator,
         time = comment.creation_time,
         text = comment.raw_text ||
@@ -1304,16 +1339,18 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $entry.id = $content.id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $entry.querySelector('[itemprop="author"] [itemprop="name"]')
-          .textContent = author.real_name || author.name;
-    $entry.querySelector('[itemprop="text"]')
-          .innerHTML = text ? parse(sanitize(text)) : '';
+    $entry.querySelector('[itemprop="text"]').innerHTML = text ? parse(sanitize(text)) : '';
+
+    $author.title = $author.querySelector('[itemprop="name"]').itemValue
+                  = author.real_name || author.name;
 
     // Set the user's avatar if author.real_name is the email address
     if (author.real_name.contains('@')) {
+      $author.querySelector('[itemprop="email"]').content = author.real_name;
+
       let ($avatar = new Image()) {
         $avatar.addEventListener('load', event => {
-          $entry.querySelector('[itemprop="author"] [itemprop="image"]').src = $avatar.src;
+          $author.querySelector('[itemprop="image"]').src = $avatar.src;
         });
         $avatar.src = 'https://www.gravatar.com/avatar/' + md5(author.real_name) + '?d=404';
       }
@@ -1330,25 +1367,35 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   for (let attachment of bug.attachments || []) {
     let $entry = entries[attachment.creation_time],
         $attachment = $entry.appendChild(document.createElement('aside')),
-        $caption = $attachment.appendChild(document.createElement('h5'));
+        $link = $attachment.appendChild(document.createElement('a')),
+        $caption = $link.appendChild(document.createElement('h5'));
 
     $attachment.itemScope = true;
     $attachment.itemProp.value = 'associatedMedia';
     $attachment.itemType.value = 'http://schema.org/MediaObject';
+    $attachment.title = [attachment.description, attachment.file_name,
+                         attachment.is_patch ? 'Patch' : attachment.content_type,
+                         (attachment.size / 1024).toFixed(2) + ' KB'].join('\n');
 
-    let $desc = $caption.appendChild(document.createElement('a'));
-    $desc.itemProp.value = 'description';
-    $desc.href = '/attachment/' + attachment.id;
-    $desc.textContent = attachment.description;
-    $desc.setAttribute('data-attachment-id', attachment.id);
+    $link.href = '/attachment/' + attachment.id;
+    $link.setAttribute('data-attachment-id', attachment.id);
 
-    let $encoding = $attachment.appendChild(document.createElement('meta'));
-    $encoding.itemProp.value = 'encodingFormat';
-    $encoding.content = attachment.content_type;
+    $caption.itemProp.value = 'description';
+    $caption.textContent = attachment.description;
+
+    if (!attachment.is_patch) {
+      let $encoding = $attachment.appendChild(document.createElement('meta'));
+      $encoding.itemProp.value = 'encodingFormat';
+      $encoding.content = attachment.content_type;
+    }
 
     let $name = $attachment.appendChild(document.createElement('meta'));
     $name.itemProp.value = 'name';
     $name.content = attachment.file_name;
+
+    let $size = $attachment.appendChild(document.createElement('meta'));
+    $size.itemProp.value = 'contentSize';
+    $size.content = attachment.size;
 
     let $url = $attachment.appendChild(document.createElement('meta')),
         // TODO: load the attachment data via API
@@ -1357,7 +1404,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $url.itemProp.value = 'contentURL';
 
     if (attachment.content_type.startsWith('image/')) {
-      let $outer = $attachment.appendChild(document.createElement('div')),
+      let $outer = $link.appendChild(document.createElement('div')),
           $img = $outer.appendChild(document.createElement('img'));
 
       $outer.setAttribute('aria-busy', 'true');
@@ -1376,18 +1423,26 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   // Changes
   for (let history of (bug.history || [])) {
     let $entry,
+        $author,
         author = history.changer,
         time = history.change_time;
 
     if (time in entries) {
       // Combine a comment + change(s)
       $entry = entries[time];
+      $author = $entry.querySelector('[itemprop="author"]');
+
+      if ($author.title !== author.name) {
+        $author.title += '\n' + author.name;
+      }
     } else {
       $entry = $entry_tmpl.cloneNode(true).firstElementChild;
       $entry.dataset.time = (new Date(time)).getTime();
       $entry.dataset.nocomment = true;
       $entry.querySelector('[itemprop="text"]').remove();
-      $entry.querySelector('[itemprop="author"] [itemprop="name"]').textContent = author.name;
+
+      $author = $entry.querySelector('[itemprop="author"]');
+      $author.title = $author.querySelector('[itemprop="name"]').itemValue = author.name;
 
       let $time = $entry.querySelector('[itemprop="datePublished"]');
       $time.textContent = i18n.format_date(time);
@@ -1396,10 +1451,12 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       entries[time] = $entry;
     }
 
+    $author.querySelector('[itemprop="email"]').content = author.name;
+
     // Set the user's avatar assuming author.name is the email address
     let ($avatar = new Image()) {
       $avatar.addEventListener('load', event => {
-        $entry.querySelector('[itemprop="author"] [itemprop="image"]').src = $avatar.src;
+        $author.querySelector('[itemprop="image"]').src = $avatar.src;
       });
       $avatar.src = 'https://www.gravatar.com/avatar/' + md5(author.name) + '?d=404';
     }
@@ -1473,6 +1530,37 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   $timeline.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
   BzDeck.global.show_status('');
+
+  // Add tooltips to the related bugs
+  let (related_bug_ids = new Set([Number.parseInt($element.getAttribute('data-bug-id'))
+                                  for ($element of $content.querySelectorAll('[data-bug-id]'))])) {
+    let add_tooltops = bugs => {
+      for (let bug of bugs) {
+        if (bug.summary) {
+          let title = bug.status + ' ' + bug.resolution + ' – ' + bug.summary;
+
+          for (let $element of $content.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
+            $element.title = title;
+            $element.dataset.status = bug.status;
+            $element.dataset.resolution = bug.resolution;
+          }
+        }
+      }
+    };
+
+    if (related_bug_ids.size) {
+      BzDeck.model.get_bugs_by_ids(related_bug_ids, bugs => {
+        add_tooltops(bugs);
+
+        let found_bug_ids = new Set([bug.id for (bug of bugs)]),
+            lookup_bug_ids = new Set([id for (id of related_bug_ids) if (!found_bug_ids.has(id))]);
+
+        if (lookup_bug_ids.size) {
+          BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids, bugs => add_tooltops(bugs));
+        }
+      });
+    }
+  }
 };
 
 BzDeck.global.update_grid_data = function (grid, bugs) {

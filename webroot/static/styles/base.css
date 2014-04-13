@@ -1518,6 +1518,10 @@ article[id$="preview-bug"] > .bug-timeline {
   margin: 0 1.2rem 1.2rem;
 }
 
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] a {
+  display: block;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
   line-height: 1.8rem;
 }
@@ -1728,6 +1732,10 @@ article[id$="preview-bug"] > .bug-timeline {
 
 :root[data-device-type|="mobile"] .bug-history td[data-item="added"]::before {
   content: "Added: ";
+}
+
+[data-bug-id]:-moz-any([data-status="RESOLVED"], [data-status="VERIFIED"], [data-status="CLOSED"]) {
+  text-decoration: line-through;
 }
 
 /* ----------------------------------------------------------------------------------------------
