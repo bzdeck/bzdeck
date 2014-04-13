@@ -1385,6 +1385,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     } else {
       $entry = $entry_tmpl.cloneNode(true).firstElementChild;
       $entry.dataset.time = (new Date(time)).getTime();
+      $entry.dataset.nocomment = true;
       $entry.querySelector('[itemprop="text"]').remove();
       $entry.querySelector('[itemprop="author"] [itemprop="name"]').textContent = author.name;
 
@@ -1462,7 +1463,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     // Click to collapse/expand comments
     // TODO: Save the state in DB
     $entry.setAttribute('aria-expanded', 'true');
-    $entry.addEventListener('click', event => {
+    $entry.querySelector('header').addEventListener('click', event => {
       $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
       // Force the scrollbar to resize
       FlareTail.util.event.dispatch(window, 'resize');
@@ -1584,6 +1585,10 @@ BzDeck.global.handle_timeline_keydown = function (event) {
       timeline_top = Math.round($timeline.getBoundingClientRect().top);
 
   for (let $comment of shift ? comments.reverse() : comments) {
+    if ($comment.clientHeight === 0) {
+      continue; // The comment is collapsed
+    }
+
     let top = Math.round($comment.getBoundingClientRect().top) - timeline_top;
 
     if (shift && top < 0 || !shift && top > 0) {

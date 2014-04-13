@@ -1414,7 +1414,7 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 1.2rem;
 }
 
-:root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"] {
+:root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"][data-nocomment] {
   display: none;
 }
 
@@ -1598,6 +1598,7 @@ article[id$="preview-bug"] > .bug-timeline {
   line-height: 1.5;
 }
 
+:root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"] .changes,
 :root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"] .changes li[data-change-field="cc"] {
   display: none;
 }
