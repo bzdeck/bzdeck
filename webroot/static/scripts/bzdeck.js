@@ -1364,50 +1364,30 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   }
 
   // Attachments
-  for (let attachment of bug.attachments || []) {
-    let $entry = entries[attachment.creation_time],
-        $attachment = $entry.appendChild(document.createElement('aside')),
-        $link = $attachment.appendChild(document.createElement('a')),
-        $caption = $link.appendChild(document.createElement('h5'));
+  for (let att of bug.attachments || []) {
+    // TODO: load the attachment data via API
+    let url = 'https://bug' + bug.id + '.bugzilla.mozilla.org/' + 'attachment.cgi?id=' + att.id,
+        $content = FlareTail.util.template.fill('#timeline-attachment', {
+          'attachment-id': att.id,
+          'url': '/attachment/' + att.id,
+          'description': att.description,
+          'name': att.file_name,
+          'contentSize': att.size,
+          'contentUrl': url,
+          'encodingFormat': att.is_patch ? '' : att.content_type
+        }),
+        $outer = $content.querySelector('div'),
+        $img = $content.querySelector('img');
 
-    $attachment.itemScope = true;
-    $attachment.itemProp.value = 'associatedMedia';
-    $attachment.itemType.value = 'http://schema.org/MediaObject';
-    $attachment.title = [attachment.description, attachment.file_name,
-                         attachment.is_patch ? 'Patch' : attachment.content_type,
-                         (attachment.size / 1024).toFixed(2) + ' KB'].join('\n');
+    $content.firstElementChild.title = [
+      att.description,
+      att.file_name,
+      att.is_patch ? 'Patch' : att.content_type, // l10n
+      (att.size / 1024).toFixed(2) + ' KB' // l10n
+    ].join('\n');
 
-    $link.href = '/attachment/' + attachment.id;
-    $link.setAttribute('data-attachment-id', attachment.id);
-
-    $caption.itemProp.value = 'description';
-    $caption.textContent = attachment.description;
-
-    if (!attachment.is_patch) {
-      let $encoding = $attachment.appendChild(document.createElement('meta'));
-      $encoding.itemProp.value = 'encodingFormat';
-      $encoding.content = attachment.content_type;
-    }
-
-    let $name = $attachment.appendChild(document.createElement('meta'));
-    $name.itemProp.value = 'name';
-    $name.content = attachment.file_name;
-
-    let $size = $attachment.appendChild(document.createElement('meta'));
-    $size.itemProp.value = 'contentSize';
-    $size.content = attachment.size;
-
-    let $url = $attachment.appendChild(document.createElement('meta')),
-        // TODO: load the attachment data via API
-        url = $url.content = 'https://bug' + bug.id + '.bugzilla.mozilla.org/'
-                           + 'attachment.cgi?id=' + attachment.id;
-    $url.itemProp.value = 'contentURL';
-
-    if (attachment.content_type.startsWith('image/')) {
-      let $outer = $link.appendChild(document.createElement('div')),
-          $img = $outer.appendChild(document.createElement('img'));
-
-      $outer.setAttribute('aria-busy', 'true');
+    if (att.content_type.startsWith('image/')) {
+      $img.alt = att.description;
       $img.addEventListener('load', event => {
         $outer.removeAttribute('aria-busy');
         // Force the scrollbar to resize
@@ -1415,9 +1395,15 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       });
 
       if (prefs['ui.timeline.display_attachments_inline'] !== false) {
+        $outer.setAttribute('aria-busy', 'true');
         $img.src = url;
       }
+    } else {
+      // TODO: support other attachment types
+      $outer.remove();
     }
+
+    entries[att.creation_time].appendChild($content);
   }
 
   // Changes

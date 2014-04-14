@@ -88,7 +88,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
         if ($img && !$img.src) {
           $img.parentElement.setAttribute('aria-busy', 'true');
-          $img.src = $attachment.querySelector('[itemprop="contentURL"]').content;
+          $img.src = $attachment.querySelector('[itemprop="contentUrl"]').itemValue;
         }
       }
     }
