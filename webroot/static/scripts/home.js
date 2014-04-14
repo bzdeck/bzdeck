@@ -69,6 +69,7 @@ BzDeck.HomePage = function () {
     })
   },
   {
+    date: { simple: vertical },
     sortable: true,
     reorderable: true,
     sort_conditions: vertical ? { key: 'last_change_time', order: 'descending' }
@@ -230,6 +231,13 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
   grid.options.adjust_scrollbar = !vertical;
+  grid.options.date.simple = vertical;
+
+  // Change the date format on the thread pane
+  for (let $time of grid.view.$container.querySelectorAll('time')) {
+    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { simple: vertical });
+    $time.dataset.simple = vertical;
+  }
 
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',

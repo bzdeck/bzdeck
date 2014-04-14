@@ -309,15 +309,24 @@ BzDeck.bootstrap.setup_ui = function () {
 
   BzDeck.global.show_status('Loading UI...'); // l10n
 
-  let date = FlareTail.util.i18n.options.date,
+  let datetime = FlareTail.util.datetime,
       prefs = BzDeck.data.prefs,
       theme = prefs['ui.theme.selected'],
       FTut = FlareTail.util.theme,
       $root = document.documentElement;
 
-  // Date options
-  date.timezone = prefs['ui.date.timezone'] || 'local';
-  date.format = prefs['ui.date.format'] || 'relative';
+  // Automatically update relative dates on the app
+  datetime.options.updater_enabled = true;
+
+  // Date format
+  let (value = prefs['ui.date.relative']) {
+    datetime.options.relative = value !== undefined ? value : true;
+  }
+
+  // Date timezone
+  let (value = prefs['ui.date.timezone']) {
+    datetime.options.timezone = value || 'local';
+  }
 
   // Timeline: Font
   let (value = prefs['ui.timeline.font.family']) {
@@ -996,8 +1005,7 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     }
 
     if (key.endsWith('_time')) {
-      $element.textContent = FlareTail.util.i18n.format_date(value);
-      $element.dateTime = value;
+      FlareTail.util.datetime.fill_element($element, value, { relative: false });
 
       if (key === 'creation_time') {
         $element.itemProp.value = 'datePublished';
@@ -1105,7 +1113,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   let $placeholder,
       conf_field = BzDeck.data.bugzilla_config.field,
       prefs = BzDeck.data.prefs,
-      i18n = FlareTail.util.i18n;
+      datetime = FlareTail.util.datetime;
 
   // dupe_of
   $placeholder = $content.querySelector('[data-field="resolution"]');
@@ -1219,9 +1227,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $entry.querySelector('[itemprop="creator"] [itemprop="name"]')
             .itemValue = att.attacher.name;
 
-      let $time = $entry.querySelector('[itemprop="uploadDate"]');
-      $time.itemValue = i18n.format_date(att.creation_time);
-      $time.dateTime = att.creation_time;
+      datetime.fill_element($entry.querySelector('[itemprop="uploadDate"]'),
+                            att.creation_time, { relative: false });
 
       let $flags = $entry.querySelector('.flags');
 
@@ -1285,16 +1292,15 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
         if (i === 0) {
           let $cell_when = $row.appendChild(document.createElement('th')),
-              $time = $cell_when.appendChild(document.createElement('time')),
               $cell_who = $row.insertCell(-1);
 
-          $time.datetime = history.change_time;
-          $time.textContent = i18n.format_date(history.change_time);
           $cell_when.dataset.item = 'when';
-
           $cell_who.innerHTML = history.changer.name.replace('@', '&#8203;@');
           $cell_who.dataset.item = 'who';
           $cell_who.rowSpan = $cell_when.rowSpan = history.changes.length;
+
+          datetime.fill_element($cell_when.appendChild(document.createElement('time')),
+                                history.change_time, { relative: false });
         }
 
         let _field = conf_field[change.field_name] ||
@@ -1356,9 +1362,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       }
     }
 
-    let $time = $entry.querySelector('[itemprop="datePublished"]');
-    $time.textContent = i18n.format_date(time);
-    $time.dateTime = time;
+    datetime.fill_element($entry.querySelector('[itemprop="datePublished"]'), time);
 
     entries[time] = $entry;
   }
@@ -1430,9 +1434,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $author = $entry.querySelector('[itemprop="author"]');
       $author.title = $author.querySelector('[itemprop="name"]').itemValue = author.name;
 
-      let $time = $entry.querySelector('[itemprop="datePublished"]');
-      $time.textContent = i18n.format_date(time);
-      $time.dateTime = time;
+      datetime.fill_element($entry.querySelector('[itemprop="datePublished"]'), time);
 
       entries[time] = $entry;
     }

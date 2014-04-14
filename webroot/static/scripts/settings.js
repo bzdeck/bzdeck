@@ -35,25 +35,14 @@ BzDeck.SettingsPage = function () {
 
 BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   let $root = document.documentElement, // <html>
-      i18n = FlareTail.util.i18n,
       activate = this.activate_radiogroup.bind(this);
-
-  let update_date_format = (option, value) => {
-    i18n.options.date[option] = value;
-
-    // Update timezone & format on the current view
-    for (let $element of document.querySelectorAll('time')) {
-      $element.textContent = i18n.format_date($element.dateTime,
-                                              $element.dataset.simple === 'true');
-    }
-  };
 
   // Theme
   activate('theme', 'Light', value => FlareTail.util.theme.selected = value);
 
   // Timezone & Date Format
-  activate('date-timezone', 'local', value => update_date_format('timezone', value));
-  activate('date-format', 'relative', value => update_date_format('format', value));
+  activate('date-timezone', 'local', value => FlareTail.util.datetime.options.timezone = value);
+  activate('date-relative', true, value => FlareTail.util.datetime.options.relative = value);
 
   // Home
   activate('home-layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
