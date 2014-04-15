@@ -993,7 +993,9 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
     return $content;
   }
 
-  let products = BzDeck.data.bugzilla_config.product,
+  let config = BzDeck.data.bugzilla_config,
+      classifications = config.classification,
+      products = config.product,
       strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
 
   for (let $element of $content.querySelectorAll('[data-field]')) {
@@ -1032,6 +1034,12 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
       }
 
       continue;
+    }
+
+    if (key === 'classification') {
+      try {
+        $element.title = strip_tags(classifications[bug.classification].description);
+      } catch (ex) {} // The classification has been renamed or removed
     }
 
     if (key === 'product') {
