@@ -1232,12 +1232,8 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [id|="bug"][role="tablist"] [role="tab"] label {
-  left: 0;
-}
-
-:root[data-device-type|="mobile"] [id|="bug"][role="tablist"] [role="tab"] label {
-  position: static;
   display: block;
+  position: static;
 }
 
 [id|="bug"][role="tablist"] ~ div {
