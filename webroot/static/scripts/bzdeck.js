@@ -1389,7 +1389,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
           'encodingFormat': att.is_patch ? '' : att.content_type
         }),
         $outer = $content.querySelector('div'),
-        $img = $content.querySelector('img');
+        $media,
+        load_event = 'load';
 
     $content.firstElementChild.title = [
       att.description,
@@ -1399,8 +1400,23 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     ].join('\n');
 
     if (att.content_type.startsWith('image/')) {
-      $img.alt = att.description;
-      $img.addEventListener('load', event => {
+      $media = document.createElement('img');
+      $media.alt = att.description;
+    }
+
+    if (att.content_type.match(/^(audio|video)\//)) {
+      $media = document.createElement(RegExp.$1);
+      $media.controls = true;
+      load_event = 'loadedmetadata';
+
+      if ($media.canPlayType(att.content_type) === '') {
+        $media = null; // Cannot play the media
+      }
+    }
+
+    if ($media) {
+      $outer.appendChild($media);
+      $media.addEventListener(load_event, event => {
         $outer.removeAttribute('aria-busy');
         // Force the scrollbar to resize
         FlareTail.util.event.dispatch(window, 'resize');
@@ -1408,7 +1424,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
 
       if (prefs['ui.timeline.display_attachments_inline'] !== false) {
         $outer.setAttribute('aria-busy', 'true');
-        $img.src = url;
+        $media.src = url;
       }
     } else {
       // TODO: support other attachment types

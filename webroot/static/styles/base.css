@@ -1562,13 +1562,13 @@ article[id$="preview-bug"] > .bug-timeline {
   height: 10rem;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] img {
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div * {
   max-width: 100%;
   opacity: 1;
   transition: opacity 1s;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] img {
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] * {
   opacity: 0;
 }
 

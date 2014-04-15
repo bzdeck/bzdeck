@@ -71,13 +71,13 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     $root.setAttribute('data-timeline-display-attachments-inline', String(value));
 
     if (value === true) {
-      // Show images
+      // Show media
       for (let $attachment of document.querySelectorAll('[itemprop="associatedMedia"]')) {
-        let $img = $attachment.querySelector('img');
+        let $media = $attachment.querySelector('img, audio, video');
 
-        if ($img && !$img.src) {
-          $img.parentElement.setAttribute('aria-busy', 'true');
-          $img.src = $attachment.querySelector('[itemprop="contentUrl"]').itemValue;
+        if ($media && !$media.src) {
+          $media.parentElement.setAttribute('aria-busy', 'true');
+          $media.src = $attachment.querySelector('[itemprop="contentUrl"]').itemValue;
         }
       }
     }
