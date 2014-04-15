@@ -24,7 +24,7 @@ body {
   width: 100%;
   height: 100%;
   font-size: 1.1rem;
-  font-family: "Lucida Grande", "Fira Sans", "Fira Sans OT", Roboto, sans-serif;
+  font-family: "Lucida Grande", "Segoe UI", "DejaVu Sans", "Fira Sans", "Fira Sans OT", Roboto, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -51,7 +51,7 @@ p {
 
 pre {
   margin: 0;
-  font-family: Consolas, monospace;
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
   white-space: pre-wrap;
 }
 
@@ -1464,13 +1464,11 @@ article[id$="preview-bug"] > .bug-timeline {
   padding-top: 0 !important;
   font-size: 1.2rem;
   line-height: 1.6;
-  font-family: Consolas, monospace;
-  letter-spacing: -.02ex;
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
 
 :root[data-timeline-font-family="proportional"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
   font-family: inherit;
-  letter-spacing: normal;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] p {
