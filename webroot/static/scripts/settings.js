@@ -64,8 +64,6 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   });
   activate('timeline-show-cc-changes', true, value => {
     $root.setAttribute('data-timeline-show-cc-changes', String(value));
-    // Force the scrollbar to resize
-    FlareTail.util.event.dispatch(window, 'resize');
   });
   activate('timeline-display-attachments-inline', true, value => {
     $root.setAttribute('data-timeline-display-attachments-inline', String(value));

@@ -1363,11 +1363,11 @@ article[id$="preview-bug"] > .bug-timeline {
   left: -9999rem;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > header {
+:root[data-device-type|="mobile"] .bug-timeline > div > header {
   padding: 3.2rem .8rem .8rem;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > header h2 {
+:root[data-device-type|="mobile"] .bug-timeline > div > header h2 {
   display: block;
   padding: 0 0 0 2.8rem;
   font-size: 1.4rem;
@@ -1375,12 +1375,12 @@ article[id$="preview-bug"] > .bug-timeline {
   font-weight: bold;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > header [role="checkbox"] {
+:root[data-device-type|="mobile"] .bug-timeline > div > header [role="checkbox"] {
   margin: -.2rem 0 0 0 !important;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > header h2 [data-field="id"],
-:root[data-device-type|="mobile"] .bug-timeline > header [role="toolbar"] {
+:root[data-device-type|="mobile"] .bug-timeline > div > header h2 [data-field="id"],
+:root[data-device-type|="mobile"] .bug-timeline > div > header [role="toolbar"] {
   display: none;
 }
 

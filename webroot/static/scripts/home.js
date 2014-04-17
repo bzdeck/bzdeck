@@ -38,12 +38,13 @@ BzDeck.HomePage = function () {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
 
-  if (!FlareTail.util.device.touch.enabled) {
-    // Custom scrollbar (info)
-    new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
+  // Custom scrollbar (info)
+  new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
 
-    // Custom scrollbar (timeline)
-    let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+  // Custom scrollbar (timeline)
+  let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
+
+  if (scrollbar) {
     scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
   }
 

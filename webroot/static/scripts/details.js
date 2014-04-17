@@ -79,13 +79,13 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
       _tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
       $header = $tabpanel.querySelector('header'),
-      $timeline = $tabpanel.querySelector('.bug-timeline'),
+      $timeline_content = $tabpanel.querySelector('.bug-timeline .scrollable-area-content'),
       $info_tab = $tabpanel.querySelector('[id$="-tab-info"]'),
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
 
   if (mobile) {
-    $timeline.insertBefore($header, $timeline.firstElementChild);
+    $timeline_content.insertBefore($header, $timeline_content.firstElementChild);
   }
 
   if (phone) {

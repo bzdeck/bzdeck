@@ -108,10 +108,8 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       config = BzDeck.data.bugzilla_config;
 
   // Custom scrollbar
-  if (!FlareTail.util.device.touch.enabled) {
-    for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-      new FlareTail.widget.ScrollBar($outer, true);
-    }
+  for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
+    new FlareTail.widget.ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -371,12 +369,13 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
 
-  if (!FlareTail.util.device.touch.enabled) {
-    // Custom scrollbar (info)
-    new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
+  // Custom scrollbar (info)
+  new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
 
-    // Custom scrollbar (timeline)
-    let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+  // Custom scrollbar (timeline)
+  let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
+
+  if (scrollbar) {
     scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
   }
 };
