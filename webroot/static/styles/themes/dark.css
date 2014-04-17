@@ -624,6 +624,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section {
   border-color: #303030; /* Control Border Color */
+  background-color: #202020; /* Grid Background Color */
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section > h3 {

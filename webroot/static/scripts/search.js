@@ -171,42 +171,26 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     let products = [],
         components = [];
 
-    for (let $option of $classification_list.querySelectorAll('[aria-selected="true"]')) {
-      products.push(...config.classification[$option.textContent].products);
+    for (let classification of event.detail.labels) {
+      products.push(...config.classification[classification].products);
     }
 
     for (let product of products) {
       components.push(...Object.keys(config.product[product].component));
     }
 
-    // Narrow down the product list
-    for (let $option of $product_list.querySelectorAll('[role="option"]')) {
-      $option.setAttribute('aria-selected', 'false');
-      $option.setAttribute('aria-disabled',
-                           products.length && products.indexOf($option.textContent) === -1);
-    }
-
-    // Narrow down the component list
-    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      $option.setAttribute('aria-selected', 'false');
-      $option.setAttribute('aria-disabled',
-                           components.length && components.indexOf($option.textContent) === -1);
-    }
+    product_list.filter(products);
+    component_list.filter(components);
   });
 
   product_list.bind('Selected', event => {
     let components = [];
 
-    for (let $option of $product_list.querySelectorAll('[aria-selected="true"]')) {
-      components.push(...Object.keys(config.product[$option.textContent].component));
+    for (let product of event.detail.labels) {
+      components.push(...Object.keys(config.product[product].component));
     }
 
-    // Narrow down the component list
-    for (let $option of $component_list.querySelectorAll('[role="option"]')) {
-      $option.setAttribute('aria-selected', 'false');
-      $option.setAttribute('aria-disabled',
-                           components.length && components.indexOf($option.textContent) === -1);
-    }
+    component_list.filter(components);
   });
 
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
