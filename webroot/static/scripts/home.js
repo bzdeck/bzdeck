@@ -185,7 +185,7 @@ BzDeck.HomePage = function () {
     set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
-      if (prop === 'preview_id') {
+      if (prop === 'preview_id' && oldval !== newval) {
         FlareTail.util.event.async(() => {
           this.show_preview(oldval, newval);
         });
