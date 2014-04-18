@@ -1888,11 +1888,19 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  let $search_box = document.querySelector('[role="banner"] [role="search"] input'),
+  let $banner = document.querySelector('[role="banner"]'),
+      $search_box = document.querySelector('[role="banner"] [role="search"] input'),
       $search_button = document.querySelector('[role="banner"] [role="search"] [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
   this.search_dropdown = new FlareTail.widget.Menu($search_dropdown);
+
+  let cleanup = () => {
+    this.search_dropdown.close();
+    $banner.classList.remove('search');
+    $search_box.value = '';
+    $search_button.focus();
+  };
 
   let exec_search = () => {
     let page = new BzDeck.SearchPage(),
@@ -1906,6 +1914,8 @@ BzDeck.toolbar.setup = function () {
         'resolution': '---' // Search only open bugs
       });
     }
+
+    cleanup();
   };
 
   window.addEventListener('keydown', event => {
@@ -1915,21 +1925,23 @@ BzDeck.toolbar.setup = function () {
     }
   });
 
-  window.addEventListener('mousedown', event => {
-    if (mobile) {
-      let $banner = document.querySelector('[role="banner"]');
+  window.addEventListener('mousedown', event => cleanup());
+  window.addEventListener('popstate', event => cleanup());
 
-      if ($banner.classList.contains('search')) {
-        $banner.classList.remove('search');
-      }
+  $search_box.addEventListener('input', event => {
+    if (event.target.value.trim()) {
+      this.quicksearch(event);
+    } else {
+      this.search_dropdown.close();
     }
   });
 
-  $search_box.addEventListener('input', event => {
-    this.quicksearch(event);
-  });
-
   $search_box.addEventListener('keydown', event => {
+    if ((event.keyCode === event.DOM_VK_UP || event.keyCode === event.DOM_VK_DOWN) &&
+        event.target.value.trim() && this.search_dropdown.closed) {
+      this.quicksearch(event);
+    }
+
     if (event.keyCode === event.DOM_VK_RETURN) {
       this.search_dropdown.close();
       exec_search();
@@ -1950,11 +1962,10 @@ BzDeck.toolbar.setup = function () {
     event.stopPropagation();
 
     if (mobile) {
-      let $banner = document.querySelector('[role="banner"]');
-
       if (!$banner.classList.contains('search')) {
         $banner.classList.add('search');
-        $search_box.focus();
+        // Somehow moving focus doesn't work, so use the async function here
+        FlareTail.util.event.async(() => $search_box.focus());
       } else if ($search_box.value) {
         exec_search();
       }
@@ -1970,14 +1981,11 @@ BzDeck.toolbar.setup = function () {
 
     if (id) {
       BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(id));
+      cleanup();
     }
 
     if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
       exec_search();
-    }
-
-    if (mobile) {
-      document.querySelector('[role="banner"]').classList.remove('search');
     }
   });
 

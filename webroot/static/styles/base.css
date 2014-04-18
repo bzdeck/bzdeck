@@ -511,19 +511,18 @@ col[data-hidden="false"] {
   height: 2.8rem;
 }
 
-#quicksearch-dropdown {
-  top: 4rem;
-  right: .4rem;
-}
-
 :root[data-device-type="desktop"] #quicksearch-dropdown {
+  top: 3.2rem;
+  right: 4.1rem;
+  min-width: 19.4rem;
   max-width: 40rem;
 }
 
 :root[data-device-type|="mobile"] #quicksearch-dropdown {
+  top: 3.4rem;
+  right: .7rem;
   overflow: auto;
-  width: 100%;
-  max-width: 100%;
+  width: calc(100% - .7rem);
   max-height: 20rem;
 }
 
