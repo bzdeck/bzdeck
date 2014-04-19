@@ -213,7 +213,7 @@ a {
   background-color: #FCFCFC; /* Grid Background Color */
 }
 
-.grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+:root[data-home-layout="classic"] .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
   background-color: #F4F4F4; /* Grid Even Row Background Color */
 }
 
@@ -494,17 +494,14 @@ a {
   border-color: #CCC; /* Grid Border Color */
 }
 
-:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"] {
-  color: #636363 !important; /* Control Foreground Color */
-  background-color: transparent !important;
-}
-
 :root[data-device-type|="mobile"] #home-list .grid-body [role="row"]:active {
   color: #FBFBFB !important; /* Selected Control Foreground Color */
   background-color: #2383C3 !important; /* Selected Control Background Color */
 }
 
+:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"],
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
+  color: inherit;
   background-color: #F4F4F4; /* Secondary Region Background Color */
 }
 
@@ -605,7 +602,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
-  color: #636363; /* Secondary Content Foreground Color */
+  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 256, 192, 192);
 }
 
 .bug-attachments [itemprop="associatedMedia"] {

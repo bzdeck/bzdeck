@@ -213,7 +213,7 @@ a {
   background-color: #202020; /* Grid Background Color */
 }
 
-.grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+:root[data-home-layout="classic"] .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
   background-color: #282828; /* Grid Even Row Background Color */
 }
 
@@ -483,17 +483,14 @@ a {
   border-color: #303030; /* Grid Border Color */
 }
 
-:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"] {
-  color: #939393 !important; /* Control Foreground Color */
-  background-color: transparent !important;
-}
-
 :root[data-device-type|="mobile"] #home-list .grid-body [role="row"]:active {
   color: #FBFBFB !important; /* Selected Control Foreground Color */
   background-color: #1A608F !important; /* Selected Control Background Color */
 }
 
+:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"],
 :root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
+  color: inherit;
   background-color: #282828; /* Secondary Region Background Color */
 }
 
@@ -602,7 +599,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
-  color: #939393; /* Secondary Content Foreground Color */
+  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 256, 192, 192);
 }
 
 .bug-attachments [itemprop="associatedMedia"] {

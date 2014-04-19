@@ -4,17 +4,6 @@
  */
 
 /* ----------------------------------------------------------------------------------------------
- * Fonts
- * ---------------------------------------------------------------------------------------------- */
-
-@font-face {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  src: url(/static/fonts/fontawesome-webfont.woff?v=4.0.3) format('woff');
-}
-
-/* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
 
@@ -269,7 +258,7 @@ col[data-hidden="false"] {
 #app-login [role="textbox"],
 #app-login [role="button"] {
   background-repeat: repeat;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -479,7 +468,7 @@ col[data-hidden="false"] {
 
 :root[data-device-type|="mobile"] [role="banner"] [role="search"] [role="textbox"] {
   display: none;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   line-height: 2rem;
 }
 
@@ -528,7 +517,7 @@ col[data-hidden="false"] {
 
 :root[data-device-type|="mobile"] #quicksearch-dropdown [role="menuitem"] {
   padding: .4rem 1.2rem;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -608,7 +597,7 @@ col[data-hidden="false"] {
   left: calc(-360px + 4rem);
 }
 
-:root[data-device-type|="mobile"] #sidebar > div > section:not(:last-of-type) {
+:root[data-device-type|="mobile"] #sidebar section:not(:last-of-type) {
   margin-bottom: 2rem;
 }
 
@@ -631,7 +620,7 @@ col[data-hidden="false"] {
 
 :root[data-device-type="desktop"] #sidebar [role="option"] {
   padding: .4rem 1.2rem;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 :root[data-device-type|="mobile"] #sidebar :-moz-any([role="option"], [role="menuitem"]) {
@@ -639,7 +628,7 @@ col[data-hidden="false"] {
   border-bottom-style: solid;
   padding: .8rem 1.2rem;
   height: 1.5em;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   line-height: 1.5;
 }
 
@@ -664,7 +653,7 @@ col[data-hidden="false"] {
 }
 
 :root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account label {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 :root[data-device-type|="mobile"] #sidebar-menu #main-menu--app-menu {
@@ -788,7 +777,7 @@ main {
 #main-tabpanels > [role="tabpanel"] > * > header > h2 {
   overflow: hidden;
   padding: 0 8rem 0 .4rem;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   line-height: 3rem;
   font-weight: bold;
   white-space: nowrap;
@@ -1056,17 +1045,12 @@ main {
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="summary"] {
   margin-top: 1.6rem;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   line-height: 1.5;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
   font-weight: bold;
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
-  color: inherit;
-  background-color: transparent;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="last_change_time"] {
@@ -1112,7 +1096,7 @@ article[id$="preview-bug"] > header > [role="checkbox"] {
 article[id$="preview-bug"] > header > h3 {
   overflow: hidden;
   margin-right: .8rem;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   line-height: 3rem;
   font-weight: bold;
   white-space: nowrap;
@@ -1369,7 +1353,7 @@ article[id$="preview-bug"] > .bug-timeline {
 :root[data-device-type|="mobile"] .bug-timeline > div > header h2 {
   display: block;
   padding: 0 0 0 2.8rem;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   line-height: 2rem;
   font-weight: bold;
 }
@@ -1461,7 +1445,7 @@ article[id$="preview-bug"] > .bug-timeline {
 .bug-timeline [itemprop="comment"] [itemprop="text"] {
   overflow: hidden;
   padding-top: 0 !important;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   line-height: 1.6;
   font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
@@ -1525,17 +1509,20 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
   float: left;
-  font-size: 2.4rem;
-  font-family: FontAwesome;
-  content: '\f0c6'; /* fa-paperclip */
+  background-size: cover;
+  content: "";
 }
 
 :root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
-  margin-left: -2.6rem;
+  margin: -.1rem 0 0 -2.7rem;
+  width: 2rem;
+  height: 2rem;
 }
 
 :root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
-  margin-left: -3rem;
+  margin: -.3rem 0 0 -3.3rem;
+  width: 2.4rem;
+  height: 2.4rem;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
@@ -1917,7 +1904,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > h4 {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 #tabpanel-settings > section > div > section > section > ul {
@@ -1930,7 +1917,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 :root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section li {
   margin: .8rem 0;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 
 #tabpanel-settings > section > div > section > section li [role="radio"] {
