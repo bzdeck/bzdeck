@@ -1840,7 +1840,8 @@ BzDeck.toolbar.setup = function () {
       }
 
       case 'toggle-fullscreen': {
-        FTu.app.toggle_fullscreen();
+        // Fullscreen requests from custom events are denied due to Bug 779324. A workaround below
+        // FTu.app.toggle_fullscreen();
         break;
       }
 
@@ -1868,10 +1869,18 @@ BzDeck.toolbar.setup = function () {
 
   $app_menu.setAttribute('aria-expanded', mobile);
 
-  // Somehow scroll doesn't work in the fullscreen mode on mobile
-  if (FTu.app.fullscreen_enabled && !mobile) {
-    // Bug 779324, fullscreen requests from a custom event doesn't work
-    // document.querySelector('#main-menu--app--fullscreen').removeAttribute('aria-hidden');
+  if (FTu.app.fullscreen_enabled) {
+    let ($menuitem = document.querySelector('#main-menu--app--fullscreen')) {
+      $menuitem.removeAttribute('aria-hidden');
+
+      // A workaround for Bug 779324
+      $menuitem.addEventListener('click', event => FTu.app.toggle_fullscreen());
+      $menuitem.addEventListener('keydown', event => {
+        if (event.keyCode === event.DOM_VK_RETURN) {
+          FTu.app.toggle_fullscreen();
+        }
+      });
+    }
   }
 
   let tabs = BzDeck.toolbar.tablist.view,
