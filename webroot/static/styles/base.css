@@ -331,7 +331,7 @@ col[data-hidden="false"] {
   background-position: 0 50%;
   background-size: contain;
   background-repeat: no-repeat;
-  transition: background-position .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transition: background-position .5s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
   content: "";
 }
 
@@ -545,7 +545,7 @@ col[data-hidden="false"] {
   border-right-width: 0;
   width: 100%;
   background-color: rgba(0, 0, 0, .3) !important;
-  transition: background-color .3s;
+  transition: background-color .4s ease .6s; /* Set a delay for the transitioning sidebar */
   pointer-events: auto;
 }
 
@@ -589,7 +589,7 @@ col[data-hidden="false"] {
 :root[data-device-type="mobile-phone"] #sidebar > div {
   right: 4em;
   max-width: calc(360px - 4rem);
-  transition: all .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transition: all .5s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
 :root[data-device-type="mobile-phone"] #sidebar[aria-hidden="true"] > div {
