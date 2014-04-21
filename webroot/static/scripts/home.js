@@ -194,6 +194,25 @@ BzDeck.HomePage = function () {
       obj[prop] = newval;
     }
   });
+
+  window.addEventListener('UI:toggle_star', event => {
+    // Thread
+    for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
+      $row.querySelector('[data-id="_starred"] [role="checkbox"]')
+          .setAttribute('aria-checked', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    }
+
+    // Preview
+    document.querySelector('#home-preview-bug > header > [role="checkbox"]')
+            .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
+  });
+
+  window.addEventListener('UI:toggle_unread', event => {
+    // Thread
+    for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
+      $row.setAttribute('data-unread', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    }
+  });
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {

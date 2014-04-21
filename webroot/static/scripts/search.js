@@ -73,6 +73,22 @@ BzDeck.SearchPage = function () {
 
   tablist.view.selected = tablist.view.$focused = $tab;
   this.view.$tabpanel.focus();
+
+  window.addEventListener('UI:toggle_star', event => {
+    if (!$tabpanel) {
+      return; // The tabpanel has already been destroyed
+    }
+
+    // Thread
+    for (let $row of $tabpanel.querySelectorAll('[id*="result-row"]')) {
+      $row.querySelector('[data-id="_starred"] [role="checkbox"]')
+          .setAttribute('aria-checked', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    }
+
+    // Preview
+    $tabpanel.querySelector('[role="article"] [role="checkbox"][data-field="_starred"]')
+             .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
+  });
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {

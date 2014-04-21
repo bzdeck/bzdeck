@@ -68,6 +68,15 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   if (bug_list.length) {
     this.setup_navigation($tabpanel, bug_list);
   }
+
+  window.addEventListener('UI:toggle_star', event => {
+    if (!$tabpanel) {
+      return; // The tabpanel has already been destroyed
+    }
+
+    $tabpanel.querySelector('[role="checkbox"][data-field="_starred"]')
+             .setAttribute('aria-checked', event.detail.ids.has(bug.id));
+  });
 };
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {

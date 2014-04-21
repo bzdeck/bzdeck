@@ -366,6 +366,28 @@ BzDeck.bootstrap.setup_ui = function () {
   // Update UI & Show a notification
   BzDeck.core.toggle_unread_ui(true);
 
+  window.addEventListener('UI:toggle_unread', event => {
+    let bugs = [...event.detail.bugs];
+
+    if (!event.detail.loaded) {
+      return;
+    }
+
+    if (bugs.length === 0) {
+      BzDeck.global.show_status('No new bugs to download'); // l10n
+      return;
+    }
+
+    bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
+
+    let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
+                                 : 'You have 1 unread bug', // l10n
+        extract = [(bug.id + ' - ' + bug.summary) for (bug of bugs.slice(0, 3))].join('\n');
+
+    BzDeck.global.show_status(status);
+    BzDeck.global.show_notification(status, extract);
+  });
+
   this.finish();
 };
 
@@ -622,7 +644,8 @@ BzDeck.core.toggle_star = function (id, value) {
 BzDeck.core.toggle_star_ui = function () {
   BzDeck.model.get_all_bugs(bugs => {
     FlareTail.util.event.dispatch(window, 'UI:toggle_star', { detail: {
-      bugs: [bug for (bug of bugs) if (bug._starred)]
+      bugs: new Set([bug for (bug of bugs) if (bug._starred)]),
+      ids: new Set([bug.id for (bug of bugs) if (bug._starred)])
     }});
   });
 };
@@ -642,7 +665,8 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs(bugs => {
     FlareTail.util.event.dispatch(window, 'UI:toggle_unread', { detail: {
       loaded: loaded,
-      bugs: [bug for (bug of bugs) if (bug._unread)]
+      bugs: new Set([bug for (bug of bugs) if (bug._unread)]),
+      ids: new Set([bug.id for (bug of bugs) if (bug._unread)])
     }});
   });
 };
@@ -2148,6 +2172,11 @@ BzDeck.sidebar.setup = function () {
       obj[prop] = newval;
     }
   });
+
+  window.addEventListener('UI:toggle_unread', event => {
+    // Update the sidebar Unread folder
+    this.toggle_unread_ui(event.detail.bugs.length);
+  });
 };
 
 BzDeck.sidebar.open_folder = function (folder_id) {
@@ -2435,68 +2464,4 @@ window.addEventListener('popstate', event => {
   $root.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#sidebar-folders--inbox');
-});
-
-window.addEventListener('UI:toggle_star', event => {
-  let ids = new Set([bug.id for (bug of event.detail.bugs)]);
-
-  // Homepage thread
-  for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
-    $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-        .setAttribute('aria-checked', ids.has(Number.parseInt($row.dataset.id)));
-  }
-
-  // Homepage preview
-  document.querySelector('#home-preview-bug > header > [role="checkbox"]')
-          .setAttribute('aria-checked', ids.has(BzDeck.homepage.data.preview_id))
-
-  // Details panels
-  for (let $panel of document.querySelectorAll('[id^="tabpanel-details"][role="tabpanel"]')) {
-    $panel.querySelector('[role="checkbox"][data-field="_starred"]')
-          .setAttribute('aria-checked', ids.has(Number.parseInt($panel.dataset.id)));
-  }
-
-  // Search preview
-  for (let $preview of document.querySelectorAll('[id$="preview-bug"][role="article"]')) {
-    $preview.querySelector('[role="checkbox"][data-field="_starred"]')
-            .setAttribute('aria-checked', ids.has(Number.parseInt($preview.dataset.id)));
-  }
-
-  // Search thread
-  for (let $row of document.querySelectorAll('[id*="result-row"]')) {
-    $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-        .setAttribute('aria-checked', ids.has(Number.parseInt($row.dataset.id)));
-  }
-});
-
-window.addEventListener('UI:toggle_unread', event => {
-  let bugs = event.detail.bugs,
-      ids = new Set([bug.id for (bug of bugs)]),
-      num = bugs.length;
-
-  // Homepage thread
-  for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
-    $row.setAttribute('data-unread', ids.has(Number.parseInt($row.dataset.id)));
-  }
-
-  // Update the sidebar Unread folder
-  BzDeck.sidebar.toggle_unread_ui(num);
-
-  if (!event.detail.loaded) {
-    return;
-  }
-
-  if (num === 0) {
-    BzDeck.global.show_status('No new bugs to download'); // l10n
-    return;
-  }
-
-  bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-
-  let status = num > 1 ? 'You have %d unread bugs'.replace('%d', num)
-                       : 'You have 1 unread bug', // l10n
-      extract = [(bug.id + ' - ' + bug.summary) for (bug of bugs.slice(0, 3))].join('\n');
-
-  BzDeck.global.show_status(status);
-  BzDeck.global.show_notification(status, extract);
 });
