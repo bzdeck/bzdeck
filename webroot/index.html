@@ -390,12 +390,14 @@
         <h1>BzDeck</h1>
       </header>
       <div>
-        <p>BzDeck is a useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA. <a href="/about/">Learn more</a>.</p>
-        <form aria-hidden="true">
-          <p>Provide your Bugzilla user name to get started. (<a href="/faq/">Why?</a>)</p>
-          <p><input type="email" placeholder="bugzilla@example.org" required role="textbox"><button role="button">Sign in</button></p>
-        </form>
-        <p role="status">This application requires <a href="http://www.mozilla.org/firefox/">Firefox</a> with JavaScript enabled.</p>
+        <div>
+          <p id="app-intro">BzDeck is a useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA. <a href="/about/">Learn more</a>.</p>
+          <form aria-hidden="true">
+            <p>Provide your Bugzilla user name to get started. (<a href="/faq/">Why?</a>)</p>
+            <p><input type="email" placeholder="bugzilla@example.org" required role="textbox"><button role="button">Sign in</button></p>
+          </form>
+          <p role="status">This application requires <a href="http://www.mozilla.org/firefox/">Firefox</a> with JavaScript enabled.</p>
+        </div>
       </div>
     </section><!-- end #app-login -->
     <section id="app-body" aria-hidden="true">

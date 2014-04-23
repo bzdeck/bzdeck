@@ -439,6 +439,9 @@ BzDeck.core.load_subscriptions = function () {
         this.fetch_subscriptions(subscriptions);
       });
 
+      // Hide the app intro copy from existing users
+      document.querySelector('#app-intro').style.display = 'none';
+
       return;
     }
 
