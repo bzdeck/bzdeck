@@ -2318,6 +2318,10 @@ window.addEventListener('drop', event => {
   event.preventDefault();
 });
 
+window.addEventListener('wheel', event => {
+  event.preventDefault();
+});
+
 window.addEventListener('click', event => {
   let $target = event.target;
 
