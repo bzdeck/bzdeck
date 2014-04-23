@@ -62,7 +62,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('timeline-font-family', 'monospace', value => {
     $root.setAttribute('data-timeline-font-family', value);
   });
-  activate('timeline-show-cc-changes', true, value => {
+  activate('timeline-show-cc-changes', false, value => {
     $root.setAttribute('data-timeline-show-cc-changes', String(value));
   });
   activate('timeline-display-attachments-inline', true, value => {

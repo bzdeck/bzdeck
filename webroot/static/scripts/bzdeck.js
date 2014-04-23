@@ -335,7 +335,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Timeline: Changes
   let (value = prefs['ui.timeline.show_cc_changes']) {
-    $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : true);
+    $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
   }
 
   // Timeline: Attachments
