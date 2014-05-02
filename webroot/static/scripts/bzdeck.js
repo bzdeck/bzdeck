@@ -1857,6 +1857,11 @@ BzDeck.toolbar.setup = function () {
         BzDeck.session.logout();
         break;
       }
+
+      case 'quit': {
+        window.close();
+        break;
+      }
     }
   });
 
@@ -1884,6 +1889,11 @@ BzDeck.toolbar.setup = function () {
         }
       });
     }
+  }
+
+  // Show the Quit menu item if the app runs on WebAppRT
+  if (!window.locationbar.visible) {
+    document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
   }
 
   let tabs = BzDeck.toolbar.tablist.view,
