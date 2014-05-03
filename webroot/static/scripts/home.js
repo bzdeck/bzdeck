@@ -277,3 +277,11 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
     cond.order = 'descending';
   }
 };
+
+BzDeck.HomePage.prototype.change_window_title = function (title) {
+  document.title = title;
+  document.querySelector('[role="banner"] h1').textContent = title;
+  document.querySelector('#tab-home').title = title;
+  document.querySelector('#tab-home label').textContent = title;
+  document.querySelector('#tabpanel-home h2').textContent = title;
+};

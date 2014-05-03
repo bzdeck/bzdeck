@@ -369,6 +369,14 @@ BzDeck.bootstrap.setup_ui = function () {
   window.addEventListener('UI:toggle_unread', event => {
     let bugs = [...event.detail.bugs];
 
+    if ($root.getAttribute('data-current-tab') === 'home') {
+      let unread_num = [bug for (bug of BzDeck.homepage.data.bug_list) if (bug._unread)].length;
+
+      BzDeck.homepage.change_window_title(
+        document.title.replace(/(\s\(\d+\))?$/, unread_num ? ' (' + unread_num + ')' : '')
+      );
+    }
+
     if (!event.detail.loaded) {
       return;
     }
@@ -1827,8 +1835,12 @@ BzDeck.toolbar.setup = function () {
       history.pushState({}, title, path);
     }
 
-    document.title = title;
-    document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
+    if (path.startsWith('/home/')) {
+      BzDeck.HomePage.prototype.change_window_title(document.querySelector('#tab-home').title);
+    } else {
+      document.title = title;
+      document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
+    }
   });
 
   new FTw.MenuBar(document.querySelector('#main-menu'));
@@ -2213,6 +2225,12 @@ BzDeck.sidebar.open_folder = function (folder_id) {
       BzDeck.global.update_grid_data(grid, bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
+
+    let unread_num = [bug for (bug of bugs) if (bug._unread)].length;
+
+    if (unread_num > 0) {
+      BzDeck.homepage.change_window_title(document.title += ' (' + unread_num + ')');
+    }
   };
 
   let get_subscribed_bugs = callback => {
@@ -2237,20 +2255,15 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
   }
 
+  let folder_label = [f for (f of this.folder_data) if (f.data.id === folder_id)][0].label,
+      folder_path = '/home/' + folder_id;
+
   // Change the window title and the tab label
-  let folder_label = [f for (f of this.folder_data) if (f.data.id === folder_id)][0].label;
-
-  document.title = folder_label;
-  document.querySelector('[role="banner"] h1').textContent
-    = document.querySelector('#tab-home').title
-    = document.querySelector('#tab-home label').textContent
-    = document.querySelector('#tabpanel-home h2').textContent = folder_label;
-
-  let path = '/home/' + folder_id;
+  BzDeck.homepage.change_window_title(folder_label);
 
   // Save history
-  if (location.pathname !== path) {
-    history.pushState({}, folder_label, path);
+  if (location.pathname !== folder_path) {
+    history.pushState({}, folder_label, folder_path);
   }
 
   if (folder_id === 'inbox') {
