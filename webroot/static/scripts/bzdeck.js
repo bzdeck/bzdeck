@@ -515,7 +515,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
 BzDeck.core.load_bugs = function (subscriptions) {
   let boot = BzDeck.bootstrap.processing,
       cached_time = {},
-      requesting_bugs = [];
+      requesting_bugs = new Map();
 
   BzDeck.global.show_status('Loading bugs...'); // l10n
 
@@ -553,13 +553,13 @@ BzDeck.core.load_bugs = function (subscriptions) {
       for (let bug of sub.bugs) {
         let cache = cached_time[bug.id];
 
-        if ((!cache || bug.last_change_time > cache) && requesting_bugs.indexOf(bug.id) === -1) {
-          requesting_bugs.push(bug.id);
+        if (!cache || bug.last_change_time > cache) {
+          requesting_bugs.set(bug.id, bug);
         }
       }
     }
 
-    if (requesting_bugs.length > 0) {
+    if (requesting_bugs.size > 0) {
       _retrieve();
     } else if (boot) {
       BzDeck.bootstrap.setup_ui();
@@ -571,14 +571,18 @@ BzDeck.core.load_bugs = function (subscriptions) {
   let opt = BzDeck.options,
       default_fields = opt.api.default_fields
                      = [id for ({ id } of opt.grid.default_columns) if (!id.startsWith('_'))],
-      query = { include_fields: default_fields.join() },
+      extra_fields = opt.api.extra_fields,
+      // Fetch only the default fields for firstrun to load faster
+      query = { include_fields: this.firstrun ? default_fields.join()
+                                              : [...default_fields, ...extra_fields].join() },
+      ignore_cc_changes = BzDeck.data.prefs['notifications.ignore_cc_changes'] !== false,
       loaded_bugs = [];
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = () => {
     // Load 100 bugs each
-    for (let i = 0, len = requesting_bugs.length; i < len; i += 100) {
-      query.id = requesting_bugs.slice(i, i + 100).join();
+    for (let i = 0, len = requesting_bugs.size; i < len; i += 100) {
+      query.id = [...requesting_bugs.keys()].slice(i, i + 100).join();
 
       this.request('GET', 'bug' + FlareTail.util.request.build_query(query), data => {
         if (!data || !Array.isArray(data.bugs)) {
@@ -589,8 +593,46 @@ BzDeck.core.load_bugs = function (subscriptions) {
         }
 
         for (let bug of data.bugs) {
-          bug._update_needed = true; // Flag to update details
-          bug._unread = !this.firstrun; // If the session is firstrun, mark all bugs read
+          if (this.firstrun) {
+            bug._unread = false; // Mark all bugs read if the session is firstrun
+            bug._update_needed = true; // Flag to update details
+            continue;
+          }
+
+          let cache = requesting_bugs.get(bug.id);
+
+          bug._starred = cache._starred || false; // Copy the annotation
+          bug._update_needed = false;
+
+          // Mark the bug unread if the user subscribes CC changes or the bug is already unread
+          if (!ignore_cc_changes || cache._unread || !cache._last_viewed) {
+            bug._unread = true;
+            continue;
+          }
+
+          // Mark the bug unread if there are unread comments
+          if ([c for (c of bug.comments) if (c.creation_time > cache.last_change_time)].length) {
+            bug._unread = true;
+            continue;
+          }
+
+          // Mark the bug unread if there are unread attachments
+          if (bug.attachments &&
+              [a for (a of bug.attachments) if (a.creation_time > cache.last_change_time)].length) {
+            bug._unread = true;
+            continue;
+          }
+
+          // Mark the bug unread if there are unread non-CC changes
+          if (bug.history &&
+              [h for (h of bug.history) if (history.change_time > cache.last_change_time &&
+              [c for (c of history.changes) if (c.field_name !== 'cc')].length)].length) {
+            bug._unread = true;
+            continue;
+          }
+
+          // Looks like there are only CC changes, so mark the bug read
+          bug._unread = false;
         }
 
         loaded_bugs.push(...data.bugs);

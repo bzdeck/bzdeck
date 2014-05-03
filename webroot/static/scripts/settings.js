@@ -44,6 +44,9 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('date-timezone', 'local', value => FlareTail.util.datetime.options.timezone = value);
   activate('date-relative', true, value => FlareTail.util.datetime.options.relative = value);
 
+  // Notifications
+  activate('notifications-ignore-cc-changes', true);
+
   // Home
   activate('home-layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
 
