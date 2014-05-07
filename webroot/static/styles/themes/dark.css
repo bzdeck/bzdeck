@@ -567,7 +567,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   border-color: #303030; /* Control Border Color */
 }
 
-.bug-timeline [itemprop="comment"] {
+.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   border-color: #303030; /* Secondary Region Border Color */
   color: #BBB; /* Content Foreground Color */
   background-color: #202020; /* Content Background Color */

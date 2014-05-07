@@ -570,7 +570,7 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
   border-color: #CCC; /* Control Border Color */
 }
 
-.bug-timeline [itemprop="comment"] {
+.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   border-color: #CCC; /* Secondary Region Border Color */
   color: #434343; /* Content Foreground Color */
   background-color: #FCFCFC; /* Content Background Color */

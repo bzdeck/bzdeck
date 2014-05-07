@@ -106,11 +106,6 @@ BzDeck.HomePage = function () {
       }
 
       let data = this.view.grid.data;
-
-      // Mark as Read
-      for (let $item of event.detail.items) {
-        data.rows[$item.sectionRowIndex].data._unread = false;
-      }
     }
   });
 
@@ -239,6 +234,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
     // Fill the content
     BzDeck.global.fill_template($template, bug);
+    BzDeck.core.toggle_unread(bug.id, false);
     $template.setAttribute('aria-hidden', 'false');
     button.data.disabled = false;
   });

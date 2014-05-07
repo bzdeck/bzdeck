@@ -55,12 +55,15 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     for (let $timeline of document.querySelectorAll('.bug-timeline')) {
       $timeline.setAttribute('aria-busy', 'true');
 
-      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"]')].reverse()) {
+      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"], \
+                                                           .read-comments-expander')].reverse()) {
         $comment.parentElement.appendChild($comment);
       }
 
       $timeline.removeAttribute('aria-busy');
     }
+
+    $root.setAttribute('data-timeline-sort-order', value);
   });
   activate('timeline-font-family', 'monospace', value => {
     $root.setAttribute('data-timeline-font-family', value);

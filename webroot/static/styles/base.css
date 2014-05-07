@@ -1378,17 +1378,25 @@ article[id$="preview-bug"] > .bug-timeline {
   display: none;
 }
 
-.bug-timeline [itemprop="comment"] {
+.bug-timeline .read-comments-expander {
+  display: block;
+  border-radius: 0;
+  padding: 1.2rem;
+  height: auto;
+  text-align: center;
+}
+
+.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   position: relative;
   border-width: 0 0 .1rem;
   border-style: solid;
 }
 
-:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] {
+:root[data-device-type="mobile-phone"] .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   margin: 0 .8rem .8rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   margin: 0 1.2rem 1.2rem;
 }
 
@@ -1400,6 +1408,8 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 1.2rem;
 }
 
+:root[data-timeline-sort-order="ascending"] .bug-timeline[data-hide-read-comments] [itemprop="comment"][data-unread="false"]:not(:last-of-type),
+:root[data-timeline-sort-order="descending"] .bug-timeline[data-hide-read-comments] [itemprop="comment"][data-unread="false"]:not(:first-of-type),
 :root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"][data-nocomment] {
   display: none;
 }

@@ -333,6 +333,11 @@ BzDeck.bootstrap.setup_ui = function () {
     $root.setAttribute('data-timeline-font-family', value || 'monospace');
   }
 
+  // Timeline: Sort order
+  let (value = prefs['ui.timeline.sort.order']) {
+    $root.setAttribute('data-timeline-sort-order', value || 'ascending');
+  }
+
   // Timeline: Changes
   let (value = prefs['ui.timeline.show_cc_changes']) {
     $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
@@ -761,13 +766,13 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
     let bug = cache.get(id);
 
     if (bug) {
+      callback(bug);
+
       if (record_time) {
         bug._last_viewed = Date.now();
         cache.set(id, bug);
         store.put(bug);
       }
-
-      callback(bug);
 
       return;
     }
@@ -775,6 +780,8 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
 
   store.get(id).addEventListener('success', event => {
     let bug = event.target.result;
+
+    callback(bug);
 
     if (bug && record_time) {
       bug._last_viewed = Date.now();
@@ -785,8 +792,6 @@ BzDeck.model.get_bug_by_id = function (id, callback, record_time = true) {
 
       store.put(bug); // Save
     }
-
-    callback(bug);
   });
 };
 
@@ -1170,7 +1175,8 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   BzDeck.global.show_status('Loading...'); // l10n
 
   // Empty timeline while keeping the template and scrollbar
-  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"]')) {
+  for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], \
+                                                   .read-comments-expander')) {
     $comment.remove();
   }
 
@@ -1591,12 +1597,13 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     }
   }
 
-  let sort_order = prefs['ui.timeline.sort.order'] || 'ascending',
+  let sort_desc = prefs['ui.timeline.sort.order'] === 'descending',
+      read_entries_num = 0,
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
   // Sort by time
   entries = [{ time: key, $element: value } for ([key, value] of [...Iterator(entries)])]
-    .sort((a, b) => sort_order === 'descending' ? a.time < b.time : a.time > b.time);
+    .sort((a, b) => sort_desc ? a.time < b.time : a.time > b.time);
 
   // Append to the timeline
   for (let entry of entries) {
@@ -1608,6 +1615,36 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     $entry.querySelector('header').addEventListener('click', event => {
       $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
     });
+
+    // Collapse read comments
+    if (bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
+      if (!$entry.mozMatchesSelector('[data-changes="cc"][data-nocomment]')) {
+        read_entries_num++;
+      }
+
+      $entry.setAttribute('data-unread', 'false');
+    } else {
+      $entry.setAttribute('data-unread', 'true');
+    }
+  }
+
+  // Show an expander if there are read comments
+  if (read_entries_num > 1) {
+    let ($expander = document.createElement('div')) {
+      $expander.textContent = read_entries_num === 2
+                            ? '1 older comment'
+                            : '%d older comments'.replace('%d', read_entries_num - 1);
+      $expander.className = 'read-comments-expander';
+      $expander.tabIndex = 0;
+      $expander.setAttribute('role', 'button');
+      $expander.addEventListener('click', event => {
+        $timeline.removeAttribute('data-hide-read-comments');
+        $timeline.focus();
+        $expander.remove();
+      });
+      $timeline.setAttribute('data-hide-read-comments', 'true');
+      $parent.insertBefore($expander, sort_desc ? null : $parent.firstElementChild);
+    }
   }
 
   $timeline.scrollTop = 0;
