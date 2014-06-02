@@ -28,7 +28,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
   };
 
   if (bug_list.length) {
-    this.open([bug for (bug of bug_list) if (bug.id === id)][0], bug_list);
+    this.open([for (bug of bug_list) if (bug.id === id) bug][0], bug_list);
 
     return;
   }
@@ -151,7 +151,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
-      bugs = [id for ({ id } of bug_list)],
+      bugs = [for (bug of bug_list) bug.id],
       index = bugs.indexOf(this.data.id),
       prev = bugs[index - 1],
       next = bugs[index + 1],
@@ -178,7 +178,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   };
 
   let change_button_tooltip = (id, button) => {
-    let bug = [bug for (bug of bug_list) if (bug.id === id)][0];
+    let bug = [for (bug of bug_list) if (bug.id === id) bug][0];
 
     if (bug) {
       button.view.$button.title = 'Bug ' + bug.id + '\n' + bug.summary; // l10n
@@ -218,12 +218,12 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   BzDeck.global.show_status('Loading...'); // l10n
 
   let api = BzDeck.options.api,
-      query = FlareTail.util.request.build_query({
-        include_fields: [...api.default_fields, ...api.extra_fields].join(),
-        exclude_fields: 'attachments.data'
-      });
+      params = new URLSearchParams();
 
-  BzDeck.core.request('GET', 'bug/' + id + query, bug => {
+  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
+  params.append('exclude_fields', 'attachments.data');
+
+  BzDeck.core.request('GET', 'bug/' + id + '?' + params.toString(), bug => {
     if (!bug || !bug.id) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
 
@@ -248,12 +248,12 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
 BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
   let api = BzDeck.options.api,
-      query = FlareTail.util.request.build_query({
-        include_fields: [...api.default_fields, ...api.extra_fields].join(),
-        exclude_fields: 'attachments.data'
-      });
+      params = new URLSearchParams();
 
-  BzDeck.core.request('GET', 'bug/' + id + query, bug => {
+  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
+  params.append('exclude_fields', 'attachments.data');
+
+  BzDeck.core.request('GET', 'bug/' + id + '?' + params.toString(), bug => {
     if (bug && bug.id) {
       BzDeck.model.save_bug(bug);
     }
@@ -311,7 +311,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
         return;
       }
 
-      let bugs = [bug.id for (bug of BzDeck.detailspage.data.bug_list)],
+      let bugs = [for (bug of BzDeck.detailspage.data.bug_list) bug.id],
           index = bugs.indexOf(BzDeck.detailspage.data.id);
 
       this.initialized = true;

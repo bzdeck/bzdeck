@@ -96,7 +96,8 @@ BzDeck.bootstrap.check_requirements = function () {
     'Notification' in window, // Firefox 22
     'remove' in Element.prototype, // Firefox 23
     'parseInt' in Number, // Firefox 25
-    'createTBody' in HTMLTableElement.prototype // Firefox 25
+    'createTBody' in HTMLTableElement.prototype, // Firefox 25
+    'URLSearchParams' in window // Firefox 29
   ];
 
   try {
@@ -114,6 +115,9 @@ BzDeck.bootstrap.check_requirements = function () {
 
     // Spread operation in function calls (Firefox 27)
     [0, 1, 2].push(...[3, 4, 5]);
+
+    // ES6 Array comprehensions (Firefox 30)
+    [for (item of Iterator(['a', 'b', 'c'])) if (item[0] === 1) item[1]];
   } catch (ex) {
     return false;
   }
@@ -375,7 +379,7 @@ BzDeck.bootstrap.setup_ui = function () {
     let bugs = [...event.detail.bugs];
 
     if ($root.getAttribute('data-current-tab') === 'home') {
-      let unread_num = [bug for (bug of BzDeck.homepage.data.bug_list) if (bug._unread)].length;
+      let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
 
       BzDeck.homepage.change_window_title(
         document.title.replace(/(\s\(\d+\))?$/, unread_num ? ' (' + unread_num + ')' : '')
@@ -395,7 +399,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
     let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
                                  : 'You have 1 unread bug', // l10n
-        extract = [(bug.id + ' - ' + bug.summary) for (bug of bugs.slice(0, 3))].join('\n');
+        extract = [for (bug of bugs.slice(0, 3)) bug.id + ' - ' + bug.summary].join('\n');
 
     BzDeck.global.show_status(status);
     BzDeck.global.show_notification(status, extract);
@@ -438,14 +442,14 @@ BzDeck.core.load_subscriptions = function () {
     if (subscriptions.length) {
       BzDeck.model.get_all_bugs(bugs => {
         // List all starred bugs to check the last modified dates
-        let ids = [bug.id for (bug of bugs) if (bug._starred)];
+        let ids = [for (bug of bugs) if (bug._starred) bug.id];
 
         if (ids.length) {
           subscriptions.push({ query: { id: ids.join() } });
         }
 
         // needinfo? migration
-        if ([sub.id for (sub of subscriptions)].indexOf('needinfo') === -1) {
+        if ([for (sub of subscriptions) sub.id].indexOf('needinfo') === -1) {
           subscriptions.push(needinfo_sub);
         }
 
@@ -493,10 +497,16 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
 
   // Load bug list from Bugzilla
   for (let [i, sub] of Iterator(subscriptions)) {
-    let index = i; // Redefine the variable to make it available in the following event
-    sub.query['include_fields'] = 'id,last_change_time';
+    let index = i, // Redefine the variable to make it available in the following event
+        params = new URLSearchParams();
 
-    this.request('GET', 'bug' + FlareTail.util.request.build_query(sub.query), data => {
+    for (let [key, value] of Iterator(sub.query)) {
+      params.append(key, value);
+    }
+
+    params.append('include_fields', 'id,last_change_time');
+
+    this.request('GET', 'bug?' + params.toString(), data => {
       if (!data || !Array.isArray(data.bugs)) {
         // Give up
         BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -575,21 +585,26 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
   let opt = BzDeck.options,
       default_fields = opt.api.default_fields
-                     = [id for ({ id } of opt.grid.default_columns) if (!id.startsWith('_'))],
+                     = [for (column of opt.grid.default_columns)
+                        if (!column.id.startsWith('_')) column.id],
       extra_fields = opt.api.extra_fields,
-      // Fetch only the default fields for firstrun to load faster
-      query = { include_fields: this.firstrun ? default_fields.join()
-                                              : [...default_fields, ...extra_fields].join() },
+      params = new URLSearchParams(),
       ignore_cc_changes = BzDeck.data.prefs['notifications.ignore_cc_changes'] !== false,
       loaded_bugs = [];
+
+  // Fetch only the default fields for firstrun to load faster
+  params.append('include_fields', this.firstrun ? default_fields.join()
+                                                : [...default_fields, ...extra_fields].join());
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = () => {
     // Load 100 bugs each
     for (let i = 0, len = requesting_bugs.size; i < len; i += 100) {
-      query.id = [...requesting_bugs.keys()].slice(i, i + 100).join();
+      let _params = new URLSearchParams(params);
 
-      this.request('GET', 'bug' + FlareTail.util.request.build_query(query), data => {
+      _params.append('id', [...requesting_bugs.keys()].slice(i, i + 100).join());
+
+      this.request('GET', 'bug?' + _params.toString(), data => {
         if (!data || !Array.isArray(data.bugs)) {
           // Give up
           BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -616,22 +631,22 @@ BzDeck.core.load_bugs = function (subscriptions) {
           }
 
           // Mark the bug unread if there are unread comments
-          if ([c for (c of bug.comments) if (c.creation_time > cache.last_change_time)].length) {
+          if ([for (c of bug.comments) if (c.creation_time > cache.last_change_time) c].length) {
             bug._unread = true;
             continue;
           }
 
           // Mark the bug unread if there are unread attachments
           if (bug.attachments &&
-              [a for (a of bug.attachments) if (a.creation_time > cache.last_change_time)].length) {
+              [for (a of bug.attachments) if (a.creation_time > cache.last_change_time) a].length) {
             bug._unread = true;
             continue;
           }
 
           // Mark the bug unread if there are unread non-CC changes
           if (bug.history &&
-              [h for (h of bug.history) if (history.change_time > cache.last_change_time &&
-              [c for (c of history.changes) if (c.field_name !== 'cc')].length)].length) {
+              [for (h of bug.history) if (history.change_time > cache.last_change_time &&
+              [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length) {
             bug._unread = true;
             continue;
           }
@@ -657,13 +672,13 @@ BzDeck.core.load_bugs = function (subscriptions) {
 };
 
 BzDeck.core.load_bug_details = function (ids, callback = null) {
-  let query = {
-    id: ids.join(),
-    include_fields: 'id,' + BzDeck.options.api.extra_fields.join(),
-    exclude_fields: 'attachments.data'
-  };
+  let params = new URLSearchParams();
 
-  this.request('GET', 'bug' + FlareTail.util.request.build_query(query), data => {
+  params.append('id', ids.join());
+  params.append('include_fields', 'id,' + BzDeck.options.api.extra_fields.join());
+  params.append('exclude_fields', 'attachments.data');
+
+  this.request('GET', 'bug?' + params.toString(), data => {
     if (!data) {
       // Give up
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -702,8 +717,8 @@ BzDeck.core.toggle_star = function (id, value) {
 BzDeck.core.toggle_star_ui = function () {
   BzDeck.model.get_all_bugs(bugs => {
     FlareTail.util.event.dispatch(window, 'UI:toggle_star', { detail: {
-      bugs: new Set([bug for (bug of bugs) if (bug._starred)]),
-      ids: new Set([bug.id for (bug of bugs) if (bug._starred)])
+      bugs: new Set([for (bug of bugs) if (bug._starred) bug]),
+      ids: new Set([for (bug of bugs) if (bug._starred) bug.id])
     }});
   });
 };
@@ -723,8 +738,8 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs(bugs => {
     FlareTail.util.event.dispatch(window, 'UI:toggle_unread', { detail: {
       loaded: loaded,
-      bugs: new Set([bug for (bug of bugs) if (bug._unread)]),
-      ids: new Set([bug.id for (bug of bugs) if (bug._unread)])
+      bugs: new Set([for (bug of bugs) if (bug._unread) bug]),
+      ids: new Set([for (bug of bugs) if (bug._unread) bug.id])
     }});
   });
 };
@@ -800,14 +815,14 @@ BzDeck.model.get_bugs_by_ids = function (ids, callback) {
       ids = [...ids]; // Accept both an Array and a Set as the first argument
 
   if (cache) {
-    callback([bug for ([id, bug] of [...cache]) if (ids.indexOf(id) > -1)]);
+    callback([for (c of [...cache]) if (ids.indexOf(c[0]) > -1) c[1]]);
 
     return;
   }
 
   this.db.transaction('bugs').objectStore('bugs')
                              .mozGetAll().addEventListener('success', event => {
-    callback([bug for (bug of event.target.result) if (ids.indexOf(bug.id) > -1)]);
+    callback([for (bug of event.target.result) if (ids.indexOf(bug.id) > -1) bug]);
   });
 };
 
@@ -815,7 +830,7 @@ BzDeck.model.get_all_bugs = function (callback) {
   let cache = this.cache.bugs;
 
   if (cache) {
-    callback([bug for ([id, bug] of [...cache])]); // Convert Map to Array
+    callback([for (c of [...cache]) c[1]]); // Convert Map to Array
 
     return;
   }
@@ -827,7 +842,7 @@ BzDeck.model.get_all_bugs = function (callback) {
     callback(bugs);
 
     if (bugs && !cache) {
-      this.cache.bugs = new Map([[bug.id, bug] for (bug of bugs)]);
+      this.cache.bugs = new Map([for (bug of bugs) [bug.id, bug]]);
     }
   });
 };
@@ -856,13 +871,16 @@ BzDeck.model.save_bugs = function (bugs, callback = () => {}) {
 };
 
 BzDeck.model.fetch_bugs_by_ids = function (ids, callback) {
-  let query = { id: [...ids].join(), include_fields: BzDeck.options.api.default_fields.join() };
+  let params = new URLSearchParams();
 
-  if (!query.id.length) {
+  if (![...ids].length) {
     return;
   }
 
-  BzDeck.core.request('GET', 'bug' + FlareTail.util.request.build_query(query), data => {
+  params.append('id', [...ids].join());
+  params.append('include_fields', BzDeck.options.api.default_fields.join());
+
+  BzDeck.core.request('GET', 'bug?' + params.toString(), data => {
     if (data && Array.isArray(data.bugs)) {
       this.save_bugs(data.bugs);
       callback(data.bugs);
@@ -891,7 +909,7 @@ BzDeck.model.get_all_subscriptions = function (callback) {
   let cache = this.cache.subscriptions;
 
   if (cache) {
-    callback([sub for ([id, sub] of [...cache])]); // Convert Map to Array
+    callback([for (c of [...cache]) c[1]]); // Convert Map to Array
 
     return;
   }
@@ -1570,7 +1588,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       return $elm;
     };
 
-    $entry.dataset.changes = [change.field_name for (change of history.changes)].join(' ');
+    $entry.dataset.changes = [for (change of history.changes) change.field_name].join(' ');
 
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li')),
@@ -1602,7 +1620,7 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
   // Sort by time
-  entries = [{ time: key, $element: value } for ([key, value] of [...Iterator(entries)])]
+  entries = [for (entry of [...Iterator(entries)]) { time: entry[0], $element: entry[1] }]
     .sort((a, b) => sort_desc ? a.time < b.time : a.time > b.time);
 
   // Append to the timeline
@@ -1652,8 +1670,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
   BzDeck.global.show_status('');
 
   // Add tooltips to the related bugs
-  let (related_bug_ids = new Set([Number.parseInt($element.getAttribute('data-bug-id'))
-                                  for ($element of $content.querySelectorAll('[data-bug-id]'))])) {
+  let (related_bug_ids = new Set([for ($element of $content.querySelectorAll('[data-bug-id]'))
+                                  Number.parseInt($element.getAttribute('data-bug-id'))])) {
     let add_tooltops = bugs => {
       for (let bug of bugs) {
         if (bug.summary) {
@@ -1672,8 +1690,8 @@ BzDeck.global.fill_template_details = function ($content, bug) {
       BzDeck.model.get_bugs_by_ids(related_bug_ids, bugs => {
         add_tooltops(bugs);
 
-        let found_bug_ids = new Set([bug.id for (bug of bugs)]),
-            lookup_bug_ids = new Set([id for (id of related_bug_ids) if (!found_bug_ids.has(id))]);
+        let found_bug_ids = new Set([for (bug of bugs) bug.id]),
+            lookup_bug_ids = new Set([for (id of related_bug_ids) if (!found_bug_ids.has(id)) id]);
 
         if (lookup_bug_ids.size) {
           BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids, bugs => add_tooltops(bugs));
@@ -1726,7 +1744,7 @@ BzDeck.global.update_grid_data = function (grid, bugs) {
         if (prop === '_unread') {
           BzDeck.core.toggle_unread(obj.id, value);
 
-          let row = [row for (row of grid.data.rows) if (row.data.id === obj.id)][0];
+          let row = [for (row of grid.data.rows) if (row.data.id === obj.id) row][0];
 
           if (row && row.$element) {
             row.$element.dataset.unread = value;
@@ -2133,7 +2151,7 @@ BzDeck.toolbar.setup = function () {
 };
 
 BzDeck.toolbar.quicksearch = function (event) {
-  let words = [word.toLowerCase() for (word of event.target.value.trim().split(/\s+/))];
+  let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()];
 
   BzDeck.model.get_all_bugs(bugs => {
     let results = bugs.filter(bug => {
@@ -2305,7 +2323,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 
-    let unread_num = [bug for (bug of bugs) if (bug._unread)].length;
+    let unread_num = [for (bug of bugs) if (bug._unread) bug].length;
 
     if (unread_num > 0) {
       BzDeck.homepage.change_window_title(document.title += ' (' + unread_num + ')');
@@ -2318,7 +2336,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
       for (let sub of subscriptions) {
         // Remove duplicates
-        ids.push(...[id for ({ id } of sub.bugs) if (ids.indexOf(id) === -1)]);
+        ids.push(...[for (bug of sub.bugs) if (ids.indexOf(bug.id) === -1) bug.id]);
       }
 
       BzDeck.model.get_bugs_by_ids(ids, bugs => {
@@ -2334,7 +2352,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
   }
 
-  let folder_label = [f for (f of this.folder_data) if (f.data.id === folder_id)][0].label,
+  let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,
       folder_path = '/home/' + folder_id;
 
   // Change the window title and the tab label
@@ -2354,7 +2372,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
   if (folder_id.match(/^(cc|reported|assigned|qa|needinfo)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
-      BzDeck.model.get_bugs_by_ids([id for ({ id } of sub.bugs)], bugs => {
+      BzDeck.model.get_bugs_by_ids([for (bug of sub.bugs) bug.id], bugs => {
         update_list(bugs);
       });
     });
@@ -2369,21 +2387,21 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs(bugs => {
-      update_list([bug for (bug of bugs) if (bug._starred)]);
+      update_list([for (bug of bugs) if (bug._starred) bug]);
     });
   }
 
   if (folder_id === 'unread') {
     // Unread bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs(bugs => {
-      update_list([bug for (bug of bugs) if (bug._unread)]);
+      update_list([for (bug of bugs) if (bug._unread) bug]);
     });
   }
 
   if (folder_id === 'important') {
     get_subscribed_bugs(bugs => {
       let severities = ['blocker', 'critical', 'major'];
-      update_list([bug for (bug of bugs) if (severities.indexOf(bug.severity) > -1)]);
+      update_list([for (bug of bugs) if (severities.indexOf(bug.severity) > -1) bug]);
     });
   }
 };
@@ -2542,7 +2560,7 @@ window.addEventListener('popstate', event => {
       bug_list = BzDeck.detailspage.data.bug_list;
 
       if (bug_list.length) {
-        let bugs = [id for ({ id } of bug_list)],
+        let bugs = [for (bug of bug_list) bug.id],
             index = bugs.indexOf(BzDeck.detailspage.data.id);
 
         if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {

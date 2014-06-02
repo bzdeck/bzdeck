@@ -37,7 +37,7 @@ BzDeck.SearchPage = function () {
           bugs[bug.id] = bug;
         }
 
-        return [bugs[row.data.id] for (row of this.view.grid.data.rows)];
+        return [for (row of this.view.grid.data.rows) bugs[row.data.id]];
       }
 
       return obj[prop];
@@ -151,7 +151,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let components = [];
 
   for (let [key, { component: cs }] of Iterator(config.product)) {
-    components.push(...[c for (c of Object.keys(cs)) if (components.indexOf(c) === -1)]);
+    components.push(...[for (c of Object.keys(cs)) if (components.indexOf(c) === -1) c]);
   }
 
   components = components.sort().map((value, index) => {
@@ -213,7 +213,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
   button.bind('Pressed', event => {
-    let query = {},
+    let params = new URLSearchParams(),
         map = {
           classification: $classification_list,
           product: $product_list,
@@ -223,19 +223,17 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
         };
 
     for (let [name, list] of Iterator(map)) {
-      let values = [$opt.textContent for ($opt of list.querySelectorAll('[aria-selected="true"]'))];
-
-      if (values.length) {
-        query[name] = values;
+      for (let $opt of list.querySelectorAll('[aria-selected="true"]')) {
+        params.append(name, $opt.textContent);
       }
     }
 
     if ($textbox.value) {
-      query['summary'] = $textbox.value;
-      query['summary_type'] = 'contains_all';
+      params.append('summary', $textbox.value);
+      params.append('summary_type', 'contains_all');
     }
 
-    this.exec_search(query);
+    this.exec_search(params);
   });
 };
 
@@ -411,15 +409,14 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
   });
 };
 
-BzDeck.SearchPage.prototype.exec_search = function (query) {
+BzDeck.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
     BzDeck.global.show_status('You have to go online to search bugs.'); // l10n
     return;
   }
 
   // Specify fields
-  query['include_fields'] = BzDeck.options.api.default_fields.join();
-  query = FlareTail.util.request.build_query(query);
+  params.append('include_fields', BzDeck.options.api.default_fields.join());
 
   BzDeck.global.show_status('Loading...'); // l10n
 
@@ -430,7 +427,7 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
 
-  BzDeck.core.request('GET', 'bug' + query, data => {
+  BzDeck.core.request('GET', 'bug?' + params.toString(), data => {
     if (!data || !Array.isArray(data.bugs)) {
       $grid_body.removeAttribute('aria-busy');
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -446,8 +443,8 @@ BzDeck.SearchPage.prototype.exec_search = function (query) {
 
       // Save data
       BzDeck.model.get_all_bugs(bugs => {
-        let saved_ids = new Set([id for ({ id } of bugs)]);
-        BzDeck.model.save_bugs([bug for (bug of data.bugs) if (!saved_ids.has(bug.id))]);
+        let saved_ids = new Set([for (bug of bugs) bug.id]);
+        BzDeck.model.save_bugs([for (bug of data.bugs) if (!saved_ids.has(bug.id)) bug]);
       });
 
       // Show results

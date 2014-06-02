@@ -172,7 +172,7 @@ BzDeck.HomePage = function () {
           bugs[bug.id] = bug;
         }
 
-        return [bugs[row.data.id] for (row of this.view.grid.data.rows)];
+        return [for (row of this.view.grid.data.rows) bugs[row.data.id]];
       }
 
       return obj[prop];

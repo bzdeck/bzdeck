@@ -78,7 +78,7 @@ del a {
 
 [role="button"],
 [role="textbox"] {
-  -moz-box-sizing: content-box;
+  box-sizing: content-box;
   border-width: .1rem;
   border-style: solid;
   border-radius: .4rem;
@@ -470,7 +470,7 @@ col[data-hidden="false"] {
 
 [role="banner"] [role="search"] [role="textbox"] {
   position: absolute;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: .1rem;
   padding: .4rem 3.2rem .4rem .8rem;
   width: 100%;
@@ -539,7 +539,7 @@ col[data-hidden="false"] {
   top: 4rem;
   z-index: 200;
   overflow: hidden;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: 0 .1rem 0 0;
   border-style: solid;
 }
@@ -768,7 +768,7 @@ main {
   overflow: hidden;
   position: absolute;
   left: -9999rem; /* Usually hide the header */
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: .1rem 0;
   border-style: solid;
   width: 100%;
@@ -823,7 +823,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] > li > [role="button"] {
   position: relative;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
 }
@@ -1127,7 +1127,7 @@ article[id$="preview-bug"] > header > h3 [data-field="id"]::after {
 article[id$="preview-bug"] > div {
   position: absolute;
   bottom: 0;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   overflow: hidden;
   pointer-events: auto;
 }
@@ -1262,7 +1262,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type|="mobile"] [id|="bug"][role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > .scrollable {
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   padding-top: 3.2rem;
 }
 
@@ -1272,7 +1272,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-info {
   overflow: hidden;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: 0 .1rem 0 0;
   border-style: solid;
 }
@@ -1770,7 +1770,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section {
   float: left;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: 0 .1rem 0 0;
   border-style: solid;
   width: 20%;
@@ -1808,7 +1808,7 @@ article[id$="preview-bug"] > .bug-timeline {
 [id|="tabpanel-search"] [id$="basic-search-pane"] .text-box {
   position: relative;
   overflow: hidden;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-width: .1rem 0;
   border-style: solid;
   height: 5.8rem;
