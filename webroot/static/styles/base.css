@@ -804,7 +804,7 @@ main {
 }
 
 :root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
-  left: -9999rem;
+  height: 0; /* left:-9999rem will lead to a buggy position:sticky rendering on Firefox OS (Bug 999021) */
 }
 
 #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] {
