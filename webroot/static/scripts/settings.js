@@ -48,6 +48,8 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
 
   $input.value = BzDeck.data.account.token || '';
   $input.addEventListener('input', event => {
+    $output.textContent = '';
+
     if ($input.value.length !== 10) {
       return;
     }
@@ -56,7 +58,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
     params.append('userid', userid);
     params.append('cookie', $input.value);
 
-    $output.textContent = 'Validating...';
+    $output.textContent = 'Verifying...'; // l10n
 
     BzDeck.core.request('GET', 'user/' + userid + '?' + params.toString(), user => {
       if (user.id) {
@@ -66,10 +68,10 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
                        .objectStore('accounts').put(BzDeck.data.account);
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
-        $output.textContent = 'Validated';
+        $output.textContent = 'Verified'; // l10n
       } else {
         $input.setAttribute('aria-invalid', 'true');
-        $output.textContent = 'Invalid, try again';
+        $output.textContent = 'Invalid, try again'; // l10n
       }
     });
   });
