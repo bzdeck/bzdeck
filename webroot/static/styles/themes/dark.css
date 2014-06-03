@@ -654,12 +654,22 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
  * Settings
  * ---------------------------------------------------------------------------------------------- */
 
-#tabpanel-settings > section > div > section h3 {
+:root[data-device-type="desktop"] #settings-tablist,
+:root[data-device-type="desktop"] #settings-tablist [role="tab"] {
+  border-color: #303030; /* Secondary Region Border Color */
+}
+
+:root[data-device-type="desktop"] #settings-tablist [role="tab"][aria-selected="true"] {
+  color: #BBB; /* Inactive Selected Control Foreground Color */
+  background-color: #303030; /* Inactive Selected Control Background Color */
+}
+
+[id^="settings-tabpanel"] > section h3 {
   color: #C3C3C3; /* Secondary Region Header Foreground Color */
   background-color: #343434; /* Secondary Region Header Background Color */
 }
 
-#tabpanel-settings > section > div > section > section {
+[id^="settings-tabpanel"] > section > section {
   border-color: #303030; /* Secondary Region Border Color */
 }
 

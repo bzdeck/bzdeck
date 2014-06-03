@@ -28,6 +28,11 @@ BzDeck.SettingsPage = function () {
 
   tablist.view.selected = tablist.view.$focused = $tab;
 
+  // Activate tabs
+  if (FlareTail.util.device.type === 'desktop') {
+    new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
+  }
+
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
   this.activate_radiogroups();

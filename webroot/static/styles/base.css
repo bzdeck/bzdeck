@@ -1883,69 +1883,106 @@ article[id$="preview-bug"] > .bug-timeline {
 :root[data-device-type="desktop"] #tabpanel-settings > section > div {
   overflow: hidden;
   padding: 0 4rem;
-  -moz-column-count: 2;
-  -moz-column-gap: 4rem;
 }
 
 :root[data-device-type|="mobile"] #tabpanel-settings > section > div {
   overflow: auto;
   padding: 0;
   pointer-events: auto;
-  -moz-column-count: auto;
 }
 
-:root[data-device-type="desktop"] #tabpanel-settings > section > div > section {
-  margin-top: 4rem;
-  page-break-inside: avoid;
+:root[data-device-type="desktop"] #settings-tablist {
+  position: absolute;
+  top: 4rem;
+  left: 4rem;
+  border-width: .1rem 0 0;
+  border-style: solid;
+  width: 20rem;
 }
 
-:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section {
-  margin: 0;
+:root[data-device-type="desktop"] #settings-tablist [role="tab"] {
+  width: 100%;
+  height: auto;
+  border-width: 0 0 .1rem;
+  padding: .8rem 1.2rem;
 }
 
-#tabpanel-settings > section > div > section > h3 {
-  padding: .4rem 1.2rem;
+:root[data-device-type="desktop"] #settings-tablist [role="tab"] label {
+  position: static;
+}
+
+:root[data-device-type|="mobile"] #settings-tablist {
+  display: none;
+}
+
+:root[data-device-type="desktop"] [id^="settings-tabpanel"] {
+  top: 4rem;
+  right: 4rem;
+  bottom: 4rem;
+  left: 28rem;
+  width: auto;
+  height: auto; 
+}
+
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"],
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"] > * {
+  position: relative;
+  height: auto; 
+}
+
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"][aria-hidden="true"] {
+  display: block;
+}
+
+[id^="settings-tabpanel"] > section > * {
+  position: relative;
+  height: auto;
+}
+
+[id^="settings-tabpanel"] > section > h3 {
+  padding: 1.2rem;
   height: 1.4rem;
+  font-size: 1.25rem;
   line-height: 1.4rem;
 }
 
-#tabpanel-settings > section > div > section > section {
+[id^="settings-tabpanel"] > section > section {
   border-width: 0 0 .1rem;
   border-style: solid;
   padding: 1.6rem 1.2rem;
 }
 
-#tabpanel-settings > section > div > section > section:last-of-type {
+[id^="settings-tabpanel"] > section > section:last-of-type {
   border-width: 0;
 }
 
-#tabpanel-settings > section > div > section > section > h4 {
+[id^="settings-tabpanel"] > section > section > h4 {
   float: left;
   width: calc(50% - 1em);
 }
 
-:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > h4 {
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"] > section > section > h4 {
   font-size: 1.25rem;
 }
 
-#tabpanel-settings > section > div > section > section > ul {
+[id^="settings-tabpanel"] > section > section > ul {
   margin-left: 50%;
 }
 
-:root[data-device-type="desktop"] #tabpanel-settings > section > div > section > section li {
+:root[data-device-type="desktop"] [id^="settings-tabpanel"] > section > section li {
   margin: .4rem 0;
 }
 
-:root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section li {
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"] > section > section li {
   margin: .8rem 0;
   font-size: 1.5rem;
 }
 
-#tabpanel-settings > section > div > section > section li [role="radio"] {
+[id^="settings-tabpanel"] > section > section li [role="radio"] {
   line-height: 1.8rem;
 }
 
-#tabpanel-settings > section > div > section > section li [role="radio"]::before {
+[id^="settings-tabpanel"] > section > section li [role="radio"]::before {
   width: 1.8rem;
   height: 1.8rem;
   background-position: center;

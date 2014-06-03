@@ -286,85 +286,102 @@
             <h2>Settings</h2>
           </header>
           <div>
-            <section>
-              <h3>User Interface</h3>
+            <ul id="settings-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
+              <li id="settings-tab-design" role="tab" aria-controls="settings-tabpanel-design" aria-selected="true"><label>Design</label></li>
+              <li id="settings-tab-datetime" role="tab" aria-controls="settings-tabpanel-datetime" aria-selected="false"><label>Date &amp; Time</label></li>
+              <li id="settings-tab-notifications" role="tab" aria-controls="settings-tabpanel-notifications" aria-selected="false"><label>Notifications</label></li>
+              <li id="settings-tab-home" role="tab" aria-controls="settings-tabpanel-home" aria-selected="false"><label>Home</label></li>
+              <li id="settings-tab-timeline" role="tab" aria-controls="settings-tabpanel-timeline" aria-selected="false"><label>Timeline</label></li>
+            </ul><!-- end #settings-tablist -->
+            <div id="settings-tabpanel-design" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="settings-tab-design">
               <section>
-                <h4>Theme</h4>
-                <ul id="tabpanel-settings-setting-theme" role="radiogroup" data-pref="ui.theme.selected">
-                  <li><span role="radio" data-value="Light">Light</span></li>
-                  <li><span role="radio" data-value="Dark">Dark</span></li>
-                </ul>
+                <h3>Design</h3>
+                <section>
+                  <h4>Theme</h4>
+                  <ul id="tabpanel-settings-setting-theme" role="radiogroup" data-pref="ui.theme.selected">
+                    <li><span role="radio" data-value="Light">Light</span></li>
+                    <li><span role="radio" data-value="Dark">Dark</span></li>
+                  </ul>
+                </section>
               </section>
-            </section>
-            <section>
-              <h3>Date &amp; Time</h3>
+            </div><!-- end #settings-tabpanel-design -->
+            <div id="settings-tabpanel-datetime" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-datetime">
               <section>
-                <h4>Timezone</h4>
-                <ul id="tabpanel-settings-setting-date-timezone" role="radiogroup" data-pref="ui.date.timezone">
-                  <li><span role="radio" data-value="local">Your Local Time</span></li>
-                  <li><span role="radio" data-value="UTC">UTC</span></li>
-                  <li><span role="radio" data-value="PST">PST/PDT</span></li>
-                </ul>
+                <h3>Date &amp; Time</h3>
+                <section>
+                  <h4>Timezone</h4>
+                  <ul id="tabpanel-settings-setting-date-timezone" role="radiogroup" data-pref="ui.date.timezone">
+                    <li><span role="radio" data-value="local">Your Local Time</span></li>
+                    <li><span role="radio" data-value="UTC">UTC</span></li>
+                    <li><span role="radio" data-value="PST">PST/PDT</span></li>
+                  </ul>
+                </section>
+                <section>
+                  <h4>Date Format</h4>
+                  <ul id="tabpanel-settings-setting-date-relative" role="radiogroup" data-pref="ui.date.relative" data-type="boolean">
+                    <li><span role="radio" data-value="true">Relative</span></li>
+                    <li><span role="radio" data-value="false">Absolute</span></li>
+                  </ul>
+                </section>
               </section>
+            </div><!-- end #settings-tabpanel-datetime -->
+            <div id="settings-tabpanel-notifications" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-notifications">
               <section>
-                <h4>Date Format</h4>
-                <ul id="tabpanel-settings-setting-date-relative" role="radiogroup" data-pref="ui.date.relative" data-type="boolean">
-                  <li><span role="radio" data-value="true">Relative</span></li>
-                  <li><span role="radio" data-value="false">Absolute</span></li>
-                </ul>
+                <h3>Notifications</h3>
+                <section>
+                  <h4>CC Changes</h4>
+                  <ul id="tabpanel-settings-setting-notifications-ignore-cc-changes" role="radiogroup" data-pref="notifications.ignore_cc_changes" data-type="boolean">
+                    <li><span role="radio" data-value="true">Ignore</span></li>
+                    <li><span role="radio" data-value="false">Include</span></li>
+                  </ul>
+                </section>
               </section>
-            </section>
-            <section>
-              <h3>Notifications</h3>
+            </div><!-- end #settings-tabpanel-notifications -->
+            <div id="settings-tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-home">
               <section>
-                <h4>CC Changes</h4>
-                <ul id="tabpanel-settings-setting-notifications-ignore-cc-changes" role="radiogroup" data-pref="notifications.ignore_cc_changes" data-type="boolean">
-                  <li><span role="radio" data-value="true">Ignore</span></li>
-                  <li><span role="radio" data-value="false">Include</span></li>
-                </ul>
+                <h3>Home</h3>
+                <section>
+                  <h4>Desktop Layout</h4>
+                  <ul id="tabpanel-settings-setting-home-layout" role="radiogroup" data-pref="ui.home.layout">
+                    <li><span role="radio" data-value="vertical">Vertical View</span></li>
+                    <li><span role="radio" data-value="classic">Classic View</span></li>
+                  </ul>
+                </section>
               </section>
-            </section>
-            <section>
-              <h3>Home</h3>
+            </div><!-- end #settings-tabpanel-home -->
+            <div id="settings-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-timeline">
               <section>
-                <h4>Desktop Layout</h4>
-                <ul id="tabpanel-settings-setting-home-layout" role="radiogroup" data-pref="ui.home.layout">
-                  <li><span role="radio" data-value="vertical">Vertical View</span></li>
-                  <li><span role="radio" data-value="classic">Classic View</span></li>
-                </ul>
+                <h3>Timeline</h3>
+                <section>
+                  <h4>Sort Order</h4>
+                  <ul id="tabpanel-settings-setting-timeline-order" role="radiogroup" data-pref="ui.timeline.sort.order">
+                    <li><span role="radio" data-value="ascending">Ascending</span></li>
+                    <li><span role="radio" data-value="descending">Descending</span></li>
+                  </ul>
+                </section>
+                <section>
+                  <h4>Font</h4>
+                  <ul id="tabpanel-settings-setting-timeline-font-family" role="radiogroup" data-pref="ui.timeline.font.family">
+                    <li><span role="radio" data-value="monospace">Monospace</span></li>
+                    <li><span role="radio" data-value="proportional">Proportional</span></li>
+                  </ul>
+                </section>
+                <section>
+                  <h4>CC Changes</h4>
+                  <ul id="tabpanel-settings-setting-timeline-show-cc-changes" role="radiogroup" data-pref="ui.timeline.show_cc_changes" data-type="boolean">
+                    <li><span role="radio" data-value="true">Show</span></li>
+                    <li><span role="radio" data-value="false">Hide</span></li>
+                  </ul>
+                </section>
+                <section>
+                  <h4>Image Attachments</h4>
+                  <ul id="tabpanel-settings-setting-timeline-display-attachments-inline" role="radiogroup" data-pref="ui.timeline.display_attachments_inline" data-type="boolean">
+                    <li><span role="radio" data-value="true">Show Inline</span></li>
+                    <li><span role="radio" data-value="false">Hide</span></li>
+                  </ul>
+                </section>
               </section>
-            </section>
-            <section>
-              <h3>Timeline</h3>
-              <section>
-                <h4>Sort Order</h4>
-                <ul id="tabpanel-settings-setting-timeline-order" role="radiogroup" data-pref="ui.timeline.sort.order">
-                  <li><span role="radio" data-value="ascending">Ascending</span></li>
-                  <li><span role="radio" data-value="descending">Descending</span></li>
-                </ul>
-              </section>
-              <section>
-                <h4>Font</h4>
-                <ul id="tabpanel-settings-setting-timeline-font-family" role="radiogroup" data-pref="ui.timeline.font.family">
-                  <li><span role="radio" data-value="monospace">Monospace</span></li>
-                  <li><span role="radio" data-value="proportional">Proportional</span></li>
-                </ul>
-              </section>
-              <section>
-                <h4>CC Changes</h4>
-                <ul id="tabpanel-settings-setting-timeline-show-cc-changes" role="radiogroup" data-pref="ui.timeline.show_cc_changes" data-type="boolean">
-                  <li><span role="radio" data-value="true">Show</span></li>
-                  <li><span role="radio" data-value="false">Hide</span></li>
-                </ul>
-              </section>
-              <section>
-                <h4>Image Attachments</h4>
-                <ul id="tabpanel-settings-setting-timeline-display-attachments-inline" role="radiogroup" data-pref="ui.timeline.display_attachments_inline" data-type="boolean">
-                  <li><span role="radio" data-value="true">Show Inline</span></li>
-                  <li><span role="radio" data-value="false">Hide</span></li>
-                </ul>
-              </section>
-            </section>
+            </div><!-- end #settings-tabpanel-timeline -->
           </div>
           <footer>
           </footer>
