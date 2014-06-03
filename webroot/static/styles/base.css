@@ -1559,6 +1559,10 @@ article[id$="preview-bug"] > .bug-timeline {
   display: block;
 }
 
+.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] a * {
+  pointer-events: none;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
   line-height: 1.8rem;
 }
