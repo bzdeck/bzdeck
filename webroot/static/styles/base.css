@@ -1965,17 +1965,30 @@ article[id$="preview-bug"] > .bug-timeline {
   font-size: 1.25rem;
 }
 
-[id^="settings-tabpanel"] > section > section > ul {
+[id^="settings-tabpanel"] > section > section > h4 ~ * {
   margin-left: 50%;
 }
 
-:root[data-device-type="desktop"] [id^="settings-tabpanel"] > section > section li {
+:root[data-device-type="desktop"] [id^="settings-tabpanel"] > section > section > ul li {
   margin: .4rem 0;
 }
 
-:root[data-device-type|="mobile"] [id^="settings-tabpanel"] > section > section li {
+:root[data-device-type|="mobile"] [id^="settings-tabpanel"] > section > section > ul li {
   margin: .8rem 0;
   font-size: 1.5rem;
+}
+
+[id^="settings-tabpanel"] > section > section > h4 ~ :-moz-any(p, ol) {
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+[id^="settings-tabpanel"] > section > section > ol {
+  padding-left: 3rem;
+}
+
+[id^="settings-tabpanel"] > section > section > ol li {
+  list-style-type: decimal;
 }
 
 [id^="settings-tabpanel"] > section > section li [role="radio"] {
@@ -1988,6 +2001,18 @@ article[id$="preview-bug"] > .bug-timeline {
   background-position: center;
   background-size: 80%;
   background-repeat: no-repeat;
+}
+
+#tabpanel-settings-account-token {
+  width: 7rem;
+  text-align: center;
+}
+
+#tabpanel-settings-account-token + span {
+  display: inline-block;
+  padding: .4rem .8rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
 }
 
 /* ----------------------------------------------------------------------------------------------

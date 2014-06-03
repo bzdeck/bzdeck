@@ -33,9 +33,46 @@ BzDeck.SettingsPage = function () {
     new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
   }
 
+  // Activate token input
+  this.activate_token_input();
+
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
   this.activate_radiogroups();
+};
+
+BzDeck.SettingsPage.prototype.activate_token_input = function () {
+  let userid = BzDeck.data.account.id,
+      $input = document.querySelector('#tabpanel-settings-account-token'),
+      $output = $input.nextElementSibling;
+
+  $input.value = BzDeck.data.account.token || '';
+  $input.addEventListener('input', event => {
+    if ($input.value.length !== 10) {
+      return;
+    }
+
+    let params = new URLSearchParams();
+    params.append('userid', userid);
+    params.append('cookie', $input.value);
+
+    $output.textContent = 'Validating...';
+
+    BzDeck.core.request('GET', 'user/' + userid + '?' + params.toString(), user => {
+      if (user.id) {
+        // Save the token
+        BzDeck.data.account.token = $input.value;
+        BzDeck.model.db.transaction('accounts', 'readwrite')
+                       .objectStore('accounts').put(BzDeck.data.account);
+        // Update the view
+        $input.setAttribute('aria-invalid', 'false');
+        $output.textContent = 'Validated';
+      } else {
+        $input.setAttribute('aria-invalid', 'true');
+        $output.textContent = 'Invalid, try again';
+      }
+    });
+  });
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
