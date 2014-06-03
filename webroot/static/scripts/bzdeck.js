@@ -334,7 +334,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Timeline: Font
   let (value = prefs['ui.timeline.font.family']) {
-    $root.setAttribute('data-timeline-font-family', value || 'monospace');
+    $root.setAttribute('data-timeline-font-family', value || 'proportional');
   }
 
   // Timeline: Sort order

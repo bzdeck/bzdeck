@@ -1468,11 +1468,10 @@ article[id$="preview-bug"] > .bug-timeline {
   padding-top: 0 !important;
   font-size: 1.25rem;
   line-height: 1.6;
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
 
-:root[data-timeline-font-family="proportional"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
-  font-family: inherit;
+:root[data-timeline-font-family="monospace"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] p {

@@ -107,7 +107,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
     $root.setAttribute('data-timeline-sort-order', value);
   });
-  activate('timeline-font-family', 'monospace', value => {
+  activate('timeline-font-family', 'proportional', value => {
     $root.setAttribute('data-timeline-font-family', value);
   });
   activate('timeline-show-cc-changes', false, value => {
