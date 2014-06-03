@@ -4,6 +4,31 @@
  */
 
 /* ----------------------------------------------------------------------------------------------
+ * Fonts
+ * ---------------------------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: FiraSans;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/static/fonts/FiraSans-Regular.woff?v=3.107) format('woff');
+}
+
+@font-face {
+  font-family: FiraSans;
+  font-weight: 500;
+  font-style: normal;
+  src: url(/static/fonts/FiraSans-Medium.woff?v=3.107) format('woff');
+}
+
+@font-face {
+  font-family: FiraMono;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/static/fonts/FiraMono-Regular.woff?v=3.107) format('woff');
+}
+
+/* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
 
@@ -12,8 +37,8 @@ body {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  font-size: 1.1rem;
-  font-family: "Lucida Grande", "Segoe UI", "DejaVu Sans", "Fira Sans", "Fira Sans OT", Roboto, sans-serif;
+  font-size: 1.2rem;
+  font-family: FiraSans, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -40,7 +65,7 @@ p {
 
 pre {
   margin: 0;
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
+  font-family: FiraMono, monospace;
   white-space: pre-wrap;
 }
 
@@ -54,6 +79,14 @@ th {
 
 img, input {
   vertical-align: top;
+}
+
+strong {
+  font-weight: 500;
+}
+
+code, kbd {
+  font-family: FiraMono, monospace;
 }
 
 :link, button {
@@ -622,7 +655,7 @@ col[data-hidden="false"] {
   border-bottom-width: .2rem;
   border-bottom-style: solid;
   padding: .4rem 1.2rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 #sidebar-folder-list {
@@ -790,7 +823,7 @@ main {
   padding: 0 8rem 0 .4rem;
   font-size: 1.5rem;
   line-height: 3rem;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -976,8 +1009,12 @@ main {
   width: 1.9rem;
 }
 
+.bug-list [role="row"] {
+  font-size: 1.1rem;
+}
+
 .bug-list [role="row"][data-unread="true"] {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 :root[data-device-type|="mobile"] .bug-list [role="row"][data-unread="true"] {
@@ -1052,6 +1089,7 @@ main {
   position: absolute;
   top: 1rem;
   left: .8rem;
+  font-size: 1.1rem;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="summary"] {
@@ -1061,13 +1099,14 @@ main {
 }
 
 :root[data-home-layout="vertical"] #home-list [role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="last_change_time"] {
   position: absolute;
   top: 1rem;
   right: .8rem;
+  font-size: 1.1rem;
 }
 
 :root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] {
@@ -1109,7 +1148,7 @@ article[id$="preview-bug"] > header > h3 {
   margin-right: .8rem;
   font-size: 1.5rem;
   line-height: 3rem;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
   pointer-events: auto;
@@ -1213,6 +1252,8 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: .6rem .8rem;
   width: auto;
   height: 2.4rem;
+  font-size: 1.1rem;
+  line-height: 2rem;
   text-align: center;
   vertical-align: middle;
 }
@@ -1280,6 +1321,7 @@ article[id$="preview-bug"] > .bug-timeline {
 .bug-info h3 {
   padding: .4rem 1.2rem;
   height: 1.4rem;
+  font-size: 1.1rem;
   line-height: 1.4rem;
 }
 
@@ -1366,7 +1408,7 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 0 0 0 2.8rem;
   font-size: 1.5rem;
   line-height: 2rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 :root[data-device-type|="mobile"] .bug-timeline > div > header [role="checkbox"] {
@@ -1383,6 +1425,7 @@ article[id$="preview-bug"] > .bug-timeline {
   border-radius: 0;
   padding: 1.2rem;
   height: auto;
+  font-size: 1.1rem;
   text-align: center;
 }
 
@@ -1423,6 +1466,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline [itemprop="comment"] header .meta {
   overflow: hidden;
+  font-size: 1.1rem;
   line-height: 1.5rem;
 }
 
@@ -1450,7 +1494,7 @@ article[id$="preview-bug"] > .bug-timeline {
   display: block;
   overflow: hidden;
   padding-top: .5rem;
-  font-weight: bold;
+  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -1471,7 +1515,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-timeline-font-family="monospace"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
+  font-family: FiraMono, monospace;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] p {
@@ -1595,6 +1639,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline [itemprop="comment"] .changes li {
   margin: .4rem 0;
+  font-size: 1.1rem;
   line-height: 1.5;
 }
 
@@ -1774,6 +1819,7 @@ article[id$="preview-bug"] > .bug-timeline {
   border-style: solid;
   width: 20%;
   height: 16.2rem;
+  font-size: 1.1rem;
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section:last-of-type {
@@ -2031,6 +2077,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 #app-body > footer [role="status"] {
   margin: .8rem;
+  font-size: 1.1rem;
   line-height: 1.6rem;
 }
 
