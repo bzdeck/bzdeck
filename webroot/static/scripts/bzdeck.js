@@ -1212,14 +1212,14 @@ BzDeck.global.fill_template = function ($template, bug, clone = false) {
   } else {
     // Load comments, history, flags and attachments' metadata
     BzDeck.core.load_bug_details([bug.id], bug => {
-      this.fill_template_details($content, bug);
+      this.fill_template_details($content, bug, true);
     });
   }
 
   return $content;
 };
 
-BzDeck.global.fill_template_details = function ($content, bug) {
+BzDeck.global.fill_template_details = function ($content, bug, delayed = false) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
   if (!$content || Number.parseInt($content.dataset.id) !== bug.id) {
@@ -1644,7 +1644,9 @@ BzDeck.global.fill_template_details = function ($content, bug) {
     });
 
     // Collapse read comments
-    if (bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
+    // If the fill_template_details function is called after the bug details are fetched,
+    // the _last_viewed annotation is already true, so check the delayed argument here
+    if (!delayed && bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
       if (!$entry.mozMatchesSelector('[data-changes="cc"][data-nocomment]')) {
         read_entries_num++;
       }
@@ -1670,7 +1672,12 @@ BzDeck.global.fill_template_details = function ($content, bug) {
         $expander.remove();
       });
       $timeline.setAttribute('data-hide-read-comments', 'true');
-      $parent.insertBefore($expander, sort_desc ? null : $parent.firstElementChild);
+
+      if (sort_desc) {
+        $parent.appendChild($expander);
+      } else {
+        $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
+      }
     }
   }
 
