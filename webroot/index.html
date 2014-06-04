@@ -80,7 +80,7 @@
               <section id="search-TID-result" class="bug-list" role="grid" aria-multiselectable="true" aria-readonly="true" data-selection="rows"></section>
             </div><!-- end #search-TID-result-pane -->
             <div id="search-TID-preview-pane" aria-hidden="true">
-              <article id="search-TID-preview-bug" itemscope itemtype="http://schema.org/Article" role="article" aria-hidden="true">
+              <article id="search-TID-preview-bug" itemscope itemtype="http://schema.org/TechArticle" role="article" aria-hidden="true">
                 <header>
                   <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                   <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
@@ -120,7 +120,7 @@
     </template><!-- end #tabpanel-search -->
     <template id="tabpanel-details">
       <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
-        <article itemscope itemtype="http://schema.org/Article" role="article">
+        <article itemscope itemtype="http://schema.org/TechArticle" role="article">
           <header>
             <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
             <h2 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h2>
@@ -219,7 +219,7 @@
                       <dt>Reporter</dt>
                       <dd data-field="creator"><span tabindex="0" role="button" itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
                       <dt>Assignee</dt>
-                      <dd data-field="assigned_to"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
+                      <dd data-field="assigned_to"><span tabindex="0" role="button" itemprop="accountablePerson" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
                       <dt>QA Contact</dt>
                       <dd data-field="qa_contact"><span tabindex="0" role="button" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span></span></dd>
                       <dt>Cc</dt>
@@ -529,7 +529,7 @@
                 </div><!-- end #home-list-pane -->
                 <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator" aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
                 <div id="home-preview-pane" role="region" aria-expanded="true">
-                  <article id="home-preview-bug" itemscope itemtype="http://schema.org/Article" role="article" aria-hidden="true">
+                  <article id="home-preview-bug" itemscope itemtype="http://schema.org/TechArticle" role="article" aria-hidden="true">
                     <header>
                       <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                       <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
