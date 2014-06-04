@@ -437,7 +437,7 @@ BzDeck.core.load_subscriptions = function () {
     let email = BzDeck.data.account.name,
         _query = { email1: email, email1_type: 'equals_any', resolution: '---' },
         fields = { cc: 'cc', reported: 'creator', assigned: 'assigned_to', qa: 'qa_contact' },
-        needinfo_sub = { id: 'needinfo', query: { quicksearch: 'needinfo?' + email }};
+        requests_sub = { id: 'requests', query: { quicksearch: 'requestee:' + email }};
 
     if (subscriptions.length) {
       BzDeck.model.get_all_bugs(bugs => {
@@ -448,9 +448,18 @@ BzDeck.core.load_subscriptions = function () {
           subscriptions.push({ query: { id: ids.join() } });
         }
 
-        // needinfo? migration
-        if ([for (sub of subscriptions) sub.id].indexOf('needinfo') === -1) {
-          subscriptions.push(needinfo_sub);
+        // [Migration] Remove Need Info
+        let (index = [for (sub of subscriptions) sub.id].indexOf('needinfo')) {
+          if (index > -1) {
+            subscriptions.splice(index, 1);
+          }
+        }
+
+        // [Migration] Add Request Queue
+        let (index = [for (sub of subscriptions) sub.id].indexOf('requests')) {
+          if (index === -1) {
+            subscriptions.push(requests_sub);
+          }
         }
 
         this.fetch_subscriptions(subscriptions);
@@ -479,7 +488,7 @@ BzDeck.core.load_subscriptions = function () {
       subscriptions.push({ id: name, query: query });
     }
 
-    subscriptions.push(needinfo_sub);
+    subscriptions.push(requests_sub);
     this.fetch_subscriptions(subscriptions);
   });
 };
@@ -2241,9 +2250,9 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'starred' }
     },
     {
-      'id': 'sidebar-folders--needinfo',
-      'label': 'Need Info',
-      'data': { 'id': 'needinfo' }
+      'id': 'sidebar-folders--requests',
+      'label': 'Requests',
+      'data': { 'id': 'requests' }
     },
     {
       'id': 'sidebar-folders--cc',
@@ -2370,7 +2379,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^(cc|reported|assigned|qa|needinfo)/)) {
+  if (folder_id.match(/^(cc|reported|assigned|qa|requests)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
       BzDeck.model.get_bugs_by_ids([for (bug of sub.bugs) bug.id], bugs => {
         update_list(bugs);
