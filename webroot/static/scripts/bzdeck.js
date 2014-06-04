@@ -2231,14 +2231,14 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'inbox' }
     },
     {
+      'id': 'sidebar-folders--recent',
+      'label': 'Recent',
+      'data': { 'id': 'recent' }
+    },
+    {
       'id': 'sidebar-folders--starred',
       'label': 'Starred',
       'data': { 'id': 'starred' }
-    },
-    {
-      'id': 'sidebar-folders--unread',
-      'label': 'Unread',
-      'data': { 'id': 'unread' }
     },
     {
       'id': 'sidebar-folders--needinfo',
@@ -2363,7 +2363,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     history.pushState({}, folder_label, folder_path);
   }
 
-  if (folder_id === 'inbox') {
+  if (folder_id === 'recent') {
     get_subscribed_bugs(bugs => {
       bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
       update_list(bugs.slice(0, 50)); // Recent 50 bugs
@@ -2391,7 +2391,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id === 'unread') {
+  if (folder_id === 'inbox') {
     // Unread bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs(bugs => {
       update_list([for (bug of bugs) if (bug._unread) bug]);
