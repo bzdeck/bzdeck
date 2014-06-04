@@ -34,7 +34,7 @@ BzDeck.SettingsPage = function () {
   }
 
   // Activate token input
-  this.activate_token_input();
+  // this.activate_token_input();
 
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
