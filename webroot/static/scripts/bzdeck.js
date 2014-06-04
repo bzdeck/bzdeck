@@ -2375,7 +2375,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   if (folder_id === 'recent') {
     get_subscribed_bugs(bugs => {
       bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-      update_list(bugs.slice(0, 50)); // Recent 50 bugs
+      update_list(bugs.slice(0, 100)); // Recent 100 bugs
     });
   }
 
