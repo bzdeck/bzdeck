@@ -9,7 +9,7 @@
     <meta property="og:site_name" content="BzDeck">
     <meta property="og:locale" content="en_US">
     <meta property="og:url" content="https://www.bzdeck.com/">
-    <meta property="og:image" content="https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-snc7/741145_271135929678790_451513255_o.png">
+    <meta property="og:image" content="https://www.bzdeck.com/static/images/logo/icon-512.png">
     <meta property="og:title" content="BzDeck">
     <meta property="og:description" content="A useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA.">
     <meta property="fb:admins" content="100003919776216">
@@ -445,7 +445,7 @@
             <p>Provide your Bugzilla user name to get started. (<a href="/faq/">Why?</a>)</p>
             <p><input type="email" placeholder="bugzilla@example.org" required role="textbox"><button role="button">Sign in</button></p>
           </form>
-          <p role="status">This application requires <a href="http://www.mozilla.org/firefox/channel/">Firefox&nbsp;30</a> with JavaScript enabled.</p>
+          <p role="status">This application requires <a href="http://www.mozilla.org/firefox/channel/">Firefox Beta</a> with JavaScript enabled.</p>
         </div>
       </div>
     </section><!-- end #app-login -->
@@ -567,6 +567,27 @@
         <p id="statusbar" role="status"></p>
       </footer>
     </section><!-- end #app-body -->
+    <div itemscope itemtype="http://schema.org/WebApplication">
+      <meta itemprop="name" content="BzDeck">
+      <meta itemprop="description" content="A useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA.">
+      <meta itemprop="url" content="https://www.bzdeck.com/">
+      <meta itemprop="image" content="https://www.bzdeck.com/static/images/logo/icon-512.png">
+      <meta itemprop="screenshot" content="https://pbs.twimg.com/media/BlOQQwjCQAEfB27.png:large">
+      <div itemprop="author" itemscope itemtype="http://schema.org/Organization">
+        <meta itemprop="name" content="BriteGrid">
+        <meta itemprop="url" content="http://www.britegrid.com/">
+      </div>
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="price" content="0">
+      </div>
+      <meta itemprop="applicationCategory" content="BusinessApplication">
+      <meta itemprop="operatingSystem" content="Windows">
+      <meta itemprop="operatingSystem" content="Mac">
+      <meta itemprop="operatingSystem" content="Linux">
+      <meta itemprop="operatingSystem" content="Android">
+      <meta itemprop="operatingSystem" content="Firefox OS">
+      <meta itemprop="browserRequirements" content="Firefox Beta">
+    </div>
     <script type="application/javascript;version=1.8" src="/static/scripts/lib/flaretail/util.js"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/lib/flaretail/widget.js"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/lib/crypto/md5.min.js"></script>
