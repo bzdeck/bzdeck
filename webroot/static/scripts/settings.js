@@ -34,7 +34,7 @@ BzDeck.SettingsPage = function () {
   }
 
   // Activate token input
-  // this.activate_token_input();
+  this.activate_token_input();
 
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
@@ -43,10 +43,15 @@ BzDeck.SettingsPage = function () {
 
 BzDeck.SettingsPage.prototype.activate_token_input = function () {
   let userid = BzDeck.data.account.id,
+      token = BzDeck.data.account.token,
       $input = document.querySelector('#tabpanel-settings-account-token'),
       $output = $input.nextElementSibling;
 
-  $input.value = BzDeck.data.account.token || '';
+  if (token) {
+    $input.value = token;
+    $output.textContent = 'Verified'; // l10n
+  }
+
   $input.addEventListener('input', event => {
     $output.textContent = '';
 
