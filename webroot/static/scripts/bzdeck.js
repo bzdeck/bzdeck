@@ -2322,7 +2322,7 @@ BzDeck.sidebar.setup = function () {
 
   window.addEventListener('UI:toggle_unread', event => {
     // Update the sidebar Unread folder
-    this.toggle_unread_ui(event.detail.bugs.length);
+    this.toggle_unread_ui(event.detail.bugs.size);
   });
 };
 
