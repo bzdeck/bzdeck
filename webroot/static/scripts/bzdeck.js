@@ -2247,11 +2247,6 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'inbox' }
     },
     {
-      'id': 'sidebar-folders--unread',
-      'label': 'Unread',
-      'data': { 'id': 'unread' }
-    },
-    {
       'id': 'sidebar-folders--starred',
       'label': 'Starred',
       'data': { 'id': 'starred' }
@@ -2321,7 +2316,7 @@ BzDeck.sidebar.setup = function () {
   });
 
   window.addEventListener('UI:toggle_unread', event => {
-    // Update the sidebar Unread folder
+    // Update the sidebar Inbox folder
     this.toggle_unread_ui(event.detail.bugs.size);
   });
 };
@@ -2382,7 +2377,11 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   if (folder_id === 'inbox') {
     get_subscribed_bugs(bugs => {
       bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-      update_list(bugs.slice(0, 100)); // Recent 100 bugs
+
+      let recent = new Set([for (bug of bugs.slice(0, 100)) bug.id]);
+
+      // Recent 100 bugs + unread bugs
+      update_list([for (bug of bugs) if (recent.has(bug.id) || bug._unread) bug]);
     });
   }
 
@@ -2407,13 +2406,6 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id === 'unread') {
-    // Unread bugs may include non-subscribed bugs, so get ALL bugs
-    BzDeck.model.get_all_bugs(bugs => {
-      update_list([for (bug of bugs) if (bug._unread) bug]);
-    });
-  }
-
   if (folder_id === 'important') {
     get_subscribed_bugs(bugs => {
       let severities = ['blocker', 'critical', 'major'];
@@ -2423,7 +2415,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 };
 
 BzDeck.sidebar.toggle_unread_ui = function (num) {
-  let $label = document.querySelector('#sidebar-folders--unread label'),
+  let $label = document.querySelector('#sidebar-folders--inbox label'),
       $num = $label.querySelector('span');
 
   if (num) {
