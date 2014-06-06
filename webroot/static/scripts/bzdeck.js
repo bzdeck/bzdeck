@@ -2011,10 +2011,14 @@ BzDeck.toolbar.setup = function () {
       $menuitem.removeAttribute('aria-hidden');
 
       // A workaround for Bug 779324
-      $menuitem.addEventListener('click', event => FTu.app.toggle_fullscreen());
+      $menuitem.addEventListener('mousedown', event => {
+        document.mozFullScreenElement ? document.mozCancelFullScreen()
+                                      : document.body.mozRequestFullScreen();
+      });
       $menuitem.addEventListener('keydown', event => {
         if (event.keyCode === event.DOM_VK_RETURN) {
-          FTu.app.toggle_fullscreen();
+          document.mozFullScreenElement ? document.mozCancelFullScreen()
+                                        : document.body.mozRequestFullScreen();
         }
       });
     }
