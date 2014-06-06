@@ -2408,12 +2408,11 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 
   if (folder_id === 'inbox') {
     get_subscribed_bugs(bugs => {
-      bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
+      let recent_time = Date.now() - 1000 * 60 * 60 * 24 * 11;
 
-      let recent = new Set([for (bug of bugs.slice(0, 100)) bug.id]);
-
-      // Recent 100 bugs + unread bugs
-      update_list([for (bug of bugs) if (recent.has(bug.id) || bug._unread) bug]);
+      // Recent bugs changed in 10 days + unread bugs
+      update_list([for (bug of bugs)
+                   if (new Date(bug.last_change_time) > recent_time || bug._unread) bug]);
     });
   }
 
