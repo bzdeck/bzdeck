@@ -65,7 +65,7 @@ p {
 
 pre {
   margin: 0;
-  font-family: FiraMono, monospace;
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
   white-space: pre-wrap;
 }
 
@@ -86,7 +86,7 @@ strong {
 }
 
 code, kbd {
-  font-family: FiraMono, monospace;
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
 
 :link, button {
@@ -1529,7 +1529,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-timeline-font-family="monospace"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
-  font-family: FiraMono, monospace;
+  font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] p {
