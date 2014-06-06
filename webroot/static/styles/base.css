@@ -703,7 +703,6 @@ col[data-hidden="false"] {
 #sidebar-folder-list [role="option"] label span {
   display: inline-block;
   position: relative;
-  top: -1.8rem;
   float: right;
   border-radius: 1rem;
   padding: .4rem;
@@ -712,6 +711,14 @@ col[data-hidden="false"] {
   font-size: 1.1rem;
   line-height: 1.1rem;
   text-align: center;
+}
+
+:root[data-device-type="desktop"] #sidebar-folder-list [role="option"] label span {
+  top: -1.8rem;
+}
+
+:root[data-device-type|="mobile"] #sidebar-folder-list [role="option"] label span {
+  top: -2rem;
 }
 
 :root[data-device-type|="mobile"] #sidebar [role="menuitem"][aria-selected="true"] {
@@ -732,10 +739,6 @@ col[data-hidden="false"] {
 
 :root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account {
   padding: 1.2rem;
-}
-
-:root[data-device-type|="mobile"] #sidebar-account #main-menu--app--account label {
-  font-size: 1.25rem;
 }
 
 :root[data-device-type|="mobile"] #sidebar-menu #main-menu--app-menu {
