@@ -405,6 +405,30 @@ BzDeck.bootstrap.setup_ui = function () {
     BzDeck.global.show_notification(status, extract);
   });
 
+  // Notify requests
+  BzDeck.model.get_subscription_by_id('requests', sub => {
+    let len = sub.bugs.length;
+
+    if (!len) {
+      return;
+    }
+
+    let title = len > 1 ? 'You have %d requests'.replace('%d', len)
+                        : 'You have 1 request'; // l10n
+    let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
+                       : 'Select the Requests folder to browse the bug.'; // l10n
+
+    // TODO: Improve the notification body to describe more about the requests,
+    // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
+
+    BzDeck.global.show_notification(title, body, event => {
+      // Select the Requests folder when the notification is clicked
+      $root.setAttribute('data-current-tab', 'home');
+      BzDeck.toolbar.tablist.view.selected = document.querySelector('#tab-home');
+      BzDeck.sidebar.folders.view.selected = document.querySelector('#sidebar-folders--requests');
+    });
+  });
+
   this.finish();
 };
 
@@ -1012,7 +1036,7 @@ BzDeck.global.show_status = function (message) {
   this.$statusbar.textContent = message;
 };
 
-BzDeck.global.show_notification = function (title, body) {
+BzDeck.global.show_notification = function (title, body, callback = null) {
   if (BzDeck.data.prefs['notifications.show_desktop_notifications'] === false) {
     return;
   }
@@ -1020,7 +1044,7 @@ BzDeck.global.show_notification = function (title, body) {
   FlareTail.util.app.show_notification(title, {
     body: body,
     icon: '/static/images/logo/icon-256.png'
-  });
+  }, callback);
 };
 
 BzDeck.global.register_activity_handler = function () {
