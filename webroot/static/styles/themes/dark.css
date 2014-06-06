@@ -387,6 +387,11 @@ a {
   border-color: #303030; /* Control Border Color */
 }
 
+#sidebar-folder-list [role="option"] label span {
+  color: #939393; /* Control Foreground Color */
+  background-color: #202020; /* Control Background Color */
+}
+
 /* ----------------------------------------------------------------------------------------------
  * Main
  * ---------------------------------------------------------------------------------------------- */

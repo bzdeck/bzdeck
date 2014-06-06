@@ -2423,10 +2423,14 @@ BzDeck.sidebar.open_folder = function (folder_id) {
 };
 
 BzDeck.sidebar.toggle_unread_ui = function (num) {
-  let $label = document.querySelector('#sidebar-folders--unread label');
+  let $label = document.querySelector('#sidebar-folders--unread label'),
+      $num = $label.querySelector('span');
 
-  if ($label) {
-    $label.textContent = num ? 'Unread (%d)'.replace('%d', num) : 'Unread'; // l10n
+  if (num) {
+    $num = $num || $label.appendChild(document.createElement('span'));
+    $num.textContent = num;
+  } else if ($num) {
+    $num.remove();
   }
 };
 
