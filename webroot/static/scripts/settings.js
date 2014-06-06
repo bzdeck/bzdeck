@@ -82,20 +82,20 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
       activate = this.activate_radiogroup.bind(this);
 
   // Theme
-  activate('theme', 'Light', value => FlareTail.util.theme.selected = value);
+  activate('ui.theme.selected', 'Light', value => FlareTail.util.theme.selected = value);
 
   // Timezone & Date Format
-  activate('date-timezone', 'local', value => FlareTail.util.datetime.options.timezone = value);
-  activate('date-relative', true, value => FlareTail.util.datetime.options.relative = value);
+  activate('ui.date.timezone', 'local', value => FlareTail.util.datetime.options.timezone = value);
+  activate('ui.date.relative', true, value => FlareTail.util.datetime.options.relative = value);
 
   // Notifications
-  activate('notifications-ignore-cc-changes', true);
+  activate('notifications.ignore_cc_changes', true);
 
   // Home
-  activate('home-layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
+  activate('ui.home.layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
 
   // Timeline
-  activate('timeline-order', 'ascending', value => {
+  activate('ui.timeline.sort.order', 'ascending', value => {
     for (let $timeline of document.querySelectorAll('.bug-timeline')) {
       $timeline.setAttribute('aria-busy', 'true');
 
@@ -109,13 +109,13 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
     $root.setAttribute('data-timeline-sort-order', value);
   });
-  activate('timeline-font-family', 'proportional', value => {
+  activate('ui.timeline.font.family', 'proportional', value => {
     $root.setAttribute('data-timeline-font-family', value);
   });
-  activate('timeline-show-cc-changes', false, value => {
+  activate('ui.timeline.show_cc_changes', false, value => {
     $root.setAttribute('data-timeline-show-cc-changes', String(value));
   });
-  activate('timeline-display-attachments-inline', true, value => {
+  activate('ui.timeline.display_attachments_inline', true, value => {
     $root.setAttribute('data-timeline-display-attachments-inline', String(value));
 
     if (value === true) {
@@ -132,10 +132,9 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   });
 };
 
-BzDeck.SettingsPage.prototype.activate_radiogroup = function (id, default_value, callback) {
-  let $rgroup = this.$tabpanel.querySelector('#tabpanel-settings-setting-' + id),
+BzDeck.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
+  let $rgroup = this.$tabpanel.querySelector('[data-pref="%s"]'.replace('%s', pref)),
       prefs = BzDeck.data.prefs,
-      pref = $rgroup.dataset.pref,
       type = $rgroup.dataset.type || 'string',
       value = prefs[pref] !== undefined ? prefs[pref] : default_value;
 
