@@ -1013,6 +1013,10 @@ BzDeck.global.show_status = function (message) {
 };
 
 BzDeck.global.show_notification = function (title, body) {
+  if (BzDeck.data.prefs['notifications.show_desktop_notifications'] === false) {
+    return;
+  }
+
   FlareTail.util.app.show_notification(title, {
     body: body,
     icon: '/static/images/logo/icon-256.png'

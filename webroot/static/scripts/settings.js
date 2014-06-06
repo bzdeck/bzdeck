@@ -89,6 +89,11 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('ui.date.relative', true, value => FlareTail.util.datetime.options.relative = value);
 
   // Notifications
+  activate('notifications.show_desktop_notifications', true, value => {
+    if (value === true && Notification.permission === 'default') {
+      FlareTail.util.app.auth_notification();
+    }
+  });
   activate('notifications.ignore_cc_changes', true);
 
   // Home
