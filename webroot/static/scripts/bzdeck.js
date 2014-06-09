@@ -1036,7 +1036,9 @@ BzDeck.global.install_app = function () {
 };
 
 BzDeck.global.show_status = function (message) {
-  this.$statusbar.textContent = message;
+  if (this.$statusbar) {
+    this.$statusbar.textContent = message;
+  }
 };
 
 BzDeck.global.show_notification = function (title, body, callback = null) {

@@ -151,8 +151,8 @@ BzDeck.HomePage = function () {
   }, true); // use capture
 
   // Show Details button
-  let button = this.view.details_button
-             = new FlareTail.widget.Button(document.querySelector('#home-button-show-details'));
+  let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
+      button = this.view.details_button = new FlareTail.widget.Button($button);
 
   button.bind('Pressed', event => {
     BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
@@ -198,7 +198,7 @@ BzDeck.HomePage = function () {
     }
 
     // Preview
-    document.querySelector('#home-preview-bug > header > [role="checkbox"]')
+    document.querySelector('#home-preview-bug [data-field="_starred"]')
             .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
   });
 

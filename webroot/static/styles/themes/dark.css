@@ -50,8 +50,8 @@
  * Alternate Button Foreground Color: #C3C3C3
  * Alternate Button Background Color: #343434
  * Alternate Disabled Button Border Color: (Unchanged)
- * Alternate Disabled Button Foreground Color: #939393
- * Alternate Disabled Button Background Color: #3C3C3C
+ * Alternate Disabled Button Foreground Color: #838383
+ * Alternate Disabled Button Background Color: (Unchanged)
  * Alternate Hovered Button Border Color: (Unchanged)
  * Alternate Hovered Button Foreground Color: (Unchanged)
  * Alternate Hovered Button Background Color: (Unchanged)
@@ -175,22 +175,6 @@ a {
 [role="button"]:not([aria-disabled="true"]):active {
   color: #C3C3C3; /* Pressed Button Foreground Color */
   background-color: #303030; /* Pressed Button Background Color */
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 256, 32, 224);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="false"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 256, 64, 224);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 288, 32, 256);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="false"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 288, 64, 256);
 }
 
 [role="columnheader"] {
@@ -424,34 +408,23 @@ a {
   background-color: #222; /* Region Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
+[itemtype$="TechArticle"] > header {
   border-color: #3C3C3C; /* Region Header Border Color */
   color: #C3C3C3; /* Region Header Foreground Color */
   background-color: #3C3C3C; /* Region Header Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"] {
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role] {
   border-color: #3C3C3C; /* Alternate Button Border Color */
   color: #C3C3C3; /* Alternate Button Foreground Color */
-  background-color: #343434; /* Alternate Button Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"]:active {
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role]:active {
   color: #C3C3C3; /* Alternate Pressed Button Foreground Color */
-  background-color: #343434; /* Alternate Pressed Button Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"][aria-disabled="true"] {
-  color: #939393; /* Alternate Disabled Button Foreground Color */
-  background-color: #3C3C3C; /* Alternate Disabled Button Background Color */
-}
-
-#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64);
-}
-
-#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128);
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role][aria-disabled="true"] {
+  color: #838383; /* Alternate Disabled Button Foreground Color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -521,14 +494,6 @@ article[id$="preview-bug"] > header {
   border-color: #3C3C3C; /* Region Header Border Color */
   color: #C3C3C3; /* Region Header Foreground Color */
   background-color: #3C3C3C; /* Region Header Background Color */
-}
-
-article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64);
-}
-
-article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128);
 }
 
 :root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
@@ -676,12 +641,4 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 
 [id^="settings-tabpanel"] > section > section {
   border-color: #303030; /* Secondary Region Border Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Global Footer
- * ---------------------------------------------------------------------------------------------- */
-
-#app-body > footer {
-  color: #C3C3C3; /* Region Header Foreground Color */
 }

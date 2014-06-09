@@ -50,8 +50,8 @@
  * Alternate Button Foreground Color: #E3E3E3
  * Alternate Button Background Color: #7C7C7C
  * Alternate Disabled Button Border Color: (Unchanged)
- * Alternate Disabled Button Foreground Color: #636363
- * Alternate Disabled Button Background Color: #646464
+ * Alternate Disabled Button Foreground Color: #B3B3B3
+ * Alternate Disabled Button Background Color: (Unchanged)
  * Alternate Hovered Button Border Color: (Unchanged)
  * Alternate Hovered Button Foreground Color: (Unchanged)
  * Alternate Hovered Button Background Color: (Unchanged)
@@ -175,22 +175,6 @@ a {
 [role="button"]:not([aria-disabled="true"]):active {
   color: #E3E3E3; /* Pressed Button Foreground Color */
   background-color: #CCC; /* Pressed Button Background Color */
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 256, 32, 224);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-back"][aria-disabled="false"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 256, 64, 224);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 288, 32, 256);
-}
-
-[role="toolbar"] [role="button"][data-command="nav-forward"][aria-disabled="false"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 32, 288, 64, 256);
 }
 
 [role="columnheader"] {
@@ -425,42 +409,29 @@ a {
   background-color: #E4E4E4; /* Region Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
+[itemtype$="TechArticle"] > header {
   border-color: #646464; /* Region Header Border Color */
   color: #E3E3E3; /* Region Header Foreground Color */
   background-color: #646464; /* Region Header Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"] {
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role] {
   border-color: #646464; /* Alternate Button Border Color */
   color: #E3E3E3; /* Alternate Button Foreground Color */
-  background-color: #7C7C7C; /* Alternate Button Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"]:active {
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role]:active {
   color: #E3E3E3; /* Alternate Pressed Button Foreground Color */
-  background-color: #7C7C7C; /* Alternate Pressed Button Background Color */
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) [role="button"][aria-disabled="true"] {
-  color: #636363; /* Alternate Disabled Button Foreground Color */
-  background-color: #646464; /* Alternate Disabled Button Background Color */
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role][aria-disabled="true"] {
+  color: #B3B3B3; /* Alternate Disabled Button Foreground Color */
 }
 
-#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 128, 192, 64);
-}
-
-#main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 192, 192, 128);
-}
-
-:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="false"],
 :root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 128, 128, 64) !important;
 }
 
-:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] header > [data-field="_starred"][aria-checked="true"],
 :root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 64, 192, 128, 128) !important;
 }
@@ -532,14 +503,6 @@ article[id$="preview-bug"] > header {
   border-color: #646464; /* Region Header Border Color */
   color: #E3E3E3; /* Region Header Foreground Color */
   background-color: #646464; /* Region Header Background Color */
-}
-
-article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 128, 192, 64);
-}
-
-article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 128, 192, 192, 128);
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -679,12 +642,4 @@ article[id$="preview-bug"] > header > [data-field="_starred"][aria-checked="true
 
 [id^="settings-tabpanel"] > section > section {
   border-color: #CCC; /* Secondary Region Border Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Global Footer
- * ---------------------------------------------------------------------------------------------- */
-
-#app-body > footer {
-  color: #E3E3E3; /* Region Header Foreground Color */
 }

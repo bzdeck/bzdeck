@@ -28,6 +28,13 @@
   src: url(/static/fonts/FiraMono-Regular.woff?v=3.107) format('woff');
 }
 
+@font-face {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/static/fonts/FontAwesome.woff?v=4.1.0) format('woff');
+}
+
 /* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
@@ -419,6 +426,10 @@ col[data-hidden="false"] {
   width: 8rem;
 }
 
+:root[data-device-type|="mobile"]:not([data-current-tab="home"]) [role="banner"] [role="toolbar"] {
+  display: none;
+}
+
 :root[data-device-type|="mobile"] [role="banner"].search [role="toolbar"] {
   left: 4.5rem;
   width: auto;
@@ -603,7 +614,7 @@ col[data-hidden="false"] {
 
 :root[data-device-type="desktop"] #sidebar {
   position: absolute;
-  bottom: 3.2rem;
+  bottom: 0;
   width: 16rem;
 }
 
@@ -843,100 +854,28 @@ main {
   position: absolute;
   left: -9999rem; /* Usually hide the header */
   box-sizing: border-box;
-  border-width: .1rem 0;
-  border-style: solid;
+  padding: 0 .8rem;
   width: 100%;
   height: 3.2rem;
 }
 
-#main-tabpanels > [role="tabpanel"] header > [role="checkbox"] {
-  float: left;
-  margin: .3rem;
-  width: 2.4rem;
-  height: 2.4rem;
-  background-position: center;
-  background-size: 72%;
-  background-repeat: no-repeat;
+:root[data-device-type="desktop"] #main-tabpanels > [role="tabpanel"] > * > header {
+  border-width: .1rem 0;
+  border-style: solid;
 }
 
-#main-tabpanels > [role="tabpanel"] > * > header > h2 {
-  overflow: hidden;
-  padding: 0 8rem 0 .4rem;
-  font-size: 1.5rem;
-  line-height: 3rem;
-  font-weight: 500;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > header > h2 [data-field="id"]::before {
-  content: 'Bug '
-}
-
-#main-tabpanels > [role="tabpanel"] > * > header > h2 [data-field="id"]::after {
-  content: ' - '
-}
-
-:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) {
-  height: 0; /* left:-9999rem will lead to a buggy position:sticky rendering on Firefox OS (Bug 999021) */
-}
-
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] {
-  display: inline-block;
-  position: absolute;
+:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > header {
+  position: fixed;
   top: .5rem;
-  right: .5rem;
-  overflow: hidden;
+  right: 0;
+  left: auto !important;
+  width: 12rem;
+  height: auto;
+  background: transparent;
 }
 
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] > li {
-  display: inline-block;
-  float: left;
-  height: 2rem;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] > li > [role="button"] {
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] > li:not(:first-of-type) > [role="button"] {
-  border-left-width: 0;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > :-moz-any(header, footer) > [role="toolbar"] > li:not(:last-of-type) > [role="button"] {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-:root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] {
-  display: none !important;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] > li {
-  width: 2.4rem;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] > li > [role="button"] {
-  padding: 0;
-  text-indent: -9999rem;
-}
-
-#main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] > li > [role="button"]::before {
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-position: center;
-  background-size: 48%;
-  background-repeat: no-repeat;
-  content: "";
+:root[data-device-type|="mobile"]:-moz-any([data-current-tab="home"], [data-current-tab="settings"]) #main-tabpanels > [role="tabpanel"] > * > header {
+  display: none;
 }
 
 #main-tabpanels > [role="tabpanel"] > * > div {
@@ -948,7 +887,7 @@ main {
 
 :root[data-device-type="desktop"] #main-tabpanels > [role="tabpanel"] > * > div {
   top: 0; /* Usually hide the header */
-  bottom: 3.2rem;
+  bottom: 0;
 }
 
 :root[data-device-type|="mobile"] #main-tabpanels > [role="tabpanel"] > * > div {
@@ -956,18 +895,110 @@ main {
   bottom: 0;
 }
 
-#main-tabpanels > [role="tabpanel"] > * > footer {
-  position: absolute;
-  bottom: 0;
-  border-width: .1rem 0 0;
-  border-style: solid;
-  width: 100%;
-  height: 3.1rem;
+[itemtype$="TechArticle"] > header {
+  display: flex;
 }
 
-#main-tabpanels > [role="tabpanel"] > * > footer > [role="toolbar"] > li > [role="button"] {
-  padding: 0 .8rem;
-  line-height: 1.8rem;
+:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header {
+  display: block;
+}
+
+[itemtype$="TechArticle"] > header > [itemprop="name"] {
+  flex: auto;
+  overflow: hidden;
+  font-size: 1.5rem;
+  line-height: 3rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: auto;
+  -moz-user-select: text;
+}
+
+[itemtype$="TechArticle"] > header > [itemprop="name"] [data-field="id"]::after {
+  content: ' - '
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] {
+  flex: none;
+  height: 3rem;
+}
+
+:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header > [role="toolbar"] {
+  float: right;
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] ul {
+  display: inline-flex;
+  margin: .4rem 0 .4rem .4rem;
+  height: 2.2rem;
+}
+
+:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header > [role="toolbar"] ul.nav {
+  display: none;
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li {
+  display: inline-block;
+  height: 2.2rem; 
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role] {
+  position: relative;
+  box-sizing: content-box;
+  border-width: 0;
+  border-radius: 0;
+  padding: .4rem;
+  height: 1.2rem;
+  background: transparent;
+  line-height: 1;
+  vertical-align: top;
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role].iconic {
+  overflow: hidden;
+  padding: 0 0 0 2.2rem;
+  width: 0;
+  height: 2.2rem;
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role].iconic::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  margin: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.8rem;
+  line-height: 2.2rem;
+  font-family: FontAwesome;
+  text-align: center;
+  vertical-align: top;
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="false"]::before {
+  content: '\F006';
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="true"]::before {
+  content: '\F005';
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="show-details"]::before {
+  content: '\F08E';
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="nav-back"]::before {
+  content: '\F053';
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="nav-forward"]::before {
+  content: '\F054';
+}
+
+[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="show-basic-search-pane"]::before {
+  content: '\F002';
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -1166,38 +1197,9 @@ article[id$="preview-bug"] > header {
   position: absolute;
   border-width: .1rem 0;
   border-style: solid;
-  width: 100%;
+  padding: 0 .8rem;
+  width: calc(100% - 1.6rem);
   height: 3.0rem;
-}
-
-article[id$="preview-bug"] > header > [role="checkbox"] {
-  float: left;
-  margin: .3rem;
-  width: 2.4rem;
-  height: 2.4rem;
-  background-position: center;
-  background-size: 72%;
-  background-repeat: no-repeat;
-}
-
-article[id$="preview-bug"] > header > h3 {
-  overflow: hidden;
-  margin-right: .8rem;
-  font-size: 1.5rem;
-  line-height: 3rem;
-  font-weight: 500;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  pointer-events: auto;
-  -moz-user-select: text;
-}
-
-article[id$="preview-bug"] > header > h3 [data-field="id"]::before {
-  content: 'Bug '
-}
-
-article[id$="preview-bug"] > header > h3 [data-field="id"]::after {
-  content: ' - '
 }
 
 article[id$="preview-bug"] > div {
@@ -1239,10 +1241,6 @@ article[id$="preview-bug"] > .bug-timeline {
 
 [id|="tabpanel-details"][role="tabpanel"] > article > header {
   left: 0 !important; /* Show the header */
-}
-
-:root[data-device-type|="mobile"] [id|="tabpanel-details"][role="tabpanel"] > article > header {
-  height: 0 !important;
 }
 
 [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 {
@@ -1438,24 +1436,15 @@ article[id$="preview-bug"] > .bug-timeline {
   left: -9999rem;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > div > header {
-  padding: 3.2rem .8rem .8rem;
-}
-
-:root[data-device-type|="mobile"] .bug-timeline > div > header h2 {
+:root[data-device-type|="mobile"] .bug-timeline > div > h2 {
   display: block;
-  padding: 0 0 0 2.8rem;
+  padding: 3.2rem 1.6rem .8rem;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 500;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > div > header [role="checkbox"] {
-  margin: -.2rem 0 0 0 !important;
-}
-
-:root[data-device-type|="mobile"] .bug-timeline > div > header h2 [data-field="id"],
-:root[data-device-type|="mobile"] .bug-timeline > div > header [role="toolbar"] {
+:root[data-device-type|="mobile"] .bug-timeline > div > h2 [data-field="id"] {
   display: none;
 }
 
@@ -2100,27 +2089,6 @@ article[id$="preview-bug"] > .bug-timeline {
   display: inline-block;
   padding: .4rem .8rem;
   height: 1.6rem;
-  line-height: 1.6rem;
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Global Footer
- * ---------------------------------------------------------------------------------------------- */
-
-#app-body > footer {
-  position: fixed;
-  bottom: 0;
-  height: 3.2rem;
-  width: 56rem;
-}
-
-:root[data-device-type|="mobile"] #app-body > footer {
-  display: none;
-}
-
-#app-body > footer [role="status"] {
-  margin: .8rem;
-  font-size: 1.1rem;
   line-height: 1.6rem;
 }
 

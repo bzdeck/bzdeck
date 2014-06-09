@@ -82,8 +82,18 @@
             <div id="search-TID-preview-pane" aria-hidden="true">
               <article id="search-TID-preview-bug" itemscope itemtype="http://schema.org/TechArticle" role="article" aria-hidden="true">
                 <header>
-                  <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                   <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
+                  <div role="toolbar">
+                    <ul>
+                      <li><span class="iconic" title="Star this bug" tabindex="0" role="checkbox" aria-checked="false" data-field="_starred">Star</span></li>
+                    </ul>
+                    <ul>
+                      <li><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
+                    </ul>
+                    <ul>
+                      <li><span class="iconic" title="Show the query pane to search again" tabindex="0" role="button" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
+                    </ul>
+                  </div>
                 </header>
                 <div id="search-TID-preview-bug-info" class="bug-info" tabindex="0">
                   <dl>
@@ -107,14 +117,6 @@
             <div id="search-TID-advanced-search-pane" aria-hidden="true">
             </div><!-- end #search-TID-advanced-search-pane -->
           </div>
-          <footer>
-            <ul role="toolbar">
-              <li><span title="Show the query pane to search again" role="button" tabindex="0" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
-              <li><span title="Open the selected bug in a tab" role="button" tabindex="0" aria-disabled="true" data-command="show-details">Show Details</span></li>
-              <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="show-advanced-search-pane">Advanced Search</span></li> -->
-              <!-- <li><span role="button" tabindex="0" aria-disabled="true" data-command="save-search-folder">Save as Search Folder</span></li> -->
-            </ul>
-          </footer>
         </section>
       </div><!-- end #tabpanel-search-TID -->
     </template><!-- end #tabpanel-search -->
@@ -122,12 +124,16 @@
       <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
         <article itemscope itemtype="http://schema.org/TechArticle" role="article">
           <header>
-            <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
             <h2 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h2>
-            <ul role="toolbar">
-              <li><span title="Show the previous bug" role="button" tabindex="0" aria-disabled="true" data-command="nav-back">Back</span></li>
-              <li><span title="Show the next bug" role="button" tabindex="0" aria-disabled="true" data-command="nav-forward">Forward</span></li>
-            </ul>
+            <div role="toolbar">
+              <ul>
+                <li><span class="iconic" title="Star this bug" tabindex="0" role="checkbox" aria-checked="false" data-field="_starred">Star</span></li>
+              </ul>
+              <ul class="nav">
+                <li><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
+                <li><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
+              </ul>
+            </div>
           </header>
           <div>
             <ul id="bug-TID-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
@@ -270,12 +276,6 @@
               </div><!-- end #bug-TID-tabpanel-history -->
             </div><!-- end #bug-TID-tabpanels -->
           </div>
-          <footer>
-            <ul role="toolbar">
-              <!-- <li><span tabindex="0" role="button" aria-disabled="true">Leave Comments</span></li> -->
-              <!-- <li><span tabindex="0" role="button" aria-disabled="true">Save Changes</span></li> -->
-            </ul>
-          </footer>
         </article>
       </div><!-- end #tabpanel-details-TID -->
     </template><!-- end #tabpanel-details -->
@@ -537,8 +537,15 @@
                 <div id="home-preview-pane" role="region" aria-expanded="true">
                   <article id="home-preview-bug" itemscope itemtype="http://schema.org/TechArticle" role="article" aria-hidden="true">
                     <header>
-                      <div title="Star this bug" role="checkbox" aria-checked="false" data-field="_starred"></div>
                       <h3 itemprop="name"><span data-field="id"></span><span data-field="summary"></span></h3>
+                      <div role="toolbar">
+                        <ul>
+                          <li><span class="iconic" title="Star this bug" tabindex="0" role="checkbox" aria-checked="false" data-field="_starred">Star</span></li>
+                        </ul>
+                        <ul>
+                          <li><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
+                        </ul>
+                      </div>
                     </header>
                     <div id="home-preview-bug-info" class="bug-info" tabindex="0">
                       <dl>
@@ -560,18 +567,10 @@
                   </article><!-- end #home-preview-content -->
                 </div><!-- end #home-preview-pane -->
               </div>
-              <footer>
-                <ul role="toolbar">
-                  <li><span id="home-button-show-details" title="Open the selected bug in a tab" tabindex="0" role="button" aria-disabled="true">Show Details</span></li>
-                </ul>
-              </footer>
             </section>
           </div><!-- end #tabpanel-home -->
         </div><!-- end #main-tabpanels -->
       </main>
-      <footer>
-        <p id="statusbar" role="status"></p>
-      </footer>
     </section><!-- end #app-body -->
     <div itemscope itemtype="http://schema.org/WebApplication">
       <meta itemprop="name" content="BzDeck">
