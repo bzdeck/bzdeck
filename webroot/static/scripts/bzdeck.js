@@ -97,7 +97,10 @@ BzDeck.bootstrap.check_requirements = function () {
     'remove' in Element.prototype, // Firefox 23
     'parseInt' in Number, // Firefox 25
     'createTBody' in HTMLTableElement.prototype, // Firefox 25
-    'URLSearchParams' in window // Firefox 29
+    'URLSearchParams' in window, // Firefox 29
+    'getBoxQuads' in Element.prototype, // Firefox 31
+    '@@iterator' in StyleSheetList.prototype, // Firefox 31
+    '@@iterator' in CSSRuleList.prototype // Firefox 32
   ];
 
   try {
