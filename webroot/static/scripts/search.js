@@ -66,13 +66,13 @@ BzDeck.SearchPage = function () {
     this.view.$tabpanel
   );
 
+  tablist.view.selected = tablist.view.$focused = $tab;
+  this.view.$tabpanel.focus();
+
   this.setup_basic_search_pane();
   this.setup_result_pane();
   this.setup_preview_pane();
   this.setup_toolbar();
-
-  tablist.view.selected = tablist.view.$focused = $tab;
-  this.view.$tabpanel.focus();
 
   window.addEventListener('UI:toggle_star', event => {
     if (!$tabpanel) {
