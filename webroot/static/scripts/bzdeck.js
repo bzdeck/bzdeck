@@ -1851,15 +1851,14 @@ BzDeck.global.handle_timeline_keydown = function (event) {
 
   let shift = key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey,
       $timeline = event.currentTarget,
-      comments = [...$timeline.querySelectorAll('[itemprop="comment"]')],
-      timeline_top = Math.round($timeline.getBoundingClientRect().top);
+      comments = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
   for (let $comment of shift ? comments.reverse() : comments) {
     if ($comment.clientHeight === 0) {
       continue; // The comment is collapsed
     }
 
-    let top = Math.round($comment.getBoundingClientRect().top) - timeline_top;
+    let top = Math.round($comment.getBoxQuads({ relativeTo: $timeline })[0].p1.y);
 
     if (shift && top < 0 || !shift && top > 0) {
       $timeline.scrollTop += top;
