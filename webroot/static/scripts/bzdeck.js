@@ -326,32 +326,44 @@ BzDeck.bootstrap.setup_ui = function () {
   datetime.options.updater_enabled = true;
 
   // Date format
-  let (value = prefs['ui.date.relative']) {
+  {
+    let value = prefs['ui.date.relative'];
+
     datetime.options.relative = value !== undefined ? value : true;
   }
 
   // Date timezone
-  let (value = prefs['ui.date.timezone']) {
+  {
+    let value = prefs['ui.date.timezone'];
+
     datetime.options.timezone = value || 'local';
   }
 
   // Timeline: Font
-  let (value = prefs['ui.timeline.font.family']) {
+  {
+    let value = prefs['ui.timeline.font.family'];
+
     $root.setAttribute('data-timeline-font-family', value || 'proportional');
   }
 
   // Timeline: Sort order
-  let (value = prefs['ui.timeline.sort.order']) {
+  {
+    let value = prefs['ui.timeline.sort.order'];
+
     $root.setAttribute('data-timeline-sort-order', value || 'ascending');
   }
 
   // Timeline: Changes
-  let (value = prefs['ui.timeline.show_cc_changes']) {
+  {
+    let value = prefs['ui.timeline.show_cc_changes'];
+
     $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
   }
 
   // Timeline: Attachments
-  let (value = prefs['ui.timeline.display_attachments_inline']) {
+  {
+    let value = prefs['ui.timeline.display_attachments_inline'];
+
     $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
   }
 
@@ -476,14 +488,18 @@ BzDeck.core.load_subscriptions = function () {
         }
 
         // [Migration] Remove Need Info
-        let (index = [for (sub of subscriptions) sub.id].indexOf('needinfo')) {
+        {
+          let index = [for (sub of subscriptions) sub.id].indexOf('needinfo');
+
           if (index > -1) {
             subscriptions.splice(index, 1);
           }
         }
 
         // [Migration] Add Request Queue
-        let (index = [for (sub of subscriptions) sub.id].indexOf('requests')) {
+        {
+          let index = [for (sub of subscriptions) sub.id].indexOf('requests');
+
           if (index === -1) {
             subscriptions.push(requests_sub);
           }
@@ -1503,7 +1519,9 @@ BzDeck.global.fill_template_details = function ($content, bug, delayed = false) 
     if (author.real_name.contains('@')) {
       $author.querySelector('[itemprop="email"]').content = author.real_name;
 
-      let ($avatar = new Image()) {
+      {
+        let $avatar = new Image();
+
         $avatar.addEventListener('load', event => {
           $author.querySelector('[itemprop="image"]').src = $avatar.src;
         });
@@ -1605,7 +1623,9 @@ BzDeck.global.fill_template_details = function ($content, bug, delayed = false) 
     $author.querySelector('[itemprop="email"]').content = author.name;
 
     // Set the user's avatar assuming author.name is the email address
-    let ($avatar = new Image()) {
+    {
+      let $avatar = new Image();
+
       $avatar.addEventListener('load', event => {
         $author.querySelector('[itemprop="image"]').src = $avatar.src;
       });
@@ -1692,7 +1712,9 @@ BzDeck.global.fill_template_details = function ($content, bug, delayed = false) 
 
   // Show an expander if there are read comments
   if (read_entries_num > 1) {
-    let ($expander = document.createElement('div')) {
+    {
+      let $expander = document.createElement('div');
+
       $expander.textContent = read_entries_num === 2
                             ? '1 older comment'
                             : '%d older comments'.replace('%d', read_entries_num - 1);
@@ -1719,8 +1741,9 @@ BzDeck.global.fill_template_details = function ($content, bug, delayed = false) 
   BzDeck.global.show_status('');
 
   // Add tooltips to the related bugs
-  let (related_bug_ids = new Set([for ($element of $content.querySelectorAll('[data-bug-id]'))
-                                  Number.parseInt($element.getAttribute('data-bug-id'))])) {
+  {
+    let related_bug_ids = new Set([for ($element of $content.querySelectorAll('[data-bug-id]'))
+                                  Number.parseInt($element.getAttribute('data-bug-id'))]);
     let add_tooltops = bugs => {
       for (let bug of bugs) {
         if (bug.summary) {
@@ -1821,7 +1844,9 @@ BzDeck.global.handle_timeline_keydown = function (event) {
   // [B] previous bug or [F] next bug
   if (document.documentElement.getAttribute('data-current-tab') === 'home' &&
       !modifiers && [event.DOM_VK_B, event.DOM_VK_F].indexOf(key) > -1) {
-    let (_event = document.createEvent("KeyboardEvent")) {
+    {
+      let _event = document.createEvent("KeyboardEvent");
+
       _event.initKeyEvent('keydown', true, true, null, false, false, false, false, key, 0);
       document.querySelector('#home-list').dispatchEvent(_event);
       this.view.$owner.focus();
@@ -2035,7 +2060,9 @@ BzDeck.toolbar.setup = function () {
   $app_menu.setAttribute('aria-expanded', mobile);
 
   if (FTu.app.fullscreen_enabled) {
-    let ($menuitem = document.querySelector('#main-menu--app--fullscreen')) {
+    {
+      let $menuitem = document.querySelector('#main-menu--app--fullscreen');
+
       $menuitem.removeAttribute('aria-hidden');
 
       // A workaround for Bug 779324
