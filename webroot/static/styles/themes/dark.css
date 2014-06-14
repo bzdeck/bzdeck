@@ -14,631 +14,153 @@
  * Foreground: #BBB, #939393, #838383, #C3C3C3, #FBFBFB
  * Background: #1C1C1C, #3C3C3C, #343434, #303030, #222, #282828, #202020, #FCFCFC
  * Accent: #1A608F
- *
- * Application Foreground Color: #939393
- * Application Background Color: #282828
- * Application Header Border Color: #1C1C1C
- * Application Header Foreground Color: #C3C3C3
- * Application Header Background Color: #1C1C1C
- * Secondary Application Header Foreground Color: #838383
- * Secondary Application Header Background Color: #3C3C3C
- *
- * Region Border Color: #343434
- * Region Background Color: #222
- * Region Header Border Color: #3C3C3C
- * Region Header Foreground Color: #C3C3C3
- * Region Header Background Color: #3C3C3C
- * Secondary Region Background Color: #282828
- * Secondary Region Border Color: #303030
- * Secondary Region Header Border Color: #343434
- * Secondary Region Header Foreground Color: #C3C3C3
- * Secondary Region Header Background Color: #343434
- *
- * Button Border Color: #303030
- * Button Foreground Color: #939393
- * Button Background Color: #222
- * Disabled Button Border Color: (Unchanged)
- * Disabled Button Foreground Color: #838383
- * Disabled Button Background Color: (Unchanged)
- * Hovered Button Border Color: (Unchanged)
- * Hovered Button Foreground Color: (Unchanged)
- * Hovered Button Background Color: (Unchanged)
- * Pressed Button Border Color: (Unchanged)
- * Pressed Button Foreground Color: #C3C3C3
- * Pressed Button Background Color: #303030
- * Alternate Button Border Color: #3C3C3C
- * Alternate Button Foreground Color: #C3C3C3
- * Alternate Button Background Color: #343434
- * Alternate Disabled Button Border Color: (Unchanged)
- * Alternate Disabled Button Foreground Color: #838383
- * Alternate Disabled Button Background Color: (Unchanged)
- * Alternate Hovered Button Border Color: (Unchanged)
- * Alternate Hovered Button Foreground Color: (Unchanged)
- * Alternate Hovered Button Background Color: (Unchanged)
- * Alternate Pressed Button Border Color: (Unchanged)
- * Alternate Pressed Button Foreground Color: #C3C3C3
- * Alternate Pressed Button Background Color: #343434
- *
- * Tab Border Color: #303030
- * Tab Foreground Color: #939393
- * Tab Background Color: #222
- * Selected Tab Border Color: (Unchanged)
- * Selected Tab Foreground Color: #BBB
- * Selected Tab Background Color: #303030
- * Hovered Tab Border Color: (Unchanged)
- * Hovered Tab Foreground Color: (Unchanged)
- * Hovered Tab Background Color: (Unchanged)
- *
- * Textbox Border Color: #303030
- * Textbox Foreground Color: #939393
- * Textbox Background Color: #303030
- * Disabled Textbox Border Color: (Unchanged)
- * Disabled Textbox Foreground Color: #838383
- * Disabled Textbox Background Color: (Unchanged)
- * Active Textbox Border Color: (Unchanged)
- * Active Textbox Foreground Color: #BBB
- * Active Textbox Background Color: #FCFCFC
- *
- * Grid Border Color: #303030
- * Grid Foreground Color: #939393
- * Grid Background Color: #202020
- * Grid Header Foreground Color: #939393
- * Grid Header Background Color: #282828
- * Selected Grid Header Foreground Color: #939393
- * Selected Grid Header Background Color: #282828
- * Grid Even Row Background Color: #282828
- *
- * Control Border Color: #303030
- * Control Foreground Color: #939393
- * Control Background Color: #202020
- * Control Shadow Color: #1C1C1C
- * Selected Control Foreground Color: #FBFBFB
- * Selected Control Background Color: #1A608F
- * Inactive Selected Control Foreground Color: #BBB
- * Inactive Selected Control Background Color: #303030
- * Disabled Control Foreground Color: #838383
- * Focused Control Outline Color: #303030
- *
- * Content Foreground Color: #BBB
- * Content Background Color: #202020
- * Secondary Content Foreground Color: #939393
- *
- * Selected Text Foreground Color: (Unchanged)
- * Selected Text Background Color: #1A608F
- * Inactive Selected Text Foreground Color: (Unchanged)
- * Inactive Selected Text Background Color: #222
- * Hyperlink Text Foreground Color: #1A608F
- */ 
+ */
+
+/* ----------------------------------------------------------------------------------------------
+ * Variables
+ * ---------------------------------------------------------------------------------------------- */
+
+:root {
+  --base-sprite-image: url(/static/images/themes/dark/sprite.png);
+
+  --base-foreground-color-1: #BBB;
+  --base-foreground-color-2: #939393;
+  --base-foreground-color-3: #838383;
+  --base-foreground-color-4: #C3C3C3;
+  --base-foreground-color-5: #FBFBFB;
+  --base-background-color-1: #1C1C1C;
+  --base-background-color-2: #3C3C3C;
+  --base-background-color-3: #343434;
+  --base-background-color-4: #303030;
+  --base-background-color-5: #222;
+  --base-background-color-6: #282828;
+  --base-background-color-7: #202020;
+  --base-background-color-8: #FCFCFC;
+  --base-accent-color-1: #1A608F;
+
+  --application-foreground-color: var(--base-foreground-color-2);
+  --application-background-color: var(--base-background-color-6);
+  --application-header-border-color: var(--base-background-color-1);
+  --application-header-foreground-color: var(--base-foreground-color-4);
+  --application-header-background-color: var(--base-background-color-1);
+  --secondary-application-header-foreground-color: var(--base-foreground-color-3);
+  --secondary-application-header-background-color: var(--base-background-color-2);
+
+  --region-border-color: var(--base-background-color-3);
+  --region-background-color: var(--base-background-color-5);
+  --region-header-border-color: var(--base-background-color-2);
+  --region-header-foreground-color: var(--base-foreground-color-4);
+  --region-header-background-color: var(--base-background-color-2);
+  --secondary-region-background-color: var(--base-background-color-6);
+  --secondary-region-border-color: var(--base-background-color-4);
+  --secondary-region-header-border-color: var(--base-background-color-3);
+  --secondary-region-header-foreground-color: var(--base-foreground-color-4);
+  --secondary-region-header-background-color: var(--base-background-color-3);
+
+  --button-border-color: var(--base-background-color-4);
+  --button-foreground-color: var(--base-foreground-color-2);
+  --button-background-color: var(--base-background-color-5);
+  --disabled-button-border-color: ; /* Unchanged */
+  --disabled-button-foreground-color: var(--base-foreground-color-3);
+  --disabled-button-background-color: ; /* Unchanged */
+  --hovered-button-border-color: ; /* Unchanged */
+  --hovered-button-foreground-color: ; /* Unchanged */
+  --hovered-button-background-color: ; /* Unchanged */
+  --pressed-button-border-color: ; /* Unchanged */
+  --pressed-button-foreground-color: var(--base-foreground-color-4);
+  --pressed-button-background-color: var(--base-background-color-4);
+  --alternate-button-border-color: var(--base-background-color-2);
+  --alternate-button-foreground-color: var(--base-foreground-color-4);
+  --alternate-button-background-color: var(--base-background-color-3);
+  --alternate-disabled-button-border-color: ; /* Unchanged */
+  --alternate-disabled-button-foreground-color: var(--base-foreground-color-3);
+  --alternate-disabled-button-background-color: ; /* Unchanged */
+  --alternate-hovered-button-border-color: ; /* Unchanged */
+  --alternate-hovered-button-foreground-color: ; /* Unchanged */
+  --alternate-hovered-button-background-color: ; /* Unchanged */
+  --alternate-pressed-button-border-color: ; /* Unchanged */
+  --alternate-pressed-button-foreground-color: var(--base-foreground-color-4);
+  --alternate-pressed-button-background-color: var(--base-background-color-3);
+
+  --tab-border-color: var(--base-background-color-4);
+  --tab-foreground-color: var(--base-foreground-color-2);
+  --tab-background-color: var(--base-background-color-5);
+  --selected-tab-border-color: ; /* Unchanged */
+  --selected-tab-foreground-color: var(--base-foreground-color-1);
+  --selected-tab-background-color: var(--base-background-color-4);
+  --hovered-tab-border-color: ; /* Unchanged */
+  --hovered-tab-foreground-color: ; /* Unchanged */
+  --hovered-tab-background-color: ; /* Unchanged */
+
+  --textbox-border-color: var(--base-background-color-4);
+  --textbox-foreground-color: var(--base-foreground-color-2);
+  --textbox-background-color: var(--base-background-color-4);
+  --disabled-textbox-border-color: ; /* Unchanged */
+  --disabled-textbox-foreground-color: var(--base-foreground-color-3);
+  --disabled-textbox-background-color: ; /* Unchanged */
+  --active-textbox-border-color: ; /* Unchanged */
+  --active-textbox-foreground-color: #434343; /* same as the Light theme */
+  --active-textbox-background-color: var(--base-background-color-8);
+
+  --grid-border-color: var(--base-background-color-4);
+  --grid-foreground-color: var(--base-foreground-color-2);
+  --grid-background-color: var(--base-background-color-7);
+  --grid-header-foreground-color: var(--base-foreground-color-2);
+  --grid-header-background-color: var(--base-background-color-6);
+  --selected-grid-header-foreground-color: var(--base-foreground-color-2);
+  --selected-grid-header-background-color: var(--base-background-color-6);
+  --grid-even-row-background-color: var(--base-background-color-6);
+
+  --control-border-color: var(--base-background-color-4);
+  --control-foreground-color: var(--base-foreground-color-2);
+  --control-background-color: var(--base-background-color-7);
+  --control-shadow-color: var(--base-background-color-1);
+  --selected-control-foreground-color: var(--base-foreground-color-5);
+  --selected-control-background-color: var(--base-accent-color-1);
+  --inactive-selected-control-foreground-color: var(--base-foreground-color-1);
+  --inactive-selected-control-background-color: var(--base-background-color-4);
+  --disabled-control-foreground-color: var(--base-foreground-color-3);
+  --focused-control-outline-color: var(--base-background-color-4);
+
+  --content-foreground-color: var(--base-foreground-color-1);
+  --content-background-color: var(--base-background-color-7);
+  --secondary-content-foreground-color: var(--base-foreground-color-2);
+
+  --selected-text-foreground-color: ; /* Unchanged */
+  --selected-text-background-color: var(--base-accent-color-1);
+  --inactive-selected-text-foreground-color: ; /* Unchanged */
+  --inactive-selected-text-background-color: var(--base-background-color-5);
+  --hyperlink-text-foreground-color: var(--base-accent-color-1);
+}
 
 /* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
 
-body {
-  color: #939393; /* Application Foreground Color */
-  background-color: #282828; /* Application Background Color */
-}
-
-table {
-  color: #939393; /* Grid Foreground Color */
-  background-color: #202020; /* Grid Background Color */
-}
-
-thead {
-  background-color: #282828; /* Grid Header Background Color */
-}
-
-th {
-  border-color: #303030; /* Grid Border Color */
-  color: #939393; /* Grid Header Foreground Color */
-  background-color: #282828; /* Grid Header Background Color */
-}
-
-td {
-  border-color: #303030; /* Grid Border Color */
-}
-
 ins, del {
-  -moz-text-decoration-color: rgba(83, 83, 83, .8); /* Secondary Content Foreground Color */
-}
-
-:focus {
-  outline-color: #303030; /* Focused Control Outline Color */
-}
-
-a {
-  color: #1A608F; /* Hyperlink Text Foreground Color */
+  -moz-text-decoration-color: rgba(147, 147, 147, .8); /* --secondary-content-foreground-color */
 }
 
 ::-moz-selection {
-  background-color: rgba(35, 131, 195, .3); /* Selected Text Background Color */
-}
-
-::-moz-selection:-moz-window-inactive {
-  background-color: #222; /* Inactive Selected Text Background Color; Doesn't work (Bug 706209) */
+  background-color: rgba(26, 96, 143, .3); /* --selected-text-background-color */
 }
 
 /* ----------------------------------------------------------------------------------------------
  * Widgets
  * ---------------------------------------------------------------------------------------------- */
 
-[role="button"] {
-  border-color: #303030; /* Button Border Color */
-  color: #939393; /* Button Foreground Color */
-  background-color: #222; /* Button Background Color */
-}
-
-[role="button"][aria-disabled="true"] {
-  color: #838383; /* Disabled Button Foreground Color */
-}
-
-[role="button"]:not([aria-disabled="true"]):active {
-  color: #C3C3C3; /* Pressed Button Foreground Color */
-  background-color: #303030; /* Pressed Button Background Color */
-}
-
-[role="columnheader"] {
-  border-color: #303030; /* Grid Border Color */
-  color: #939393; /* Grid Header Foreground Color */
-  background-color: #282828; /* Grid Header Background Color */
-}
-
-[role="columnheader"][aria-sort] {
-  color: #939393; /* Selected Grid Header Foreground Color */
-  background-color: #282828; /* Selected Grid Header Background Color */
-}
-
-[role="columnheader"][aria-sort] label::after {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
-}
-
-.grid-body {
-  color: #939393; /* Grid Foreground Color */
-  background-color: #202020; /* Grid Background Color */
-}
-
-:root[data-home-layout="classic"] .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
-  background-color: #282828; /* Grid Even Row Background Color */
-}
-
-[role="gridcell"][data-type="boolean"] [aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 160, 32, 128);
-}
-
-[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-type="boolean"] [aria-checked="false"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 160, 64, 128);
-}
-
-#column-drag-image-container {
-  background-color: #343434; /* Secondary Region Header Background Color */
-}
-
 [role="menu"] {
-  background-color: #202020; /* Control Background Color */
-  box-shadow: 0 0 .4rem rgba(68, 68, 68, .8); /* Control Shadow Color */
-}
-
-[role="menu"] [role="separator"] {
-  border-color: #303030; /* Control Border Color */
-}
-
-:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"]) {
-  color: #939393; /* Control Foreground Color */
-}
-
-:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-disabled="true"] {
-  color: #838383; /* Disabled Control Foreground Color */
-}
-
-:-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-selected="true"] {
-  color: #BBB; /* Inactive Selected Control Foreground Color */
-  background-color: #303030; /* Inactive Selected Control Background Color */
-}
-
-[aria-activedescendant] :-moz-any([role="option"], [role="treeitem"], [role^="menuitem"], [role="row"])[aria-selected="true"] {
-  color: #FBFBFB; /* Selected Control Foreground Color */
-  background-color: #1A608F; /* Selected Control Background Color */
-}
-
-[role="menuitem"][aria-haspopup="true"]::after {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
-}
-
-:-moz-any([role^="menuitem"], [role="radio"])[aria-checked="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 64, 32, 32);
-}
-
-[role="treeitem"][aria-expanded] + .expander {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 32, 32, 0);
-}
-
-[role="listbox"] {
-  background-color: #202020; /* Grid Background Color */
-}
-
-[role="scrollbar"] {
-  background-color: #939393; /* Application Foreground Color */
+  box-shadow: 0 0 .4rem rgba(28, 28, 28, .8); /* --control-shadow-color */
 }
 
 [role="textbox"] {
-  border-color: #303030; /* Textbox Border Color */
-  color: #939393; /* Textbox Foreground Color */
-  background-color: #303030; /* Textbox Background Color */
-  box-shadow: inset 0 0 .4rem rgba(68, 68, 68, .4); /* Control Shadow Color */
-}
-
-[role="textbox"]::-moz-placeholder {
-  color: #939393; /* Textbox Foreground Color */
-}
-
-[role="textbox"][aria-disabled="true"] {
-  color: #838383; /* Disabled Textbox Foreground Color */
-}
-
-[role="textbox"]:focus {
-  color: #434343; /* Active Textbox Foreground Color, same as the Light theme */
-  background-color: #FCFCFC; /* Active Textbox Background Color, same as the Light theme */
-}
-
-[aria-busy="true"]::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 256, 128, 192);
-}
-
-/* ----------------------------------------------------------------------------------------------
- * App Log-in
- * ---------------------------------------------------------------------------------------------- */
-
-#app-login {
-  background-color: #282828; /* Application Background Color */
-}
-
-:root[data-device-type|="mobile"] #app-login header {
-  color: #C3C3C3; /* Application Header Foreground Color */
-  background-color: #1C1C1C; /* Application Header Background Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * App Body
- * ---------------------------------------------------------------------------------------------- */
-
-#app-body {
-  background-color: #282828; /* Application Background Color */
+  box-shadow: inset 0 0 .4rem rgba(28, 28, 28, .4); /* --control-shadow-color */
 }
 
 /* ----------------------------------------------------------------------------------------------
  * Global Header
  * ---------------------------------------------------------------------------------------------- */
 
-[role="banner"] {
-  color: #C3C3C3; /* Application Header Foreground Color */
-  background-color: #1C1C1C; /* Application Header Background Color */
-}
-
-:root[data-device-type|="mobile"] [role="banner"] h1::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 320, 32, 304);
-}
-
-:root[data-device-type="mobile-phone"][data-current-tab="home"] [role="banner"] h1::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 304, 32, 288);
-}
-
-#main-menu--app {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 64, 128, 0);
-}
-
-#main-menu--app[aria-selected="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 64, 192, 0);
-}
-
-#main-menu--app-menu::before {
-  border-bottom-color: #202020; /* Control Background Color */
-}
-
-[role="banner"] [role="search"] [role="textbox"] {
-  border-color: #1C1C1C; /* Application Header Background Color */
-}
-
-[role="banner"] [role="search"] [role="button"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 128, 32, 96);
-}
-
-:root[data-device-type|="mobile"] [role="banner"]:not(.search) [role="search"] [role="button"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 128, 64, 96);
-}
-
 [role="banner"] [role="search"]:focus + [role="button"] {
   background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 128, 32, 96); /* Use the Light theme asset */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Global Sidebar
- * ---------------------------------------------------------------------------------------------- */
-
-#sidebar {
-  border-color: #343434; /* Region Border Color */
-  background-color: #222; /* Region Background Color */
-}
-
-:root[data-device-type|="mobile"] #sidebar > div {
-  background-color: #222; /* Region Background Color */
-}
-
-:root[data-device-type|="mobile"] #sidebar h2 {
-  border-color: #343434; /* Region Border Color */
-}
-
-:root[data-device-type|="mobile"] #sidebar :-moz-any([role="option"], [role="menuitem"]) {
-  border-color: #303030; /* Control Border Color */
-}
-
-#sidebar-folder-list [role="option"] label span {
-  color: #939393; /* Control Foreground Color */
-  background-color: #202020; /* Control Background Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Main
- * ---------------------------------------------------------------------------------------------- */
-
-#main-tablist [role="tab"] {
-  border-color: #3C3C3C; /* Region Header Border Color */
-  color: #838383; /* Secondary Application Header Foreground Color */
-  background-color: #1C1C1C; /* Application Header Background Color */
-}
-
-#main-tablist [role="tab"][aria-selected="true"] {
-  color: #C3C3C3; /* Region Header Foreground Color */
-  background-color: #3C3C3C; /* Region Header Background Color */
-}
-
-#main-tablist [role="tab"][aria-selected="false"]:hover {
-  color: #C3C3C3; /* Region Header Foreground Color */
-  background-color: #343434; /* Secondary Region Header Background Color */
-}
-
-#main-tablist [role="tab"] .close {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 96, 32, 64) !important;
-}
-
-#main-tablist [role="tab"] .close:hover {
-  background-color: #3C3C3C; /* Secondary Application Header Background Color */
-}
-
-#main-tabpanels {
-  background-color: #222; /* Region Background Color */
-}
-
-[itemtype$="TechArticle"] > header {
-  border-color: #3C3C3C; /* Region Header Border Color */
-  color: #C3C3C3; /* Region Header Foreground Color */
-  background-color: #3C3C3C; /* Region Header Background Color */
-}
-
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role] {
-  border-color: #3C3C3C; /* Alternate Button Border Color */
-  color: #C3C3C3; /* Alternate Button Foreground Color */
-}
-
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role]:active {
-  color: #C3C3C3; /* Alternate Pressed Button Foreground Color */
-}
-
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role][aria-disabled="true"] {
-  color: #838383; /* Alternate Disabled Button Foreground Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Home
- * ---------------------------------------------------------------------------------------------- */
-
-#home-preview-pane {
-  border-color: #343434; /* Region Border Color */
-}
-
-.bug-list [role="columnheader"][data-id="_starred"] label,
-.bug-list [role="gridcell"][data-id="_starred"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 192, 32, 160);
-}
-
-.bug-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 192, 64, 160);
-}
-
-.bug-list [role="columnheader"][data-id="_unread"] label,
-.bug-list [role="gridcell"][data-id="_unread"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 0, 224, 32, 192);
-}
-
-.bug-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_unread"] [aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 32, 224, 64, 192);
-}
-
-.bug-list > footer {
-  background-color: #222; /* Region Background Color */
-}
-
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"] {
-  border-color: #303030; /* Grid Border Color */
-}
-
-:root[data-device-type|="mobile"] #home-list .grid-body [role="row"]:active {
-  color: #FBFBFB !important; /* Selected Control Foreground Color */
-  background-color: #1A608F !important; /* Selected Control Background Color */
-}
-
-:root[data-device-type|="mobile"] #home-list .grid-body [role="row"][data-unread="false"],
-:root[data-home-layout="vertical"] #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
-  color: inherit;
-  background-color: #282828; /* Secondary Region Background Color */
-}
-
-:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64) !important;
-}
-
-:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"],
-:root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 128, 192, 64) !important;
-}
-
-:root[data-home-layout="vertical"] #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128) !important;
-}
-
-:root[data-home-layout="vertical"] #home-list [role="row"]:active [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"],
-:root[data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 192, 192, 128) !important;
-}
-
-article[id$="preview-bug"] > header {
-  border-color: #3C3C3C; /* Region Header Border Color */
-  color: #C3C3C3; /* Region Header Foreground Color */
-  background-color: #3C3C3C; /* Region Header Background Color */
-}
-
-:root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 128, 128, 64) !important;
-}
-
-:root[data-device-type|="mobile"][data-home-layout="vertical"] #home-list[aria-activedescendant] [role="row"][aria-selected="true"] [role="gridcell"][data-id="_starred"] [role="checkbox"][aria-checked="true"] {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 192, 128, 128) !important;
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Details
- * ---------------------------------------------------------------------------------------------- */
-
-[id|="bug"][role="tablist"] {
-  background-color: #222; /* Region Background Color */
-}
-
-[id|="bug"][role="tablist"] [role="tab"] {
-  border-color: #303030; /* Tab Border Color */
-  color: #939393; /* Tab Foreground Color */
-  background-color: #222; /* Tab Background Color */
-}
-
-[id|="bug"][role="tablist"] [role="tab"][aria-selected="true"] {
-  color: #BBB; /* Selected Tab Foreground Color */
-  background-color: #303030; /* Selected Tab Background Color */
-}
-
-.bug-info {
-  border-color: #343434; /* Region Border Color */
-}
-
-.bug-info h3 {
-  color: #C3C3C3; /* Secondary Region Header Foreground Color */
-  background-color: #343434; /* Secondary Region Header Background Color */
-}
-
-.bug-info section > ul > li,
-.bug-info dd {
-  border-color: #303030; /* Control Border Color */
-}
-
-.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
-  border-color: #303030; /* Secondary Region Border Color */
-  color: #BBB; /* Content Foreground Color */
-  background-color: #202020; /* Content Background Color */
-}
-
-.bug-timeline [itemprop="comment"] .changes {
-  border-color: #303030; /* Secondary Region Border Color */
-  background-color: #282828; /* Secondary Region Background Color */
-}
-
-.bug-timeline [itemprop="comment"] header {
-  background-color: #202020; /* Content Background Color */
-}
-
-.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"],
-#main-menu--app--account label {
-  color: #939393; /* Control Foreground Color */
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 64, 320, 128, 256);
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="text"] blockquote {
-  border-color: #343434; /* Region Border Color */
-  color: #939393; /* Secondary Content Foreground Color */
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
-  border-color: #303030; /* Secondary Region Border Color */
-  background-color: #282828; /* Secondary Region Background Color */
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
-  background-image: -moz-image-rect(url(/static/images/themes/dark/sprite.png), 128, 256, 192, 192);
-}
-
-.bug-attachments [itemprop="associatedMedia"] {
-  border-color: #303030; /* Secondary Region Border Color */
-  background-color: #202020; /* Content Background Color */
-}
-
-.bug-attachments [itemprop="associatedMedia"] h4 {
-  background-color: #282828; /* Secondary Region Background Color */
-}
-
-.bug-history tr {
-  background-color: #202020; /* Grid Background Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Search
- * ---------------------------------------------------------------------------------------------- */
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section {
-  border-color: #303030; /* Control Border Color */
-  background-color: #202020; /* Grid Background Color */
-}
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .browse-box > section > h3 {
-  border-color: #303030; /* Grid Border Color */
-  background-color: #282828; /* Grid Header Background Color */
-}
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box {
-  border-color: #3C3C3C; /* Region Header Border Color */
-  color: #C3C3C3; /* Region Header Foreground Color */
-  background-color: #3C3C3C; /* Region Header Background Color */
-}
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="textbox"] {
-  border-color: #3C3C3C; /* Region Header Background Color */
-}
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"] {
-  border-color: #3C3C3C; /* Alternate Button Border Color */
-  color: #C3C3C3; /* Alternate Button Foreground Color */
-  background-color: #343434; /* Alternate Button Background Color */
-}
-
-[id|="tabpanel-search"] [id$="basic-search-pane"] .text-box [role="button"]:active {
-  color: #C3C3C3; /* Alternate Pressed Button Foreground Color */
-  background-color: #343434; /* Alternate Pressed Button Background Color */
-}
-
-/* ----------------------------------------------------------------------------------------------
- * Settings
- * ---------------------------------------------------------------------------------------------- */
-
-:root[data-device-type="desktop"] #settings-tablist,
-:root[data-device-type="desktop"] #settings-tablist [role="tab"] {
-  border-color: #303030; /* Secondary Region Border Color */
-}
-
-:root[data-device-type="desktop"] #settings-tablist [role="tab"][aria-selected="true"] {
-  color: #BBB; /* Inactive Selected Control Foreground Color */
-  background-color: #303030; /* Inactive Selected Control Background Color */
-}
-
-[id^="settings-tabpanel"] > section h3 {
-  color: #C3C3C3; /* Secondary Region Header Foreground Color */
-  background-color: #343434; /* Secondary Region Header Background Color */
-}
-
-[id^="settings-tabpanel"] > section > section {
-  border-color: #303030; /* Secondary Region Border Color */
 }
