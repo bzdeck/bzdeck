@@ -223,7 +223,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
   params.append('exclude_fields', 'attachments.data');
 
-  BzDeck.core.request('GET', 'bug/' + id + '?' + params.toString(), bug => {
+  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
     if (!bug || !bug.id) {
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
 
@@ -253,7 +253,7 @@ BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
   params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
   params.append('exclude_fields', 'attachments.data');
 
-  BzDeck.core.request('GET', 'bug/' + id + '?' + params.toString(), bug => {
+  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
     if (bug && bug.id) {
       BzDeck.model.save_bug(bug);
     }

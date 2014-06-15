@@ -427,7 +427,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
   let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
   $grid_body.setAttribute('aria-busy', 'true');
 
-  BzDeck.core.request('GET', 'bug?' + params.toString(), data => {
+  BzDeck.core.request('GET', 'bug', params, null, data => {
     if (!data || !Array.isArray(data.bugs)) {
       $grid_body.removeAttribute('aria-busy');
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n

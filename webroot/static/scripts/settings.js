@@ -65,7 +65,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
 
     $output.textContent = 'Verifying...'; // l10n
 
-    BzDeck.core.request('GET', 'user/' + userid + '?' + params.toString(), user => {
+    BzDeck.core.request('GET', 'user/' + userid, params, null, user => {
       if (user.id) {
         // Save the token
         BzDeck.data.account.token = $input.value;

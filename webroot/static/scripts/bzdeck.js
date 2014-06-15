@@ -193,7 +193,7 @@ BzDeck.bootstrap.load_config = function () {
     }
 
     // Load the Bugzilla config in background
-    BzDeck.core.request('GET', 'configuration?cached_ok=1', data => {
+    BzDeck.core.request('GET', 'configuration', new URLSearchParams('cached_ok=1'), null, data => {
       if (!data || !data.version) {
         // Give up
         BzDeck.global.show_status('ERROR: Bugzilla configuration could not be loaded. \
@@ -278,7 +278,7 @@ BzDeck.bootstrap.validate_account = function () {
   BzDeck.global.show_status('Confirming account...'); // l10n
   this.$input.disabled = this.$button.disabled = true;
 
-  BzDeck.core.request('GET', 'user/' + encodeURIComponent(this.$input.value), data => {
+  BzDeck.core.request('GET', 'user/' + encodeURIComponent(this.$input.value), null, null, data => {
     let status;
 
     if (!data) {
@@ -558,7 +558,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
 
     params.append('include_fields', 'id,last_change_time');
 
-    this.request('GET', 'bug?' + params.toString(), data => {
+    this.request('GET', 'bug', params, null, data => {
       if (!data || !Array.isArray(data.bugs)) {
         // Give up
         BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -656,7 +656,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
       _params.append('id', [...requesting_bugs.keys()].slice(i, i + 100).join());
 
-      this.request('GET', 'bug?' + _params.toString(), data => {
+      this.request('GET', 'bug', _params, null, data => {
         if (!data || !Array.isArray(data.bugs)) {
           // Give up
           BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -730,7 +730,7 @@ BzDeck.core.load_bug_details = function (ids, callback = null) {
   params.append('include_fields', 'id,' + BzDeck.options.api.extra_fields.join());
   params.append('exclude_fields', 'attachments.data');
 
-  this.request('GET', 'bug?' + params.toString(), data => {
+  this.request('GET', 'bug', params, null, data => {
     if (!data) {
       // Give up
       BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
@@ -796,7 +796,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
   });
 };
 
-BzDeck.core.request = function (method, query, callback) {
+BzDeck.core.request = function (method, path, params, data, callback, auth = false) {
   if (!navigator.onLine) {
     BzDeck.global.show_status('You have to go online to load data.'); // l10n
 
@@ -804,18 +804,34 @@ BzDeck.core.request = function (method, query, callback) {
   }
 
   let xhr = new XMLHttpRequest(),
-      api = BzDeck.options.api;
+      url = new URL(BzDeck.options.api.endpoint);
 
-  xhr.open(method, api.endpoint + query, true);
+  params = params || new URLSearchParams();
+
+  if (auth) {
+    params.append('userid', BzDeck.data.account.id);
+    params.append('cookie', BzDeck.data.account.token);
+  }
+
+  url.pathname += path;
+  url.searchParams = params;
+  xhr.open(method, url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
+
+  if (method === 'POST') {
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  }
+
   xhr.addEventListener('load', event => {
     let text = event.target.responseText;
     callback(text ? JSON.parse(text) : null);
   });
+
   xhr.addEventListener('error', event => {
     callback(null);
   });
-  xhr.send(null);
+
+  xhr.send(data);
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -932,7 +948,7 @@ BzDeck.model.fetch_bugs_by_ids = function (ids, callback) {
   params.append('id', [...ids].join());
   params.append('include_fields', BzDeck.options.api.default_fields.join());
 
-  BzDeck.core.request('GET', 'bug?' + params.toString(), data => {
+  BzDeck.core.request('GET', 'bug', params, null, data => {
     if (data && Array.isArray(data.bugs)) {
       this.save_bugs(data.bugs);
       callback(data.bugs);
