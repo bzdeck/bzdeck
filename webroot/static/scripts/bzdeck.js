@@ -97,6 +97,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'remove' in Element.prototype, // Firefox 23
     'parseInt' in Number, // Firefox 25
     'createTBody' in HTMLTableElement.prototype, // Firefox 25
+    'Promise' in window, // Firefox 29
     'URLSearchParams' in window, // Firefox 29
     'getBoxQuads' in Element.prototype, // Firefox 31
     '@@iterator' in StyleSheetList.prototype, // Firefox 31
@@ -544,13 +545,8 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
     return;
   }
 
-  let loaded = 0,
-      len = Object.keys(subscriptions).length;
-
-  // Load bug list from Bugzilla
-  for (let [i, sub] of Iterator(subscriptions)) {
-    let index = i, // Redefine the variable to make it available in the following event
-        params = new URLSearchParams();
+  let _fetch = sub => new Promise((resolve, reject) => {
+    let params = new URLSearchParams();
 
     for (let [key, value] of Iterator(sub.query)) {
       params.append(key, value);
@@ -560,23 +556,23 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
 
     this.request('GET', 'bug', params, null, data => {
       if (!data || !Array.isArray(data.bugs)) {
-        // Give up
-        BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+        reject(new Error('No data'));
 
         return;
       }
 
-      // One subscription data loaded; update database with the bug list
-      subscriptions[index].bugs = data.bugs;
-      loaded++;
-
-      if (loaded === len) {
-        // All subscription data loaded
-        BzDeck.model.save_subscriptions(subscriptions);
-        this.load_bugs(subscriptions);
-      }
+      sub.bugs = data.bugs;
+      resolve(sub);
     });
-  }
+  });
+
+  // Load bug list from Bugzilla
+  Promise.all([for (sub of subscriptions) _fetch(sub)]).then(subscriptions => {
+    BzDeck.model.save_subscriptions(subscriptions);
+    this.load_bugs(subscriptions);
+  }).catch(error => {
+    BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+  });
 };
 
 BzDeck.core.load_bugs = function (subscriptions) {
@@ -641,8 +637,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
                         if (!column.id.startsWith('_')) column.id],
       extra_fields = opt.api.extra_fields,
       params = new URLSearchParams(),
-      ignore_cc_changes = BzDeck.data.prefs['notifications.ignore_cc_changes'] !== false,
-      loaded_bugs = [];
+      ignore_cc_changes = BzDeck.data.prefs['notifications.ignore_cc_changes'] !== false;
 
   // Fetch only the default fields for firstrun to load faster
   params.append('include_fields', this.firstrun ? default_fields.join()
@@ -650,16 +645,14 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = () => {
-    // Load 100 bugs each
-    for (let i = 0, len = requesting_bugs.size; i < len; i += 100) {
+    let _fetch = bug_ids => new Promise((resolve, reject) => {
       let _params = new URLSearchParams(params);
 
-      _params.append('id', [...requesting_bugs.keys()].slice(i, i + 100).join());
+      _params.append('id', bug_ids.join());
 
       this.request('GET', 'bug', _params, null, data => {
         if (!data || !Array.isArray(data.bugs)) {
-          // Give up
-          BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+          reject(new Error('No data'));
 
           return;
         }
@@ -707,16 +700,28 @@ BzDeck.core.load_bugs = function (subscriptions) {
           bug._unread = false;
         }
 
-        loaded_bugs.push(...data.bugs);
-
-        // Finally load the UI modules
-        if (boot && loaded_bugs.length === len) {
-          BzDeck.model.save_bugs(loaded_bugs, bugs => {
-            BzDeck.bootstrap.setup_ui();
-          });
-        }
+        resolve(data.bugs);
       });
+    });
+
+    let bug_ids = [...requesting_bugs.keys()],
+        bug_ids_chunk = [];
+
+    // Load 50 bugs each
+    while (bug_ids.length) {
+      bug_ids_chunk.push(_fetch(bug_ids.splice(0, 50)));
     }
+
+    Promise.all(bug_ids_chunk).then(bug_arrays => {
+      // Finally load the UI modules
+      if (boot) {
+        BzDeck.model.save_bugs(Array.concat(...bug_arrays), bugs => {
+          BzDeck.bootstrap.setup_ui();
+        });
+      }
+    }).catch(error => {
+      BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+    });
   };
 
   // Start processing
