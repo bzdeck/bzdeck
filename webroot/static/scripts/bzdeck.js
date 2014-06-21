@@ -1909,7 +1909,7 @@ BzDeck.global.handle_timeline_keydown = function (event) {
       continue; // The comment is collapsed
     }
 
-    let top = Math.round($comment.getBoxQuads({ relativeTo: $timeline })[0].p1.y);
+    let top = Math.round($comment.getBoxQuads({ relativeTo: $timeline })[0].bounds.top);
 
     if (shift && top < 0 || !shift && top > 0) {
       $timeline.scrollTop += top;
