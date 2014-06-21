@@ -99,6 +99,7 @@ BzDeck.bootstrap.check_requirements = function () {
     'createTBody' in HTMLTableElement.prototype, // Firefox 25
     'Promise' in window, // Firefox 29
     'URLSearchParams' in window, // Firefox 29
+    'escape' in CSS, // Firefox 31
     'getBoxQuads' in Element.prototype, // Firefox 31
     '@@iterator' in StyleSheetList.prototype, // Firefox 31
     '@@iterator' in CSSRuleList.prototype // Firefox 32
@@ -1327,7 +1328,7 @@ BzDeck.global.fill_template_details = function ($content, bug, delayed = false) 
 
   // Depends on & Blocks
   for (let field of ['depends_on', 'blocks']) {
-    $placeholder = $content.querySelector('[data-field="' + field + '"]');
+    $placeholder = $content.querySelector('[data-field="' + CSS.escape(field) + '"]');
 
     if ($placeholder) {
       let $ul = $placeholder.appendChild(document.createElement('ul'));
@@ -2682,7 +2683,7 @@ window.addEventListener('popstate', event => {
     }
   }
 
-  $tab = document.querySelector('#tab-' + path);
+  $tab = document.querySelector('#tab-' + CSS.escape(path));
 
   if ($tab) {
     $root.setAttribute('data-current-tab', path);
