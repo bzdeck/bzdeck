@@ -1912,8 +1912,15 @@ BzDeck.global.parse_comment = function (str) {
 
   // General links
   str = str.replace(
-    /((https?|ftp|news):\/\/[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
+    /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
     '<a href="$1">$1</a>'
+  );
+
+  // Email links
+  // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
+  str = str.replace(
+    /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
+    '<a href="mailto:$1">$1</a>'
   );
 
   // Bugs
