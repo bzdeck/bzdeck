@@ -120,6 +120,7 @@ code, kbd {
 }
 
 a {
+  color: #2383C3; /* Fallback */
   color: var(--hyperlink-text-foreground-color);
   text-decoration: underline;
 }
@@ -378,7 +379,9 @@ col[data-hidden="false"] {
   z-index: 200;
   width: 100%;
   height: 100%;
+  color: #E3E3E3; /* Fallback */
   color: var(--application-foreground-color);
+  background-color: #545454; /* Fallback */
   background-color: var(--application-background-color);
   opacity: 1;
   transition: opacity 1.5s;
