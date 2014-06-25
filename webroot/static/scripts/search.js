@@ -19,6 +19,7 @@ BzDeck.SearchPage = function () {
 
   this.view = {
     $tabpanel: $content.querySelector('[role="tabpanel"]'),
+    $status: $content.querySelector('[role="status"]'),
     buttons: {},
     panes: {}
   };
@@ -45,7 +46,8 @@ BzDeck.SearchPage = function () {
     set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
-      if (oldval === newval) {
+      if (oldval === newval &&
+          this.view.panes['preview'].getAttribute('aria-hidden') === 'false') {
         return;
       }
 
@@ -112,7 +114,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
     }
   };
 
-  for (let $button of this.view.$tabpanel.querySelectorAll('footer [role="button"]')) {
+  for (let $button of this.view.$tabpanel.querySelectorAll('header [role="button"]')) {
     let button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
     button.bind('Pressed', handler);
   }
@@ -396,7 +398,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
 
     // Show the preview pane
     if ($pane.mozMatchesSelector('[aria-hidden="true"]')) {
-      BzDeck.global.show_status('');
+      this.hide_status();
       this.view.panes['basic-search'].setAttribute('aria-hidden', 'true');
       $pane.setAttribute('aria-hidden', 'false');
       this.view.buttons['show-details'].data.disabled = false;
@@ -411,34 +413,32 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
-    BzDeck.global.show_status('You have to go online to search bugs.'); // l10n
+    this.show_status('You have to go online to search bugs.'); // l10n
     return;
   }
 
   // Specify fields
   params.append('include_fields', BzDeck.options.api.default_fields.join());
 
-  BzDeck.global.show_status('Loading...'); // l10n
+  let $grid = this.view.panes['result'].querySelector('[role="grid"]');
+
+  $grid.removeAttribute('aria-hidden');
+  $grid.setAttribute('aria-busy', 'true');
+  this.hide_status();
 
   FlareTail.util.event.async(() => {
     BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body
   });
 
-  let $grid_body = this.view.panes['result'].querySelector('[class="grid-body"]')
-  $grid_body.setAttribute('aria-busy', 'true');
-
   BzDeck.core.request('GET', 'bug', params, null, data => {
     if (!data || !Array.isArray(data.bugs)) {
-      $grid_body.removeAttribute('aria-busy');
-      BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+      $grid.removeAttribute('aria-busy');
+      this.show_status('ERROR: Failed to load data.'); // l10n
 
       return;
     }
 
-    let num = data.bugs.length,
-        status = '';
-
-    if (num > 0) {
+    if (data.bugs.length > 0) {
       this.data.bug_list = data.bugs;
 
       // Save data
@@ -450,14 +450,22 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
       // Show results
       FlareTail.util.event.async(() => {
         BzDeck.global.update_grid_data(this.view.grid, data.bugs);
+        $grid.removeAttribute('aria-busy');
+        this.hide_status();
       });
-
-      status = num > 1 ? '%d bugs found.'.replace('%d', num) : '1 bug found.'; // l10n
     } else {
-      status = 'Zarro Boogs found.'; // l10n
+      $grid.removeAttribute('aria-busy');
+      this.show_status('Zarro Boogs found.'); // l10n
     }
-
-    $grid_body.removeAttribute('aria-busy');
-    BzDeck.global.show_status(status);
   });
+};
+
+BzDeck.SearchPage.prototype.show_status = function (str) {
+  this.view.$status.firstElementChild.textContent = str;
+  this.view.$status.setAttribute('aria-hidden', str === '');
+  this.view.panes['result'].querySelector('[role="grid"]').setAttribute('aria-hidden', str !== '');
+};
+
+BzDeck.SearchPage.prototype.hide_status = function () {
+  this.show_status('');
 };
