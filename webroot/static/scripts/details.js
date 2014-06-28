@@ -80,9 +80,44 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 };
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
-  let $template = document.querySelector('template#tabpanel-details'),
-      $tabpanel = BzDeck.global.fill_template($template.content, bug, true),
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+  let FTw = FlareTail.widget,
+      $tabpanel = document.querySelector('template#tabpanel-details').content
+                          .cloneNode(true).firstElementChild,
+      $bug = this.view.$bug = $tabpanel.querySelector('article'),
+      $star_checkbox = $tabpanel.querySelector('[role="checkbox"][data-field="_starred"]');
+
+  // Assign unique IDs
+  $tabpanel.id = $tabpanel.id.replace(/TID/, bug.id);
+
+  if ($tabpanel.hasAttribute('aria-labelledby')) {
+    $tabpanel.setAttribute('aria-labelledby',
+                           $tabpanel.getAttribute('aria-labelledby').replace(/TID/, bug.id));
+  }
+
+  for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
+    for (let $element of $tabpanel.querySelectorAll('[' + attr +']')) {
+      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, bug.id));
+    }
+  }
+
+  // Star on the header
+  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event =>
+    BzDeck.core.toggle_star(bug.id, event.detail.checked));
+
+  for (let $area of $tabpanel.querySelectorAll('.scrollable')) {
+    // Custom scrollbar
+    let scrollbar = new FTw.ScrollBar($area);
+
+    if (scrollbar && $area.classList.contains('bug-timeline')) {
+      scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
+    }
+
+    $area.tabIndex = 0;
+  }
+
+  BzDeck.bug.fill_data($bug, bug);
+
+  let mobile = FlareTail.util.device.type.startsWith('mobile'),
       phone = FlareTail.util.device.type === 'mobile-phone',
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       _tablist = new FlareTail.widget.TabList($tablist),
@@ -240,7 +275,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
     if ($tabpanel) {
       BzDeck.global.show_status('');
       // Update UI
-      BzDeck.global.fill_template($tabpanel, bug);
+      BzDeck.bug.fill_data(this.view.$bug, bug);
       $tab.title = this.get_tab_title(bug);
     }
   });
@@ -263,6 +298,111 @@ BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
 BzDeck.DetailsPage.prototype.navigate = function (id) {
   BzDeck.toolbar.tablist.close_tab(this.view.$tab);
   BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
+};
+
+/* ----------------------------------------------------------------------------------------------
+ * Attachments
+ * ---------------------------------------------------------------------------------------------- */
+
+BzDeck.DetailsPage.attachments = {};
+
+BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = false) {
+  let $placeholder = $bug.querySelector('[data-field="attachments"]');
+
+  if (!$placeholder || !attachments.length) {
+    return;
+  }
+
+  if (!addition) {
+    for (let $attachment of $placeholder.querySelectorAll('[itemprop="attachment"]')) {
+      $attachment.remove();
+    }
+  }
+
+  for (let att of attachments) {
+    let $attachment = $placeholder.appendChild(document.querySelector('#details-attachment')
+                                                       .content.cloneNode(true).firstElementChild);
+
+    FlareTail.util.content.fill($attachment, {
+      'url': '/attachment/' + att.id,
+      'description': att.description,
+      'name': att.file_name,
+      'contentSize': (att.size / 1024).toFixed(2) + ' KB', // l10n
+      'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
+      'uploadDate': att.creation_time,
+      'flag': [for (flag of att.flags || []) {
+        'creator': {
+          'name': flag.setter.name
+        },
+        'name': flag.name,
+        'status': flag.status
+      }],
+      'creator': {
+        'name': att.attacher.name
+      }
+    }, {
+      'data-attachment-id': att.id
+    });
+  }
+
+  $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-hidden', 'false');
+};
+
+/* ----------------------------------------------------------------------------------------------
+ * History
+ * ---------------------------------------------------------------------------------------------- */
+
+BzDeck.DetailsPage.history = {};
+
+BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
+  let $placeholder = $bug.querySelector('[data-field="history"]');
+
+  if (!$placeholder || !history.length) {
+    return;
+  }
+
+  let datetime = FlareTail.util.datetime,
+      conf_field = BzDeck.data.bugzilla_config.field,
+      $tbody = $placeholder.querySelector('tbody'),
+      $template = document.querySelector('#details-change');
+
+  let cell_content = (field, content) =>
+        ['blocks', 'depends_on'].indexOf(field) > -1
+                ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
+                : content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+
+  if (!addition) {
+    $tbody.innerHTML = ''; // Remove the table rows
+  }
+
+  for (let hist of history) {
+    for (let [i, change] of Iterator(hist.changes)) {
+      let $row = $tbody.appendChild($template.content.cloneNode(true).firstElementChild),
+          $cell = field => $row.querySelector('[data-field="' + field + '"]');
+
+      if (i === 0) {
+        $cell('who').innerHTML = hist.changer.name.replace('@', '&#8203;@');
+        $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
+        datetime.fill_element($cell('when').appendChild(document.createElement('time')),
+                              hist.change_time, { relative: false });
+      } else {
+        $cell('when').remove();
+        $cell('who').remove();
+      }
+
+      let _field = conf_field[change.field_name] ||
+                   // Bug 909055 - Field name mismatch in history: group vs groups
+                   conf_field[change.field_name.replace(/s$/, '')] ||
+                   // If the Bugzilla config is outdated, the field name can be null
+                   change.field_name;
+
+      $cell('what').textContent = _field.description;
+      $cell('removed').innerHTML = cell_content(change.field_name, change.removed);
+      $cell('added').innerHTML = cell_content(change.field_name, change.added);
+    }
+  }
+
+  $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-hidden', 'false');
 };
 
 /* ----------------------------------------------------------------------------------------------

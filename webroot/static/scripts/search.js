@@ -361,7 +361,11 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let FTw = FlareTail.widget,
       ScrollBar = FTw.ScrollBar,
       $pane = this.view.panes['preview']
-            = this.view.$tabpanel.querySelector('[id$="-preview-pane"]');
+            = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
+      $bug = $pane.querySelector('article'),
+      $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
+
+  $bug.appendChild($info).id = $bug.id + '-info';
 
   // Star on the header
   let $star_checkbox = $pane.querySelector('[role="checkbox"][data-field="_starred"]');
@@ -370,29 +374,29 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   });
 
   // Custom scrollbar (info)
-  new ScrollBar($pane.querySelector('[id$="-bug-info"]'));
+  new ScrollBar($info);
 
   // Custom scrollbar (timeline)
   let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
 
   if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+    scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
   }
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
   let $pane = this.view.panes['preview'],
-      $template = $pane.querySelector('[id$="-preview-bug"]');
+      $bug = $pane.querySelector('[id$="-preview-bug"]');
 
   if (!newval) {
-    $template.setAttribute('aria-hidden', 'true');
+    $bug.setAttribute('aria-hidden', 'true');
     return;
   }
 
   BzDeck.model.get_bug_by_id(newval, bug => {
     if (!bug) {
       // Unknown bug
-      $template.setAttribute('aria-hidden', 'true');
+      $bug.setAttribute('aria-hidden', 'true');
       return;
     }
 
@@ -406,8 +410,8 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     }
 
     // Fill the content
-    BzDeck.global.fill_template($template, bug);
-    $template.setAttribute('aria-hidden', 'false');
+    BzDeck.bug.fill_data($bug, bug);
+    $bug.setAttribute('aria-hidden', 'false');
   });
 };
 

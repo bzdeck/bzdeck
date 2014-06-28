@@ -1072,18 +1072,18 @@ main {
   bottom: 0;
 }
 
-[itemtype$="TechArticle"] > header {
+[itemtype="https://www.bzdeck.com/bug"] > header {
   display: flex;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);
 }
 
-:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header {
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > header {
   display: block;
 }
 
-[itemtype$="TechArticle"] > header > [itemprop="name"] {
+[itemtype="https://www.bzdeck.com/bug"] > header > :-moz-any(h2, h3) {
   flex: auto;
   overflow: hidden;
   font-size: 1.5rem;
@@ -1095,35 +1095,35 @@ main {
   -moz-user-select: text;
 }
 
-[itemtype$="TechArticle"] > header > [itemprop="name"] [data-field="id"]::after {
-  content: ' - '
+[itemtype="https://www.bzdeck.com/bug"] > header > :-moz-any(h2, h3) [itemprop="id"]::after {
+  content: ' - ';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] {
   flex: none;
   height: 3rem;
 }
 
-:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header > [role="toolbar"] {
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] {
   float: right;
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] ul {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] ul {
   display: inline-flex;
   margin: .4rem 0 .4rem .4rem;
   height: 2.2rem;
 }
 
-:root[data-device-type|="mobile"] [itemtype$="TechArticle"] > header > [role="toolbar"] ul.nav {
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] ul.nav {
   display: none;
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li {
   display: inline-block;
   height: 2.2rem; 
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role] {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [role] {
   position: relative;
   box-sizing: content-box;
   border-width: 0;
@@ -1137,22 +1137,22 @@ main {
   vertical-align: top;
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role]:active {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [role]:active {
   color: var(--alternate-pressed-button-foreground-color);
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role][aria-disabled="true"] {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [role][aria-disabled="true"] {
   color: var(--alternate-disabled-button-foreground-color);
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role].iconic {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [role].iconic {
   overflow: hidden;
   padding: 0 0 0 2.2rem;
   width: 0;
   height: 2.2rem;
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [role].iconic::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [role].iconic::before {
   position: absolute;
   top: 0;
   left: 0;
@@ -1167,27 +1167,27 @@ main {
   vertical-align: top;
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="false"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="false"]::before {
   content: '\F006';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="true"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-field="_starred"][aria-checked="true"]::before {
   content: '\F005';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="show-details"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-command="show-details"]::before {
   content: '\F08E';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="nav-back"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-command="nav-back"]::before {
   content: '\F053';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="nav-forward"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-command="nav-forward"]::before {
   content: '\F054';
 }
 
-[itemtype$="TechArticle"] > header > [role="toolbar"] li > [data-command="show-basic-search-pane"]::before {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] li > [data-command="show-basic-search-pane"]::before {
   content: '\F002';
 }
 
@@ -1708,7 +1708,7 @@ article[id$="preview-bug"] > .bug-timeline {
   font-weight: 500;
 }
 
-:root[data-device-type|="mobile"] .bug-timeline > div > h2 [data-field="id"] {
+:root[data-device-type|="mobile"] .bug-timeline > div > h2 [itemprop="id"] {
   display: none;
 }
 
@@ -1845,7 +1845,7 @@ article[id$="preview-bug"] > .bug-timeline {
   color: var(--secondary-content-foreground-color);
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] {
   border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
@@ -1853,81 +1853,81 @@ article[id$="preview-bug"] > .bug-timeline {
   background-color: var(--secondary-region-background-color);
 }
 
-:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
   margin: 0 .8rem .8rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
   margin: 0 1.2rem 1.2rem;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] a {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] a {
   display: block;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] a * {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] a * {
   pointer-events: none;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
   line-height: 1.8rem;
 }
 
-:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
   padding: .8rem .8rem .8rem 3.4rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5 {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
   padding: 1.2rem 1.2rem 1.2rem 4.2rem;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
   float: left;
   background-image: -moz-image-rect(var(--base-sprite-image), 128, 256, 192, 192);
   background-size: cover;
   content: "";
 }
 
-:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
   margin: -.1rem 0 0 -2.7rem;
   width: 2rem;
   height: 2rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] h5::before {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
   margin: -.3rem 0 0 -3.3rem;
   width: 2.4rem;
   height: 2.4rem;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   position: relative;
   text-align: center;
 }
 
-:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+:root[data-device-type="mobile-phone"] .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   padding: 0 .8rem .8rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   padding: 0 1.2rem 1.2rem;
 }
 
-:root[data-timeline-display-attachments-inline="false"] .bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div {
+:root[data-timeline-display-attachments-inline="false"] .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   display: none;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] {
   height: 10rem;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div * {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div * {
   max-width: 100%;
   opacity: 1;
   transition: opacity 1s;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="associatedMedia"] div[aria-busy="true"] * {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] * {
   opacity: 0;
 }
 
@@ -1973,30 +1973,30 @@ article[id$="preview-bug"] > .bug-timeline {
   overflow: hidden;
 }
 
-.bug-attachments [itemprop="associatedMedia"] {
+.bug-attachments [itemprop="attachment"] {
   border-width: 0 0 .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
   background-color: var(--content-background-color);
 }
 
-.bug-attachments [itemprop="associatedMedia"] h4 {
+.bug-attachments [itemprop="attachment"] h4 {
   background-color: var(--secondary-region-background-color);
 }
 
-:root[data-device-type="mobile-phone"] .bug-attachments [itemprop="associatedMedia"] {
+:root[data-device-type="mobile-phone"] .bug-attachments [itemprop="attachment"] {
   margin: .8rem;
 }
 
-:root[data-device-type="mobile-phone"] .bug-attachments [itemprop="associatedMedia"] > * {
+:root[data-device-type="mobile-phone"] .bug-attachments [itemprop="attachment"] > * {
   padding: .8rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-attachments [itemprop="associatedMedia"] {
+:root:not([data-device-type="mobile-phone"]) .bug-attachments [itemprop="attachment"] {
   margin: 1.2rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-attachments [itemprop="associatedMedia"] > * {
+:root:not([data-device-type="mobile-phone"]) .bug-attachments [itemprop="attachment"] > * {
   padding: 1.2rem;
 }
 
@@ -2082,19 +2082,19 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: .4rem 1.2rem;
 }
 
-:root[data-device-type|="mobile"] .bug-history td[data-item="who"]::before {
+:root[data-device-type|="mobile"] .bug-history td[data-field="who"]::before {
   content: "Who: ";
 }
 
-:root[data-device-type|="mobile"] .bug-history td[data-item="what"]::before {
+:root[data-device-type|="mobile"] .bug-history td[data-field="what"]::before {
   content: "What: ";
 }
 
-:root[data-device-type|="mobile"] .bug-history td[data-item="removed"]::before {
+:root[data-device-type|="mobile"] .bug-history td[data-field="removed"]::before {
   content: "Removed: ";
 }
 
-:root[data-device-type|="mobile"] .bug-history td[data-item="added"]::before {
+:root[data-device-type|="mobile"] .bug-history td[data-field="added"]::before {
   content: "Added: ";
 }
 

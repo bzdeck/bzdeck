@@ -32,6 +32,11 @@ BzDeck.HomePage = function () {
     });
   }
 
+  let $bug = document.querySelector('#home-preview-pane article'),
+      $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
+
+  $bug.appendChild($info).id = 'home-preview-bug-info';
+
   // Star on the header
   let $star_checkbox = document.querySelector('#home-preview-bug header [data-field="_starred"]');
   (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
@@ -39,13 +44,13 @@ BzDeck.HomePage = function () {
   });
 
   // Custom scrollbar (info)
-  new FTw.ScrollBar(document.querySelector('#home-preview-bug-info'));
+  new FTw.ScrollBar($info);
 
   // Custom scrollbar (timeline)
   let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
 
   if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.global.handle_timeline_keydown.bind(scrollbar);
+    scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
   }
 
   this.view = {};
@@ -212,13 +217,13 @@ BzDeck.HomePage = function () {
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
   let $pane = document.querySelector('#home-preview-pane'),
-      $template = document.querySelector('#home-preview-bug'),
+      $bug = document.querySelector('#home-preview-bug'),
       button = this.view.details_button;
 
   // Remove the current preview if exists
 
   if (!newval) {
-    $template.setAttribute('aria-hidden', 'true');
+    $bug.setAttribute('aria-hidden', 'true');
     button.data.disabled = true;
 
     return;
@@ -226,16 +231,16 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
   BzDeck.model.get_bug_by_id(newval, bug => {
     if (!bug) {
-      $template.setAttribute('aria-hidden', 'true');
+      $bug.setAttribute('aria-hidden', 'true');
       button.data.disabled = true;
 
       return;
     }
 
     // Fill the content
-    BzDeck.global.fill_template($template, bug);
+    BzDeck.bug.fill_data($bug, bug);
     BzDeck.core.toggle_unread(bug.id, false);
-    $template.setAttribute('aria-hidden', 'false');
+    $bug.setAttribute('aria-hidden', 'false');
     button.data.disabled = false;
   });
 };

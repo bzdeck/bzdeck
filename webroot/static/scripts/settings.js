@@ -130,7 +130,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
     if (value === true) {
       // Show media
-      for (let $attachment of document.querySelectorAll('[itemprop="associatedMedia"]')) {
+      for (let $attachment of document.querySelectorAll('[itemprop="attachment"]')) {
         let $media = $attachment.querySelector('img, audio, video');
 
         if ($media && !$media.src) {
