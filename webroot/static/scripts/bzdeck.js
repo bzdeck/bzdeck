@@ -19,7 +19,10 @@ BzDeck.data = {};
 
 BzDeck.options = {
   api: {
-    endpoint: 'https://api-dev.bugzilla.mozilla.org/latest/',
+    endpoints: {
+      rest: 'https://api-dev.bugzilla.mozilla.org/latest/',
+      websocket: 'ws://bugzfeed.mozilla.org/'
+    },
     extra_fields: [
       'attachments', 'blocks', 'cc', 'comments', 'depends_on', 'dupe_of', 'flags', 'groups',
       'history', 'is_cc_accessible', 'is_confirmed', 'is_creator_accessible', 'see_also',
@@ -401,6 +404,9 @@ BzDeck.bootstrap.finish = function () {
   // Register the app for an activity on Firefox OS
   BzDeck.global.register_activity_handler();
 
+  // Connect to the push notification server
+  BzDeck.bugzfeed.connect();
+
   BzDeck.global.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
   this.processing = false;
@@ -753,7 +759,7 @@ BzDeck.core.request = function (method, path, params, data, callback, auth = fal
   }
 
   let xhr = new XMLHttpRequest(),
-      url = new URL(BzDeck.options.api.endpoint);
+      url = new URL(BzDeck.options.api.endpoints.rest);
 
   params = params || new URLSearchParams();
 

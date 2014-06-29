@@ -42,6 +42,8 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
 
     this.open(bug);
   });
+
+  BzDeck.bugzfeed.subscribe([id]);
 };
 
 BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
@@ -76,6 +78,12 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 
     $tabpanel.querySelector('[role="checkbox"][data-field="_starred"]')
              .setAttribute('aria-checked', event.detail.ids.has(bug.id));
+  });
+
+  window.addEventListener('bug:updated', event => {
+    if ($tabpanel && this.data.id === event.detail.bug.id) {
+      BzDeck.bug.update(this.view.$bug, event.detail.bug, event.detail.changes);
+    }
   });
 };
 

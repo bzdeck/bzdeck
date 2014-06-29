@@ -51,10 +51,14 @@ BzDeck.SearchPage = function () {
         return;
       }
 
-      if (prop === 'preview_id' && !FlareTail.util.device.type.startsWith('mobile')) {
-        FlareTail.util.event.async(() => {
-          this.show_preview(oldval, newval);
-        });
+      if (prop === 'preview_id') {
+        if (!FlareTail.util.device.type.startsWith('mobile')) {
+          FlareTail.util.event.async(() => {
+            this.show_preview(oldval, newval);
+          });
+        }
+
+        BzDeck.bugzfeed.subscribe([newval]);
       }
 
       obj[prop] = newval;
@@ -90,6 +94,12 @@ BzDeck.SearchPage = function () {
     // Preview
     $tabpanel.querySelector('[role="article"] [role="checkbox"][data-field="_starred"]')
              .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
+  });
+
+  window.addEventListener('bug:updated', event => {
+    if ($tabpanel && this.data.preview_id === event.detail.bug.id) {
+      BzDeck.bug.update($tabpanel.querySelector('article'), event.detail.bug, event.detail.changes);
+    }
   });
 };
 

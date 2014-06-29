@@ -197,6 +197,37 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
   }
 };
 
+BzDeck.bug.update = function ($bug, bug, changes) {
+  let $timeline = $bug.querySelector('.bug-timeline');
+
+  if ($timeline) {
+    let $parent = $timeline.querySelector('section, .scrollable-area-content'),
+        $entry = BzDeck.timeline.create_entry($timeline.id, changes);
+
+    if (BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending') {
+      $parent.insertBefore($entry, $timeline.querySelector('[itemprop="comment"]'));
+    } else {
+      $parent.appendChild($entry);
+    }
+  }
+
+  if (changes.has('attachment') && $bug.querySelector('[data-field="attachments"]')) {
+    BzDeck.DetailsPage.attachments.render($bug, [changes.get('attachment')], true);
+  }
+
+  if (changes.has('history') && $bug.querySelector('[data-field="history"]')) {
+    let _bug = { 'id': bug.id, '_update_needed': true };
+
+    // Prep partial data
+    for (let change in changes.get('history').changes) {
+      _bug[change.field_name] = bug[change.field_name];
+    }
+
+    BzDeck.bug.fill_data($bug, _bug, true);
+    BzDeck.DetailsPage.history.render($bug, [changes.get('history')], true);
+  }
+};
+
 /* ----------------------------------------------------------------------------------------------
  * Timeline
  * ---------------------------------------------------------------------------------------------- */
@@ -517,4 +548,137 @@ BzDeck.timeline.handle_keydown = function (event) {
   }
 
   return FlareTail.util.event.ignore(event);
+};
+
+/* ----------------------------------------------------------------------------------------------
+ * Bugzilla Push Notifications support
+ * https://wiki.mozilla.org/BMO/ChangeNotificationSystem
+ * ---------------------------------------------------------------------------------------------- */
+
+BzDeck.bugzfeed = {
+  subscription: new Set()
+};
+
+BzDeck.bugzfeed.connect = function () {
+  let endpoint = BzDeck.options.api.endpoints.websocket;
+
+  if (!endpoint || !navigator.onLine) {
+    return;
+  }
+
+  this.websocket = new WebSocket(endpoint);
+
+  this.websocket.addEventListener('open', event => {
+    if (this.reconnector) {
+      window.clearInterval(this.reconnector);
+    }
+
+    // Subscribe bugs once (re)connected
+    if (this.subscription.size) {
+      this.subscribe([...this.subscription]);
+    }
+  });
+
+  this.websocket.addEventListener('close', event => {
+    // Try to reconnect every 30 seconds when unexpectedly disconnected
+    if (event.code !== 1000) {
+      this.reconnector = window.setInterval(() => this.connect(), 30000);
+    }
+  });
+
+  this.websocket.addEventListener('message', event => {
+    let message = JSON.parse(event.data)
+
+    if (message.command === 'update') {
+      this.get_changes(message);
+    }
+  });
+};
+
+BzDeck.bugzfeed.send = function (command, bugs) {
+  if (this.websocket.readyState === 1) {
+    this.websocket.send(JSON.stringify({ 'command': command, 'bugs': bugs }));
+  }
+};
+
+BzDeck.bugzfeed.subscribe = function (bugs) {
+  for (let bug of bugs) {
+    this.subscription.add(bug);
+  }
+
+  this.send('subscribe', bugs);
+};
+
+BzDeck.bugzfeed.unsubscribe = function (bugs) {
+  for (let bug of bugs) {
+    this.subscription.delete(bug);
+  }
+
+  this.send('unsubscribe', bugs);
+};
+
+BzDeck.bugzfeed.get_changes = function (message) {
+  let api = BzDeck.options.api,
+      id = message.bug,
+      time = new Date(message.when),
+      params = new URLSearchParams();
+
+  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
+  params.append('exclude_fields', 'attachments.data');
+
+  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
+    if (!bug || !bug.comments) {
+      return;
+    }
+
+    let get_change = (field, time_field = 'creation_time') =>
+          [for (item of bug[field] || []) if (new Date(item[time_field]) - time === 0) item][0],
+        changes = new Map(),
+        comment = get_change('comments'),
+        attachment = get_change('attachments'),
+        history = get_change('history', 'change_time');
+
+    if (comment) {
+      changes.set('comment', comment);
+    }
+
+    if (attachment) {
+      changes.set('attachment', attachment);
+    }
+
+    if (history) {
+      changes.set('history', history);
+    }
+
+    this.save_changes(bug, changes);
+
+    FlareTail.util.event.dispatch(window, 'bug:updated', { 'detail': {
+      'bug': bug,
+      'changes': changes
+    }});
+  });
+};
+
+BzDeck.bugzfeed.save_changes = function (bug, changes) {
+  BzDeck.model.get_bug_by_id(bug.id, cache => {
+    if (changes.has('comment')) {
+      cache.comments.push(changes.get('comment'));
+    }
+
+    if (changes.has('attachment')) {
+      cache.attachments = cache.attachments || [];
+      cache.attachments.push(changes.get('attachment'));
+    }
+
+    if (changes.has('history')) {
+      cache.history = cache.history || [];
+      cache.history.push(changes.get('history'));
+
+      for (let change in changes.get('history').changes) {
+        cache[change.field_name] = bug[change.field_name];
+      }
+    }
+
+    BzDeck.model.save_bug(cache);
+  });
 };

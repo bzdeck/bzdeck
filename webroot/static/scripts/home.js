@@ -189,6 +189,8 @@ BzDeck.HomePage = function () {
         FlareTail.util.event.async(() => {
           this.show_preview(oldval, newval);
         });
+
+        BzDeck.bugzfeed.subscribe([newval]);
       }
 
       obj[prop] = newval;
@@ -211,6 +213,13 @@ BzDeck.HomePage = function () {
     // Thread
     for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
       $row.setAttribute('data-unread', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    }
+  });
+
+  window.addEventListener('bug:updated', event => {
+    if (this.data.preview_id === event.detail.bug.id) {
+      BzDeck.bug.update(document.querySelector('#home-preview-bug'),
+                        event.detail.bug, event.detail.changes);
     }
   });
 };
