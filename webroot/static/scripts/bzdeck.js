@@ -35,10 +35,10 @@ BzDeck.options = {
   grid: {
     default_columns: [
       // Custom
-      { id: '_starred', type: 'boolean' },
-      { id: '_unread', type: 'boolean', hidden: true },
+      { id: '_starred', label: 'Starred', type: 'boolean' },
+      { id: '_unread', label: 'Unread', type: 'boolean', hidden: true },
       // Name
-      { id: 'id', type: 'integer' },
+      { id: 'id', label: 'ID' /* instead of Bug ID */, type: 'integer' },
       { id: 'alias', hidden: true },
       { id: 'summary' },
       // Status
@@ -63,6 +63,7 @@ BzDeck.options = {
       { id: 'creator', type: 'person', hidden: true },
       { id: 'assigned_to', type: 'person', hidden: true },
       { id: 'qa_contact', type: 'person', hidden: true },
+      { id: 'mentor', label: 'Mentor' /* not found in config */, type: 'person', hidden: true },
       // Dates
       { id: 'creation_time', type: 'time', hidden: true },
       { id: 'last_change_time', type: 'time' },

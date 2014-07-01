@@ -262,11 +262,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     rows: [],
     columns: columns.map(col => {
       // Add labels
-      col.label = {
-        'id': 'ID', // Instead of Bug ID; l10n
-        '_starred': 'Starred', // l10n
-        '_unread': 'Unread' // l10n
-      }[col.id] || field[col.id].description;
+      col.label = col.label || field[col.id].description;
 
       return col;
     })
