@@ -620,7 +620,7 @@ BzDeck.bugzfeed.unsubscribe = function (bugs) {
 BzDeck.bugzfeed.get_changes = function (message) {
   let api = BzDeck.options.api,
       id = message.bug,
-      time = new Date(message.when),
+      time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
       params = new URLSearchParams();
 
   params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
