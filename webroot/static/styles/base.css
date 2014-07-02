@@ -11,21 +11,21 @@
   font-family: FiraSans;
   font-weight: normal;
   font-style: normal;
-  src: url(/static/fonts/FiraSans-Regular.woff?v=3.107) format('woff');
+  src: url(/static/fonts/FiraSans-Regular.woff?v=3.110) format('woff');
 }
 
 @font-face {
   font-family: FiraSans;
   font-weight: 500;
   font-style: normal;
-  src: url(/static/fonts/FiraSans-Medium.woff?v=3.107) format('woff');
+  src: url(/static/fonts/FiraSans-Medium.woff?v=3.110) format('woff');
 }
 
 @font-face {
   font-family: FiraMono;
   font-weight: normal;
   font-style: normal;
-  src: url(/static/fonts/FiraMono-Regular.woff?v=3.107) format('woff');
+  src: url(/static/fonts/FiraMono-Regular.woff?v=3.110) format('woff');
 }
 
 @font-face {
@@ -74,7 +74,7 @@ p {
 
 pre {
   margin: 0;
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
+  font-family: FiraMono, monospace;
   white-space: pre-wrap;
 }
 
@@ -108,7 +108,7 @@ strong {
 }
 
 code, kbd {
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
+  font-family: FiraMono, monospace;
 }
 
 :focus {
@@ -1821,7 +1821,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-timeline-font-family="monospace"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
-  font-family: Consolas, "DejaVu Sans Mono", monospace;
+  font-family: FiraMono, monospace;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"] p {
