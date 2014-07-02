@@ -58,14 +58,16 @@ BzDeck.HomePage = function () {
   let prefs = BzDeck.data.prefs,
       layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical',
-      columns = prefs['home.list.columns'] || BzDeck.options.grid.default_columns,
+      default_cols = BzDeck.options.grid.default_columns,
+      columns = prefs['home.list.columns'] || default_cols,
       field = BzDeck.data.bugzilla_config.field;
 
   let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
     rows: [],
     columns: columns.map(col => {
       // Add labels
-      col.label = col.label || field[col.id].description;
+      col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
+                  field[col.id].description;
 
       return col;
     })
