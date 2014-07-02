@@ -2372,16 +2372,20 @@ article[id$="preview-bug"] > .bug-timeline {
   border-width: 0;
 }
 
-[id^="settings-tabpanel"] > section > section > h4 {
+:root:not([data-device-type="mobile-phone"]) [id^="settings-tabpanel"] > section > section > h4 {
   float: left;
   width: calc(50% - 1em);
+}
+
+:root[data-device-type="mobile-phone"] [id^="settings-tabpanel"] > section > section > h4 {
+  margin-bottom: 1.2rem;
 }
 
 :root[data-device-type|="mobile"] [id^="settings-tabpanel"] > section > section > h4 {
   font-size: 1.25rem;
 }
 
-[id^="settings-tabpanel"] > section > section > h4 ~ * {
+:root:not([data-device-type="mobile-phone"]) [id^="settings-tabpanel"] > section > section > h4 ~ * {
   margin-left: 50%;
 }
 
