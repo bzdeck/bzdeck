@@ -323,7 +323,7 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.DetailsPage.swipe.init();
 
   // Check the requested URL to open the specific folder or tab if needed
-  FlareTail.util.event.dispatch(window, 'popstate');
+  FlareTail.util.event.trigger(window, 'popstate');
 
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
@@ -724,7 +724,7 @@ BzDeck.core.toggle_star = function (id, value) {
 
 BzDeck.core.toggle_star_ui = function () {
   BzDeck.model.get_all_bugs(bugs => {
-    FlareTail.util.event.dispatch(window, 'UI:toggle_star', { detail: {
+    FlareTail.util.event.trigger(window, 'UI:toggle_star', { detail: {
       bugs: new Set([for (bug of bugs) if (bug._starred) bug]),
       ids: new Set([for (bug of bugs) if (bug._starred) bug.id])
     }});
@@ -744,7 +744,7 @@ BzDeck.core.toggle_unread = function (id, value) {
 
 BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs(bugs => {
-    FlareTail.util.event.dispatch(window, 'UI:toggle_unread', { detail: {
+    FlareTail.util.event.trigger(window, 'UI:toggle_unread', { detail: {
       loaded: loaded,
       bugs: new Set([for (bug of bugs) if (bug._unread) bug]),
       ids: new Set([for (bug of bugs) if (bug._unread) bug.id])

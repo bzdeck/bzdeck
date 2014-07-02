@@ -652,7 +652,7 @@ BzDeck.bugzfeed.get_changes = function (message) {
 
     this.save_changes(bug, changes);
 
-    FlareTail.util.event.dispatch(window, 'bug:updated', { 'detail': {
+    FlareTail.util.event.trigger(window, 'bug:updated', { 'detail': {
       'bug': bug,
       'changes': changes
     }});
