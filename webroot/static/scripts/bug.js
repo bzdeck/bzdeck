@@ -409,7 +409,7 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
       $outer.remove();
     }
 
-    $entry.appendChild($attachment);
+    $entry.insertBefore($attachment, $changes);
   }
 
   if (history) {

@@ -1816,6 +1816,10 @@ article[id$="preview-bug"] > .bug-timeline {
   line-height: 1.6;
 }
 
+.bug-timeline [itemprop="comment"] [itemprop="text"]:empty {
+  display: none;
+}
+
 :root[data-timeline-font-family="monospace"] .bug-timeline [itemprop="comment"] [itemprop="text"] {
   font-family: Consolas, "DejaVu Sans Mono", monospace;
 }
