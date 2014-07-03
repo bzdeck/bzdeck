@@ -202,13 +202,15 @@ BzDeck.bug.update = function ($bug, bug, changes) {
 
   if ($timeline) {
     let $parent = $timeline.querySelector('section, .scrollable-area-content'),
-        $entry = BzDeck.timeline.create_entry($timeline.id, changes);
+        $entry = BzDeck.timeline.create_entry($timeline.id, bug, changes);
 
     if (BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending') {
       $parent.insertBefore($entry, $timeline.querySelector('[itemprop="comment"]'));
     } else {
       $parent.appendChild($entry);
     }
+
+    $entry.scrollIntoView();
   }
 
   if (changes.has('attachment') && $bug.querySelector('[data-field="attachments"]')) {
@@ -266,12 +268,6 @@ BzDeck.timeline.render = function (bug, $bug, delayed) {
   // Append to the timeline
   for (let entry of entries) {
     let $entry = $parent.appendChild(entry.$element);
-
-    // Click to collapse/expand comments
-    // TODO: Save the state in DB
-    $entry.setAttribute('aria-expanded', 'true');
-    $entry.querySelector('header').addEventListener('click', event =>
-      $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false'));
 
     // Collapse read comments
     // If the fill_bug_details function is called after the bug details are fetched,
@@ -478,6 +474,12 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
   } else {
     $changes.remove();
   }
+
+  // Click to collapse/expand comments
+  // TODO: Save the state in DB
+  $entry.setAttribute('aria-expanded', 'true');
+  $entry.querySelector('header').addEventListener('click', event =>
+    $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false'));
 
   return $entry;
 };
