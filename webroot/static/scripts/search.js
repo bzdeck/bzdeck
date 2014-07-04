@@ -388,7 +388,7 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
 
   if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
+    scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
   }
 };
 
@@ -439,7 +439,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
   this.hide_status();
 
   FlareTail.util.event.async(() => {
-    BzDeck.global.update_grid_data(this.view.grid, []); // Clear grid body
+    BzDeck.core.update_grid_data(this.view.grid, []); // Clear grid body
   });
 
   BzDeck.core.request('GET', 'bug', params, null, data => {
@@ -461,7 +461,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
 
       // Show results
       FlareTail.util.event.async(() => {
-        BzDeck.global.update_grid_data(this.view.grid, data.bugs);
+        BzDeck.core.update_grid_data(this.view.grid, data.bugs);
         $grid.removeAttribute('aria-busy');
         this.hide_status();
       });

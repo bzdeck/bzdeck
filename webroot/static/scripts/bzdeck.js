@@ -81,7 +81,7 @@ BzDeck.bootstrap.start = function () {
   this.$form = document.querySelector('#app-login form');
   this.$input = this.$form.querySelector('[role="textbox"]');
   this.$button = this.$form.querySelector('[role="button"]');
-  BzDeck.global.$statusbar = document.querySelector('#app-login [role="status"]');
+  BzDeck.core.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.open_database();
 };
@@ -90,7 +90,7 @@ BzDeck.bootstrap.open_database = function () {
   let req = indexedDB.open('BzDeck'); // Version 1
 
   req.addEventListener('error', event => {
-    BzDeck.global.show_status('ERROR: Cannot open the database.'); // l10n
+    BzDeck.core.show_status('ERROR: Cannot open the database.'); // l10n
   });
 
   // The database is created or upgraded
@@ -136,7 +136,7 @@ BzDeck.bootstrap.load_config = function () {
 
     if (!navigator.onLine) {
       // Offline; give up
-      BzDeck.global.show_status('You have to go online to load data.'); // l10n
+      BzDeck.core.show_status('You have to go online to load data.'); // l10n
 
       return;
     }
@@ -145,7 +145,7 @@ BzDeck.bootstrap.load_config = function () {
     BzDeck.core.request('GET', 'configuration', new URLSearchParams('cached_ok=1'), null, data => {
       if (!data || !data.version) {
         // Give up
-        BzDeck.global.show_status('ERROR: Bugzilla configuration could not be loaded. \
+        BzDeck.core.show_status('ERROR: Bugzilla configuration could not be loaded. \
           The instance might be offline.'); // l10n
         this.$input.disabled = this.$button.disabled = true;
 
@@ -213,18 +213,18 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
     }
 
     navigator.onLine ? this.validate_account()
-                     : BzDeck.global.show_status('You have to go online to sign in.'); // l10n
+                     : BzDeck.core.show_status('You have to go online to sign in.'); // l10n
 
     event.preventDefault();
 
     return false;
   });
 
-  BzDeck.global.show_status('');
+  BzDeck.core.show_status('');
 };
 
 BzDeck.bootstrap.validate_account = function () {
-  BzDeck.global.show_status('Confirming account...'); // l10n
+  BzDeck.core.show_status('Confirming account...'); // l10n
   this.$input.disabled = this.$button.disabled = true;
 
   BzDeck.core.request('GET', 'user/' + encodeURIComponent(this.$input.value), null, null, data => {
@@ -242,7 +242,7 @@ BzDeck.bootstrap.validate_account = function () {
     }
 
     if (status) {
-      BzDeck.global.show_status(status); // l10n
+      BzDeck.core.show_status(status); // l10n
       this.$input.disabled = this.$button.disabled = false;
 
       return;
@@ -263,7 +263,7 @@ BzDeck.bootstrap.setup_ui = function () {
     return;
   }
 
-  BzDeck.global.show_status('Loading UI...'); // l10n
+  BzDeck.core.show_status('Loading UI...'); // l10n
 
   let datetime = FlareTail.util.datetime,
       prefs = BzDeck.data.prefs,
@@ -355,7 +355,7 @@ BzDeck.bootstrap.setup_ui = function () {
     }
 
     if (bugs.length === 0) {
-      BzDeck.global.show_status('No new bugs to download'); // l10n
+      BzDeck.core.show_status('No new bugs to download'); // l10n
       return;
     }
 
@@ -365,8 +365,8 @@ BzDeck.bootstrap.setup_ui = function () {
                                  : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) bug.id + ' - ' + bug.summary].join('\n');
 
-    BzDeck.global.show_status(status);
-    BzDeck.global.show_notification(status, extract);
+    BzDeck.core.show_status(status);
+    BzDeck.core.show_notification(status, extract);
   });
 
   // Notify requests
@@ -385,7 +385,7 @@ BzDeck.bootstrap.setup_ui = function () {
     // TODO: Improve the notification body to describe more about the requests,
     // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
-    BzDeck.global.show_notification(title, body, event => {
+    BzDeck.core.show_notification(title, body, event => {
       // Select the Requests folder when the notification is clicked
       $root.setAttribute('data-current-tab', 'home');
       BzDeck.toolbar.tablist.view.selected = document.querySelector('#tab-home');
@@ -403,12 +403,12 @@ BzDeck.bootstrap.finish = function () {
   }, 600000); // Call every 10 minutes
 
   // Register the app for an activity on Firefox OS
-  BzDeck.global.register_activity_handler();
+  BzDeck.core.register_activity_handler();
 
   // Connect to the push notification server
   BzDeck.bugzfeed.connect();
 
-  BzDeck.global.show_status('Loading complete.'); // l10n
+  BzDeck.core.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
   this.processing = false;
 };
@@ -422,7 +422,7 @@ BzDeck.core.timers = {};
 
 BzDeck.core.load_subscriptions = function () {
   this.firstrun = false;
-  BzDeck.global.show_status('Checking for new bugs...'); // l10n
+  BzDeck.core.show_status('Checking for new bugs...'); // l10n
 
   BzDeck.model.get_all_subscriptions(subscriptions => {
     let email = BzDeck.data.account.name,
@@ -471,7 +471,7 @@ BzDeck.core.load_subscriptions = function () {
     // No cache available; try to create the default store
     if (!navigator.onLine) {
       // Offline; give up
-      BzDeck.global.show_status('You have to go online to load data.'); // l10n
+      BzDeck.core.show_status('You have to go online to load data.'); // l10n
 
       return;
     }
@@ -522,7 +522,7 @@ BzDeck.core.fetch_subscriptions = function (subscriptions) {
     BzDeck.model.save_subscriptions(subscriptions);
     this.load_bugs(subscriptions);
   }).catch(error => {
-    BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+    BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
   });
 };
 
@@ -531,7 +531,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
       cached_time = {},
       requesting_bugs = new Map();
 
-  BzDeck.global.show_status('Loading bugs...'); // l10n
+  BzDeck.core.show_status('Loading bugs...'); // l10n
 
   // Step 1: look for bugs in the local storage
   let _get = () => {
@@ -553,7 +553,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
 
       if (!navigator.onLine) {
         // Offline; give up
-        BzDeck.global.show_status('You have to go online to load data.'); // l10n
+        BzDeck.core.show_status('You have to go online to load data.'); // l10n
       }
 
       // No cache available; try to retrieve bugs anyway
@@ -578,7 +578,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
     } else if (boot) {
       BzDeck.bootstrap.setup_ui();
     } else {
-      BzDeck.global.show_status('No new bugs to download'); // l10n
+      BzDeck.core.show_status('No new bugs to download'); // l10n
     }
   };
 
@@ -671,7 +671,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
         });
       }
     }).catch(error => {
-      BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+      BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
     });
   };
 
@@ -689,7 +689,7 @@ BzDeck.core.load_bug_details = function (ids, callback = null) {
   this.request('GET', 'bug', params, null, data => {
     if (!data) {
       // Give up
-      BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+      BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
 
       return;
     }
@@ -754,7 +754,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
 
 BzDeck.core.request = function (method, path, params, data, callback, auth = false) {
   if (!navigator.onLine) {
-    BzDeck.global.show_status('You have to go online to load data.'); // l10n
+    BzDeck.core.show_status('You have to go online to load data.'); // l10n
 
     return;
   }
@@ -784,6 +784,193 @@ BzDeck.core.request = function (method, path, params, data, callback, auth = fal
   });
 
   xhr.send(data);
+};
+
+BzDeck.core.install_app = function () {
+  FlareTail.util.app.install(BzDeck.options.app.manifest, event => {
+    if (event.type === 'success') {
+      document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true');
+    }
+  });
+};
+
+BzDeck.core.show_status = function (message) {
+  if (this.$statusbar) {
+    this.$statusbar.textContent = message;
+  }
+};
+
+BzDeck.core.show_notification = function (title, body, callback = null) {
+  if (BzDeck.data.prefs['notifications.show_desktop_notifications'] === false) {
+    return;
+  }
+
+  FlareTail.util.app.show_notification(title, {
+    body: body,
+    icon: '/static/images/logo/icon-256.png'
+  }, callback);
+};
+
+BzDeck.core.register_activity_handler = function () {
+  // Match BMO's bug detail pages.
+  // TODO: Implement a handler for attachments
+  let re = /^https?:\/\/(?:bugzilla\.mozilla\.org\/show_bug\.cgi\?id=|bugzil\.la\/)(\d+)$/;
+
+  // Not implemented yet on Firefox OS nor Firefox for Android
+  if (typeof navigator.mozRegisterActivityHandler === 'function') {
+    navigator.mozRegisterActivityHandler({
+      name: 'view',
+      filters: {
+        type: 'url',
+        url: {
+          required: true,
+          regexp: re
+        }
+      }
+    });
+  }
+
+  if (typeof navigator.mozSetMessageHandler === 'function') {
+    navigator.mozSetMessageHandler('activity', req => {
+      if (req.source.url.match(re)) {
+        BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(RegExp.$1));
+      }
+    });
+  }
+};
+
+BzDeck.core.update_grid_data = function (grid, bugs) {
+  grid.build_body(bugs.map(bug => {
+    let row = {
+      id: grid.view.$container.id + '-row-' + bug.id,
+      data: {},
+      dataset: {
+        unread: bug._unread === true,
+        severity: bug.severity
+      }
+    };
+
+    for (let column of grid.data.columns) {
+      let field = column.id,
+          value = bug[field];
+
+      if (Array.isArray(value)) { // Keywords
+        value = value.join(', ');
+      }
+
+      if (typeof value === 'object') { // Person
+        value = value.real_name || value.name || '';
+      }
+
+      if (field === '_starred' || field === '_unread') {
+        value = value === true;
+      }
+
+      if (!value) {
+        value = '';
+      }
+
+      row.data[field] = value;
+    }
+
+    row.data = new Proxy(row.data, {
+      set: (obj, prop, value) => {
+        if (prop === '_starred') {
+          BzDeck.core.toggle_star(obj.id, value);
+        }
+
+        if (prop === '_unread') {
+          BzDeck.core.toggle_unread(obj.id, value);
+
+          let row = [for (row of grid.data.rows) if (row.data.id === obj.id) row][0];
+
+          if (row && row.$element) {
+            row.$element.dataset.unread = value;
+          }
+        }
+
+        obj[prop] = value;
+      }
+    });
+
+    return row;
+  }));
+}
+
+BzDeck.core.parse_comment = function (str) {
+  let blockquote = p => {
+    let regex = /^&gt;\s?/gm;
+
+    if (!p.match(regex)) {
+      return p;
+    }
+
+    let lines = p.split(/\n/),
+        quote = [];
+
+    for (let [i, line] of Iterator(lines)) {
+      if (line.match(regex)) {
+        // A quote start
+        quote.push(line);
+      }
+
+      if ((!line.match(regex) || !lines[i + 1]) && quote.length) {
+        // A quote end, the next line is not a part of the quote, or no more lines
+        let quote_str = quote.join('\n'),
+            quote_repl = quote_str.replace(regex, '');
+
+        if (quote_repl.match(regex)) {
+          // Nested quote(s) found, do recursive processing
+          quote_repl = blockquote(quote_repl);
+        }
+
+        for (let p of quote_repl.split(/\n{2,}/)) {
+          quote_repl = quote_repl.replace(p, '<p>' + p + '</p>');
+        }
+
+        p = p.replace(quote_str, '<blockquote>' + quote_repl + '</blockquote>');
+        quote = [];
+      }
+    }
+
+    return p;
+  };
+
+  str = FlareTail.util.string.sanitize(str);
+
+  // Quotes
+  for (let p of str.split(/\n{2,}/)) {
+    str = str.replace(p, '<p>' + blockquote(p) + '</p>');
+  }
+
+  str = str.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
+
+  // General links
+  str = str.replace(
+    /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
+    '<a href="$1">$1</a>'
+  );
+
+  // Email links
+  // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
+  str = str.replace(
+    /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
+    '<a href="mailto:$1">$1</a>'
+  );
+
+  // Bugs
+  str = str.replace(
+    /Bug\s*#?(\d+)/igm,
+    '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
+  );
+
+  // Attachments
+  str = str.replace(
+    /Attachment\s*#?(\d+)/igm,
+    '<a href="/attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
+  );
+
+  return str;
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -964,7 +1151,7 @@ BzDeck.session.login = function () {
   let $app_login = document.querySelector('#app-login'),
       $app_body = document.querySelector('#app-body');
 
-  BzDeck.global.$statusbar = document.querySelector('#statusbar');
+  BzDeck.core.$statusbar = document.querySelector('#statusbar');
 
   $app_login.setAttribute('aria-hidden', 'true');
   $app_body.removeAttribute('aria-hidden');
@@ -981,8 +1168,8 @@ BzDeck.session.logout = function () {
   let $app_login = document.querySelector('#app-login'),
       $app_body = document.querySelector('#app-body');
 
-  BzDeck.global.$statusbar = $app_login.querySelector('[role="status"]');
-  BzDeck.global.show_status('You have logged out.'); // l10n
+  BzDeck.core.$statusbar = $app_login.querySelector('[role="status"]');
+  BzDeck.core.show_status('You have logged out.'); // l10n
 
   $app_login.removeAttribute('aria-hidden');
   $app_body.setAttribute('aria-hidden', 'true');
@@ -1003,199 +1190,6 @@ BzDeck.session.logout = function () {
   if (_gaq) {
     _gaq.push(['_setCustomVar', 1, 'Login', 'false', 2], ['_trackEvent', 'Session', 'Logout']);
   }
-};
-
-/* ----------------------------------------------------------------------------------------------
- * Global
- * ---------------------------------------------------------------------------------------------- */
-
-BzDeck.global = {};
-
-BzDeck.global.install_app = function () {
-  FlareTail.util.app.install(BzDeck.options.app.manifest, event => {
-    if (event.type === 'success') {
-      document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true');
-    }
-  });
-};
-
-BzDeck.global.show_status = function (message) {
-  if (this.$statusbar) {
-    this.$statusbar.textContent = message;
-  }
-};
-
-BzDeck.global.show_notification = function (title, body, callback = null) {
-  if (BzDeck.data.prefs['notifications.show_desktop_notifications'] === false) {
-    return;
-  }
-
-  FlareTail.util.app.show_notification(title, {
-    body: body,
-    icon: '/static/images/logo/icon-256.png'
-  }, callback);
-};
-
-BzDeck.global.register_activity_handler = function () {
-  // Match BMO's bug detail pages.
-  // TODO: Implement a handler for attachments
-  let re = /^https?:\/\/(?:bugzilla\.mozilla\.org\/show_bug\.cgi\?id=|bugzil\.la\/)(\d+)$/;
-
-  // Not implemented yet on Firefox OS nor Firefox for Android
-  if (typeof navigator.mozRegisterActivityHandler === 'function') {
-    navigator.mozRegisterActivityHandler({
-      name: 'view',
-      filters: {
-        type: 'url',
-        url: {
-          required: true,
-          regexp: re
-        }
-      }
-    });
-  }
-
-  if (typeof navigator.mozSetMessageHandler === 'function') {
-    navigator.mozSetMessageHandler('activity', req => {
-      if (req.source.url.match(re)) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(RegExp.$1));
-      }
-    });
-  }
-};
-
-BzDeck.global.update_grid_data = function (grid, bugs) {
-  grid.build_body(bugs.map(bug => {
-    let row = {
-      id: grid.view.$container.id + '-row-' + bug.id,
-      data: {},
-      dataset: {
-        unread: bug._unread === true,
-        severity: bug.severity
-      }
-    };
-
-    for (let column of grid.data.columns) {
-      let field = column.id,
-          value = bug[field];
-
-      if (Array.isArray(value)) { // Keywords
-        value = value.join(', ');
-      }
-
-      if (typeof value === 'object') { // Person
-        value = value.real_name || value.name || '';
-      }
-
-      if (field === '_starred' || field === '_unread') {
-        value = value === true;
-      }
-
-      if (!value) {
-        value = '';
-      }
-
-      row.data[field] = value;
-    }
-
-    row.data = new Proxy(row.data, {
-      set: (obj, prop, value) => {
-        if (prop === '_starred') {
-          BzDeck.core.toggle_star(obj.id, value);
-        }
-
-        if (prop === '_unread') {
-          BzDeck.core.toggle_unread(obj.id, value);
-
-          let row = [for (row of grid.data.rows) if (row.data.id === obj.id) row][0];
-
-          if (row && row.$element) {
-            row.$element.dataset.unread = value;
-          }
-        }
-
-        obj[prop] = value;
-      }
-    });
-
-    return row;
-  }));
-}
-
-BzDeck.global.parse_comment = function (str) {
-  let blockquote = p => {
-    let regex = /^&gt;\s?/gm;
-
-    if (!p.match(regex)) {
-      return p;
-    }
-
-    let lines = p.split(/\n/),
-        quote = [];
-
-    for (let [i, line] of Iterator(lines)) {
-      if (line.match(regex)) {
-        // A quote start
-        quote.push(line);
-      }
-
-      if ((!line.match(regex) || !lines[i + 1]) && quote.length) {
-        // A quote end, the next line is not a part of the quote, or no more lines
-        let quote_str = quote.join('\n'),
-            quote_repl = quote_str.replace(regex, '');
-
-        if (quote_repl.match(regex)) {
-          // Nested quote(s) found, do recursive processing
-          quote_repl = blockquote(quote_repl);
-        }
-
-        for (let p of quote_repl.split(/\n{2,}/)) {
-          quote_repl = quote_repl.replace(p, '<p>' + p + '</p>');
-        }
-
-        p = p.replace(quote_str, '<blockquote>' + quote_repl + '</blockquote>');
-        quote = [];
-      }
-    }
-
-    return p;
-  };
-
-  str = FlareTail.util.string.sanitize(str);
-
-  // Quotes
-  for (let p of str.split(/\n{2,}/)) {
-    str = str.replace(p, '<p>' + blockquote(p) + '</p>');
-  }
-
-  str = str.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
-
-  // General links
-  str = str.replace(
-    /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
-    '<a href="$1">$1</a>'
-  );
-
-  // Email links
-  // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
-  str = str.replace(
-    /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
-    '<a href="mailto:$1">$1</a>'
-  );
-
-  // Bugs
-  str = str.replace(
-    /Bug\s*#?(\d+)/igm,
-    '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
-  );
-
-  // Attachments
-  str = str.replace(
-    /Attachment\s*#?(\d+)/igm,
-    '<a href="/attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
-  );
-
-  return str;
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -1263,7 +1257,7 @@ BzDeck.toolbar.setup = function () {
       }
 
       case 'install-app': {
-        BzDeck.global.install_app();
+        BzDeck.core.install_app();
         break;
       }
 
@@ -1625,7 +1619,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   let update_list = bugs => {
     home.data.bug_list = bugs;
     FlareTail.util.event.async(() => {
-      BzDeck.global.update_grid_data(grid, bugs);
+      BzDeck.core.update_grid_data(grid, bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 

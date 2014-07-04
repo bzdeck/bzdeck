@@ -50,7 +50,7 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
   }
 
   $timeline.setAttribute('aria-busy', 'true');
-  BzDeck.global.show_status('Loading...'); // l10n
+  BzDeck.core.show_status('Loading...'); // l10n
 
   // Empty timeline while keeping the scrollbar
   if (!partial) {
@@ -123,7 +123,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
 
   if (!partial) {
     // Timeline: comments, attachments & history
-    BzDeck.timeline.render(bug, $bug, delayed);
+    BzDeck.bug.timeline.render(bug, $bug, delayed);
 
     // Attachments and History, only on the details tabs
     BzDeck.DetailsPage.attachments.render($bug, bug.attachments || []);
@@ -133,7 +133,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
     this.set_bug_tooltips($bug, bug);
   }
 
-  BzDeck.global.show_status('');
+  BzDeck.core.show_status('');
 };
 
 BzDeck.bug.set_product_tooltips = function ($bug, bug) {
@@ -202,7 +202,7 @@ BzDeck.bug.update = function ($bug, bug, changes) {
 
   if ($timeline) {
     let $parent = $timeline.querySelector('section, .scrollable-area-content'),
-        $entry = BzDeck.timeline.create_entry($timeline.id, bug, changes),
+        $entry = BzDeck.bug.timeline.create_entry($timeline.id, bug, changes),
         sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending';
 
     $parent.insertBefore($entry, sort_desc ? $timeline.querySelector('[itemprop="comment"]')
@@ -231,9 +231,9 @@ BzDeck.bug.update = function ($bug, bug, changes) {
  * Timeline
  * ---------------------------------------------------------------------------------------------- */
 
-BzDeck.timeline = {};
+BzDeck.bug.timeline = {};
 
-BzDeck.timeline.render = function (bug, $bug, delayed) {
+BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
   let entries = new Map([for (c of Iterator(bug.comments))
         [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending',
@@ -310,7 +310,7 @@ BzDeck.timeline.render = function (bug, $bug, delayed) {
   $timeline.removeAttribute('aria-busy', 'false');
 };
 
-BzDeck.timeline.create_entry = function (timeline_id, bug, data) {
+BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
       comment = data.get('comment'),
       attachment = data.get('attachment'),
@@ -337,7 +337,7 @@ BzDeck.timeline.create_entry = function (timeline_id, bug, data) {
     $entry.id = timeline_id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $comment.innerHTML = text ? BzDeck.global.parse_comment(text) : '';
+    $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
     $author.title = $author.querySelector('[itemprop="name"]').itemValue
                   = author.real_name || author.name;
     datetime.fill_element($time, time);
@@ -514,7 +514,7 @@ BzDeck.timeline.create_entry = function (timeline_id, bug, data) {
   return $entry;
 };
 
-BzDeck.timeline.handle_keydown = function (event) {
+BzDeck.bug.timeline.handle_keydown = function (event) {
   // this = a binded Scrollbar widget
   let key = event.keyCode,
       modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
@@ -582,7 +582,7 @@ BzDeck.timeline.handle_keydown = function (event) {
   return FlareTail.util.event.ignore(event);
 };
 
-BzDeck.timeline.CommentForm = function (bug, timeline_id) {
+BzDeck.bug.timeline.CommentForm = function (bug, timeline_id) {
   let $fragment = document.querySelector('#timeline-comment-form').content.cloneNode(true);
 
   // Assign unique IDs first
@@ -616,7 +616,7 @@ BzDeck.timeline.CommentForm = function (bug, timeline_id) {
     }
 
     if (tab_id.endsWith('preview')) {
-      this.$preview.innerHTML = BzDeck.global.parse_comment(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.core.parse_comment(this.$textbox.value);
     }
   });
 
@@ -660,7 +660,7 @@ BzDeck.timeline.CommentForm = function (bug, timeline_id) {
   }
 };
 
-BzDeck.timeline.CommentForm.prototype.oninput = function () {
+BzDeck.bug.timeline.CommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', this.$textbox.scrollHeight + 'px');
   this.$submit.setAttribute('aria-disabled', !this.has_text() || !this.has_token());
@@ -671,7 +671,7 @@ BzDeck.timeline.CommentForm.prototype.oninput = function () {
   }
 };
 
-BzDeck.timeline.CommentForm.prototype.submit = function () {
+BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
   let data = JSON.stringify({ text: this.$textbox.value });
 
   this.$textbox.setAttribute('aria-readonly', 'true');

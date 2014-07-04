@@ -50,7 +50,7 @@ BzDeck.HomePage = function () {
   let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
 
   if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
+    scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
   }
 
   this.view = {};

@@ -117,7 +117,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
     let scrollbar = new FTw.ScrollBar($area);
 
     if (scrollbar && $area.classList.contains('bug-timeline')) {
-      scrollbar.onkeydown_extend = BzDeck.timeline.handle_keydown.bind(scrollbar);
+      scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
     }
 
     $area.tabIndex = 0;
@@ -253,12 +253,12 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
 
 BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
-    BzDeck.global.show_status('You have to go online to load a bug.'); // l10n
+    BzDeck.core.show_status('You have to go online to load a bug.'); // l10n
 
     return;
   }
 
-  BzDeck.global.show_status('Loading...'); // l10n
+  BzDeck.core.show_status('Loading...'); // l10n
 
   let api = BzDeck.options.api,
       params = new URLSearchParams();
@@ -268,7 +268,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
   BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
     if (!bug || !bug.id) {
-      BzDeck.global.show_status('ERROR: Failed to load data.'); // l10n
+      BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
 
       return;
     }
@@ -281,7 +281,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
     // Check if the tabpanel still exists
     if ($tabpanel) {
-      BzDeck.global.show_status('');
+      BzDeck.core.show_status('');
       // Update UI
       BzDeck.bug.fill_data(this.view.$bug, bug);
       $tab.title = this.get_tab_title(bug);
