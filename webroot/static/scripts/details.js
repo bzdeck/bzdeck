@@ -384,7 +384,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
   }
 
   for (let hist of history) {
-    for (let [i, change] of Iterator(hist.changes)) {
+    for (let [i, change] of hist.changes.entries()) {
       let $row = $tbody.appendChild($template.content.cloneNode(true).firstElementChild),
           $cell = field => $row.querySelector('[data-field="' + field + '"]');
 

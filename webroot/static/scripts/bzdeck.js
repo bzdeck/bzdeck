@@ -908,7 +908,7 @@ BzDeck.core.parse_comment = function (str) {
     let lines = p.split(/\n/),
         quote = [];
 
-    for (let [i, line] of Iterator(lines)) {
+    for (let [i, line] of lines.entries()) {
       if (line.match(regex)) {
         // A quote start
         quote.push(line);
@@ -1476,7 +1476,7 @@ BzDeck.toolbar.quicksearch = function (event) {
       disabled: true
     }];
 
-    for (let [i, bug] of Iterator(results)) {
+    for (let [i, bug] of results.entries()) {
       data.push({
         id: 'quicksearch-dropdown-' + bug.id,
         label: bug.id + ' - ' + bug.summary,

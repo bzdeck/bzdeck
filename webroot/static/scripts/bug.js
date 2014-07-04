@@ -234,7 +234,7 @@ BzDeck.bug.update = function ($bug, bug, changes) {
 BzDeck.bug.timeline = {};
 
 BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
-  let entries = new Map([for (c of Iterator(bug.comments))
+  let entries = new Map([for (c of bug.comments.entries())
         [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending',
       read_entries_num = 0,
