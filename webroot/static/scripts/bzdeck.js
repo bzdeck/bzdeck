@@ -1157,11 +1157,6 @@ BzDeck.session.login = function () {
   $app_body.removeAttribute('aria-hidden');
 
   // TODO: focus handling
-
-  // GA
-  if (_gaq) {
-    _gaq.push(['_trackEvent', 'Session', 'Login'], ['_setCustomVar', 1, 'Login', 'true', 2]);
-  }
 };
 
 BzDeck.session.logout = function () {
@@ -1188,11 +1183,6 @@ BzDeck.session.logout = function () {
   BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts')
                                                       .delete(BzDeck.data.account.id);
   delete BzDeck.data.account;
-
-  // GA
-  if (_gaq) {
-    _gaq.push(['_setCustomVar', 1, 'Login', 'false', 2], ['_trackEvent', 'Session', 'Logout']);
-  }
 };
 
 /* ----------------------------------------------------------------------------------------------
