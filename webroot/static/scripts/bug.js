@@ -726,7 +726,7 @@ BzDeck.bugzfeed.connect = function () {
 
   this.websocket.addEventListener('close', event => {
     // Try to reconnect every 30 seconds when unexpectedly disconnected
-    if (event.code !== 1000) {
+    if (!(new Set([1000, 1005])).has(event.code)) {
       this.reconnector = window.setInterval(() => this.connect(), 30000);
     }
   });

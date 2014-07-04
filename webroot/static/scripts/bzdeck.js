@@ -1181,6 +1181,9 @@ BzDeck.session.logout = function () {
     window.clearInterval(timer);
   }
 
+  // Disconnect from the Bugzfeed server
+  BzDeck.bugzfeed.websocket.close();
+
   // Delete the account data
   BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts')
                                                       .delete(BzDeck.data.account.id);
