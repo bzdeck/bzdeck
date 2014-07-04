@@ -774,10 +774,6 @@ BzDeck.core.request = function (method, path, params, data, callback, auth = fal
   xhr.open(method, url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
-  if (method === 'POST') {
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  }
-
   xhr.addEventListener('load', event => {
     let text = event.target.responseText;
     callback(text ? JSON.parse(text) : null);
@@ -1164,6 +1160,8 @@ BzDeck.global.parse_comment = function (str) {
 
     return p;
   };
+
+  str = FlareTail.util.string.sanitize(str);
 
   // Quotes
   for (let p of str.split(/\n{2,}/)) {

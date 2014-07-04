@@ -54,7 +54,7 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
 
   // Empty timeline while keeping the scrollbar
   if (!partial) {
-    for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], \
+    for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], [role="form"], \
                                                      .read-comments-expander')) {
       $comment.remove();
     }
@@ -202,14 +202,11 @@ BzDeck.bug.update = function ($bug, bug, changes) {
 
   if ($timeline) {
     let $parent = $timeline.querySelector('section, .scrollable-area-content'),
-        $entry = BzDeck.timeline.create_entry($timeline.id, bug, changes);
+        $entry = BzDeck.timeline.create_entry($timeline.id, bug, changes),
+        sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending';
 
-    if (BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending') {
-      $parent.insertBefore($entry, $timeline.querySelector('[itemprop="comment"]'));
-    } else {
-      $parent.appendChild($entry);
-    }
-
+    $parent.insertBefore($entry, sort_desc ? $timeline.querySelector('[itemprop="comment"]')
+                                           : $timeline.querySelector('[role="form"]'));
     $entry.scrollIntoView();
   }
 
@@ -237,12 +234,13 @@ BzDeck.bug.update = function ($bug, bug, changes) {
 BzDeck.timeline = {};
 
 BzDeck.timeline.render = function (bug, $bug, delayed) {
-  let entries = new Map([for (c of bug.comments)
-        [c.creation_time, new Map([['comment', c], ['id', bug.id]])]]),
+  let entries = new Map([for (c of Iterator(bug.comments))
+        [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending',
       read_entries_num = 0,
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = $bug.id + '-timeline',
+      comment_form = new this.CommentForm(bug, timeline_id),
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
   for (let attachment of bug.attachments || []) {
@@ -258,16 +256,16 @@ BzDeck.timeline.render = function (bug, $bug, delayed) {
   }
 
   for (let [time, data] of entries) {
-    data.set('$entry', this.create_entry(timeline_id, data));
+    data.set('$entry', this.create_entry(timeline_id, bug, data));
   }
 
   // Sort by time
-  entries = [for (entry of entries) { time: entry[0], $element: entry[1].get('$entry') }]
+  entries = [for (entry of entries) { time: entry[0], data: entry[1] }]
     .sort((a, b) => sort_desc ? a.time < b.time : a.time > b.time);
 
   // Append to the timeline
   for (let entry of entries) {
-    let $entry = $parent.appendChild(entry.$element);
+    let $entry = $parent.appendChild(entry.data.get('$entry'));
 
     // Collapse read comments
     // If the fill_bug_details function is called after the bug details are fetched,
@@ -304,14 +302,16 @@ BzDeck.timeline.render = function (bug, $bug, delayed) {
               : $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
   }
 
+  // Add a comment form
+  $parent.insertBefore(comment_form.$form,
+                       sort_desc ? $parent.querySelector('[itemprop="comment"]') : null),
+
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 };
 
-BzDeck.timeline.create_entry = function (timeline_id, data) {
-  let parse = BzDeck.global.parse_comment,
-      sanitize = FlareTail.util.string.sanitize,
-      datetime = FlareTail.util.datetime,
+BzDeck.timeline.create_entry = function (timeline_id, bug, data) {
+  let datetime = FlareTail.util.datetime,
       comment = data.get('comment'),
       attachment = data.get('attachment'),
       history = data.get('history'),
@@ -319,8 +319,10 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
                        .cloneNode(true).firstElementChild,
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
+      $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment = $entry.querySelector('[itemprop="text"]'),
       $changes = $entry.querySelector('.changes'),
+      $textbox = document.querySelector('#' + timeline_id + '-comment-form [role="textbox"]'),
       $image = new Image();
 
   $image.addEventListener('load', event =>
@@ -335,7 +337,7 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
     $entry.id = timeline_id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $comment.innerHTML = text ? parse(sanitize(text)) : '';
+    $comment.innerHTML = text ? BzDeck.global.parse_comment(text) : '';
     $author.title = $author.querySelector('[itemprop="name"]').itemValue
                   = author.real_name || author.name;
     datetime.fill_element($time, time);
@@ -345,14 +347,39 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
       $author.querySelector('[itemprop="email"]').content = author.real_name;
       $image.src = 'https://www.gravatar.com/avatar/' + md5(author.real_name) + '?d=404';
     }
+
+    // Make a quote
+    let quote_header = FlareTail.util.string.format('(In reply to {name} from comment #{number})', {
+          'name': comment.creator.real_name || comment.creator.name,
+          'number': data.get('comment_number')
+        }),
+        quote_lines = [for (line of text.match(/.{1,78}(?:\b|$)/g) || []) '> ' + line.trim()],
+        quote = quote_header + '\n' + quote_lines.join('\n');
+
+    // Activate the Reply button
+    $reply_button.addEventListener('click', event => {
+      let $tabpanel = document.querySelector('#' + timeline_id + '-comment-form-tabpanel-write'),
+          $textbox = document.querySelector('#' + timeline_id + '-comment-form [role="textbox"]');
+
+      $textbox.focus();
+      $textbox.value += ($textbox.value ? '\n\n' : '') + quote + '\n\n';
+      // Trigger an event to do something. Disable async to make sure the following lines work
+      FlareTail.util.event.trigger($textbox, 'input', {}, false);
+      // Scroll unti the caret is visible
+      $tabpanel.scrollTop = $tabpanel.scrollHeight;
+      $entry.scrollIntoView();
+
+      event.stopPropagation();
+    });
   } else {
     $entry.dataset.nocomment = true;
+    $reply_button.setAttribute('aria-hidden', 'true');
     $comment.remove();
   }
 
   if (attachment) {
     // TODO: load the attachment data via API
-    let url = 'https://bug' + data.get('id') + '.bugzilla.mozilla.org/attachment.cgi?id=' + attachment.id,
+    let url = 'https://bug' + bug.id + '.bugzilla.mozilla.org/attachment.cgi?id=' + attachment.id,
         $attachment = document.querySelector('#timeline-attachment').content
                               .cloneNode(true).firstElementChild,
         $outer = $attachment.querySelector('div'),
@@ -475,6 +502,9 @@ BzDeck.timeline.create_entry = function (timeline_id, data) {
     $changes.remove();
   }
 
+  // Mark unread
+  $entry.setAttribute('data-unread', 'true');
+
   // Click to collapse/expand comments
   // TODO: Save the state in DB
   $entry.setAttribute('aria-expanded', 'true');
@@ -550,6 +580,119 @@ BzDeck.timeline.handle_keydown = function (event) {
   }
 
   return FlareTail.util.event.ignore(event);
+};
+
+BzDeck.timeline.CommentForm = function (bug, timeline_id) {
+  let $fragment = document.querySelector('#timeline-comment-form').content.cloneNode(true);
+
+  // Assign unique IDs first
+  for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
+    for (let $element of $fragment.querySelectorAll('[' + attr +']')) {
+      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, timeline_id));
+    }
+  }
+
+  this.$form = $fragment.firstElementChild;
+  this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
+  this.$textbox = this.$form.querySelector('[id$="write"] [role="textbox"]');
+  this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
+  this.$preview = this.$form.querySelector('[id$="preview"] [itemprop="text"]');
+  this.$footer = this.$form.querySelector('footer');
+  this.$status = this.$form.querySelector('[role="status"]');
+  this.$submit = this.$form.querySelector('[data-command="submit"]');
+
+  this.bug = bug;
+  this.has_token = () => !!BzDeck.data.account.token;
+  this.has_text = () => !!this.$textbox.value.match(/\S/);
+
+  this.$form.addEventListener('wheel', event => event.stopPropagation());
+
+  (new FlareTail.widget.TabList(this.$form.querySelector('[role="tablist"]')))
+      .bind('Selected', event => {
+    let tab_id = event.detail.items[0].id;
+
+    if (tab_id.endsWith('write')) {
+      this.$textbox.focus();
+    }
+
+    if (tab_id.endsWith('preview')) {
+      this.$preview.innerHTML = BzDeck.global.parse_comment(this.$textbox.value);
+    }
+  });
+
+  this.$preview_tab.setAttribute('aria-disabled', 'true');
+
+  for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
+    new FlareTail.widget.ScrollBar($tabpanel);
+  }
+
+  // Workaround a Firefox bug: the placeholder is not displayed in some cases
+  this.$textbox.value = '';
+
+  this.$textbox.addEventListener('keydown', event => {
+    event.stopPropagation();
+
+    if (this.has_text() && this.has_token() &&
+        event.keyCode === event.DOM_VK_RETURN && (event.metaKey || event.ctrlKey)) {
+      this.submit();
+    }
+  });
+
+  this.$textbox.addEventListener('focus', event =>
+    this.$footer.setAttribute('aria-hidden', 'false'));
+
+  this.$textbox.addEventListener('blur', event =>
+    this.$footer.setAttribute('aria-hidden', !this.has_text()));
+
+  this.$textbox.addEventListener('input', event => this.oninput());
+
+  this.$submit.addEventListener('click', event => this.submit());
+
+  if (!this.has_token()) {
+    this.$status.innerHTML = '<strong>Provide your auth token</strong> to post.';
+    this.$status.querySelector('strong').addEventListener('click', event =>
+      new BzDeck.SettingsPage());
+
+    window.addEventListener('Account:AuthTokenVerified', event => {
+      this.$status.textContent = '';
+      this.$submit.setAttribute('aria-disabled', !this.has_text());
+    });
+  }
+};
+
+BzDeck.timeline.CommentForm.prototype.oninput = function () {
+  this.$textbox.style.removeProperty('height');
+  this.$textbox.style.setProperty('height', this.$textbox.scrollHeight + 'px');
+  this.$submit.setAttribute('aria-disabled', !this.has_text() || !this.has_token());
+  this.$preview_tab.setAttribute('aria-disabled', !this.has_text());
+
+  if (this.has_token() && this.$status.textContent) {
+    this.$status.textContent = '';
+  }
+};
+
+BzDeck.timeline.CommentForm.prototype.submit = function () {
+  let data = JSON.stringify({ text: this.$textbox.value });
+
+  this.$textbox.setAttribute('aria-readonly', 'true');
+  this.$submit.setAttribute('aria-disabled', 'true');
+  this.$status.textContent = 'Submitting...';
+
+  BzDeck.core.request('POST', 'bug/' + this.bug.id + '/comment', null, data, result => {
+    if (result && result.ref) {
+      // Comment successfully posted, the timeline will soon be updated via Bugzfeed
+      this.$textbox.value = '';
+      this.oninput();
+    } else {
+      // Something went wrong
+      this.$submit.setAttribute('aria-disabled', 'false');
+      this.$status.textContent = result.message ? 'ERROR: ' + result.message
+                                                : 'Failed to post your comment. Try again later.';
+    }
+
+    this.$textbox.setAttribute('aria-readonly', 'false');
+    this.$textbox.focus();
+  }, true); // Enable auth
 };
 
 /* ----------------------------------------------------------------------------------------------

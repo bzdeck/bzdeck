@@ -416,15 +416,49 @@
     <template id="timeline-comment">
       <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
         <header>
-          <p class="meta">
+          <div class="meta">
             <span itemprop="author" itemscope itemtype="http://schema.org/Person"><img itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
             <time itemprop="datePublished"></time>
-          </p>
+          </div>
+          <div role="toolbar">
+            <ul>
+              <li><span class="iconic" title="Reply" tabindex="0" role="button" data-command="reply">Reply</span></li>
+            </ul>
+          </div>
         </header>
         <div itemprop="text"></div>
         <ul class="changes"></ul>
       </article>
     </template><!-- end #timeline-comment -->
+    <template id="timeline-comment-form">
+      <section id="TID-comment-form" role="form">
+        <header>
+          <h4>Reply</h4>
+        </header>
+        <div>
+          <ul id="TID-comment-form-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
+            <li id="TID-comment-form-tab-write" role="tab" aria-controls="TID-comment-form-tabpanel-write" aria-selected="true"><label>Write</label></li>
+            <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false"><label>Preview</label></li>
+          </ul>
+          <div id="TID-comment-form-tabpanel-write" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-comment-form-tab-write">
+            <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
+          </div>
+          <div id="TID-comment-form-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-preview">
+            <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
+              <div itemprop="text"></div>
+            </article>
+          </div>
+        </div>
+        <footer aria-hidden="true">
+          <div role="status"></div>
+          <div role="toolbar">
+            <ul>
+              <li><span role="button" aria-disabled="true" data-command="submit">Post</span></li>
+            </ul>
+          </div>
+        </footer>
+      </section>
+    </template><!-- end #timeline-comment-form -->
     <template id="timeline-attachment">
       <aside itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject">
         <a itemprop="url" data-attrs="data-attachment-id">

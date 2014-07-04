@@ -74,6 +74,8 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
         $output.textContent = 'Verified'; // l10n
+        // Fire an event
+        FlareTail.util.event.trigger(window, 'Account:AuthTokenVerified');
       } else {
         $input.setAttribute('aria-invalid', 'true');
         $output.textContent = 'Invalid, try again'; // l10n
@@ -109,7 +111,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
     for (let $timeline of document.querySelectorAll('.bug-timeline')) {
       $timeline.setAttribute('aria-busy', 'true');
 
-      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"], \
+      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"], [role="form"], \
                                                            .read-comments-expander')].reverse()) {
         $comment.parentElement.appendChild($comment);
       }
