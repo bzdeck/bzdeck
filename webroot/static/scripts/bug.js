@@ -353,7 +353,7 @@ BzDeck.timeline.create_entry = function (timeline_id, bug, data) {
           'name': comment.creator.real_name || comment.creator.name,
           'number': data.get('comment_number')
         }),
-        quote_lines = [for (line of text.match(/.{1,78}(?:\b|$)/g) || []) '> ' + line.trim()],
+        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) '> ' + line],
         quote = quote_header + '\n' + quote_lines.join('\n');
 
     // Activate the Reply button
