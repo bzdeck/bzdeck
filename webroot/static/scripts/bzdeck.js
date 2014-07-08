@@ -805,9 +805,13 @@ BzDeck.core.show_notification = function (title, body, callback = null) {
     return;
   }
 
+  let ua = navigator.userAgent,
+      fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/);
+
   FlareTail.util.app.show_notification(title, {
     body: body,
-    icon: '/static/images/logo/icon-256.png'
+    // Firefox OS requires a complete URL for the icon
+    icon: location.origin + '/static/images/logo/icon-' + (fxos ? 'fxos-120' : '128') + '.png'
   }, callback);
 };
 
