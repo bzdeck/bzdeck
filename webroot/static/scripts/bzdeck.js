@@ -426,8 +426,9 @@ BzDeck.core.load_subscriptions = function () {
 
   BzDeck.model.get_all_subscriptions(subscriptions => {
     let email = BzDeck.data.account.name,
-        _query = { email1: email, email1_type: 'equals_any', resolution: '---' },
-        fields = { cc: 'cc', reported: 'creator', assigned: 'assigned_to', qa: 'qa_contact' },
+        _query = { email1: email, emailtype1: 'exact', resolution: '---' },
+        fields = { cc: 'cc', reported: 'reporter', assigned: 'assigned_to',
+                   qa: 'qa_contact', mentor: 'bug_mentor' },
         requests_sub = { id: 'requests', query: { quicksearch: 'requestee:' + email }};
 
     if (subscriptions.length) {
@@ -450,10 +451,18 @@ BzDeck.core.load_subscriptions = function () {
 
         // [Migration] Add Request Queue
         {
-          let index = [for (sub of subscriptions) sub.id].indexOf('requests');
-
-          if (index === -1) {
+          if ([for (sub of subscriptions) sub.id].indexOf('requests') === -1) {
             subscriptions.push(requests_sub);
+          }
+        }
+
+        // [Migration] Add Mentor
+        {
+          if ([for (sub of subscriptions) sub.id].indexOf('mentor') === -1) {
+            let query = FlareTail.util.object.clone(_query);
+
+            query['emailbug_mentor1'] = 1;
+            subscriptions.push({ id: 'mentor', query: query });
           }
         }
 
@@ -479,7 +488,7 @@ BzDeck.core.load_subscriptions = function () {
     for (let [name, field] of Iterator(fields)) {
       let query = FlareTail.util.object.clone(_query);
 
-      query['email1_' + field] = 1;
+      query['email' + field + '1'] = 1;
       subscriptions.push({ id: name, query: query });
     }
 
@@ -1559,6 +1568,11 @@ BzDeck.sidebar.setup = function () {
       'data': { 'id': 'assigned' }
     },
     {
+      'id': 'sidebar-folders--mentor',
+      'label': 'Mentor',
+      'data': { 'id': 'mentor' }
+    },
+    {
       'id': 'sidebar-folders--qa',
       'label': 'QA Contact',
       'data': { 'id': 'qa' }
@@ -1671,7 +1685,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^(cc|reported|assigned|qa|requests)/)) {
+  if (folder_id.match(/^(cc|reported|assigned|mentor|qa|requests)/)) {
     BzDeck.model.get_subscription_by_id(RegExp.$1, sub => {
       BzDeck.model.get_bugs_by_ids([for (bug of sub.bugs) bug.id], bugs => {
         update_list(bugs);
