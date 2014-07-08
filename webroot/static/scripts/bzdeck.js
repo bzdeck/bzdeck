@@ -593,6 +593,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
   // Fetch only the default fields for firstrun to load faster
   params.append('include_fields', this.firstrun ? default_fields.join()
                                                 : [...default_fields, ...extra_fields].join());
+  params.append('exclude_fields', 'attachments.data');
 
   // Step 3: load the listed bugs from Bugzilla
   let _retrieve = () => {
