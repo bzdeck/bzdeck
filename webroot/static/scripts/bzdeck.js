@@ -406,7 +406,7 @@ BzDeck.bootstrap.finish = function () {
   BzDeck.core.register_activity_handler();
 
   // Connect to the push notification server
-  BzDeck.bugzfeed.connect();
+  // BzDeck.bugzfeed.connect();
 
   BzDeck.core.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
