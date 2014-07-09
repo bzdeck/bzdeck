@@ -212,7 +212,7 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
       this.processing = true;
     }
 
-    navigator.onLine ? this.validate_account()
+    navigator.onLine ? this.verify_account()
                      : BzDeck.core.show_status('You have to go online to sign in.'); // l10n
 
     event.preventDefault();
@@ -223,8 +223,8 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
   BzDeck.core.show_status('');
 };
 
-BzDeck.bootstrap.validate_account = function () {
-  BzDeck.core.show_status('Confirming account...'); // l10n
+BzDeck.bootstrap.verify_account = function () {
+  BzDeck.core.show_status('Verifying your account...'); // l10n
   this.$input.disabled = this.$button.disabled = true;
 
   BzDeck.core.request('GET', 'user/' + encodeURIComponent(this.$input.value), null, null, data => {
