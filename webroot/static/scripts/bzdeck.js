@@ -146,7 +146,7 @@ BzDeck.bootstrap.load_config = function () {
       if (!data || !data.version) {
         // Give up
         BzDeck.core.show_status('ERROR: Bugzilla configuration could not be loaded. \
-          The instance might be offline.'); // l10n
+                                 The instance might be offline.'); // l10n
         this.$input.disabled = this.$button.disabled = true;
 
         return;
@@ -356,6 +356,7 @@ BzDeck.bootstrap.setup_ui = function () {
 
     if (bugs.length === 0) {
       BzDeck.core.show_status('No new bugs to download'); // l10n
+
       return;
     }
 
@@ -622,6 +623,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
           if (this.firstrun) {
             bug._unread = false; // Mark all bugs read if the session is firstrun
             bug._update_needed = true; // Flag to update details
+
             continue;
           }
 
@@ -633,12 +635,14 @@ BzDeck.core.load_bugs = function (subscriptions) {
           // Mark the bug unread if the user subscribes CC changes or the bug is already unread
           if (!ignore_cc_changes || cache._unread || !cache._last_viewed) {
             bug._unread = true;
+
             continue;
           }
 
           // Mark the bug unread if there are unread comments
           if ([for (c of bug.comments) if (c.creation_time > cache.last_change_time) c].length) {
             bug._unread = true;
+
             continue;
           }
 
@@ -646,6 +650,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
           if (bug.attachments &&
               [for (a of bug.attachments) if (a.creation_time > cache.last_change_time) a].length) {
             bug._unread = true;
+
             continue;
           }
 
@@ -654,6 +659,7 @@ BzDeck.core.load_bugs = function (subscriptions) {
               [for (h of bug.history) if (history.change_time > cache.last_change_time &&
               [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length) {
             bug._unread = true;
+
             continue;
           }
 
@@ -786,6 +792,7 @@ BzDeck.core.request = function (method, path, params, data, callback, auth = fal
 
   xhr.addEventListener('load', event => {
     let text = event.target.responseText;
+
     callback(text ? JSON.parse(text) : null);
   });
 
@@ -1196,6 +1203,7 @@ BzDeck.session.logout = function () {
   // Delete the account data
   BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts')
                                                       .delete(BzDeck.data.account.id);
+
   delete BzDeck.data.account;
 };
 
@@ -1254,6 +1262,7 @@ BzDeck.toolbar.setup = function () {
     switch (event.detail.command) {
       case 'show-settings': {
         new BzDeck.SettingsPage();
+
         break;
       }
 
@@ -1265,16 +1274,19 @@ BzDeck.toolbar.setup = function () {
 
       case 'install-app': {
         BzDeck.core.install_app();
+
         break;
       }
 
       case 'logout': {
         BzDeck.session.logout();
+
         break;
       }
 
       case 'quit': {
         window.close();
+
         break;
       }
     }
@@ -1323,9 +1335,9 @@ BzDeck.toolbar.setup = function () {
   document.querySelector('[role="banner"] h1').addEventListener('click', event => {
     if (mobile) {
       if (phone && tabs.selected[0] === $tab_home) {
-        document.querySelector('#sidebar > div').scrollTop = 0;
-
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+
+        document.querySelector('#sidebar > div').scrollTop = 0;
         $root.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
       } else {
@@ -1496,6 +1508,7 @@ BzDeck.toolbar.quicksearch = function (event) {
     data.push({ id: 'quicksearch-dropdown-more', label: 'Search All Bugs...' }); // l10n
 
     let dropdown = this.search_dropdown;
+
     dropdown.build(data);
     dropdown.view.$container.scrollTop = 0;
     dropdown.open();
@@ -1530,6 +1543,7 @@ BzDeck.sidebar.setup = function () {
   $sidebar.addEventListener('click', event => {
     if (phone) {
       let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+
       $root.setAttribute('data-sidebar-hidden', hidden);
       $sidebar.setAttribute('aria-hidden', hidden);
     }
@@ -1709,6 +1723,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   if (folder_id === 'important') {
     get_subscribed_bugs(bugs => {
       let severities = ['blocker', 'critical', 'major'];
+
       update_list([for (bug of bugs) if (severities.indexOf(bug.severity) > -1) bug]);
     });
   }

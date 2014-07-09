@@ -163,7 +163,6 @@ ins, del {
 [role="textbox"]:focus {
   box-shadow: 0 0 .4rem rgba(26, 96, 143, .6), /* --active-textbox-border-color */
               inset 0 0 .4rem rgba(28, 28, 28, .2); /* --control-shadow-color */
-              
 }
 
 /* ----------------------------------------------------------------------------------------------

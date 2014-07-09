@@ -39,6 +39,7 @@ BzDeck.HomePage = function () {
 
   // Star on the header
   let $star_checkbox = document.querySelector('#home-preview-bug header [data-field="_starred"]');
+
   (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
@@ -140,6 +141,7 @@ BzDeck.HomePage = function () {
     if (!modifiers && event.keyCode === event.DOM_VK_M) {
       for (let $item of view.selected) {
         let _data = data.rows[$item.sectionRowIndex].data;
+
         _data._unread = _data._unread !== true;
       }
     }
@@ -148,6 +150,7 @@ BzDeck.HomePage = function () {
     if (!modifiers && event.keyCode === event.DOM_VK_S) {
       for (let $item of view.selected) {
         let _data = data.rows[$item.sectionRowIndex].data;
+
         _data._starred = _data._starred !== true;
       }
     }
@@ -281,6 +284,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   if (vertical && sort_grid) {
     // Force to change the sort condition when switched to the mobile layout
     let cond = grid.options.sort_conditions;
+
     cond.key = 'last_change_time';
     cond.order = 'descending';
   }

@@ -111,6 +111,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
     switch (event.target.dataset.command) {
       case 'show-details': {
         BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+
         break;
       }
 
@@ -119,6 +120,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
         panes['preview'].setAttribute('aria-hidden', 'true');
         buttons['show-details'].data.disabled = true;
         buttons['show-basic-search-pane'].data.disabled = true;
+
         break;
       }
     }
@@ -126,6 +128,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 
   for (let $button of this.view.$tabpanel.querySelectorAll('header [role="button"]')) {
     let button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
+
     button.bind('Pressed', handler);
   }
 };
@@ -280,6 +283,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   // Force to change the sort condition when switched to the mobile layout
   if (mobile) {
     let cond = grid.options.sort_conditions;
+
     cond.key = 'last_change_time';
     cond.order = 'descending';
   }
@@ -351,6 +355,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     if (!modifiers && event.keyCode === event.DOM_VK_S) {
       for (let $item of view.selected) {
         let _data = data.rows[$item.sectionRowIndex].data;
+
         _data._starred = _data._starred !== true;
       }
     }
@@ -377,6 +382,7 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
 
   // Star on the header
   let $star_checkbox = $pane.querySelector('[role="checkbox"][data-field="_starred"]');
+
   (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
     BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
   });
@@ -398,6 +404,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
 
   if (!newval) {
     $bug.setAttribute('aria-hidden', 'true');
+
     return;
   }
 
@@ -405,6 +412,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     if (!bug) {
       // Unknown bug
       $bug.setAttribute('aria-hidden', 'true');
+
       return;
     }
 
@@ -426,6 +434,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
 BzDeck.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
     this.show_status('You have to go online to search bugs.'); // l10n
+
     return;
   }
 
@@ -456,6 +465,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
       // Save data
       BzDeck.model.get_all_bugs(bugs => {
         let saved_ids = new Set([for (bug of bugs) bug.id]);
+
         BzDeck.model.save_bugs([for (bug of data.bugs) if (!saved_ids.has(bug.id)) bug]);
       });
 

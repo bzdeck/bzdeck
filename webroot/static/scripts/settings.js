@@ -13,6 +13,7 @@ BzDeck.SettingsPage = function () {
 
   if ($existing_tab) {
     tablist.view.selected = tablist.view.$focused = $existing_tab;
+
     return;
   }
 
@@ -60,6 +61,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
     }
 
     let params = new URLSearchParams();
+
     params.append('userid', userid);
     params.append('cookie', $input.value);
 
