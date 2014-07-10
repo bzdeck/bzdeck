@@ -741,7 +741,7 @@ BzDeck.bugzfeed.connect = function () {
 };
 
 BzDeck.bugzfeed.send = function (command, bugs) {
-  if (this.websocket.readyState === 1) {
+  if (this.websocket && this.websocket.readyState === 1) {
     this.websocket.send(JSON.stringify({ 'command': command, 'bugs': bugs }));
   }
 };
