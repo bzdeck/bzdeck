@@ -1632,7 +1632,17 @@ BzDeck.sidebar.setup = function () {
 
   window.addEventListener('UI:toggle_unread', event => {
     // Update the sidebar Inbox folder
-    this.toggle_unread_ui(event.detail.bugs.size);
+    BzDeck.model.get_all_subscriptions(subscriptions => {
+      let unread = new Set();
+
+      for (let sub of subscriptions) {
+        for (let bug of sub.bugs) if (event.detail.ids.has(bug.id)) {
+          unread.add(bug.id);
+        }
+      }
+
+      this.toggle_unread_ui(unread.size);
+    });
   });
 };
 
