@@ -229,10 +229,6 @@ col[data-hidden="false"] {
   text-indent: -9999rem;
 }
 
-:root[data-home-layout="classic"] .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
-  background-color: var(--grid-even-row-background-color);
-}
-
 [role="rowheader"], [role="gridcell"] {
   height: 2rem;
   line-height: 2rem;
@@ -1358,6 +1354,10 @@ main {
   border-color: var(--grid-border-color);
 }
 
+:root[data-home-layout="classic"] #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+  background-color: var(--grid-even-row-background-color);
+}
+
 :root[data-device-type|="mobile"] #home-list .grid-body [role="row"]:active {
   color: var(--selected-control-foreground-color) !important;
   background-color: var(--selected-control-background-color) !important;
@@ -2436,6 +2436,10 @@ article[id$="preview-bug"] > .bug-timeline {
 
 :root[data-device-type|="mobile"] [id|="tabpanel-search"] [id$="result-pane"] {
   top: 0;
+}
+
+[id|="tabpanel-search"] [id$="result-pane"] .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+  background-color: var(--grid-even-row-background-color);
 }
 
 [id|="tabpanel-search"] [id$="result-pane"] [role="status"] {
