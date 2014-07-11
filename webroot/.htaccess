@@ -32,7 +32,6 @@ RewriteRule ^settings$ / [L]
 RewriteRule ^(?:attachment|bug|search)/\d+$ / [L]
 
 # Rewrite: misc
-RewriteRule ^static/(scripts|styles)/lib/flaretail/(\w+)\.(js|css)$ /static/$1/lib/flaretail/flaretail.$2.$3 [L]
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
 
 # Performance: remove ETag
