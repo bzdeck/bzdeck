@@ -441,18 +441,15 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
         conf_field = BzDeck.data.bugzilla_config.field;
 
     let generate_element = (change, how) => {
-      let $elm;
+      let $elm = document.createElement('span');
 
       if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
-        $elm = document.createElement('a');
-        $elm.href = '/bug/' + change[how];
-        $elm.setAttribute('data-bug-id', change[how]);
+        $elm.innerHTML = change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');
       } else {
-        $elm = document.createElement('span');
+        $elm.textContent = change[how];
       }
 
       $elm.setAttribute('data-how', how);
-      $elm.textContent = change[how];
 
       return $elm;
     };
