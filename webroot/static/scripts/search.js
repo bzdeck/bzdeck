@@ -18,18 +18,18 @@ BzDeck.SearchPage = function () {
   }
 
   this.view = {
-    $tabpanel: $content.querySelector('[role="tabpanel"]'),
-    $status: $content.querySelector('[role="status"]'),
-    buttons: {},
-    panes: {}
+    '$tabpanel': $content.querySelector('[role="tabpanel"]'),
+    '$status': $content.querySelector('[role="status"]'),
+    'buttons': {},
+    'panes': {}
   };
 
   this.data = new Proxy({
-    bug_list: [],
-    preview_id: null
+    'bug_list': [],
+    'preview_id': null
   },
   {
-    get: (obj, prop) => {
+    'get': (obj, prop) => {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
@@ -43,7 +43,7 @@ BzDeck.SearchPage = function () {
 
       return obj[prop];
     },
-    set: (obj, prop, newval) => {
+    'set': (obj, prop, newval) => {
       let oldval = obj[prop];
 
       if (oldval === newval &&
@@ -151,43 +151,43 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
   let classifications = Object.keys(config.classification).sort().map((value, index) => {
     return {
-      id: $classification_list.id + 'item-' + index,
-      label: value
+      'id': $classification_list.id + 'item-' + index,
+      'label': value
     };
   });
 
   let products = Object.keys(config.product).sort().map((value, index) => {
     return {
-      id: $product_list.id + 'item-' + index,
-      label: value
+      'id': $product_list.id + 'item-' + index,
+      'label': value
     };
   });
 
   let components = [];
 
-  for (let [key, { component: cs }] of Iterator(config.product)) {
+  for (let [key, { 'component': cs }] of Iterator(config.product)) {
     components.push(...[for (c of Object.keys(cs)) if (components.indexOf(c) === -1) c]);
   }
 
   components = components.sort().map((value, index) => {
     return {
-      id: $component_list.id + 'item-' + index,
-      label: value
+      'id': $component_list.id + 'item-' + index,
+      'label': value
     };
   });
 
   let statuses = config.field.status.values.map((value, index) => {
     return {
-      id: $status_list.id + 'item-' + index,
-      label: value
+      'id': $status_list.id + 'item-' + index,
+      'label': value
     };
   });
 
   let resolutions = config.field.resolution.values.map((value, index) => {
     return {
-      id: $resolution_list.id + 'item-' + index,
-      label: value || '---',
-      selected: !value // Select '---' to search open bugs
+      'id': $resolution_list.id + 'item-' + index,
+      'label': value || '---',
+      'selected': !value // Select '---' to search open bugs
     };
   });
 
@@ -230,11 +230,11 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   button.bind('Pressed', event => {
     let params = new URLSearchParams(),
         map = {
-          classification: $classification_list,
-          product: $product_list,
-          component: $component_list,
-          status: $status_list,
-          resolution: $resolution_list
+          'classification': $classification_list,
+          'product': $product_list,
+          'component': $component_list,
+          'status': $status_list,
+          'resolution': $resolution_list
         };
 
     for (let [name, list] of Iterator(map)) {
@@ -263,8 +263,8 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
       field = BzDeck.data.bugzilla_config.field;
 
   let grid = this.view.grid = new FlareTail.widget.Grid($grid, {
-    rows: [],
-    columns: columns.map(col => {
+    'rows': [],
+    'columns': columns.map(col => {
       // Add labels
       col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
                   field[col.id].description;
@@ -273,11 +273,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     })
   },
   {
-    sortable: true,
-    reorderable: true,
-    sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
-                            : prefs['home.list.sort_conditions'] ||
-                              { key: 'id', order: 'ascending' }
+    'sortable': true,
+    'reorderable': true,
+    'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
+                              : prefs['home.list.sort_conditions'] ||
+                                { 'key': 'id', 'order': 'ascending' }
   });
 
   // Force to change the sort condition when switched to the mobile layout
@@ -295,9 +295,9 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
   grid.bind('ColumnModified', event => {
     prefs['search.list.columns'] = event.detail.columns.map(col => {
       return {
-        id: col.id,
-        type: col.type || 'string',
-        hidden: col.hidden || false
+        'id': col.id,
+        'type': col.type || 'string',
+        'hidden': col.hidden || false
       };
     });
   });

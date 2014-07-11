@@ -23,12 +23,12 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
 
   let _bug = {};
 
-  for (let { id: field, type: type } of BzDeck.options.grid.default_columns) {
+  for (let { 'id': field, 'type': type } of BzDeck.options.grid.default_columns) {
     if (bug[field] !== undefined && !field.startsWith('_')) {
       if (field === 'keywords') {
         _bug['keyword'] = bug['keywords'] || [];
       } else {
-        _bug[field] = type === 'person' ? { name: bug[field].real_name || bug[field].name || '' }
+        _bug[field] = type === 'person' ? { 'name': bug[field].real_name || bug[field].name || '' }
                                         : bug[field] || '';
       }
     }
@@ -80,7 +80,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
   }
 
   let _bug = {
-    'cc': [for (cc of bug.cc || []) { name: cc.real_name || cc.name }],
+    'cc': [for (cc of bug.cc || []) { 'name': cc.real_name || cc.name }],
     'depends_on': bug.depends_on || [],
     'blocks': bug.blocks || [],
     'see_also': bug.see_also || '',
@@ -170,15 +170,13 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
   let related_bug_ids = new Set([for ($element of $bug.querySelectorAll('[data-bug-id]'))
                                 Number.parseInt($element.getAttribute('data-bug-id'))]);
   let set_tooltops = bugs => {
-    for (let bug of bugs) {
-      if (bug.summary) {
-        let title = bug.status + ' ' + bug.resolution + ' – ' + bug.summary;
+    for (let bug of bugs) if (bug.summary) {
+      let title = bug.status + ' ' + bug.resolution + ' – ' + bug.summary;
 
-        for (let $element of $bug.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
-          $element.title = title;
-          $element.dataset.status = bug.status;
-          $element.dataset.resolution = bug.resolution;
-        }
+      for (let $element of $bug.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
+        $element.title = title;
+        $element.dataset.status = bug.status;
+        $element.dataset.resolution = bug.resolution;
       }
     }
   };
@@ -247,12 +245,10 @@ BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
     entries.get(attachment.creation_time).set('attachment', attachment);
   }
 
-  for (let history of bug.history || []) {
-    if (entries.has(history.change_time)) {
-      entries.get(history.change_time).set('history', history);
-    } else {
-      entries.set(history.change_time, new Map([['history', history]]));
-    }
+  for (let history of bug.history || []) if (entries.has(history.change_time)) {
+    entries.get(history.change_time).set('history', history);
+  } else {
+    entries.set(history.change_time, new Map([['history', history]]));
   }
 
   for (let [time, data] of entries) {
@@ -260,7 +256,7 @@ BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
   }
 
   // Sort by time
-  entries = [for (entry of entries) { time: entry[0], data: entry[1] }]
+  entries = [for (entry of entries) { 'time': entry[0], 'data': entry[1] }]
     .sort((a, b) => sort_desc ? a.time < b.time : a.time > b.time);
 
   // Append to the timeline
@@ -567,7 +563,7 @@ BzDeck.bug.timeline.handle_keydown = function (event) {
       continue; // The comment is collapsed
     }
 
-    let top = Math.round($comment.getBoxQuads({ relativeTo: $timeline })[0].bounds.top);
+    let top = Math.round($comment.getBoxQuads({ 'relativeTo': $timeline })[0].bounds.top);
 
     if (shift && top < 0 || !shift && top > 0) {
       $timeline.scrollTop += top;
@@ -669,7 +665,7 @@ BzDeck.bug.timeline.CommentForm.prototype.oninput = function () {
 };
 
 BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
-  let data = JSON.stringify({ text: this.$textbox.value });
+  let data = JSON.stringify({ 'text': this.$textbox.value });
 
   this.$textbox.setAttribute('aria-readonly', 'true');
   this.$submit.setAttribute('aria-disabled', 'true');
@@ -698,7 +694,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
  * ---------------------------------------------------------------------------------------------- */
 
 BzDeck.bugzfeed = {
-  subscription: new Set()
+  'subscription': new Set()
 };
 
 BzDeck.bugzfeed.connect = function () {

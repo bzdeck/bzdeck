@@ -64,8 +64,8 @@ BzDeck.HomePage = function () {
       field = BzDeck.data.bugzilla_config.field;
 
   let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
-    rows: [],
-    columns: columns.map(col => {
+    'rows': [],
+    'columns': columns.map(col => {
       // Add labels
       col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
                   field[col.id].description;
@@ -74,12 +74,12 @@ BzDeck.HomePage = function () {
     })
   },
   {
-    date: { simple: vertical },
-    sortable: true,
-    reorderable: true,
-    sort_conditions: vertical ? { key: 'last_change_time', order: 'descending' }
-                              : prefs['home.list.sort_conditions'] ||
-                                { key: 'id', order: 'ascending' }
+    'date': { 'simple': vertical },
+    'sortable': true,
+    'reorderable': true,
+    'sort_conditions': vertical ? { 'key': 'last_change_time', 'order': 'descending' }
+                                : prefs['home.list.sort_conditions'] ||
+                                  { 'key': 'id', 'order': 'ascending' }
   });
 
   this.change_layout(prefs['ui.home.layout']);
@@ -91,9 +91,9 @@ BzDeck.HomePage = function () {
   grid.bind('ColumnModified', event => {
     prefs['home.list.columns'] = event.detail.columns.map(col => {
       return {
-        id: col.id,
-        type: col.type || 'string',
-        hidden: col.hidden || false
+        'id': col.id,
+        'type': col.type || 'string',
+        'hidden': col.hidden || false
       };
     });
   });
@@ -165,11 +165,11 @@ BzDeck.HomePage = function () {
   });
 
   this.data = new Proxy({
-    bug_list: [],
-    preview_id: null
+    'bug_list': [],
+    'preview_id': null
   },
   {
-    get: (obj, prop) => {
+    'get': (obj, prop) => {
       if (prop === 'bug_list') {
         // Return a sorted bug list
         let bugs = {};
@@ -183,7 +183,7 @@ BzDeck.HomePage = function () {
 
       return obj[prop];
     },
-    set: (obj, prop, newval) => {
+    'set': (obj, prop, newval) => {
       let oldval = obj[prop];
 
       if (prop === 'preview_id' && oldval !== newval) {
@@ -266,7 +266,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
 
   // Change the date format on the thread pane
   for (let $time of grid.view.$container.querySelectorAll('time')) {
-    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { simple: vertical });
+    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
     $time.dataset.simple = vertical;
   }
 

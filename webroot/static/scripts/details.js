@@ -18,13 +18,13 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
   }
 
   this.data = {
-    id: id,
-    bug_list: bug_list
+    'id': id,
+    'bug_list': bug_list
   };
 
   this.view = {
-    $tab: null,
-    $tabpanel: null
+    '$tab': null,
+    '$tabpanel': null
   };
 
   if (bug_list.length) {
@@ -37,7 +37,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
       this.fetch_bug(id);
-      bug = { id: id };
+      bug = { 'id': id };
     }
 
     this.open(bug);
@@ -392,7 +392,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
         $cell('who').innerHTML = hist.changer.name.replace('@', '&#8203;@');
         $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
         datetime.fill_element($cell('when').appendChild(document.createElement('time')),
-                              hist.change_time, { relative: false });
+                              hist.change_time, { 'relative': false });
       } else {
         $cell('when').remove();
         $cell('who').remove();

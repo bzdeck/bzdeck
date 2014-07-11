@@ -18,55 +18,55 @@ BzDeck.data = {};
  * ---------------------------------------------------------------------------------------------- */
 
 BzDeck.options = {
-  api: {
-    endpoints: {
-      rest: 'https://api-dev.bugzilla.mozilla.org/latest/',
-      websocket: 'ws://bugzfeed.mozilla.org/'
+  'api': {
+    'endpoints': {
+      'rest': 'https://api-dev.bugzilla.mozilla.org/latest/',
+      'websocket': 'ws://bugzfeed.mozilla.org/'
     },
-    extra_fields: [
+    'extra_fields': [
       'attachments', 'blocks', 'cc', 'comments', 'depends_on', 'dupe_of', 'flags', 'groups',
       'history', 'is_cc_accessible', 'is_confirmed', 'is_creator_accessible', 'see_also',
       'update_token'
     ]
   },
-  app: {
-    manifest: location.origin + '/manifest.webapp'
+  'app': {
+    'manifest': location.origin + '/manifest.webapp'
   },
-  grid: {
-    default_columns: [
+  'grid': {
+    'default_columns': [
       // Custom
-      { id: '_starred', label: 'Starred', type: 'boolean' },
-      { id: '_unread', label: 'Unread', type: 'boolean', hidden: true },
+      { 'id': '_starred', 'label': 'Starred', 'type': 'boolean' },
+      { 'id': '_unread', 'label': 'Unread', 'type': 'boolean', 'hidden': true },
       // Name
-      { id: 'id', label: 'ID' /* instead of Bug ID */, type: 'integer' },
-      { id: 'alias', hidden: true },
-      { id: 'summary' },
+      { 'id': 'id', 'label': 'ID' /* instead of Bug ID */, 'type': 'integer' },
+      { 'id': 'alias', 'hidden': true },
+      { 'id': 'summary' },
       // Status
-      { id: 'status', hidden: true },
-      { id: 'resolution', hidden: true },
-      { id: 'target_milestone', hidden: true },
+      { 'id': 'status', 'hidden': true },
+      { 'id': 'resolution', 'hidden': true },
+      { 'id': 'target_milestone', 'hidden': true },
       // Affected
-      { id: 'classification', hidden: true },
-      { id: 'product' },
-      { id: 'component' },
-      { id: 'version', hidden: true },
-      { id: 'platform', hidden: true },
-      { id: 'op_sys', hidden: true },
+      { 'id': 'classification', 'hidden': true },
+      { 'id': 'product' },
+      { 'id': 'component' },
+      { 'id': 'version', 'hidden': true },
+      { 'id': 'platform', 'hidden': true },
+      { 'id': 'op_sys', 'hidden': true },
       // Importance
-      { id: 'severity', hidden: true },
-      { id: 'priority', hidden: true },
+      { 'id': 'severity', 'hidden': true },
+      { 'id': 'priority', 'hidden': true },
       // Notes
-      { id: 'whiteboard', hidden: true },
-      { id: 'keywords', hidden: true },
-      { id: 'url', hidden: true },
+      { 'id': 'whiteboard', 'hidden': true },
+      { 'id': 'keywords', 'hidden': true },
+      { 'id': 'url', 'hidden': true },
       // People
-      { id: 'creator', type: 'person', hidden: true },
-      { id: 'assigned_to', type: 'person', hidden: true },
-      { id: 'qa_contact', type: 'person', hidden: true },
-      { id: 'mentor', label: 'Mentor' /* not found in config */, type: 'person', hidden: true },
+      { 'id': 'creator', 'type': 'person', 'hidden': true },
+      { 'id': 'assigned_to', 'type': 'person', 'hidden': true },
+      { 'id': 'qa_contact', 'type': 'person', 'hidden': true },
+      { 'id': 'mentor', 'label': 'Mentor' /* not found in config */, 'type': 'person', 'hidden': true },
       // Dates
-      { id: 'creation_time', type: 'time', hidden: true },
-      { id: 'last_change_time', type: 'time' },
+      { 'id': 'creation_time', 'type': 'time', 'hidden': true },
+      { 'id': 'last_change_time', 'type': 'time' },
     ]
   }
 };
@@ -98,14 +98,14 @@ BzDeck.bootstrap.open_database = function () {
     let db = BzDeck.model.db = event.target.result,
         stores = {
           // Bugzilla data
-          bugs: { keyPath: 'id' },
-          attachments: { keyPath: 'id' },
-          users: { keyPath: 'id' },
-          bugzilla: { keyPath: 'key' },
+          'bugs': { 'keyPath': 'id' },
+          'attachments': { 'keyPath': 'id' },
+          'users': { 'keyPath': 'id' },
+          'bugzilla': { 'keyPath': 'key' },
           // BzDeck data
-          accounts: { keyPath: 'id' }, // the key is Bugzilla account ID
-          subscriptions: { keyPath: 'id' },
-          prefs: { keyPath: 'key' }
+          'accounts': { 'keyPath': 'id' }, // the key is Bugzilla account ID
+          'subscriptions': { 'keyPath': 'id' },
+          'prefs': { 'keyPath': 'key' }
         };
 
     for (let [name, option] of Iterator(stores)) if (!db.objectStoreNames.contains(name)) {
@@ -155,7 +155,7 @@ BzDeck.bootstrap.load_config = function () {
       // The config is loaded successfully
       BzDeck.data.bugzilla_config = data;
       BzDeck.model.db.transaction('bugzilla', 'readwrite').objectStore('bugzilla')
-                                                          .add({ key: 'config', value: data });
+                                                          .add({ 'key': 'config', 'value': data });
     });
   });
 };
@@ -188,9 +188,9 @@ BzDeck.bootstrap.load_prefs = function () {
     }
 
     BzDeck.data.prefs = new Proxy(prefs, {
-      set: (obj, key, value) => {
+      'set': (obj, key, value) => {
         obj[key] = value;
-        db.transaction('prefs', 'readwrite').objectStore('prefs').put({ key: key, value: value });
+        db.transaction('prefs', 'readwrite').objectStore('prefs').put({ 'key': key, 'value': value });
       }
     });
   });
@@ -427,10 +427,10 @@ BzDeck.core.load_subscriptions = function () {
 
   BzDeck.model.get_all_subscriptions(subscriptions => {
     let email = BzDeck.data.account.name,
-        _query = { email1: email, emailtype1: 'exact', resolution: '---' },
-        fields = { cc: 'cc', reported: 'reporter', assigned: 'assigned_to',
-                   qa: 'qa_contact', mentor: 'bug_mentor' },
-        requests_sub = { id: 'requests', query: { quicksearch: 'requestee:' + email }};
+        _query = { 'email1': email, 'emailtype1': 'exact', 'resolution': '---' },
+        fields = { 'cc': 'cc', 'reported': 'reporter', 'assigned': 'assigned_to',
+                   'qa': 'qa_contact', 'mentor': 'bug_mentor' },
+        requests_sub = { 'id': 'requests', 'query': { 'quicksearch': 'requestee:' + email }};
 
     if (subscriptions.length) {
       BzDeck.model.get_all_bugs(bugs => {
@@ -438,7 +438,7 @@ BzDeck.core.load_subscriptions = function () {
         let ids = [for (bug of bugs) if (bug._starred) bug.id];
 
         if (ids.length) {
-          subscriptions.push({ query: { id: ids.join() } });
+          subscriptions.push({ 'query': { 'id': ids.join() } });
         }
 
         // [Migration] Remove Need Info
@@ -463,7 +463,7 @@ BzDeck.core.load_subscriptions = function () {
             let query = FlareTail.util.object.clone(_query);
 
             query['emailbug_mentor1'] = 1;
-            subscriptions.push({ id: 'mentor', query: query });
+            subscriptions.push({ 'id': 'mentor', 'query': query });
           }
         }
 
@@ -490,7 +490,7 @@ BzDeck.core.load_subscriptions = function () {
       let query = FlareTail.util.object.clone(_query);
 
       query['email' + field + '1'] = 1;
-      subscriptions.push({ id: name, query: query });
+      subscriptions.push({ 'id': name, 'query': query });
     }
 
     subscriptions.push(requests_sub);
@@ -740,9 +740,9 @@ BzDeck.core.toggle_star = function (id, value) {
 
 BzDeck.core.toggle_star_ui = function () {
   BzDeck.model.get_all_bugs(bugs => {
-    FlareTail.util.event.trigger(window, 'UI:toggle_star', { detail: {
-      bugs: new Set([for (bug of bugs) if (bug._starred) bug]),
-      ids: new Set([for (bug of bugs) if (bug._starred) bug.id])
+    FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': {
+      'bugs': new Set([for (bug of bugs) if (bug._starred) bug]),
+      'ids': new Set([for (bug of bugs) if (bug._starred) bug.id])
     }});
   });
 };
@@ -760,10 +760,10 @@ BzDeck.core.toggle_unread = function (id, value) {
 
 BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs(bugs => {
-    FlareTail.util.event.trigger(window, 'UI:toggle_unread', { detail: {
-      loaded: loaded,
-      bugs: new Set([for (bug of bugs) if (bug._unread) bug]),
-      ids: new Set([for (bug of bugs) if (bug._unread) bug.id])
+    FlareTail.util.event.trigger(window, 'UI:toggle_unread', { 'detail': {
+      'loaded': loaded,
+      'bugs': new Set([for (bug of bugs) if (bug._unread) bug]),
+      'ids': new Set([for (bug of bugs) if (bug._unread) bug.id])
     }});
   });
 };
@@ -826,9 +826,9 @@ BzDeck.core.show_notification = function (title, body, callback = null) {
       fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/);
 
   FlareTail.util.app.show_notification(title, {
-    body: body,
+    'body': body,
     // Firefox OS requires a complete URL for the icon
-    icon: location.origin + '/static/images/logo/icon-' + (fxos ? 'fxos-120' : '128') + '.png'
+    'icon': location.origin + '/static/images/logo/icon-' + (fxos ? 'fxos-120' : '128') + '.png'
   }, callback);
 };
 
@@ -840,12 +840,12 @@ BzDeck.core.register_activity_handler = function () {
   // Not implemented yet on Firefox OS nor Firefox for Android
   if (typeof navigator.mozRegisterActivityHandler === 'function') {
     navigator.mozRegisterActivityHandler({
-      name: 'view',
-      filters: {
-        type: 'url',
-        url: {
-          required: true,
-          regexp: re
+      'name': 'view',
+      'filters': {
+        'type': 'url',
+        'url': {
+          'required': true,
+          'regexp': re
         }
       }
     });
@@ -863,11 +863,11 @@ BzDeck.core.register_activity_handler = function () {
 BzDeck.core.update_grid_data = function (grid, bugs) {
   grid.build_body(bugs.map(bug => {
     let row = {
-      id: grid.view.$container.id + '-row-' + bug.id,
-      data: {},
-      dataset: {
-        unread: bug._unread === true,
-        severity: bug.severity
+      'id': grid.view.$container.id + '-row-' + bug.id,
+      'data': {},
+      'dataset': {
+        'unread': bug._unread === true,
+        'severity': bug.severity
       }
     };
 
@@ -895,7 +895,7 @@ BzDeck.core.update_grid_data = function (grid, bugs) {
     }
 
     row.data = new Proxy(row.data, {
-      set: (obj, prop, value) => {
+      'set': (obj, prop, value) => {
         if (prop === '_starred') {
           BzDeck.core.toggle_star(obj.id, value);
         }
@@ -1487,16 +1487,16 @@ BzDeck.toolbar.quicksearch = function (event) {
     results.reverse();
 
     let data = [{
-      id: 'quicksearch-dropdown-header',
-      label: results.length ? 'Local Search' : 'Local Search: No Results', // l10n
-      disabled: true
+      'id': 'quicksearch-dropdown-header',
+      'label': results.length ? 'Local Search' : 'Local Search: No Results', // l10n
+      'disabled': true
     }];
 
     for (let [i, bug] of results.entries()) {
       data.push({
-        id: 'quicksearch-dropdown-' + bug.id,
-        label: bug.id + ' - ' + bug.summary,
-        data: { id: bug.id }
+        'id': 'quicksearch-dropdown-' + bug.id,
+        'label': bug.id + ' - ' + bug.summary,
+        'data': { 'id': bug.id }
       });
 
       if (i === 20) {
@@ -1504,8 +1504,8 @@ BzDeck.toolbar.quicksearch = function (event) {
       }
     }
 
-    data.push({ type: 'separator' });
-    data.push({ id: 'quicksearch-dropdown-more', label: 'Search All Bugs...' }); // l10n
+    data.push({ 'type': 'separator' });
+    data.push({ 'id': 'quicksearch-dropdown-more', 'label': 'Search All Bugs...' }); // l10n
 
     let dropdown = this.search_dropdown;
 
@@ -1611,10 +1611,10 @@ BzDeck.sidebar.setup = function () {
   });
 
   this.data = new Proxy({
-    folder_id: null,
+    'folder_id': null,
   },
   {
-    set: (obj, prop, newval) => {
+    'set': (obj, prop, newval) => {
       let oldval = obj[prop];
 
       // On mobile, the same folder can be selected
