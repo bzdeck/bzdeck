@@ -1383,15 +1383,15 @@ BzDeck.toolbar.setup = function () {
 
   let exec_search = () => {
     let page = new BzDeck.SearchPage(),
+        params = new URLSearchParams(),
         terms = $search_box.value;
 
     if (terms) {
       page.view.panes['basic-search'].querySelector('.text-box [role="textbox"]').value = terms;
-      page.exec_search({
-        'summary': terms,
-        'summary_type': 'contains_all',
-        'resolution': '---' // Search only open bugs
-      });
+      params.append('summary', terms);
+      params.append('summary_type', 'contains_all');
+      params.append('resolution', '---'); // Search only open bugs
+      page.exec_search(params);
     }
 
     cleanup();
