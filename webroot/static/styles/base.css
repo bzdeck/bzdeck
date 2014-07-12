@@ -354,8 +354,15 @@ col[data-hidden="false"] {
   background-color: var(--application-foreground-color);
 }
 
+.dialog-wrapper {
+  animation: dissolve .2s;
+}
+
 [role$="dialog"] {
+  border-radius: 0 0 .4rem .4rem;
   background-color: var(--application-background-color);
+  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .4);
+  animation: pop .2s;
 }
 
 [role$="dialog"] header {
@@ -2785,6 +2792,38 @@ article[id$="preview-bug"] > .bug-timeline {
 
   to {
     transform: rotate(360deg);
+  }
+
+}
+
+@keyframes dissolve {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+@keyframes pop {
+
+  from {
+    transform: scale(0);
+  }
+
+  96% {
+    transform: scale(1.04);
+  }
+
+  98% {
+    transform: scale(.96);
+  }
+
+  to {
+    transform: scale(1);
   }
 
 }
