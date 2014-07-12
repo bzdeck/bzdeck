@@ -171,12 +171,12 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
                                 Number.parseInt($element.getAttribute('data-bug-id'))]);
   let set_tooltops = bugs => {
     for (let bug of bugs) if (bug.summary) {
-      let title = bug.status + ' ' + bug.resolution + ' – ' + bug.summary;
+      let title = bug.status + (bug.resolution ? ' ' + bug.resolution : '') + ' – ' + bug.summary;
 
       for (let $element of $bug.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
         $element.title = title;
         $element.dataset.status = bug.status;
-        $element.dataset.resolution = bug.resolution;
+        $element.dataset.resolution = bug.resolution || '';
       }
     }
   };
