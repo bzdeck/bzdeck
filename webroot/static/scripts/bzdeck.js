@@ -768,7 +768,8 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
   });
 };
 
-BzDeck.core.request = function (method, path, params, data, callback, auth = false) {
+BzDeck.core.request = function (method, path, params, data, callback,
+                                listeners = {}, auth = false) {
   if (!navigator.onLine) {
     BzDeck.core.show_status('You have to go online to load data.'); // l10n
 
@@ -790,15 +791,53 @@ BzDeck.core.request = function (method, path, params, data, callback, auth = fal
   xhr.open(method, url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
+  xhr.addEventListener('progress', event => {
+    if (typeof listeners.onprogress === 'function') {
+      listeners.onprogress(event);
+    }
+  });
+
   xhr.addEventListener('load', event => {
     let text = event.target.responseText;
 
     callback(text ? JSON.parse(text) : null);
+
+    if (typeof listeners.onload === 'function') {
+      listeners.onload(event);
+    }
   });
 
   xhr.addEventListener('error', event => {
     callback(null);
+
+    if (typeof listeners.onerror === 'function') {
+      listeners.onerror(event);
+    }
   });
+
+  xhr.addEventListener('abort', event => {
+    callback(null);
+
+    if (typeof listeners.onabort === 'function') {
+      listeners.onabort(event);
+    }
+  });
+
+  if (listeners.upload && typeof listeners.upload.onprogress === 'function') {
+    xhr.upload.addEventListener('progress', event => listeners.upload.onprogress(event));
+  }
+
+  if (listeners.upload && typeof listeners.upload.onload === 'function') {
+    xhr.upload.addEventListener('load', event => listeners.upload.onload(event));
+  }
+
+  if (listeners.upload && typeof listeners.upload.onerror === 'function') {
+    xhr.upload.addEventListener('error', event => listeners.upload.onerror(event));
+  }
+
+  if (listeners.upload && typeof listeners.upload.onabort === 'function') {
+    xhr.upload.addEventListener('abort', event => listeners.upload.onabort(event));
+  }
 
   xhr.send(data);
 };
@@ -1767,13 +1806,9 @@ window.addEventListener('contextmenu', event => {
   event.preventDefault();
 });
 
-window.addEventListener('dragover', event => {
-  event.preventDefault();
-});
-
-window.addEventListener('drop', event => {
-  event.preventDefault();
-});
+window.addEventListener('dragenter', event => event.preventDefault());
+window.addEventListener('dragover', event => event.preventDefault());
+window.addEventListener('drop', event => event.preventDefault());
 
 window.addEventListener('wheel', event => {
   event.preventDefault();

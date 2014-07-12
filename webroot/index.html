@@ -439,6 +439,7 @@
           <ul id="TID-comment-form-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
             <li id="TID-comment-form-tab-write" role="tab" aria-controls="TID-comment-form-tabpanel-write" aria-selected="true"><label>Write</label></li>
             <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false"><label>Preview</label></li>
+            <li id="TID-comment-form-tab-attachments" role="tab" aria-controls="TID-comment-form-tabpanel-attachments" aria-selected="false"><label>Attachments</label></li>
           </ul>
           <div id="TID-comment-form-tabpanel-write" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-comment-form-tab-write">
             <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
@@ -448,8 +449,23 @@
               <div itemprop="text"></div>
             </article>
           </div>
+          <div id="TID-comment-form-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-attachments">
+            <div>
+              <input type="file" hidden multiple>
+              <span tabindex="0" role="checkbox" aria-checked="true" aria-hidden="true">Upload files in parallel</span>
+              <table>
+                <colgroup><col class="description"><col class="actions"></colgroup>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <footer aria-hidden="true">
+        <footer>
+          <div role="toolbar">
+            <ul>
+              <li><span class="iconic" title="Attach Files..." tabindex="0" role="button" data-command="attach">Attach</span></li>
+            </ul>
+          </div>
           <div role="status"></div>
           <div role="toolbar">
             <ul>
@@ -457,8 +473,20 @@
             </ul>
           </div>
         </footer>
+        <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
       </section>
     </template><!-- end #timeline-comment-form -->
+    <template id="timeline-comment-form-attachments-row">
+      <tr>
+        <td><input spellcheck="false" role="textbox" data-field="description"></td>
+        <td>
+          <span title="Edit" role="button" data-command="edit" aria-disabled="true">Edit</span>
+          <span title="Remove" tabindex="0" role="button" data-command="remove">Remove</span>
+          <span title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span>
+          <span title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span>
+        </td>
+      </tr>
+    </template>
     <template id="timeline-attachment">
       <aside itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject">
         <a itemprop="url" data-attrs="data-attachment-id">
