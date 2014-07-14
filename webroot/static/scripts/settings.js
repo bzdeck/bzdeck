@@ -43,8 +43,8 @@ BzDeck.SettingsPage = function () {
 };
 
 BzDeck.SettingsPage.prototype.activate_token_input = function () {
-  let userid = BzDeck.data.account.id,
-      token = BzDeck.data.account.token,
+  let account = BzDeck.data.account,
+      token = account.token,
       $input = document.querySelector('#tabpanel-settings-account-token'),
       $output = $input.nextElementSibling;
 
@@ -62,17 +62,17 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
 
     let params = new URLSearchParams();
 
-    params.append('userid', userid);
-    params.append('cookie', $input.value);
+    params.append('names', account.name);
+    params.append('token', account.id + '-' + $input.value);
 
     $output.textContent = 'Verifying...'; // l10n
 
-    BzDeck.core.request('GET', 'user/' + userid, params, null, user => {
-      if (user.id) {
+    BzDeck.core.request('GET', 'user', params, null, result => {
+      if (result.users) {
         // Save the token
-        BzDeck.data.account.token = $input.value;
-        BzDeck.model.db.transaction('accounts', 'readwrite')
-                       .objectStore('accounts').put(BzDeck.data.account);
+        account = BzDeck.data.account = result.users[0];
+        account.token = $input.value;
+        BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts').put(account);
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
         $output.textContent = 'Verified'; // l10n

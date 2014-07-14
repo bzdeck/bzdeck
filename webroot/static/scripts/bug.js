@@ -26,10 +26,13 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
   for (let { 'id': field, 'type': type } of BzDeck.options.grid.default_columns) {
     if (bug[field] !== undefined && !field.startsWith('_')) {
       if (field === 'keywords') {
-        _bug['keyword'] = bug['keywords'] || [];
+        _bug.keyword = bug.keywords;
+      } else if (field === 'mentors') {
+        _bug.mentor = [for (person of bug.mentors_detail) { 'name': BzDeck.core.get_name(person) }];
+      } else if (type === 'person') {
+        _bug[field] = { 'name': bug[field] ? BzDeck.core.get_name(bug[field + '_detail']) : '' };
       } else {
-        _bug[field] = type === 'person' ? { 'name': bug[field].real_name || bug[field].name || '' }
-                                        : bug[field] || '';
+        _bug[field] = bug[field] || '';
       }
     }
   }
@@ -64,7 +67,8 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
     this.fill_details($bug, bug, partial, false);
   } else {
     // Load comments, history, flags and attachments' metadata
-    BzDeck.core.load_bug_details([bug.id], bug => {
+    BzDeck.model.fetch_bug(bug, false).then(bug => {
+      BzDeck.model.save_bug(bug);
       this.fill_details($bug, bug, false, true);
     });
   }
@@ -80,13 +84,15 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
   }
 
   let _bug = {
-    'cc': [for (cc of bug.cc || []) { 'name': cc.real_name || cc.name }],
-    'depends_on': bug.depends_on || [],
-    'blocks': bug.blocks || [],
-    'see_also': bug.see_also || '',
-    'flag': [for (flag of bug.flags || []) {
+    'cc': [for (person of bug.cc_detail) {
+      'name': BzDeck.core.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, '') // Remove bracketed strings
+    }],
+    'depends_on': bug.depends_on,
+    'blocks': bug.blocks,
+    'see_also': bug.see_also,
+    'flag': [for (flag of bug.flags) {
       'creator': {
-        'name': flag.setter.name
+        'name': flag.setter
       },
       'name': flag.name,
       'status': flag.status
@@ -116,7 +122,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
   let $flags = $bug.querySelector('[data-field="flags"]');
 
   if ($flags) {
-    $flags.setAttribute('aria-hidden', !bug.flags || !bug.flags.length);
+    $flags.setAttribute('aria-hidden', !bug.flags.length);
   }
 
   // TODO: Show Project Flags and Tracking Flags
@@ -126,8 +132,8 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
     BzDeck.bug.timeline.render(bug, $bug, delayed);
 
     // Attachments and History, only on the details tabs
-    BzDeck.DetailsPage.attachments.render($bug, bug.attachments || []);
-    BzDeck.DetailsPage.history.render($bug, bug.history || []);
+    BzDeck.DetailsPage.attachments.render($bug, bug.attachments);
+    BzDeck.DetailsPage.history.render($bug, bug.history);
 
     // Add tooltips to the related bugs
     this.set_bug_tooltips($bug, bug);
@@ -169,8 +175,8 @@ BzDeck.bug.set_product_tooltips = function ($bug, bug) {
 BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
   let related_bug_ids = new Set([for ($element of $bug.querySelectorAll('[data-bug-id]'))
                                 Number.parseInt($element.getAttribute('data-bug-id'))]);
-  let set_tooltops = bugs => {
-    for (let bug of bugs) if (bug.summary) {
+  let set_tooltops = bug => {
+    if (bug.summary) {
       let title = bug.status + (bug.resolution ? ' ' + bug.resolution : '') + ' – ' + bug.summary;
 
       for (let $element of $bug.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
@@ -183,13 +189,16 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
 
   if (related_bug_ids.size) {
     BzDeck.model.get_bugs_by_ids(related_bug_ids, bugs => {
-      set_tooltops(bugs);
+      let found_bug_ids = [for (bug of bugs) bug.id],
+          lookup_bug_ids = [for (id of related_bug_ids) if (found_bug_ids.indexOf(id) === -1) id];
 
-      let found_bug_ids = new Set([for (bug of bugs) bug.id]),
-          lookup_bug_ids = new Set([for (id of related_bug_ids) if (!found_bug_ids.has(id)) id]);
+      bugs.map(set_tooltops);
 
-      if (lookup_bug_ids.size) {
-        BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids, bugs => set_tooltops(bugs));
+      if (lookup_bug_ids.length) {
+        BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids).then(bugs => {
+          BzDeck.model.save_bugs(bugs);
+          bugs.map(set_tooltops);
+        });
       }
     });
   }
@@ -225,6 +234,32 @@ BzDeck.bug.update = function ($bug, bug, changes) {
   }
 };
 
+BzDeck.bug.find_person = function (bug, email) {
+  if (bug.creator === email) {
+    return bug.creator_detail;
+  }
+
+  if (bug.assigned_to === email) {
+    return bug.assigned_to_detail;
+  }
+
+  if (bug.qa_contact === email) {
+    return bug.qa_contact_detail;
+  }
+
+  if (bug.cc.indexOf(email) > -1) {
+    return [for (person of bug.cc_detail) if (person.email === email) person][0];
+  }
+
+  if (bug.mentors.indexOf(email) > -1) {
+    return [for (person of bug.mentors_detail) if (person.email === email) person][0];
+  }
+
+  // If the person is just watching the bug component, s/he might not be in any field of the bug
+  // and cannot be found. Then just return a simple object. TODO: fetch the account using the API
+  return { 'email': email, 'id': 0, 'name': email, 'real_name': '' };
+};
+
 /* ----------------------------------------------------------------------------------------------
  * Timeline
  * ---------------------------------------------------------------------------------------------- */
@@ -241,14 +276,14 @@ BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
       comment_form = new this.CommentForm(bug, timeline_id),
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
-  for (let attachment of bug.attachments || []) {
+  for (let attachment of bug.attachments) {
     entries.get(attachment.creation_time).set('attachment', attachment);
   }
 
-  for (let history of bug.history || []) if (entries.has(history.change_time)) {
-    entries.get(history.change_time).set('history', history);
+  for (let history of bug.history) if (entries.has(history.when)) {
+    entries.get(history.when).set('history', history);
   } else {
-    entries.set(history.change_time, new Map([['history', history]]));
+    entries.set(history.when, new Map([['history', history]]));
   }
 
   for (let [time, data] of entries) {
@@ -308,6 +343,8 @@ BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
 
 BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
+      author,
+      time,
       comment = data.get('comment'),
       attachment = data.get('attachment'),
       history = data.get('history'),
@@ -321,32 +358,19 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
       $textbox = document.querySelector('#' + timeline_id + '-comment-form [role="textbox"]'),
       $image = new Image();
 
-  $image.addEventListener('load', event =>
-    $author.querySelector('[itemprop="image"]').src = $image.src);
-
   if (comment) {
-    let author = comment.creator,
-        time = comment.creation_time,
-        text = comment.raw_text ||
-               (comment.text || '').replace(/^Created\ attachment\ \d+\n.+(?:\n\n)?/m, '');
+    let text = comment.raw_text;
 
+    author = BzDeck.bug.find_person(bug, comment.creator);
+    time = comment.creation_time;
     $entry.id = timeline_id + '-comment-' + comment.id;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
-    $author.title = $author.querySelector('[itemprop="name"]').itemValue
-                  = author.real_name || author.name;
-    datetime.fill_element($time, time);
-
-    // Set the user's avatar if author.real_name is the email address
-    if (author.real_name && author.real_name.contains('@')) {
-      $author.querySelector('[itemprop="email"]').content = author.real_name;
-      $image.src = 'https://www.gravatar.com/avatar/' + md5(author.real_name) + '?d=404';
-    }
 
     // Make a quote
     let quote_header = FlareTail.util.string.format('(In reply to {name} from comment #{number})', {
-          'name': comment.creator.real_name || comment.creator.name,
+          'name': author.real_name || author.email,
           'number': data.get('comment_number')
         }),
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) '> ' + line],
@@ -384,7 +408,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
     FlareTail.util.content.fill($attachment, {
       'url': '/attachment/' + attachment.id,
-      'description': attachment.description,
+      'description': attachment.summary,
       'name': attachment.file_name,
       'contentSize': attachment.size,
       'contentUrl': url,
@@ -394,7 +418,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
     }),
 
     $attachment.title = [
-      attachment.description,
+      attachment.summary,
       attachment.file_name,
       attachment.is_patch ? 'Patch' : attachment.content_type, // l10n
       (attachment.size / 1024).toFixed(2) + ' KB' // l10n
@@ -402,7 +426,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
     if (attachment.content_type.startsWith('image/')) {
       $media = document.createElement('img');
-      $media.alt = attachment.description;
+      $media.alt = attachment.summary;
     }
 
     if (attachment.content_type.match(/^(audio|video)\//)) {
@@ -432,9 +456,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
   }
 
   if (history) {
-    let author = history.changer,
-        time = history.change_time,
-        conf_field = BzDeck.data.bugzilla_config.field;
+    let conf_field = BzDeck.data.bugzilla_config.field;
 
     let generate_element = (change, how) => {
       let $elm = document.createElement('span');
@@ -450,23 +472,9 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
       return $elm;
     };
 
-    if (comment) {
-      if ($author.title !== author.name) {
-        $author.title += '\n' + author.name;
-      }
-    } else {
-      $entry.dataset.time = (new Date(time)).getTime();
-      $author.title = $author.querySelector('[itemprop="name"]').itemValue = author.name;
-      datetime.fill_element($time, time);
-    }
-
+    author = author || BzDeck.bug.find_person(bug, history.who);
+    time = time || history.when;
     $entry.dataset.changes = [for (change of history.changes) change.field_name].join(' ');
-    $author.querySelector('[itemprop="email"]').content = author.name;
-
-    // Set the user's avatar assuming author.name is the email address
-    if (!$image.src) {
-      $image.src = 'https://www.gravatar.com/avatar/' + md5(author.name) + '?d=404';
-    }
 
     for (let change of history.changes) {
       let $change = $changes.appendChild(document.createElement('li')),
@@ -494,6 +502,13 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
   } else {
     $changes.remove();
   }
+
+  $author.title = (author.real_name ? author.real_name + '\n' : '') + author.email;
+  $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
+  $author.querySelector('[itemprop="email"]').itemValue = author.email;
+  $image.addEventListener('load', event => $author.querySelector('[itemprop="image"]').src = $image.src);
+  $image.src = 'https://www.gravatar.com/avatar/' + md5(author.email) + '?d=404';
+  datetime.fill_element($time, time);
 
   // Mark unread
   $entry.setAttribute('data-unread', 'true');
@@ -712,13 +727,12 @@ BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
   reader.addEventListener('load', event => {
     this.add_attachment({
       'data': reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
-      'description': is_ghpr ? 'GitHub Pull Request, ' + is_ghpr[1] + '#' + is_ghpr[2]
-                             : is_patch ? 'Patch'
-                                        : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
-      'encoding': 'base64',
+      'summary': is_ghpr ? 'GitHub Pull Request, ' + is_ghpr[1] + '#' + is_ghpr[2]
+                         : is_patch ? 'Patch'
+                                    : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
       'file_name': URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
       'is_patch': is_patch,
-      'size': blob.size,
+      'size': blob.size, // Not required for the API but used in find_attachment()
       'content_type': is_ghpr ? 'text/x-github-pull-request' : 'text/plain'
     });
   });
@@ -752,11 +766,10 @@ BzDeck.bug.timeline.CommentForm.prototype.onselect_files = function (files) {
     reader.addEventListener('load', event => {
       this.add_attachment({
         'data': reader.result.replace(/^.*?,/, ''), // Drop data:<type>;base64,
-        'description': is_patch ? 'Patch' : file.name,
-        'encoding': 'base64',
+        'summary': is_patch ? 'Patch' : file.name,
         'file_name': file.name,
         'is_patch': is_patch,
-        'size': file.size,
+        'size': file.size, // Not required for the API but used in find_attachment()
         'content_type': is_patch ? 'text/plain' : file.type || 'application/x-download'
       });
     });
@@ -791,9 +804,9 @@ BzDeck.bug.timeline.CommentForm.prototype.add_attachment = function (attachment)
 
   this.attachments.push(attachment);
 
-  $desc.value = $desc.placeholder = attachment.description;
+  $desc.value = $desc.placeholder = attachment.summary;
   $desc.addEventListener('keydown', event => event.stopPropagation());
-  $desc.addEventListener('input', event => attachment.description = $desc.value);
+  $desc.addEventListener('input', event => attachment.summary = $desc.value);
 
   $row.querySelector('[data-command="remove"]').addEventListener('click', event => {
     this.remove_attachment(attachment);
@@ -858,7 +871,7 @@ BzDeck.bug.timeline.CommentForm.prototype.update_parallel_ui = function () {
 
 BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
   let data,
-      comment = { 'text': this.$textbox.value },
+      comment = this.$textbox.value,
       att_num = this.attachments.length,
       att_total = 0,
       att_uploaded = 0;
@@ -874,7 +887,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
         size = 0;
 
     // If there is no comment, go ahead with attachments
-    if (method === 'comment' && !data.text) {
+    if (method === 'comment' && !data.comment) {
       resolve();
 
       return;
@@ -882,7 +895,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
 
     BzDeck.core.request('POST', 'bug/' + this.bug.id + '/' + method, null,
                         JSON.stringify(data), result => {
-      if (result && result.ref) {
+      if (result && result.ids) {
         if (method === 'attachment') {
           this.remove_attachment(data);
 
@@ -921,11 +934,11 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
   if (att_num === 1) {
     // If there's a single attachment, send it with the comment
     data = this.attachments[0];
-    data.comments = [comment];
+    data.comment = comment;
   } else {
     // If there's no attachment, just send the comment. If there are 2 or more attachments,
     // send the comment first then send the attachments in parallel
-    data = comment;
+    data = { 'comment': comment };
   }
 
   post(data).then(value => {
@@ -1029,25 +1042,14 @@ BzDeck.bugzfeed.unsubscribe = function (bugs) {
 };
 
 BzDeck.bugzfeed.get_changes = function (message) {
-  let api = BzDeck.options.api,
-      id = message.bug,
-      time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
-      params = new URLSearchParams();
-
-  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
-  params.append('exclude_fields', 'attachments.data');
-
-  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
-    if (!bug || !bug.comments) {
-      return;
-    }
-
-    let get_change = (field, time_field = 'creation_time') =>
-          [for (item of bug[field] || []) if (new Date(item[time_field]) - time === 0) item][0],
+  BzDeck.model.fetch_bug({ 'id': message.bug }).then(bug => {
+    let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
+        get_change = (field, time_field = 'creation_time') =>
+          [for (item of bug[field]) if (new Date(item[time_field]) - time === 0) item][0],
         changes = new Map(),
         comment = get_change('comments'),
         attachment = get_change('attachments'),
-        history = get_change('history', 'change_time');
+        history = get_change('history', 'when');
 
     if (comment) {
       changes.set('comment', comment);
@@ -1077,12 +1079,12 @@ BzDeck.bugzfeed.save_changes = function (bug, changes) {
     }
 
     if (changes.has('attachment')) {
-      cache.attachments = cache.attachments || [];
+      cache.attachments = cache.attachments;
       cache.attachments.push(changes.get('attachment'));
     }
 
     if (changes.has('history')) {
-      cache.history = cache.history || [];
+      cache.history = cache.history;
       cache.history.push(changes.get('history'));
 
       for (let change in changes.get('history').changes) {

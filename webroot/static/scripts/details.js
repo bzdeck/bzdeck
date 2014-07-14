@@ -215,7 +215,8 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       );
 
       if (!bug.comments) {
-        this.prefetch_bug(id);
+        // Prefetch the bug
+        BzDeck.model.fetch_bug(bug, false).then(bug => BzDeck.model.save_bug(bug));
       }
     });
   };
@@ -260,19 +261,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
   BzDeck.core.show_status('Loading...'); // l10n
 
-  let api = BzDeck.options.api,
-      params = new URLSearchParams();
-
-  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
-  params.append('exclude_fields', 'attachments.data');
-
-  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
-    if (!bug || !bug.id) {
-      BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
-
-      return;
-    }
-
+  BzDeck.model.fetch_bug({ 'id': id }).then(bug => {
     // Save in DB
     BzDeck.model.save_bug(bug);
 
@@ -286,20 +275,8 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
       BzDeck.bug.fill_data(this.view.$bug, bug);
       $tab.title = this.get_tab_title(bug);
     }
-  });
-};
-
-BzDeck.DetailsPage.prototype.prefetch_bug = function (id) {
-  let api = BzDeck.options.api,
-      params = new URLSearchParams();
-
-  params.append('include_fields', [...api.default_fields, ...api.extra_fields].join());
-  params.append('exclude_fields', 'attachments.data');
-
-  BzDeck.core.request('GET', 'bug/' + id, params, null, bug => {
-    if (bug && bug.id) {
-      BzDeck.model.save_bug(bug);
-    }
+  }).catch(bug => {
+    BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
   });
 };
 
@@ -333,20 +310,20 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
 
     FlareTail.util.content.fill($attachment, {
       'url': '/attachment/' + att.id,
-      'description': att.description,
+      'description': att.summary,
       'name': att.file_name,
       'contentSize': (att.size / 1024).toFixed(2) + ' KB', // l10n
       'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
       'uploadDate': att.creation_time,
-      'flag': [for (flag of att.flags || []) {
+      'flag': [for (flag of att.flags) {
         'creator': {
-          'name': flag.setter.name
+          'name': flag.setter
         },
         'name': flag.name,
         'status': flag.status
       }],
       'creator': {
-        'name': att.attacher.name
+        'name': att.creator
       }
     }, {
       'data-attachment-id': att.id
@@ -389,10 +366,10 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
           $cell = field => $row.querySelector('[data-field="' + field + '"]');
 
       if (i === 0) {
-        $cell('who').innerHTML = hist.changer.name.replace('@', '&#8203;@');
+        $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
         $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
         datetime.fill_element($cell('when').appendChild(document.createElement('time')),
-                              hist.change_time, { 'relative': false });
+                              hist.when, { 'relative': false });
       } else {
         $cell('when').remove();
         $cell('who').remove();

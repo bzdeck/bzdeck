@@ -244,8 +244,8 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     }
 
     if ($textbox.value) {
-      params.append('summary', $textbox.value);
-      params.append('summary_type', 'contains_all');
+      params.append('short_desc', $textbox.value);
+      params.append('short_desc_type', 'allwordssubstr');
     }
 
     this.exec_search(params);
@@ -437,9 +437,6 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
 
     return;
   }
-
-  // Specify fields
-  params.append('include_fields', BzDeck.options.api.default_fields.join());
 
   let $grid = this.view.panes['result'].querySelector('[role="grid"]');
 
