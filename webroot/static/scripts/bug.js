@@ -704,7 +704,7 @@ BzDeck.bug.timeline.CommentForm.prototype.oninput = function () {
 
 BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
   let reader = new FileReader(),
-      blob = new Blob([encodeURIComponent(escape(str))], { type: 'text/plain' }),
+      blob = new Blob([str], { type: 'text/plain' }),
       is_ghpr = str.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/),
       is_patch = str.match(/^diff\s/m);
 
