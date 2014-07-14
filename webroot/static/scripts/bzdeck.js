@@ -74,62 +74,64 @@ BzDeck.options = {
 BzDeck.bootstrap = {};
 
 BzDeck.bootstrap.start = function () {
+  let status = message => BzDeck.core.show_status(message);
+
   this.$form = document.querySelector('#app-login form');
   this.$input = this.$form.querySelector('[role="textbox"]');
   this.$button = this.$form.querySelector('[role="button"]');
   BzDeck.core.$statusbar = document.querySelector('#app-login [role="status"]');
 
-  this.open_database();
-};
+  BzDeck.model.open_database().then(() => {
+    return BzDeck.model.load_prefs();
+  }, error => {
+    status(error.message);
+  }).then(() => {
+    return BzDeck.model.load_account();
+  }).then(account => {
+    BzDeck.data.account = account;
+  }).catch(() => {
+    status('');
 
-BzDeck.bootstrap.open_database = function () {
-  let req = indexedDB.open('BzDeck', 2);
+    return new Promise((resolve, reject) => {
+      this.show_login_form().then(() => {
+        status('Verifying your account...'); // l10n
 
-  req.addEventListener('error', event => {
-    BzDeck.core.show_status('ERROR: Cannot open the database.'); // l10n
-  });
+        return BzDeck.model.fetch_user(this.$input.value);
+      }).then(account => {
+        BzDeck.data.account = account;
+        BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts').add(account);
+        // User found, now load his/her bugs
+        resolve();
+      }).catch(error => {
+        if (error.message === 'Network Error') {
+          status('Failed to sign in. Network error?'); // l10n
+        } else if (error.message === 'User Not Found') {
+          status('Your account could not be found. Please check your email adress and try again.'); // l10n
+        } else {
+          status(error.message);
+        }
 
-  // The database is created or upgraded
-  req.addEventListener('upgradeneeded', event => {
-    let db = BzDeck.model.db = event.target.result,
-        stores = {
-          // Bugzilla data
-          'bugs': { 'keyPath': 'id' },
-          'bugzilla': { 'keyPath': 'key' },
-          // BzDeck data
-          'accounts': { 'keyPath': 'id' }, // the key is Bugzilla account ID
-          'prefs': { 'keyPath': 'key' }
-        };
-
-    if (event.oldVersion === 1) {
-      // Drop old format stores (and recreate)
-      db.deleteObjectStore('accounts');
-      db.deleteObjectStore('bugs');
-      // Drop stores that have never been used
-      db.deleteObjectStore('attachments');
-      db.deleteObjectStore('users');
-      // Drop the subscriptions store that is no longer used
-      db.deleteObjectStore('subscriptions');
-    }
-
-    for (let [name, option] of Iterator(stores)) if (!db.objectStoreNames.contains(name)) {
-      db.createObjectStore(name, option);
-    }
-  });
-
-  req.addEventListener('success', event => {
-    BzDeck.model.db = event.target.result;
-
-    Promise.all([
-      BzDeck.model.load_account(),
-      BzDeck.model.load_prefs()
-    ]).then(() => {
-      if (BzDeck.data.account) {
-        BzDeck.bootstrap.fetch_data();
-      } else {
-        this.show_login_form();
-      }
+        this.$input.disabled = this.$button.disabled = false;
+      });
     });
+  }).then(() => {
+    status('Loading bugs...'); // l10n
+    document.querySelector('#app-intro').style.display = 'none';
+
+    return Promise.all([
+      BzDeck.model.fetch_subscriptions(),
+      BzDeck.model.fetch_config()
+    ]);
+  }).then(() => {
+    if (!this.relogin) {
+      // Finally load the UI modules
+      BzDeck.bootstrap.setup_ui();
+    }
+  }, error => {
+    status(error.message);
+  }).then(() => {
+    this.show_notification();
+    this.finish();
   });
 };
 
@@ -138,91 +140,36 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
   this.$input.disabled = this.$button.disabled = false;
   this.$input.focus();
 
-  if (!firstrun) {
-    return;
-  }
-
-  this.$form.addEventListener('submit', event => {
+  return new Promise((resolve, reject) => this.$form.addEventListener('submit', event => {
     if (!this.processing) {
       // User is trying to re-login
       this.relogin = true;
       this.processing = true;
     }
 
-    navigator.onLine ? this.verify_account()
-                     : BzDeck.core.show_status('You have to go online to sign in.'); // l10n
+    if (navigator.onLine) {
+      this.$input.disabled = this.$button.disabled = true;
+      resolve();
+    } else {
+      reject(new Error('You have to go online to sign in.')); // l10n
+    }
 
     event.preventDefault();
 
     return false;
-  });
+  }));
 
-  BzDeck.core.show_status('');
-};
-
-BzDeck.bootstrap.verify_account = function () {
-  let params = new URLSearchParams();
-
-  BzDeck.core.show_status('Verifying your account...'); // l10n
-  this.$input.disabled = this.$button.disabled = true;
-  params.append('names', this.$input.value);
-
-  BzDeck.core.request('GET', 'user', params, null, result => {
-    let status,
-        account;
-
-    if (!result) {
-      // Network error?
-      status = 'ERROR: Failed to sign in.'; // l10n
-    }
-
-    if (result.error) {
-      // User not found
-      status = 'ERROR: ' + (result.message || 'Your account could not be found. \
-                            Please check your email adress and try again.'); // l10n
-    }
-
-    if (status) {
-      BzDeck.core.show_status(status); // l10n
-      this.$input.disabled = this.$button.disabled = false;
-
-      return;
-    }
-
-    // User found, now load his/her data
-    account = BzDeck.data.account = result.users[0];
-    BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts').add(account);
-    BzDeck.bootstrap.fetch_data();
-  });
-};
-
-BzDeck.bootstrap.fetch_data = function () {
-  BzDeck.core.show_status('Loading bugs...'); // l10n
-  document.querySelector('#app-intro').style.display = 'none';
-
-  Promise.all([
-    BzDeck.model.fetch_subscriptions(),
-    BzDeck.model.fetch_config()
-  ]).then(() => {
-    // Finally load the UI modules
-    BzDeck.bootstrap.setup_ui();
-  }).catch(error => {
-    BzDeck.core.show_status(error);
-  });
+  if (!firstrun) {
+    this.$form.submit();
+  }
 };
 
 BzDeck.bootstrap.setup_ui = function () {
-  if (this.relogin) {
-    // UI has already been set up, skip this process
-    this.finish();
-
-    return;
-  }
-
   BzDeck.core.show_status('Loading UI...'); // l10n
 
   let datetime = FlareTail.util.datetime,
       prefs = BzDeck.data.prefs,
+      value,
       theme = prefs['ui.theme.selected'],
       FTut = FlareTail.util.theme,
       $root = document.documentElement;
@@ -231,46 +178,28 @@ BzDeck.bootstrap.setup_ui = function () {
   datetime.options.updater_enabled = true;
 
   // Date format
-  {
-    let value = prefs['ui.date.relative'];
-
-    datetime.options.relative = value !== undefined ? value : true;
-  }
+  value = prefs['ui.date.relative'];
+  datetime.options.relative = value !== undefined ? value : true;
 
   // Date timezone
-  {
-    let value = prefs['ui.date.timezone'];
-
-    datetime.options.timezone = value || 'local';
-  }
+  value = prefs['ui.date.timezone'];
+  datetime.options.timezone = value || 'local';
 
   // Timeline: Font
-  {
-    let value = prefs['ui.timeline.font.family'];
-
-    $root.setAttribute('data-timeline-font-family', value || 'proportional');
-  }
+  value = prefs['ui.timeline.font.family'];
+  $root.setAttribute('data-timeline-font-family', value || 'proportional');
 
   // Timeline: Sort order
-  {
-    let value = prefs['ui.timeline.sort.order'];
-
-    $root.setAttribute('data-timeline-sort-order', value || 'ascending');
-  }
+  value = prefs['ui.timeline.sort.order'];
+  $root.setAttribute('data-timeline-sort-order', value || 'ascending');
 
   // Timeline: Changes
-  {
-    let value = prefs['ui.timeline.show_cc_changes'];
-
-    $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
-  }
+  value = prefs['ui.timeline.show_cc_changes'];
+  $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
 
   // Timeline: Attachments
-  {
-    let value = prefs['ui.timeline.display_attachments_inline'];
-
-    $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
-  }
+  value = prefs['ui.timeline.display_attachments_inline'];
+  $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Activate widgets
   BzDeck.homepage = new BzDeck.HomePage();
@@ -288,43 +217,14 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Preload images from CSS
   FTut.preload_images(() => {});
+};
 
+BzDeck.bootstrap.show_notification = function () {
   // Authorize a notification
   FlareTail.util.app.auth_notification();
 
   // Update UI & Show a notification
   BzDeck.core.toggle_unread_ui(true);
-
-  window.addEventListener('UI:toggle_unread', event => {
-    let bugs = [...event.detail.bugs];
-
-    if ($root.getAttribute('data-current-tab') === 'home') {
-      let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
-
-      BzDeck.homepage.change_window_title(
-        document.title.replace(/(\s\(\d+\))?$/, unread_num ? ' (' + unread_num + ')' : '')
-      );
-    }
-
-    if (!event.detail.loaded) {
-      return;
-    }
-
-    if (bugs.length === 0) {
-      BzDeck.core.show_status('No new bugs to download'); // l10n
-
-      return;
-    }
-
-    bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-
-    let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
-                                 : 'You have 1 unread bug', // l10n
-        extract = [for (bug of bugs.slice(0, 3)) bug.id + ' - ' + bug.summary].join('\n');
-
-    BzDeck.core.show_status(status);
-    BzDeck.core.show_notification(status, extract);
-  });
 
   // Notify requests
   BzDeck.model.get_subscription_by_id('requests', bugs => {
@@ -349,8 +249,6 @@ BzDeck.bootstrap.setup_ui = function () {
       BzDeck.sidebar.folders.view.selected = document.querySelector('#sidebar-folders--requests');
     });
   });
-
-  this.finish();
 };
 
 BzDeck.bootstrap.finish = function () {
@@ -698,26 +596,63 @@ BzDeck.core.get_name = function (person) {
 BzDeck.model = {};
 BzDeck.model.cache = {};
 
-BzDeck.model.load_account = function () {
-  return new Promise((resolve, reject) => BzDeck.model.db.transaction('accounts').objectStore('accounts')
-                                                         .openCursor().addEventListener('success', event => {
-    let cursor = event.target.result;
+BzDeck.model.open_database = function () {
+  let req = indexedDB.open('BzDeck', 2);
 
-    if (cursor) {
-      // Cache found (the first entry)
-      BzDeck.data.account = cursor.value;
+  // The database is created or upgraded
+  req.addEventListener('upgradeneeded', event => {
+    let db = this.db = event.target.result,
+        stores = {
+          // Bugzilla data
+          'bugs': { 'keyPath': 'id' },
+          'bugzilla': { 'keyPath': 'key' },
+          // BzDeck data
+          'accounts': { 'keyPath': 'id' }, // the key is Bugzilla account ID
+          'prefs': { 'keyPath': 'key' }
+        };
+
+    if (event.oldVersion === 1) {
+      // Drop old format stores (and recreate)
+      db.deleteObjectStore('accounts');
+      db.deleteObjectStore('bugs');
+      // Drop stores that have never been used
+      db.deleteObjectStore('attachments');
+      db.deleteObjectStore('users');
+      // Drop the subscriptions store that is no longer used
+      db.deleteObjectStore('subscriptions');
     }
 
-    resolve();
+    for (let [name, option] of Iterator(stores)) if (!db.objectStoreNames.contains(name)) {
+      db.createObjectStore(name, option);
+    }
+  });
+
+  return new Promise((resolve, reject) => {
+    req.addEventListener('success', event => {
+      this.db = event.target.result;
+      resolve();
+    });
+
+    req.addEventListener('error', event => {
+      reject(new Error('Cannot open the database.')); // l10n
+    });
+  });
+};
+
+BzDeck.model.load_account = function () {
+  return new Promise((resolve, reject) => this.db.transaction('accounts').objectStore('accounts')
+                                                 .openCursor().addEventListener('success', event => {
+    let cursor = event.target.result;
+
+    cursor ? resolve(cursor.value) : reject(new Error('Account Not Found'));
   }));
 };
 
 BzDeck.model.load_prefs = function () {
-  let db = BzDeck.model.db,
-      prefs = {};
+  let prefs = {};
 
-  return new Promise((resolve, reject) => db.transaction('prefs').objectStore('prefs').mozGetAll()
-                                            .addEventListener('success', event => {
+  return new Promise((resolve, reject) => this.db.transaction('prefs').objectStore('prefs').mozGetAll()
+                                                 .addEventListener('success', event => {
     for (let { key, value } of event.target.result) {
       prefs[key] = value;
     }
@@ -725,7 +660,7 @@ BzDeck.model.load_prefs = function () {
     BzDeck.data.prefs = new Proxy(prefs, {
       'set': (obj, key, value) => {
         obj[key] = value;
-        db.transaction('prefs', 'readwrite').objectStore('prefs').put({ 'key': key, 'value': value });
+        this.db.transaction('prefs', 'readwrite').objectStore('prefs').put({ 'key': key, 'value': value });
       }
     });
 
@@ -734,8 +669,8 @@ BzDeck.model.load_prefs = function () {
 };
 
 BzDeck.model.fetch_config = function () {
-  return new Promise((resolve, reject) => BzDeck.model.db.transaction('bugzilla').objectStore('bugzilla')
-                                                         .get('config').addEventListener('success', event => {
+  return new Promise((resolve, reject) => this.db.transaction('bugzilla').objectStore('bugzilla')
+                                                 .get('config').addEventListener('success', event => {
     let result = event.target.result;
 
     if (result) {
@@ -773,12 +708,28 @@ BzDeck.model.fetch_config = function () {
 
       // The config is loaded successfully
       BzDeck.data.bugzilla_config = data;
-      BzDeck.model.db.transaction('bugzilla', 'readwrite').objectStore('bugzilla')
+      this.db.transaction('bugzilla', 'readwrite').objectStore('bugzilla')
                                                           .add({ 'key': 'config', 'value': data });
       resolve();
     });
 
     xhr.send(null);
+  }));
+};
+
+BzDeck.model.fetch_user = function (email) {
+  let params = new URLSearchParams();
+
+  params.append('names', email);
+
+  return new Promise((resolve, reject) => BzDeck.core.request('GET', 'user', params, null, result => {
+    if (!result) {
+      reject(new Error('Network Error')); // l10n
+    } else if (result.error) {
+      reject(new Error(result.message || 'User Not Found'));
+    } else {
+      resolve(result.users[0]);
+    }
   }));
 };
 
@@ -1779,4 +1730,35 @@ window.addEventListener('popstate', event => {
   $root.setAttribute('data-current-tab', 'home');
   tabs.selected = document.querySelector('#tab-home');
   folders.selected = document.querySelector('#sidebar-folders--inbox');
+});
+
+window.addEventListener('UI:toggle_unread', event => {
+  let bugs = [...event.detail.bugs];
+
+  if (document.documentElement.getAttribute('data-current-tab') === 'home') {
+    let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
+
+    BzDeck.homepage.change_window_title(
+      document.title.replace(/(\s\(\d+\))?$/, unread_num ? ' (' + unread_num + ')' : '')
+    );
+  }
+
+  if (!event.detail.loaded) {
+    return;
+  }
+
+  if (bugs.length === 0) {
+    BzDeck.core.show_status('No new bugs to download'); // l10n
+
+    return;
+  }
+
+  bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
+
+  let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
+                               : 'You have 1 unread bug', // l10n
+      extract = [for (bug of bugs.slice(0, 3)) bug.id + ' - ' + bug.summary].join('\n');
+
+  BzDeck.core.show_status(status);
+  BzDeck.core.show_notification(status, extract);
 });
