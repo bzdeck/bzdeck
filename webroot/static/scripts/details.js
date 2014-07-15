@@ -33,7 +33,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(id, bug => {
+  BzDeck.model.get_bug_by_id(id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
       this.fetch_bug(id);
@@ -205,7 +205,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       return;
     }
 
-    BzDeck.model.get_bug_by_id(id, bug => {
+    BzDeck.model.get_bug_by_id(id).then(bug => {
       let $tabpanel = this.prep_tabpanel(bug);
 
       $tabpanel.setAttribute('aria-hidden', 'true');

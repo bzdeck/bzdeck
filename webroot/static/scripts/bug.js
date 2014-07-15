@@ -188,7 +188,7 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
   };
 
   if (related_bug_ids.size) {
-    BzDeck.model.get_bugs_by_ids(related_bug_ids, bugs => {
+    BzDeck.model.get_bugs_by_ids(related_bug_ids).then(bugs => {
       let found_bug_ids = [for (bug of bugs) bug.id],
           lookup_bug_ids = [for (id of related_bug_ids) if (found_bug_ids.indexOf(id) === -1) id];
 
@@ -549,7 +549,7 @@ BzDeck.bug.timeline.handle_keydown = function (event) {
     let $parent = this.view.$owner.parentElement,
         bug_id = Number.parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
 
-    BzDeck.model.get_bug_by_id(bug_id, bug => {
+    BzDeck.model.get_bug_by_id(bug_id).then(bug => {
       if (key === event.DOM_VK_M) {
         BzDeck.core.toggle_unread(bug_id, !bug._unread);
       }
@@ -893,22 +893,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.core.request('POST', 'bug/' + this.bug.id + '/' + method, null,
-                        JSON.stringify(data), result => {
-      if (result && result.ids) {
-        if (method === 'attachment') {
-          this.remove_attachment(data);
-
-          if (!length_computable) {
-            update_status(size);
-          }
-        }
-
-        resolve();
-      } else {
-        reject(new Error(result));
-      }
-    }, {
+    BzDeck.core.request('POST', 'bug/' + this.bug.id + '/' + method, null, JSON.stringify(data), {
       'upload': {
         'onprogress': event => {
           if (method === 'attachment') {
@@ -924,7 +909,25 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
           }
         }
       }
-    }, true); // Enable auth
+    }, {
+      'auth': true // Enable auth
+    }).then(result => {
+      if (result.ids) {
+        if (method === 'attachment') {
+          this.remove_attachment(data);
+
+          if (!length_computable) {
+            update_status(size);
+          }
+        }
+
+        resolve();
+      } else {
+        reject(new Error(result));
+      }
+    }).catch(event => {
+      reject(new Error());
+    });
   });
 
   this.$textbox.setAttribute('aria-readonly', 'true');
@@ -1073,7 +1076,7 @@ BzDeck.bugzfeed.get_changes = function (message) {
 };
 
 BzDeck.bugzfeed.save_changes = function (bug, changes) {
-  BzDeck.model.get_bug_by_id(bug.id, cache => {
+  BzDeck.model.get_bug_by_id(bug.id).then(cache => {
     if (changes.has('comment')) {
       cache.comments.push(changes.get('comment'));
     }

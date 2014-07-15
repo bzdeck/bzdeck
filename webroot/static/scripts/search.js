@@ -408,7 +408,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, bug => {
+  BzDeck.model.get_bug_by_id(newval).then(bug => {
     if (!bug) {
       // Unknown bug
       $bug.setAttribute('aria-hidden', 'true');
@@ -448,34 +448,27 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
     BzDeck.core.update_grid_data(this.view.grid, []); // Clear grid body
   });
 
-  BzDeck.core.request('GET', 'bug', params, null, data => {
-    if (!data || !Array.isArray(data.bugs)) {
-      $grid.removeAttribute('aria-busy');
-      this.show_status('ERROR: Failed to load data.'); // l10n
-
-      return;
-    }
-
-    if (data.bugs.length > 0) {
-      this.data.bug_list = data.bugs;
+  BzDeck.core.request('GET', 'bug', params, null).then(result => {
+    if (result.bugs.length > 0) {
+      this.data.bug_list = result.bugs;
 
       // Save data
-      BzDeck.model.get_all_bugs(bugs => {
+      BzDeck.model.get_all_bugs().then(bugs => {
         let saved_ids = new Set([for (bug of bugs) bug.id]);
 
-        BzDeck.model.save_bugs([for (bug of data.bugs) if (!saved_ids.has(bug.id)) bug]);
+        BzDeck.model.save_bugs([for (bug of result.bugs) if (!saved_ids.has(bug.id)) bug]);
       });
 
       // Show results
-      FlareTail.util.event.async(() => {
-        BzDeck.core.update_grid_data(this.view.grid, data.bugs);
-        $grid.removeAttribute('aria-busy');
-        this.hide_status();
-      });
+      BzDeck.core.update_grid_data(this.view.grid, result.bugs);
+      this.hide_status();
     } else {
-      $grid.removeAttribute('aria-busy');
       this.show_status('Zarro Boogs found.'); // l10n
     }
+  }).catch(event => {
+    this.show_status('ERROR: Failed to load data.'); // l10n
+  }).then(() => {
+    $grid.removeAttribute('aria-busy');
   });
 };
 

@@ -239,7 +239,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval, bug => {
+  BzDeck.model.get_bug_by_id(newval).then(bug => {
     if (!bug) {
       $bug.setAttribute('aria-hidden', 'true');
       button.data.disabled = true;
