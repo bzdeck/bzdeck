@@ -667,7 +667,7 @@ BzDeck.toolbar.setup = function () {
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
     document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
-  });
+  }).catch(error => {});
 
   let $banner = document.querySelector('[role="banner"]'),
       $search_box = document.querySelector('[role="banner"] [role="search"] input'),
