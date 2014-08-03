@@ -90,6 +90,10 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
   this.$input.disabled = this.$button.disabled = false;
   this.$input.focus();
 
+  if (!firstrun) {
+    return true;
+  }
+
   return new Promise((resolve, reject) => {
     this.$form.addEventListener('submit', event => {
       if (!this.processing) {
@@ -109,10 +113,6 @@ BzDeck.bootstrap.show_login_form = function (firstrun = true) {
 
       return false;
     });
-
-    if (!firstrun) {
-      this.$form.submit();
-    }
   });
 };
 
@@ -503,7 +503,7 @@ BzDeck.session.logout = function () {
   }
 
   // Disconnect from the Bugzfeed server
-  BzDeck.bugzfeed.websocket.close();
+  // BzDeck.bugzfeed.websocket.close();
 
   // Delete the account data
   BzDeck.model.get_store('accounts').delete(BzDeck.model.data.account.id);
