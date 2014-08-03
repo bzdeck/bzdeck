@@ -21,16 +21,19 @@ BzDeck.bootstrap.start = function () {
   this.$button = this.$form.querySelector('[role="button"]');
   BzDeck.core.$statusbar = document.querySelector('#app-login [role="status"]');
 
-  BzDeck.model.open_database().then(database => {
-    BzDeck.model.database = database;
+  // Delete the old DB
+  indexedDB.deleteDatabase('BzDeck');
+
+  BzDeck.model.open_global_database().then(database => {
+    BzDeck.model.databases.global = database;
   }, error => {
     status(error.message);
   }).then(() => {
-    return BzDeck.model.load_account();
+    return BzDeck.model.get_active_account();
   }).then(account => {
     BzDeck.model.data.account = account;
   }).then(() => {
-    return BzDeck.model.get_server('mozilla');
+    return BzDeck.model.get_server(BzDeck.model.data.account.host);
   }).then(server => {
     BzDeck.model.data.server = server;
   }).catch(() => {
@@ -47,8 +50,11 @@ BzDeck.bootstrap.start = function () {
 
         return BzDeck.model.fetch_user(this.$input.value);
       }).then(account => {
+        account.active = true;
+        account.loaded = Date.now(); // key
+        account.host = BzDeck.model.data.server.name;
         BzDeck.model.data.account = account;
-        BzDeck.model.get_store('accounts').save(account);
+        BzDeck.model.save_account(account);
         resolve();
       }).catch(error => {
         if (error.message === 'Network Error') {
@@ -62,6 +68,12 @@ BzDeck.bootstrap.start = function () {
         this.$input.disabled = this.$button.disabled = false;
       });
     });
+  }).then(() => {
+    return BzDeck.model.open_account_database();
+  }).then(database => {
+    BzDeck.model.databases.account = database;
+  }, error => {
+    status(error.message);
   }).then(() => {
     return BzDeck.model.load_prefs();
   }).then(() => {
@@ -506,7 +518,8 @@ BzDeck.session.logout = function () {
   // BzDeck.bugzfeed.websocket.close();
 
   // Delete the account data
-  BzDeck.model.get_store('accounts').delete(BzDeck.model.data.account.id);
+  BzDeck.model.data.account.active = false;
+  BzDeck.model.save_account(BzDeck.model.data.account);
 
   delete BzDeck.model.data.account;
 };

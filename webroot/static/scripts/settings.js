@@ -70,9 +70,8 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
     BzDeck.model.request('GET', 'user', params).then(result => {
       if (result.users) {
         // Save the token
-        account = BzDeck.model.data.account = result.users[0];
         account.token = $input.value;
-        BzDeck.model.get_store('accounts').save(account);
+        BzDeck.model.save_account(account);
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
         $output.textContent = 'Verified'; // l10n

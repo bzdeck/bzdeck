@@ -71,6 +71,7 @@ BzDeck.config = {
  * ---------------------------------------------------------------------------------------------- */
 
 BzDeck.model = {
+ 'databases': {},
  'data': {}
 };
 
@@ -120,7 +121,8 @@ BzDeck.model.request = function (method, path, params, data = null, listeners = 
 };
 
 BzDeck.model.get_store = function (name) {
-  let store = this.database.transaction(name, 'readwrite').objectStore(name),
+  let type = name.match(/^accounts|bugzilla$/) ? 'global' : 'account',
+      store = this.databases[type].transaction(name, 'readwrite').objectStore(name),
       send = request => new Promise((resolve, reject) => {
         request.addEventListener('success', event => resolve(event.target.result));
         request.addEventListener('error', event => reject(new Error(event)));
@@ -134,35 +136,20 @@ BzDeck.model.get_store = function (name) {
   };
 };
 
-BzDeck.model.open_database = function () {
-  let req = indexedDB.open('BzDeck', 2);
+BzDeck.model.open_global_database = function () {
+  let req = indexedDB.open('global');
 
   // The database is created or upgraded
   req.addEventListener('upgradeneeded', event => {
     let db = event.target.result,
-        stores = {
-          // Bugzilla data
-          'bugs': { 'keyPath': 'id' },
-          'bugzilla': { 'keyPath': 'key' },
-          // BzDeck data
-          'accounts': { 'keyPath': 'id' }, // the key is Bugzilla account ID
-          'prefs': { 'keyPath': 'key' }
-        };
+        store;
 
-    if (event.oldVersion === 1) {
-      // Drop old format stores (and recreate)
-      db.deleteObjectStore('accounts');
-      db.deleteObjectStore('bugs');
-      // Drop stores that have never been used
-      db.deleteObjectStore('attachments');
-      db.deleteObjectStore('users');
-      // Drop the subscriptions store that is no longer used
-      db.deleteObjectStore('subscriptions');
-    }
+    store = db.createObjectStore('bugzilla', { 'keyPath': 'host' });
 
-    for (let [name, option] of Iterator(stores)) if (!db.objectStoreNames.contains(name)) {
-      db.createObjectStore(name, option);
-    }
+    store = db.createObjectStore('accounts', { 'keyPath': 'loaded' });
+    store.createIndex('host', 'host', { 'unique': false });
+    store.createIndex('id', 'id', { 'unique': false });
+    store.createIndex('name', 'name', { 'unique': false });
   });
 
   return new Promise((resolve, reject) => {
@@ -171,13 +158,55 @@ BzDeck.model.open_database = function () {
   });
 };
 
-BzDeck.model.load_account = function () {
+BzDeck.model.get_all_accounts = function () {
   return new Promise((resolve, reject) => {
-    this.database.transaction('accounts').objectStore('accounts').openCursor().addEventListener('success', event => {
-      let cursor = event.target.result;
-
-      cursor ? resolve(cursor.value) : reject(new Error('Account Not Found'));
+    this.get_store('accounts').get_all().then(accounts => {
+      resolve(accounts);
+    }).catch(error => {
+      reject(new Error('Failed to load accounts.')); // l10n
     });
+  });  
+};
+
+BzDeck.model.get_active_account = function () {
+  return new Promise((resolve, reject) => {
+    this.get_all_accounts().then(accounts => {
+      let account = [for (account of accounts) if (account.active) account][0];
+
+      account ? resolve(account) : reject(new Error('Account Not Found'));
+    });
+  });
+};
+
+BzDeck.model.save_account = function (account) {
+  return new Promise((resolve, reject) => {
+    this.get_store('accounts').save(account).then(result => {
+      resolve(result);
+    }).catch(error => {
+      reject(new Error('Failed to save the account.')); // l10n
+    });
+  });
+};
+
+BzDeck.model.open_account_database = function () {
+  let req = indexedDB.open(this.data.server.name + '::' + this.data.account.name);
+
+  req.addEventListener('upgradeneeded', event => {
+    let db = this.databases.account = event.target.result,
+        store;
+
+    store = db.createObjectStore('bugs', { 'keyPath': 'id' });
+    store.createIndex('alias', 'alias', { 'unique': true });
+
+    store = db.createObjectStore('users', { 'keyPath': 'name' });
+    store.createIndex('id', 'id', { 'unique': true });
+
+    store = db.createObjectStore('prefs', { 'keyPath': 'name' });
+  });
+
+  return new Promise((resolve, reject) => {
+    req.addEventListener('success', event => resolve(event.target.result));
+    req.addEventListener('error', event => reject(new Error('Cannot open the database.'))); // l10n
   });
 };
 
@@ -194,14 +223,14 @@ BzDeck.model.load_prefs = function () {
 
   return new Promise((resolve, reject) => {
     this.get_store('prefs').get_all().then(result => {
-      for (let { key, value } of result) {
-        prefs[key] = value;
+      for (let pref of result) {
+        prefs[pref.name] = pref.value;
       }
 
       this.data.prefs = new Proxy(prefs, {
         'set': (obj, key, value) => {
           obj[key] = value;
-          this.get_store('prefs').save({ 'key': key, 'value': value });
+          this.get_store('prefs').save({ 'name': key, 'value': value });
         }
       });
 
@@ -214,10 +243,10 @@ BzDeck.model.load_config = function () {
   let server_name = this.data.server.name;
 
   return new Promise((resolve, reject) => {
-    this.get_store('bugzilla').get('config').then(result => {
-      if (result) {
+    this.get_store('bugzilla').get(server_name).then(server => {
+      if (server) {
         // Cache found
-        resolve(result.value);
+        resolve(server.config);
 
         return;
       }
@@ -231,7 +260,7 @@ BzDeck.model.load_config = function () {
 
       // Load the Bugzilla config in background
       let server = this.data.server,
-          xhr = new XMLHttpRequest(); 
+          xhr = new XMLHttpRequest();
 
       // The config is not available from the REST endpoint so use the BzAPI compat layer instead
       xhr.open('GET', server.url + server.endpoints.bzapi + 'configuration?cached_ok=1', true);
@@ -249,7 +278,7 @@ BzDeck.model.load_config = function () {
         }
 
         // The config is loaded successfully
-        this.get_store('bugzilla').save({ 'key': 'config', 'value': data });
+        this.get_store('bugzilla').save({ 'host': server_name, 'config': data });
         resolve(data);
       });
 
@@ -476,7 +505,7 @@ BzDeck.model.save_bug = function (bug) {
 
 BzDeck.model.save_bugs = function (bugs) {
   let cache = this.data.bugs,
-      transaction = this.database.transaction('bugs', 'readwrite'),
+      transaction = this.databases.account.transaction('bugs', 'readwrite'),
       store = transaction.objectStore('bugs');
 
   return new Promise((resolve, reject) => {
