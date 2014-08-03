@@ -21,7 +21,7 @@ BzDeck.config = {
       'endpoints': {
         'bzapi': '/bzapi/',
         'rest': '/rest/',
-        'websocket': 'ws://bugzfeed.mozilla.org/'
+        'websocket': 'wss://bugzfeed.mozilla.org/'
       }
     }
   ],

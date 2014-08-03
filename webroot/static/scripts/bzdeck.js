@@ -231,7 +231,7 @@ BzDeck.bootstrap.finish = function () {
   BzDeck.core.register_activity_handler();
 
   // Connect to the push notification server
-  // BzDeck.bugzfeed.connect();
+  BzDeck.bugzfeed.connect();
 
   BzDeck.core.show_status('Loading complete.'); // l10n
   BzDeck.session.login();
@@ -488,7 +488,7 @@ BzDeck.session.logout = function () {
   }
 
   // Disconnect from the Bugzfeed server
-  // BzDeck.bugzfeed.websocket.close();
+  BzDeck.bugzfeed.disconnect();
 
   // Delete the account data
   BzDeck.model.data.account.active = false;

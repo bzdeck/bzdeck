@@ -1066,6 +1066,12 @@ BzDeck.bugzfeed.connect = function () {
   });
 };
 
+BzDeck.bugzfeed.disconnect = function () {
+  if (this.websocket) {
+    this.websocket.close();
+  }
+};
+
 BzDeck.bugzfeed.send = function (command, bugs) {
   if (this.websocket && this.websocket.readyState === 1) {
     this.websocket.send(JSON.stringify({ command, bugs }));
