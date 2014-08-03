@@ -347,7 +347,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
   }
 
   let datetime = FlareTail.util.datetime,
-      conf_field = BzDeck.data.bugzilla_config.field,
+      conf_field = BzDeck.model.data.server.config.field,
       $tbody = $placeholder.querySelector('tbody'),
       $template = document.querySelector('#details-change');
 

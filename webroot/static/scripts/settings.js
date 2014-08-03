@@ -43,7 +43,7 @@ BzDeck.SettingsPage = function () {
 };
 
 BzDeck.SettingsPage.prototype.activate_token_input = function () {
-  let account = BzDeck.data.account,
+  let account = BzDeck.model.data.account,
       token = account.token,
       $input = document.querySelector('#tabpanel-settings-account-token'),
       $output = $input.nextElementSibling;
@@ -67,12 +67,12 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
 
     $output.textContent = 'Verifying...'; // l10n
 
-    BzDeck.core.request('GET', 'user', params, null).then(result => {
+    BzDeck.model.request('GET', 'user', params).then(result => {
       if (result.users) {
         // Save the token
-        account = BzDeck.data.account = result.users[0];
+        account = BzDeck.model.data.account = result.users[0];
         account.token = $input.value;
-        BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts').put(account);
+        BzDeck.model.get_store('accounts').save(account);
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
         $output.textContent = 'Verified'; // l10n
@@ -82,7 +82,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
         $input.setAttribute('aria-invalid', 'true');
         $output.textContent = 'Invalid, try again'; // l10n
       }
-    });
+    }).catch(error => BzDeck.core.show_status(error.message));
   });
 };
 
@@ -148,7 +148,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
   let $rgroup = this.$tabpanel.querySelector('[data-pref="%s"]'.replace('%s', pref)),
-      prefs = BzDeck.data.prefs,
+      prefs = BzDeck.model.data.prefs,
       type = $rgroup.dataset.type || 'string',
       value = prefs[pref] !== undefined ? prefs[pref] : default_value;
 

@@ -10,7 +10,7 @@ let BzDeck = BzDeck || {};
 BzDeck.HomePage = function () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      prefs = BzDeck.data.prefs;
+      prefs = BzDeck.model.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
   {
@@ -56,12 +56,12 @@ BzDeck.HomePage = function () {
 
   this.view = {};
 
-  let prefs = BzDeck.data.prefs,
+  let prefs = BzDeck.model.data.prefs,
       layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical',
-      default_cols = BzDeck.options.grid.default_columns,
+      default_cols = BzDeck.config.grid.default_columns,
       columns = prefs['home.list.columns'] || default_cols,
-      field = BzDeck.data.bugzilla_config.field;
+      field = BzDeck.model.data.server.config.field;
 
   let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
     'rows': [],
@@ -272,7 +272,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
 
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = BzDeck.data.prefs['ui.home.preview.splitter.position.' + orientation];
+        pref = BzDeck.model.data.prefs['ui.home.preview.splitter.position.' + orientation];
 
     splitter.data.orientation = orientation;
 

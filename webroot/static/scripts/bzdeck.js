@@ -8,66 +8,6 @@
 let BzDeck = BzDeck || {};
 
 /* ----------------------------------------------------------------------------------------------
- * Data
- * ---------------------------------------------------------------------------------------------- */
-
-BzDeck.data = {};
-
-/* ----------------------------------------------------------------------------------------------
- * Options
- * ---------------------------------------------------------------------------------------------- */
-
-BzDeck.options = {
-  'api': {
-    'endpoints': {
-      'bzapi': 'https://bugzilla.mozilla.org/bzapi/',
-      'rest': 'https://bugzilla.mozilla.org/rest/',
-      'websocket': 'ws://bugzfeed.mozilla.org/'
-    }
-  },
-  'app': {
-    'manifest': location.origin + '/manifest.webapp'
-  },
-  'grid': {
-    'default_columns': [
-      // Custom
-      { 'id': '_starred', 'label': 'Starred', 'type': 'boolean' },
-      { 'id': '_unread', 'label': 'Unread', 'type': 'boolean', 'hidden': true },
-      // Name
-      { 'id': 'id', 'label': 'ID' /* instead of Bug ID */, 'type': 'integer' },
-      { 'id': 'alias', 'hidden': true },
-      { 'id': 'summary' },
-      // Status
-      { 'id': 'status', 'hidden': true },
-      { 'id': 'resolution', 'hidden': true },
-      { 'id': 'target_milestone', 'hidden': true },
-      // Affected
-      { 'id': 'classification', 'hidden': true },
-      { 'id': 'product' },
-      { 'id': 'component' },
-      { 'id': 'version', 'hidden': true },
-      { 'id': 'platform', 'hidden': true },
-      { 'id': 'op_sys', 'hidden': true },
-      // Importance
-      { 'id': 'severity', 'hidden': true },
-      { 'id': 'priority', 'hidden': true },
-      // Notes
-      { 'id': 'whiteboard', 'hidden': true },
-      { 'id': 'keywords', 'hidden': true },
-      { 'id': 'url', 'hidden': true },
-      // People
-      { 'id': 'creator', 'type': 'person', 'hidden': true },
-      { 'id': 'assigned_to', 'type': 'person', 'hidden': true },
-      { 'id': 'qa_contact', 'type': 'person', 'hidden': true },
-      { 'id': 'mentors', 'label': 'Mentors' /* Not found in the config */, 'type': 'people', 'hidden': true },
-      // Dates
-      { 'id': 'creation_time', 'type': 'time', 'hidden': true },
-      { 'id': 'last_change_time', 'type': 'time' },
-    ]
-  }
-};
-
-/* ----------------------------------------------------------------------------------------------
  * Bootstrap
  * ---------------------------------------------------------------------------------------------- */
 
@@ -81,26 +21,34 @@ BzDeck.bootstrap.start = function () {
   this.$button = this.$form.querySelector('[role="button"]');
   BzDeck.core.$statusbar = document.querySelector('#app-login [role="status"]');
 
-  BzDeck.model.open_database().then(() => {
-    return BzDeck.model.load_prefs();
+  BzDeck.model.open_database().then(database => {
+    BzDeck.model.database = database;
   }, error => {
     status(error.message);
   }).then(() => {
     return BzDeck.model.load_account();
   }).then(account => {
-    BzDeck.data.account = account;
+    BzDeck.model.data.account = account;
+  }).then(() => {
+    return BzDeck.model.get_server('mozilla');
+  }).then(server => {
+    BzDeck.model.data.server = server;
   }).catch(() => {
     status('');
 
     return new Promise((resolve, reject) => {
       this.show_login_form().then(() => {
+        // TODO: Users will be able to choose an instance on the sign-in form
+        return BzDeck.model.get_server('mozilla');
+      }).then(server => {
+        BzDeck.model.data.server = server;
+      }).then(() => {
         status('Verifying your account...'); // l10n
 
         return BzDeck.model.fetch_user(this.$input.value);
       }).then(account => {
-        BzDeck.data.account = account;
-        BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts').add(account);
-        // User found, now load his/her bugs
+        BzDeck.model.data.account = account;
+        BzDeck.model.get_store('accounts').save(account);
         resolve();
       }).catch(error => {
         if (error.message === 'Network Error') {
@@ -115,12 +63,14 @@ BzDeck.bootstrap.start = function () {
       });
     });
   }).then(() => {
+    return BzDeck.model.load_prefs();
+  }).then(() => {
     status('Loading bugs...'); // l10n
     document.querySelector('#app-intro').style.display = 'none';
 
     return Promise.all([
       BzDeck.model.fetch_subscriptions(),
-      BzDeck.model.fetch_config()
+      BzDeck.model.load_config().then(config => BzDeck.model.data.server.config = config)
     ]);
   }).then(() => {
     if (!this.relogin) {
@@ -170,7 +120,7 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.core.show_status('Loading UI...'); // l10n
 
   let datetime = FlareTail.util.datetime,
-      prefs = BzDeck.data.prefs,
+      prefs = BzDeck.model.data.prefs,
       value,
       theme = prefs['ui.theme.selected'],
       FTut = FlareTail.util.theme,
@@ -318,53 +268,8 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
   });
 };
 
-BzDeck.core.request = function (method, path, params, data, listeners = {}, options = {}) {
-  if (!navigator.onLine) {
-    BzDeck.core.show_status('You have to go online to load data.'); // l10n
-
-    return;
-  }
-
-  let xhr = new XMLHttpRequest(),
-      url = new URL(BzDeck.options.api.endpoints.rest),
-      account = BzDeck.data.account;
-
-  params = params || new URLSearchParams();
-
-  if (options.auth) {
-    params.append('token', account.id + '-' + account.token);
-  }
-
-  url.pathname += path;
-  url.searchParams = params;
-  xhr.open(method, url.toString(), true);
-  xhr.setRequestHeader('Accept', 'application/json');
-
-  if (listeners.upload && typeof listeners.upload.onprogress === 'function') {
-    xhr.upload.addEventListener('progress', event => listeners.upload.onprogress(event));
-  }
-
-  return new Promise((resolve, reject) => {
-    xhr.addEventListener('progress', event => {
-      if (typeof listeners.onprogress === 'function') {
-        listeners.onprogress(event);
-      }
-    });
-
-    xhr.addEventListener('load', event => {
-      let text = event.target.responseText;
-
-      text ? resolve(JSON.parse(text)) : reject(event);
-    });
-
-    xhr.addEventListener('error', event => reject(event));
-    xhr.addEventListener('abort', event => reject(event));
-    xhr.send(data);
-  });
-};
-
 BzDeck.core.install_app = function () {
-  FlareTail.util.app.install(BzDeck.options.app.manifest).then(() => {
+  FlareTail.util.app.install(BzDeck.config.app.manifest).then(() => {
     document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true');
   });
 };
@@ -376,7 +281,7 @@ BzDeck.core.show_status = function (message) {
 };
 
 BzDeck.core.show_notification = function (title, body) {
-  if (BzDeck.data.prefs['notifications.show_desktop_notifications'] === false) {
+  if (BzDeck.model.data.prefs['notifications.show_desktop_notifications'] === false) {
     return;
   }
 
@@ -563,392 +468,6 @@ BzDeck.core.get_name = function (person) {
 };
 
 /* ----------------------------------------------------------------------------------------------
- * Model
- * ---------------------------------------------------------------------------------------------- */
-
-BzDeck.model = {};
-BzDeck.model.cache = {};
-
-BzDeck.model.open_database = function () {
-  let req = indexedDB.open('BzDeck', 2);
-
-  // The database is created or upgraded
-  req.addEventListener('upgradeneeded', event => {
-    let db = this.db = event.target.result,
-        stores = {
-          // Bugzilla data
-          'bugs': { 'keyPath': 'id' },
-          'bugzilla': { 'keyPath': 'key' },
-          // BzDeck data
-          'accounts': { 'keyPath': 'id' }, // the key is Bugzilla account ID
-          'prefs': { 'keyPath': 'key' }
-        };
-
-    if (event.oldVersion === 1) {
-      // Drop old format stores (and recreate)
-      db.deleteObjectStore('accounts');
-      db.deleteObjectStore('bugs');
-      // Drop stores that have never been used
-      db.deleteObjectStore('attachments');
-      db.deleteObjectStore('users');
-      // Drop the subscriptions store that is no longer used
-      db.deleteObjectStore('subscriptions');
-    }
-
-    for (let [name, option] of Iterator(stores)) if (!db.objectStoreNames.contains(name)) {
-      db.createObjectStore(name, option);
-    }
-  });
-
-  return new Promise((resolve, reject) => {
-    req.addEventListener('success', event => {
-      this.db = event.target.result;
-      resolve();
-    });
-
-    req.addEventListener('error', event => {
-      reject(new Error('Cannot open the database.')); // l10n
-    });
-  });
-};
-
-BzDeck.model.load_account = function () {
-  return new Promise((resolve, reject) => {
-    this.db.transaction('accounts').objectStore('accounts').openCursor().addEventListener('success', event => {
-      let cursor = event.target.result;
-
-      cursor ? resolve(cursor.value) : reject(new Error('Account Not Found'));
-    });
-  });
-};
-
-BzDeck.model.load_prefs = function () {
-  let prefs = {};
-
-  return new Promise((resolve, reject) => {
-    this.db.transaction('prefs').objectStore('prefs').mozGetAll().addEventListener('success', event => {
-      for (let { key, value } of event.target.result) {
-        prefs[key] = value;
-      }
-
-      BzDeck.data.prefs = new Proxy(prefs, {
-        'set': (obj, key, value) => {
-          obj[key] = value;
-          this.db.transaction('prefs', 'readwrite').objectStore('prefs').put({ 'key': key, 'value': value });
-        }
-      });
-
-      resolve();
-    });
-  });
-};
-
-BzDeck.model.fetch_config = function () {
-  return new Promise((resolve, reject) => {
-    this.db.transaction('bugzilla').objectStore('bugzilla').get('config').addEventListener('success', event => {
-      let result = event.target.result;
-
-      if (result) {
-        // Cache found
-        BzDeck.data.bugzilla_config = result.value;
-        resolve();
-
-        return;
-      }
-
-      if (!navigator.onLine) {
-        // Offline; give up
-        reject(new Error('You have to go online to load data.')); // l10n
-
-        return;
-      }
-
-      // Load the Bugzilla config in background
-      let xhr = new XMLHttpRequest(); 
-
-      // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-      xhr.open('GET', BzDeck.options.api.endpoints.bzapi + 'configuration?cached_ok=1', true);
-      xhr.setRequestHeader('Accept', 'application/json');
-
-      xhr.addEventListener('load', event => {
-        let data = JSON.parse(event.target.responseText);
-
-        if (!data || !data.version) {
-          // Give up
-          this.$input.disabled = this.$button.disabled = true;
-          reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')); // l10n
-
-          return;
-        }
-
-        // The config is loaded successfully
-        BzDeck.data.bugzilla_config = data;
-        this.db.transaction('bugzilla', 'readwrite').objectStore('bugzilla').add({ 'key': 'config', 'value': data });
-        resolve();
-      });
-
-      xhr.send(null);
-    });
-  });
-};
-
-BzDeck.model.fetch_user = function (email) {
-  let params = new URLSearchParams();
-
-  params.append('names', email);
-
-  return new Promise((resolve, reject) => {
-    BzDeck.core.request('GET', 'user', params, null).then(result => {
-      result.error ? reject(new Error(result.message || 'User Not Found')) : resolve(result.users[0]);
-    }).catch(event => {
-      reject(new Error('Network Error')); // l10n
-    });
-  });
-};
-
-BzDeck.model.fetch_subscriptions = function () {
-  let prefs = BzDeck.data.prefs,
-      last_loaded = prefs['subscriptions.last_loaded'],
-      ignore_cc = prefs['notifications.ignore_cc_changes'] !== false,
-      firstrun = !last_loaded,
-      params = new URLSearchParams(),
-      fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
-
-  params.append('resolution', '---');
-  params.append('j_top', 'OR');
-
-  if (last_loaded) {
-    params.append('chfieldfrom', (new Date(last_loaded)).toLocaleFormat('%Y-%m-%d %T'));
-  }
-
-  for (let [i, name] of fields.entries()) {
-    params.append('f' + i, name);
-    params.append('o' + i, 'equals');
-    params.append('v' + i, BzDeck.data.account.name);
-  }
-
-  return new Promise((resolve, reject) => {
-    BzDeck.model.get_all_bugs().then(cached_bugs => {
-      // Append starred bugs to the query
-      params.append('f9', 'bug_id');
-      params.append('o9', 'anywords');
-      params.append('v9', [for (_bug of cached_bugs) if (_bug._starred) _bug.id].join());
-
-      BzDeck.core.request('GET', 'bug', params, null).then(result => {
-        last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
-
-        for (let bug of result.bugs) {
-          if (firstrun) {
-            bug._unread = false; // Mark all bugs read if the session is firstrun
-            bug._update_needed = true; // Flag to fetch details
-
-            continue;
-          }
-
-          BzDeck.model.fetch_bug(bug, false).then(bug => {
-            let cache = [for (_bug of cached_bugs) if (_bug.id === bug.id) _bug][0];
-
-            bug._starred = cache._starred || false; // Copy the annotation
-            bug._update_needed = false;
-
-            // Mark the bug unread if the user subscribes CC changes or the bug is already unread
-            if (!ignore_cc || cache._unread || !cache._last_viewed ||
-                // or there are unread comments
-                [for (c of bug.comments) if (c.creation_time > cache.last_change_time) c].length ||
-                // or there are unread attachments
-                [for (a of bug.attachments) if (a.creation_time > cache.last_change_time) a].length ||
-                // or there are unread non-CC changes
-                [for (h of bug.history) if (history.when > cache.last_change_time &&
-                  [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length) {
-              bug._unread = true;
-            } else {
-              // Looks like there are only CC changes, so mark the bug read
-              bug._unread = false;
-            }
-
-            BzDeck.model.save_bug(bug);
-          });
-        }
-
-        firstrun ? BzDeck.model.save_bugs(result.bugs).then(bugs => resolve()) : resolve();
-      }).catch(event => {
-        reject(new Error('Failed to load data.')); // l10n
-      });
-    });
-  });
-};
-
-BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details = true) {
-  let fetch = (method, params) => new Promise((resolve, reject) => {
-    BzDeck.core.request('GET', 'bug/' + bug.id + (method ? '/' + method : ''),
-                        params ? new URLSearchParams(params) : null, null).then(result => {
-      resolve(result.bugs);
-    }).catch(event => {
-      reject(new Error());
-    });
-  });
-
-  let fetchers = [include_metadata ? fetch() : Promise.resolve()];
-
-  if (include_details) {
-    fetchers.push(fetch('comment'), fetch('history'), fetch('attachment', 'exclude_fields=data'));
-  }
-
-  return Promise.all(fetchers).then(values => {
-    bug = include_metadata ? values[0][0] : bug;
-
-    if (include_details) {
-      bug.comments = values[1][bug.id].comments;
-      bug.history = values[2][0].history || [];
-      bug.attachments = values[3][bug.id] || [];
-      bug._update_needed = false;
-    }
-
-    return bug;
-  }).catch(error => {
-    return bug;
-  });
-};
-
-BzDeck.model.fetch_bugs_by_ids = function (ids) {
-  let params = new URLSearchParams();
-
-  params.append('bug_id', ids.join());
-
-  return new Promise((resolve, reject) => {
-    BzDeck.core.request('GET', 'bug', params, null).then(result => {
-      resolve(result.bugs);
-    }).catch(event => {
-      reject(new Error());
-    });
-  });
-};
-
-BzDeck.model.get_bug_by_id = function (id, record_time = true) {
-  let cache = this.cache.bugs,
-      store = this.db.transaction('bugs', 'readwrite').objectStore('bugs');
-
-  return new Promise((resolve, reject) => {
-    if (cache) {
-      let bug = cache.get(id);
-
-      if (bug) {
-        resolve(bug);
-
-        if (record_time) {
-          bug._last_viewed = Date.now();
-          cache.set(id, bug);
-          store.put(bug);
-        }
-
-        return;
-      }
-    }
-
-    store.get(id).addEventListener('success', event => {
-      let bug = event.target.result;
-
-      resolve(bug);
-
-      if (bug && record_time) {
-        bug._last_viewed = Date.now();
-
-        if (cache) {
-          cache.set(id, bug);
-        }
-
-        store.put(bug); // Save
-      }
-    });
-  });
-};
-
-BzDeck.model.get_bugs_by_ids = function (ids) {
-  let cache = this.cache.bugs,
-      ids = [...ids]; // Accept both an Array and a Set as the first argument
-
-  return new Promise((resolve, reject) => {
-    if (cache) {
-      resolve([for (c of [...cache]) if (ids.indexOf(c[0]) > -1) c[1]]);
-
-      return;
-    }
-
-    this.db.transaction('bugs').objectStore('bugs').mozGetAll().addEventListener('success', event => {
-      resolve([for (bug of event.target.result) if (ids.indexOf(bug.id) > -1) bug]);
-    });
-  });
-};
-
-BzDeck.model.get_all_bugs = function () {
-  let cache = this.cache.bugs;
-
-  return new Promise((resolve, reject) => {
-    if (cache) {
-      resolve([for (c of [...cache]) c[1]]); // Convert Map to Array
-
-      return;
-    }
-
-    this.db.transaction('bugs').objectStore('bugs').mozGetAll().addEventListener('success', event => {
-      let bugs = event.target.result; // array of Bug
-
-      resolve(bugs || []);
-
-      if (bugs && !cache) {
-        this.cache.bugs = new Map([for (bug of bugs) [bug.id, bug]]);
-      }
-    });
-  });
-};
-
-BzDeck.model.save_bug = function (bug) {
-  return new Promise((resolve, reject) => this.save_bugs([bug]).then(resolve(bug)));
-};
-
-BzDeck.model.save_bugs = function (bugs) {
-  let cache = this.cache.bugs,
-      transaction = this.db.transaction('bugs', 'readwrite'),
-      store = transaction.objectStore('bugs');
-
-  return new Promise((resolve, reject) => {
-    transaction.addEventListener('complete', event => resolve(bugs));
-
-    if (!cache) {
-      cache = this.cache.bugs = new Map();
-    }
-
-    for (let bug of bugs) if (bug.id) {
-      cache.set(bug.id, bug);
-      store.put(bug);
-    }
-  });
-};
-
-BzDeck.model.get_subscription_by_id = function (id) {
-  return new Promise((resolve, reject) => {
-    this.get_all_subscriptions().then(subscriptions => resolve(subscriptions.get(id)));
-  });
-};
-
-BzDeck.model.get_all_subscriptions = function () {
-  let email = BzDeck.data.account.name;
-
-  return new Promise((resolve, reject) => {
-    this.get_all_bugs().then(bugs => {
-      resolve(new Map([
-        ['cc', [for (bug of bugs) if (bug.cc.indexOf(email) > -1) bug]],
-        ['reported', [for (bug of bugs) if (bug.creator === email) bug]],
-        ['assigned', [for (bug of bugs) if (bug.assigned_to === email) bug]],
-        ['mentor', [for (bug of bugs) if (bug.mentors.indexOf(email) > -1) bug]],
-        ['qa', [for (bug of bugs) if (bug.qa_contact === email) bug]],
-        ['requests', [for (bug of bugs) if (bug.flags) for (flag of bug.flags) if (flag.requestee === email) bug]]
-      ]));
-    });
-  });
-};
-
-/* ----------------------------------------------------------------------------------------------
  * Session
  * ---------------------------------------------------------------------------------------------- */
 
@@ -987,10 +506,9 @@ BzDeck.session.logout = function () {
   BzDeck.bugzfeed.websocket.close();
 
   // Delete the account data
-  BzDeck.model.db.transaction('accounts', 'readwrite').objectStore('accounts')
-                                                      .delete(BzDeck.data.account.id);
+  BzDeck.model.get_store('accounts').delete(BzDeck.model.data.account.id);
 
-  delete BzDeck.data.account;
+  delete BzDeck.model.data.account;
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -1135,7 +653,7 @@ BzDeck.toolbar.setup = function () {
   $root.setAttribute('data-current-tab', 'home');
 
   // Account label & avatar
-  let account = BzDeck.data.account,
+  let account = BzDeck.model.data.account,
       account_label = (account.real_name ? '<strong>' + account.real_name + '</strong>' : '&nbsp;')
                     + '<br>' + account.name,
       $account_label = document.querySelector('#main-menu--app--account label'),
@@ -1147,7 +665,7 @@ BzDeck.toolbar.setup = function () {
   });
   $account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
 
-  FTu.app.can_install(BzDeck.options.app.manifest).then(() => {
+  FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
     document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
   });
 
@@ -1265,7 +783,7 @@ BzDeck.toolbar.quicksearch = function (event) {
     let results = bugs.filter(bug => {
       return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
               words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0])) &&
-              BzDeck.data.bugzilla_config.field.status.open.indexOf(bug.status) > -1;
+              BzDeck.model.data.server.config.field.status.open.indexOf(bug.status) > -1;
     });
 
     results.reverse();
@@ -1575,7 +1093,7 @@ window.addEventListener('click', event => {
 
     // Attachment link: open in a new browser tab (TEMP)
     if ($target.hasAttribute('data-attachment-id')) {
-      window.open('https://bugzilla.mozilla.org/attachment.cgi?id='
+      window.open(BzDeck.model.data.server.url + '/attachment.cgi?id='
                    + $target.getAttribute('data-attachment-id'), '_blank');
 
       event.preventDefault();

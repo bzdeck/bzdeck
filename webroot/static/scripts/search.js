@@ -136,7 +136,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let $pane = this.view.panes['basic-search']
             = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
-      config = BzDeck.data.bugzilla_config;
+      config = BzDeck.model.data.server.config;
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
@@ -257,10 +257,10 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
             = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       $grid = $pane.querySelector('[role="grid"]'),
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      prefs = BzDeck.data.prefs,
-      default_cols = BzDeck.options.grid.default_columns,
+      prefs = BzDeck.model.data.prefs,
+      default_cols = BzDeck.config.grid.default_columns,
       columns = prefs['search.list.columns'] || default_cols,
-      field = BzDeck.data.bugzilla_config.field;
+      field = BzDeck.model.data.server.config.field;
 
   let grid = this.view.grid = new FlareTail.widget.Grid($grid, {
     'rows': [],
@@ -448,7 +448,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
     BzDeck.core.update_grid_data(this.view.grid, []); // Clear grid body
   });
 
-  BzDeck.core.request('GET', 'bug', params, null).then(result => {
+  BzDeck.model.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
       this.data.bug_list = result.bugs;
 
@@ -465,8 +465,8 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
     } else {
       this.show_status('Zarro Boogs found.'); // l10n
     }
-  }).catch(event => {
-    this.show_status('ERROR: Failed to load data.'); // l10n
+  }).catch(error => {
+    this.show_status(error.message);
   }).then(() => {
     $grid.removeAttribute('aria-busy');
   });

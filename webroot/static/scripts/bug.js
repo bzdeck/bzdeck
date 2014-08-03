@@ -23,7 +23,7 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
 
   let _bug = {};
 
-  for (let { 'id': field, 'type': type } of BzDeck.options.grid.default_columns) {
+  for (let { 'id': field, 'type': type } of BzDeck.config.grid.default_columns) {
     if (bug[field] !== undefined && !field.startsWith('_')) {
       if (field === 'keywords') {
         _bug.keyword = bug.keywords;
@@ -143,7 +143,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
 };
 
 BzDeck.bug.set_product_tooltips = function ($bug, bug) {
-  let config = BzDeck.data.bugzilla_config,
+  let config = BzDeck.model.data.server.config,
       strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[bug.classification],
       product = config.product[bug.product],
@@ -210,7 +210,7 @@ BzDeck.bug.update = function ($bug, bug, changes) {
   if ($timeline) {
     let $parent = $timeline.querySelector('section, .scrollable-area-content'),
         $entry = BzDeck.bug.timeline.create_entry($timeline.id, bug, changes),
-        sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending';
+        sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending';
 
     $parent.insertBefore($entry, sort_desc ? $timeline.querySelector('[itemprop="comment"]')
                                            : $timeline.querySelector('[role="form"]'));
@@ -269,7 +269,7 @@ BzDeck.bug.timeline = {};
 BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
   let entries = new Map([for (c of bug.comments.entries())
         [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
-      sort_desc = BzDeck.data.prefs['ui.timeline.sort.order'] === 'descending',
+      sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending',
       read_entries_num = 0,
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = $bug.id + '-timeline',
@@ -399,7 +399,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
   if (attachment) {
     // TODO: load the attachment data via API
-    let url = 'https://bug' + bug.id + '.bugzilla.mozilla.org/attachment.cgi?id=' + attachment.id,
+    let url = BzDeck.model.data.server.url + '/attachment.cgi?id=' + attachment.id,
         $attachment = document.querySelector('#timeline-attachment').content
                               .cloneNode(true).firstElementChild,
         $outer = $attachment.querySelector('div'),
@@ -443,7 +443,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
       $outer.appendChild($media);
       $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
-      if (BzDeck.data.prefs['ui.timeline.display_attachments_inline'] !== false) {
+      if (BzDeck.model.data.prefs['ui.timeline.display_attachments_inline'] !== false) {
         $outer.setAttribute('aria-busy', 'true');
         $media.src = url;
       }
@@ -456,7 +456,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
   }
 
   if (history) {
-    let conf_field = BzDeck.data.bugzilla_config.field;
+    let conf_field = BzDeck.model.data.server.config.field;
 
     let generate_element = (change, how) => {
       let $elm = document.createElement('span');
@@ -618,7 +618,7 @@ BzDeck.bug.timeline.CommentForm = function (bug, timeline_id) {
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
   this.bug = bug;
-  this.has_token = () => !!BzDeck.data.account.token;
+  this.has_token = () => !!BzDeck.model.data.account.token;
   this.has_text = () => !!this.$textbox.value.match(/\S/);
   this.attachments = [];
   this.has_attachments = () => this.attachments.length > 0;
@@ -742,7 +742,7 @@ BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
 
 BzDeck.bug.timeline.CommentForm.prototype.onselect_files = function (files) {
   let excess_files = new Set(),
-      max_size = BzDeck.data.bugzilla_config.max_attachment_size,
+      max_size = BzDeck.model.data.server.config.max_attachment_size,
       str_format = FlareTail.util.string.format,
       message;
 
@@ -893,7 +893,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.core.request('POST', 'bug/' + this.bug.id + '/' + method, null, JSON.stringify(data), {
+    BzDeck.model.request('POST', 'bug/' + this.bug.id + '/' + method, null, JSON.stringify(data), {
       'upload': {
         'onprogress': event => {
           if (method === 'attachment') {
@@ -987,7 +987,7 @@ BzDeck.bugzfeed = {
 };
 
 BzDeck.bugzfeed.connect = function () {
-  let endpoint = BzDeck.options.api.endpoints.websocket;
+  let endpoint = BzDeck.model.data.server.endpoints.websocket;
 
   if (!endpoint || !navigator.onLine) {
     return;
