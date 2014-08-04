@@ -7,7 +7,7 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.SearchPage = function () {
+BzDeck.SearchPage = function SearchPage () {
   let tablist = BzDeck.toolbar.tablist,
       $content = document.querySelector('template#tabpanel-search').content.cloneNode(true),
       id_suffix = this.id = Date.now();

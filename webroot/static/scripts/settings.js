@@ -7,7 +7,7 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.SettingsPage = function () {
+BzDeck.SettingsPage = function SettingsPage () {
   let tablist = BzDeck.toolbar.tablist,
       $existing_tab = document.querySelector('#tab-settings');
 

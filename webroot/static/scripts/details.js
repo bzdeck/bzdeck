@@ -7,7 +7,7 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.DetailsPage = function (id, bug_list = []) {
+BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
   let tablist = BzDeck.toolbar.tablist,
       $existing_tab = document.querySelector(`#tab-details-${id}`);
 

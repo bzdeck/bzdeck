@@ -7,7 +7,7 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.HomePage = function () {
+BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
       prefs = BzDeck.model.data.prefs;
