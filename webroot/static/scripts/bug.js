@@ -30,7 +30,7 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
       } else if (field === 'mentors') {
         _bug.mentor = [for (person of bug.mentors_detail) { 'name': BzDeck.core.get_name(person) }];
       } else if (type === 'person') {
-        _bug[field] = { 'name': bug[field] ? BzDeck.core.get_name(bug[field + '_detail']) : '' };
+        _bug[field] = { 'name': bug[field] ? BzDeck.core.get_name(bug[`${field}_detail`]) : '' };
       } else {
         _bug[field] = bug[field] || '';
       }
@@ -100,7 +100,7 @@ BzDeck.bug.fill_details = function ($bug, bug, partial, delayed) {
   };
 
   if (bug.dupe_of) {
-    _bug.resolution = 'DUPLICATE of ' + bug.dupe_of;
+    _bug.resolution = `DUPLICATE of ${bug.dupe_of}`;
   }
 
   FlareTail.util.content.fill($bug, _bug);
@@ -177,9 +177,9 @@ BzDeck.bug.set_bug_tooltips = function ($bug, bug) {
                                 Number.parseInt($element.getAttribute('data-bug-id'))]);
   let set_tooltops = bug => {
     if (bug.summary) {
-      let title = bug.status + (bug.resolution ? ' ' + bug.resolution : '') + ' – ' + bug.summary;
+      let title = `${bug.status} ${bug.resolution || ''} – ${bug.summary}`;
 
-      for (let $element of $bug.querySelectorAll('[data-bug-id="' + bug.id + '"]')) {
+      for (let $element of $bug.querySelectorAll(`[data-bug-id="${bug.id}"]`)) {
         $element.title = title;
         $element.dataset.status = bug.status;
         $element.dataset.resolution = bug.resolution || '';
@@ -272,7 +272,7 @@ BzDeck.bug.timeline.render = function (bug, $bug, delayed) {
       sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending',
       read_entries_num = 0,
       $timeline = $bug.querySelector('.bug-timeline'),
-      timeline_id = $timeline.id = $bug.id + '-timeline',
+      timeline_id = $timeline.id = `${$bug.id}-timeline`,
       comment_form = new this.CommentForm(bug, timeline_id),
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
@@ -356,7 +356,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment = $entry.querySelector('[itemprop="text"]'),
       $changes = $entry.querySelector('.changes'),
-      $textbox = document.querySelector('#' + timeline_id + '-comment-form [role="textbox"]'),
+      $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`),
       $image = new Image();
 
   if (comment) {
@@ -364,18 +364,15 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
     author = BzDeck.bug.find_person(bug, comment.creator);
     time = comment.creation_time;
-    $entry.id = timeline_id + '-comment-' + comment.id;
+    $entry.id = `${timeline_id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
 
     // Make a quote
-    let quote_header = FlareTail.util.string.format('(In reply to {name} from comment #{number})', {
-          'name': author.real_name || author.email,
-          'number': data.get('comment_number')
-        }),
-        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) '> ' + line],
-        quote = quote_header + '\n' + quote_lines.join('\n');
+    let quote_header = `(In reply to ${author.real_name || author.email} from comment #${data.get('comment_number')})`,
+        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
+        quote = `${quote_header}\n${quote_lines.join('\n')}`;
 
     // Activate the Star button
     $star_button.addEventListener('click', event => {
@@ -397,11 +394,11 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
     // Activate the Reply button
     $reply_button.addEventListener('click', event => {
-      let $tabpanel = document.querySelector('#' + timeline_id + '-comment-form-tabpanel-write'),
-          $textbox = document.querySelector('#' + timeline_id + '-comment-form [role="textbox"]');
+      let $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
+          $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
       $textbox.focus();
-      $textbox.value += ($textbox.value ? '\n\n' : '') + quote + '\n\n';
+      $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
       // Trigger an event to do something. Disable async to make sure the following lines work
       FlareTail.util.event.trigger($textbox, 'input', {}, false);
       // Scroll unti the caret is visible
@@ -419,7 +416,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
 
   if (attachment) {
     // TODO: load the attachment data via API
-    let url = BzDeck.model.data.server.url + '/attachment.cgi?id=' + attachment.id,
+    let url = `${BzDeck.model.data.server.url}/attachment.cgi?id=${attachment.id}`,
         $attachment = document.querySelector('#timeline-attachment').content
                               .cloneNode(true).firstElementChild,
         $outer = $attachment.querySelector('div'),
@@ -427,7 +424,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
         load_event = 'load';
 
     FlareTail.util.content.fill($attachment, {
-      'url': '/attachment/' + attachment.id,
+      'url': `/attachment/${attachment.id}`,
       'description': attachment.summary,
       'name': attachment.file_name,
       'contentSize': attachment.size,
@@ -441,7 +438,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
       attachment.summary,
       attachment.file_name,
       attachment.is_patch ? 'Patch' : attachment.content_type, // l10n
-      (attachment.size / 1024).toFixed(2) + ' KB' // l10n
+      `${(attachment.size / 1024).toFixed(2)} KB` // l10n
     ].join('\n');
 
     if (attachment.content_type.startsWith('image/')) {
@@ -504,7 +501,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
                    // If the Bugzilla config is outdated, the field name can be null
                    change.field_name;
 
-      $change.textContent = _field.description + ': ';
+      $change.textContent = `${_field.description}: `;
       $change.setAttribute('data-change-field', change.field_name);
 
       if (change.removed) {
@@ -523,11 +520,11 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
     $changes.remove();
   }
 
-  $author.title = (author.real_name ? author.real_name + '\n' : '') + author.email;
+  $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
   $image.addEventListener('load', event => $author.querySelector('[itemprop="image"]').src = $image.src);
-  $image.src = 'https://www.gravatar.com/avatar/' + md5(author.email) + '?d=404';
+  $image.src = `https://www.gravatar.com/avatar/${md5(author.email)}?d=404`;
   datetime.fill_element($time, time);
 
   // Mark unread
@@ -615,7 +612,7 @@ BzDeck.bug.timeline.CommentForm = function (bug, timeline_id) {
 
   // Assign unique IDs first
   for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
-    for (let $element of $fragment.querySelectorAll('[' + attr +']')) {
+    for (let $element of $fragment.querySelectorAll(`[${attr}]`)) {
       $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, timeline_id));
     }
   }
@@ -727,7 +724,7 @@ BzDeck.bug.timeline.CommentForm = function (bug, timeline_id) {
 
 BzDeck.bug.timeline.CommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
-  this.$textbox.style.setProperty('height', this.$textbox.scrollHeight + 'px');
+  this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
   this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) ||
                                              !this.has_token());
   this.$preview_tab.setAttribute('aria-disabled', !this.has_text());
@@ -747,7 +744,7 @@ BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
   reader.addEventListener('load', event => {
     this.add_attachment({
       'data': reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
-      'summary': is_ghpr ? 'GitHub Pull Request, ' + is_ghpr[1] + '#' + is_ghpr[2]
+      'summary': is_ghpr ? `GitHub Pull Request, ${is_ghpr[1]}#${is_ghpr[2]}`
                          : is_patch ? 'Patch'
                                     : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
       'file_name': URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
@@ -762,8 +759,9 @@ BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
 
 BzDeck.bug.timeline.CommentForm.prototype.onselect_files = function (files) {
   let excess_files = new Set(),
+      num_format = num => num.toLocaleString('en-US'),
       max_size = BzDeck.model.data.server.config.max_attachment_size,
-      str_format = FlareTail.util.string.format,
+      max = num_format(max_size),
       message;
 
   for (let _file of files) {
@@ -799,20 +797,17 @@ BzDeck.bug.timeline.CommentForm.prototype.onselect_files = function (files) {
 
   if (excess_files.size) {
     message = excess_files.size === 1
-            ? 'This file cannot be attached because it exceeds the maximum attachment size \
-               ({max} bytes) specified by the current Bugzilla instance. Upload the file to an \
-               online storage and post the link instead.'
-            : 'These files cannot be attached because they exceed the maximum attachment size \
-               ({max} bytes) specified by the current Bugzilla instance. Upload the files to an \
-               online storage and post the links instead.';
+            ? `This file cannot be attached because it exceeds the maximum attachment size (${max} bytes) specified \
+               by the current Bugzilla instance. Upload the file to an online storage and post the link instead.`
+            : `These files cannot be attached because they exceed the maximum attachment size (${max} bytes) specified \
+               by the current Bugzilla instance. Upload the files to an online storage and post the links instead.`;
     message += '<br><br>';
-    message += [for (file of excess_files) str_format('&middot; {name} ({size} bytes)',
-                  { 'name': file.name, 'size': file.size.toLocaleString('en-US') })].join('<br>');
+    message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
 
     (new FlareTail.widget.Dialog({
       'type': 'alert',
       'title': 'Error on attaching files',
-      'message': str_format(message, { 'max': max_size.toLocaleString('en-US') })
+      message
     })).show();
   }
 };
@@ -894,11 +889,13 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
       comment = this.$textbox.value,
       att_num = this.attachments.length,
       att_total = 0,
-      att_uploaded = 0;
+      att_uploaded = 0,
+      percentage;
 
   let update_status = size => {
     att_uploaded += size;
-    this.$status.textContent = Math.round(att_uploaded / att_total * 100) + '% uploaded';
+    percentage = Math.round(att_uploaded / att_total * 100);
+    this.$status.textContent = `${percentage}% uploaded`;
   };
 
   let post = data => new Promise((resolve, reject) => {
@@ -913,7 +910,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.model.request('POST', 'bug/' + this.bug.id + '/' + method, null, JSON.stringify(data), {
+    BzDeck.model.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
       'upload': {
         'onprogress': event => {
           if (method === 'attachment') {
@@ -980,7 +977,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
   }, error => {
     // Failed to post
     this.$submit.setAttribute('aria-disabled', 'false');
-    this.$status.textContent = error && error.message ? 'ERROR: ' + error.message
+    this.$status.textContent = error && error.message ? `ERROR: ${error.message}`
                              : 'Failed to post your comment or attachment. Try again later.';
   }).then(() => {
     // All done, the timeline will soon be updated via Bugzfeed

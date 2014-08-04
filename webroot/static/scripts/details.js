@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.DetailsPage = function (id, bug_list = []) {
   let tablist = BzDeck.toolbar.tablist,
-      $existing_tab = document.querySelector('#tab-details-' + id);
+      $existing_tab = document.querySelector(`#tab-details-${id}`);
 
   if ($existing_tab) {
     tablist.view.selected = tablist.view.$focused = $existing_tab;
@@ -45,7 +45,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
 
 BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   // If there is an existing tabpanel, reuse it
-  let $tabpanel = document.querySelector('#tabpanel-details-' + bug.id);
+  let $tabpanel = document.querySelector(`#tabpanel-details-${bug.id}`);
 
   // Or prep a new one
   if (!$tabpanel) {
@@ -60,7 +60,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 
   // Open a new tab
   this.view.$tab = tablist.view.selected = tablist.view.$focused = tablist.add_tab(
-    'details-' + bug.id, bug.id, this.get_tab_title(bug), $tabpanel, 'next'
+    `details-${bug.id}`, bug.id, this.get_tab_title(bug), $tabpanel, 'next'
   );
 
   // Set Back & Forward navigation
@@ -110,7 +110,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   }
 
   for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
-    for (let $element of $tabpanel.querySelectorAll('[' + attr +']')) {
+    for (let $element of $tabpanel.querySelectorAll(`[${attr}]`)) {
       $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, bug.id));
     }
   }
@@ -162,8 +162,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 
   // Scroll a tabpanel to top when the tab is selected
   _tablist.bind('Selected', event => {
-    document.querySelector('#' + event.detail.items[0].getAttribute('aria-controls')
-                               + ' > .scrollable').scrollTop = 0;
+    document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')} > .scrollable`).scrollTop = 0;
   });
 
   // Hide tabs when scrolled down on mobile
@@ -208,7 +207,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
       set_keybind = FlareTail.util.event.set_keybind;
 
   let preload = id => {
-    if (document.querySelector('#tabpanel-details-' + id)) {
+    if (document.querySelector(`#tabpanel-details-${id}`)) {
       return;
     }
 
@@ -232,7 +231,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
     let bug = [for (bug of bug_list) if (bug.id === id) bug][0];
 
     if (bug) {
-      button.view.$button.title = 'Bug ' + bug.id + '\n' + bug.summary; // l10n
+      button.view.$button.title = `Bug ${bug.id}\n${bug.summary}`; // l10n
     }
   };
 
@@ -272,7 +271,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
     // Save in DB
     BzDeck.model.save_bug(bug);
 
-    let $tab = document.querySelector('#tab-details-' + id),
+    let $tab = document.querySelector(`#tab-details-${id}`),
         $tabpanel = this.view.$tabpanel;
 
     // Check if the tabpanel still exists
@@ -316,10 +315,10 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
                                                        .content.cloneNode(true).firstElementChild);
 
     FlareTail.util.content.fill($attachment, {
-      'url': '/attachment/' + att.id,
+      'url': `/attachment/${att.id}`,
       'description': att.summary,
       'name': att.file_name,
-      'contentSize': (att.size / 1024).toFixed(2) + ' KB', // l10n
+      'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
       'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
       'uploadDate': att.creation_time,
       'flag': [for (flag of att.flags) {
@@ -370,7 +369,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
   for (let hist of history) {
     for (let [i, change] of hist.changes.entries()) {
       let $row = $tbody.appendChild($template.content.cloneNode(true).firstElementChild),
-          $cell = field => $row.querySelector('[data-field="' + field + '"]');
+          $cell = field => $row.querySelector(`[data-field="${field}"]`);
 
       if (i === 0) {
         $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
@@ -448,8 +447,8 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
 
       this.initialized = true;
       this.$target = BzDeck.detailspage.view.$tabpanel;
-      this.$prev = document.querySelector('#tabpanel-details-' + bugs[index - 1]),
-      this.$next = document.querySelector('#tabpanel-details-' + bugs[index + 1]);
+      this.$prev = document.querySelector(`#tabpanel-details-${bugs[index - 1]}`),
+      this.$next = document.querySelector(`#tabpanel-details-${bugs[index + 1]}`);
       this.$sibling = null;
 
       if (this.$prev) {
@@ -477,9 +476,8 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
   }
 
   if (event.type === 'touchmove') {
-    this.$target.style.left = delta + 'px';
-    this.$sibling.style.left = 'calc(' + (this.$sibling === this.$prev ? '-' : '') + '100% + '
-                                       + delta + 'px)';
+    this.$target.style.left = `${delta}px`;
+    this.$sibling.style.left = `calc(${this.$sibling === this.$prev ? '-100%' : '100%'} + ${delta}px)`;
   }
 
   let cleanup = () => {

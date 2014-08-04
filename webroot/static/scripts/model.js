@@ -25,7 +25,7 @@ BzDeck.config = {
     }
   ],
   'app': {
-    'manifest': location.origin + '/manifest.webapp'
+    'manifest': `${location.origin}/manifest.webapp`
   },
   'grid': {
     'default_columns': [
@@ -84,7 +84,7 @@ BzDeck.model.request = function (method, path, params, data = null, listeners = 
   params = params || new URLSearchParams();
 
   if (options.auth) {
-    params.append('token', account.id + '-' + account.token);
+    params.append('token', `${account.id} - ${account.token}`);
   }
 
   url.pathname += path;
@@ -189,7 +189,7 @@ BzDeck.model.save_account = function (account) {
 };
 
 BzDeck.model.open_account_database = function () {
-  let req = indexedDB.open(this.data.server.name + '::' + this.data.account.name);
+  let req = indexedDB.open(`${this.data.server.name} :: ${this.data.account.name}`);
 
   req.addEventListener('upgradeneeded', event => {
     let db = this.databases.account = event.target.result,
@@ -263,7 +263,7 @@ BzDeck.model.load_config = function () {
           xhr = new XMLHttpRequest();
 
       // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-      xhr.open('GET', server.url + server.endpoints.bzapi + 'configuration?cached_ok=1', true);
+      xhr.open('GET', `${server.url}${server.endpoints.bzapi}configuration?cached_ok=1`, true);
       xhr.setRequestHeader('Accept', 'application/json');
 
       xhr.addEventListener('load', event => {
@@ -381,7 +381,7 @@ BzDeck.model.fetch_subscriptions = function () {
 
 BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details = true) {
   let fetch = (method, params) => new Promise((resolve, reject) => {
-    this.request('GET', 'bug/' + bug.id + (method ? '/' + method : ''),
+    this.request('GET', `bug/${bug.id}${method ? '/' + method : ''}`,
                  params ? new URLSearchParams(params) : null).then(result => {
       resolve(result.bugs);
     }).catch(event => {

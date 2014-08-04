@@ -200,7 +200,7 @@ BzDeck.HomePage = function () {
   window.addEventListener('UI:toggle_star', event => {
     let _bug = event.detail.bug,
         _starred = _bug._starred_comments,
-        $row = document.querySelector('#home-list-row-' + _bug.id);
+        $row = document.querySelector(`#home-list-row-${_bug.id}`);
 
     // Thread
     if ($row) {
@@ -281,7 +281,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
 
   if (splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = BzDeck.model.data.prefs['ui.home.preview.splitter.position.' + orientation];
+        pref = BzDeck.model.data.prefs[`ui.home.preview.splitter.position.${orientation}`];
 
     splitter.data.orientation = orientation;
 

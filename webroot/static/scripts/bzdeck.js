@@ -308,7 +308,7 @@ BzDeck.core.show_notification = function (title, body) {
     FlareTail.util.app.show_notification(title, {
       body,
       // Firefox OS requires a complete URL for the icon
-      'icon': location.origin + '/static/images/logo/icon-' + (fxos ? 'fxos-120' : '128') + '.png'
+      'icon': `${location.origin}/static/images/logo/icon-${fxos ? 'fxos-120' : '128'}.png`
     }).then(event => resolve(event));
   });
 };
@@ -344,7 +344,7 @@ BzDeck.core.register_activity_handler = function () {
 BzDeck.core.update_grid_data = function (grid, bugs) {
   grid.build_body(bugs.map(bug => {
     let row = {
-      'id': grid.view.$container.id + '-row-' + bug.id,
+      'id': `${grid.view.$container.id}-row-${bug.id}`,
       'data': {},
       'dataset': {
         'unread': bug._unread === true,
@@ -369,7 +369,7 @@ BzDeck.core.update_grid_data = function (grid, bugs) {
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = this.get_name(bug[field + '_detail']);
+        value = this.get_name(bug[`${field}_detail`]);
       }
 
       if (field === '_starred') {
@@ -435,10 +435,10 @@ BzDeck.core.parse_comment = function (str) {
         }
 
         for (let p of quote_repl.split(/\n{2,}/)) {
-          quote_repl = quote_repl.replace(p, '<p>' + p + '</p>');
+          quote_repl = quote_repl.replace(p, `<p>${p}</p>`);
         }
 
-        p = p.replace(quote_str, '<blockquote>' + quote_repl + '</blockquote>');
+        p = p.replace(quote_str, `<blockquote>${quote_repl}</blockquote>`);
         quote = [];
       }
     }
@@ -450,7 +450,7 @@ BzDeck.core.parse_comment = function (str) {
 
   // Quotes
   for (let p of str.split(/\n{2,}/)) {
-    str = str.replace(p, '<p>' + blockquote(p) + '</p>');
+    str = str.replace(p, `<p>${blockquote(p)}</p>`);
   }
 
   str = str.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
@@ -675,16 +675,15 @@ BzDeck.toolbar.setup = function () {
 
   // Account label & avatar
   let account = BzDeck.model.data.account,
-      account_label = (account.real_name ? '<strong>' + account.real_name + '</strong>' : '&nbsp;')
-                    + '<br>' + account.name,
+      account_label = `${account.real_name ? `<strong>${account.real_name}</strong>` : '&nbsp;'}<br>${account.name}`,
       $account_label = document.querySelector('#main-menu--app--account label'),
       $account_img = new Image();
 
   $account_label.innerHTML = account_label;
   $account_img.addEventListener('load', event => {
-    $account_label.style.backgroundImage = 'url(' + event.target.src + ')';
+    $account_label.style.backgroundImage = `url(${event.target.src})`;
   });
-  $account_img.src = 'https://www.gravatar.com/avatar/' + md5(account.name) + '?d=404';
+  $account_img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
     document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
@@ -817,8 +816,8 @@ BzDeck.toolbar.quicksearch = function (event) {
 
     for (let [i, bug] of results.entries()) {
       data.push({
-        'id': 'quicksearch-dropdown-' + bug.id,
-        'label': bug.id + ' - ' + bug.summary,
+        'id': `quicksearch-dropdown-${bug.id}`,
+        'label': `${bug.id} - ${bug.summary}`,
         'data': { 'id': bug.id }
       });
 
@@ -985,7 +984,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
     let unread_num = [for (bug of bugs) if (bug._unread) bug].length;
 
     if (unread_num > 0) {
-      BzDeck.homepage.change_window_title(document.title += ' (' + unread_num + ')');
+      BzDeck.homepage.change_window_title(document.title += ` (${unread_num})`);
     }
   };
 
@@ -1198,7 +1197,7 @@ window.addEventListener('popstate', event => {
         bug_list = [];
 
     $root.setAttribute('data-current-tab', 'bug');
-    $tab = document.querySelector('#tab-details-' + bug_id);
+    $tab = document.querySelector(`#tab-details-${bug_id}`);
 
     if ($tab) {
       tabs.selected = $tab;
@@ -1226,7 +1225,7 @@ window.addEventListener('popstate', event => {
   }
 
   if (path.match(/^home-(\w+)/)) {
-    $folder = document.querySelector('#sidebar-folders--' + RegExp.$1);
+    $folder = document.querySelector(`#sidebar-folders--${RegExp.$1}`);
 
     if ($folder) {
       $root.setAttribute('data-current-tab', 'home');
@@ -1237,7 +1236,7 @@ window.addEventListener('popstate', event => {
     }
   }
 
-  $tab = document.querySelector('#tab-' + CSS.escape(path));
+  $tab = document.querySelector(`#tab-${CSS.escape(path)}`);
 
   if ($tab) {
     $root.setAttribute('data-current-tab', path);
@@ -1259,7 +1258,7 @@ window.addEventListener('UI:toggle_unread', event => {
     let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
 
     BzDeck.homepage.change_window_title(
-      document.title.replace(/(\s\(\d+\))?$/, unread_num ? ' (' + unread_num + ')' : '')
+      document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
     );
   }
 
@@ -1277,7 +1276,7 @@ window.addEventListener('UI:toggle_unread', event => {
 
   let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
                                : 'You have 1 unread bug', // l10n
-      extract = [for (bug of bugs.slice(0, 3)) bug.id + ' - ' + bug.summary].join('\n');
+      extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
 
   BzDeck.core.show_status(status);
   BzDeck.core.show_notification(status, extract);

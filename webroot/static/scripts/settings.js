@@ -63,7 +63,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
     let params = new URLSearchParams();
 
     params.append('names', account.name);
-    params.append('token', account.id + '-' + $input.value);
+    params.append('token', `${account.id}-${$input.value}`);
 
     $output.textContent = 'Verifying...'; // l10n
 

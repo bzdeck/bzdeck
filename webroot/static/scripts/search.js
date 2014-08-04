@@ -68,7 +68,7 @@ BzDeck.SearchPage = function () {
   let $tabpanel = this.view.$tabpanel;
 
   let $tab = tablist.add_tab(
-    'search-' + id_suffix,
+    `search-${id_suffix}`,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
     $tabpanel
@@ -89,7 +89,7 @@ BzDeck.SearchPage = function () {
 
     let _bug = event.detail.bug,
         _starred = _bug._starred_comments,
-        $row = $tabpanel.querySelector('[id$="result-row-' + _bug.id + '"]');
+        $row = $tabpanel.querySelector(`[id$="result-row-${_bug.id}"]`);
 
     // Thread
     if ($row) {
@@ -163,14 +163,14 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
   let classifications = Object.keys(config.classification).sort().map((value, index) => {
     return {
-      'id': $classification_list.id + 'item-' + index,
+      'id': `${$classification_list.id}item-${index}`,
       'label': value
     };
   });
 
   let products = Object.keys(config.product).sort().map((value, index) => {
     return {
-      'id': $product_list.id + 'item-' + index,
+      'id': `${$product_list.id}item-${index}`,
       'label': value
     };
   });
@@ -183,21 +183,21 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
   components = components.sort().map((value, index) => {
     return {
-      'id': $component_list.id + 'item-' + index,
+      'id': `${$component_list.id}item-${index}`,
       'label': value
     };
   });
 
   let statuses = config.field.status.values.map((value, index) => {
     return {
-      'id': $status_list.id + 'item-' + index,
+      'id': `${$status_list.id}item-${index}`,
       'label': value
     };
   });
 
   let resolutions = config.field.resolution.values.map((value, index) => {
     return {
-      'id': $resolution_list.id + 'item-' + index,
+      'id': `${$resolution_list.id}item-${index}`,
       'label': value || '---',
       'selected': !value // Select '---' to search open bugs
     };
@@ -390,7 +390,7 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
       $bug = $pane.querySelector('article'),
       $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
 
-  $bug.appendChild($info).id = $bug.id + '-info';
+  $bug.appendChild($info).id = `${$bug.id}-info`;
 
   // Star on the header
   let $star_button = $pane.querySelector('[role="button"][data-command="star"]');
