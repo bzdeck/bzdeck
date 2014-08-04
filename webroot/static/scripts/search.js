@@ -65,15 +65,17 @@ BzDeck.SearchPage = function () {
     }
   });
 
+  let $tabpanel = this.view.$tabpanel;
+
   let $tab = tablist.add_tab(
     'search-' + id_suffix,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
-    this.view.$tabpanel
+    $tabpanel
   );
 
   tablist.view.selected = tablist.view.$focused = $tab;
-  this.view.$tabpanel.focus();
+  $tabpanel.focus();
 
   this.setup_basic_search_pane();
   this.setup_result_pane();
@@ -85,15 +87,25 @@ BzDeck.SearchPage = function () {
       return; // The tabpanel has already been destroyed
     }
 
+    let _bug = event.detail.bug,
+        _starred = _bug._starred_comments,
+        $row = $tabpanel.querySelector('[id$="result-row-' + _bug.id + '"]');
+
     // Thread
-    for (let $row of $tabpanel.querySelectorAll('[id*="result-row"]')) {
-      $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-          .setAttribute('aria-checked', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    if ($row) {
+      $row.querySelector('[data-id="_starred"] [role="checkbox"]').setAttribute('aria-checked', !!_starred.size);
     }
 
     // Preview
-    $tabpanel.querySelector('[role="article"] [role="checkbox"][data-field="_starred"]')
-             .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
+    if (this.data.preview_id === _bug.id) {
+      $tabpanel.querySelector('[role="article"] [role="button"][data-command="star"]')
+               .setAttribute('aria-pressed', !!_starred.size);
+
+      for (let $comment of $tabpanel.querySelectorAll('[role="article"] [itemprop="comment"][data-id]')) {
+        $comment.querySelector('[role="button"][data-command="star"]')
+                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
+      }
+    }
   });
 
   window.addEventListener('bug:updated', event => {
@@ -381,11 +393,10 @@ BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   $bug.appendChild($info).id = $bug.id + '-info';
 
   // Star on the header
-  let $star_checkbox = $pane.querySelector('[role="checkbox"][data-field="_starred"]');
+  let $star_button = $pane.querySelector('[role="button"][data-command="star"]');
 
-  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
-    BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
-  });
+  (new FTw.Button($star_button)).bind('Pressed', event =>
+    BzDeck.core.toggle_star(this.data.preview_id, event.detail.pressed));
 
   // Custom scrollbar (info)
   new ScrollBar($info);

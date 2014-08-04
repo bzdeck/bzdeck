@@ -76,8 +76,18 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
       return; // The tabpanel has already been destroyed
     }
 
-    $tabpanel.querySelector('[role="checkbox"][data-field="_starred"]')
-             .setAttribute('aria-checked', event.detail.ids.has(bug.id));
+    let _bug = event.detail.bug,
+        _starred = _bug._starred_comments;
+
+    if (_bug.id === bug.id) {
+      $tabpanel.querySelector('[role="button"][data-command="star"]')
+               .setAttribute('aria-pressed', !!_starred.size);
+
+      for (let $comment of $tabpanel.querySelectorAll('[itemprop="comment"][data-id]')) {
+        $comment.querySelector('[role="button"][data-command="star"]')
+                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
+      }
+    }
   });
 
   window.addEventListener('bug:updated', event => {
@@ -92,7 +102,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
       $tabpanel = document.querySelector('template#tabpanel-details').content
                           .cloneNode(true).firstElementChild,
       $bug = this.view.$bug = $tabpanel.querySelector('article'),
-      $star_checkbox = $tabpanel.querySelector('[role="checkbox"][data-field="_starred"]');
+      $star_button = $tabpanel.querySelector('[role="button"][data-command="star"]');
 
   // Assign unique IDs
   $tabpanel.id = $tabpanel.id.replace(/TID/, bug.id);
@@ -109,8 +119,8 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   }
 
   // Star on the header
-  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event =>
-    BzDeck.core.toggle_star(bug.id, event.detail.checked));
+  (new FTw.Button($star_button)).bind('Pressed', event =>
+    BzDeck.core.toggle_star(bug.id, event.detail.pressed));
 
   for (let $area of $tabpanel.querySelectorAll('.scrollable')) {
     // Custom scrollbar

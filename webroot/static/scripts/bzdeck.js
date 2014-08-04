@@ -239,24 +239,28 @@ BzDeck.bootstrap.finish = function () {
 BzDeck.core = {};
 BzDeck.core.timers = {};
 
-BzDeck.core.toggle_star = function (id, value) {
+BzDeck.core.toggle_star = function (id, starred) {
   // Save in DB
   BzDeck.model.get_bug_by_id(id).then(bug => {
-    if (bug) {
-      bug._starred = value;
+    if (bug && bug.comments) {
+      if (!bug._starred_comments) {
+        bug._starred_comments = new Set();
+      }
+
+      if (starred) {
+        bug._starred_comments.add(bug.comments[0].id);
+      } else {
+        bug._starred_comments.clear();
+      }
+
       BzDeck.model.save_bug(bug);
-      this.toggle_star_ui();
+      this.toggle_star_ui(bug);
     }
   });
 };
 
-BzDeck.core.toggle_star_ui = function () {
-  BzDeck.model.get_all_bugs().then(bugs => {
-    FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': {
-      'bugs': new Set([for (bug of bugs) if (bug._starred) bug]),
-      'ids': new Set([for (bug of bugs) if (bug._starred) bug.id])
-    }});
-  });
+BzDeck.core.toggle_star_ui = function (bug) {
+  FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { 'bug': bug }});
 };
 
 BzDeck.core.toggle_unread = function (id, value) {
@@ -368,7 +372,11 @@ BzDeck.core.update_grid_data = function (grid, bugs) {
         value = this.get_name(bug[field + '_detail']);
       }
 
-      if (field === '_starred' || field === '_unread') {
+      if (field === '_starred') {
+        value = !!bug._starred_comments && !!bug._starred_comments.size;
+      }
+
+      if (field === '_unread') {
         value = value === true;
       }
 
@@ -1035,7 +1043,7 @@ BzDeck.sidebar.open_folder = function (folder_id) {
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs().then(bugs => {
-      update_list([for (bug of bugs) if (bug._starred) bug]);
+      update_list([for (bug of bugs) if (!!bug._starred_comments && !!bug._starred_comments.size) bug]);
     });
   }
 

@@ -38,11 +38,10 @@ BzDeck.HomePage = function () {
   $bug.appendChild($info).id = 'home-preview-bug-info';
 
   // Star on the header
-  let $star_checkbox = document.querySelector('#home-preview-bug header [data-field="_starred"]');
+  let $star_button = document.querySelector('#home-preview-bug header [role="button"][data-command="star"]');
 
-  (new FTw.Checkbox($star_checkbox)).bind('Toggled', event => {
-    BzDeck.core.toggle_star(this.data.preview_id, event.detail.checked);
-  });
+  (new FTw.Button($star_button)).bind('Pressed', event =>
+    BzDeck.core.toggle_star(this.data.preview_id, event.detail.pressed));
 
   // Custom scrollbar (info)
   new FTw.ScrollBar($info);
@@ -199,15 +198,25 @@ BzDeck.HomePage = function () {
   });
 
   window.addEventListener('UI:toggle_star', event => {
+    let _bug = event.detail.bug,
+        _starred = _bug._starred_comments,
+        $row = document.querySelector('#home-list-row-' + _bug.id);
+
     // Thread
-    for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
-      $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-          .setAttribute('aria-checked', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    if ($row) {
+      $row.querySelector('[data-id="_starred"] [role="checkbox"]').setAttribute('aria-checked', !!_starred.size);
     }
 
     // Preview
-    document.querySelector('#home-preview-bug [data-field="_starred"]')
-            .setAttribute('aria-checked', event.detail.ids.has(this.data.preview_id));
+    if (this.data.preview_id === _bug.id) {
+      document.querySelector('#home-preview-bug [role="button"][data-command="star"]')
+              .setAttribute('aria-pressed', !!_starred.size);
+
+      for (let $comment of document.querySelectorAll('#home-preview-bug [itemprop="comment"][data-id]')) {
+        $comment.querySelector('[role="button"][data-command="star"]')
+                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
+      }
+    }
   });
 
   window.addEventListener('UI:toggle_unread', event => {

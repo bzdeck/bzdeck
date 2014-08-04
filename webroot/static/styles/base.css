@@ -1196,11 +1196,11 @@ main {
   vertical-align: top;
 }
 
-[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-field="_starred"][aria-checked="false"]::before {
+[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-command="star"][aria-pressed="false"]::before {
   content: '\F006';
 }
 
-[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-field="_starred"][aria-checked="true"]::before {
+[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-command="star"][aria-pressed="true"]::before {
   content: '\F005';
 }
 

@@ -41,11 +41,11 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
 
   this.set_product_tooltips($bug, bug);
 
-  let $checkbox = $bug.querySelector('[data-field="_starred"]'),
+  let $button = $bug.querySelector('[role="button"][data-command="star"]'),
       $timeline = $bug.querySelector('.bug-timeline');
 
-  if ($checkbox) {
-    $checkbox.setAttribute('aria-checked', bug._starred ? 'true' : 'false');
+  if ($button) {
+    $button.setAttribute('aria-pressed', !!bug._starred_comments && !!bug._starred_comments.size);
   }
 
   if (!$timeline) {
@@ -352,6 +352,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
                        .cloneNode(true).firstElementChild,
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
+      $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment = $entry.querySelector('[itemprop="text"]'),
       $changes = $entry.querySelector('.changes'),
@@ -376,6 +377,24 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) '> ' + line],
         quote = quote_header + '\n' + quote_lines.join('\n');
 
+    // Activate the Star button
+    $star_button.addEventListener('click', event => {
+      if (!bug._starred_comments) {
+        bug._starred_comments = new Set([comment.id]);
+      } else if (bug._starred_comments.has(comment.id)) {
+        bug._starred_comments.delete(comment.id);
+      } else {
+        bug._starred_comments.add(comment.id);
+      }
+
+      BzDeck.model.save_bug(bug);
+      BzDeck.core.toggle_star_ui(bug);
+
+      event.stopPropagation();
+    });
+
+    $star_button.setAttribute('aria-pressed', !!bug._starred_comments && bug._starred_comments.has(comment.id));
+
     // Activate the Reply button
     $reply_button.addEventListener('click', event => {
       let $tabpanel = document.querySelector('#' + timeline_id + '-comment-form-tabpanel-write'),
@@ -393,6 +412,7 @@ BzDeck.bug.timeline.create_entry = function (timeline_id, bug, data) {
     });
   } else {
     $entry.dataset.nocomment = true;
+    $star_button.setAttribute('aria-hidden', 'true');
     $reply_button.setAttribute('aria-hidden', 'true');
     $comment.remove();
   }
@@ -555,7 +575,7 @@ BzDeck.bug.timeline.handle_keydown = function (event) {
       }
 
       if (key === event.DOM_VK_S) {
-        BzDeck.core.toggle_star(bug_id, !bug._starred);
+        BzDeck.core.toggle_star(bug_id, !(!!bug._starred_comments && !!bug._starred_comments.size));
       }
     });
 
