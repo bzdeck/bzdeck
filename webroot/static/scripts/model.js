@@ -189,7 +189,7 @@ BzDeck.model.save_account = function (account) {
 };
 
 BzDeck.model.open_account_database = function () {
-  let req = indexedDB.open(`${this.data.server.name} :: ${this.data.account.name}`);
+  let req = indexedDB.open(`${this.data.server.name}::${this.data.account.name}`);
 
   req.addEventListener('upgradeneeded', event => {
     let db = this.databases.account = event.target.result,
