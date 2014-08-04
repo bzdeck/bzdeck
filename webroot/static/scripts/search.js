@@ -38,7 +38,7 @@ BzDeck.SearchPage = function () {
           bugs[bug.id] = bug;
         }
 
-        return [for (row of this.view.grid.data.rows) bugs[row.data.id]];
+        return [for (row of this.thread.grid.data.rows) bugs[row.data.id]];
       }
 
       return obj[prop];
@@ -83,21 +83,10 @@ BzDeck.SearchPage = function () {
   this.setup_toolbar();
 
   window.addEventListener('UI:toggle_star', event => {
-    if (!$tabpanel) {
-      return; // The tabpanel has already been destroyed
-    }
-
     let _bug = event.detail.bug,
-        _starred = _bug._starred_comments,
-        $row = $tabpanel.querySelector(`[id$="result-row-${_bug.id}"]`);
+        _starred = _bug._starred_comments;
 
-    // Thread
-    if ($row) {
-      $row.querySelector('[data-id="_starred"] [role="checkbox"]').setAttribute('aria-checked', !!_starred.size);
-    }
-
-    // Preview
-    if (this.data.preview_id === _bug.id) {
+    if ($tabpanel && this.data.preview_id === _bug.id) {
       $tabpanel.querySelector('[role="article"] [role="button"][data-command="star"]')
                .setAttribute('aria-pressed', !!_starred.size);
 
@@ -267,30 +256,18 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result']
             = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
-      $grid = $pane.querySelector('[role="grid"]'),
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      prefs = BzDeck.model.data.prefs,
-      default_cols = BzDeck.config.grid.default_columns,
-      columns = prefs['search.list.columns'] || default_cols,
-      field = BzDeck.model.data.server.config.field;
+      prefs = BzDeck.model.data.prefs;
 
-  let grid = this.view.grid = new FlareTail.widget.Grid($grid, {
-    'rows': [],
-    'columns': columns.map(col => {
-      // Add labels
-      col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
-                  field[col.id].description;
-
-      return col;
-    })
-  },
-  {
+  this.thread = new BzDeck.Thread(this, 'search', $pane.querySelector('[role="grid"]'), {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
                               : prefs['home.list.sort_conditions'] ||
                                 { 'key': 'id', 'order': 'ascending' }
   });
+
+  let grid = this.thread.grid;
 
   // Force to change the sort condition when switched to the mobile layout
   if (mobile) {
@@ -300,84 +277,11 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     cond.order = 'descending';
   }
 
-  grid.bind('Sorted', event => {
-    prefs['search.list.sort_conditions'] = event.detail.conditions;
-  });
-
-  grid.bind('ColumnModified', event => {
-    prefs['search.list.columns'] = event.detail.columns.map(col => {
-      return {
-        'id': col.id,
-        'type': col.type || 'string',
-        'hidden': col.hidden || false
-      };
-    });
-  });
-
-  grid.bind('Selected', event => {
-    let ids = event.detail.ids;
-
-    if (ids.length) {
-      // Show Bug in Preview Pane
-      this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
-
-      // Mobile compact layout
-      if (mobile) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
-      }
-    }
-  });
-
-  grid.bind('dblclick', event => {
-    let $target = event.originalTarget;
-
-    if ($target.mozMatchesSelector('[role="row"]')) {
-      // Open Bug in New Tab
-      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt($target.dataset.id),
-                                                  this.data.bug_list);
-    }
-  });
-
-  grid.bind('keydown', event => {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        data = this.view.grid.data,
-        view = this.view.grid.view,
-        members = view.members,
-        index = members.indexOf(view.$focused);
-
-    // [B] Select previous bug
-    if (!modifiers && event.keyCode === event.DOM_VK_B && index > 0) {
-      view.selected = view.$focused = members[index - 1];
-    }
-
-    // [F] Select next bug
-    if (!modifiers && event.keyCode === event.DOM_VK_F && index < members.length - 1) {
-      view.selected = view.$focused = members[index + 1];
-    }
-
-    // [M] toggle read
-    if (!modifiers && event.keyCode === event.DOM_VK_M) {
-      for (let $item of view.selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-        _data._unread = _data._unread !== true;
-      }
-    }
-
-    // [S] toggle star
-    if (!modifiers && event.keyCode === event.DOM_VK_S) {
-      for (let $item of view.selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-
-        _data._starred = _data._starred !== true;
-      }
-    }
-  }, true); // use capture
-
   $pane.addEventListener('transitionend', event => {
-    let selected = this.view.grid.view.selected;
+    let selected = grid.view.selected;
 
     if (event.propertyName === 'bottom' && selected.length) {
-      this.view.grid.ensure_row_visibility(selected[selected.length - 1]);
+      grid.ensure_row_visibility(selected[selected.length - 1]);
     }
   });
 };
@@ -456,7 +360,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
   this.hide_status();
 
   FlareTail.util.event.async(() => {
-    BzDeck.core.update_grid_data(this.view.grid, []); // Clear grid body
+    this.thread.update([]); // Clear grid body
   });
 
   BzDeck.model.request('GET', 'bug', params).then(result => {
@@ -471,7 +375,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
       });
 
       // Show results
-      BzDeck.core.update_grid_data(this.view.grid, result.bugs);
+      this.thread.update(result.bugs);
       this.hide_status();
     } else {
       this.show_status('Zarro Boogs found.'); // l10n

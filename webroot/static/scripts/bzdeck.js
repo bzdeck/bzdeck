@@ -346,72 +346,6 @@ BzDeck.core.register_activity_handler = function () {
   }
 };
 
-BzDeck.core.update_grid_data = function (grid, bugs) {
-  grid.build_body(bugs.map(bug => {
-    let row = {
-      'id': `${grid.view.$container.id}-row-${bug.id}`,
-      'data': {},
-      'dataset': {
-        'unread': bug._unread === true,
-        'severity': bug.severity
-      }
-    };
-
-    for (let column of grid.data.columns) {
-      let field = column.id,
-          value = bug[field];
-
-      if (!value) {
-        value = '';
-      }
-
-      if (Array.isArray(value)) {
-        if (field === 'mentors') { // Array of Person
-          value = [for (person of bug['mentors_detail']) this.get_name(person)].join(', ');
-        } else { // Keywords
-          value = value.join(', ');
-        }
-      }
-
-      if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = this.get_name(bug[`${field}_detail`]);
-      }
-
-      if (field === '_starred') {
-        value = !!bug._starred_comments && !!bug._starred_comments.size;
-      }
-
-      if (field === '_unread') {
-        value = value === true;
-      }
-
-      row.data[field] = value;
-    }
-
-    row.data = new Proxy(row.data, {
-      'set': (obj, prop, value) => {
-        if (prop === '_starred') {
-          BzDeck.core.toggle_star(obj.id, value);
-        }
-
-        if (prop === '_unread') {
-          BzDeck.core.toggle_unread(obj.id, value);
-
-          let row = [for (row of grid.data.rows) if (row.data.id === obj.id) row][0];
-
-          if (row && row.$element) {
-            row.$element.dataset.unread = value;
-          }
-        }
-
-        obj[prop] = value;
-      }
-    });
-
-    return row;
-  }));
-}
-
 BzDeck.core.parse_comment = function (str) {
   let blockquote = p => {
     let regex = /^&gt;\s?/gm;
@@ -974,15 +908,14 @@ BzDeck.sidebar.setup = function () {
 };
 
 BzDeck.sidebar.open_folder = function (folder_id) {
-  let home = BzDeck.homepage,
-      grid = home.view.grid;
+  let home = BzDeck.homepage;
 
   home.data.preview_id = null;
 
   let update_list = bugs => {
     home.data.bug_list = bugs;
     FlareTail.util.event.async(() => {
-      BzDeck.core.update_grid_data(grid, bugs);
+      home.thread.update(bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 

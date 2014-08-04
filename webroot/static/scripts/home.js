@@ -57,22 +57,9 @@ BzDeck.HomePage = function () {
 
   let prefs = BzDeck.model.data.prefs,
       layout_pref = prefs['ui.home.layout'],
-      vertical = mobile || !layout_pref || layout_pref === 'vertical',
-      default_cols = BzDeck.config.grid.default_columns,
-      columns = prefs['home.list.columns'] || default_cols,
-      field = BzDeck.model.data.server.config.field;
+      vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
-  let grid = this.view.grid = new FlareTail.widget.Grid(document.querySelector('#home-list'), {
-    'rows': [],
-    'columns': columns.map(col => {
-      // Add labels
-      col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
-                  field[col.id].description;
-
-      return col;
-    })
-  },
-  {
+  this.thread = new BzDeck.Thread(this, 'home', document.querySelector('#home-list'), {
     'date': { 'simple': vertical },
     'sortable': true,
     'reorderable': true,
@@ -83,34 +70,7 @@ BzDeck.HomePage = function () {
 
   this.change_layout(prefs['ui.home.layout']);
 
-  grid.bind('Sorted', event => {
-    prefs['home.list.sort_conditions'] = event.detail.conditions;
-  });
-
-  grid.bind('ColumnModified', event => {
-    prefs['home.list.columns'] = event.detail.columns.map(col => {
-      return {
-        'id': col.id,
-        'type': col.type || 'string',
-        'hidden': col.hidden || false
-      };
-    });
-  });
-
-  grid.bind('Selected', event => {
-    let ids = event.detail.ids;
-
-    if (ids.length) {
-      // Show Bug in Preview Pane
-      this.data.preview_id = Number.parseInt(ids[ids.length - 1]);
-
-      if (mobile) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
-      }
-
-      let data = this.view.grid.data;
-    }
-  });
+  let grid = this.thread.grid;
 
   grid.bind('Rebuilt', event => {
     // Select the first bug on the list automatically when a folder is opened
@@ -119,41 +79,6 @@ BzDeck.HomePage = function () {
       grid.view.selected = grid.view.focused = grid.view.members[0];
     }
   });
-
-  grid.bind('dblclick', event => {
-    let $target = event.originalTarget;
-
-    if ($target.mozMatchesSelector('[role="row"]')) {
-      // Open Bug in New Tab
-      BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
-    }
-  });
-
-  grid.bind('keydown', event => {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        data = this.view.grid.data,
-        view = this.view.grid.view,
-        members = view.members,
-        index = members.indexOf(view.$focused);
-
-    // [M] toggle read
-    if (!modifiers && event.keyCode === event.DOM_VK_M) {
-      for (let $item of view.selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-
-        _data._unread = _data._unread !== true;
-      }
-    }
-
-    // [S] toggle star
-    if (!modifiers && event.keyCode === event.DOM_VK_S) {
-      for (let $item of view.selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-
-        _data._starred = _data._starred !== true;
-      }
-    }
-  }, true); // use capture
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
@@ -177,7 +102,7 @@ BzDeck.HomePage = function () {
           bugs[bug.id] = bug;
         }
 
-        return [for (row of this.view.grid.data.rows) bugs[row.data.id]];
+        return [for (row of grid.data.rows) bugs[row.data.id]];
       }
 
       return obj[prop];
@@ -199,15 +124,8 @@ BzDeck.HomePage = function () {
 
   window.addEventListener('UI:toggle_star', event => {
     let _bug = event.detail.bug,
-        _starred = _bug._starred_comments,
-        $row = document.querySelector(`#home-list-row-${_bug.id}`);
+        _starred = _bug._starred_comments;
 
-    // Thread
-    if ($row) {
-      $row.querySelector('[data-id="_starred"] [role="checkbox"]').setAttribute('aria-checked', !!_starred.size);
-    }
-
-    // Preview
     if (this.data.preview_id === _bug.id) {
       document.querySelector('#home-preview-bug [role="button"][data-command="star"]')
               .setAttribute('aria-pressed', !!_starred.size);
@@ -216,13 +134,6 @@ BzDeck.HomePage = function () {
         $comment.querySelector('[role="button"][data-command="star"]')
                 .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
       }
-    }
-  });
-
-  window.addEventListener('UI:toggle_unread', event => {
-    // Thread
-    for (let $row of document.querySelectorAll('[id^="home-list-row"]')) {
-      $row.setAttribute('data-unread', event.detail.ids.has(Number.parseInt($row.dataset.id)));
     }
   });
 
@@ -266,7 +177,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.device.type.startsWith('mobile') || !pref || pref === 'vertical',
-      grid = this.view.grid,
+      grid = this.thread.grid,
       splitter = this.preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
