@@ -17,10 +17,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     return;
   }
 
-  this.data = {
-    'id': id,
-    'bug_list': bug_list
-  };
+  this.data = { id, bug_list };
 
   this.view = {
     '$tab': null,
@@ -37,7 +34,7 @@ BzDeck.DetailsPage = function (id, bug_list = []) {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
       this.fetch_bug(id);
-      bug = { 'id': id };
+      bug = { id };
     }
 
     this.open(bug);
@@ -271,7 +268,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
   BzDeck.core.show_status('Loading...'); // l10n
 
-  BzDeck.model.fetch_bug({ 'id': id }).then(bug => {
+  BzDeck.model.fetch_bug({ id }).then(bug => {
     // Save in DB
     BzDeck.model.save_bug(bug);
 

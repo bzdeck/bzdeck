@@ -260,7 +260,7 @@ BzDeck.core.toggle_star = function (id, starred) {
 };
 
 BzDeck.core.toggle_star_ui = function (bug) {
-  FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { 'bug': bug }});
+  FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
 };
 
 BzDeck.core.toggle_unread = function (id, value) {
@@ -277,7 +277,7 @@ BzDeck.core.toggle_unread = function (id, value) {
 BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs().then(bugs => {
     FlareTail.util.event.trigger(window, 'UI:toggle_unread', { 'detail': {
-      'loaded': loaded,
+      loaded,
       'bugs': new Set([for (bug of bugs) if (bug._unread) bug]),
       'ids': new Set([for (bug of bugs) if (bug._unread) bug.id])
     }});
@@ -306,7 +306,7 @@ BzDeck.core.show_notification = function (title, body) {
 
   return new Promise((resolve, reject) => {
     FlareTail.util.app.show_notification(title, {
-      'body': body,
+      body,
       // Firefox OS requires a complete URL for the icon
       'icon': location.origin + '/static/images/logo/icon-' + (fxos ? 'fxos-120' : '128') + '.png'
     }).then(event => resolve(event));

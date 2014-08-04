@@ -23,7 +23,7 @@ BzDeck.bug.fill_data = function ($bug, bug, partial = false) {
 
   let _bug = {};
 
-  for (let { 'id': field, 'type': type } of BzDeck.config.grid.default_columns) {
+  for (let { 'id': field, type } of BzDeck.config.grid.default_columns) {
     if (bug[field] !== undefined && !field.startsWith('_')) {
       if (field === 'keywords') {
         _bug.keyword = bug.keywords;
@@ -257,7 +257,7 @@ BzDeck.bug.find_person = function (bug, email) {
 
   // If the person is just watching the bug component, s/he might not be in any field of the bug
   // and cannot be found. Then just return a simple object. TODO: fetch the account using the API
-  return { 'email': email, 'id': 0, 'name': email, 'real_name': '' };
+  return { email, 'id': 0, 'name': email, 'real_name': '' };
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -751,7 +751,7 @@ BzDeck.bug.timeline.CommentForm.prototype.attach_text = function (str) {
                          : is_patch ? 'Patch'
                                     : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
       'file_name': URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
-      'is_patch': is_patch,
+      is_patch,
       'size': blob.size, // Not required for the API but used in find_attachment()
       'content_type': is_ghpr ? 'text/x-github-pull-request' : 'text/plain'
     });
@@ -788,7 +788,7 @@ BzDeck.bug.timeline.CommentForm.prototype.onselect_files = function (files) {
         'data': reader.result.replace(/^.*?,/, ''), // Drop data:<type>;base64,
         'summary': is_patch ? 'Patch' : file.name,
         'file_name': file.name,
-        'is_patch': is_patch,
+        is_patch,
         'size': file.size, // Not required for the API but used in find_attachment()
         'content_type': is_patch ? 'text/plain' : file.type || 'application/x-download'
       });
@@ -961,7 +961,7 @@ BzDeck.bug.timeline.CommentForm.prototype.submit = function () {
   } else {
     // If there's no attachment, just send the comment. If there are 2 or more attachments,
     // send the comment first then send the attachments in parallel
-    data = { 'comment': comment };
+    data = { comment };
   }
 
   post(data).then(value => {
@@ -1044,7 +1044,7 @@ BzDeck.bugzfeed.connect = function () {
 
 BzDeck.bugzfeed.send = function (command, bugs) {
   if (this.websocket && this.websocket.readyState === 1) {
-    this.websocket.send(JSON.stringify({ 'command': command, 'bugs': bugs }));
+    this.websocket.send(JSON.stringify({ command, bugs }));
   }
 };
 
@@ -1088,10 +1088,7 @@ BzDeck.bugzfeed.get_changes = function (message) {
 
     this.save_changes(bug, changes);
 
-    FlareTail.util.event.trigger(window, 'bug:updated', { 'detail': {
-      'bug': bug,
-      'changes': changes
-    }});
+    FlareTail.util.event.trigger(window, 'bug:updated', { 'detail': { bug, changes }});
   });
 };
 

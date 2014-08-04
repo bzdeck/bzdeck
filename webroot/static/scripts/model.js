@@ -230,7 +230,7 @@ BzDeck.model.load_prefs = function () {
       this.data.prefs = new Proxy(prefs, {
         'set': (obj, key, value) => {
           obj[key] = value;
-          this.get_store('prefs').save({ 'name': key, 'value': value });
+          this.get_store('prefs').save({ 'name': key, value });
         }
       });
 
