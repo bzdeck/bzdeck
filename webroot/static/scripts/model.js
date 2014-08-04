@@ -271,7 +271,6 @@ BzDeck.model.load_config = function () {
 
         if (!data || !data.version) {
           // Give up
-          this.$input.disabled = this.$button.disabled = true;
           reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')); // l10n
 
           return;

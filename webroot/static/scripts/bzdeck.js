@@ -82,7 +82,12 @@ BzDeck.bootstrap.start = function () {
 
     return Promise.all([
       BzDeck.model.fetch_subscriptions(),
-      BzDeck.model.load_config().then(config => BzDeck.model.data.server.config = config)
+      BzDeck.model.load_config().then(config => {
+        BzDeck.model.data.server.config = config
+      }, error => {
+        this.$input.disabled = this.$button.disabled = true;
+        status(error.message);
+      })
     ]);
   }).then(() => {
     if (!this.relogin) {
