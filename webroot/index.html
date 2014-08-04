@@ -96,7 +96,7 @@
                     </ul>
                   </div>
                 </header>
-                <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0"></div>
+                <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region"></div>
               </article><!-- end #search-TID-preview-bug -->
             </div><!-- end #search-TID-preview-pane -->
             <div id="search-TID-advanced-search-pane" aria-hidden="true">
@@ -129,14 +129,14 @@
             </ul>
             <div id="bug-TID-tabpanels">
               <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
-                <div class="scrollable bug-timeline">
+                <div class="bug-timeline" role="region">
                   <section>
                     <h3>Comments</h3>
                   </section>
                 </div>
               </div><!-- end #bug-TID-tabpanel-timeline -->
               <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
-                <div id="bug-TID-info" class="scrollable bug-info">
+                <div id="bug-TID-info" class="bug-info" role="region">
                   <section>
                     <h3>General</h3>
                     <dl>
@@ -229,14 +229,14 @@
                 </div><!-- end .bug-info -->
               </div><!-- end #bug-TID-tabpanel-info -->
               <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
-                <div class="scrollable bug-attachments">
+                <div class="bug-attachments" role="region">
                   <section data-field="attachments">
                     <h3>Attachments</h3>
                   </section>
                 </div>
               </div><!-- end #bug-TID-tabpanel-attachments -->
               <div id="bug-TID-tabpanel-history" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
-                <div class="scrollable bug-history">
+                <div class="bug-history" role="region">
                   <section data-field="history">
                     <h3>History</h3>
                     <table>
@@ -396,7 +396,7 @@
       </div><!-- end #tabpanel-settings -->
     </template><!-- end #tabpanel-settings-template -->
     <template id="preview-bug-info">
-      <div class="bug-info" tabindex="0">
+      <div class="bug-info" tabindex="0" role="region">
         <dl>
           <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
           <dt>Last Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
@@ -593,7 +593,7 @@
         </div>
       </header>
       <aside id="sidebar" tabindex="0" role="complementary">
-        <div class="scrollable">
+        <div role="region">
           <section id="sidebar-account">
             <h2>Account</h2>
           </section><!-- end #sidebar-account -->
@@ -638,7 +638,7 @@
                         </ul>
                       </div>
                     </header>
-                    <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0"></div>
+                    <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region"></div>
                   </article><!-- end #home-preview-content -->
                 </div><!-- end #home-preview-pane -->
               </div>

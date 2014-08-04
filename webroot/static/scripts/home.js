@@ -37,22 +37,6 @@ BzDeck.HomePage = function () {
 
   $bug.appendChild($info).id = 'home-preview-bug-info';
 
-  // Star on the header
-  let $star_button = document.querySelector('#home-preview-bug header [role="button"][data-command="star"]');
-
-  (new FTw.Button($star_button)).bind('Pressed', event =>
-    BzDeck.core.toggle_star(this.data.preview_id, event.detail.pressed));
-
-  // Custom scrollbar (info)
-  new FTw.ScrollBar($info);
-
-  // Custom scrollbar (timeline)
-  let scrollbar = new FTw.ScrollBar(document.querySelector('#home-preview-bug-timeline'));
-
-  if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
-  }
-
   this.view = {};
 
   let prefs = BzDeck.model.data.prefs,
@@ -121,28 +105,6 @@ BzDeck.HomePage = function () {
       obj[prop] = newval;
     }
   });
-
-  window.addEventListener('UI:toggle_star', event => {
-    let _bug = event.detail.bug,
-        _starred = _bug._starred_comments;
-
-    if (this.data.preview_id === _bug.id) {
-      document.querySelector('#home-preview-bug [role="button"][data-command="star"]')
-              .setAttribute('aria-pressed', !!_starred.size);
-
-      for (let $comment of document.querySelectorAll('#home-preview-bug [itemprop="comment"][data-id]')) {
-        $comment.querySelector('[role="button"][data-command="star"]')
-                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
-      }
-    }
-  });
-
-  window.addEventListener('bug:updated', event => {
-    if (this.data.preview_id === event.detail.bug.id) {
-      BzDeck.bug.update(document.querySelector('#home-preview-bug'),
-                        event.detail.bug, event.detail.changes);
-    }
-  });
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
@@ -167,8 +129,12 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
       return;
     }
 
+    if (!this.$$bug) {
+      this.$$bug = new BzDeck.Bug($bug);
+    }
+
     // Fill the content
-    BzDeck.bug.fill_data($bug, bug);
+    this.$$bug.fill(bug);
     BzDeck.core.toggle_unread(bug.id, false);
     $bug.setAttribute('aria-hidden', 'false');
     button.data.disabled = false;

@@ -67,39 +67,12 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   if (bug_list.length) {
     this.setup_navigation($tabpanel, bug_list);
   }
-
-  window.addEventListener('UI:toggle_star', event => {
-    if (!$tabpanel) {
-      return; // The tabpanel has already been destroyed
-    }
-
-    let _bug = event.detail.bug,
-        _starred = _bug._starred_comments;
-
-    if (_bug.id === bug.id) {
-      $tabpanel.querySelector('[role="button"][data-command="star"]')
-               .setAttribute('aria-pressed', !!_starred.size);
-
-      for (let $comment of $tabpanel.querySelectorAll('[itemprop="comment"][data-id]')) {
-        $comment.querySelector('[role="button"][data-command="star"]')
-                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
-      }
-    }
-  });
-
-  window.addEventListener('bug:updated', event => {
-    if ($tabpanel && this.data.id === event.detail.bug.id) {
-      BzDeck.bug.update(this.view.$bug, event.detail.bug, event.detail.changes);
-    }
-  });
 };
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let FTw = FlareTail.widget,
       $tabpanel = document.querySelector('template#tabpanel-details').content
-                          .cloneNode(true).firstElementChild,
-      $bug = this.view.$bug = $tabpanel.querySelector('article'),
-      $star_button = $tabpanel.querySelector('[role="button"][data-command="star"]');
+                          .cloneNode(true).firstElementChild;
 
   // Assign unique IDs
   $tabpanel.id = $tabpanel.id.replace(/TID/, bug.id);
@@ -115,22 +88,8 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
     }
   }
 
-  // Star on the header
-  (new FTw.Button($star_button)).bind('Pressed', event =>
-    BzDeck.core.toggle_star(bug.id, event.detail.pressed));
-
-  for (let $area of $tabpanel.querySelectorAll('.scrollable')) {
-    // Custom scrollbar
-    let scrollbar = new FTw.ScrollBar($area);
-
-    if (scrollbar && $area.classList.contains('bug-timeline')) {
-      scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
-    }
-
-    $area.tabIndex = 0;
-  }
-
-  BzDeck.bug.fill_data($bug, bug);
+  this.$$bug = new BzDeck.Bug($tabpanel.querySelector('article'));
+  this.$$bug.fill(bug);
 
   let mobile = FlareTail.util.device.type.startsWith('mobile'),
       phone = FlareTail.util.device.type === 'mobile-phone',
@@ -162,7 +121,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 
   // Scroll a tabpanel to top when the tab is selected
   _tablist.bind('Selected', event => {
-    document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')} > .scrollable`).scrollTop = 0;
+    document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')} > [role="region"]`).scrollTop = 0;
   });
 
   // Hide tabs when scrolled down on mobile
@@ -278,7 +237,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
     if ($tabpanel) {
       BzDeck.core.show_status('');
       // Update UI
-      BzDeck.bug.fill_data(this.view.$bug, bug);
+      this.$$bug.fill(bug);
       $tab.title = this.get_tab_title(bug);
     }
   }).catch(bug => {

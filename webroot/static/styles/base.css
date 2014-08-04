@@ -1640,7 +1640,7 @@ article[id$="preview-bug"] > .bug-timeline {
   content: "";
 }
 
-:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > .scrollable {
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] {
   box-sizing: border-box;
   padding-top: 3.2rem;
 }

@@ -81,27 +81,6 @@ BzDeck.SearchPage = function () {
   this.setup_result_pane();
   this.setup_preview_pane();
   this.setup_toolbar();
-
-  window.addEventListener('UI:toggle_star', event => {
-    let _bug = event.detail.bug,
-        _starred = _bug._starred_comments;
-
-    if ($tabpanel && this.data.preview_id === _bug.id) {
-      $tabpanel.querySelector('[role="article"] [role="button"][data-command="star"]')
-               .setAttribute('aria-pressed', !!_starred.size);
-
-      for (let $comment of $tabpanel.querySelectorAll('[role="article"] [itemprop="comment"][data-id]')) {
-        $comment.querySelector('[role="button"][data-command="star"]')
-                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
-      }
-    }
-  });
-
-  window.addEventListener('bug:updated', event => {
-    if ($tabpanel && this.data.preview_id === event.detail.bug.id) {
-      BzDeck.bug.update($tabpanel.querySelector('article'), event.detail.bug, event.detail.changes);
-    }
-  });
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
@@ -287,30 +266,12 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
-  let FTw = FlareTail.widget,
-      ScrollBar = FTw.ScrollBar,
-      $pane = this.view.panes['preview']
+  let $pane = this.view.panes['preview']
             = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
       $bug = $pane.querySelector('article'),
       $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
 
   $bug.appendChild($info).id = `${$bug.id}-info`;
-
-  // Star on the header
-  let $star_button = $pane.querySelector('[role="button"][data-command="star"]');
-
-  (new FTw.Button($star_button)).bind('Pressed', event =>
-    BzDeck.core.toggle_star(this.data.preview_id, event.detail.pressed));
-
-  // Custom scrollbar (info)
-  new ScrollBar($info);
-
-  // Custom scrollbar (timeline)
-  let scrollbar = new ScrollBar($pane.querySelector('[id$="-bug-timeline"]'));
-
-  if (scrollbar) {
-    scrollbar.onkeydown_extend = BzDeck.bug.timeline.handle_keydown.bind(scrollbar);
-  }
 };
 
 BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
@@ -340,8 +301,12 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
       this.view.buttons['show-basic-search-pane'].data.disabled = false;
     }
 
+    if (!this.$$bug) {
+      this.$$bug = new BzDeck.Bug($bug);
+    }
+
     // Fill the content
-    BzDeck.bug.fill_data($bug, bug);
+    this.$$bug.fill(bug);
     $bug.setAttribute('aria-hidden', 'false');
   });
 };
