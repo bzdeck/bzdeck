@@ -342,10 +342,16 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       }
 
       $entry.setAttribute('data-unread', 'false');
+      $entry.setAttribute('aria-hidden', 'true');
     } else {
       $entry.setAttribute('data-unread', 'true');
     }
   }
+
+  let comments = [...$timeline.querySelectorAll('[itemprop="comment"]:not([data-nocomment])')];
+
+  // Unhide the latest comment
+  comments[sort_desc ? 0 : comments.length - 1].removeAttribute('aria-hidden');
 
   // Show an expander if there are read comments
   if (read_entries_num > 1) {
@@ -358,6 +364,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
     $expander.addEventListener('click', event => {
+      [for ($entry of $timeline.querySelectorAll('[itemprop="comment"]')) $entry.removeAttribute('aria-hidden')];
       $timeline.removeAttribute('data-hide-read-comments');
       $timeline.focus();
       $expander.remove();

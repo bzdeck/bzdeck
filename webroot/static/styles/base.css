@@ -1794,8 +1794,6 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: 1.2rem;
 }
 
-:root[data-timeline-sort-order="ascending"] .bug-timeline[data-hide-read-comments] [itemprop="comment"][data-unread="false"]:not(:last-of-type),
-:root[data-timeline-sort-order="descending"] .bug-timeline[data-hide-read-comments] [itemprop="comment"][data-unread="false"]:not(:first-of-type),
 :root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"][data-nocomment] {
   display: none;
 }
