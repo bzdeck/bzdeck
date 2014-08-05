@@ -122,7 +122,7 @@ BzDeck.Sidebar = function Sidebar () {
       let unread = new Set();
 
       for (let [key, bugs] of subscriptions) {
-        for (let bug of bugs) if (event.detail.ids.has(bug.id)) {
+        for (let bug of bugs) if (bug._unread) {
           unread.add(bug.id);
         }
       }

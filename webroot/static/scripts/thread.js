@@ -105,8 +105,11 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
   });
 
   window.addEventListener('UI:toggle_unread', event => {
-    for (let $row of $grid.querySelectorAll('[role="row"]')) {
-      $row.setAttribute('data-unread', event.detail.ids.has(Number.parseInt($row.dataset.id)));
+    let bug = event.detail.bug,
+        $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
+
+    if ($row) {
+      $row.setAttribute('data-unread', !!bug._unread);
     }
   });
 };

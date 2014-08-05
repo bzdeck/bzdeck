@@ -270,18 +270,41 @@ BzDeck.core.toggle_unread = function (id, value) {
     if (bug && bug._unread !== value) {
       bug._unread = value;
       BzDeck.model.save_bug(bug);
-      this.toggle_unread_ui();
+      FlareTail.util.event.trigger(window, 'UI:toggle_unread', { 'detail': { bug }});
     }
   });
 };
 
 BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs().then(bugs => {
-    FlareTail.util.event.trigger(window, 'UI:toggle_unread', { 'detail': {
-      loaded,
-      'bugs': new Set([for (bug of bugs) if (bug._unread) bug]),
-      'ids': new Set([for (bug of bugs) if (bug._unread) bug.id])
-    }});
+    let bugs = [for (bug of bugs) if (bug._unread) bug];
+
+    if (document.documentElement.getAttribute('data-current-tab') === 'home') {
+      let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
+
+      BzDeck.homepage.change_window_title(
+        document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
+      );
+    }
+
+    if (!loaded) {
+      return;
+    }
+
+    if (bugs.length === 0) {
+      BzDeck.core.show_status('No new bugs to download'); // l10n
+
+      return;
+    }
+
+    bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
+
+    let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
+                                 : 'You have 1 unread bug', // l10n
+        extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
+
+    BzDeck.core.show_status(status);
+    BzDeck.core.show_notification(status, extract);
   });
 };
 
@@ -652,32 +675,5 @@ window.addEventListener('popstate', event => {
 });
 
 window.addEventListener('UI:toggle_unread', event => {
-  let bugs = [...event.detail.bugs];
-
-  if (document.documentElement.getAttribute('data-current-tab') === 'home') {
-    let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
-
-    BzDeck.homepage.change_window_title(
-      document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
-    );
-  }
-
-  if (!event.detail.loaded) {
-    return;
-  }
-
-  if (bugs.length === 0) {
-    BzDeck.core.show_status('No new bugs to download'); // l10n
-
-    return;
-  }
-
-  bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-
-  let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
-                               : 'You have 1 unread bug', // l10n
-      extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
-
-  BzDeck.core.show_status(status);
-  BzDeck.core.show_notification(status, extract);
+  BzDeck.core.toggle_unread_ui();
 });
