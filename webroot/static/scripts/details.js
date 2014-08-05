@@ -149,8 +149,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 };
 
 BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
-  return 'Bug %d\n%s'.replace('%d', bug.id)
-                     .replace('%s', bug.summary || 'Loading...'); // l10n
+  return `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
 };
 
 BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
@@ -219,7 +218,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
 
 BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
-    BzDeck.core.show_status('You have to go online to load a bug.'); // l10n
+    BzDeck.core.show_status('You have to go online to load the bug.'); // l10n
 
     return;
   }

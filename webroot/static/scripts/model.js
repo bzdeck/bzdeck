@@ -154,7 +154,7 @@ BzDeck.model.open_global_database = function () {
 
   return new Promise((resolve, reject) => {
     req.addEventListener('success', event => resolve(event.target.result));
-    req.addEventListener('error', event => reject(new Error('Cannot open the database.'))); // l10n
+    req.addEventListener('error', event => reject(new Error('Failed to open the database.'))); // l10n
   });
 };
 
@@ -206,7 +206,7 @@ BzDeck.model.open_account_database = function () {
 
   return new Promise((resolve, reject) => {
     req.addEventListener('success', event => resolve(event.target.result));
-    req.addEventListener('error', event => reject(new Error('Cannot open the database.'))); // l10n
+    req.addEventListener('error', event => reject(new Error('Failed to open the database.'))); // l10n
   });
 };
 

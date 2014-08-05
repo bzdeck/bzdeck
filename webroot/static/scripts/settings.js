@@ -146,7 +146,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
-  let $rgroup = this.$tabpanel.querySelector('[data-pref="%s"]'.replace('%s', pref)),
+  let $rgroup = this.$tabpanel.querySelector(`[data-pref="${pref}"]`),
       prefs = BzDeck.model.data.prefs,
       type = $rgroup.dataset.type || 'string',
       value = prefs[pref] !== undefined ? prefs[pref] : default_value;

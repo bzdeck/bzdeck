@@ -203,7 +203,7 @@ BzDeck.bootstrap.show_notification = function () {
       return;
     }
 
-    let title = len > 1 ? 'You have %d requests'.replace('%d', len)
+    let title = len > 1 ? `You have ${len} requests`
                         : 'You have 1 request'; // l10n
     let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
                        : 'Select the Requests folder to browse the bug.'; // l10n
@@ -299,7 +299,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
 
     bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
 
-    let status = bugs.length > 1 ? 'You have %d unread bugs'.replace('%d', bugs.length)
+    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs`
                                  : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
 

@@ -359,7 +359,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
 
     $expander.textContent = read_entries_num === 2
                           ? '1 older comment'
-                          : '%d older comments'.replace('%d', read_entries_num - 1);
+                          : `${read_entries_num - 1} older comments`;
     $expander.className = 'read-comments-expander';
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
@@ -839,10 +839,12 @@ BzDeck.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
 
   if (excess_files.size) {
     message = excess_files.size === 1
-            ? `This file cannot be attached because it exceeds the maximum attachment size (${max} bytes) specified \
-               by the current Bugzilla instance. Upload the file to an online storage and post the link instead.`
-            : `These files cannot be attached because they exceed the maximum attachment size (${max} bytes) specified \
-               by the current Bugzilla instance. Upload the files to an online storage and post the links instead.`;
+            ? `This file cannot be attached because it may exceed the maximum attachment size \
+               (${max} bytes) specified by the current Bugzilla instance. You can upload the file \
+               to an online storage and post the link instead.`
+            : `These files cannot be attached because they may exceed the maximum attachment size \
+               (${max} bytes) specified by the current Bugzilla instance. You can upload the files \
+               to an online storage and post the links instead.`; // l10n
     message += '<br><br>';
     message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
 
