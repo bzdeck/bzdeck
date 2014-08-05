@@ -522,7 +522,7 @@ window.addEventListener('click', event => {
     return true;
   }
 
-  if ($target.mozMatchesSelector(':link')) {
+  if ($target.matches(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.detailspage = new BzDeck.DetailsPage(
@@ -556,7 +556,7 @@ window.addEventListener('click', event => {
 window.addEventListener('keydown', event => {
   let $target = event.target;
 
-  if ($target.mozMatchesSelector('input, [role="textbox"]')) {
+  if ($target.matches('input, [role="textbox"]')) {
     if (event.metaKey || event.ctrlKey) {
       switch (event.keyCode) {
         case event.DOM_VK_A: // Select

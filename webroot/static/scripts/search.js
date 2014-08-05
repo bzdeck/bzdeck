@@ -293,7 +293,7 @@ BzDeck.SearchPage.prototype.show_preview = function (oldval, newval) {
     }
 
     // Show the preview pane
-    if ($pane.mozMatchesSelector('[aria-hidden="true"]')) {
+    if ($pane.matches('[aria-hidden="true"]')) {
       this.hide_status();
       this.view.panes['basic-search'].setAttribute('aria-hidden', 'true');
       $pane.setAttribute('aria-hidden', 'false');

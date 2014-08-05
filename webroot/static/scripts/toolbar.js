@@ -232,7 +232,7 @@ BzDeck.Toolbar = function Toolbar () {
     event.stopPropagation();
 
     if (mobile) {
-      if (!$banner.classList.contains('search')) {
+      if (!$banner.matches('.search')) {
         $banner.classList.add('search');
         // Somehow moving focus doesn't work, so use the async function here
         FlareTail.util.event.async(() => $search_box.focus());
@@ -254,7 +254,7 @@ BzDeck.Toolbar = function Toolbar () {
       cleanup();
     }
 
-    if ($target.mozMatchesSelector('#quicksearch-dropdown-more')) {
+    if ($target.matches('#quicksearch-dropdown-more')) {
       exec_search();
     }
   });

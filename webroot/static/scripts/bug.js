@@ -18,7 +18,7 @@ BzDeck.Bug = function Bug ($bug) {
   for (let $area of this.$bug.querySelectorAll('[role="region"]')) {
     let scrollbar = new FlareTail.widget.ScrollBar($area);
 
-    if (scrollbar && $area.classList.contains('bug-timeline')) {
+    if (scrollbar && $area.matches('.bug-timeline')) {
       scrollbar.onkeydown_extend = BzDeck.Bug.Timeline.handle_keydown.bind(scrollbar);
     }
 
@@ -337,7 +337,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     // If the fill_bug_details function is called after the bug details are fetched,
     // the _last_viewed annotation is already true, so check the delayed argument here
     if (!delayed && bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
-      if (!$entry.mozMatchesSelector('[data-changes="cc"][data-nocomment]')) {
+      if (!$entry.matches('[data-changes="cc"][data-nocomment]')) {
         read_entries_num++;
       }
 

@@ -62,7 +62,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
   this.grid.bind('dblclick', event => {
     let $target = event.originalTarget;
 
-    if ($target.mozMatchesSelector('[role="row"]')) {
+    if ($target.matches('[role="row"]')) {
       // Open Bug in New Tab
       BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt($target.dataset.id), this.bugs);
     }

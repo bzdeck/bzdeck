@@ -126,7 +126,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 
   // Hide tabs when scrolled down on mobile
   for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] div')) {
-    if (!mobile || !phone && $tabpanel_content.classList.contains('bug-info')) {
+    if (!mobile || !phone && $tabpanel_content.matches('.bug-info')) {
       continue;
     }
 
