@@ -326,7 +326,7 @@ BzDeck.model.fetch_subscriptions = function () {
       // Append starred bugs to the query
       params.append('f9', 'bug_id');
       params.append('o9', 'anywords');
-      params.append('v9', [for (_bug of cached_bugs) if (!!_bug._starred_comments && !!_bug._starred_comments.size) _bug.id].join());
+      params.append('v9', [for (_bug of cached_bugs) if (BzDeck.model.bug_is_starred(_bug)) _bug.id].join());
 
       this.request('GET', 'bug', params).then(result => {
         last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
@@ -519,6 +519,10 @@ BzDeck.model.save_bugs = function (bugs) {
       store.put(bug);
     }
   });
+};
+
+BzDeck.model.bug_is_starred = function (bug) {
+  return !!bug._starred_comments && !!bug._starred_comments.size;
 };
 
 BzDeck.model.get_subscription_by_id = function (id) {

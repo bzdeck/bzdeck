@@ -205,7 +205,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs().then(bugs => {
-      update_list([for (bug of bugs) if (!!bug._starred_comments && !!bug._starred_comments.size) bug]);
+      update_list([for (bug of bugs) if (BzDeck.model.bug_is_starred(bug)) bug]);
     });
   }
 

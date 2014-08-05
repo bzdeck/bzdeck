@@ -81,7 +81,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
 
   // Star on the header
   if ($button) {
-    $button.setAttribute('aria-pressed', !!this.bug._starred_comments && !!this.bug._starred_comments.size);
+    $button.setAttribute('aria-pressed', BzDeck.model.bug_is_starred(this.bug));
     new FlareTail.widget.Button($button).bind('Pressed', event => BzDeck.core.toggle_star(this.bug.id, event.detail.pressed));
   }
 
@@ -420,7 +420,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       }
 
       BzDeck.model.save_bug(bug);
-      BzDeck.core.toggle_star_ui(bug);
+      FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
 
       event.stopPropagation();
     });
@@ -607,7 +607,7 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
       }
 
       if (key === event.DOM_VK_S) {
-        BzDeck.core.toggle_star(bug_id, !(!!bug._starred_comments && !!bug._starred_comments.size));
+        BzDeck.core.toggle_star(bug_id, !BzDeck.model.bug_is_starred(bug));
       }
     });
 

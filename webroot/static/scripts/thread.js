@@ -145,7 +145,7 @@ BzDeck.Thread.prototype.update = function (bugs) {
       }
 
       if (field === '_starred') {
-        value = !!bug._starred_comments && !!bug._starred_comments.size;
+        value = BzDeck.model.bug_is_starred(bug);
       }
 
       if (field === '_unread') {

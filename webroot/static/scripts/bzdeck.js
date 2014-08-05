@@ -259,13 +259,9 @@ BzDeck.core.toggle_star = function (id, starred) {
       }
 
       BzDeck.model.save_bug(bug);
-      this.toggle_star_ui(bug);
+      FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
     }
   });
-};
-
-BzDeck.core.toggle_star_ui = function (bug) {
-  FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
 };
 
 BzDeck.core.toggle_unread = function (id, value) {
