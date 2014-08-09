@@ -84,7 +84,7 @@ BzDeck.model.request = function (method, path, params, data = null, listeners = 
   params = params || new URLSearchParams();
 
   if (options.auth) {
-    params.append('token', `${account.id} - ${account.token}`);
+    params.append('token', `${account.id}-${account.token}`);
   }
 
   url.pathname += path;
