@@ -94,7 +94,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     }
   }, true); // use capture
 
-  window.addEventListener('UI:toggle_star', event => {
+  window.addEventListener('Bug:StarToggled', event => {
     let bug = event.detail.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
@@ -104,7 +104,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     }
   });
 
-  window.addEventListener('UI:toggle_unread', event => {
+  window.addEventListener('Bug:UnreadToggled', event => {
     let bug = event.detail.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 

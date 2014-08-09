@@ -259,7 +259,7 @@ BzDeck.core.toggle_star = function (id, starred) {
       }
 
       BzDeck.model.save_bug(bug);
-      FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
+      FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { bug }});
     }
   });
 };
@@ -270,7 +270,7 @@ BzDeck.core.toggle_unread = function (id, value) {
     if (bug && bug._unread !== value) {
       bug._unread = value;
       BzDeck.model.save_bug(bug);
-      FlareTail.util.event.trigger(window, 'UI:toggle_unread', { 'detail': { bug }});
+      FlareTail.util.event.trigger(window, 'Bug:UnreadToggled', { 'detail': { bug }});
     }
   });
 };
@@ -674,6 +674,6 @@ window.addEventListener('popstate', event => {
   folders.selected = document.querySelector('#sidebar-folders--inbox');
 });
 
-window.addEventListener('UI:toggle_unread', event => {
+window.addEventListener('Bug:UnreadToggled', event => {
   BzDeck.core.toggle_unread_ui();
 });

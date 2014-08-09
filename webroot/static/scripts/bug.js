@@ -25,7 +25,7 @@ BzDeck.Bug = function Bug ($bug) {
     $area.tabIndex = 0;
   }
 
-  window.addEventListener('UI:toggle_star', event => {
+  window.addEventListener('Bug:StarToggled', event => {
     let _bug = event.detail.bug,
         _starred = _bug._starred_comments;
 
@@ -40,7 +40,7 @@ BzDeck.Bug = function Bug ($bug) {
     }
   });
 
-  window.addEventListener('bug:updated', event => {
+  window.addEventListener('Bug:Updated', event => {
     if (event.detail.bug.id === this.bug.id) {
       this.update(event.detail.bug, event.detail.changes);
     }
@@ -427,7 +427,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       }
 
       BzDeck.model.save_bug(bug);
-      FlareTail.util.event.trigger(window, 'UI:toggle_star', { 'detail': { bug }});
+      FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { bug }});
 
       event.stopPropagation();
     });
@@ -1129,7 +1129,7 @@ BzDeck.bugzfeed.get_changes = function (message) {
 
     this.save_changes(bug, changes);
 
-    FlareTail.util.event.trigger(window, 'bug:updated', { 'detail': { bug, changes }});
+    FlareTail.util.event.trigger(window, 'Bug:Updated', { 'detail': { bug, changes }});
   });
 };
 

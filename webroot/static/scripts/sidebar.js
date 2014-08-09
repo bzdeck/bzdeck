@@ -116,7 +116,7 @@ BzDeck.Sidebar = function Sidebar () {
     }
   });
 
-  window.addEventListener('UI:toggle_unread', event => {
+  window.addEventListener('Bug:UnreadToggled', event => {
     // Update the sidebar Inbox folder
     BzDeck.model.get_all_subscriptions().then(subscriptions => {
       let unread = new Set();
