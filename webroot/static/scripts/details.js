@@ -9,11 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
   this.data = { id, bug_list };
-
-  this.view = {
-    '$tab': null,
-    '$tabpanel': null
-  };
+  this.view = { '$tab': null, '$tabpanel': null };
 
   if (bug_list.length) {
     this.open([for (bug of bug_list) if (bug.id === id) bug][0], bug_list);
@@ -79,15 +75,13 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let FTw = FlareTail.widget,
-      $tabpanel = document.querySelector('template#tabpanel-details').content
-                          .cloneNode(true).firstElementChild;
+      $tabpanel = document.querySelector('template#tabpanel-details').content.cloneNode(true).firstElementChild;
 
   // Assign unique IDs
   $tabpanel.id = $tabpanel.id.replace(/TID/, bug.id);
 
   if ($tabpanel.hasAttribute('aria-labelledby')) {
-    $tabpanel.setAttribute('aria-labelledby',
-                           $tabpanel.getAttribute('aria-labelledby').replace(/TID/, bug.id));
+    $tabpanel.setAttribute('aria-labelledby', $tabpanel.getAttribute('aria-labelledby').replace(/TID/, bug.id));
   }
 
   for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
@@ -257,9 +251,9 @@ BzDeck.DetailsPage.prototype.navigate = function (id) {
   BzDeck.DetailsPage.open(id, this.data.bug_list);
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Attachments
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.DetailsPage.attachments = {};
 
@@ -305,9 +299,9 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
   $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-hidden', 'false');
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * History
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.DetailsPage.history = {};
 
@@ -362,9 +356,9 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
   $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-hidden', 'false');
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Swipe navigation
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.DetailsPage.swipe = {};
 

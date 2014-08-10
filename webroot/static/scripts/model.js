@@ -7,9 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Config
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.config = {
   'servers': [
@@ -66,9 +66,9 @@ BzDeck.config = {
   }
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Model
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.model = {
  'databases': {},
@@ -160,11 +160,8 @@ BzDeck.model.open_global_database = function () {
 
 BzDeck.model.get_all_accounts = function () {
   return new Promise((resolve, reject) => {
-    this.get_store('accounts').get_all().then(accounts => {
-      resolve(accounts);
-    }).catch(error => {
-      reject(new Error('Failed to load accounts.')); // l10n
-    });
+    this.get_store('accounts').get_all().then(accounts => resolve(accounts))
+                                        .catch(error => reject(new Error('Failed to load accounts.'))); // l10n
   });  
 };
 
@@ -180,11 +177,8 @@ BzDeck.model.get_active_account = function () {
 
 BzDeck.model.save_account = function (account) {
   return new Promise((resolve, reject) => {
-    this.get_store('accounts').save(account).then(result => {
-      resolve(result);
-    }).catch(error => {
-      reject(new Error('Failed to save the account.')); // l10n
-    });
+    this.get_store('accounts').save(account).then(result => resolve(result))
+                                            .catch(error => reject(new Error('Failed to save the account.'))); // l10n
   });
 };
 
@@ -221,7 +215,7 @@ BzDeck.model.get_server = function (name) {
 BzDeck.model.load_prefs = function () {
   let prefs = {};
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     this.get_store('prefs').get_all().then(result => {
       for (let pref of result) {
         prefs[pref.name] = pref.value;
@@ -371,9 +365,7 @@ BzDeck.model.fetch_subscriptions = function () {
         }
 
         firstrun ? this.save_bugs(result.bugs).then(bugs => resolve()) : resolve();
-      }).catch(event => {
-        reject(new Error('Failed to load data.')); // l10n
-      });
+      }).catch(event => reject(new Error('Failed to load data.'))); // l10n
     });
   });
 };
@@ -383,9 +375,7 @@ BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details
     this.request('GET', `bug/${bug.id}${method ? '/' + method : ''}`,
                  params ? new URLSearchParams(params) : null).then(result => {
       resolve(result.bugs);
-    }).catch(event => {
-      reject(new Error());
-    });
+    }).catch(event => reject(new Error()));
   });
 
   let fetchers = [include_metadata ? fetch() : Promise.resolve()];
@@ -405,9 +395,7 @@ BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details
     }
 
     return bug;
-  }).catch(error => {
-    return bug;
-  });
+  }).catch(error => bug);
 };
 
 BzDeck.model.fetch_bugs_by_ids = function (ids) {
@@ -416,11 +404,8 @@ BzDeck.model.fetch_bugs_by_ids = function (ids) {
   params.append('bug_id', ids.join());
 
   return new Promise((resolve, reject) => {
-    this.request('GET', 'bug', params).then(result => {
-      resolve(result.bugs);
-    }).catch(event => {
-      reject(new Error());
-    });
+    this.request('GET', 'bug', params).then(result => resolve(result.bugs))
+                                      .catch(event => reject(new Error()));
   });
 };
 
@@ -428,7 +413,7 @@ BzDeck.model.get_bug_by_id = function (id, record_time = true) {
   let cache = this.data.bugs,
       store = this.get_store('bugs');
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (cache) {
       let bug = cache.get(id);
 
@@ -465,7 +450,7 @@ BzDeck.model.get_bugs_by_ids = function (ids) {
   let cache = this.data.bugs,
       ids = [...ids]; // Accept both an Array and a Set as the first argument
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (cache) {
       resolve([for (c of [...cache]) if (ids.indexOf(c[0]) > -1) c[1]]);
 
@@ -481,7 +466,7 @@ BzDeck.model.get_bugs_by_ids = function (ids) {
 BzDeck.model.get_all_bugs = function () {
   let cache = this.data.bugs;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (cache) {
       resolve([for (c of [...cache]) c[1]]); // Convert Map to Array
 
@@ -499,7 +484,7 @@ BzDeck.model.get_all_bugs = function () {
 };
 
 BzDeck.model.save_bug = function (bug) {
-  return new Promise((resolve, reject) => this.save_bugs([bug]).then(resolve(bug)));
+  return new Promise(resolve => this.save_bugs([bug]).then(resolve(bug)));
 };
 
 BzDeck.model.save_bugs = function (bugs) {
@@ -507,7 +492,7 @@ BzDeck.model.save_bugs = function (bugs) {
       transaction = this.databases.account.transaction('bugs', 'readwrite'),
       store = transaction.objectStore('bugs');
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     transaction.addEventListener('complete', event => resolve(bugs));
 
     if (!cache) {
@@ -526,7 +511,7 @@ BzDeck.model.bug_is_starred = function (bug) {
 };
 
 BzDeck.model.get_subscription_by_id = function (id) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     this.get_all_subscriptions().then(subscriptions => resolve(subscriptions.get(id)));
   });
 };
@@ -534,7 +519,7 @@ BzDeck.model.get_subscription_by_id = function (id) {
 BzDeck.model.get_all_subscriptions = function () {
   let email = this.data.account.name;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     this.get_all_bugs().then(bugs => {
       resolve(new Map([
         ['cc', [for (bug of bugs) if (bug.cc.indexOf(email) > -1) bug]],

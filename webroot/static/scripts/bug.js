@@ -7,9 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Bug View
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.Bug = function Bug ($bug) {
   this.$bug = $bug;
@@ -82,7 +82,8 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
   // Star on the header
   if ($button) {
     $button.setAttribute('aria-pressed', BzDeck.model.bug_is_starred(this.bug));
-    new FlareTail.widget.Button($button).bind('Pressed', event => BzDeck.core.toggle_star(this.bug.id, event.detail.pressed));
+    (new FlareTail.widget.Button($button)).bind('Pressed', event =>
+      BzDeck.core.toggle_star(this.bug.id, event.detail.pressed));
   }
 
   if (!$timeline) {
@@ -94,8 +95,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
 
   // Empty timeline while keeping the scrollbar
   if (!partial) {
-    for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], [role="form"], \
-                                                     .read-comments-expander')) {
+    for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], [role="form"], .read-comments-expander')) {
       $comment.remove();
     }
   }
@@ -297,9 +297,9 @@ BzDeck.Bug.find_person = function (bug, email) {
   return { email, 'id': 0, 'name': email, 'real_name': '' };
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Timeline
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   let entries = new Map([for (c of bug.comments.entries())
@@ -357,9 +357,8 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   if (read_entries_num > 1) {
     let $expander = document.createElement('div');
 
-    $expander.textContent = read_entries_num === 2
-                          ? '1 older comment'
-                          : `${read_entries_num - 1} older comments`;
+    $expander.textContent = read_entries_num === 2 ? '1 older comment'
+                                                   : `${read_entries_num - 1} older comments`;
     $expander.className = 'read-comments-expander';
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
@@ -376,9 +375,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   }
 
   // Add a comment form
-  $parent.insertBefore(comment_form.$form,
-                       sort_desc ? $parent.querySelector('[itemprop="comment"]') : null),
-
+  $parent.insertBefore(comment_form.$form, sort_desc ? $parent.querySelector('[itemprop="comment"]') : null);
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 };
@@ -390,8 +387,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       comment = data.get('comment'),
       attachment = data.get('attachment'),
       history = data.get('history'),
-      $entry = document.querySelector('template#timeline-comment').content
-                       .cloneNode(true).firstElementChild,
+      $entry = document.querySelector('template#timeline-comment').content.cloneNode(true).firstElementChild,
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
       $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
@@ -459,8 +455,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   if (attachment) {
     // TODO: load the attachment data via API
     let url = `${BzDeck.model.data.server.url}/attachment.cgi?id=${attachment.id}`,
-        $attachment = document.querySelector('#timeline-attachment').content
-                              .cloneNode(true).firstElementChild,
+        $attachment = document.querySelector('#timeline-attachment').content.cloneNode(true).firstElementChild,
         $outer = $attachment.querySelector('div'),
         $media,
         load_event = 'load';
@@ -766,8 +761,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
 BzDeck.Bug.Timeline.CommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
-  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) ||
-                                             !this.has_token());
+  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
   this.$preview_tab.setAttribute('aria-disabled', !this.has_text());
 
   if (this.has_token() && this.$status.textContent) {
@@ -786,8 +780,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.attach_text = function (str) {
     this.add_attachment({
       'data': reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
       'summary': is_ghpr ? `GitHub Pull Request, ${is_ghpr[1]}#${is_ghpr[2]}`
-                         : is_patch ? 'Patch'
-                                    : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
+                         : is_patch ? 'Patch' : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
       'file_name': URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
       is_patch,
       'size': blob.size, // Not required for the API but used in find_attachment()
@@ -899,8 +892,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.remove_attachment = function (attachme
 
   this.$attachments_tbody.rows[index].remove();
   this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments());
-  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) ||
-                                             !this.has_token());
+  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
   this.update_parallel_ui();
 
   if (!this.has_attachments()) {
@@ -1015,8 +1007,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
     }
 
     // Upload files in series
-    return this.attachments.reduce((sequence, att) => sequence.then(() => post(att)),
-                                   Promise.resolve());
+    return this.attachments.reduce((sequence, att) => sequence.then(() => post(att)), Promise.resolve());
   }, error => {
     // Failed to post
     this.$submit.setAttribute('aria-disabled', 'false');
@@ -1037,10 +1028,10 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
   });
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Bugzilla Push Notifications support
  * https://wiki.mozilla.org/BMO/ChangeNotificationSystem
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.bugzfeed = {
   'subscription': new Set()

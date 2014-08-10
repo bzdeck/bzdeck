@@ -106,13 +106,11 @@ BzDeck.Toolbar = function Toolbar () {
 
       // A workaround for Bug 779324
       $menuitem.addEventListener('mousedown', event => {
-        document.mozFullScreenElement ? document.mozCancelFullScreen()
-                                      : document.body.mozRequestFullScreen();
+        document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
       });
       $menuitem.addEventListener('keydown', event => {
         if (event.keyCode === event.DOM_VK_RETURN) {
-          document.mozFullScreenElement ? document.mozCancelFullScreen()
-                                        : document.body.mozRequestFullScreen();
+          document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
         }
       });
     }
@@ -143,16 +141,16 @@ BzDeck.Toolbar = function Toolbar () {
   $root.setAttribute('data-current-tab', 'home');
 
   // Account label & avatar
-  let account = BzDeck.model.data.account,
-      account_label = `${account.real_name ? `<strong>${account.real_name}</strong>` : '&nbsp;'}<br>${account.name}`,
-      $account_label = document.querySelector('#main-menu--app--account label'),
-      $account_img = new Image();
+  {
+    let account = BzDeck.model.data.account,
+        label = `${account.real_name ? `<strong>${account.real_name}</strong>` : '&nbsp;'}<br>${account.name}`,
+        $label = document.querySelector('#main-menu--app--account label'),
+        $img = new Image();
 
-  $account_label.innerHTML = account_label;
-  $account_img.addEventListener('load', event => {
-    $account_label.style.backgroundImage = `url(${event.target.src})`;
-  });
-  $account_img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
+    $label.innerHTML = label;
+    $img.addEventListener('load', event => $label.style.backgroundImage = `url(${event.target.src})`);
+    $img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
+  }
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
     document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
@@ -218,9 +216,7 @@ BzDeck.Toolbar = function Toolbar () {
     }
   });
 
-  $search_box.addEventListener('mousedown', event => {
-    event.stopPropagation();
-  });
+  $search_box.addEventListener('mousedown', event => event.stopPropagation());
 
   $search_button.addEventListener('keydown', event => {
     if (event.keyCode === event.DOM_VK_RETURN || event.keyCode === event.DOM_VK_SPACE) {
@@ -260,9 +256,7 @@ BzDeck.Toolbar = function Toolbar () {
   });
 
   // Suppress context menu
-  $search_box.addEventListener('contextmenu', event => {
-    return FTu.event.ignore(event);
-  }, true); // use capture
+  $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
 };
 
 BzDeck.Toolbar.prototype.quicksearch = function (event) {
@@ -275,24 +269,18 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
               BzDeck.model.data.server.config.field.status.open.indexOf(bug.status) > -1;
     });
 
-    results.reverse();
-
     let data = [{
       'id': 'quicksearch-dropdown-header',
       'label': results.length ? 'Local Search' : 'Local Search: No Results', // l10n
       'disabled': true
     }];
 
-    for (let [i, bug] of results.entries()) {
+    for (let bug of results.reverse().slice(0, 20)) {
       data.push({
         'id': `quicksearch-dropdown-${bug.id}`,
         'label': `${bug.id} - ${bug.summary}`,
         'data': { 'id': bug.id }
       });
-
-      if (i === 20) {
-        break;
-      }
     }
 
     data.push({ 'type': 'separator' });

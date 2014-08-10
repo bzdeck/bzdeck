@@ -7,9 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Bootstrap
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.bootstrap = {};
 
@@ -39,7 +39,7 @@ BzDeck.bootstrap.start = function () {
   }).catch(() => {
     status('');
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       this.show_login_form().then(() => {
         // TODO: Users will be able to choose an instance on the sign-in form
         return BzDeck.model.get_server('mozilla');
@@ -238,9 +238,9 @@ BzDeck.bootstrap.finish = function () {
   this.processing = false;
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Core
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.core = {};
 BzDeck.core.timers = {};
@@ -300,8 +300,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
 
     bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
 
-    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs`
-                                 : 'You have 1 unread bug', // l10n
+    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
 
     BzDeck.core.show_status(status);
@@ -329,7 +328,7 @@ BzDeck.core.show_notification = function (title, body) {
   let ua = navigator.userAgent,
       fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/);
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     FlareTail.util.app.show_notification(title, {
       body,
       // Firefox OS requires a complete URL for the icon
@@ -446,9 +445,9 @@ BzDeck.core.get_name = function (person) {
   return person.real_name || person.email;
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Session
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.session = {};
 
@@ -491,9 +490,9 @@ BzDeck.session.logout = function () {
   delete BzDeck.model.data.account;
 };
 
-/* ----------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------------
  * Events
- * ---------------------------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------------------------------------------------------ */
 
 window.addEventListener('DOMContentLoaded', event => {
   BzDeck.bootstrap.processing = true;
@@ -503,17 +502,11 @@ window.addEventListener('DOMContentLoaded', event => {
   }
 });
 
-window.addEventListener('contextmenu', event => {
-  event.preventDefault();
-});
-
+window.addEventListener('contextmenu', event => event.preventDefault());
 window.addEventListener('dragenter', event => event.preventDefault());
 window.addEventListener('dragover', event => event.preventDefault());
 window.addEventListener('drop', event => event.preventDefault());
-
-window.addEventListener('wheel', event => {
-  event.preventDefault();
-});
+window.addEventListener('wheel', event => event.preventDefault());
 
 window.addEventListener('click', event => {
   let $target = event.target;

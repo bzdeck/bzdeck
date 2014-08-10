@@ -7,10 +7,6 @@
 
 let BzDeck = BzDeck || {};
 
-/* ----------------------------------------------------------------------------------------------
- * Thread View
- * ---------------------------------------------------------------------------------------------- */
-
 BzDeck.Thread = function Thread (consumer, name, $grid, options) {
   let prefs = BzDeck.model.data.prefs,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
@@ -31,18 +27,14 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     })
   }, options);
 
-  this.grid.bind('Sorted', event => {
-    prefs[`${name}.list.sort_conditions`] = event.detail.conditions;
-  });
+  this.grid.bind('Sorted', event => prefs[`${name}.list.sort_conditions`] = event.detail.conditions);
 
   this.grid.bind('ColumnModified', event => {
-    prefs[`${name}.list.columns`] = event.detail.columns.map(col => {
-      return {
-        'id': col.id,
-        'type': col.type || 'string',
-        'hidden': col.hidden || false
-      };
-    });
+    prefs[`${name}.list.columns`] = event.detail.columns.map(col => ({
+      'id': col.id,
+      'type': col.type || 'string',
+      'hidden': col.hidden || false
+    }));
   });
 
   this.grid.bind('Selected', event => {

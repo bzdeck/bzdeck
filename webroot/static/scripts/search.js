@@ -10,6 +10,7 @@ let BzDeck = BzDeck || {};
 BzDeck.SearchPage = function SearchPage () {
   let tablist = BzDeck.toolbar.tablist,
       $content = document.querySelector('template#tabpanel-search').content.cloneNode(true),
+      $tabpanel = $content.querySelector('[role="tabpanel"]'),
       id_suffix = this.id = Date.now();
 
   // Assign unique IDs
@@ -18,7 +19,7 @@ BzDeck.SearchPage = function SearchPage () {
   }
 
   this.view = {
-    '$tabpanel': $content.querySelector('[role="tabpanel"]'),
+    $tabpanel,
     '$status': $content.querySelector('[role="status"]'),
     'buttons': {},
     'panes': {}
@@ -64,8 +65,6 @@ BzDeck.SearchPage = function SearchPage () {
       obj[prop] = newval;
     }
   });
-
-  let $tabpanel = this.view.$tabpanel;
 
   tablist.view.selected = tablist.view.$focused = tablist.add_tab(
     `search-${id_suffix}`,
@@ -117,8 +116,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
-  let $pane = this.view.panes['basic-search']
-            = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
+  let $pane = this.view.panes['basic-search'] = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
       config = BzDeck.model.data.server.config;
 
   // Custom scrollbar
@@ -132,19 +130,15 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-  let classifications = Object.keys(config.classification).sort().map((value, index) => {
-    return {
-      'id': `${$classification_list.id}item-${index}`,
-      'label': value
-    };
-  });
+  let classifications = Object.keys(config.classification).sort().map((value, index) => ({
+    'id': `${$classification_list.id}item-${index}`,
+    'label': value
+  }));
 
-  let products = Object.keys(config.product).sort().map((value, index) => {
-    return {
-      'id': `${$product_list.id}item-${index}`,
-      'label': value
-    };
-  });
+  let products = Object.keys(config.product).sort().map((value, index) => ({
+    'id': `${$product_list.id}item-${index}`,
+    'label': value
+  }));
 
   let components = [];
 
@@ -152,27 +146,21 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     components.push(...[for (c of Object.keys(cs)) if (components.indexOf(c) === -1) c]);
   }
 
-  components = components.sort().map((value, index) => {
-    return {
-      'id': `${$component_list.id}item-${index}`,
-      'label': value
-    };
-  });
+  components = components.sort().map((value, index) => ({
+    'id': `${$component_list.id}item-${index}`,
+    'label': value
+  }));
 
-  let statuses = config.field.status.values.map((value, index) => {
-    return {
-      'id': `${$status_list.id}item-${index}`,
-      'label': value
-    };
-  });
+  let statuses = config.field.status.values.map((value, index) => ({
+    'id': `${$status_list.id}item-${index}`,
+    'label': value
+  }));
 
-  let resolutions = config.field.resolution.values.map((value, index) => {
-    return {
-      'id': `${$resolution_list.id}item-${index}`,
-      'label': value || '---',
-      'selected': !value // Select '---' to search open bugs
-    };
-  });
+  let resolutions = config.field.resolution.values.map((value, index) => ({
+    'id': `${$resolution_list.id}item-${index}`,
+    'label': value || '---',
+    'selected': !value // Select '---' to search open bugs
+  }));
 
   let ListBox = FlareTail.widget.ListBox,
       classification_list = new ListBox($classification_list, classifications),
@@ -236,8 +224,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
-  let $pane = this.view.panes['result']
-            = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
+  let $pane = this.view.panes['result'] = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = FlareTail.util.device.type.startsWith('mobile'),
       prefs = BzDeck.model.data.prefs;
 
@@ -245,8 +232,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
-                              : prefs['home.list.sort_conditions'] ||
-                                { 'key': 'id', 'order': 'ascending' }
+                              : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
   });
 
   let grid = this.thread.grid;
@@ -269,8 +255,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
-  let $pane = this.view.panes['preview']
-            = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
+  let $pane = this.view.panes['preview'] = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
       $bug = $pane.querySelector('article'),
       $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
 

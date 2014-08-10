@@ -14,8 +14,7 @@ BzDeck.HomePage = function HomePage () {
 
   // A movable splitter between the thread pane and preview pane
   {
-    let splitter = this.preview_splitter
-                 = new FTw.Splitter(document.querySelector('#home-preview-splitter')),
+    let splitter = this.preview_splitter = new FTw.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.',
         pref = prefs[prefix + splitter.data.orientation];
 
@@ -48,8 +47,7 @@ BzDeck.HomePage = function HomePage () {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': vertical ? { 'key': 'last_change_time', 'order': 'descending' }
-                                : prefs['home.list.sort_conditions'] ||
-                                  { 'key': 'id', 'order': 'ascending' }
+                                : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
   });
 
   this.change_layout(prefs['ui.home.layout']);
@@ -68,9 +66,7 @@ BzDeck.HomePage = function HomePage () {
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
       button = this.view.details_button = new FlareTail.widget.Button($button);
 
-  button.bind('Pressed', event => {
-    BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list);
-  });
+  button.bind('Pressed', event => BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list));
 
   this.data = new Proxy({
     'bug_list': [],

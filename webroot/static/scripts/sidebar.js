@@ -15,10 +15,8 @@ BzDeck.Sidebar = function Sidebar () {
       $sidebar = document.querySelector('#sidebar');
 
   if (mobile) {
-    document.querySelector('#sidebar-account')
-            .appendChild(document.querySelector('#main-menu--app--account'));
-    document.querySelector('#sidebar-menu')
-            .appendChild(document.querySelector('#main-menu--app-menu'));
+    document.querySelector('#sidebar-account').appendChild(document.querySelector('#main-menu--app--account'));
+    document.querySelector('#sidebar-menu').appendChild(document.querySelector('#main-menu--app-menu'));
   }
 
   $root.setAttribute('data-sidebar-hidden', phone);
@@ -89,12 +87,9 @@ BzDeck.Sidebar = function Sidebar () {
     }
   ];
 
-  let folders = this.folders
-              = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
+  let folders = this.folders = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
 
-  folders.bind('Selected', event => {
-    this.data.folder_id = event.detail.ids[0];
-  });
+  folders.bind('Selected', event => this.data.folder_id = event.detail.ids[0]);
 
   this.data = new Proxy({
     'folder_id': null,
@@ -151,7 +146,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     }
   };
 
-  let get_subscribed_bugs = () => new Promise((resolve, reject) => {
+  let get_subscribed_bugs = () => new Promise(resolve => {
     BzDeck.model.get_all_subscriptions().then(subscriptions => {
       let ids = [];
 
@@ -187,8 +182,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
       let recent_time = Date.now() - 1000 * 60 * 60 * 24 * 11;
 
       // Recent bugs changed in 10 days + unread bugs
-      update_list([for (bug of bugs)
-                   if (new Date(bug.last_change_time) > recent_time || bug._unread) bug]);
+      update_list([for (bug of bugs) if (new Date(bug.last_change_time) > recent_time || bug._unread) bug]);
     });
   }
 
