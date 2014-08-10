@@ -387,7 +387,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       comment = data.get('comment'),
       attachment = data.get('attachment'),
       history = data.get('history'),
-      $entry = document.querySelector('template#timeline-comment').content.cloneNode(true).firstElementChild,
+      $entry = FlareTail.util.content.get_fragment('timeline-comment').firstElementChild,
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
       $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
@@ -455,7 +455,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   if (attachment) {
     // TODO: load the attachment data via API
     let url = `${BzDeck.model.data.server.url}/attachment.cgi?id=${attachment.id}`,
-        $attachment = document.querySelector('#timeline-attachment').content.cloneNode(true).firstElementChild,
+        $attachment = FlareTail.util.content.get_fragment('timeline-attachment').firstElementChild,
         $outer = $attachment.querySelector('div'),
         $media,
         load_event = 'load';
@@ -645,14 +645,7 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
 };
 
 BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
-  let $fragment = document.querySelector('#timeline-comment-form').content.cloneNode(true);
-
-  // Assign unique IDs first
-  for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
-    for (let $element of $fragment.querySelectorAll(`[${attr}]`)) {
-      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, timeline_id));
-    }
-  }
+  let $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
 
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');

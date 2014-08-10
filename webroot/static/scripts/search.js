@@ -9,18 +9,12 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SearchPage = function SearchPage () {
   let tablist = BzDeck.toolbar.tablist,
-      $content = document.querySelector('template#tabpanel-search').content.cloneNode(true),
-      $tabpanel = $content.querySelector('[role="tabpanel"]'),
-      id_suffix = this.id = Date.now();
-
-  // Assign unique IDs
-  for (let $element of $content.querySelectorAll('[id]')) {
-    $element.id = $element.id.replace(/TID/, id_suffix);
-  }
+      id_suffix = this.id = Date.now(),
+      $tabpanel = FlareTail.util.content.get_fragment('tabpanel-search', id_suffix).firstElementChild;
 
   this.view = {
     $tabpanel,
-    '$status': $content.querySelector('[role="status"]'),
+    '$status': $tabpanel.querySelector('[role="status"]'),
     'buttons': {},
     'panes': {}
   };
@@ -257,7 +251,7 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
 BzDeck.SearchPage.prototype.setup_preview_pane = function () {
   let $pane = this.view.panes['preview'] = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
       $bug = $pane.querySelector('article'),
-      $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
+      $info = FlareTail.util.content.get_fragment('preview-bug-info').firstElementChild;
 
   $bug.appendChild($info).id = `${$bug.id}-info`;
 };

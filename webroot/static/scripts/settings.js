@@ -9,8 +9,8 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
   let tablist = BzDeck.toolbar.tablist,
-      $content = document.querySelector('#tabpanel-settings-template').content.cloneNode(true),
-      $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]');
+      $fragment = FlareTail.util.content.get_fragment('tabpanel-settings-template'),
+      $tabpanel = this.$tabpanel = $fragment.querySelector('[role="tabpanel"]');
 
   tablist.view.selected = tablist.view.$focused = tablist.add_tab(
     'settings',

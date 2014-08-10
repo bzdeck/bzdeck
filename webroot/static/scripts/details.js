@@ -75,20 +75,7 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
 
 BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let FTw = FlareTail.widget,
-      $tabpanel = document.querySelector('template#tabpanel-details').content.cloneNode(true).firstElementChild;
-
-  // Assign unique IDs
-  $tabpanel.id = $tabpanel.id.replace(/TID/, bug.id);
-
-  if ($tabpanel.hasAttribute('aria-labelledby')) {
-    $tabpanel.setAttribute('aria-labelledby', $tabpanel.getAttribute('aria-labelledby').replace(/TID/, bug.id));
-  }
-
-  for (let attr of ['id', 'aria-controls', 'aria-labelledby']) {
-    for (let $element of $tabpanel.querySelectorAll(`[${attr}]`)) {
-      $element.setAttribute(attr, $element.getAttribute(attr).replace(/TID/, bug.id));
-    }
-  }
+      $tabpanel = FlareTail.util.content.get_fragment('tabpanel-details', bug.id).firstElementChild;
 
   this.$$bug = new BzDeck.Bug($tabpanel.querySelector('article'));
   this.$$bug.fill(bug);
@@ -271,8 +258,8 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
   }
 
   for (let att of attachments) {
-    let $attachment = $placeholder.appendChild(document.querySelector('#details-attachment')
-                                                       .content.cloneNode(true).firstElementChild);
+    let $attachment = $placeholder.appendChild(
+      FlareTail.util.content.get_fragment('details-attachment').firstElementChild);
 
     FlareTail.util.content.fill($attachment, {
       'url': `/attachment/${att.id}`,

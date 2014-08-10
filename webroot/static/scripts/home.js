@@ -32,7 +32,7 @@ BzDeck.HomePage = function HomePage () {
   }
 
   let $bug = document.querySelector('#home-preview-pane article'),
-      $info = document.querySelector('#preview-bug-info').content.cloneNode(true).firstElementChild;
+      $info = FlareTail.util.content.get_fragment('preview-bug-info').firstElementChild;
 
   $bug.appendChild($info).id = 'home-preview-bug-info';
 
