@@ -133,7 +133,7 @@ BzDeck.Sidebar = function Sidebar () {
 };
 
 BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
-  let home = BzDeck.homepage;
+  let home = BzDeck.pages.home;
 
   home.data.preview_id = null;
 
@@ -147,7 +147,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     let unread_num = [for (bug of bugs) if (bug._unread) bug].length;
 
     if (unread_num > 0) {
-      BzDeck.homepage.change_window_title(document.title += ` (${unread_num})`);
+      BzDeck.pages.home.change_window_title(document.title += ` (${unread_num})`);
     }
   };
 
@@ -175,7 +175,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
       folder_path = '/home/' + folder_id;
 
   // Change the window title and the tab label
-  BzDeck.homepage.change_window_title(folder_label);
+  BzDeck.pages.home.change_window_title(folder_label);
 
   // Save history
   if (location.pathname !== folder_path) {

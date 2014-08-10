@@ -67,20 +67,23 @@ BzDeck.SearchPage = function SearchPage () {
 
   let $tabpanel = this.view.$tabpanel;
 
-  let $tab = tablist.add_tab(
+  tablist.view.selected = tablist.view.$focused = tablist.add_tab(
     `search-${id_suffix}`,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
     $tabpanel
   );
 
-  tablist.view.selected = tablist.view.$focused = $tab;
   $tabpanel.focus();
 
   this.setup_basic_search_pane();
   this.setup_result_pane();
   this.setup_preview_pane();
   this.setup_toolbar();
+};
+
+BzDeck.SearchPage.open = function () {
+  return BzDeck.pages.search = new BzDeck.SearchPage();
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
@@ -90,7 +93,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
     switch (event.target.dataset.command) {
       case 'show-details': {
-        BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+        BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list);
 
         break;
       }

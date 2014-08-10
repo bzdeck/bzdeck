@@ -145,7 +145,7 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
     $li.setAttribute('data-bug-id', $li.itemValue);
 
     (new FlareTail.widget.Button($li)).bind('Pressed', event =>
-      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(event.target.textContent)));
+      BzDeck.DetailsPage.open(Number.parseInt(event.target.textContent)));
   }
 
   // See Also
@@ -754,8 +754,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
 
   if (!this.has_token()) {
     this.$status.innerHTML = '<strong>Provide your auth token</strong> to post.';
-    this.$status.querySelector('strong').addEventListener('click', event =>
-      new BzDeck.SettingsPage());
+    this.$status.querySelector('strong').addEventListener('click', event => BzDeck.SettingsPage.open());
 
     window.addEventListener('Account:AuthTokenVerified', event => {
       this.$status.textContent = '';

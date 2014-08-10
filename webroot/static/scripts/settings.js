@@ -9,25 +9,15 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
   let tablist = BzDeck.toolbar.tablist,
-      $existing_tab = document.querySelector('#tab-settings');
-
-  if ($existing_tab) {
-    tablist.view.selected = tablist.view.$focused = $existing_tab;
-
-    return;
-  }
-
-  let $content = document.querySelector('#tabpanel-settings-template').content.cloneNode(true),
+      $content = document.querySelector('#tabpanel-settings-template').content.cloneNode(true),
       $tabpanel = this.$tabpanel = $content.querySelector('[role="tabpanel"]');
 
-  let $tab = tablist.add_tab(
+  tablist.view.selected = tablist.view.$focused = tablist.add_tab(
     'settings',
     'Settings', // l10n
     'Settings', // l10n
     $tabpanel
   );
-
-  tablist.view.selected = tablist.view.$focused = $tab;
 
   // Activate tabs
   if (FlareTail.util.device.type === 'desktop') {
@@ -40,6 +30,21 @@ BzDeck.SettingsPage = function SettingsPage () {
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
   this.activate_radiogroups();
+};
+
+BzDeck.SettingsPage.open = function () {
+  let tablist = BzDeck.toolbar.tablist,
+      page,
+      $tab = document.querySelector('#tab-settings');
+
+  if ($tab) {
+    page = BzDeck.pages.settings;
+    tablist.view.selected = tablist.view.$focused = $tab;
+  } else {
+    page = BzDeck.pages.settings = new BzDeck.SettingsPage();
+  }
+
+  return page;
 };
 
 BzDeck.SettingsPage.prototype.activate_token_input = function () {
@@ -105,7 +110,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   activate('notifications.ignore_cc_changes', true);
 
   // Home
-  activate('ui.home.layout', 'vertical', value => BzDeck.homepage.change_layout(value, true));
+  activate('ui.home.layout', 'vertical', value => BzDeck.pages.home.change_layout(value, true));
 
   // Timeline
   activate('ui.timeline.sort.order', 'ascending', value => {

@@ -54,7 +54,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
       // Mobile compact layout
       if (mobile) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(id, this.bugs);
+        BzDeck.DetailsPage.open(id, this.bugs);
       }
     }
   });
@@ -64,7 +64,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
     if ($target.matches('[role="row"]')) {
       // Open Bug in New Tab
-      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt($target.dataset.id), this.bugs);
+      BzDeck.DetailsPage.open(Number.parseInt($target.dataset.id), this.bugs);
     }
   });
 

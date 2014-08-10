@@ -8,15 +8,6 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
-  let tablist = BzDeck.toolbar.tablist,
-      $existing_tab = document.querySelector(`#tab-details-${id}`);
-
-  if ($existing_tab) {
-    tablist.view.selected = tablist.view.$focused = $existing_tab;
-
-    return;
-  }
-
   this.data = { id, bug_list };
 
   this.view = {
@@ -41,6 +32,23 @@ BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
   });
 
   BzDeck.bugzfeed.subscribe([id]);
+};
+
+BzDeck.DetailsPage.open = function (id, bug_list = []) {
+  let pages = BzDeck.pages.details_list ? BzDeck.pages.details_list : BzDeck.pages.details_list = new Map(),
+      page,
+      tablist = BzDeck.toolbar.tablist,
+      $tab = document.querySelector(`#tab-details-${id}`);
+
+  if ($tab) {
+    page = pages.get(id),
+    tablist.view.selected = tablist.view.$focused = $tab;
+  } else {
+    page = new BzDeck.DetailsPage(id, bug_list);
+    pages.set(id, page);
+  }
+
+  return BzDeck.pages.details = page;
 };
 
 BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
@@ -246,7 +254,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
 BzDeck.DetailsPage.prototype.navigate = function (id) {
   BzDeck.toolbar.tablist.close_tab(this.view.$tab);
-  BzDeck.detailspage = new BzDeck.DetailsPage(id, this.data.bug_list);
+  BzDeck.DetailsPage.open(id, this.data.bug_list);
 };
 
 /* ----------------------------------------------------------------------------------------------
@@ -373,7 +381,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
       delta;
 
   if (!BzDeck.toolbar.tablist.view.selected[0].id.startsWith('tab-details') ||
-      !BzDeck.detailspage || !BzDeck.detailspage.data || !BzDeck.detailspage.data.bug_list.length) {
+      !BzDeck.pages.details || !BzDeck.pages.details.data || !BzDeck.pages.details.data.bug_list.length) {
     return;
   }
 
@@ -400,11 +408,11 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
         return;
       }
 
-      let bugs = [for (bug of BzDeck.detailspage.data.bug_list) bug.id],
-          index = bugs.indexOf(BzDeck.detailspage.data.id);
+      let bugs = [for (bug of BzDeck.pages.details.data.bug_list) bug.id],
+          index = bugs.indexOf(BzDeck.pages.details.data.id);
 
       this.initialized = true;
-      this.$target = BzDeck.detailspage.view.$tabpanel;
+      this.$target = BzDeck.pages.details.view.$tabpanel;
       this.$prev = document.querySelector(`#tabpanel-details-${bugs[index - 1]}`),
       this.$next = document.querySelector(`#tabpanel-details-${bugs[index + 1]}`);
       this.$sibling = null;
@@ -455,7 +463,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
     }
 
     if (this.$sibling) {
-      BzDeck.detailspage.navigate(Number.parseInt(this.$sibling.dataset.id));
+      BzDeck.pages.details.navigate(Number.parseInt(this.$sibling.dataset.id));
     }
 
     delete this.startX;

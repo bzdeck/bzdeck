@@ -171,7 +171,8 @@ BzDeck.bootstrap.setup_ui = function () {
   $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Activate widgets
-  BzDeck.homepage = new BzDeck.HomePage();
+  BzDeck.pages = {};
+  BzDeck.HomePage.open();
   BzDeck.toolbar = new BzDeck.Toolbar();
   BzDeck.sidebar = new BzDeck.Sidebar();
   BzDeck.DetailsPage.swipe.init();
@@ -280,9 +281,9 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
     let bugs = [for (bug of bugs) if (bug._unread) bug];
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
-      let unread_num = [for (bug of BzDeck.homepage.data.bug_list) if (bug._unread) bug].length;
+      let unread_num = [for (bug of BzDeck.pages.home.data.bug_list) if (bug._unread) bug].length;
 
-      BzDeck.homepage.change_window_title(
+      BzDeck.pages.home.change_window_title(
         document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
       );
     }
@@ -359,7 +360,7 @@ BzDeck.core.register_activity_handler = function () {
   if (typeof navigator.mozSetMessageHandler === 'function') {
     navigator.mozSetMessageHandler('activity', req => {
       if (req.source.url.match(re)) {
-        BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(RegExp.$1));
+        BzDeck.DetailsPage.open(Number.parseInt(RegExp.$1));
       }
     });
   }
@@ -525,9 +526,7 @@ window.addEventListener('click', event => {
   if ($target.matches(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      BzDeck.detailspage = new BzDeck.DetailsPage(
-        Number.parseInt($target.getAttribute('data-bug-id'))
-      );
+      BzDeck.DetailsPage.open(Number.parseInt($target.getAttribute('data-bug-id')));
 
       event.preventDefault();
 
@@ -628,21 +627,21 @@ window.addEventListener('popstate', event => {
       return;
     }
 
-    if (BzDeck.detailspage) {
-      bug_list = BzDeck.detailspage.data.bug_list;
+    if (BzDeck.pages.details) {
+      bug_list = BzDeck.pages.details.data.bug_list;
 
       if (bug_list.length) {
         let bugs = [for (bug of bug_list) bug.id],
-            index = bugs.indexOf(BzDeck.detailspage.data.id);
+            index = bugs.indexOf(BzDeck.pages.details.data.id);
 
         if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
           // Back or Forward navigation
-          BzDeck.toolbar.tablist.close_tab(BzDeck.detailspage.view.$tab);
+          BzDeck.toolbar.tablist.close_tab(BzDeck.pages.details.view.$tab);
         }
       }
     }
 
-    BzDeck.detailspage = new BzDeck.DetailsPage(bug_id, bug_list);
+    BzDeck.DetailsPage.open(bug_id, bug_list);
 
     return;
   }

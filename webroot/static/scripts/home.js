@@ -69,7 +69,7 @@ BzDeck.HomePage = function HomePage () {
       button = this.view.details_button = new FlareTail.widget.Button($button);
 
   button.bind('Pressed', event => {
-    BzDeck.detailspage = new BzDeck.DetailsPage(this.data.preview_id, this.data.bug_list);
+    BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list);
   });
 
   this.data = new Proxy({
@@ -105,6 +105,10 @@ BzDeck.HomePage = function HomePage () {
       obj[prop] = newval;
     }
   });
+};
+
+BzDeck.HomePage.open = function () {
+  return BzDeck.pages.home = new BzDeck.HomePage;
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {

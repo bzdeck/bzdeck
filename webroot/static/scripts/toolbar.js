@@ -55,7 +55,7 @@ BzDeck.Toolbar = function Toolbar () {
   $app_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'show-settings': {
-        new BzDeck.SettingsPage();
+        BzDeck.SettingsPage.open();
 
         break;
       }
@@ -173,7 +173,7 @@ BzDeck.Toolbar = function Toolbar () {
   };
 
   let exec_search = () => {
-    let page = new BzDeck.SearchPage(),
+    let page = BzDeck.SearchPage.open(),
         params = new URLSearchParams(),
         terms = $search_box.value;
 
@@ -250,7 +250,7 @@ BzDeck.Toolbar = function Toolbar () {
         id = $target.dataset.id;
 
     if (id) {
-      BzDeck.detailspage = new BzDeck.DetailsPage(Number.parseInt(id));
+      BzDeck.DetailsPage.open(Number.parseInt(id));
       cleanup();
     }
 
