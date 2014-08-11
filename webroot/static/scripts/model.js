@@ -16,6 +16,7 @@ BzDeck.config = {
     {
       'name': 'mozilla',
       'label': 'Mozilla',
+      'timezone': -8,
       'url': 'https://bugzilla.mozilla.org',
       'endpoints': {
         'bzapi': '/bzapi/',
@@ -306,7 +307,15 @@ BzDeck.model.fetch_subscriptions = function () {
   params.append('j_top', 'OR');
 
   if (last_loaded) {
-    params.append('chfieldfrom', (new Date(last_loaded)).toLocaleFormat('%Y-%m-%d %T'));
+    // FlareTail.util.datetime.format
+    let date = new Date(last_loaded),
+        dst = Math.max((new Date(date.getFullYear(), 0, 1)).getTimezoneOffset(),
+                       (new Date(date.getFullYear(), 6, 1)).getTimezoneOffset())
+                        > date.getTimezoneOffset(),
+        utc = date.getTime() + (date.getTimezoneOffset() + (dst ? 60 : 0)) * 60000,
+        offset = 3600000 * BzDeck.model.data.server.timezone;
+
+    params.append('chfieldfrom', (new Date(utc + offset)).toLocaleFormat('%Y-%m-%d %T'));
   }
 
   for (let [i, name] of fields.entries()) {
