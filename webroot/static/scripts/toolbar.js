@@ -263,7 +263,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
   let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()];
 
   BzDeck.model.get_all_bugs().then(bugs => {
-    let results = bugs.filter(bug => {
+    let results = bugs.filterPar(bug => {
       return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
               words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0])) &&
               BzDeck.model.data.server.config.field.status.open.indexOf(bug.status) > -1;

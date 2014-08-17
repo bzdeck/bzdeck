@@ -18,7 +18,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
   this.grid = new FlareTail.widget.Grid($grid, {
     'rows': [],
-    'columns': columns.map(col => {
+    'columns': columns.mapPar(col => {
       // Add labels
       col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
                   field[col.id].description;
@@ -30,7 +30,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
   this.grid.bind('Sorted', event => prefs[`${name}.list.sort_conditions`] = event.detail.conditions);
 
   this.grid.bind('ColumnModified', event => {
-    prefs[`${name}.list.columns`] = event.detail.columns.map(col => ({
+    prefs[`${name}.list.columns`] = event.detail.columns.mapPar(col => ({
       'id': col.id,
       'type': col.type || 'string',
       'hidden': col.hidden || false
@@ -109,7 +109,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 BzDeck.Thread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
-  this.grid.build_body(bugs.map(bug => {
+  this.grid.build_body(bugs.mapPar(bug => {
     let row = {
       'id': `${this.grid.view.$container.id}-row-${bug.id}`,
       'data': {},
