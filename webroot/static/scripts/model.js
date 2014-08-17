@@ -307,15 +307,9 @@ BzDeck.model.fetch_subscriptions = function () {
   params.append('j_top', 'OR');
 
   if (last_loaded) {
-    // FlareTail.util.datetime.format
-    let date = new Date(last_loaded),
-        dst = Math.max((new Date(date.getFullYear(), 0, 1)).getTimezoneOffset(),
-                       (new Date(date.getFullYear(), 6, 1)).getTimezoneOffset())
-                        > date.getTimezoneOffset(),
-        utc = date.getTime() + (date.getTimezoneOffset() + (dst ? 60 : 0)) * 60000,
-        offset = 3600000 * BzDeck.model.data.server.timezone;
+    let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), BzDeck.model.data.server.timezone);
 
-    params.append('chfieldfrom', (new Date(utc + offset)).toLocaleFormat('%Y-%m-%d %T'));
+    params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
   }
 
   for (let [i, name] of fields.entries()) {
