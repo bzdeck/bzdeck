@@ -215,8 +215,8 @@ BzDeck.bootstrap.show_notification = function () {
     BzDeck.core.show_notification(title, body).then(event => {
       // Select the Requests folder when the notification is clicked
       $root.setAttribute('data-current-tab', 'home');
-      BzDeck.toolbar.tablist.view.selected = document.querySelector('#tab-home');
-      BzDeck.sidebar.folders.view.selected = document.querySelector('#sidebar-folders--requests');
+      BzDeck.toolbar.$$tablist.view.selected = document.querySelector('#tab-home');
+      BzDeck.sidebar.$$folders.view.selected = document.querySelector('#sidebar-folders--requests');
     });
   });
 };
@@ -595,8 +595,8 @@ window.addEventListener('keydown', event => {
 
 window.addEventListener('popstate', event => {
   let path = location.pathname.substr(1).replace('/', '-'),
-      tabs = BzDeck.toolbar.tablist.view,
-      folders = BzDeck.sidebar.folders.view,
+      tabs = BzDeck.toolbar.$$tablist.view,
+      folders = BzDeck.sidebar.$$folders.view,
       $tab,
       $folder,
       $root = document.documentElement; // <html>
@@ -629,7 +629,7 @@ window.addEventListener('popstate', event => {
 
         if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
           // Back or Forward navigation
-          BzDeck.toolbar.tablist.close_tab(BzDeck.pages.details.view.$tab);
+          BzDeck.toolbar.$$tablist.close_tab(BzDeck.pages.details.view.$tab);
         }
       }
     }

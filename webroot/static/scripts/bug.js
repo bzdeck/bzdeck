@@ -16,10 +16,10 @@ BzDeck.Bug = function Bug ($bug) {
 
   // Custom scrollbars
   for (let $area of this.$bug.querySelectorAll('[role="region"]')) {
-    let scrollbar = new FlareTail.widget.ScrollBar($area);
+    let $$scrollbar = new FlareTail.widget.ScrollBar($area);
 
-    if (scrollbar && $area.matches('.bug-timeline')) {
-      scrollbar.onkeydown_extend = BzDeck.Bug.Timeline.handle_keydown.bind(scrollbar);
+    if ($$scrollbar && $area.matches('.bug-timeline')) {
+      $$scrollbar.onkeydown_extend = BzDeck.Bug.Timeline.handle_keydown.bind($$scrollbar);
     }
 
     $area.tabIndex = 0;

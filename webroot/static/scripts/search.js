@@ -8,7 +8,7 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.SearchPage = function SearchPage () {
-  let tablist = BzDeck.toolbar.tablist,
+  let $$tablist = BzDeck.toolbar.$$tablist,
       id_suffix = this.id = Date.now(),
       $tabpanel = FlareTail.util.content.get_fragment('tabpanel-search', id_suffix).firstElementChild;
 
@@ -60,7 +60,7 @@ BzDeck.SearchPage = function SearchPage () {
     }
   });
 
-  tablist.view.selected = tablist.view.$focused = tablist.add_tab(
+  $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
     `search-${id_suffix}`,
     'Search', // l10n
     'Search & Browse Bugs', // l10n
@@ -103,9 +103,9 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   };
 
   for (let $button of this.view.$tabpanel.querySelectorAll('header [role="button"]')) {
-    let button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
+    let $$button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
 
-    button.bind('Pressed', handler);
+    $$button.bind('Pressed', handler);
   }
 };
 
@@ -157,13 +157,13 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   }));
 
   let ListBox = FlareTail.widget.ListBox,
-      classification_list = new ListBox($classification_list, classifications),
-      product_list = new ListBox($product_list, products),
-      component_list = new ListBox($component_list, components),
-      status_list = new ListBox($status_list, statuses),
-      resolution_list = new ListBox($resolution_list, resolutions);
+      $$classification_list = new ListBox($classification_list, classifications),
+      $$product_list = new ListBox($product_list, products),
+      $$component_list = new ListBox($component_list, components),
+      $$status_list = new ListBox($status_list, statuses),
+      $$resolution_list = new ListBox($resolution_list, resolutions);
 
-  classification_list.bind('Selected', event => {
+  $$classification_list.bind('Selected', event => {
     let products = [],
         components = [];
 
@@ -175,24 +175,24 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       components.push(...Object.keys(config.product[product].component));
     }
 
-    product_list.filter(products);
-    component_list.filter(components);
+    $$product_list.filter(products);
+    $$component_list.filter(components);
   });
 
-  product_list.bind('Selected', event => {
+  $$product_list.bind('Selected', event => {
     let components = [];
 
     for (let product of event.detail.labels) {
       components.push(...Object.keys(config.product[product].component));
     }
 
-    component_list.filter(components);
+    $$component_list.filter(components);
   });
 
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
-      button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
+      $$button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
-  button.bind('Pressed', event => {
+  $$button.bind('Pressed', event => {
     let params = new URLSearchParams(),
         map = {
           'classification': $classification_list,
@@ -229,21 +229,21 @@ BzDeck.SearchPage.prototype.setup_result_pane = function () {
                               : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
   });
 
-  let grid = this.thread.grid;
+  let $$grid = this.thread.$$grid;
 
   // Force to change the sort condition when switched to the mobile layout
   if (mobile) {
-    let cond = grid.options.sort_conditions;
+    let cond = $$grid.options.sort_conditions;
 
     cond.key = 'last_change_time';
     cond.order = 'descending';
   }
 
   $pane.addEventListener('transitionend', event => {
-    let selected = grid.view.selected;
+    let selected = $$grid.view.selected;
 
     if (event.propertyName === 'bottom' && selected.length) {
-      grid.ensure_row_visibility(selected[selected.length - 1]);
+      $$grid.ensure_row_visibility(selected[selected.length - 1]);
     }
   });
 };

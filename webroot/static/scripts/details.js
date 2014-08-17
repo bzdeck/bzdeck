@@ -33,12 +33,12 @@ BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
 BzDeck.DetailsPage.open = function (id, bug_list = []) {
   let pages = BzDeck.pages.details_list ? BzDeck.pages.details_list : BzDeck.pages.details_list = new Map(),
       page,
-      tablist = BzDeck.toolbar.tablist,
+      $$tablist = BzDeck.toolbar.$$tablist,
       $tab = document.querySelector(`#tab-details-${id}`);
 
   if ($tab) {
     page = pages.get(id),
-    tablist.view.selected = tablist.view.$focused = $tab;
+    $$tablist.view.selected = $$tablist.view.$focused = $tab;
   } else {
     page = new BzDeck.DetailsPage(id, bug_list);
     pages.set(id, page);
@@ -60,10 +60,10 @@ BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
   this.view.$tabpanel = $tabpanel;
   $tabpanel.setAttribute('aria-hidden', 'false');
 
-  let tablist = BzDeck.toolbar.tablist;
+  let $$tablist = BzDeck.toolbar.$$tablist;
 
   // Open a new tab
-  this.view.$tab = tablist.view.selected = tablist.view.$focused = tablist.add_tab(
+  this.view.$tab = $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
     `details-${bug.id}`, bug.id, this.get_tab_title(bug), $tabpanel, 'next'
   );
 
@@ -83,7 +83,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   let mobile = FlareTail.util.device.type.startsWith('mobile'),
       phone = FlareTail.util.device.type === 'mobile-phone',
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
-      _tablist = new FlareTail.widget.TabList($tablist),
+      $$tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
       $title = $tabpanel.querySelector('h2'),
       $timeline_content = $tabpanel.querySelector('.bug-timeline .scrollable-area-content'),
@@ -99,8 +99,8 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
     $info_tab.setAttribute('aria-hidden', 'false');
     $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
   } else {
-    if (_tablist.view.selected[0] === $info_tab) {
-      _tablist.view.selected = _tablist.view.$focused = $timeline_tab;
+    if ($$tablist.view.selected[0] === $info_tab) {
+      $$tablist.view.selected = $$tablist.view.$focused = $timeline_tab;
     }
 
     $info_tab.setAttribute('aria-hidden', 'true');
@@ -109,7 +109,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
   }
 
   // Scroll a tabpanel to top when the tab is selected
-  _tablist.bind('Selected', event => {
+  $$tablist.bind('Selected', event => {
     document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')} > [role="region"]`).scrollTop = 0;
   });
 
@@ -145,8 +145,8 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   let $current_tabpanel = this.view.$tabpanel,
       Button = FlareTail.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
-      btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
-      btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
+      $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
+      $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
       bugs = [for (bug of bug_list) bug.id],
       index = bugs.indexOf(this.data.id),
       prev = bugs[index - 1],
@@ -174,34 +174,34 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
     });
   };
 
-  let change_button_tooltip = (id, button) => {
+  let change_button_tooltip = (id, $$button) => {
     let bug = [for (bug of bug_list) if (bug.id === id) bug][0];
 
     if (bug) {
-      button.view.$button.title = `Bug ${bug.id}\n${bug.summary}`; // l10n
+      $$button.view.$button.title = `Bug ${bug.id}\n${bug.summary}`; // l10n
     }
   };
 
   if (prev) {
     preload(prev);
-    change_button_tooltip(prev, btn_back);
-    btn_back.data.disabled = false;
-    btn_back.bind('Pressed', event => this.navigate(prev));
+    change_button_tooltip(prev, $$btn_back);
+    $$btn_back.data.disabled = false;
+    $$btn_back.bind('Pressed', event => this.navigate(prev));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'B', '', event => this.navigate(prev));
   } else {
-    btn_back.data.disabled = true;
+    $$btn_back.data.disabled = true;
   }
 
   if (next) {
     preload(next);
-    change_button_tooltip(next, btn_forward);
-    btn_forward.data.disabled = false;
-    btn_forward.bind('Pressed', event => this.navigate(next));
+    change_button_tooltip(next, $$btn_forward);
+    $$btn_forward.data.disabled = false;
+    $$btn_forward.bind('Pressed', event => this.navigate(next));
     // TODO: Add keyboard shortcut
     // set_keybind($tabpanel, 'F', '', event => this.navigate(next));
   } else {
-    btn_forward.data.disabled = true;
+    $$btn_forward.data.disabled = true;
   }
 };
 
@@ -234,7 +234,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 };
 
 BzDeck.DetailsPage.prototype.navigate = function (id) {
-  BzDeck.toolbar.tablist.close_tab(this.view.$tab);
+  BzDeck.toolbar.$$tablist.close_tab(this.view.$tab);
   BzDeck.DetailsPage.open(id, this.data.bug_list);
 };
 
@@ -361,7 +361,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
   let touch,
       delta;
 
-  if (!BzDeck.toolbar.tablist.view.selected[0].id.startsWith('tab-details') ||
+  if (!BzDeck.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
       !BzDeck.pages.details || !BzDeck.pages.details.data || !BzDeck.pages.details.data.bug_list.length) {
     return;
   }

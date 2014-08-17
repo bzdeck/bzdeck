@@ -16,7 +16,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
   this.bugs = [];
 
-  this.grid = new FlareTail.widget.Grid($grid, {
+  this.$$grid = new FlareTail.widget.Grid($grid, {
     'rows': [],
     'columns': columns.mapPar(col => {
       // Add labels
@@ -27,9 +27,9 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     })
   }, options);
 
-  this.grid.bind('Sorted', event => prefs[`${name}.list.sort_conditions`] = event.detail.conditions);
+  this.$$grid.bind('Sorted', event => prefs[`${name}.list.sort_conditions`] = event.detail.conditions);
 
-  this.grid.bind('ColumnModified', event => {
+  this.$$grid.bind('ColumnModified', event => {
     prefs[`${name}.list.columns`] = event.detail.columns.mapPar(col => ({
       'id': col.id,
       'type': col.type || 'string',
@@ -37,7 +37,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     }));
   });
 
-  this.grid.bind('Selected', event => {
+  this.$$grid.bind('Selected', event => {
     let ids = event.detail.ids;
 
     if (ids.length) {
@@ -51,7 +51,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     }
   });
 
-  this.grid.bind('dblclick', event => {
+  this.$$grid.bind('dblclick', event => {
     let $target = event.originalTarget;
 
     if ($target.matches('[role="row"]')) {
@@ -60,10 +60,10 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
     }
   });
 
-  this.grid.bind('keydown', event => {
+  this.$$grid.bind('keydown', event => {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        data = this.grid.data,
-        view = this.grid.view,
+        data = this.$$grid.data,
+        view = this.$$grid.view,
         members = view.members,
         index = members.indexOf(view.$focused);
 
@@ -109,9 +109,9 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 BzDeck.Thread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
-  this.grid.build_body(bugs.mapPar(bug => {
+  this.$$grid.build_body(bugs.mapPar(bug => {
     let row = {
-      'id': `${this.grid.view.$container.id}-row-${bug.id}`,
+      'id': `${this.$$grid.view.$container.id}-row-${bug.id}`,
       'data': {},
       'dataset': {
         'unread': bug._unread === true,
@@ -119,7 +119,7 @@ BzDeck.Thread.prototype.update = function (bugs) {
       }
     };
 
-    for (let column of this.grid.data.columns) {
+    for (let column of this.$$grid.data.columns) {
       let field = column.id,
           value = bug[field];
 
@@ -159,7 +159,7 @@ BzDeck.Thread.prototype.update = function (bugs) {
         if (prop === '_unread') {
           BzDeck.core.toggle_unread(obj.id, value);
 
-          let row = [for (row of this.grid.data.rows) if (row.data.id === obj.id) row][0];
+          let row = [for (row of this.$$grid.data.rows) if (row.data.id === obj.id) row][0];
 
           if (row && row.$element) {
             row.$element.dataset.unread = value;

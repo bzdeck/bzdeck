@@ -8,11 +8,11 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
-  let tablist = BzDeck.toolbar.tablist,
+  let $$tablist = BzDeck.toolbar.$$tablist,
       $fragment = FlareTail.util.content.get_fragment('tabpanel-settings-template'),
       $tabpanel = this.$tabpanel = $fragment.querySelector('[role="tabpanel"]');
 
-  tablist.view.selected = tablist.view.$focused = tablist.add_tab(
+  $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
     'settings',
     'Settings', // l10n
     'Settings', // l10n
@@ -33,13 +33,13 @@ BzDeck.SettingsPage = function SettingsPage () {
 };
 
 BzDeck.SettingsPage.open = function () {
-  let tablist = BzDeck.toolbar.tablist,
+  let $$tablist = BzDeck.toolbar.$$tablist,
       page,
       $tab = document.querySelector('#tab-settings');
 
   if ($tab) {
     page = BzDeck.pages.settings;
-    tablist.view.selected = tablist.view.$focused = $tab;
+    $$tablist.view.selected = $$tablist.view.$focused = $tab;
   } else {
     page = BzDeck.pages.settings = new BzDeck.SettingsPage();
   }

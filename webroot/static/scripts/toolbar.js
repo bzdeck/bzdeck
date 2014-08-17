@@ -12,12 +12,12 @@ BzDeck.Toolbar = function Toolbar () {
       FTu = FlareTail.util,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
       phone = FlareTail.util.device.type === 'mobile-phone',
-      tablist = this.tablist = new FTw.TabList(document.querySelector('#main-tablist')),
+      $$tablist = this.$$tablist = new FTw.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
   // Change the window title when a new tab is selected
-  tablist.bind('Selected', event => {
+  $$tablist.bind('Selected', event => {
     let $tab = event.detail.items[0],
         sidebar = BzDeck.sidebar.data,
         path = $tab.id.replace(/^tab-(.+)/, '$1'),
@@ -121,7 +121,7 @@ BzDeck.Toolbar = function Toolbar () {
     document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
   }
 
-  let tabs = this.tablist.view,
+  let tabs = this.$$tablist.view,
       $tab_home = document.querySelector('#tab-home');
 
   document.querySelector('[role="banner"] h1').addEventListener('click', event => {
@@ -161,10 +161,10 @@ BzDeck.Toolbar = function Toolbar () {
       $search_button = document.querySelector('[role="banner"] [role="search"] [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
-  this.search_dropdown = new FlareTail.widget.Menu($search_dropdown);
+  this.$$search_dropdown = new FlareTail.widget.Menu($search_dropdown);
 
   let cleanup = () => {
-    this.search_dropdown.close();
+    this.$$search_dropdown.close();
     $banner.classList.remove('search');
     $search_box.value = '';
     $search_button.focus();
@@ -200,18 +200,18 @@ BzDeck.Toolbar = function Toolbar () {
     if (event.target.value.trim()) {
       this.quicksearch(event);
     } else {
-      this.search_dropdown.close();
+      this.$$search_dropdown.close();
     }
   });
 
   $search_box.addEventListener('keydown', event => {
     if ((event.keyCode === event.DOM_VK_UP || event.keyCode === event.DOM_VK_DOWN) &&
-        event.target.value.trim() && this.search_dropdown.closed) {
+        event.target.value.trim() && this.$$search_dropdown.closed) {
       this.quicksearch(event);
     }
 
     if (event.keyCode === event.DOM_VK_RETURN) {
-      this.search_dropdown.close();
+      this.$$search_dropdown.close();
       exec_search();
     }
   });
@@ -286,10 +286,10 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
     data.push({ 'type': 'separator' });
     data.push({ 'id': 'quicksearch-dropdown-more', 'label': 'Search All Bugs...' }); // l10n
 
-    let dropdown = this.search_dropdown;
+    let $$dropdown = this.$$search_dropdown;
 
-    dropdown.build(data);
-    dropdown.view.$container.scrollTop = 0;
-    dropdown.open();
+    $$dropdown.build(data);
+    $$dropdown.view.$container.scrollTop = 0;
+    $$dropdown.open();
   });
 };

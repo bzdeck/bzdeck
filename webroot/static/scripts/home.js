@@ -14,19 +14,19 @@ BzDeck.HomePage = function HomePage () {
 
   // A movable splitter between the thread pane and preview pane
   {
-    let splitter = this.preview_splitter = new FTw.Splitter(document.querySelector('#home-preview-splitter')),
+    let $$splitter = this.$$preview_splitter = new FTw.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.',
-        pref = prefs[prefix + splitter.data.orientation];
+        pref = prefs[prefix + $$splitter.data.orientation];
 
     if (pref) {
-      splitter.data.position = pref;
+      $$splitter.data.position = pref;
     }
 
-    splitter.bind('Resized', event => {
+    $$splitter.bind('Resized', event => {
       let position = event.detail.position;
 
       if (position) {
-        prefs[prefix + splitter.data.orientation] = position;
+        prefs[prefix + $$splitter.data.orientation] = position;
       }
     });
   }
@@ -52,21 +52,21 @@ BzDeck.HomePage = function HomePage () {
 
   this.change_layout(prefs['ui.home.layout']);
 
-  let grid = this.thread.grid;
+  let $$grid = this.thread.$$grid;
 
-  grid.bind('Rebuilt', event => {
+  $$grid.bind('Rebuilt', event => {
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder
-    if (grid.data.rows.length && !mobile) {
-      grid.view.selected = grid.view.focused = grid.view.members[0];
+    if ($$grid.data.rows.length && !mobile) {
+      $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
     }
   });
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
-      button = this.view.details_button = new FlareTail.widget.Button($button);
+      $$button = this.view.$$details_button = new FlareTail.widget.Button($button);
 
-  button.bind('Pressed', event => BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list));
+  $$button.bind('Pressed', event => BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list));
 
   this.data = new Proxy({
     'bug_list': [],
@@ -82,7 +82,7 @@ BzDeck.HomePage = function HomePage () {
           bugs[bug.id] = bug;
         }
 
-        return [for (row of grid.data.rows) bugs[row.data.id]];
+        return [for (row of $$grid.data.rows) bugs[row.data.id]];
       }
 
       return obj[prop];
@@ -110,13 +110,13 @@ BzDeck.HomePage.open = function () {
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
   let $pane = document.querySelector('#home-preview-pane'),
       $bug = document.querySelector('#home-preview-bug'),
-      button = this.view.details_button;
+      $$button = this.view.$$details_button;
 
   // Remove the current preview if exists
 
   if (!newval) {
     $bug.setAttribute('aria-hidden', 'true');
-    button.data.disabled = true;
+    $$button.data.disabled = true;
 
     return;
   }
@@ -124,7 +124,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
   BzDeck.model.get_bug_by_id(newval).then(bug => {
     if (!bug) {
       $bug.setAttribute('aria-hidden', 'true');
-      button.data.disabled = true;
+      $$button.data.disabled = true;
 
       return;
     }
@@ -137,39 +137,39 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     this.$$bug.fill(bug);
     BzDeck.core.toggle_unread(bug.id, false);
     $bug.setAttribute('aria-hidden', 'false');
-    button.data.disabled = false;
+    $$button.data.disabled = false;
   });
 };
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.device.type.startsWith('mobile') || !pref || pref === 'vertical',
-      grid = this.thread.grid,
-      splitter = this.preview_splitter;
+      $$grid = this.thread.$$grid,
+      $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
-  grid.options.adjust_scrollbar = !vertical;
-  grid.options.date.simple = vertical;
+  $$grid.options.adjust_scrollbar = !vertical;
+  $$grid.options.date.simple = vertical;
 
   // Change the date format on the thread pane
-  for (let $time of grid.view.$container.querySelectorAll('time')) {
+  for (let $time of $$grid.view.$container.querySelectorAll('time')) {
     $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
     $time.dataset.simple = vertical;
   }
 
-  if (splitter) {
+  if ($$splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
         pref = BzDeck.model.data.prefs[`ui.home.preview.splitter.position.${orientation}`];
 
-    splitter.data.orientation = orientation;
+    $$splitter.data.orientation = orientation;
 
     if (pref) {
-      splitter.data.position = pref;
+      $$splitter.data.position = pref;
     }
   }
 
   if (vertical && sort_grid) {
     // Force to change the sort condition when switched to the mobile layout
-    let cond = grid.options.sort_conditions;
+    let cond = $$grid.options.sort_conditions;
 
     cond.key = 'last_change_time';
     cond.order = 'descending';

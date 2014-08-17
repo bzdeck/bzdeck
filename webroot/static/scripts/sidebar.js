@@ -87,9 +87,9 @@ BzDeck.Sidebar = function Sidebar () {
     }
   ];
 
-  let folders = this.folders = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
+  let $$folders = this.$$folders = new FTw.ListBox(document.querySelector('#sidebar-folder-list'), this.folder_data);
 
-  folders.bind('Selected', event => this.data.folder_id = event.detail.ids[0]);
+  $$folders.bind('Selected', event => this.data.folder_id = event.detail.ids[0]);
 
   this.data = new Proxy({
     'folder_id': null,
@@ -161,9 +161,9 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
 
   // Mobile compact layout
   if (FlareTail.util.device.type.startsWith('mobile') &&
-      BzDeck.toolbar.tablist.view.selected[0].id !== 'tab-home') {
+      BzDeck.toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
-    BzDeck.toolbar.tablist.view.selected = BzDeck.toolbar.tablist.view.members[0];
+    BzDeck.toolbar.$$tablist.view.selected = BzDeck.toolbar.$$tablist.view.members[0];
   }
 
   let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,
