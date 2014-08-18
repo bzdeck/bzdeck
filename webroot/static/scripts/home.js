@@ -176,7 +176,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   }
 };
 
-BzDeck.HomePage.prototype.change_window_title = function (title) {
+BzDeck.HomePage.prototype.update_window_title = function (title) {
   document.title = title;
   document.querySelector('[role="banner"] h1').textContent = title;
   document.querySelector('#tab-home').title = title;

@@ -16,35 +16,18 @@ BzDeck.Toolbar = function Toolbar () {
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
-  // Change the window title when a new tab is selected
   $$tablist.bind('Selected', event => {
     let $tab = event.detail.items[0],
         sidebar = BzDeck.sidebar.data,
-        path = $tab.id.replace(/^tab-(.+)/, '$1'),
-        title = $tab.title.replace('\n', ' – ');
+        path = '/' + $tab.id.substr(4).replace(/^details-/, 'bug/').replace(/^(search)-/, '$1/');
 
-    if (path === 'home') {
-      if (!sidebar.folder_id) {
-        sidebar.folder_id = 'inbox';
-      }
-
-      path = 'home/' + sidebar.folder_id;
-    } else {
-      path = path.replace(/^details-/, 'bug/').replace(/^(search)-/, '$1/');
+    if (path === '/home') {
+      sidebar.folder_id = sidebar.folder_id || 'inbox';
+      path += '/' + sidebar.folder_id;
     }
-
-    $root.setAttribute('data-current-tab', path.split('/')[0]);
-    path = '/' + path;
 
     if (location.pathname !== path) {
-      history.pushState({}, title, path);
-    }
-
-    if (path.startsWith('/home/')) {
-      BzDeck.HomePage.prototype.change_window_title(document.querySelector('#tab-home').title);
-    } else {
-      document.title = title;
-      document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
+      BzDeck.core.navigate(path);
     }
   });
 

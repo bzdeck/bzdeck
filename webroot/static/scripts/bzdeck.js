@@ -178,7 +178,7 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.DetailsPage.swipe.init();
 
   // Check the requested URL to open the specific folder or tab if needed
-  FlareTail.util.event.trigger(window, 'popstate');
+  window.dispatchEvent(new PopStateEvent('popstate'));
 
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
@@ -245,6 +245,13 @@ BzDeck.bootstrap.finish = function () {
 BzDeck.core = {};
 BzDeck.core.timers = {};
 
+BzDeck.core.navigate = function (path, data = {}, replace = false) {
+  let args = [data, 'Loading...', path]; // l10n
+
+  replace ? history.replaceState(...args) : history.pushState(...args);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+};
+
 BzDeck.core.toggle_star = function (id, starred) {
   // Save in DB
   BzDeck.model.get_bug_by_id(id).then(bug => {
@@ -283,7 +290,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
       let unread_num = [for (bug of BzDeck.pages.home.data.bug_list) if (bug._unread) bug].length;
 
-      BzDeck.pages.home.change_window_title(
+      BzDeck.pages.home.update_window_title(
         document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
       );
     }
@@ -598,8 +605,16 @@ window.addEventListener('popstate', event => {
       tabs = BzDeck.toolbar.$$tablist.view,
       folders = BzDeck.sidebar.$$folders.view,
       $tab,
-      $folder,
       $root = document.documentElement; // <html>
+
+  let update_window_title = $tab => {
+    if ($tab.id === 'tab-home') {
+      BzDeck.pages.home.update_window_title($tab.title);
+    } else {
+      document.title = $tab.title.replace('\n', ' – ');
+      document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
+    }
+  };
 
   // Hide sidebar
   if (FlareTail.util.device.type.startsWith('mobile')) {
@@ -616,6 +631,7 @@ window.addEventListener('popstate', event => {
 
     if ($tab) {
       tabs.selected = $tab;
+      update_window_title($tab);
 
       return;
     }
@@ -640,12 +656,23 @@ window.addEventListener('popstate', event => {
   }
 
   if (path.match(/^home-(\w+)/)) {
-    $folder = document.querySelector(`#sidebar-folders--${RegExp.$1}`);
+    let folder_id = RegExp.$1,
+        $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
+
+    $tab = document.querySelector('#tab-home');
 
     if ($folder) {
-      $root.setAttribute('data-current-tab', 'home');
-      tabs.selected = document.querySelector('#tab-home');
-      folders.selected = $folder;
+      if ($root.getAttribute('data-current-tab') !== 'home') {
+        $root.setAttribute('data-current-tab', 'home');
+        tabs.selected = $tab;
+      }
+
+      if (BzDeck.sidebar.data.folder_id !== folder_id) {
+        folders.selected = $folder;
+        BzDeck.sidebar.open_folder(folder_id);
+      }
+
+      update_window_title($tab);
 
       return;
     }
@@ -656,14 +683,13 @@ window.addEventListener('popstate', event => {
   if ($tab) {
     $root.setAttribute('data-current-tab', path);
     tabs.selected = $tab;
+    update_window_title($tab);
 
     return;
   }
 
   // Fallback
-  $root.setAttribute('data-current-tab', 'home');
-  tabs.selected = document.querySelector('#tab-home');
-  folders.selected = document.querySelector('#sidebar-folders--inbox');
+  BzDeck.core.navigate('/home/inbox', {}, true);
 });
 
 window.addEventListener('Bug:UnreadToggled', event => {

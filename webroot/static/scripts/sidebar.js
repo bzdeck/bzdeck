@@ -103,8 +103,8 @@ BzDeck.Sidebar = function Sidebar () {
         return;
       }
 
-      if (prop === 'folder_id') {
-        this.open_folder(newval);
+      if (prop === 'folder_id' && oldval) {
+        BzDeck.core.navigate('/home/' + newval);
       }
 
       obj[prop] = newval;
@@ -139,11 +139,10 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 
-    let unread_num = [for (bug of bugs) if (bug._unread) bug].length;
+    let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,
+        unread = [for (bug of bugs) if (bug._unread) bug].length;
 
-    if (unread_num > 0) {
-      BzDeck.pages.home.change_window_title(document.title += ` (${unread_num})`);
-    }
+    BzDeck.pages.home.update_window_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
   };
 
   let get_subscribed_bugs = () => new Promise(resolve => {
@@ -164,17 +163,6 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
       BzDeck.toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     BzDeck.toolbar.$$tablist.view.selected = BzDeck.toolbar.$$tablist.view.members[0];
-  }
-
-  let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,
-      folder_path = '/home/' + folder_id;
-
-  // Change the window title and the tab label
-  BzDeck.pages.home.change_window_title(folder_label);
-
-  // Save history
-  if (location.pathname !== folder_path) {
-    history.pushState({}, folder_label, folder_path);
   }
 
   if (folder_id === 'inbox') {
