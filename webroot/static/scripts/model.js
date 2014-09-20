@@ -254,8 +254,9 @@ BzDeck.model.load_config = function () {
       }
 
       // Load the Bugzilla config in background
-      let server = this.data.server,
-          xhr = new XMLHttpRequest();
+      let xhr = new XMLHttpRequest();
+
+      server = this.data.server;
 
       // The config is not available from the REST endpoint so use the BzAPI compat layer instead
       xhr.open('GET', `${server.url}${server.endpoints.bzapi}configuration?cached_ok=1`, true);
@@ -450,8 +451,9 @@ BzDeck.model.get_bug_by_id = function (id, record_time = true) {
 };
 
 BzDeck.model.get_bugs_by_ids = function (ids) {
-  let cache = this.data.bugs,
-      ids = [...ids]; // Accept both an Array and a Set as the first argument
+  let cache = this.data.bugs;
+
+  ids = [...ids]; // Accept both an Array and a Set as the first argument
 
   return new Promise(resolve => {
     if (cache) {

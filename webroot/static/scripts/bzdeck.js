@@ -285,7 +285,7 @@ BzDeck.core.toggle_unread = function (id, value) {
 
 BzDeck.core.toggle_unread_ui = function (loaded = false) {
   BzDeck.model.get_all_bugs().then(bugs => {
-    let bugs = [for (bug of bugs) if (bug._unread) bug];
+    bugs = [for (bug of bugs) if (bug._unread) bug];
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
       let unread_num = [for (bug of BzDeck.pages.home.data.bug_list) if (bug._unread) bug].length;

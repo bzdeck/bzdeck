@@ -38,8 +38,7 @@ BzDeck.HomePage = function HomePage () {
 
   this.view = {};
 
-  let prefs = BzDeck.model.data.prefs,
-      layout_pref = prefs['ui.home.layout'],
+  let layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
   this.thread = new BzDeck.Thread(this, 'home', document.querySelector('#home-list'), {
