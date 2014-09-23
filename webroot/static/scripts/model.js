@@ -457,13 +457,13 @@ BzDeck.model.get_bugs_by_ids = function (ids) {
 
   return new Promise(resolve => {
     if (cache) {
-      resolve([for (c of [...cache]) if (ids.indexOf(c[0]) > -1) c[1]]);
+      resolve([for (c of [...cache]) if (ids.contains(c[0])) c[1]]);
 
       return;
     }
 
     this.get_store('bugs').get_all().then(bugs => {
-      resolve([for (bug of bugs) if (ids.indexOf(bug.id) > -1) bug]);
+      resolve([for (bug of bugs) if (ids.contains(bug.id)) bug]);
     });
   });
 };
@@ -527,10 +527,10 @@ BzDeck.model.get_all_subscriptions = function () {
   return new Promise(resolve => {
     this.get_all_bugs().then(bugs => {
       resolve(new Map([
-        ['cc', [for (bug of bugs) if (bug.cc.indexOf(email) > -1) bug]],
+        ['cc', [for (bug of bugs) if (bug.cc.contains(email)) bug]],
         ['reported', [for (bug of bugs) if (bug.creator === email) bug]],
         ['assigned', [for (bug of bugs) if (bug.assigned_to === email) bug]],
-        ['mentor', [for (bug of bugs) if (bug.mentors.indexOf(email) > -1) bug]],
+        ['mentor', [for (bug of bugs) if (bug.mentors.contains(email)) bug]],
         ['qa', [for (bug of bugs) if (bug.qa_contact === email) bug]],
         ['requests', [for (bug of bugs) if (bug.flags) for (flag of bug.flags) if (flag.requestee === email) bug]]
       ]));

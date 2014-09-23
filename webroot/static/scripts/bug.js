@@ -225,7 +225,7 @@ BzDeck.Bug.prototype.set_bug_tooltips = function () {
   if (related_bug_ids.size) {
     BzDeck.model.get_bugs_by_ids(related_bug_ids).then(bugs => {
       let found_bug_ids = [for (bug of bugs) bug.id],
-          lookup_bug_ids = [for (id of related_bug_ids) if (found_bug_ids.indexOf(id) === -1) id];
+          lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.contains(id)) id];
 
       bugs.mapPar(set_tooltops);
 
@@ -284,11 +284,11 @@ BzDeck.Bug.find_person = function (bug, email) {
     return bug.qa_contact_detail;
   }
 
-  if (bug.cc.indexOf(email) > -1) {
+  if (bug.cc.contains(email)) {
     return [for (person of bug.cc_detail) if (person.email === email) person][0];
   }
 
-  if (bug.mentors.indexOf(email) > -1) {
+  if (bug.mentors.contains(email)) {
     return [for (person of bug.mentors_detail) if (person.email === email) person][0];
   }
 
@@ -515,7 +515,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     let generate_element = (change, how) => {
       let $elm = document.createElement('span');
 
-      if (['blocks', 'depends_on'].indexOf(change.field_name) > -1) {
+      if (['blocks', 'depends_on'].contains(change.field_name)) {
         $elm.innerHTML = change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');
       } else {
         $elm.textContent = change[how];
@@ -588,7 +588,7 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
 
   // [B] previous bug or [F] next bug
   if (document.documentElement.getAttribute('data-current-tab') === 'home' &&
-      !modifiers && [event.DOM_VK_B, event.DOM_VK_F].indexOf(key) > -1) {
+      !modifiers && [event.DOM_VK_B, event.DOM_VK_F].contains(key)) {
     let _event = document.createEvent("KeyboardEvent");
 
     _event.initKeyEvent('keydown', true, true, null, false, false, false, false, key, 0);
@@ -599,7 +599,7 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
   }
 
   // [M] toggle read or [S] toggle star
-  if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].indexOf(key) > -1) {
+  if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].contains(key)) {
     let $parent = this.view.$owner.parentElement,
         bug_id = Number.parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
 
@@ -617,7 +617,7 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
   }
 
   if (event.currentTarget !== this.view.$owner ||
-      [event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].indexOf(key) === -1) {
+      ![event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].contains(key)) {
     this.scroll_with_keyboard(event); // Use default handler
 
     return FlareTail.util.event.ignore(event);
@@ -1052,7 +1052,7 @@ BzDeck.bugzfeed.connect = function () {
 
   this.websocket.addEventListener('close', event => {
     // Try to reconnect every 30 seconds when unexpectedly disconnected
-    if (!(new Set([1000, 1005])).has(event.code)) {
+    if (![1000, 1005].contains(event.code)) {
       this.reconnector = window.setInterval(() => this.connect(), 30000);
     }
   });

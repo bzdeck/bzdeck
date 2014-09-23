@@ -249,7 +249,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
     let results = bugs.filterPar(bug => {
       return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
               words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0])) &&
-              BzDeck.model.data.server.config.field.status.open.indexOf(bug.status) > -1;
+              BzDeck.model.data.server.config.field.status.open.contains(bug.status);
     });
 
     let data = [{

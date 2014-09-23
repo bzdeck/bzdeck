@@ -305,7 +305,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
       $template = document.querySelector('#details-change');
 
   let cell_content = (field, content) =>
-        ['blocks', 'depends_on'].indexOf(field) > -1
+        ['blocks', 'depends_on'].contains(field)
                 ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
                 : content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
 
