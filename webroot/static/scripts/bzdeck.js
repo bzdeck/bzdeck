@@ -452,6 +452,11 @@ BzDeck.core.get_name = function (person) {
   return person.real_name || person.email;
 };
 
+BzDeck.core.get_user_color = function (person) {
+  return '#' + String(person.real_name ? person.real_name.length : 0).substr(-1, 1)
+             + String(person.email.length).substr(-1, 1) + String(person.email.length).substr(0, 1);
+};
+
 /* ------------------------------------------------------------------------------------------------------------------
  * Session
  * ------------------------------------------------------------------------------------------------------------------ */

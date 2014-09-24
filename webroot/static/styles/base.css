@@ -1827,13 +1827,14 @@ article[id$="preview-bug"] > .bug-timeline {
   margin: 0 .8rem 0 -.8rem;
   width: 4rem;
   height: 4rem;
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
+  color: #FCFCFC;
+  font-size: 2.4rem;
+  line-height: 4rem;
+  text-align: center;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"][src] {
-  background-image: none;
+  background-color: transparent !important;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
@@ -1846,7 +1847,6 @@ article[id$="preview-bug"] > .bug-timeline {
   text-overflow: ellipsis;
 }
 
-.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"],
 #main-menu--app--account label {
   color: var(--control-foreground-color);
   background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);

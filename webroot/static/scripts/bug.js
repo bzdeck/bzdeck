@@ -395,7 +395,8 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       $comment = $entry.querySelector('[itemprop="text"]'),
       $changes = $entry.querySelector('.changes'),
       $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`),
-      $image = new Image();
+      $image = $author.querySelector('[itemprop="image"]'),
+      $_image = new Image();
 
   if (comment) {
     let text = comment.raw_text;
@@ -560,8 +561,10 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  $image.addEventListener('load', event => $author.querySelector('[itemprop="image"]').src = $image.src);
-  $image.src = `https://www.gravatar.com/avatar/${md5(author.email)}?d=404`;
+  $image.alt = (author.real_name || author.email).match(/^[\[\(\:]?(.)/)[1].toUpperCase();
+  $image.style.setProperty('background-color', BzDeck.core.get_user_color(author));
+  $_image.addEventListener('load', event => $image.src = $_image.src);
+  $_image.src = `https://www.gravatar.com/avatar/${md5(author.email)}?d=404`;
   datetime.fill_element($time, time);
 
   // Mark unread
