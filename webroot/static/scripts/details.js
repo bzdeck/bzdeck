@@ -234,8 +234,8 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 };
 
 BzDeck.DetailsPage.prototype.navigate = function (id) {
-  BzDeck.toolbar.$$tablist.close_tab(this.view.$tab);
   BzDeck.DetailsPage.open(id, this.data.bug_list);
+  BzDeck.toolbar.$$tablist.close_tab(this.view.$tab);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------

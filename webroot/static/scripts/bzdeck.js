@@ -628,7 +628,8 @@ window.addEventListener('popstate', event => {
 
   if (path.match(/^bug-(\d+)$/)) {
     let bug_id = Number.parseInt(RegExp.$1),
-        bug_list = [];
+        bug_list = [],
+        $current_tab;
 
     $root.setAttribute('data-current-tab', 'bug');
     $tab = document.querySelector(`#tab-details-${bug_id}`);
@@ -649,12 +650,16 @@ window.addEventListener('popstate', event => {
 
         if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
           // Back or Forward navigation
-          BzDeck.toolbar.$$tablist.close_tab(BzDeck.pages.details.view.$tab);
+          $current_tab = BzDeck.pages.details.view.$tab;
         }
       }
     }
 
     BzDeck.DetailsPage.open(bug_id, bug_list);
+
+    if ($current_tab) {
+      BzDeck.toolbar.$$tablist.close_tab($current_tab);
+    }
 
     return;
   }
