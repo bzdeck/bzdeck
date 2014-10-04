@@ -537,9 +537,9 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
                    // Bug 909055 - Field name mismatch in history: group vs groups
                    conf_field[change.field_name.replace(/s$/, '')] ||
                    // If the Bugzilla config is outdated, the field name can be null
-                   change.field_name;
+                   change;
 
-      $change.textContent = `${_field.description}: `;
+      $change.textContent = `${_field.description || _field.field_name}: `;
       $change.setAttribute('data-change-field', change.field_name);
 
       if (change.removed) {

@@ -332,9 +332,9 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
                    // Bug 909055 - Field name mismatch in history: group vs groups
                    conf_field[change.field_name.replace(/s$/, '')] ||
                    // If the Bugzilla config is outdated, the field name can be null
-                   change.field_name;
+                   change;
 
-      $cell('what').textContent = _field.description;
+      $cell('what').textContent = _field.description || _field.field_name;
       $cell('removed').innerHTML = cell_content(change.field_name, change.removed);
       $cell('added').innerHTML = cell_content(change.field_name, change.added);
     }
