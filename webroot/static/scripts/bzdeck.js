@@ -518,6 +518,10 @@ window.addEventListener('beforeunload', event => {
   BzDeck.bugzfeed.disconnect();
 });
 
+window.addEventListener('online', event => {
+  BzDeck.bugzfeed.connect();
+});
+
 window.addEventListener('contextmenu', event => event.preventDefault());
 window.addEventListener('dragenter', event => event.preventDefault());
 window.addEventListener('dragover', event => event.preventDefault());

@@ -1060,6 +1060,11 @@ BzDeck.bugzfeed.connect = function () {
     }
   });
 
+  this.websocket.addEventListener('error', event => {
+    // Try to reconnect every 30 seconds when unexpectedly disconnected
+    this.reconnector = window.setInterval(() => this.connect(), 30000);
+  });
+
   this.websocket.addEventListener('message', event => {
     let message = JSON.parse(event.data)
 
