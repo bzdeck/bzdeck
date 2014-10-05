@@ -2327,6 +2327,10 @@ article[id$="preview-bug"] > .bug-timeline {
   background-color: var(--secondary-region-background-color);
 }
 
+.bug-attachments [itemprop="attachment"] h4 a span {
+  pointer-events: none;
+}
+
 :root[data-device-type="mobile-phone"] .bug-attachments [itemprop="attachment"] {
   margin: .8rem;
 }
