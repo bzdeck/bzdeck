@@ -640,13 +640,13 @@ col[data-hidden="false"] {
   height: 100%;
   background-image: -moz-image-rect(var(--base-sprite-image), 64, 64, 128, 0);
   background-position: center;
-  background-size: 24px;
+  background-size: 2.4rem;
   background-repeat: no-repeat;
   text-indent: -9999rem;
 }
 
 #main-menu--app label[style] {
-  background-size: 28px;
+  background-size: 2.8rem;
 }
 
 #main-menu--app[aria-selected="true"] {
@@ -1757,8 +1757,8 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-info [itemtype="http://schema.org/Person"] [itemprop="image"] {
   margin-right: .4rem;
-  width: 16px;
-  height: 16px;
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 .bug-timeline {
