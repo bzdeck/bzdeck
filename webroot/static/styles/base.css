@@ -1628,7 +1628,6 @@ article[id$="preview-bug"] > .bug-timeline {
   height: 2.4rem;
   color: var(--tab-foreground-color);
   background-color: var(--tab-background-color);
-  font-size: 1.1rem;
   line-height: 2rem;
   text-align: center;
   vertical-align: middle;
@@ -1648,8 +1647,39 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
-  display: block;
+  display: inline-block;
   position: static;
+  width: auto;
+  height: auto;
+  line-height: 2rem;
+  vertical-align: middle;
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label::before {
+  display: inline-block;
+  margin-right: .4rem;
+  width: 2rem;
+  height: 2rem;
+  font-family: FontAwesome;
+  font-size: 1.6rem;
+  line-height: 2rem;
+  vertical-align: top;
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [id$="tab-timeline"] label::before {
+  content: "\F086";
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [id$="tab-info"] label::before {
+  content: "\F05A";
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [id$="tab-attachments"] label::before {
+  content: "\F0C5";
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [id$="tab-history"] label::before {
+  content: "\F017";
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ div {
@@ -3024,6 +3054,11 @@ article[id$="preview-bug"] > .bug-timeline {
   :root[data-device-type|="mobile"] #app-login > div > div {
     display: block;
     height: auto;
+  }
+
+  :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
+    overflow: hidden;
+    width: 2rem; /* Show icons only */
   }
 
 }
