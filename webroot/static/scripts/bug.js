@@ -63,9 +63,17 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
-        _bug.mentor = [for (person of this.bug.mentors_detail) { 'name': BzDeck.core.get_name(person) }];
+        _bug.mentor = [for (person of this.bug.mentors_detail) {
+          'name': BzDeck.core.get_name(person),
+          'image': 'https://www.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
+        }];
       } else if (type === 'person') {
-        _bug[field] = { 'name': this.bug[field] ? BzDeck.core.get_name(this.bug[`${field}_detail`]) : '' };
+        if (this.bug[field]) {
+          _bug[field] = {
+            'name': BzDeck.core.get_name(this.bug[`${field}_detail`]),
+            'image': 'https://www.gravatar.com/avatar/' + md5(this.bug[`${field}_detail`].email) + '?d=mm'
+          };
+        }
       } else {
         _bug[field] = this.bug[field] || '';
       }
@@ -120,7 +128,8 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
 
   let _bug = {
     'cc': [for (person of this.bug.cc_detail) {
-      'name': BzDeck.core.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, '') // Remove bracketed strings
+      'name': BzDeck.core.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, ''), // Remove bracketed strings
+      'image': 'https://www.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
     }],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,

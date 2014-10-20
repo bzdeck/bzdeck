@@ -1744,6 +1744,23 @@ article[id$="preview-bug"] > .bug-timeline {
   text-overflow: ellipsis;
 }
 
+.bug-info [itemtype="http://schema.org/Person"] {
+  display: block;
+  padding: 0 .4rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.bug-info [itemtype="http://schema.org/Person"]:not(:last-of-type) {
+  margin-bottom: .8rem;
+}
+
+.bug-info [itemtype="http://schema.org/Person"] [itemprop="image"] {
+  margin-right: .4rem;
+  width: 16px;
+  height: 16px;
+}
+
 .bug-timeline {
   bottom: 0;
   padding-top: 0 !important;
