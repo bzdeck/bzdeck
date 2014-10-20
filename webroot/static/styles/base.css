@@ -633,15 +633,27 @@ col[data-hidden="false"] {
   padding: 0;
   width: 4rem;
   height: 4rem;
+}
+
+#main-menu--app label {
+  width: 100%;
+  height: 100%;
   background-image: -moz-image-rect(var(--base-sprite-image), 64, 64, 128, 0);
   background-position: center;
-  background-size: 56%;
+  background-size: 24px;
   background-repeat: no-repeat;
   text-indent: -9999rem;
 }
 
+#main-menu--app label[style] {
+  background-size: 28px;
+}
+
 #main-menu--app[aria-selected="true"] {
   background-color: transparent;
+}
+
+#main-menu--app[aria-selected="true"] label:not([style]) {
   background-image: -moz-image-rect(var(--base-sprite-image), 128, 64, 192, 0);
 }
 
@@ -667,17 +679,29 @@ col[data-hidden="false"] {
 }
 
 #main-menu--app--account {
-  padding: .4rem .8rem;
   height: auto;
   opacity: 1;
 }
 
+:root[data-device-type|="mobile"] #main-menu--app--account {
+  padding: .4rem .8rem;
+}
+
 #main-menu--app--account label {
-  padding-left: 4rem;
-  background-size: contain;
-  background-repeat: no-repeat;
+  color: var(--control-foreground-color);
   font-size: 1.1rem;
   line-height: 1.6rem;
+}
+
+:root[data-device-type="desktop"] #main-menu--app--account label {
+  background-image: none !important;
+}
+
+:root[data-device-type|="mobile"] #main-menu--app--account label {
+  padding-left: 4rem;
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 #main-menu--app--account label strong {
@@ -1845,11 +1869,6 @@ article[id$="preview-bug"] > .bug-timeline {
   font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-#main-menu--app--account label {
-  color: var(--control-foreground-color);
-  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
 }
 
 .bug-timeline [itemprop="comment"] header [role="toolbar"] {

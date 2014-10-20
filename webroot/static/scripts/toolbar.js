@@ -131,12 +131,14 @@ BzDeck.Toolbar = function Toolbar () {
   // Account label & avatar
   {
     let account = BzDeck.model.data.account,
-        label = `${account.real_name ? `<strong>${account.real_name}</strong>` : '&nbsp;'}<br>${account.name}`,
-        $label = document.querySelector('#main-menu--app--account label'),
+        label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
+        $menu_label = document.querySelector('#main-menu--app label'),
+        $account_label = document.querySelector('#main-menu--app--account label'),
         $img = new Image();
 
-    $label.innerHTML = label;
-    $img.addEventListener('load', event => $label.style.backgroundImage = `url(${event.target.src})`);
+    $account_label.innerHTML = label;
+    $img.addEventListener('load', event =>
+        $menu_label.style.backgroundImage = $account_label.style.backgroundImage = `url(${event.target.src})`);
     $img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
   }
 
