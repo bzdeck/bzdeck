@@ -140,6 +140,12 @@ BzDeck.Toolbar = function Toolbar () {
     $img.addEventListener('load', event =>
         $menu_label.style.backgroundImage = $account_label.style.backgroundImage = `url(${event.target.src})`);
     $img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
+
+    // TODO: Replace these links with in-app pages
+    document.querySelector('#main-menu--app--profile').href
+        = BzDeck.model.data.server.url + '/user_profile?login=' + encodeURI(account.name);
+    document.querySelector('#main-menu--app--activity').href
+        = BzDeck.model.data.server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(account.name);
   }
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
