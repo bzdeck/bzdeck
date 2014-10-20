@@ -96,6 +96,11 @@ BzDeck.Toolbar = function Toolbar () {
           document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
         }
       });
+
+      window.addEventListener('mozfullscreenchange', event => {
+        $menuitem.querySelector('label').textContent = document.mozFullScreenElement ? 'Exit Full Screen'
+                                                                                     : 'Enter Full Screen'; // l10n
+      });
     }
   }
 
