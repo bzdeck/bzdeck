@@ -85,14 +85,14 @@
                 <header>
                   <h3><span itemprop="id"></span> <span itemprop="summary"></span></h3>
                   <div role="toolbar">
-                    <ul>
-                      <li><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+                    <ul role="presentation">
+                      <li role="presentation"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
                     </ul>
-                    <ul>
-                      <li><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
+                    <ul role="presentation">
+                      <li role="presentation"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
                     </ul>
-                    <ul>
-                      <li><span class="iconic" title="Show the query pane to search again" tabindex="0" role="button" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
+                    <ul role="presentation">
+                      <li role="presentation"><span class="iconic" title="Show the query pane to search again" tabindex="0" role="button" aria-disabled="true" data-command="show-basic-search-pane">Search Again</span></li>
                     </ul>
                   </div>
                 </header>
@@ -111,12 +111,12 @@
           <header>
             <h2><span itemprop="id"></span> <span itemprop="summary"></span></h2>
             <div role="toolbar">
-              <ul>
-                <li><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+              <ul role="presentation">
+                <li role="presentation"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
               </ul>
-              <ul class="nav">
-                <li><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
-                <li><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
+              <ul class="nav" role="presentation">
+                <li role="presentation"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
+                <li role="presentation"><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
               </ul>
             </div>
           </header>
@@ -299,8 +299,8 @@
                 <section>
                   <h4>Theme</h4>
                   <ul role="radiogroup" data-pref="ui.theme.selected">
-                    <li><span role="radio" data-value="Light">Light</span></li>
-                    <li><span role="radio" data-value="Dark">Dark</span></li>
+                    <li role="presentation"><span role="radio" data-value="Light">Light</span></li>
+                    <li role="presentation"><span role="radio" data-value="Dark">Dark</span></li>
                   </ul>
                 </section>
               </section>
@@ -311,16 +311,16 @@
                 <section>
                   <h4>Timezone</h4>
                   <ul role="radiogroup" data-pref="ui.date.timezone">
-                    <li><span role="radio" data-value="local">Your local time</span></li>
-                    <li><span role="radio" data-value="UTC">UTC</span></li>
-                    <li><span role="radio" data-value="PST">PST/PDT</span></li>
+                    <li role="presentation"><span role="radio" data-value="local">Your local time</span></li>
+                    <li role="presentation"><span role="radio" data-value="UTC">UTC</span></li>
+                    <li role="presentation"><span role="radio" data-value="PST">PST/PDT</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>Date Format</h4>
                   <ul role="radiogroup" data-pref="ui.date.relative" data-type="boolean">
-                    <li><span role="radio" data-value="true">Relative</span></li>
-                    <li><span role="radio" data-value="false">Absolute</span></li>
+                    <li role="presentation"><span role="radio" data-value="true">Relative</span></li>
+                    <li role="presentation"><span role="radio" data-value="false">Absolute</span></li>
                   </ul>
                 </section>
               </section>
@@ -331,15 +331,15 @@
                 <section>
                   <h4>Desktop Notifications</h4>
                   <ul role="radiogroup" data-pref="notifications.show_desktop_notifications" data-type="boolean">
-                    <li><span role="radio" data-value="true">Show if possible</span></li>
-                    <li><span role="radio" data-value="false">Don't show</span></li>
+                    <li role="presentation"><span role="radio" data-value="true">Show if possible</span></li>
+                    <li role="presentation"><span role="radio" data-value="false">Don't show</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>CC Changes</h4>
                   <ul role="radiogroup" data-pref="notifications.ignore_cc_changes" data-type="boolean">
-                    <li><span role="radio" data-value="true">Ignore</span></li>
-                    <li><span role="radio" data-value="false">Include</span></li>
+                    <li role="presentation"><span role="radio" data-value="true">Ignore</span></li>
+                    <li role="presentation"><span role="radio" data-value="false">Include</span></li>
                   </ul>
                 </section>
               </section>
@@ -350,8 +350,8 @@
                 <section>
                   <h4>Desktop Layout</h4>
                   <ul role="radiogroup" data-pref="ui.home.layout">
-                    <li><span role="radio" data-value="vertical">Vertical View</span></li>
-                    <li><span role="radio" data-value="classic">Classic View</span></li>
+                    <li role="presentation"><span role="radio" data-value="vertical">Vertical View</span></li>
+                    <li role="presentation"><span role="radio" data-value="classic">Classic View</span></li>
                   </ul>
                 </section>
               </section>
@@ -362,29 +362,29 @@
                 <section>
                   <h4>Sort Order</h4>
                   <ul role="radiogroup" data-pref="ui.timeline.sort.order">
-                    <li><span role="radio" data-value="ascending">Ascending (old to new)</span></li>
-                    <li><span role="radio" data-value="descending">Descending (new to old)</span></li>
+                    <li role="presentation"><span role="radio" data-value="ascending">Ascending (old to new)</span></li>
+                    <li role="presentation"><span role="radio" data-value="descending">Descending (new to old)</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>Font Family</h4>
                   <ul role="radiogroup" data-pref="ui.timeline.font.family">
-                    <li><span role="radio" data-value="proportional">Proportional</span></li>
-                    <li><span role="radio" data-value="monospace">Monospace</span></li>
+                    <li role="presentation"><span role="radio" data-value="proportional">Proportional</span></li>
+                    <li role="presentation"><span role="radio" data-value="monospace">Monospace</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>CC Changes</h4>
                   <ul role="radiogroup" data-pref="ui.timeline.show_cc_changes" data-type="boolean">
-                    <li><span role="radio" data-value="true">Show</span></li>
-                    <li><span role="radio" data-value="false">Hide</span></li>
+                    <li role="presentation"><span role="radio" data-value="true">Show</span></li>
+                    <li role="presentation"><span role="radio" data-value="false">Hide</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>Media Attachments</h4>
                   <ul role="radiogroup" data-pref="ui.timeline.display_attachments_inline" data-type="boolean">
-                    <li><span role="radio" data-value="true">Show inline</span></li>
-                    <li><span role="radio" data-value="false">Hide</span></li>
+                    <li role="presentation"><span role="radio" data-value="true">Show inline</span></li>
+                    <li role="presentation"><span role="radio" data-value="false">Hide</span></li>
                   </ul>
                 </section>
               </section>
@@ -421,9 +421,9 @@
             <time itemprop="datePublished"></time>
           </div>
           <div role="toolbar">
-            <ul>
-              <li><span class="iconic" title="Star this comment" tabindex="0" role="button" aria-pressed="false" data-command="star">Star</span></li>
-              <li><span class="iconic" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
+            <ul role="presentation">
+              <li role="presentation"><span class="iconic" title="Star this comment" tabindex="0" role="button" aria-pressed="false" data-command="star">Star</span></li>
+              <li role="presentation"><span class="iconic" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
             </ul>
           </div>
         </header>
@@ -463,14 +463,14 @@
         </div>
         <footer>
           <div role="toolbar">
-            <ul>
-              <li><span class="iconic" title="Attach Files..." tabindex="0" role="button" data-command="attach">Attach</span></li>
+            <ul role="presentation">
+              <li role="presentation"><span class="iconic" title="Attach Files..." tabindex="0" role="button" data-command="attach">Attach</span></li>
             </ul>
           </div>
           <div role="status"></div>
           <div role="toolbar">
-            <ul>
-              <li><span role="button" aria-disabled="true" data-command="submit">Post</span></li>
+            <ul role="presentation">
+              <li role="presentation"><span role="button" aria-disabled="true" data-command="submit">Post</span></li>
             </ul>
           </div>
         </footer>
@@ -551,7 +551,7 @@
         <h1>Home</h1>
         <div role="toolbar">
           <ul id="toolbar--search-menu">
-            <li>
+            <li role="presentation">
               <ul id="main-menu" role="menubar">
                 <li role="presentation">
                   <span id="main-menu--app" title="Application Menu" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app-menu"><label>App</label></span>
@@ -637,11 +637,11 @@
                     <header>
                       <h3><span itemprop="id"></span> <span itemprop="summary"></span></h3>
                       <div role="toolbar">
-                        <ul>
-                          <li><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+                        <ul role="presentation">
+                          <li role="presentation"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
                         </ul>
-                        <ul>
-                          <li><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
+                        <ul role="presentation">
+                          <li role="presentation"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" aria-disabled="true" data-command="show-details">Show Details</span></li>
                         </ul>
                       </div>
                     </header>
