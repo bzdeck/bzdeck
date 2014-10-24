@@ -588,28 +588,6 @@ window.addEventListener('keydown', event => {
     }
   }
 
-  if (event.metaKey || event.ctrlKey) {
-    switch (event.keyCode) {
-      // Disable some keyboard shortcuts
-      case event.DOM_VK_A: // Select All
-      case event.DOM_VK_B: // Bookmark Sidebar
-      case event.DOM_VK_F: // Find
-      case event.DOM_VK_G: // Find Again
-      case event.DOM_VK_H: // History Sidebar
-      case event.DOM_VK_O: // Open File
-      case event.DOM_VK_Q: // Quit
-      case event.DOM_VK_R: // Reload
-      case event.DOM_VK_S: // Save
-      case event.DOM_VK_W: // Close Tab/Window
-      case event.DOM_VK_ADD: // Zoom In
-      case event.DOM_VK_SUBTRACT: { // Zoom Out
-        event.preventDefault();
-
-        return false;
-      }
-    }
-  }
-
   return true;
 });
 
