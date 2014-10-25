@@ -1989,6 +1989,10 @@ article[id$="preview-bug"] > .bug-timeline {
   color: var(--secondary-content-foreground-color);
 }
 
+.bug-timeline [itemprop="comment"] [itemprop="text"] p a {
+  -moz-user-select: text;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
   border-width: .1rem;
   border-style: solid;
