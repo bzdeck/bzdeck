@@ -1936,14 +1936,13 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] {
   display: block;
-  padding: 0 .8rem;
   line-height: 1;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
   display: inline-block;
   float: left;
-  margin: 0 .8rem 0 -.8rem;
+  margin-right: .8rem;
   width: 4rem;
   height: 4rem;
   color: #FCFCFC;
@@ -1960,6 +1959,7 @@ article[id$="preview-bug"] > .bug-timeline {
   display: inline-block;
   overflow: hidden;
   margin-top: .6rem;
+  max-width: calc(100% - 4.8rem);
   font-size: 1.25rem;
   font-weight: 500;
   white-space: nowrap;
