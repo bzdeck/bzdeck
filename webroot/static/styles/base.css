@@ -1594,52 +1594,58 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
-  display: table;
+  display: flex;
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   width: 100%;
-  height: 3.2rem;
   background-color: var(--region-background-color);
-  table-layout: fixed;
+}
+
+:root[data-device-type="desktop"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
+  height: 3.6rem;
 }
 
 :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
   z-index: 100;
+  height: 4rem;
   transition: top .4s;
 }
 
 :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"][aria-hidden="true"] {
-  display: table;
   top: -4rem;
   transition-duration: .8s;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] {
-  display: table-cell;
+  flex: 1 1 auto;
   float: none;
   margin: 0;
-  border-width: .1rem 0 .1rem .1rem;
-  border-color: var(--tab-border-color);
+  box-sizing: border-box;
   border-radius: 0;
-  padding: .6rem .8rem;
-  width: auto;
-  height: 2.4rem;
-  color: var(--tab-foreground-color);
-  background-color: var(--tab-background-color);
+  padding: .8rem;
+  height: 100%;
+  font-size: 1.25rem;
   line-height: 2rem;
   text-align: center;
-  vertical-align: middle;
-}
-
-[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"]:first-of-type {
-  border-left-width: 0;
+  transition: color .2s;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] {
-  color: var(--selected-tab-foreground-color);
-  background-color: var(--selected-tab-background-color);
+  border-width: 0 0 .4rem;
+  border-color: var(--base-accent-color-1);
+  color: var(--base-accent-color-1);
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] {
+  border-width: 0 0 .1rem;
+  border-color: var(--tab-border-color);
+  color: var(--tab-foreground-color);
+}
+
+[itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"]:hover {
+  color: var(--hovered-tab-foreground-color);
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"][aria-hidden="true"] {
@@ -1651,19 +1657,36 @@ article[id$="preview-bug"] > .bug-timeline {
   position: static;
   width: auto;
   height: auto;
-  line-height: 2rem;
   vertical-align: middle;
+}
+
+:root[data-device-type="desktop"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
+  line-height: 2rem;
+}
+
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
+  line-height: 2.4rem;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label::before {
   display: inline-block;
   margin-right: .4rem;
+  font-family: FontAwesome;
+  vertical-align: top;
+}
+
+:root[data-device-type="desktop"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label::before {
   width: 2rem;
   height: 2rem;
-  font-family: FontAwesome;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   line-height: 2rem;
-  vertical-align: top;
+}
+
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label::before {
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 2.2rem;
+  line-height: 2.4rem;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [id$="tab-timeline"] label::before {
@@ -1692,7 +1715,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root[data-device-type="desktop"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
-  top: 3.2rem;
+  top: 3.6rem; /* A space for the tabs */
 }
 
 :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
@@ -1713,9 +1736,8 @@ article[id$="preview-bug"] > .bug-timeline {
   content: "";
 }
 
-:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] {
-  box-sizing: border-box;
-  padding-top: 3.2rem;
+:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > .scrollable-area-content > :first-child {
+  padding-top: 4rem;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ .bug-info {
@@ -1813,11 +1835,11 @@ article[id$="preview-bug"] > .bug-timeline {
 .bug-timeline {
   bottom: 0;
   padding-top: 0 !important;
-  height: auto;
 }
 
 :root[data-device-type="mobile-phone"] .bug-timeline {
   top: .8rem;
+  height: calc(100% - .8rem);
 }
 
 :root:not([data-device-type="mobile-phone"]) .bug-timeline {
@@ -1840,7 +1862,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 :root[data-device-type|="mobile"] .bug-timeline > div > h2 {
   display: block;
-  padding: 3.2rem 1.6rem .8rem;
+  padding: 4rem 1.6rem .8rem;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 500;
@@ -3060,11 +3082,6 @@ article[id$="preview-bug"] > .bug-timeline {
     height: auto;
   }
 
-  :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
-    overflow: hidden;
-    width: 2rem; /* Show icons only */
-  }
-
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -3079,6 +3096,11 @@ article[id$="preview-bug"] > .bug-timeline {
 
   :root[data-device-type|="mobile"] #tabpanel-settings > section > div > section > section > ul {
     margin: .8rem 0 0;
+  }
+
+  :root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] [role="tab"] label {
+    overflow: hidden;
+    width: 2.4rem; /* Show icons only */
   }
 
 }

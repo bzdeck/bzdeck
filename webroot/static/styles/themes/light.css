@@ -91,7 +91,7 @@
   --selected-tab-foreground-color: var(--base-foreground-color-1);
   --selected-tab-background-color: var(--base-background-color-4);
   --hovered-tab-border-color: ; /* Unchanged */
-  --hovered-tab-foreground-color: ; /* Unchanged */
+  --hovered-tab-foreground-color: var(--base-foreground-color-1);
   --hovered-tab-background-color: ; /* Unchanged */
 
   --textbox-border-color: var(--base-background-color-4);
