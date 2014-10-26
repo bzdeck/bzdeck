@@ -1249,7 +1249,7 @@ main {
   content: '\F005';
 }
 
-:root[data-device-type|="mobile"] [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-command="reply"] {
+:root[data-device-type="mobile-phone"] [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] [data-command="reply"] {
   display: none !important; /* TEMP, mobile comment form UI is not ready */
 }
 
@@ -2184,7 +2184,7 @@ article[id$="preview-bug"] > .bug-timeline {
   pointer-events: none;
 }
 
-:root[data-device-type|="mobile"] [id$="timeline-comment-form"] {
+:root[data-device-type="mobile-phone"] [id$="timeline-comment-form"] {
   display: none !important; /* TEMP, mobile comment form UI is not ready */
 }
 
