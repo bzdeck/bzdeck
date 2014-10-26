@@ -1863,9 +1863,16 @@ article[id$="preview-bug"] > .bug-timeline {
 :root[data-device-type|="mobile"] .bug-timeline > div > h2 {
   display: block;
   padding: 4rem 1.6rem .8rem;
-  font-size: 1.5rem;
-  line-height: 2rem;
+  line-height: 1.4;
   font-weight: 500;
+}
+
+:root[data-device-type="mobile-phone"] .bug-timeline > div > h2 {
+  font-size: 1.5rem;
+}
+
+:root[data-device-type="mobile-tablet"] .bug-timeline > div > h2 {
+  font-size: 2rem;
 }
 
 :root[data-device-type|="mobile"] .bug-timeline > div > h2 [itemprop="id"] {
