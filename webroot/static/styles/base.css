@@ -1890,7 +1890,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   position: relative;
-  border-width: 0 0 .1rem;
+  border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
   color: var(--content-foreground-color);
@@ -1915,6 +1915,10 @@ article[id$="preview-bug"] > .bug-timeline {
 
 :root[data-timeline-show-cc-changes="false"] .bug-timeline [itemprop="comment"][data-changes="cc"][data-nocomment] {
   display: none;
+}
+
+.bug-timeline [itemprop="comment"]:focus {
+  border-color: var(--base-accent-color-1);
 }
 
 .bug-timeline [itemprop="comment"] header {

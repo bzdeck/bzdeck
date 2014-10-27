@@ -318,6 +318,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${$bug.id}-timeline`,
       comment_form = new BzDeck.Bug.Timeline.CommentForm(bug, timeline_id),
+      $expander,
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
   for (let attachment of bug.attachments) {
@@ -364,7 +365,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
 
   // Show an expander if there are read comments
   if (read_entries_num > 1) {
-    let $expander = document.createElement('div');
+    $expander = document.createElement('div');
 
     $expander.textContent = read_entries_num === 2 ? '1 older comment'
                                                    : `${read_entries_num - 1} older comments`;
@@ -387,6 +388,28 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   $parent.insertBefore(comment_form.$form, sort_desc ? $parent.querySelector('[itemprop="comment"]') : null);
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
+
+  let check_fragment = () => {
+    // If the URL fragment has a valid comment number, scroll the comment into view
+    if (location.pathname === `/bug/${bug.id}` && location.hash.match(/^#c(\d+)$/)) {
+      let $comment = $timeline.querySelector(`[data-comment-number="${RegExp.$1}"]`);
+
+      if ($comment) {
+        if ($expander) {
+          // Expand all comments
+          $expander.dispatchEvent(new MouseEvent('click'));
+        }
+
+        $comment.scrollIntoView();
+        $comment.focus();
+      }
+    }
+  };
+
+  // Check the fragment; use a timer to wait for rendering
+  window.setTimeout(window => check_fragment(), 150);
+  window.addEventListener('popstate', event => check_fragment());
+  window.addEventListener('hashchange', event => check_fragment());
 };
 
 BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
@@ -410,15 +433,24 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   if (comment) {
     let text = comment.raw_text;
 
+    comment.number = data.get('comment_number');
     author = BzDeck.Bug.find_person(bug, comment.creator);
     time = comment.creation_time;
     $entry.id = `${timeline_id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
+    $entry.setAttribute('data-comment-number', comment.number);
     $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
 
+    // Append the comment number to the URL when clicked
+    $entry.addEventListener('click', event => {
+      if (location.pathname.startsWith('/bug/')) {
+        window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
+      }
+    });
+
     // Make a quote
-    let quote_header = `(In reply to ${author.real_name || author.email} from comment #${data.get('comment_number')})`,
+    let quote_header = `(In reply to ${author.real_name || author.email} from comment #${comment.number})`,
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
         quote = `${quote_header}\n${quote_lines.join('\n')}`;
 
