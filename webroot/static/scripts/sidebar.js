@@ -111,6 +111,8 @@ BzDeck.Sidebar = function Sidebar () {
     }
   });
 
+  this.open_folder('inbox');
+
   window.addEventListener('Bug:UnreadToggled', event => {
     // Update the sidebar Inbox folder
     BzDeck.model.get_all_subscriptions().then(subscriptions => {
