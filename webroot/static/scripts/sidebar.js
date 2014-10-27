@@ -170,9 +170,26 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   if (folder_id === 'inbox') {
     get_subscribed_bugs().then(bugs => {
       let recent_time = Date.now() - 1000 * 60 * 60 * 24 * 11;
+      let is_new = bug => {
+        if (bug._unread) {
+          return true;
+        }
+
+        // Ignore CC Changes option
+        if (BzDeck.model.data.prefs['notifications.ignore_cc_changes'] !== false) {
+          // Check if there is a comment, attachment or non-CC change(s) on the last modified time
+          return [for (c of bug.comments || []) if (c.creation_time === bug.last_change_time) c].length ||
+                 [for (a of bug.attachments || []) if (a.creation_time === bug.last_change_time) a].length ||
+                 [for (h of bug.history || []) if (history.when === bug.last_change_time &&
+                     [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length;
+        }
+
+        // Simply check the last modified date
+        return new Date(bug.last_change_time) > recent_time;
+      };
 
       // Recent bugs changed in 10 days + unread bugs
-      update_list([for (bug of bugs) if (new Date(bug.last_change_time) > recent_time || bug._unread) bug]);
+      update_list([for (bug of bugs) if (is_new(bug)) bug]);
     });
   }
 
