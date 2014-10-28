@@ -350,15 +350,18 @@ BzDeck.model.fetch_subscriptions = function () {
 
             bug._update_needed = false;
 
+            let last_mod = new Date(cache.last_change_time),
+                cmp_date = str => new Date(str) > last_mod;
+
             // Mark the bug unread if the user subscribes CC changes or the bug is already unread
             if (!ignore_cc || !cache || cache._unread || !cache._last_viewed ||
                 // or there are unread comments
-                [for (c of bug.comments) if (c.creation_time > cache.last_change_time) c].length ||
+                [for (c of bug.comments) if (cmp_date(c.creation_time)) c].length ||
                 // or there are unread attachments
-                [for (a of bug.attachments) if (a.creation_time > cache.last_change_time) a].length ||
+                [for (a of bug.attachments) if (cmp_date(a.creation_time)) a].length ||
                 // or there are unread non-CC changes
-                [for (h of bug.history) if (history.when > cache.last_change_time &&
-                  [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length) {
+                [for (h of bug.history) if (cmp_date(h.when) &&
+                    [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
               bug._unread = true;
             } else {
               // Looks like there are only CC changes, so mark the bug read

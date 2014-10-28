@@ -180,8 +180,8 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
           // Check if there is a comment, attachment or non-CC change(s) on the last modified time
           return [for (c of bug.comments || []) if (c.creation_time === bug.last_change_time) c].length ||
                  [for (a of bug.attachments || []) if (a.creation_time === bug.last_change_time) a].length ||
-                 [for (h of bug.history || []) if (history.when === bug.last_change_time &&
-                     [for (c of history.changes) if (c.field_name !== 'cc') c].length) h].length;
+                 [for (h of bug.history || []) if (h.when === bug.last_change_time &&
+                     [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length;
         }
 
         // Simply check the last modified date
