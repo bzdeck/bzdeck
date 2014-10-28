@@ -30,6 +30,7 @@ RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.2711358196
 RewriteRule ^home/\w+$ / [L]
 RewriteRule ^settings$ / [L]
 RewriteRule ^(?:attachment|bug|search)/\d+$ / [L]
+RewriteRule ^(?:profile)/.+$ / [L]
 
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]

@@ -19,7 +19,7 @@ BzDeck.Toolbar = function Toolbar () {
   $$tablist.bind('Selected', event => {
     let $tab = event.detail.items[0],
         sidebar = BzDeck.sidebar.data,
-        path = '/' + $tab.id.substr(4).replace(/^details-/, 'bug/').replace(/^(search)-/, '$1/');
+        path = '/' + $tab.id.substr(4).replace(/^details-/, 'bug/').replace(/^(search|profile)-/, '$1/');
 
     if (path === '/home') {
       sidebar.folder_id = sidebar.folder_id || 'inbox';
@@ -37,6 +37,12 @@ BzDeck.Toolbar = function Toolbar () {
 
   $app_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
+      case 'show-profile': {
+        BzDeck.ProfilePage.open(BzDeck.model.data.account.name);
+
+        break;
+      }
+
       case 'show-settings': {
         BzDeck.SettingsPage.open();
 
@@ -140,12 +146,6 @@ BzDeck.Toolbar = function Toolbar () {
     $img.addEventListener('load', event =>
         $menu_label.style.backgroundImage = $account_label.style.backgroundImage = `url(${event.target.src})`);
     $img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
-
-    // TODO: Replace these links with in-app pages
-    document.querySelector('#main-menu--app--profile').href
-        = BzDeck.model.data.server.url + '/user_profile?login=' + encodeURI(account.name);
-    document.querySelector('#main-menu--app--activity').href
-        = BzDeck.model.data.server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(account.name);
   }
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {

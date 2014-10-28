@@ -1122,7 +1122,7 @@ main {
   background: transparent;
 }
 
-:root[data-device-type|="mobile"]:-moz-any([data-current-tab="home"], [data-current-tab="settings"]) #main-tabpanels > [role="tabpanel"] > * > header {
+:root[data-device-type|="mobile"]:-moz-any([data-current-tab="home"], [data-current-tab="settings"], [data-current-tab="profile"]) #main-tabpanels > [role="tabpanel"] > * > header {
   display: none;
 }
 
@@ -2902,6 +2902,67 @@ article[id$="preview-bug"] > .bug-timeline {
   padding: .4rem .8rem;
   height: 1.6rem;
   line-height: 1.6rem;
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Profile
+ * ---------------------------------------------------------------------------------------------- */
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] > section > div {
+  overflow: hidden;
+  padding: 4rem;
+}
+
+:root[data-device-type="mobile-phone"] [id|="tabpanel-profile"] > section > div {
+  overflow: auto;
+  padding: 2rem;
+  pointer-events: auto;
+}
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] {
+}
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] {
+  float: left;
+  width: 16rem;
+}
+
+:root[data-device-type="mobile-phone"] [id|="tabpanel-profile"] article [itemprop="image"] {
+  width: 8rem;
+}
+
+[id|="tabpanel-profile"] article [itemprop="image"] ~ * {
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] ~ * {
+  margin: 0 0 1rem 18rem;
+}
+
+:root[data-device-type="mobile-phone"] [id|="tabpanel-profile"] article [itemprop="image"] ~ * {
+  margin: 1rem 0 0 0;
+}
+
+[id|="tabpanel-profile"] article h3 {
+  font-size: 2rem;
+}
+
+[id|="tabpanel-profile"] article dt {
+  float: left;
+  width: 6rem;
+}
+
+[id|="tabpanel-profile"] article dt::after {
+  content: ":";
+}
+
+[id|="tabpanel-profile"] footer [role="status"] {
+  position: absolute;
+  top: calc(50% + 4rem);
+  left: calc(50% - 8rem);
+  width: 16rem;
+  text-align: center;
 }
 
 /* ----------------------------------------------------------------------------------------------

@@ -395,6 +395,35 @@
         </section>
       </div><!-- end #tabpanel-settings -->
     </template><!-- end #tabpanel-settings-template -->
+    <template id="tabpanel-profile-template">
+      <div id="tabpanel-profile" tabindex="0" role="tabpanel" aria-labelledby="tab-profile">
+        <section>
+          <header>
+            <h2>User Profile</h2>
+          </header>
+          <div>
+            <article id="profile-TID" role="article" itemscope itemtype="http://schema.org/Person http://bzdeck.com/Person">
+              <img alt="" itemprop="image">
+              <h3 itemprop="name"></h3>
+              <dl>
+                <dt>ID</dt>
+                <dd><span itemprop="id"></span></dd>
+                <dt>Email</dt>
+                <dd><a itemprop="emailLink"><span itemprop="email"></span></a></dd>
+              </dl>
+              <ul>
+                <li data-id="bugzilla-profile"><a href="">User Profile on Bugzilla</a></li>
+                <li data-id="bugzilla-activity"><a href="">User Activity on Bugzilla</a></li>
+              </ul>
+              <p>This User Profile panel is under development. More information will be added in the future.</p>
+            </article>
+          </div>
+          <footer>
+            <div role="status"></div>
+          </footer>
+        </section>
+      </div><!-- end #tabpanel-profile -->
+    </template><!-- end #tabpanel-profile-template -->
     <template id="preview-bug-info">
       <div class="bug-info" tabindex="0" role="region">
         <dl>
@@ -561,10 +590,7 @@
                     </li>
                     <li role="separator"></li>
                     <li role="presentation">
-                      <a id="main-menu--app--profile" role="menuitem" data-command="show-profile"><label>Profile</label></a>
-                    </li>
-                    <li role="presentation">
-                      <a id="main-menu--app--activity" role="menuitem" data-command="show-activity"><label>Activity</label></a>
+                      <span id="main-menu--app--profile" role="menuitem" data-command="show-profile"><label>Profile</label></span>
                     </li>
                     <li role="separator"></li>
                     <li role="presentation">
@@ -688,5 +714,6 @@
     <script type="application/javascript;version=1.8" src="/static/scripts/search.js"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/details.js"></script>
     <script type="application/javascript;version=1.8" src="/static/scripts/settings.js"></script>
+    <script type="application/javascript;version=1.8" src="/static/scripts/profile.js"></script>
   </body>
 </html>
