@@ -358,9 +358,9 @@ BzDeck.model.fetch_subscriptions = function () {
                 // or there are unread comments
                 [for (c of bug.comments) if (cmp_date(c.creation_time)) c].length ||
                 // or there are unread attachments
-                [for (a of bug.attachments) if (cmp_date(a.creation_time)) a].length ||
+                [for (a of bug.attachments || []) if (cmp_date(a.creation_time)) a].length ||
                 // or there are unread non-CC changes
-                [for (h of bug.history) if (cmp_date(h.when) &&
+                [for (h of bug.history || []) if (cmp_date(h.when) &&
                     [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
               bug._unread = true;
             } else {

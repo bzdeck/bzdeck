@@ -176,9 +176,10 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
         }
 
         // Ignore CC Changes option
-        if (BzDeck.model.data.prefs['notifications.ignore_cc_changes'] !== false) {
+        // At first startup, bug details are not loaded yet, so check if the comments exist
+        if (BzDeck.model.data.prefs['notifications.ignore_cc_changes'] !== false && bug.comments) {
           // Check if there is a comment, attachment or non-CC change(s) on the last modified time
-          return [for (c of bug.comments || []) if (c.creation_time === bug.last_change_time) c].length ||
+          return [for (c of bug.comments) if (c.creation_time === bug.last_change_time) c].length ||
                  [for (a of bug.attachments || []) if (a.creation_time === bug.last_change_time) a].length ||
                  [for (h of bug.history || []) if (h.when === bug.last_change_time &&
                      [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length;
