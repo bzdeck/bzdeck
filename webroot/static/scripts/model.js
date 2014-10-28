@@ -329,12 +329,13 @@ BzDeck.model.fetch_subscriptions = function () {
       this.request('GET', 'bug', params).then(result => {
         last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
-        for (let bug of result.bugs) {
+        let load_details = bug => new Promise(resolve => {
           if (firstrun) {
             bug._unread = false; // Mark all bugs read if the session is firstrun
             bug._update_needed = true; // Flag to fetch details
+            resolve(bug);
 
-            continue;
+            return;
           }
 
           this.fetch_bug(bug, false).then(bug => {
@@ -364,12 +365,12 @@ BzDeck.model.fetch_subscriptions = function () {
               bug._unread = false;
             }
 
-            this.save_bug(bug);
+            resolve(bug);
           });
-        }
+        });
 
-        firstrun ? this.save_bugs(result.bugs).then(bugs => resolve()) : resolve();
-      }).catch(event => reject(new Error('Failed to load data.'))); // l10n
+        return Promise.all([for (bug of result.bugs) load_details(bug)]).then(bugs => this.save_bugs(bugs));
+      }).then(() => resolve(), event => reject(new Error('Failed to load data.'))); // l10n
     });
   });
 };
