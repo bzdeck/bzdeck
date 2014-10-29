@@ -339,9 +339,12 @@ BzDeck.model.fetch_subscriptions = function () {
           }
 
           this.fetch_bug(bug, false).then(bug => {
-            let cache = [for (_bug of cached_bugs) if (_bug.id === bug.id) _bug][0];
+            let cache = [for (_bug of cached_bugs) if (_bug.id === bug.id) _bug][0],
+                cmp_date;
 
             if (cache) {
+              cmp_date = str => new Date(str) > new Date(cache.last_change_time);
+
               // Copy annotations
               for (let [key, value] of Iterator(cache)) if (key.startsWith('_')) {
                 bug[key] = value;
@@ -349,9 +352,6 @@ BzDeck.model.fetch_subscriptions = function () {
             }
 
             bug._update_needed = false;
-
-            let last_mod = new Date(cache.last_change_time),
-                cmp_date = str => new Date(str) > last_mod;
 
             // Mark the bug unread if the user subscribes CC changes or the bug is already unread
             if (!ignore_cc || !cache || cache._unread || !cache._last_viewed ||
