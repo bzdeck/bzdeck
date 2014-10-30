@@ -260,9 +260,13 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
 
   BzDeck.model.get_all_bugs().then(bugs => {
     let results = bugs.filterPar(bug => {
-      return (words.every(word => bug.summary.toLowerCase().contains(word)) ||
-              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0])) &&
-              BzDeck.model.data.server.config.field.status.open.contains(bug.status);
+      if (!BzDeck.model.data.server.config.field.status.open.contains(bug.status)) {
+        return false;
+      }
+
+      return words.every(word => bug.summary.toLowerCase().contains(word)) ||
+             words.length === 1 && bug.alias && bug.alias.toLowerCase().contains(words[0]) ||
+             words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0]);
     });
 
     let data = [{
@@ -274,7 +278,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
     for (let bug of results.reverse().slice(0, 20)) {
       data.push({
         'id': `quicksearch-dropdown-${bug.id}`,
-        'label': `${bug.id} - ${bug.summary}`,
+        'label': bug.id + ' - ' + (bug.alias ? `(${bug.alias}) ` : '') + bug.summary,
         'data': { 'id': bug.id }
       });
     }
