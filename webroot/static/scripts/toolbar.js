@@ -256,7 +256,9 @@ BzDeck.Toolbar = function Toolbar () {
 };
 
 BzDeck.Toolbar.prototype.quicksearch = function (event) {
-  let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()];
+  let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()],
+      // Support for multiple aliases on Bugzilla 5.0+
+      get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
 
   BzDeck.model.get_all_bugs().then(bugs => {
     let results = bugs.filterPar(bug => {
@@ -265,7 +267,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
       }
 
       return words.every(word => bug.summary.toLowerCase().contains(word)) ||
-             words.length === 1 && bug.alias && bug.alias.toLowerCase().contains(words[0]) ||
+             words.every(word => get_aliases(bug).join().toLowerCase().contains(word)) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0]);
     });
 
@@ -276,9 +278,11 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
     }];
 
     for (let bug of results.reverse().slice(0, 20)) {
+      let aliases = get_aliases(bug);
+
       data.push({
         'id': `quicksearch-dropdown-${bug.id}`,
-        'label': bug.id + ' - ' + (bug.alias ? `(${bug.alias}) ` : '') + bug.summary,
+        'label': bug.id + ' - ' + (aliases ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
         'data': { 'id': bug.id }
       });
     }
