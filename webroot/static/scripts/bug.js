@@ -1086,6 +1086,7 @@ BzDeck.bugzfeed.connect = function () {
   this.websocket.addEventListener('open', event => {
     if (this.reconnector) {
       window.clearInterval(this.reconnector);
+      delete this.reconnector;
     }
 
     // Subscribe bugs once (re)connected
@@ -1096,14 +1097,16 @@ BzDeck.bugzfeed.connect = function () {
 
   this.websocket.addEventListener('close', event => {
     // Try to reconnect every 30 seconds when unexpectedly disconnected
-    if (![1000, 1005].contains(event.code)) {
+    if (!this.reconnector && ![1000, 1005].contains(event.code)) {
       this.reconnector = window.setInterval(() => this.connect(), 30000);
     }
   });
 
   this.websocket.addEventListener('error', event => {
     // Try to reconnect every 30 seconds when unexpectedly disconnected
-    this.reconnector = window.setInterval(() => this.connect(), 30000);
+    if (!this.reconnector) {
+      this.reconnector = window.setInterval(() => this.connect(), 30000);
+    }
   });
 
   this.websocket.addEventListener('message', event => {
