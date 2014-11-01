@@ -462,6 +462,11 @@ col[data-hidden="false"] {
   margin-top: .4rem;
 }
 
+#app-login a {
+  color: inherit;
+  font-weight: 500;
+}
+
 #app-login [role="textbox"] {
   margin-right: .8rem;
   width: calc(100% - 10rem);

@@ -79,6 +79,7 @@ BzDeck.bootstrap.start = function () {
   }).then(() => {
     status('Loading bugs...'); // l10n
     document.querySelector('#app-intro').style.display = 'none';
+    this.$form.setAttribute('aria-hidden', 'true');
 
     return Promise.all([
       BzDeck.model.fetch_subscriptions(),
