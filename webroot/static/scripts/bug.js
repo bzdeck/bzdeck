@@ -390,9 +390,12 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   $timeline.removeAttribute('aria-busy', 'false');
 
   let check_fragment = () => {
+    let match = location.hash.match(/^#c(\d+)$/),
+        comment_number = match ? Number.parseInt(match[1]) : undefined;
+
     // If the URL fragment has a valid comment number, scroll the comment into view
-    if (location.pathname === `/bug/${bug.id}` && location.hash.match(/^#c(\d+)$/)) {
-      let $comment = $timeline.querySelector(`[data-comment-number="${RegExp.$1}"]`);
+    if (location.pathname === `/bug/${bug.id}` && comment_number) {
+      let $comment = $timeline.querySelector(`[data-comment-number="${comment_number}"]`);
 
       if ($comment) {
         if ($expander) {
@@ -497,6 +500,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   if (attachment) {
     // TODO: load the attachment data via API
     let url = `${BzDeck.model.data.server.url}/attachment.cgi?id=${attachment.id}`,
+        media_type = attachment.content_type.split('/')[0],
         $attachment = FlareTail.util.content.get_fragment('timeline-attachment').firstElementChild,
         $outer = $attachment.querySelector('div'),
         $media,
@@ -520,13 +524,13 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       `${(attachment.size / 1024).toFixed(2)} KB` // l10n
     ].join('\n');
 
-    if (attachment.content_type.startsWith('image/')) {
+    if (media_type === 'image') {
       $media = document.createElement('img');
       $media.alt = attachment.summary;
     }
 
-    if (attachment.content_type.match(/^(audio|video)\//)) {
-      $media = document.createElement(RegExp.$1);
+    if (media_type === 'audio' || media_type === 'video') {
+      $media = document.createElement(media_type);
       $media.controls = true;
       load_event = 'loadedmetadata';
 

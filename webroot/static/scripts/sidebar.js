@@ -194,8 +194,8 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^(cc|reported|assigned|mentor|qa|requests)/)) {
-    BzDeck.model.get_subscription_by_id(RegExp.$1).then(bugs => update_list(bugs));
+  if (folder_id.match(/^(cc|reported|assigned|mentor|qa|requests)$/)) {
+    BzDeck.model.get_subscription_by_id(folder_id).then(bugs => update_list(bugs));
   }
 
   if (folder_id === 'all') {

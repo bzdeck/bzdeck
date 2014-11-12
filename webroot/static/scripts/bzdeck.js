@@ -366,8 +366,10 @@ BzDeck.core.register_activity_handler = function () {
 
   if (typeof navigator.mozSetMessageHandler === 'function') {
     navigator.mozSetMessageHandler('activity', req => {
-      if (req.source.url.match(re)) {
-        BzDeck.DetailsPage.open(Number.parseInt(RegExp.$1));
+      let match = req.source.url.match(re);
+
+      if (match) {
+        BzDeck.DetailsPage.open(Number.parseInt(match[1]));
       }
     });
   }
@@ -594,6 +596,7 @@ window.addEventListener('keydown', event => {
 
 window.addEventListener('popstate', event => {
   let path = location.pathname.substr(1).replace('/', '-'),
+      match,
       tabs = BzDeck.toolbar.$$tablist.view,
       folders = BzDeck.sidebar.$$folders.view,
       $tab,
@@ -614,8 +617,10 @@ window.addEventListener('popstate', event => {
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
 
-  if (path.match(/^bug-(\d+)$/)) {
-    let bug_id = Number.parseInt(RegExp.$1),
+  match = path.match(/^bug-(\d+)$/);
+
+  if (match) {
+    let bug_id = Number.parseInt(match[1]),
         bug_list = [],
         $current_tab;
 
@@ -652,8 +657,10 @@ window.addEventListener('popstate', event => {
     return;
   }
 
-  if (path.match(/^home-(\w+)/)) {
-    let folder_id = RegExp.$1,
+  match = path.match(/^home-(\w+)/);
+
+  if (match) {
+    let folder_id = match[1],
         $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
 
     $tab = document.querySelector('#tab-home');
