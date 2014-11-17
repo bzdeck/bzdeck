@@ -282,7 +282,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
 
       data.push({
         'id': `quicksearch-dropdown-${bug.id}`,
-        'label': bug.id + ' - ' + (aliases ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
+        'label': bug.id + ' - ' + (aliases.length ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
         'data': { 'id': bug.id }
       });
     }
