@@ -434,7 +434,7 @@ col[data-hidden="false"] {
   width: 100%;
   height: 100%;
   text-indent: -9999rem;
-  background-image: url(/static/images/logo/icon-256.png);
+  background-image: url(/static/images/logo/icon-256-white.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -526,8 +526,8 @@ col[data-hidden="false"] {
   position: absolute;
   overflow: hidden;
   height: 2rem;
-  background-image: url(/static/images/logo/icon-256.png);
-  background-size: 3.2rem;
+  background-image: url(/static/images/logo/icon-256-white.png);
+  background-size: 2.8rem;
   background-repeat: no-repeat;
   font-size: 1.6rem;
   line-height: 2rem;
@@ -536,13 +536,13 @@ col[data-hidden="false"] {
 [data-device-type="desktop"]:root [role="banner"] h1 {
   padding: 1rem 0 1rem 4rem;
   width: 0;
-  background-position: .4rem .4rem;
+  background-position: .6rem .6rem;
 }
 
 [data-device-type|="mobile"]:root [role="banner"] h1 {
   padding: 1rem 0 1rem 4.5rem;
   width: auto;
-  background-position: 1rem .4rem;
+  background-position: 1rem .6rem;
 }
 
 [data-device-type|="mobile"]:root [role="banner"].search h1 {
