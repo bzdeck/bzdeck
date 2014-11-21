@@ -46,6 +46,11 @@ BzDeck.Sidebar = function Sidebar () {
       'data': { 'id': 'starred' }
     },
     {
+      'id': 'sidebar-folders--recent',
+      'label': 'Recent',
+      'data': { 'id': 'recent' }
+    },
+    {
       'id': 'sidebar-folders--requests',
       'label': 'Requests',
       'data': { 'id': 'requests' }
@@ -208,6 +213,15 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs().then(bugs => {
       update_list([for (bug of bugs) if (BzDeck.model.bug_is_starred(bug)) bug]);
+    });
+  }
+
+  if (folder_id === 'recent') {
+    // Recently selected bugs may include non-subscribed bugs, so get ALL bugs
+    // TODO: Bugs on threads should be sorted by the last viewed date, not by the last modified date.
+    BzDeck.model.get_all_bugs().then(bugs => {
+      update_list([for (bug of bugs) if (bug._last_viewed) bug]
+                    .sort((a, b) => a._last_viewed < b._last_viewed).slice(0, 50));
     });
   }
 
