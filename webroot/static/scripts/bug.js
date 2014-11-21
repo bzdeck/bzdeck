@@ -434,7 +434,9 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       $_image = new Image();
 
   if (comment) {
-    let text = comment.raw_text;
+    // TEMP: the message for a duplicated bug is currently only in the comment.text field
+    let text = comment.text.contains('has been marked as a duplicate of this bug')
+             ? comment.text : comment.raw_text;
 
     comment.number = data.get('comment_number');
     author = BzDeck.Bug.find_person(bug, comment.creator);
