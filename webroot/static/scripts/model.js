@@ -304,7 +304,6 @@ BzDeck.model.fetch_subscriptions = function () {
       params = new URLSearchParams(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
-  params.append('resolution', '---');
   params.append('j_top', 'OR');
 
   if (last_loaded) {
