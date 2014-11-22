@@ -158,7 +158,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
 
       for (let [key, bugs] of subscriptions) {
         // Remove duplicates
-        ids.push(...[for (bug of bugs) if (!ids.contains(bug.id)) bug.id]);
+        ids.push(...[for (bug of bugs) if (!ids.includes(bug.id)) bug.id]);
       }
 
       BzDeck.model.get_bugs_by_ids(ids).then(bugs => resolve(bugs));
@@ -229,7 +229,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     get_subscribed_bugs().then(bugs => {
       let severities = ['blocker', 'critical', 'major'];
 
-      update_list([for (bug of bugs) if (severities.contains(bug.severity)) bug]);
+      update_list([for (bug of bugs) if (severities.includes(bug.severity)) bug]);
     });
   }
 };

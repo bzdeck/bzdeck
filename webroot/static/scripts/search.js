@@ -137,7 +137,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
   let components = [];
 
   for (let [key, { 'component': cs }] of Iterator(config.product)) {
-    components.push(...[for (c of Object.keys(cs)) if (!components.contains(c)) c]);
+    components.push(...[for (c of Object.keys(cs)) if (!components.includes(c)) c]);
   }
 
   components = components.sort().mapPar((value, index) => ({
@@ -318,7 +318,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
       BzDeck.model.get_all_bugs().then(bugs => {
         let saved_ids = [for (bug of bugs) bug.id];
 
-        BzDeck.model.save_bugs([for (bug of result.bugs) if (!saved_ids.contains(bug.id)) bug]);
+        BzDeck.model.save_bugs([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
       });
 
       // Show results

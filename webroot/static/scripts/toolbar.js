@@ -262,7 +262,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
 
   BzDeck.model.get_all_bugs().then(bugs => {
     let results = bugs.filterPar(bug => {
-      if (!BzDeck.model.data.server.config.field.status.open.contains(bug.status)) {
+      if (!BzDeck.model.data.server.config.field.status.open.includes(bug.status)) {
         return false;
       }
 
