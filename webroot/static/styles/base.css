@@ -1852,10 +1852,6 @@ article[id$="preview-bug"] > .bug-timeline {
   height: calc(100% - 1.2rem);
 }
 
-.bug-timeline > .scrollable-area-content {
-  pointer-events: none;
-}
-
 .bug-timeline h2 {
   display: none; /* Visible on mobile */
 }
@@ -1933,7 +1929,6 @@ article[id$="preview-bug"] > .bug-timeline {
   z-index: 10;
   overflow: hidden;
   background-color: var(--content-background-color);
-  pointer-events: auto;
 }
 
 .bug-timeline [itemprop="comment"] header .meta {
@@ -2006,7 +2001,6 @@ article[id$="preview-bug"] > .bug-timeline {
   margin: 1.2rem 0;
   white-space: pre-wrap;
   -moz-user-select: text;
-  pointer-events: auto;
   cursor: text;
 }
 
