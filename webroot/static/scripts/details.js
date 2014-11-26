@@ -110,7 +110,10 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
 
   // Scroll a tabpanel to top when the tab is selected
   $$tablist.bind('Selected', event => {
-    document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')} > [role="region"]`).scrollTop = 0;
+    let $tabpanel = document.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')}`);
+
+    $tabpanel.querySelector('[role="region"]').scrollTop = 0; // Mobile
+    $tabpanel.querySelector('.scrollable-area-content').scrollTop = 0; // Desktop
   });
 
   // Hide tabs when scrolled down on mobile
