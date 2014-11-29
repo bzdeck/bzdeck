@@ -7,15 +7,12 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
-  this.data = { id, bug_list };
-  this.view = { '$tab': null, '$tabpanel': null };
+BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
+  let $tab = document.querySelector(`#tab-details-${id}`),
+      $tabpanel = document.querySelector(`#tabpanel-details-${id}`);
 
-  if (bug_list.length) {
-    this.open([for (bug of bug_list) if (bug.id === id) bug][0], bug_list);
-
-    return;
-  }
+  this.data = { id, ids };
+  this.view = { $tab, $tabpanel };
 
   BzDeck.model.get_bug_by_id(id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
@@ -24,58 +21,34 @@ BzDeck.DetailsPage = function DetailsPage (id, bug_list = []) {
       bug = { id };
     }
 
-    this.open(bug);
+    // Prepare the newly opened tabpanel
+    if ($tabpanel.firstElementChild.id === 'bug-TID') {
+      this.prep_tabpanel($tabpanel, bug, ids);
+      $tab.title = this.get_tab_title(bug);
+      BzDeck.core.update_window_title($tab);
+    }
   });
 
   BzDeck.bugzfeed.subscribe([id]);
 };
 
-BzDeck.DetailsPage.open = function (id, bug_list = []) {
-  let pages = BzDeck.pages.details_list ? BzDeck.pages.details_list : BzDeck.pages.details_list = new Map(),
-      page,
-      $$tablist = BzDeck.toolbar.$$tablist,
-      $tab = document.querySelector(`#tab-details-${id}`);
+BzDeck.DetailsPage.route = '/bug/(\\d+)';
 
-  if ($tab) {
-    page = pages.get(id),
-    $$tablist.view.selected = $$tablist.view.$focused = $tab;
-  } else {
-    page = new BzDeck.DetailsPage(id, bug_list);
-    pages.set(id, page);
-  }
+BzDeck.DetailsPage.connect = function () {
+  let id = Number.parseInt(arguments[0]);
 
-  return BzDeck.pages.details = page;
+  BzDeck.toolbar.open_tab({
+    'page_category': 'details',
+    'page_id': id,
+    'page_constructor': BzDeck.DetailsPage,
+    'page_constructor_args': [id, history.state.ids],
+    'tab_label': id,
+    'tab_position': 'next',
+  });
 };
 
-BzDeck.DetailsPage.prototype.open = function (bug, bug_list = []) {
-  // If there is an existing tabpanel, reuse it
-  let $tabpanel = document.querySelector(`#tabpanel-details-${bug.id}`);
-
-  // Or prep a new one
-  if (!$tabpanel) {
-    $tabpanel = this.prep_tabpanel(bug);
-    document.querySelector('#main-tabpanels').appendChild($tabpanel);
-  }
-
-  this.view.$tabpanel = $tabpanel;
-  $tabpanel.setAttribute('aria-hidden', 'false');
-
-  let $$tablist = BzDeck.toolbar.$$tablist;
-
-  // Open a new tab
-  this.view.$tab = $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
-    `details-${bug.id}`, bug.id, this.get_tab_title(bug), $tabpanel, 'next'
-  );
-
-  // Set Back & Forward navigation
-  if (bug_list.length) {
-    this.setup_navigation($tabpanel, bug_list);
-  }
-};
-
-BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
-  let FTw = FlareTail.widget,
-      $tabpanel = FlareTail.util.content.get_fragment('tabpanel-details', bug.id).firstElementChild;
+BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
+  $tabpanel = $tabpanel || FlareTail.util.content.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
 
   this.$$bug = new BzDeck.Bug($tabpanel.querySelector('article'));
   this.$$bug.fill(bug);
@@ -137,6 +110,11 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function (bug) {
     });
   }
 
+  // Set Back & Forward navigation
+  if (ids.length) {
+    this.setup_navigation($tabpanel, ids);
+  }
+
   return $tabpanel;
 };
 
@@ -144,49 +122,26 @@ BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
   return `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
 };
 
-BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
+BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
   let $current_tabpanel = this.view.$tabpanel,
       Button = FlareTail.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
-      bugs = [for (bug of bug_list) bug.id],
-      index = bugs.indexOf(this.data.id),
-      prev = bugs[index - 1],
-      next = bugs[index + 1],
+      index = ids.indexOf(this.data.id),
+      prev = ids[index - 1],
+      next = ids[index + 1],
       set_keybind = FlareTail.util.event.set_keybind;
 
-  let preload = id => {
-    if (document.querySelector(`#tabpanel-details-${id}`)) {
-      return;
-    }
-
+  let change_button_tooltip = (id, $$button) => {
     BzDeck.model.get_bug_by_id(id).then(bug => {
-      let $tabpanel = this.prep_tabpanel(bug);
-
-      $tabpanel.setAttribute('aria-hidden', 'true');
-      document.querySelector('#main-tabpanels').insertBefore(
-        $tabpanel,
-        id === prev ? $current_tabpanel : $current_tabpanel.nextElementSibling
-      );
-
-      if (!bug.comments) {
-        // Prefetch the bug
-        BzDeck.model.fetch_bug(bug, false).then(bug => BzDeck.model.save_bug(bug));
+      if (bug && bug.summary) {
+        $$button.view.$button.title = `Bug ${id}\n${bug.summary}`; // l10n
       }
     });
   };
 
-  let change_button_tooltip = (id, $$button) => {
-    let bug = [for (bug of bug_list) if (bug.id === id) bug][0];
-
-    if (bug) {
-      $$button.view.$button.title = `Bug ${bug.id}\n${bug.summary}`; // l10n
-    }
-  };
-
   if (prev) {
-    preload(prev);
     change_button_tooltip(prev, $$btn_back);
     $$btn_back.data.disabled = false;
     $$btn_back.bind('Pressed', event => this.navigate(prev));
@@ -197,7 +152,6 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, bug_list) {
   }
 
   if (next) {
-    preload(next);
     change_button_tooltip(next, $$btn_forward);
     $$btn_forward.data.disabled = false;
     $$btn_forward.bind('Pressed', event => this.navigate(next));
@@ -237,8 +191,10 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 };
 
 BzDeck.DetailsPage.prototype.navigate = function (id) {
-  BzDeck.DetailsPage.open(id, this.data.bug_list);
-  BzDeck.toolbar.$$tablist.close_tab(this.view.$tab);
+  let $current_tab = this.view.$tab;
+
+  BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
+  BzDeck.toolbar.$$tablist.close_tab($current_tab);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -360,14 +316,40 @@ BzDeck.DetailsPage.swipe.init = function () {
   $tabpanels.addEventListener('touchend', this);
 };
 
-BzDeck.DetailsPage.swipe.handleEvent = function (event) {
-  let touch,
-      delta;
-
-  if (!BzDeck.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
-      !BzDeck.pages.details || !BzDeck.pages.details.data || !BzDeck.pages.details.data.bug_list.length) {
+BzDeck.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
+  if (document.querySelector(`#tabpanel-details-${id}`)) {
     return;
   }
+
+  BzDeck.model.get_bug_by_id(id).then(bug => {
+    let page = BzDeck.pages.details,
+        $tabpanel = page.prep_tabpanel(undefined, bug, ids),
+        $ref = position === 'prev' ? page.view.$tabpanel : page.view.$tabpanel.nextElementSibling;
+
+    $tabpanel.style.display = 'none';
+    document.querySelector('#main-tabpanels').insertBefore($tabpanel, $ref);
+
+    if (!bug.comments) {
+      // Prefetch the bug
+      BzDeck.model.fetch_bug(bug, false).then(bug => BzDeck.model.save_bug(bug));
+    }
+  });
+};
+
+BzDeck.DetailsPage.swipe.handleEvent = function (event) {
+  let touch,
+      delta,
+      page = BzDeck.pages.details;
+
+  if (!BzDeck.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
+      !page || !page.data || !page.data.ids.length) {
+    return;
+  }
+
+  let ids = page.data.ids,
+      index = ids.indexOf(page.data.id),
+      prev_id = ids[index - 1],
+      next_id = ids[index + 1];
 
   if (event.type.startsWith('touch')) {
     if (this.transitioning || event.changedTouches.length > 1) {
@@ -381,6 +363,14 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
     this.startX = touch.pageX;
     this.startY = touch.pageY;
     this.initialized = false;
+
+    if (prev_id) {
+      this.add_tabpanel(prev_id, ids, 'prev');
+    }
+
+    if (next_id) {
+      this.add_tabpanel(next_id, ids, 'next');
+    }
   }
 
   if (event.type === 'touchmove' || event.type === 'touchend') {
@@ -392,14 +382,12 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
         return;
       }
 
-      let bugs = [for (bug of BzDeck.pages.details.data.bug_list) bug.id],
-          index = bugs.indexOf(BzDeck.pages.details.data.id);
-
       this.initialized = true;
-      this.$target = BzDeck.pages.details.view.$tabpanel;
-      this.$prev = document.querySelector(`#tabpanel-details-${bugs[index - 1]}`),
-      this.$next = document.querySelector(`#tabpanel-details-${bugs[index + 1]}`);
+      this.$target = page.view.$tabpanel;
+      this.$prev = document.querySelector(`#tabpanel-details-${prev_id}`);
+      this.$next = document.querySelector(`#tabpanel-details-${next_id}`);
       this.$sibling = null;
+      this.sibling_id = undefined;
 
       if (this.$prev) {
         this.$prev.style.display = 'block';
@@ -414,10 +402,12 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
 
     if (this.$prev && delta > 0) {
       this.$sibling = this.$prev;
+      this.sibling_id = prev_id;
     }
 
     if (this.$next && delta < 0) {
       this.$sibling = this.$next;
+      this.sibling_id = next_id;
     }
 
     if (!this.$sibling) {
@@ -447,7 +437,7 @@ BzDeck.DetailsPage.swipe.handleEvent = function (event) {
     }
 
     if (this.$sibling) {
-      BzDeck.pages.details.navigate(Number.parseInt(this.$sibling.dataset.id));
+      page.navigate(this.sibling_id);
     }
 
     delete this.startX;

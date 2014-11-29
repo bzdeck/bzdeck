@@ -9,20 +9,11 @@ let BzDeck = BzDeck || {};
 
 BzDeck.ProfilePage = function ProfilePage (name) {
   let server = BzDeck.model.data.server,
-      id_suffix = this.id = name,
-      $$tablist = BzDeck.toolbar.$$tablist,
-      $tabpanel = FlareTail.util.content.get_fragment('tabpanel-profile-template', id_suffix).firstElementChild,
+      $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
+      $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
       $profile = $tabpanel.querySelector('article'),
       $status = $tabpanel.querySelector('footer [role="status"]');
 
-  let $tab = $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
-    `profile-${id_suffix}`,
-    'Profile', // l10n
-    'User Profile', // l10n
-    $tabpanel
-  );
-
-  $tabpanel.focus();
   $tabpanel.setAttribute('aria-busy', 'true');
   $status.textContent = 'Loading...'; // l10n
 
@@ -51,19 +42,15 @@ BzDeck.ProfilePage = function ProfilePage (name) {
   });
 };
 
-BzDeck.ProfilePage.open = function (name) {
-  let pages = BzDeck.pages.profile_list ? BzDeck.pages.profile_list : BzDeck.pages.profile_list = new Map(),
-      page,
-      $$tablist = BzDeck.toolbar.$$tablist,
-      $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`);
+BzDeck.ProfilePage.route = '/profile/(.+)';
 
-  if ($tab) {
-    page = pages.get(name),
-    $$tablist.view.selected = $$tablist.view.$focused = $tab;
-  } else {
-    page = new BzDeck.ProfilePage(name);
-    pages.set(name, page);
-  }
-
-  return BzDeck.pages.profile = page;
+BzDeck.ProfilePage.connect = function (name) {
+  BzDeck.toolbar.open_tab({
+    'page_category': 'profile',
+    'page_id': name,
+    'page_constructor': BzDeck.ProfilePage,
+    'page_constructor_args': [name],
+    'tab_label': 'Profile', // l10n
+    'tab_desc': 'User Profile', // l10n
+  });
 };

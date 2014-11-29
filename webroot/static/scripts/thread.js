@@ -46,7 +46,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
       // Mobile compact layout
       if (mobile) {
-        BzDeck.DetailsPage.open(id, this.bugs);
+        BzDeck.router.navigate('/bug/' + id, { 'ids': [for (row of this.$$grid.data.rows) row.data.id] });
       }
     }
   });
@@ -56,7 +56,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
 
     if ($target.matches('[role="row"]')) {
       // Open Bug in New Tab
-      BzDeck.DetailsPage.open(Number.parseInt($target.dataset.id), this.bugs);
+      BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [for (row of this.$$grid.data.rows) row.data.id] });
     }
   });
 

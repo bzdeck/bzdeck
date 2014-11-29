@@ -65,15 +65,16 @@ BzDeck.HomePage = function HomePage () {
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
       $$button = this.view.$$details_button = new FlareTail.widget.Button($button);
 
-  $$button.bind('Pressed', event => BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list));
+  $$button.bind('Pressed', event =>
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] }));
 
   this.data = new Proxy({
-    'bug_list': [],
+    'bugs': [],
     'preview_id': null
   },
   {
     'get': (obj, prop) => {
-      if (prop === 'bug_list') {
+      if (prop === 'bugs') {
         // Return a sorted bug list
         let bugs = {};
 
@@ -102,8 +103,31 @@ BzDeck.HomePage = function HomePage () {
   });
 };
 
-BzDeck.HomePage.open = function () {
-  return BzDeck.pages.home = new BzDeck.HomePage;
+BzDeck.HomePage.route = '/home/(\\w+)';
+
+BzDeck.HomePage.connect = function (folder_id) {
+  let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
+      $tab = document.querySelector('#tab-home'),
+      $$tablist = BzDeck.toolbar.$$tablist;
+
+  if (!$folder) {
+    // Unknown folder; ignore
+    BzDeck.router.navigate('/home/inbox');
+
+    return;
+  }
+
+  if (document.documentElement.getAttribute('data-current-tab') !== 'home') {
+    $$tablist.view.selected = $$tablist.view.$focused = $tab;
+  }
+
+  if (BzDeck.sidebar.data.folder_id !== folder_id) {
+    BzDeck.sidebar.$$folders.view.selected = $folder;
+    BzDeck.sidebar.open_folder(folder_id);
+  }
+
+  BzDeck.toolbar.tab_path_map.set('tab-home', location.pathname);
+  BzDeck.core.update_window_title($tab);
 };
 
 BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {

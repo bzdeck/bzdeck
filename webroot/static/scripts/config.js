@@ -26,6 +26,8 @@ BzDeck.config = {
     }
   ],
   'app': {
+    'root': '/',
+    'launch_path': '/home/inbox',
     'manifest': `${location.origin}/manifest.webapp`
   },
   'grid': {

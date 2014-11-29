@@ -109,14 +109,12 @@ BzDeck.Sidebar = function Sidebar () {
       }
 
       if (prop === 'folder_id' && oldval) {
-        BzDeck.core.navigate('/home/' + newval);
+        BzDeck.router.navigate('/home/' + newval);
       }
 
       obj[prop] = newval;
     }
   });
-
-  this.open_folder('inbox');
 
   window.addEventListener('Bug:UnreadToggled', event => {
     // Update the sidebar Inbox folder
@@ -140,7 +138,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   home.data.preview_id = null;
 
   let update_list = bugs => {
-    home.data.bug_list = bugs;
+    home.data.bugs = bugs;
     FlareTail.util.event.async(() => {
       home.thread.update(bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');

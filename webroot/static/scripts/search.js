@@ -7,10 +7,8 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.SearchPage = function SearchPage () {
-  let $$tablist = BzDeck.toolbar.$$tablist,
-      id_suffix = this.id = Date.now(),
-      $tabpanel = FlareTail.util.content.get_fragment('tabpanel-search', id_suffix).firstElementChild;
+BzDeck.SearchPage = function SearchPage (search_id) {
+  let $tabpanel = document.querySelector(`#tabpanel-search-${search_id}`);
 
   this.view = {
     $tabpanel,
@@ -20,12 +18,12 @@ BzDeck.SearchPage = function SearchPage () {
   };
 
   this.data = new Proxy({
-    'bug_list': [],
+    'bugs': [],
     'preview_id': null
   },
   {
     'get': (obj, prop) => {
-      if (prop === 'bug_list') {
+      if (prop === 'bugs') {
         // Return a sorted bug list
         let bugs = {};
 
@@ -60,23 +58,34 @@ BzDeck.SearchPage = function SearchPage () {
     }
   });
 
-  $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
-    `search-${id_suffix}`,
-    'Search', // l10n
-    'Search & Browse Bugs', // l10n
-    $tabpanel
-  );
-
-  $tabpanel.focus();
-
   this.setup_basic_search_pane();
   this.setup_result_pane();
   this.setup_preview_pane();
   this.setup_toolbar();
+
+  let params = location.search.substr(1) || history.state.params;
+
+  if (params) {
+    params = new URLSearchParams(params);
+
+    // TODO: support other params
+    this.view.panes['basic-search'].querySelector('.text-box [role="textbox"]').value = params.get('short_desc') || '';
+
+    this.exec_search(params);
+  }
 };
 
-BzDeck.SearchPage.open = function () {
-  return BzDeck.pages.search = new BzDeck.SearchPage();
+BzDeck.SearchPage.route = '/search/(\\d{13,})';
+
+BzDeck.SearchPage.connect = function (search_id) {
+  BzDeck.toolbar.open_tab({
+    'page_category': 'search',
+    'page_id': search_id,
+    'page_constructor': BzDeck.SearchPage,
+    'page_constructor_args': [search_id],
+    'tab_label': 'Search', // l10n
+    'tab_desc': 'Search & Browse Bugs', // l10n
+  });
 };
 
 BzDeck.SearchPage.prototype.setup_toolbar = function () {
@@ -86,7 +95,7 @@ BzDeck.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
     switch (event.target.dataset.command) {
       case 'show-details': {
-        BzDeck.DetailsPage.open(this.data.preview_id, this.data.bug_list);
+        BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
 
         break;
       }
@@ -312,7 +321,7 @@ BzDeck.SearchPage.prototype.exec_search = function (params) {
 
   BzDeck.model.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
-      this.data.bug_list = result.bugs;
+      this.data.bugs = result.bugs;
 
       // Save data
       BzDeck.model.get_all_bugs().then(bugs => {

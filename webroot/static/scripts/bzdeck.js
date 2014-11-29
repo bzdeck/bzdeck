@@ -173,13 +173,10 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Activate widgets
   BzDeck.pages = {};
-  BzDeck.HomePage.open();
+  BzDeck.pages.home = new BzDeck.HomePage();
   BzDeck.toolbar = new BzDeck.Toolbar();
   BzDeck.sidebar = new BzDeck.Sidebar();
   BzDeck.DetailsPage.swipe.init();
-
-  // Check the requested URL to open the specific folder or tab if needed
-  window.dispatchEvent(new PopStateEvent('popstate'));
 
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
@@ -213,16 +210,16 @@ BzDeck.bootstrap.show_notification = function () {
     // TODO: Improve the notification body to describe more about the requests,
     // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
-    BzDeck.core.show_notification(title, body).then(event => {
-      // Select the Requests folder when the notification is clicked
-      $root.setAttribute('data-current-tab', 'home');
-      BzDeck.toolbar.$$tablist.view.selected = document.querySelector('#tab-home');
-      BzDeck.sidebar.$$folders.view.selected = document.querySelector('#sidebar-folders--requests');
-    });
+    // Select the Requests folder when the notification is clicked
+    BzDeck.core.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
   });
 };
 
 BzDeck.bootstrap.finish = function () {
+  // Activate the router
+  BzDeck.router = new FlareTail.app.Router(BzDeck);
+  BzDeck.router.locate();
+
   // Timer to check for updates
   BzDeck.core.timers.fetch_subscriptions = window.setInterval(() => {
     BzDeck.model.fetch_subscriptions();
@@ -245,13 +242,6 @@ BzDeck.bootstrap.finish = function () {
 
 BzDeck.core = {};
 BzDeck.core.timers = {};
-
-BzDeck.core.navigate = function (path, data = {}, replace = false) {
-  let args = [data, 'Loading...', path]; // l10n
-
-  replace ? history.replaceState(...args) : history.pushState(...args);
-  window.dispatchEvent(new PopStateEvent('popstate'));
-};
 
 BzDeck.core.toggle_star = function (id, starred) {
   // Save in DB
@@ -289,7 +279,7 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
     bugs = [for (bug of bugs) if (bug._unread) bug];
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
-      let unread_num = [for (bug of BzDeck.pages.home.data.bug_list) if (bug._unread) bug].length;
+      let unread_num = [for (bug of BzDeck.pages.home.data.bugs) if (bug._unread) bug].length;
 
       BzDeck.pages.home.update_window_title(
         document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
@@ -312,7 +302,9 @@ BzDeck.core.toggle_unread_ui = function (loaded = false) {
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
 
     BzDeck.core.show_status(status);
-    BzDeck.core.show_notification(status, extract);
+
+    // Select Inbox when the notification is clicked
+    BzDeck.core.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
   });
 };
 
@@ -369,7 +361,7 @@ BzDeck.core.register_activity_handler = function () {
       let match = req.source.url.match(re);
 
       if (match) {
-        BzDeck.DetailsPage.open(Number.parseInt(match[1]));
+        BzDeck.router.navigate('/bug/' + match[1]);
       }
     });
   }
@@ -460,6 +452,15 @@ BzDeck.core.get_user_color = function (person) {
              + String(person.email.length).substr(-1, 1) + String(person.email.length).substr(0, 1);
 };
 
+BzDeck.core.update_window_title = $tab => {
+  if ($tab.id === 'tab-home') {
+    BzDeck.pages.home.update_window_title($tab.title);
+  } else {
+    document.title = $tab.title.replace('\n', ' – ');
+    document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
+  }
+};
+
 /* ------------------------------------------------------------------------------------------------------------------
  * Session
  * ------------------------------------------------------------------------------------------------------------------ */
@@ -521,6 +522,14 @@ window.addEventListener('beforeunload', event => {
   BzDeck.bugzfeed.disconnect();
 });
 
+window.addEventListener('popstate', event => {
+  // Hide sidebar
+  if (FlareTail.util.device.type.startsWith('mobile')) {
+    document.documentElement.setAttribute('data-sidebar-hidden', 'true');
+    document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+  }
+});
+
 window.addEventListener('online', event => {
   BzDeck.bugzfeed.connect();
 });
@@ -542,7 +551,7 @@ window.addEventListener('click', event => {
   if ($target.matches(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      BzDeck.DetailsPage.open(Number.parseInt($target.getAttribute('data-bug-id')));
+      BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));
 
       event.preventDefault();
 
@@ -592,108 +601,6 @@ window.addEventListener('keydown', event => {
   }
 
   return true;
-});
-
-window.addEventListener('popstate', event => {
-  let path = location.pathname.substr(1).replace('/', '-'),
-      match,
-      tabs = BzDeck.toolbar.$$tablist.view,
-      folders = BzDeck.sidebar.$$folders.view,
-      $tab,
-      $root = document.documentElement; // <html>
-
-  let update_window_title = $tab => {
-    if ($tab.id === 'tab-home') {
-      BzDeck.pages.home.update_window_title($tab.title);
-    } else {
-      document.title = $tab.title.replace('\n', ' – ');
-      document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
-    }
-  };
-
-  // Hide sidebar
-  if (FlareTail.util.device.type.startsWith('mobile')) {
-    $root.setAttribute('data-sidebar-hidden', 'true');
-    document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
-  }
-
-  match = path.match(/^bug-(\d+)$/);
-
-  if (match) {
-    let bug_id = Number.parseInt(match[1]),
-        bug_list = [],
-        $current_tab;
-
-    $root.setAttribute('data-current-tab', 'bug');
-    $tab = document.querySelector(`#tab-details-${bug_id}`);
-
-    if ($tab) {
-      tabs.selected = $tab;
-      update_window_title($tab);
-
-      return;
-    }
-
-    if (BzDeck.pages.details) {
-      bug_list = BzDeck.pages.details.data.bug_list;
-
-      if (bug_list.length) {
-        let bugs = [for (bug of bug_list) bug.id],
-            index = bugs.indexOf(BzDeck.pages.details.data.id);
-
-        if (bugs[index - 1] === bug_id || bugs[index + 1] === bug_id) {
-          // Back or Forward navigation
-          $current_tab = BzDeck.pages.details.view.$tab;
-        }
-      }
-    }
-
-    BzDeck.DetailsPage.open(bug_id, bug_list);
-
-    if ($current_tab) {
-      BzDeck.toolbar.$$tablist.close_tab($current_tab);
-    }
-
-    return;
-  }
-
-  match = path.match(/^home-(\w+)/);
-
-  if (match) {
-    let folder_id = match[1],
-        $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
-
-    $tab = document.querySelector('#tab-home');
-
-    if ($folder) {
-      if ($root.getAttribute('data-current-tab') !== 'home') {
-        $root.setAttribute('data-current-tab', 'home');
-        tabs.selected = $tab;
-      }
-
-      if (BzDeck.sidebar.data.folder_id !== folder_id) {
-        folders.selected = $folder;
-        BzDeck.sidebar.open_folder(folder_id);
-      }
-
-      update_window_title($tab);
-
-      return;
-    }
-  }
-
-  $tab = document.querySelector(`#tab-${CSS.escape(path)}`);
-
-  if ($tab) {
-    $root.setAttribute('data-current-tab', path);
-    tabs.selected = $tab;
-    update_window_title($tab);
-
-    return;
-  }
-
-  // Fallback
-  BzDeck.core.navigate('/home/inbox', {}, true);
 });
 
 window.addEventListener('Bug:UnreadToggled', event => {

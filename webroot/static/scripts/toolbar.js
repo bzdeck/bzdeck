@@ -16,18 +16,15 @@ BzDeck.Toolbar = function Toolbar () {
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
+  this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
+
   $$tablist.bind('Selected', event => {
-    let $tab = event.detail.items[0],
-        sidebar = BzDeck.sidebar.data,
-        path = '/' + $tab.id.substr(4).replace(/^details-/, 'bug/').replace(/^(search|profile)-/, '$1/');
+    let path = this.tab_path_map.get(event.detail.items[0].id);
 
-    if (path === '/home') {
-      sidebar.folder_id = sidebar.folder_id || 'inbox';
-      path += '/' + sidebar.folder_id;
-    }
+    $root.setAttribute('data-current-tab', path.match(/^\/(\w+)/)[1]);
 
-    if (location.pathname !== path) {
-      BzDeck.core.navigate(path);
+    if (location.pathname + location.search !== path) {
+      BzDeck.router.navigate(path);
     }
   });
 
@@ -38,13 +35,13 @@ BzDeck.Toolbar = function Toolbar () {
   $app_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'show-profile': {
-        BzDeck.ProfilePage.open(BzDeck.model.data.account.name);
+        BzDeck.router.navigate('/profile/' + BzDeck.model.data.account.name);
 
         break;
       }
 
       case 'show-settings': {
-        BzDeck.SettingsPage.open();
+        BzDeck.router.navigate('/settings');
 
         break;
       }
@@ -132,8 +129,6 @@ BzDeck.Toolbar = function Toolbar () {
     }
   });
 
-  $root.setAttribute('data-current-tab', 'home');
-
   // Account label & avatar
   {
     let account = BzDeck.model.data.account,
@@ -167,17 +162,16 @@ BzDeck.Toolbar = function Toolbar () {
   };
 
   let exec_search = () => {
-    let page = BzDeck.SearchPage.open(),
-        params = new URLSearchParams(),
+    let params = new URLSearchParams(),
         terms = $search_box.value;
 
     if (terms) {
-      page.view.panes['basic-search'].querySelector('.text-box [role="textbox"]').value = terms;
       params.append('short_desc', terms);
       params.append('short_desc_type', 'allwordssubstr');
       params.append('resolution', '---'); // Search only open bugs
-      page.exec_search(params);
     }
+
+    BzDeck.router.navigate('/search/' + Date.now(), { 'params' : params.toString() });
 
     cleanup();
   };
@@ -242,7 +236,7 @@ BzDeck.Toolbar = function Toolbar () {
         id = $target.dataset.id;
 
     if (id) {
-      BzDeck.DetailsPage.open(Number.parseInt(id));
+      BzDeck.router.navigate('/bug/' + id);
       cleanup();
     }
 
@@ -253,6 +247,44 @@ BzDeck.Toolbar = function Toolbar () {
 
   // Suppress context menu
   $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
+};
+
+BzDeck.Toolbar.prototype.open_tab = function (options) {
+  let page,
+      page_category = options.page_category,
+      page_id = options.page_id || 'default',
+      page_constructor = options.page_constructor,
+      page_constructor_args = options.page_constructor_args || [],
+      pages = BzDeck.pages[`${page_category}_list`],
+      $$tablist = BzDeck.toolbar.$$tablist,
+      tab_id = options.page_category + (page_id === 'default' ? '' : `-${page_id}`),
+      tab_label = options.tab_label,
+      tab_desc = options.tab_desc || tab_label,
+      tab_position = options.tab_position || 'last',
+      $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`),
+      $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
+
+  if (!pages) {
+    pages = BzDeck.pages[`${page_category}_list`] = new Map();
+  }
+
+  // Reuse a tabpanel if possible
+  if ($tabpanel) {
+    page = pages.get(page_id);
+    $tab = $tab || $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
+  } else {
+    $tabpanel = FlareTail.util.content.get_fragment(`tabpanel-${page_category}-template`).firstElementChild;
+    $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
+    page = new page_constructor(...page_constructor_args);
+    pages.set(page_id, page);
+  }
+
+  $$tablist.view.selected = $$tablist.view.$focused = $tab
+  $tabpanel.focus();
+
+  BzDeck.core.update_window_title($tab);
+  BzDeck.pages[page_category] = page;
+  this.tab_path_map.set($tab.id, location.pathname + location.search);
 };
 
 BzDeck.Toolbar.prototype.quicksearch = function (event) {

@@ -8,20 +8,9 @@
 let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
-  let $$tablist = BzDeck.toolbar.$$tablist,
-      $fragment = FlareTail.util.content.get_fragment('tabpanel-settings-template'),
-      $tabpanel = this.$tabpanel = $fragment.querySelector('[role="tabpanel"]');
-
-  $$tablist.view.selected = $$tablist.view.$focused = $$tablist.add_tab(
-    'settings',
-    'Settings', // l10n
-    'Settings', // l10n
-    $tabpanel
-  );
-
   // Activate tabs
   if (FlareTail.util.device.type === 'desktop') {
-    new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
+    this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
   }
 
   // Activate token input
@@ -32,19 +21,21 @@ BzDeck.SettingsPage = function SettingsPage () {
   this.activate_radiogroups();
 };
 
-BzDeck.SettingsPage.open = function () {
-  let $$tablist = BzDeck.toolbar.$$tablist,
-      page,
-      $tab = document.querySelector('#tab-settings');
+BzDeck.SettingsPage.route = '/settings';
 
-  if ($tab) {
-    page = BzDeck.pages.settings;
-    $$tablist.view.selected = $$tablist.view.$focused = $tab;
-  } else {
-    page = BzDeck.pages.settings = new BzDeck.SettingsPage();
+BzDeck.SettingsPage.connect = function () {
+  BzDeck.toolbar.open_tab({
+    'page_category': 'settings',
+    'page_constructor': BzDeck.SettingsPage,
+    'tab_label': 'Settings',
+  });
+
+  let tab_id = history.state.tab_id,
+      $$tablist = BzDeck.pages.settings.$$tablist;
+
+  if (tab_id) {
+    $$tablist.view.selected = $$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
   }
-
-  return page;
 };
 
 BzDeck.SettingsPage.prototype.activate_token_input = function () {
@@ -151,7 +142,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 };
 
 BzDeck.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
-  let $rgroup = this.$tabpanel.querySelector(`[data-pref="${pref}"]`),
+  let $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${pref}"]`),
       prefs = BzDeck.model.data.prefs,
       type = $rgroup.dataset.type || 'string',
       value = prefs[pref] !== undefined ? prefs[pref] : default_value;
