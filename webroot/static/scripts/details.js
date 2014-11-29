@@ -229,13 +229,15 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
       'uploadDate': att.creation_time,
       'flag': [for (flag of att.flags) {
         'creator': {
-          'name': flag.setter
+          'name': flag.setter, // email
+          'email': flag.setter
         },
         'name': flag.name,
         'status': flag.status
       }],
       'creator': {
-        'name': att.creator
+        'name': att.creator, // email
+        'email': att.creator
       }
     }, {
       'data-attachment-id': att.id

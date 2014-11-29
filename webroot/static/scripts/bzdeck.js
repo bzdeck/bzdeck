@@ -548,6 +548,14 @@ window.addEventListener('click', event => {
     return true;
   }
 
+  if ($target.matches('[itemtype="http://schema.org/Person"]')) {
+    BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
+    event.stopPropagation();
+    event.preventDefault();
+
+    return false;
+  }
+
   if ($target.matches(':link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
