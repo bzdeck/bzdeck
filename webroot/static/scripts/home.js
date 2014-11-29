@@ -205,8 +205,8 @@ BzDeck.HomePage.prototype.update_window_title = function (title) {
   }
 
   document.title = title;
-  document.querySelector('[role="banner"] h1').textContent = title;
+  document.querySelector('[role="banner"] h1').textContent = title.replace(/\s\(\d+\)$/, '');
   document.querySelector('#tab-home').title = title;
-  document.querySelector('#tab-home label').textContent = title;
+  document.querySelector('#tab-home label').textContent = title.replace(/\s\(\d+\)$/, '');
   document.querySelector('#tabpanel-home h2').textContent = title;
 };
