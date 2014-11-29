@@ -462,6 +462,24 @@ BzDeck.core.update_window_title = $tab => {
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
+ * Services
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.services = {};
+
+BzDeck.services.Gravatar = function Gravatar (email) {
+  this.hash = md5(email);
+  this.avatar_url = this.endpoint + '/avatar/' + this.hash + '?s=160&d=mm';
+  this.profile_url = this.endpoint + '/' + this.hash + '.json';
+};
+
+BzDeck.services.Gravatar.prototype.endpoint = 'https://secure.gravatar.com';
+
+BzDeck.services.Gravatar.prototype.get_profile = function () {
+  return new Promise(resolve => FlareTail.util.network.jsonp(this.profile_url).then(data => resolve(data.entry[0])));
+};
+
+/* ------------------------------------------------------------------------------------------------------------------
  * Session
  * ------------------------------------------------------------------------------------------------------------------ */
 

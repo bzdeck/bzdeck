@@ -135,12 +135,16 @@ BzDeck.Toolbar = function Toolbar () {
         label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
         $menu_label = document.querySelector('#main-menu--app label'),
         $account_label = document.querySelector('#main-menu--app--account label'),
-        $img = new Image();
+        gravatar = new BzDeck.services.Gravatar(account.name);
 
     $account_label.innerHTML = label;
-    $img.addEventListener('load', event =>
-        $menu_label.style.backgroundImage = $account_label.style.backgroundImage = `url(${event.target.src})`);
-    $img.src = `https://www.gravatar.com/avatar/${md5(account.name)}?d=404`;
+    $account_label.style.backgroundImage = $menu_label.style.backgroundImage = `url(${gravatar.avatar_url})`;
+
+    gravatar.get_profile().then(entry => {
+      if (entry.profileBackground && entry.profileBackground.url) {
+        document.querySelector('#sidebar-account').style.backgroundImage = `url(${entry.profileBackground.url})`;
+      }
+    });
   }
 
   FTu.app.can_install(BzDeck.config.app.manifest).then(() => {

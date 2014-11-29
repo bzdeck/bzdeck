@@ -700,13 +700,6 @@ col[data-hidden="false"] {
   background-image: none !important;
 }
 
-[data-device-type|="mobile"]:root #main-menu--app--account label {
-  padding-left: 4rem;
-  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
 #main-menu--app--account label strong {
   font-size: 1.2rem;
 }
@@ -971,6 +964,11 @@ col[data-hidden="false"] {
   border-bottom-width: 0;
 }
 
+[data-device-type|="mobile"]:root #sidebar-account {
+  background-position: center center;
+  background-size: cover;
+}
+
 [data-device-type|="mobile"]:root #sidebar-account h2 {
   position: absolute;
   left: -9999rem;
@@ -978,6 +976,17 @@ col[data-hidden="false"] {
 
 [data-device-type|="mobile"]:root #sidebar-account #main-menu--app--account {
   padding: 1.2rem;
+  height: auto;
+  background-color: rgba(0, 0, 0, .3);
+}
+
+[data-device-type|="mobile"]:root #sidebar-account #main-menu--app--account label {
+  padding-left: 4rem;
+  color: rgba(255, 255, 255, .9);
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
+  background-repeat: no-repeat;
+  background-size: contain;
+  text-shadow: 0 0 .1rem rgba(0, 0, 0, .6);
 }
 
 [data-device-type|="mobile"]:root #sidebar-menu #main-menu--app-menu {
@@ -2922,33 +2931,70 @@ article[id$="preview-bug"] > .bug-timeline {
   pointer-events: auto;
 }
 
-:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] {
+[id|="tabpanel-profile"] article > header {
+  margin: -4rem -4rem 4rem;
+  background-color: transparent;
+  background-position: center center;
+  background-size: cover;
 }
 
-:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] {
-  float: left;
+[id|="tabpanel-profile"] article > header div {
+  position: relative;
+  padding: 4rem;
+  color: rgba(255, 255, 255, .9);
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+}
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header div {
+  height: 16rem;
+}
+
+[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header div {
+  height: 6rem;
+}
+
+[id|="tabpanel-profile"] article > header [itemprop="image"] {
+  position: absolute;
+  bottom: -2rem;
+  left: 4rem;
+  border: .4rem solid #FFF;
+  border-radius: .2rem;
+  box-shadow: 0 0 .1rem rgba(0, 0, 0, .5);
+}
+
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header [itemprop="image"] {
   width: 16rem;
+  height: 16rem;
 }
 
-[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article [itemprop="image"] {
+[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header [itemprop="image"] {
   width: 8rem;
+  height: 8rem;
 }
 
-[id|="tabpanel-profile"] article [itemprop="image"] ~ * {
-  overflow: hidden;
-  line-height: 1.5;
+[id|="tabpanel-profile"] article > header h3 {
+  position: absolute;
+  text-shadow: 0 0 .2rem rgba(0, 0, 0, .8);
 }
 
-:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article [itemprop="image"] ~ * {
-  margin: 0 0 1rem 18rem;
-}
-
-[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article [itemprop="image"] ~ * {
-  margin: 1rem 0 0 0;
-}
-
-[id|="tabpanel-profile"] article h3 {
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header h3 {
+  bottom: 2rem;
+  left: 23rem;
+  width: calc(100% - 27rem);
   font-size: 2rem;
+}
+
+[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header h3 {
+  bottom: 1rem;
+  left: 14rem;
+  width: calc(100% - 18rem);
+  font-size: 1.6rem;
+}
+
+[id|="tabpanel-profile"] article > header ~ * {
+  overflow: hidden;
+  margin-bottom: .8rem;
+  line-height: 1.5;
 }
 
 [id|="tabpanel-profile"] article dt {

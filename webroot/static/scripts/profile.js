@@ -18,7 +18,8 @@ BzDeck.ProfilePage = function ProfilePage (name) {
   $status.textContent = 'Loading...'; // l10n
 
   BzDeck.model.fetch_user(name).then(user => {
-    let name = user.real_name || user.name;
+    let name = user.real_name || user.name,
+        gravatar = new BzDeck.services.Gravatar(user.name);
 
     document.title = $tab.title = $tabpanel.querySelector('h2').textContent = `User Profile: ${name}`;
 
@@ -27,9 +28,18 @@ BzDeck.ProfilePage = function ProfilePage (name) {
       'email': user.name,
       'emailLink': 'mailto:' + user.name,
       'name': name,
-      'image': 'https://www.gravatar.com/avatar/' + md5(user.name) + '?s=160&d=mm',
+      'image': gravatar.avatar_url,
     });
 
+    gravatar.get_profile().then(entry => {
+      if (entry.profileBackground && entry.profileBackground.url) {
+        $profile.querySelector('header').style.backgroundImage = `url(${entry.profileBackground.url})`;
+      }
+
+      // TODO: Add location and social accounts if provided
+    });
+
+    $profile.id = 'profile-' + user.id;
     $profile.querySelector('[data-id="bugzilla-profile"] a').href
         = server.url + '/user_profile?login=' + encodeURI(user.name);
     $profile.querySelector('[data-id="bugzilla-activity"] a').href
