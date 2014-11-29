@@ -1405,7 +1405,7 @@ main {
 }
 
 .bug-list [role="gridcell"][data-type="boolean"] [role="checkbox"]::before {
-  line-height: 2rem;
+  line-height: 2.6rem;
 }
 
 .bug-list [role="gridcell"][data-type="boolean"] [aria-checked="false"]::before {
@@ -1820,7 +1820,7 @@ article[id$="preview-bug"] > .bug-timeline {
   border-width: 0;
 }
 
-.bug-info [role="button"] {
+.bug-info [role="button"], .bug-info [itemtype="http://schema.org/Person"] {
   overflow: hidden;
   border-width: 0;
   padding: .2rem .4rem;
@@ -2165,7 +2165,10 @@ article[id$="preview-bug"] > .bug-timeline {
 [id$="timeline-comment-form"] {
   position: sticky;
   z-index: 100;
-  padding: 1.2rem;
+  margin: 1.2rem;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
   background-color: var(--region-background-color);
 }
 
@@ -2213,12 +2216,11 @@ article[id$="preview-bug"] > .bug-timeline {
 
 [data-timeline-sort-order="descending"]:root [id$="timeline-comment-form"] {
   top: 0;
-  padding-top: 0;
+  margin-top: 0;
 }
 
 [data-timeline-sort-order="ascending"]:root [id$="timeline-comment-form"] {
-  bottom: 0;
-  margin-top: -1.2rem;
+  bottom: 1.2rem;
 }
 
 [id$="timeline-comment-form"] > header {
@@ -2385,9 +2387,6 @@ article[id$="preview-bug"] > .bug-timeline {
 [id$="timeline-comment-form"] > footer {
   display: flex;
   overflow: hidden;
-  border-width: .1rem 0;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
   height: 4.4rem;
   color: var(--content-foreground-color);
   background-color: var(--secondary-region-background-color);
@@ -2932,42 +2931,50 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [id|="tabpanel-profile"] article > header {
-  margin: -4rem -4rem 4rem;
   background-color: transparent;
   background-position: center center;
   background-size: cover;
 }
 
+:root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header {
+  margin: -4rem -4rem 4rem;
+}
+
+[data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header {
+  margin: -2rem -2rem 4rem;
+}
+
 [id|="tabpanel-profile"] article > header div {
   position: relative;
-  padding: 4rem;
   color: rgba(255, 255, 255, .9);
   background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
 }
 
 :root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header div {
-  height: 16rem;
+  height: 24rem;
 }
 
 [data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header div {
-  height: 6rem;
+  height: 14rem;
 }
 
 [id|="tabpanel-profile"] article > header [itemprop="image"] {
   position: absolute;
   bottom: -2rem;
-  left: 4rem;
   border: .4rem solid #FFF;
   border-radius: .2rem;
+  background-color: #FFF;
   box-shadow: 0 0 .1rem rgba(0, 0, 0, .5);
 }
 
 :root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header [itemprop="image"] {
+  left: 4rem;
   width: 16rem;
   height: 16rem;
 }
 
 [data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header [itemprop="image"] {
+  left: 2rem;
   width: 8rem;
   height: 8rem;
 }
@@ -2978,16 +2985,16 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 :root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] article > header h3 {
-  bottom: 2rem;
-  left: 23rem;
-  width: calc(100% - 27rem);
-  font-size: 2rem;
+  bottom: 1.6rem;
+  left: 22.4rem;
+  width: calc(100% - 22.4rem - 4rem);
+  font-size: 2.4rem;
 }
 
 [data-device-type="mobile-phone"]:root [id|="tabpanel-profile"] article > header h3 {
   bottom: 1rem;
-  left: 14rem;
-  width: calc(100% - 18rem);
+  left: 11.6rem;
+  width: calc(100% - 11.6rem - 1.2em);
   font-size: 1.6rem;
 }
 

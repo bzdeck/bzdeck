@@ -449,7 +449,7 @@ BzDeck.core.get_name = function (person) {
 
 BzDeck.core.get_user_color = function (person) {
   return '#' + String(person.real_name ? person.real_name.length : 0).substr(-1, 1)
-             + String(person.email.length).substr(-1, 1) + String(person.email.length).substr(0, 1);
+             + String(person.name.length).substr(-1, 1) + String(person.name.length).substr(0, 1);
 };
 
 BzDeck.core.update_window_title = $tab => {

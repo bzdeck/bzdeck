@@ -12,6 +12,7 @@ BzDeck.ProfilePage = function ProfilePage (name) {
       $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
       $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
       $profile = $tabpanel.querySelector('article'),
+      $header = $profile.querySelector('header'),
       $status = $tabpanel.querySelector('footer [role="status"]');
 
   $tabpanel.setAttribute('aria-busy', 'true');
@@ -33,7 +34,7 @@ BzDeck.ProfilePage = function ProfilePage (name) {
 
     gravatar.get_profile().then(entry => {
       if (entry.profileBackground && entry.profileBackground.url) {
-        $profile.querySelector('header').style.backgroundImage = `url(${entry.profileBackground.url})`;
+        $header.style.backgroundImage = `url(${entry.profileBackground.url})`;
       }
 
       // TODO: Add location and social accounts if provided
@@ -44,6 +45,7 @@ BzDeck.ProfilePage = function ProfilePage (name) {
         = server.url + '/user_profile?login=' + encodeURI(user.name);
     $profile.querySelector('[data-id="bugzilla-activity"] a').href
         = server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(user.name);
+    $header.style.backgroundColor = BzDeck.core.get_user_color(user);
   }).catch(error => {
     $status.textContent = error.message;
   }).then(() => {
