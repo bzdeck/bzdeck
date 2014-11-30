@@ -813,6 +813,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.oninput = function () {
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
   this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
   this.$preview_tab.setAttribute('aria-disabled', !this.has_text());
+  this.$$tabs.view.members = this.$$tabs.view.members; // Force updating members
 
   if (this.has_token() && this.$status.textContent) {
     this.$status.textContent = '';
@@ -930,6 +931,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment)
   $tbody.appendChild($row);
 
   this.$attachments_tab.setAttribute('aria-disabled', 'false');
+  this.$$tabs.view.members = this.$$tabs.view.members; // Force updating members
   this.$$tabs.view.selected = this.$attachments_tab;
   this.$submit.setAttribute('aria-disabled', !this.has_token());
   this.update_parallel_ui();
@@ -942,6 +944,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.remove_attachment = function (attachme
 
   this.$attachments_tbody.rows[index].remove();
   this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments());
+  this.$$tabs.view.members = this.$$tabs.view.members; // Force updating members
   this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
   this.update_parallel_ui();
 
