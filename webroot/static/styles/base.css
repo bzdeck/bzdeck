@@ -1550,6 +1550,12 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
+.bug-timeline-wrapper {
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
 article[id$="preview-bug"] > .bug-timeline-wrapper {
   right: 0;
   width: auto;
@@ -1825,28 +1831,11 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 }
 
 .bug-timeline {
-  position: absolute;
+  flex: auto;
   overflow: hidden;
   box-sizing: padding-box;
+  margin: 1.2rem 0;
   width: 100%;
-}
-
-[data-timeline-sort-order="descending"]:root .bug-timeline {
-  top: 15rem;
-  bottom: 1.2rem;
-}
-
-[data-timeline-sort-order="descending"][data-device-type="mobile-phone"]:root .bug-timeline {
-  top: 0; /* TEMP, mobile comment form UI is not ready */
-}
-
-[data-timeline-sort-order="ascending"]:root .bug-timeline {
-  top: 1.2rem;
-  bottom: 15rem;
-}
-
-[data-timeline-sort-order="ascending"][data-device-type="mobile-phone"]:root .bug-timeline {
-  bottom: 0; /* TEMP, mobile comment form UI is not ready */
 }
 
 .bug-timeline h2 {
@@ -2175,10 +2164,10 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 }
 
 [id$="timeline-comment-form"] {
-  position: absolute;
+  flex: none;
   z-index: 100;
-  right: 1.2rem;
   box-sizing: border-box;
+  margin: 0 1.2rem 1.2rem;
   border-radius: .2rem;
   border-width: .1rem;
   border-style: solid;
@@ -2190,26 +2179,25 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 [id$="timeline-comment-form"] [aria-dropeffect] {
   display: none;
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -.1rem;
+  left: -.1rem;
   z-index: 200;
   box-sizing: border-box;
-  margin: 1.2rem;
   border: .2rem dashed var(--hyperlink-text-foreground-color);
   padding: 0;
-  width: calc(100% - 2.4rem);
-  height: calc(100% - 2.4rem);
+  width: calc(100% + .2rem);
+  height: calc(100% + .2rem);
   color: var(--hyperlink-text-foreground-color);
   background-color: var(--content-background-color);
   text-align: center;
   pointer-events: auto;
 }
 
-.bug-timeline:-moz-drag-over :not([aria-dropeffect]) {
+.bug-timeline-wrapper:-moz-drag-over :not([aria-dropeffect]) {
   pointer-events: none !important;
 }
 
-.bug-timeline:-moz-drag-over [aria-dropeffect],
+.bug-timeline-wrapper:-moz-drag-over [aria-dropeffect],
 [aria-dropeffect]:-moz-drag-over {
   display: block;
 }
