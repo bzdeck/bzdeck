@@ -140,7 +140,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   let update_list = bugs => {
     home.data.bugs = bugs;
     FlareTail.util.event.async(() => {
-      home.thread.update(bugs);
+      home.thread.filter(bugs);
       document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 

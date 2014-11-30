@@ -1473,7 +1473,7 @@ main {
   background-color: var(--secondary-region-background-color);
 }
 
-[data-home-layout="vertical"]:root #home-list :-moz-any(table, tbody, [role="row"]) {
+[data-home-layout="vertical"]:root #home-list :-moz-any(table, tbody, [role="row"]:not([aria-hidden="true"])) {
   display: block;
 }
 

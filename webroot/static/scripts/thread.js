@@ -173,3 +173,7 @@ BzDeck.Thread.prototype.update = function (bugs) {
     return row;
   }));
 };
+
+BzDeck.Thread.prototype.filter = function (bugs) {
+  this.$$grid.filter([for (bug of bugs) bug.id]);
+};

@@ -49,14 +49,17 @@ BzDeck.HomePage = function HomePage () {
                                 : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
   });
 
+  // Fill the thread with all saved bugs, and filter the rows later
+  BzDeck.model.get_all_bugs().then(bugs => this.thread.update(bugs));
+
   this.change_layout(prefs['ui.home.layout']);
 
   let $$grid = this.thread.$$grid;
 
-  $$grid.bind('Rebuilt', event => {
+  $$grid.bind('Filtered', event => {
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder
-    if ($$grid.data.rows.length && !mobile) {
+    if ($$grid.view.members.length && !mobile) {
       $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
     }
   });
