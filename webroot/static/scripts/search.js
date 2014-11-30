@@ -60,7 +60,7 @@ BzDeck.SearchPage = function SearchPage (search_id) {
   this.setup_preview_pane();
   this.setup_toolbar();
 
-  let params = location.search.substr(1) || history.state.params;
+  let params = location.search.substr(1) || history.state ? history.state.params : undefined;
 
   if (params) {
     params = new URLSearchParams(params);

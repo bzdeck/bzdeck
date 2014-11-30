@@ -30,7 +30,7 @@ BzDeck.SettingsPage.connect = function () {
     'tab_label': 'Settings',
   });
 
-  let tab_id = history.state.tab_id,
+  let tab_id = history.state ? history.state.tab_id : undefined,
       $$tablist = BzDeck.pages.settings.$$tablist;
 
   if (tab_id) {

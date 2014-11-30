@@ -41,7 +41,7 @@ BzDeck.DetailsPage.connect = function () {
     'page_category': 'details',
     'page_id': id,
     'page_constructor': BzDeck.DetailsPage,
-    'page_constructor_args': [id, history.state.ids],
+    'page_constructor_args': [id, history.state ? history.state.ids : []],
     'tab_label': id,
     'tab_position': 'next',
   });
