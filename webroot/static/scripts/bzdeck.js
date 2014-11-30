@@ -220,10 +220,8 @@ BzDeck.bootstrap.finish = function () {
   BzDeck.router = new FlareTail.app.Router(BzDeck);
   BzDeck.router.locate();
 
-  // Timer to check for updates
-  BzDeck.core.timers.fetch_subscriptions = window.setInterval(() => {
-    BzDeck.model.fetch_subscriptions();
-  }, 600000); // Call every 10 minutes
+  // Timer to check for updates, call every 10 minutes
+  BzDeck.core.timers.set('fetch_subscriptions', window.setInterval(() => BzDeck.model.fetch_subscriptions(), 600000));
 
   // Register the app for an activity on Firefox OS
   BzDeck.core.register_activity_handler();
@@ -241,7 +239,8 @@ BzDeck.bootstrap.finish = function () {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.core = {};
-BzDeck.core.timers = {};
+BzDeck.core.timers = new Map();
+BzDeck.core.notifications = new Set();
 
 BzDeck.core.toggle_star = function (id, starred) {
   // Save in DB
@@ -326,15 +325,14 @@ BzDeck.core.show_notification = function (title, body) {
   }
 
   let ua = navigator.userAgent,
-      fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/);
-
-  return new Promise(resolve => {
-    FlareTail.util.app.show_notification(title, {
-      body,
+      fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/),
       // Firefox OS requires a complete URL for the icon
-      'icon': `${location.origin}/static/images/logo/icon-${fxos ? 'fxos-120' : '128'}.png`
-    }).then(event => resolve(event));
-  });
+      icon = `${location.origin}/static/images/logo/icon-${fxos ? 'fxos-120' : '128'}.png`,
+      notification = new Notification(title, { body, icon });
+
+  BzDeck.core.notifications.add(notification);
+
+  return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
 };
 
 BzDeck.core.register_activity_handler = function () {
@@ -509,13 +507,7 @@ BzDeck.session.logout = function () {
 
   BzDeck.bootstrap.show_login_form(false);
 
-  // Terminate timers
-  for (let [key, timer] of Iterator(BzDeck.core.timers)) {
-    window.clearInterval(timer);
-  }
-
-  // Disconnect from the Bugzfeed server
-  BzDeck.bugzfeed.disconnect();
+  BzDeck.session.clean();
 
   // Delete the account data
   BzDeck.model.data.account.active = false;
@@ -523,6 +515,25 @@ BzDeck.session.logout = function () {
 
   delete BzDeck.model.data.account;
 };
+
+BzDeck.session.clean = function () {
+  // Terminate timers
+  for (let timer of BzDeck.core.timers.values()) {
+    window.clearInterval(timer);
+  }
+
+  BzDeck.core.timers.clear();
+
+  // Destroy all notifications
+  for (let notification of BzDeck.core.notifications) {
+    notification.close()
+  };
+
+  BzDeck.core.notifications.clear();
+
+  // Disconnect from the Bugzfeed server
+  BzDeck.bugzfeed.disconnect();
+}
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Events
@@ -537,7 +548,7 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 window.addEventListener('beforeunload', event => {
-  BzDeck.bugzfeed.disconnect();
+  BzDeck.session.clean();
 });
 
 window.addEventListener('popstate', event => {
