@@ -974,15 +974,17 @@ BzDeck.Bug.Timeline.CommentForm.prototype.update_parallel_ui = function () {
 
 BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
   let data,
+      hash = att => md5(att.file_name + String(att.size)),
+      map_sum = map => [...map.values()].reducePar((p, c) => p + c),
       comment = this.$textbox.value,
       att_num = this.attachments.length,
       att_total = 0,
-      att_uploaded = 0,
+      att_uploaded = new Map([for (att of this.attachments) [hash(att), 0]]),
       percentage;
 
-  let update_status = size => {
-    att_uploaded += size;
-    percentage = Math.round(att_uploaded / att_total * 100);
+  let update_status = (att, uploaded) => {
+    att_uploaded.set(hash(att), uploaded);
+    percentage = Math.round(map_sum(att_uploaded) / att_total * 100);
     this.$status.textContent = `${percentage}% uploaded`;
   };
 
@@ -1009,7 +1011,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
             }
 
             if (length_computable) {
-              update_status(event.loaded);
+              update_status(data, event.loaded);
             }
           }
         }
@@ -1022,7 +1024,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
           this.remove_attachment(data);
 
           if (!length_computable) {
-            update_status(size);
+            update_status(data, size);
           }
         }
 
