@@ -25,13 +25,10 @@ BzDeck.SearchPage = function SearchPage (search_id) {
     'get': (obj, prop) => {
       if (prop === 'bugs') {
         // Return a sorted bug list
-        let bugs = {};
+        let bugs = new Map([for (bug of obj.bugs) [bug.id, bug]]),
+            rows = this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-        for (let bug of obj[prop]) {
-          bugs[bug.id] = bug;
-        }
-
-        return [for (row of this.thread.grid.data.rows) bugs[row.data.id]];
+        return [for ($row of rows) bugs.get(Number($row.dataset.id))];
       }
 
       return obj[prop];
