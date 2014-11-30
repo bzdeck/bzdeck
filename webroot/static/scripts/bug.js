@@ -364,7 +364,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     }
   }
 
-  let comments = [...$timeline.querySelectorAll('[itemprop="comment"]:not([data-nocomment])')];
+  let comments = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
   // Unhide the latest comment
   comments[sort_desc ? 0 : comments.length - 1].removeAttribute('aria-hidden');
