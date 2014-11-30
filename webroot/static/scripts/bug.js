@@ -390,6 +390,12 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
               : $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
   }
 
+  let $existing_form = $timeline.parentElement.querySelector('[id$="comment-form"]');
+
+  if ($existing_form) {
+    $existing_form.remove();
+  }
+
   // Add a comment form
   $timeline.parentElement.appendChild(comment_form.$form);
   $parent.scrollTop = 0;
