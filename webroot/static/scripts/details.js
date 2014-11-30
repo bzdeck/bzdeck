@@ -90,7 +90,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   });
 
   // Hide tabs when scrolled down on mobile
-  for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] div')) {
+  for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] [role="region"]')) {
     if (!mobile || !phone && $tabpanel_content.matches('.bug-info')) {
       continue;
     }
@@ -98,7 +98,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
     let scroll_top = $tabpanel_content.scrollTop,
         tablist_hidden = false;
 
-    $tabpanel_content.addEventListener('scroll', event => {
+    $tabpanel_content.querySelector('.scrollable-area-content').addEventListener('scroll', event => {
       let value = event.target.scrollTop - scroll_top > 0;
 
       if (tablist_hidden !== value) {

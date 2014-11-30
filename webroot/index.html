@@ -96,7 +96,9 @@
                     </ul>
                   </div>
                 </header>
-                <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region"></div>
+                <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
+                  <div id="search-TID-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0"></div>
+                </div>
               </article><!-- end #search-TID-preview-bug -->
             </div><!-- end #search-TID-preview-pane -->
             <div id="search-TID-advanced-search-pane" aria-hidden="true">
@@ -129,10 +131,12 @@
             </ul>
             <div id="bug-TID-tabpanels">
               <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
-                <div class="bug-timeline" role="region">
-                  <section>
-                    <h3>Comments</h3>
-                  </section>
+                <div class="bug-timeline-wrapper">
+                  <div class="bug-timeline" role="region" tabindex="0">
+                    <section>
+                      <h3>Comments</h3>
+                    </section>
+                  </div>
                 </div>
               </div><!-- end #bug-TID-tabpanel-timeline -->
               <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
@@ -675,7 +679,9 @@
                         </ul>
                       </div>
                     </header>
-                    <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region"></div>
+                    <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
+                      <div id="home-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0"></div>
+                    </div>
                   </article><!-- end #home-preview-content -->
                 </div><!-- end #home-preview-pane -->
               </div>

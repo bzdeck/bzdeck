@@ -550,7 +550,7 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root [role="banner"].search h1 {
-  width: 0;
+  display: none;
 }
 
 [data-device-type|="mobile"]:root [role="banner"] h1::before {
@@ -572,26 +572,28 @@ col[data-hidden="false"] {
   background-position: -.4rem 50%;
 }
 
-[data-device-type="mobile-phone"][data-current-tab="home"]:root [role="banner"] h1::before {
+[data-device-type|="mobile"][data-current-tab="home"]:root [role="banner"] h1::before {
   background-image: -moz-image-rect(var(--base-sprite-image), 0, 304, 32, 288);
-}
-
-[data-device-type="mobile-tablet"][data-current-tab="home"]:root [role="banner"] h1::before {
-  background-image: none;
 }
 
 [role="banner"] [role="toolbar"] {
   position: absolute;
-  right: 0;
   height: 4rem;
 }
 
 [data-device-type="desktop"]:root [role="banner"] [role="toolbar"] {
+  right: 0;
   width: 24.4rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] [role="toolbar"] {
+[data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
+  right: auto;
   width: 8rem;
+}
+
+[data-device-type="mobile-phone"]:root [role="banner"] [role="toolbar"] {
+  right: 0;
+  width: auto;
 }
 
 [data-device-type|="mobile"]:root:not([data-current-tab="home"]) [role="banner"] [role="toolbar"] {
@@ -599,8 +601,7 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root [role="banner"].search [role="toolbar"] {
-  left: 4.5rem;
-  width: auto;
+  left: 0;
 }
 
 #toolbar--search-menu {
@@ -721,7 +722,7 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root [role="banner"].search [role="search"] {
-  width: calc(100% - .6rem);
+  width: calc(100% - 1.2rem);
 }
 
 [role="banner"] [role="search"] [role="textbox"] {
@@ -801,8 +802,7 @@ col[data-hidden="false"] {
   top: 3.4rem;
   right: .7rem;
   overflow: auto;
-  width: calc(100% - .7rem);
-  max-height: 20rem;
+  width: calc(100% - 1.4rem);
 }
 
 [data-device-type|="mobile"]:root #quicksearch-dropdown [role="menuitem"] {
@@ -831,7 +831,7 @@ col[data-hidden="false"] {
   width: 16rem;
 }
 
-[data-device-type="mobile-phone"]:root #sidebar {
+[data-device-type|="mobile"]:root #sidebar {
   position: fixed;
   bottom: 0;
   border-right-width: 0;
@@ -839,22 +839,6 @@ col[data-hidden="false"] {
   background-color: rgba(0, 0, 0, .3) !important;
   transition: background-color .4s ease .6s; /* Set a delay for the transitioning sidebar */
   pointer-events: auto;
-}
-
-[data-device-type="mobile-tablet"]:root #sidebar {
-  position: absolute;
-  bottom: 0;
-  width: 24rem;
-}
-
-[data-device-type="mobile-tablet"]:root #sidebar::after {
-  position: absolute;
-  right: 0;
-  z-index: 100;
-  width: .8rem;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(0, 0, 0, .2));
-  content: "";
 }
 
 [data-device-type|="mobile"]:root #sidebar[aria-hidden="true"] {
@@ -874,41 +858,25 @@ col[data-hidden="false"] {
   height: 100%;
 }
 
-:root:not([data-device-type="mobile-phone"]) #sidebar > div {
+[data-device-type="desktop"]:root #sidebar > div {
   right: 0;
 }
 
 [data-device-type|="mobile"]:root #sidebar > div {
-  background-color: var(--region-background-color);
-}
-
-[data-device-type="mobile-phone"]:root #sidebar > div {
   right: 4em;
   max-width: calc(360px - 4rem);
+  background-color: var(--region-background-color);
   transition: all .5s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
-[data-device-type="mobile-phone"]:root #sidebar[aria-hidden="true"] > div {
+[data-device-type|="mobile"]:root #sidebar[aria-hidden="true"] > div {
   right: 100%;
   left: calc(-360px + 4rem);
 }
 
-[data-device-type|="mobile"]:root #sidebar section:not(:last-of-type) {
-  margin-bottom: 2rem;
-}
-
-[data-device-type="desktop"]:root #sidebar h2 {
+#sidebar h2 {
   position: absolute;
   left: -9999rem;
-}
-
-[data-device-type|="mobile"]:root #sidebar h2 {
-  position: static;
-  border-color: var(--region-border-color);
-  border-bottom-width: .2rem;
-  border-bottom-style: solid;
-  padding: .4rem 1.2rem;
-  font-weight: 500;
 }
 
 #sidebar-folder-list {
@@ -921,9 +889,6 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
-  border-color: var(--control-border-color);
-  border-bottom-width: .1rem;
-  border-bottom-style: solid;
   padding: .8rem 1.2rem;
   height: 1.5em;
   font-size: 1.5rem;
@@ -987,6 +952,12 @@ col[data-hidden="false"] {
   background-repeat: no-repeat;
   background-size: contain;
   text-shadow: 0 0 .1rem rgba(0, 0, 0, .6);
+}
+
+[data-device-type|="mobile"]:root #sidebar-menu {
+  border-width: .2rem 0 0;
+  border-style: solid;
+  border-color: var(--region-border-color);
 }
 
 [data-device-type|="mobile"]:root #sidebar-menu #main-menu--app-menu {
@@ -1130,6 +1101,7 @@ main {
   border-style: solid;
 }
 
+[data-device-type|="mobile"]:root #home-preview-bug > header,
 [data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header {
   position: fixed;
   top: .5rem;
@@ -1138,6 +1110,10 @@ main {
   width: 12rem;
   height: auto;
   background: transparent;
+}
+
+[data-device-type|="mobile"]:root #home-preview-bug > header {
+  border-width: 0;
 }
 
 [data-device-type|="mobile"]:root:-moz-any([data-current-tab="home"], [data-current-tab="settings"], [data-current-tab="profile"]) #main-tabpanels > [role="tabpanel"] > * > header {
@@ -1162,14 +1138,13 @@ main {
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > header {
-  display: flex;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);
 }
 
-[data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] > header {
-  display: block;
+[data-device-type="desktop"]:root [itemtype="https://www.bzdeck.com/bug"] > header {
+  display: flex;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > header > :-moz-any(h2, h3) {
@@ -1193,7 +1168,7 @@ main {
   height: 3rem;
 }
 
-[data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] {
+[data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] {
   float: right;
 }
 
@@ -1203,7 +1178,7 @@ main {
   height: 2.2rem;
 }
 
-[data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] ul.nav {
+[data-device-type="mobile-phone"]:root [itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] ul.nav {
   display: none;
 }
 
@@ -1299,11 +1274,7 @@ main {
   left: 16rem; /* A space for the sidebar */
 }
 
-[data-device-type="mobile-tablet"]:root #main-tabpanels > #tabpanel-home > section > div {
-  left: 24rem; /* A space for the sidebar */
-}
-
-[data-device-type="mobile-phone"]:root #main-tabpanels > #tabpanel-home > section > div {
+[data-device-type|="mobile"]:root #main-tabpanels > #tabpanel-home > section > div {
   left: 0;
 }
 
@@ -1320,8 +1291,12 @@ main {
   height: 100%;
 }
 
-[data-device-type|="mobile"]:root #home-list-pane {
+[data-device-type="mobile-phone"]:root #home-list-pane {
   width: 100% !important;
+}
+
+[data-device-type="mobile-tablet"]:root #home-list-pane {
+  width: 32rem !important;
 }
 
 #home-preview-splitter {
@@ -1356,7 +1331,11 @@ main {
   border-width: 0 0 0 .1rem;
 }
 
-[data-device-type|="mobile"]:root :-moz-any(#home-preview-splitter, #home-preview-pane) {
+[data-device-type="mobile-tablet"]:root #home-preview-pane {
+  left: 32rem !important;
+}
+
+[data-device-type="mobile-phone"]:root #home-preview-pane {
   display: none;
 }
 
@@ -1462,12 +1441,12 @@ main {
   background-color: var(--grid-even-row-background-color);
 }
 
-[data-device-type|="mobile"]:root #home-list .grid-body [role="row"]:active {
+[data-device-type="mobile-phone"]:root #home-list .grid-body [role="row"]:active {
   color: var(--selected-control-foreground-color) !important;
   background-color: var(--selected-control-background-color) !important;
 }
 
-[data-device-type|="mobile"]:root #home-list .grid-body [role="row"][data-unread="false"],
+[data-device-type="mobile-phone"]:root #home-list .grid-body [role="row"][data-unread="false"],
 [data-home-layout="vertical"]:root #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
   color: inherit;
   background-color: var(--secondary-region-background-color);
@@ -1571,22 +1550,27 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
-article[id$="preview-bug"] > .bug-timeline {
+article[id$="preview-bug"] > .bug-timeline-wrapper {
   right: 0;
   width: auto;
 }
 
-[data-device-type="mobile-phone"]:root article[id$="preview-bug"] > .bug-timeline {
+[data-device-type="desktop"]:root article[id$="preview-bug"] > .bug-timeline-wrapper {
+  top: 3.2rem;
+  height: calc(100% - 3.2rem);
+}
+
+[data-device-type="mobile-tablet"]:root article[id$="preview-bug"] > .bug-timeline-wrapper {
+  top: 0;
+  height: 100%;
+}
+
+[data-device-type="mobile-phone"]:root article[id$="preview-bug"] > .bug-timeline-wrapper {
   top: 4rem;
   height: calc(100% - 4rem);
 }
 
-:root:not([data-device-type="mobile-phone"]) article[id$="preview-bug"] > .bug-timeline {
-  top: 4.4rem;
-  height: calc(100% - 4.4rem);
-}
-
-[data-home-layout="vertical"]:root #home-preview-bug-timeline {
+[data-home-layout="vertical"]:root #home-preview-bug-timeline-wrapper {
   left: 0;
 }
 
@@ -1744,16 +1728,6 @@ article[id$="preview-bug"] > .bug-timeline {
   left: 0;
 }
 
-[data-device-type="mobile-tablet"]:root [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"]::before {
-  position: absolute;
-  left: -.8rem;
-  z-index: 100;
-  width: .8rem;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(0, 0, 0, .2));
-  content: "";
-}
-
 [data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > .scrollable-area-content > :first-child {
   padding-top: 4rem;
 }
@@ -1851,18 +1825,28 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 .bug-timeline {
-  bottom: 0;
-  padding-top: 0 !important;
+  position: absolute;
+  overflow: hidden;
+  box-sizing: padding-box;
+  width: 100%;
 }
 
-[data-device-type="mobile-phone"]:root .bug-timeline {
-  top: .8rem;
-  height: calc(100% - .8rem);
+[data-timeline-sort-order="descending"]:root .bug-timeline {
+  top: 15rem;
+  bottom: 1.2rem;
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline {
+[data-timeline-sort-order="descending"][data-device-type="mobile-phone"]:root .bug-timeline {
+  top: 0; /* TEMP, mobile comment form UI is not ready */
+}
+
+[data-timeline-sort-order="ascending"]:root .bug-timeline {
   top: 1.2rem;
-  height: calc(100% - 1.2rem);
+  bottom: 15rem;
+}
+
+[data-timeline-sort-order="ascending"][data-device-type="mobile-phone"]:root .bug-timeline {
+  bottom: 0; /* TEMP, mobile comment form UI is not ready */
 }
 
 .bug-timeline h2 {
@@ -1874,28 +1858,45 @@ article[id$="preview-bug"] > .bug-timeline {
   left: -9999rem;
 }
 
-[data-device-type|="mobile"]:root .bug-timeline > div > h2 {
+[data-device-type|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) {
   display: block;
-  padding: 4rem 1.6rem .8rem;
+  position: static;
+  padding: 1.2rem;
   line-height: 1.4;
   font-weight: 500;
+}
+
+[data-device-type|="mobile"]:root .bug-timeline > div > h2 {
+  padding-top: 4rem !important; /* Bug details */
+}
+
+[data-device-type|="mobile"]:root .bug-timeline > div > h3 {
+  padding-top: 0 !important; /* Home preview */
 }
 
 [data-device-type="mobile-phone"]:root .bug-timeline > div > h2 {
   font-size: 1.5rem;
 }
 
-[data-device-type="mobile-tablet"]:root .bug-timeline > div > h2 {
+[data-device-type="mobile-tablet"]:root .bug-timeline > div > :-moz-any(h2, h3) {
   font-size: 2rem;
 }
 
-[data-device-type|="mobile"]:root .bug-timeline > div > h2 [itemprop="id"] {
+[data-device-type|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) [itemprop="id"] {
   display: none;
+}
+
+.bug-timeline [itemprop="comment"] {
+  border-width: 0 .1rem .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
 }
 
 .bug-timeline .read-comments-expander {
   display: block;
-  border-radius: 0;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
   padding: 1.2rem;
   height: auto;
   font-size: 1.1rem;
@@ -1904,19 +1905,25 @@ article[id$="preview-bug"] > .bug-timeline {
 
 .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
   position: relative;
-  border-width: .1rem;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
+  border-radius: .2rem;
   color: var(--content-foreground-color);
   background-color: var(--content-background-color);
 }
 
+.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):first-of-type {
+  margin-top: 0 !important;
+}
+
+.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):last-of-type {
+  margin-bottom: 0 !important;
+}
+
 [data-device-type="mobile-phone"]:root .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
-  margin: 0 .8rem .8rem;
+  margin: .8rem;
 }
 
 :root:not([data-device-type="mobile-phone"]) .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
-  margin: 0 1.2rem 1.2rem;
+  margin: 1.2rem;
 }
 
 [data-device-type="mobile-phone"]:root .bug-timeline [itemprop="comment"] > * {
@@ -1941,7 +1948,11 @@ article[id$="preview-bug"] > .bug-timeline {
   top: 0;
   z-index: 10;
   overflow: hidden;
-  background-color: var(--content-background-color);
+  border-radius: .2rem; /* Same as the comment box */
+  border-width: .1rem 0 0;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  background-color: var(--content-background-color-alpha); /* Because of position: sticky, the comment text go under the header */
 }
 
 .bug-timeline [itemprop="comment"] header .meta {
@@ -2125,6 +2136,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 .bug-timeline [itemprop="comment"] .changes {
+  border-radius: 0 0 .2rem .2rem;
   border-width: .1rem 0 0;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
@@ -2163,13 +2175,16 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [id$="timeline-comment-form"] {
-  position: sticky;
+  position: absolute;
   z-index: 100;
-  margin: 1.2rem;
+  right: 1.2rem;
+  box-sizing: border-box;
+  border-radius: .2rem;
   border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
-  background-color: var(--region-background-color);
+  width: calc(100% - 2.4rem);
+  background-color: var(--content-background-color);
 }
 
 [id$="timeline-comment-form"] [aria-dropeffect] {
@@ -2215,8 +2230,7 @@ article[id$="preview-bug"] > .bug-timeline {
 }
 
 [data-timeline-sort-order="descending"]:root [id$="timeline-comment-form"] {
-  top: 0;
-  margin-top: 0;
+  top: 1.2rem;
 }
 
 [data-timeline-sort-order="ascending"]:root [id$="timeline-comment-form"] {
@@ -2231,7 +2245,6 @@ article[id$="preview-bug"] > .bug-timeline {
 [id$="timeline-comment-form"] > div {
   padding: 1.2rem;
   color: var(--content-foreground-color);
-  background-color: var(--content-background-color);
 }
 
 [id$="timeline-comment-form"] [role="tablist"] {
@@ -2387,6 +2400,7 @@ article[id$="preview-bug"] > .bug-timeline {
 [id$="timeline-comment-form"] > footer {
   display: flex;
   overflow: hidden;
+  border-radius: 0 0 .2rem .2rem;
   height: 4.4rem;
   color: var(--content-foreground-color);
   background-color: var(--secondary-region-background-color);
@@ -2774,7 +2788,7 @@ article[id$="preview-bug"] > .bug-timeline {
   pointer-events: auto;
 }
 
-[data-device-type="desktop"]:root #settings-tablist {
+:root:not([data-device-type="mobile-phone"]) #settings-tablist {
   position: absolute;
   top: 4rem;
   left: 4rem;
@@ -2783,32 +2797,36 @@ article[id$="preview-bug"] > .bug-timeline {
   width: 20rem;
 }
 
-[data-device-type="desktop"]:root #settings-tablist [role="tab"] {
+:root:not([data-device-type="mobile-phone"]) #settings-tablist [role="tab"] {
   width: 100%;
   height: auto;
   border-width: 0 0 .1rem;
   padding: .8rem 1.2rem;
 }
 
-[data-device-type="desktop"]:root #settings-tablist,
-[data-device-type="desktop"]:root #settings-tablist [role="tab"] {
+:root:not([data-device-type="mobile-phone"]) #settings-tablist,
+:root:not([data-device-type="mobile-phone"]) #settings-tablist [role="tab"] {
   border-color: var(--secondary-region-border-color);
 }
 
-[data-device-type="desktop"]:root #settings-tablist [role="tab"][aria-selected="true"] {
+:root:not([data-device-type="mobile-phone"]) #settings-tablist [role="tab"][aria-selected="true"] {
   color: var(--inactive-selected-control-foreground-color);
   background-color: var(--inactive-selected-control-background-color);
 }
 
-[data-device-type="desktop"]:root #settings-tablist [role="tab"] label {
+:root:not([data-device-type="mobile-phone"]) #settings-tablist [role="tab"] label {
   position: static;
 }
 
-[data-device-type|="mobile"]:root #settings-tablist {
+[data-device-type="mobile-tablet"]:root #settings-tablist [role="tab"] label {
+  font-size: 1.25rem;
+}
+
+[data-device-type="mobile-phone"]:root #settings-tablist {
   display: none;
 }
 
-[data-device-type="desktop"]:root [id^="settings-tabpanel"] {
+:root:not([data-device-type="mobile-phone"]) [id^="settings-tabpanel"] {
   top: 4rem;
   right: 4rem;
   bottom: 4rem;
@@ -2817,13 +2835,13 @@ article[id$="preview-bug"] > .bug-timeline {
   height: auto; 
 }
 
-[data-device-type|="mobile"]:root [id^="settings-tabpanel"],
-[data-device-type|="mobile"]:root [id^="settings-tabpanel"] > * {
+[data-device-type="mobile-phone"]:root [id^="settings-tabpanel"],
+[data-device-type="mobile-phone"]:root [id^="settings-tabpanel"] > * {
   position: relative;
   height: auto; 
 }
 
-[data-device-type|="mobile"]:root [id^="settings-tabpanel"][aria-hidden="true"] {
+[data-device-type="mobile-phone"]:root [id^="settings-tabpanel"][aria-hidden="true"] {
   display: block;
 }
 
@@ -3075,20 +3093,31 @@ article[id$="preview-bug"] > .bug-timeline {
 
 @media (min-width: 641px) and (max-width: 800px) {
 
-  [data-home-layout="vertical"]:root #home-list-pane {
-    width: 100% !important;
+  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
+    left: calc(24rem - 8rem);
   }
 
-  [data-home-layout="vertical"]:root #home-preview-splitter,
-  [data-home-layout="vertical"]:root #home-preview-pane {
+  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"] {
+    width: 24rem;
+  }
+
+  [data-home-layout="vertical"]:root #home-list-pane {
+    width: 24rem !important;
+  }
+
+  [data-home-layout="vertical"]:root #home-preview-splitter {
     display: none;
+  }
+
+  [data-home-layout="vertical"]:root #home-preview-pane {
+    left: 24rem !important;
   }
 
   #home-preview-bug-info {
     display: none;
   }
 
-  #home-preview-bug-timeline {
+  #home-preview-bug-timeline-wrapper {
     left: 0;
   }
 
@@ -3114,7 +3143,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
   [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"],
   [itemtype="https://www.bzdeck.com/bug"] > div > [id$="tabpanels"],
-  [id^="search"].bug-timeline {
+  [id^="search"].bug-timeline-wrapper {
     left: 24rem;
   }
 
@@ -3133,7 +3162,7 @@ article[id$="preview-bug"] > .bug-timeline {
 
   [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"],
   [itemtype="https://www.bzdeck.com/bug"] > div > [id$="tabpanels"],
-  [id^="search"].bug-timeline {
+  [id^="search"].bug-timeline-wrapper {
     left: 32rem;
   }
 
@@ -3145,6 +3174,11 @@ article[id$="preview-bug"] > .bug-timeline {
 
 @media (min-width: 801px) and (max-width: 980px) {
 
+  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
+    left: calc(22rem - 8rem);
+  }
+
+  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"],
   #home-preview-bug-info {
     width: 22rem;
   }
@@ -3162,7 +3196,7 @@ article[id$="preview-bug"] > .bug-timeline {
     width: 100%;
   }
 
-  #home-preview-bug-timeline {
+  #home-preview-bug-timeline-wrapper {
     left: 22rem;
   }
 
@@ -3170,11 +3204,16 @@ article[id$="preview-bug"] > .bug-timeline {
 
 @media (min-width: 981px) {
 
+  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
+    left: calc(32rem - 8rem);
+  }
+
+  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"],
   #home-preview-bug-info {
     width: 32rem;
   }
 
-  #home-preview-bug-timeline {
+  #home-preview-bug-timeline-wrapper {
     left: 32rem;
   }
 

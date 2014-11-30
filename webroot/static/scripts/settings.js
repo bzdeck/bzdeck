@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
   // Activate tabs
-  if (FlareTail.util.device.type === 'desktop') {
+  if (FlareTail.util.device.type !== 'mobile-phone') {
     this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
   }
 

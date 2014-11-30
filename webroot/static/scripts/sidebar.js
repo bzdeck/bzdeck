@@ -10,7 +10,6 @@ let BzDeck = BzDeck || {};
 BzDeck.Sidebar = function Sidebar () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      phone = FlareTail.util.device.type === 'mobile-phone',
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -19,13 +18,13 @@ BzDeck.Sidebar = function Sidebar () {
     document.querySelector('#sidebar-menu').appendChild(document.querySelector('#main-menu--app-menu'));
   }
 
-  $root.setAttribute('data-sidebar-hidden', phone);
-  $sidebar.setAttribute('aria-hidden', phone);
+  $root.setAttribute('data-sidebar-hidden', mobile);
+  $sidebar.setAttribute('aria-hidden', mobile);
 
   new FTw.ScrollBar($sidebar.querySelector('div'));
 
   $sidebar.addEventListener('click', event => {
-    if (phone) {
+    if (mobile) {
       let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
       $root.setAttribute('data-sidebar-hidden', hidden);

@@ -11,7 +11,6 @@ BzDeck.Toolbar = function Toolbar () {
   let FTw = FlareTail.widget,
       FTu = FlareTail.util,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      phone = FlareTail.util.device.type === 'mobile-phone',
       $$tablist = this.$$tablist = new FTw.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
@@ -117,7 +116,7 @@ BzDeck.Toolbar = function Toolbar () {
 
   document.querySelector('[role="banner"] h1').addEventListener('click', event => {
     if (mobile) {
-      if (phone && tabs.selected[0] === $tab_home) {
+      if (tabs.selected[0] === $tab_home) {
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
         document.querySelector('#sidebar > div').scrollTop = 0;

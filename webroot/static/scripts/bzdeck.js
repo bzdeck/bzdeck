@@ -542,7 +542,7 @@ window.addEventListener('beforeunload', event => {
 
 window.addEventListener('popstate', event => {
   // Hide sidebar
-  if (FlareTail.util.device.type.startsWith('mobile')) {
+  if (FlareTail.util.device.type === 'mobile-phone') {
     document.documentElement.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }

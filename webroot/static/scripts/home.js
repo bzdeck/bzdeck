@@ -10,6 +10,7 @@ let BzDeck = BzDeck || {};
 BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
+      phone = FlareTail.util.device.type === 'mobile-phone',
       prefs = BzDeck.model.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
@@ -59,7 +60,7 @@ BzDeck.HomePage = function HomePage () {
   $$grid.bind('Filtered', event => {
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder
-    if ($$grid.view.members.length && !mobile) {
+    if ($$grid.view.members.length && !phone) {
       $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
     }
   });
@@ -164,6 +165,13 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     BzDeck.core.toggle_unread(bug.id, false);
     $bug.setAttribute('aria-hidden', 'false');
     $$button.data.disabled = false;
+
+    if (FlareTail.util.device.type.startsWith('mobile')) {
+      let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
+          $title = $bug.querySelector('h3');
+
+      $timeline_content.insertBefore($title, $timeline_content.firstElementChild);
+    }
   });
 };
 

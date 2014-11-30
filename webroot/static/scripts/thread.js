@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.Thread = function Thread (consumer, name, $grid, options) {
   let prefs = BzDeck.model.data.prefs,
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      phone = FlareTail.util.device.type === 'mobile-phone',
       default_cols = BzDeck.config.grid.default_columns,
       columns = prefs[`${name}.list.columns`] || default_cols,
       field = BzDeck.model.data.server.config.field;
@@ -45,7 +45,7 @@ BzDeck.Thread = function Thread (consumer, name, $grid, options) {
       let id = consumer.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
       // Mobile compact layout
-      if (mobile) {
+      if (phone) {
         BzDeck.router.navigate('/bug/' + id, { 'ids': [for (row of this.$$grid.data.rows) row.data.id] });
       }
     }

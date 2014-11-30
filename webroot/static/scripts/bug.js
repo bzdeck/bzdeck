@@ -391,7 +391,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   }
 
   // Add a comment form
-  $parent.insertBefore(comment_form.$form, sort_desc ? $parent.querySelector('[itemprop="comment"]') : null);
+  $timeline.parentElement.appendChild(comment_form.$form);
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 

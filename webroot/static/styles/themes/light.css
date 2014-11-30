@@ -75,7 +75,7 @@
   --alternate-button-foreground-color: var(--base-foreground-color-4);
   --alternate-button-background-color: var(--base-background-color-3);
   --alternate-disabled-button-border-color: var(--base-background-color-4);
-  --alternate-disabled-button-foreground-color: var(--base-foreground-color-5);
+  --alternate-disabled-button-foreground-color: var(--base-foreground-color-2);
   --alternate-disabled-button-background-color: var(--base-background-color-4);
   --alternate-hovered-button-border-color: ; /* Unchanged */
   --alternate-hovered-button-foreground-color: ; /* Unchanged */
@@ -126,6 +126,7 @@
 
   --content-foreground-color: var(--base-foreground-color-1);
   --content-background-color: var(--base-background-color-7);
+  --content-background-color-alpha: rgba(252, 252, 252, .9);
   --secondary-content-foreground-color: var(--base-foreground-color-2);
 
   --selected-text-foreground-color: ; /* Unchanged */
