@@ -614,32 +614,6 @@ window.addEventListener('click', event => {
   return true;
 });
 
-window.addEventListener('keydown', event => {
-  let $target = event.target;
-
-  if ($target.matches('input, [role="textbox"]')) {
-    if (event.metaKey || event.ctrlKey) {
-      switch (event.keyCode) {
-        case event.DOM_VK_A: // Select
-        case event.DOM_VK_C: // Copy
-        case event.DOM_VK_V: // Paste
-        case event.DOM_VK_X: // Cut
-        case event.DOM_VK_Z: { // Undo/Redo
-          return true;
-        }
-
-        default: {
-          event.preventDefault();
-
-          return false;
-        }
-      }
-    }
-  }
-
-  return true;
-});
-
 window.addEventListener('Bug:UnreadToggled', event => {
   BzDeck.core.toggle_unread_ui();
 });
