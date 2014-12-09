@@ -27,7 +27,7 @@ BzDeck.bootstrap.start = function () {
   BzDeck.model.open_global_database().then(database => {
     BzDeck.model.databases.global = database;
   }, error => {
-    status(error.message);
+    status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
   }).then(() => {
     return BzDeck.model.get_active_account();
   }).then(account => {
@@ -73,7 +73,7 @@ BzDeck.bootstrap.start = function () {
   }).then(database => {
     BzDeck.model.databases.account = database;
   }, error => {
-    status(error.message);
+    status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
   }).then(() => {
     return BzDeck.model.load_prefs();
   }).then(() => {
