@@ -325,7 +325,7 @@ BzDeck.core.show_notification = function (title, body) {
   }
 
   let ua = navigator.userAgent,
-      fxos = ua.contains('Firefox') && !ua.contains('Android') && ua.match(/Mobile|Tablet/),
+      fxos = ua.includes('Firefox') && !ua.includes('Android') && ua.match(/Mobile|Tablet/),
       // Firefox OS requires a complete URL for the icon
       icon = `${location.origin}/static/images/logo/icon-${fxos ? 'fxos-120' : '128'}.png`,
       notification = new Notification(title, { body, icon });

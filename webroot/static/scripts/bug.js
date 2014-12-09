@@ -447,7 +447,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
 
   if (comment) {
     // TEMP: the message for a duplicated bug is currently only in the comment.text field
-    let text = comment.text.contains('has been marked as a duplicate of this bug')
+    let text = comment.text.includes('has been marked as a duplicate of this bug')
              ? comment.text : comment.raw_text;
 
     comment.number = data.get('comment_number');

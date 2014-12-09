@@ -297,9 +297,9 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
 
   BzDeck.model.get_all_bugs().then(bugs => {
     let results = bugs.filter(bug => {
-      return words.every(word => bug.summary.toLowerCase().contains(word)) ||
-             words.every(word => get_aliases(bug).join().toLowerCase().contains(word)) ||
-             words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0]);
+      return words.every(word => bug.summary.toLowerCase().includes(word)) ||
+             words.every(word => get_aliases(bug).join().toLowerCase().includes(word)) ||
+             words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
     });
 
     let data = [{
