@@ -1834,7 +1834,6 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   flex: auto;
   overflow: hidden;
   box-sizing: padding-box;
-  margin: 1.2rem 0;
   width: 100%;
 }
 
@@ -1850,17 +1849,13 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 [data-device-type|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) {
   display: block;
   position: static;
-  padding: 1.2rem;
+  padding: 1.2rem 1.2rem 0;
   line-height: 1.4;
   font-weight: 500;
 }
 
 [data-device-type|="mobile"]:root .bug-timeline > div > h2 {
-  padding-top: 4rem !important; /* Bug details */
-}
-
-[data-device-type|="mobile"]:root .bug-timeline > div > h3 {
-  padding-top: 0 !important; /* Home preview */
+  padding-top: 5.2rem !important; /* Bug details */
 }
 
 [data-device-type="mobile-phone"]:root .bug-timeline > div > h2 {
@@ -1876,7 +1871,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 }
 
 .bug-timeline [itemprop="comment"] {
-  border-width: 0 .1rem .1rem;
+  border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
 }
@@ -1899,11 +1894,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   background-color: var(--content-background-color);
 }
 
-.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):first-of-type {
-  margin-top: 0 !important;
-}
-
-.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):last-of-type {
+:root:not([data-device-type="mobile-phone"]) .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):last-of-type {
   margin-bottom: 0 !important;
 }
 
@@ -1938,9 +1929,6 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   z-index: 10;
   overflow: hidden;
   border-radius: .2rem; /* Same as the comment box */
-  border-width: .1rem 0 0;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
   background-color: var(--content-background-color-alpha); /* Because of position: sticky, the comment text go under the header */
 }
 
@@ -2167,7 +2155,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   flex: none;
   z-index: 100;
   box-sizing: border-box;
-  margin: 0 1.2rem 1.2rem;
+  margin: 1.2rem;
   border-radius: .2rem;
   border-width: .1rem;
   border-style: solid;
