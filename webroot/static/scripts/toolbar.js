@@ -111,19 +111,16 @@ BzDeck.Toolbar = function Toolbar () {
     document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
   }
 
-  let tabs = this.$$tablist.view,
-      $tab_home = document.querySelector('#tab-home');
-
   document.querySelector('[role="banner"] h1').addEventListener('click', event => {
     if (mobile) {
-      if (tabs.selected[0] === $tab_home) {
+      if ($root.getAttribute('data-current-tab') === 'home') {
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
         document.querySelector('#sidebar > div').scrollTop = 0;
         $root.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
       } else {
-        tabs.selected = $tab_home;
+        history.back();
       }
     }
   });
