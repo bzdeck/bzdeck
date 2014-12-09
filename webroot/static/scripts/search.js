@@ -130,12 +130,12 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
       $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-  let classifications = Object.keys(config.classification).sort().mapPar((value, index) => ({
+  let classifications = Object.keys(config.classification).sort().map((value, index) => ({
     'id': `${$classification_list.id}item-${index}`,
     'label': value
   }));
 
-  let products = Object.keys(config.product).sort().mapPar((value, index) => ({
+  let products = Object.keys(config.product).sort().map((value, index) => ({
     'id': `${$product_list.id}item-${index}`,
     'label': value
   }));
@@ -146,17 +146,17 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
     components.push(...[for (c of Object.keys(cs)) if (!components.includes(c)) c]);
   }
 
-  components = components.sort().mapPar((value, index) => ({
+  components = components.sort().map((value, index) => ({
     'id': `${$component_list.id}item-${index}`,
     'label': value
   }));
 
-  let statuses = config.field.status.values.mapPar((value, index) => ({
+  let statuses = config.field.status.values.map((value, index) => ({
     'id': `${$status_list.id}item-${index}`,
     'label': value
   }));
 
-  let resolutions = config.field.resolution.values.mapPar((value, index) => ({
+  let resolutions = config.field.resolution.values.map((value, index) => ({
     'id': `${$resolution_list.id}item-${index}`,
     'label': value || '---',
     'selected': !value // Select '---' to search open bugs

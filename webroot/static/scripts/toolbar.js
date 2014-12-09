@@ -296,7 +296,7 @@ BzDeck.Toolbar.prototype.quicksearch = function (event) {
       get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
 
   BzDeck.model.get_all_bugs().then(bugs => {
-    let results = bugs.filterPar(bug => {
+    let results = bugs.filter(bug => {
       return words.every(word => bug.summary.toLowerCase().contains(word)) ||
              words.every(word => get_aliases(bug).join().toLowerCase().contains(word)) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).contains(words[0]);

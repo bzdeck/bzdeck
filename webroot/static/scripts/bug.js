@@ -242,12 +242,12 @@ BzDeck.Bug.prototype.set_bug_tooltips = function () {
       let found_bug_ids = [for (bug of bugs) bug.id],
           lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.includes(id)) id];
 
-      bugs.mapPar(set_tooltops);
+      bugs.map(set_tooltops);
 
       if (lookup_bug_ids.length) {
         BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids).then(bugs => {
           BzDeck.model.save_bugs(bugs);
-          bugs.mapPar(set_tooltops);
+          bugs.map(set_tooltops);
         });
       }
     });
@@ -978,7 +978,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.update_parallel_ui = function () {
 BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
   let data,
       hash = att => md5(att.file_name + String(att.size)),
-      map_sum = map => [...map.values()].reducePar((p, c) => p + c),
+      map_sum = map => [...map.values()].reduce((p, c) => p + c),
       comment = this.$textbox.value,
       att_num = this.attachments.length,
       att_total = 0,
@@ -1065,7 +1065,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
     }
 
     // Upload files in series
-    return this.attachments.reducePar((sequence, att) => sequence.then(() => post(att)), Promise.resolve());
+    return this.attachments.reduce((sequence, att) => sequence.then(() => post(att)), Promise.resolve());
   }, error => {
     // Failed to post
     this.$submit.setAttribute('aria-disabled', 'false');
