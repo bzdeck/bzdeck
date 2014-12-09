@@ -31,10 +31,7 @@
     "64": "/static/images/logo/icon-64.png",
     "128": "/static/images/logo/icon-128.png",
     "256": "/static/images/logo/icon-256.png",
-    "512": "/static/images/logo/icon-512.png",
-    "60": "/static/images/logo/icon-fxos-60.png",
-    "90": "/static/images/logo/icon-fxos-90.png",
-    "120": "/static/images/logo/icon-fxos-120.png"
+    "512": "/static/images/logo/icon-512.png"
   },
   "default_locale": "en"
 }
