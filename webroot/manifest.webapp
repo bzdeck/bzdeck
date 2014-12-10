@@ -8,6 +8,9 @@
     "url": "http://www.britegrid.com/"
   },
   "permissions": {
+    "desktop-notification": {
+      "description": "Required to show notifications on desktop or Notification Center."
+    },
     "storage": {
       "description": "Required to store bug data locally"
     }
