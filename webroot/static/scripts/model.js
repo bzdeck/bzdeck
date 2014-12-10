@@ -461,24 +461,46 @@ BzDeck.model.bug_is_starred = function (bug) {
 };
 
 BzDeck.model.get_subscription_by_id = function (id) {
-  return new Promise(resolve => {
-    this.get_all_subscriptions().then(subscriptions => resolve(subscriptions.get(id)));
-  });
-};
-
-BzDeck.model.get_all_subscriptions = function () {
   let email = this.data.account.name;
 
   return new Promise(resolve => {
     this.get_all_bugs().then(bugs => {
-      resolve(new Map([
-        ['cc', [for (bug of bugs) if (bug.cc.includes(email)) bug]],
-        ['reported', [for (bug of bugs) if (bug.creator === email) bug]],
-        ['assigned', [for (bug of bugs) if (bug.assigned_to === email) bug]],
-        ['mentor', [for (bug of bugs) if (bug.mentors.includes(email)) bug]],
-        ['qa', [for (bug of bugs) if (bug.qa_contact === email) bug]],
-        ['requests', [for (bug of bugs) if (bug.flags) for (flag of bug.flags) if (flag.requestee === email) bug]]
-      ]));
+      if (id === 'cc') {
+        resolve([for (bug of bugs) if (bug.cc.includes(email)) bug]);
+      }
+
+      if (id === 'reported') {
+        resolve([for (bug of bugs) if (bug.creator === email) bug]);
+      }
+
+      if (id === 'assigned') {
+        resolve([for (bug of bugs) if (bug.assigned_to === email) bug]);
+      }
+
+      if (id === 'mentor') {
+        resolve([for (bug of bugs) if (bug.mentors.includes(email)) bug]);
+      }
+
+      if (id === 'qa') {
+        resolve([for (bug of bugs) if (bug.qa_contact === email) bug]);
+      }
+
+      if (id === 'requests') {
+        resolve([for (bug of bugs) if (bug.flags) for (flag of bug.flags) if (flag.requestee === email) bug]);
+      }
+    });
+  });
+};
+
+BzDeck.model.get_subscribed_bugs = function () {
+  let email = this.data.account.name;
+
+  return new Promise(resolve => {
+    this.get_all_bugs().then(bugs => {
+       resolve([for (bug of bugs) 
+                 if (bug.cc.includes(email) || bug.creator === email || bug.assigned_to === email ||
+                     bug.mentors.includes(email) || bug.qa_contact === email ||
+                     [for (flag of bug.flags || []) if (flag.requestee === email) flag].length) bug]);
     });
   });
 };

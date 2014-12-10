@@ -117,16 +117,8 @@ BzDeck.Sidebar = function Sidebar () {
 
   window.addEventListener('Bug:UnreadToggled', event => {
     // Update the sidebar Inbox folder
-    BzDeck.model.get_all_subscriptions().then(subscriptions => {
-      let unread = new Set();
-
-      for (let [key, bugs] of subscriptions) {
-        for (let bug of bugs) if (bug._unread) {
-          unread.add(bug.id);
-        }
-      }
-
-      this.toggle_unread_ui(unread.size);
+    BzDeck.model.get_subscribed_bugs().then(bugs => {
+      this.toggle_unread_ui([for (bug of bugs) if (bug._unread) bug].length);
     });
   });
 };
@@ -149,19 +141,6 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     BzDeck.pages.home.update_window_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
   };
 
-  let get_subscribed_bugs = () => new Promise(resolve => {
-    BzDeck.model.get_all_subscriptions().then(subscriptions => {
-      let ids = [];
-
-      for (let [key, bugs] of subscriptions) {
-        // Remove duplicates
-        ids.push(...[for (bug of bugs) if (!ids.includes(bug.id)) bug.id]);
-      }
-
-      BzDeck.model.get_bugs_by_ids(ids).then(bugs => resolve(bugs));
-    });
-  });
-
   // Mobile compact layout
   if (FlareTail.util.device.type.startsWith('mobile') &&
       BzDeck.toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
@@ -170,7 +149,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id === 'inbox') {
-    get_subscribed_bugs().then(bugs => {
+    BzDeck.model.get_subscribed_bugs().then(bugs => {
       let recent_time = Date.now() - 1000 * 60 * 60 * 24 * 11;
       let is_new = bug => {
         if (bug._unread) {
@@ -201,7 +180,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id === 'all') {
-    get_subscribed_bugs().then(bugs => {
+    BzDeck.model.get_subscribed_bugs().then(bugs => {
       update_list(bugs);
     });
   }
@@ -223,7 +202,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id === 'important') {
-    get_subscribed_bugs().then(bugs => {
+    BzDeck.model.get_subscribed_bugs().then(bugs => {
       let severities = ['blocker', 'critical', 'major'];
 
       update_list([for (bug of bugs) if (severities.includes(bug.severity)) bug]);
