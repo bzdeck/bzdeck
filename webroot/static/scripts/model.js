@@ -250,6 +250,8 @@ BzDeck.model.fetch_subscriptions = function () {
     let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), BzDeck.model.data.server.timezone);
 
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
+  } else {
+    params.append('resolution', '---');
   }
 
   for (let [i, name] of fields.entries()) {
