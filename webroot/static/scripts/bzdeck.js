@@ -176,7 +176,7 @@ BzDeck.bootstrap.setup_ui = function () {
   BzDeck.pages.home = new BzDeck.HomePage();
   BzDeck.toolbar = new BzDeck.Toolbar();
   BzDeck.sidebar = new BzDeck.Sidebar();
-  BzDeck.DetailsPage.swipe.init();
+  // BzDeck.DetailsPage.swipe.init();
 
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
