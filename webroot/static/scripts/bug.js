@@ -320,6 +320,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   let entries = new Map([for (c of bug.comments.entries())
         [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending',
+      click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
       read_entries_num = 0,
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${$bug.id}-timeline`,
@@ -378,7 +379,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     $expander.className = 'read-comments-expander';
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
-    $expander.addEventListener('click', event => {
+    $expander.addEventListener(click_event_type, event => {
       [for ($entry of $timeline.querySelectorAll('[itemprop="comment"]')) $entry.removeAttribute('aria-hidden')];
       $timeline.removeAttribute('data-hide-read-comments');
       $timeline.focus();
@@ -412,7 +413,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       if ($comment) {
         if ($expander) {
           // Expand all comments
-          $expander.dispatchEvent(new MouseEvent('click'));
+          $expander.dispatchEvent(new CustomEvent(click_event_type));
         }
 
         $comment.scrollIntoView();
@@ -429,6 +430,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
 
 BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
+      click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
       author,
       time,
       comment = data.get('comment'),
@@ -460,7 +462,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
 
     // Append the comment number to the URL when clicked
-    $entry.addEventListener('click', event => {
+    $entry.addEventListener(click_event_type, event => {
       if (location.pathname.startsWith('/bug/')) {
         window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
       }
@@ -472,7 +474,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
         quote = `${quote_header}\n${quote_lines.join('\n')}`;
 
     // Activate the Star button
-    $star_button.addEventListener('click', event => {
+    $star_button.addEventListener(click_event_type, event => {
       if (!bug._starred_comments) {
         bug._starred_comments = new Set([comment.id]);
       } else if (bug._starred_comments.has(comment.id)) {
@@ -490,7 +492,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     $star_button.setAttribute('aria-pressed', !!bug._starred_comments && bug._starred_comments.has(comment.id));
 
     // Activate the Reply button
-    $reply_button.addEventListener('click', event => {
+    $reply_button.addEventListener(click_event_type, event => {
       let $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
           $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
@@ -632,7 +634,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   // Click to collapse/expand comments
   // TODO: Save the state in DB
   $entry.setAttribute('aria-expanded', 'true');
-  $entry.querySelector('header').addEventListener('click', event =>
+  $entry.querySelector('header').addEventListener(click_event_type, event =>
     $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false'));
 
   return $entry;
@@ -707,7 +709,8 @@ BzDeck.Bug.Timeline.handle_keydown = function (event) {
 };
 
 BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
-  let $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
+  let click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+      $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
 
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
@@ -769,7 +772,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   this.$textbox.addEventListener('input', event => this.oninput());
 
   // Attach files using a file picker
-  this.$attach_button.addEventListener('click', event => this.$file_picker.click());
+  this.$attach_button.addEventListener(click_event_type, event => this.$file_picker.click());
   this.$file_picker.addEventListener('change', event => this.onselect_files(event.target.files));
 
   // Attach files by drag & drop
@@ -800,11 +803,11 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
     this.update_parallel_ui();
   });
 
-  this.$submit.addEventListener('click', event => this.submit());
+  this.$submit.addEventListener(click_event_type, event => this.submit());
 
   if (!this.has_token()) {
     this.$status.innerHTML = '<strong>Provide your auth token</strong> to post.';
-    this.$status.querySelector('strong').addEventListener('click', event =>
+    this.$status.querySelector('strong').addEventListener(click_event_type, event =>
       BzDeck.router.navigate('/settings', { 'tab_id': 'account' }));
 
     window.addEventListener('Account:AuthTokenVerified', event => {
@@ -905,7 +908,8 @@ BzDeck.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
 };
 
 BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment) {
-  let $tbody = this.$attachments_tbody,
+  let click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+      $tbody = this.$attachments_tbody,
       $row = this.$attachments_row_tmpl.content.cloneNode(true).firstElementChild,
       $desc = $row.querySelector('[data-field="description"]');
 
@@ -915,18 +919,18 @@ BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment)
   $desc.addEventListener('keydown', event => event.stopPropagation());
   $desc.addEventListener('input', event => attachment.summary = $desc.value);
 
-  $row.querySelector('[data-command="remove"]').addEventListener('click', event => {
+  $row.querySelector('[data-command="remove"]').addEventListener(click_event_type, event => {
     this.remove_attachment(attachment);
   });
 
-  $row.querySelector('[data-command="move-up"]').addEventListener('click', event => {
+  $row.querySelector('[data-command="move-up"]').addEventListener(click_event_type, event => {
     let index = this.find_attachment(attachment);
 
     this.attachments.splice(index - 1, 2, attachment, this.attachments[index - 1]);
     $tbody.insertBefore($row.previousElementSibling, $row.nextElementSibling);
   });
 
-  $row.querySelector('[data-command="move-down"]').addEventListener('click', event => {
+  $row.querySelector('[data-command="move-down"]').addEventListener(click_event_type, event => {
     let index = this.find_attachment(attachment);
 
     this.attachments.splice(index, 2, this.attachments[index + 1], attachment);

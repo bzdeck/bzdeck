@@ -156,7 +156,7 @@ del a {
 }
 
 [role="button"]:not([aria-disabled="true"]):active {
-  color: var(--pressed-button-foreground-color);
+  /* color: var(--pressed-button-foreground-color); */
   background-color: var(--pressed-button-background-color);
 }
 
