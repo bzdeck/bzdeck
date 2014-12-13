@@ -108,6 +108,16 @@ BzDeck.Sidebar = function Sidebar () {
       }
 
       if (prop === 'folder_id' && oldval) {
+        // On mobile, wait until the sidebar is closed so that the transition effects work smoother
+        if (mobile) {
+          window.setTimeout(window => {
+            BzDeck.router.navigate('/home/' + newval);
+            obj[prop] = newval;
+          }, 1000);
+
+          return;
+        }
+
         BzDeck.router.navigate('/home/' + newval);
       }
 
