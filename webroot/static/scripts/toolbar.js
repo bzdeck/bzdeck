@@ -111,8 +111,8 @@ BzDeck.Toolbar = function Toolbar () {
     document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
   }
 
-  document.querySelector('[role="banner"] h1').addEventListener('click', event => {
-    if (mobile) {
+  if (mobile) {
+    document.querySelector('#banner-nav-button').addEventListener('touchstart', event => {
       if ($root.getAttribute('data-current-tab') === 'home') {
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
@@ -122,8 +122,8 @@ BzDeck.Toolbar = function Toolbar () {
       } else {
         history.back();
       }
-    }
-  });
+    });
+  }
 
   // Account label & avatar
   {

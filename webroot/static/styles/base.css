@@ -526,54 +526,72 @@ col[data-hidden="false"] {
   pointer-events: auto;
 }
 
-[role="banner"] h1 {
+#banner-nav-button {
   position: absolute;
-  overflow: hidden;
-  height: 2rem;
+  top: 0;
+  left: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  width: 4rem;
+  height: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: transparent;
+}
+
+[data-device-type="desktop"]:root #banner-nav-button {
   background-image: url(/static/images/logo/icon-256-white.png);
   background-size: 2.8rem;
   background-repeat: no-repeat;
-  font-size: 1.6rem;
-  line-height: 2rem;
+  background-position: center;
 }
 
-[data-device-type="desktop"]:root [role="banner"] h1 {
-  padding: 1rem 0 1rem 4rem;
-  width: 0;
-  background-position: .6rem .6rem;
+[data-device-type|="mobile"]:root #banner-nav-button:active {
+  opacity: .8;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] h1 {
-  padding: 1rem 0 1rem 4.5rem;
-  width: auto;
-  background-position: 1rem .6rem;
-}
-
-[data-device-type|="mobile"]:root [role="banner"].search h1 {
-  display: none;
-}
-
-[data-device-type|="mobile"]:root [role="banner"] h1::before {
+#banner-nav-button::before {
   display: block;
   position: absolute;
   top: 0;
   left: 0;
-  width: .8rem;
+  width: 4rem;
   height: 4rem;
-  background-image: -moz-image-rect(var(--base-sprite-image), 0, 320, 32, 304);
-  background-position: 0 50%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  transition: background-position .5s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
-  content: "";
+  font-size: 2rem;
+  line-height: 4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  content: "\F053"; // back icon
 }
 
-[data-sidebar-hidden="false"]:root [role="banner"] h1::before {
-  background-position: -.4rem 50%;
+[data-current-tab="home"]:root #banner-nav-button::before {
+  content: "\F0C9"; // hamburger menu icon
 }
 
-[data-device-type|="mobile"][data-current-tab="home"]:root [role="banner"] h1::before {
-  background-image: -moz-image-rect(var(--base-sprite-image), 0, 304, 32, 288);
+[data-device-type="desktop"]:root #banner-nav-button::before {
+  display: none;
+}
+
+[role="banner"] h1 {
+  overflow: hidden;
+  position: absolute;
+  left: 4rem;
+  padding: 1rem 0;
+  height: 2rem;
+  font-size: 1.8rem;
+  line-height: 2rem;
+}
+
+[data-device-type="desktop"]:root [role="banner"] h1 {
+  width: 0;
+}
+
+[data-device-type|="mobile"]:root [role="banner"] h1 {
+  width: auto;
+}
+
+[data-device-type|="mobile"]:root [role="banner"].search h1 {
+  display: none;
 }
 
 [role="banner"] [role="toolbar"] {
@@ -3209,7 +3227,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   }
 
   [data-device-type|="mobile"]:root #app-login h1 {
-    background-position: 1rem .4rem;
+    background-position: .4rem .4rem;
     background-size: 3.2rem;
   }
 
