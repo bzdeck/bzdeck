@@ -855,7 +855,7 @@ col[data-hidden="false"] {
   border-right-width: 0;
   width: 100%;
   background-color: rgba(0, 0, 0, .3) !important;
-  transition: background-color .4s ease .6s; /* Set a delay for the transitioning sidebar */
+  transition: background-color .2s ease .4s; /* Set a delay for the transitioning sidebar */
   pointer-events: auto;
 }
 
@@ -884,7 +884,7 @@ col[data-hidden="false"] {
   right: 4em;
   max-width: calc(360px - 4rem);
   background-color: var(--region-background-color);
-  transition: all .5s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transition: all .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
 [data-device-type|="mobile"]:root #sidebar[aria-hidden="true"] > div {

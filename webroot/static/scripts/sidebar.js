@@ -113,7 +113,7 @@ BzDeck.Sidebar = function Sidebar () {
           window.setTimeout(window => {
             BzDeck.router.navigate('/home/' + newval);
             obj[prop] = newval;
-          }, 1000);
+          }, 600);
 
           return;
         }
