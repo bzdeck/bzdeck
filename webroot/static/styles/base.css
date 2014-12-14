@@ -833,7 +833,7 @@ col[data-hidden="false"] {
  * ---------------------------------------------------------------------------------------------- */
 
 #sidebar {
-  top: 4rem;
+  position: absolute;
   z-index: 200;
   overflow: hidden;
   box-sizing: border-box;
@@ -844,13 +844,13 @@ col[data-hidden="false"] {
 }
 
 [data-device-type="desktop"]:root #sidebar {
-  position: absolute;
+  top: 4rem;
   bottom: 0;
   width: 16rem;
 }
 
 [data-device-type|="mobile"]:root #sidebar {
-  position: fixed;
+  top: 0;
   bottom: 0;
   border-right-width: 0;
   width: 100%;
@@ -907,10 +907,10 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
-  padding: .8rem 1.2rem;
-  height: 1.5em;
-  font-size: 1.5rem;
-  line-height: 1.5;
+  padding: .4rem 1.2rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
 }
 
 #sidebar-folder-list [role="option"] label span {

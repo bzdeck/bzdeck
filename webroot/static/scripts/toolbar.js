@@ -116,12 +116,14 @@ BzDeck.Toolbar = function Toolbar () {
       if ($root.getAttribute('data-current-tab') === 'home') {
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
-        document.querySelector('#sidebar > div').scrollTop = 0;
+        document.querySelector('#sidebar .scrollable-area-content').scrollTop = 0;
         $root.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
       } else {
         history.back();
       }
+
+      return FlareTail.util.event.ignore(event);
     });
   }
 
