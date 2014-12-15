@@ -597,6 +597,15 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
           _field = conf_field[change.field_name] ||
                    // Bug 909055 - Field name mismatch in history: group vs groups
                    conf_field[change.field_name.replace(/s$/, '')] ||
+                   // Bug 1078009 - Changes/history now include some wrong field names
+                   conf_field[{
+                     'flagtypes.name': 'flag',
+                     'attachments.description': 'attachment.description',
+                     'attachments.ispatch': 'attachment.is_patch',
+                     'attachments.isobsolete': 'attachment.is_obsolete',
+                     'attachments.isprivate': 'attachment.is_private',
+                     'attachments.mimetype': 'attachment.content_type',
+                   }[change.field_name]] ||
                    // If the Bugzilla config is outdated, the field name can be null
                    change;
 
