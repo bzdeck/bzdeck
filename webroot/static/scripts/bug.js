@@ -443,9 +443,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment = $entry.querySelector('[itemprop="text"]'),
       $changes = $entry.querySelector('.changes'),
-      $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`),
-      $image = $author.querySelector('[itemprop="image"]'),
-      $_image = new Image();
+      $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
   if (comment) {
     // TEMP: the message for a duplicated bug is currently only in the comment.text field
@@ -622,10 +620,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  $image.alt = (author.real_name || author.email).match(/^[\[\(\:]?(.)/)[1].toUpperCase();
-  $image.style.setProperty('background-color', BzDeck.core.get_user_color(author));
-  $_image.addEventListener('load', event => $image.src = $_image.src);
-  $_image.src = `https://www.gravatar.com/avatar/${md5(author.email)}?d=404`;
+  BzDeck.core.set_avatar(author, $author.querySelector('[itemprop="image"]'));
   datetime.fill_element($time, time);
 
   // Mark unread

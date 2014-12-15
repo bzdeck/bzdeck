@@ -448,6 +448,15 @@ BzDeck.core.get_user_color = function (person) {
              + String(person.name.length).substr(-1, 1) + String(person.name.length).substr(0, 1);
 };
 
+BzDeck.core.set_avatar = function (person, $image) {
+  let $_image = new Image();
+
+  $image.alt = BzDeck.core.get_name(person).match(/^[\[\(\:]?(.)/)[1].toUpperCase();
+  $image.style.setProperty('background-color', BzDeck.core.get_user_color(person));
+  $_image.addEventListener('load', event => { if ($image) { $image.src = $_image.src; } });
+  $_image.src = `https://www.gravatar.com/avatar/${md5(person.email)}?d=404&s=160`;
+};
+
 BzDeck.core.update_window_title = $tab => {
   if ($tab.id === 'tab-home') {
     BzDeck.pages.home.update_window_title($tab.title);
