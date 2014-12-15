@@ -384,6 +384,8 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       $timeline.removeAttribute('data-hide-read-comments');
       $timeline.focus();
       $expander.remove();
+
+      return FlareTail.util.event.ignore(event);
     });
     $timeline.setAttribute('data-hide-read-comments', 'true');
 
