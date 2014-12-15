@@ -251,6 +251,7 @@ BzDeck.model.fetch_subscriptions = function () {
 
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
   } else {
+    // Fetch only solved bugs at initial startup
     params.append('resolution', '---');
   }
 
