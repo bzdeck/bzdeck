@@ -295,7 +295,8 @@ BzDeck.VerticalThread.prototype.render = function () {
       'aria-checked': BzDeck.model.bug_is_starred(bug)
     }));
 
-    BzDeck.core.set_avatar(bug.creator_detail, $option.querySelector('img'));
+    BzDeck.core.set_avatar(bug.comments ? BzDeck.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
+                                        : bug.creator_detail, $option.querySelector('img'));
   }
 
   this.$listbox.appendChild($fragment);
