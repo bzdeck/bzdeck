@@ -561,7 +561,7 @@ col[data-hidden="false"] {
   line-height: 4rem;
   font-family: FontAwesome;
   text-align: center;
-  content: "\F053"; // back icon
+  content: "\F060"; // left arrow icon
 }
 
 [data-current-tab="home"]:root #banner-nav-button::before {
@@ -871,25 +871,25 @@ col[data-hidden="false"] {
 
 #sidebar > div {
   position: absolute;
-  left: 0;
   overflow: hidden;
   height: 100%;
 }
 
 [data-device-type="desktop"]:root #sidebar > div {
   right: 0;
+  left: 0;
 }
 
 [data-device-type|="mobile"]:root #sidebar > div {
-  right: 4em;
-  max-width: calc(360px - 4rem);
+  right: auto;
+  left: 0;
+  width: calc(320px - 4rem);
   background-color: var(--region-background-color);
-  transition: all .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transition: left .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
 [data-device-type|="mobile"]:root #sidebar[aria-hidden="true"] > div {
-  right: 100%;
-  left: calc(-360px + 4rem);
+  left: -100%;
 }
 
 #sidebar h2 {
@@ -908,9 +908,9 @@ col[data-hidden="false"] {
 
 [data-device-type|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
   padding: .4rem 1.2rem;
-  height: 2rem;
-  font-size: 1.2rem;
-  line-height: 2rem;
+  height: 2.4rem;
+  font-size: 1.4rem;
+  line-height: 2.4rem;
 }
 
 #sidebar-folder-list [role="option"] label span {
@@ -1399,6 +1399,7 @@ main {
 [id$="vertical-thread"] [itemprop="image"] {
   top: 1rem;
   left: 1rem;
+  border-radius: .32rem;
   width: 3.2rem;
   height: 3.2rem;
   color: #FCFCFC;
@@ -1982,6 +1983,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   display: inline-block;
   float: left;
   margin-right: .8rem;
+  border-radius: .4rem;
   width: 4rem;
   height: 4rem;
   color: #FCFCFC;
