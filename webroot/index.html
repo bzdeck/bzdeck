@@ -566,6 +566,15 @@
         <td data-field="added"></td>
       </tr>
     </template><!-- end #details-change -->
+    <template id="vertical-thread-item">
+      <li tabindex="0" role="option" data-attrs="id data-id data-unread" itemscope itemtype="https://www.bzdeck.com/bug">
+        <img data-attrs="alt style" itemprop="image">
+        <span itemprop="id"></span>
+        <span itemprop="name"></span>
+        <time data-simple="true" itemprop="dateModified"></time>
+        <span data-field="_starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
+      </li>
+    </template><!-- end #details-change -->
   </head>
   <body role="application">
     <section id="app-login">
@@ -661,10 +670,13 @@
               <div>
                 <div id="home-list-pane" role="region">
                   <section id="home-list" class="bug-list" role="grid" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
-                    <footer aria-hidden="true">
-                      <div role="status"><span>No bugs found in this folder.</span></div>
-                    </footer>
                   </section>
+                  <section id="home-vertical-thread" tabindex="0" role="region">
+                    <ul tabindex="0" role="listbox" aria-multiselectable="true"></ul>
+                  </section>
+                  <footer aria-hidden="true">
+                    <div role="status"><span>No bugs found in this folder.</span></div>
+                  </footer>
                 </div><!-- end #home-list-pane -->
                 <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator" aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
                 <div id="home-preview-pane" role="region" aria-expanded="true">

@@ -10,7 +10,6 @@ let BzDeck = BzDeck || {};
 BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      phone = FlareTail.util.device.type === 'mobile-phone',
       prefs = BzDeck.model.data.prefs;
 
   // A movable splitter between the thread pane and preview pane
@@ -42,28 +41,7 @@ BzDeck.HomePage = function HomePage () {
   let layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
-  this.thread = new BzDeck.Thread(this, 'home', document.querySelector('#home-list'), {
-    'date': { 'simple': vertical },
-    'sortable': true,
-    'reorderable': true,
-    'sort_conditions': vertical ? { 'key': 'last_change_time', 'order': 'descending' }
-                                : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
-  });
-
-  // Fill the thread with all saved bugs, and filter the rows later
-  BzDeck.model.get_all_bugs().then(bugs => this.thread.update(bugs));
-
-  this.change_layout(prefs['ui.home.layout']);
-
-  let $$grid = this.thread.$$grid;
-
-  $$grid.bind('Filtered', event => {
-    // Select the first bug on the list automatically when a folder is opened
-    // TODO: Remember the last selected bug for each folder
-    if ($$grid.view.members.length && !phone) {
-      $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
-    }
-  });
+  this.change_layout(layout_pref);
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
@@ -81,9 +59,10 @@ BzDeck.HomePage = function HomePage () {
       if (prop === 'bugs') {
         // Return a sorted bug list
         let bugs = new Map([for (bug of obj.bugs) [bug.id, bug]]),
-            rows = $$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+            items = vertical ? document.querySelectorAll('#home-vertical-thread [role="options"]')
+                             : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-        return [for ($row of rows) bugs.get(Number($row.dataset.id))];
+        return [for ($item of items) bugs.get(Number($item.dataset.id))];
       }
 
       return obj[prop];
@@ -174,36 +153,90 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.device.type.startsWith('mobile') || !pref || pref === 'vertical',
-      $$grid = this.thread.$$grid,
+      phone = FlareTail.util.device.type === 'mobile-phone',
+      prefs = BzDeck.model.data.prefs,
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
-  $$grid.options.adjust_scrollbar = !vertical;
-  $$grid.options.date.simple = vertical;
 
-  // Change the date format on the thread pane
-  for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
-    $time.dataset.simple = vertical;
+  if (vertical) {
+    let $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
+
+    if (!this.vertical_thread_initialized) {
+      // Select the first bug on the list automatically when a folder is opened
+      // TODO: Remember the last selected bug for each folder
+      $listbox.addEventListener('Updated', event => {
+        let $$listbox = this.thread.$$listbox;
+
+        if ($$listbox.view.members.length && !phone) {
+          $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.members[0];
+        }
+      });
+
+      // Star button
+      $listbox.addEventListener('mousedown', event => {
+        if (event.target.matches('[data-field="_starred"]')) {
+          BzDeck.core.toggle_star(Number(event.target.parentElement.dataset.id),
+                                  event.target.getAttribute('aria-checked') === 'false');
+          event.stopPropagation();
+        }
+      });
+
+      this.vertical_thread_initialized = true;
+    }
+
+    this.thread = new BzDeck.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
+      'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
+    });
+  } else {
+    this.thread = new BzDeck.ClassicThread(this, 'home', document.querySelector('#home-list'), {
+      'date': { 'simple': false },
+      'sortable': true,
+      'reorderable': true,
+      'sort_conditions': prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
+    });
+
+    let $$grid = this.thread.$$grid;
+
+    $$grid.options.adjust_scrollbar = !vertical;
+    $$grid.options.date.simple = vertical;
+
+    if (!this.classic_thread_initialized) {
+      // Fill the thread with all saved bugs, and filter the rows later
+      BzDeck.model.get_all_bugs().then(bugs => this.thread.update(bugs));
+
+      // Select the first bug on the list automatically when a folder is opened
+      // TODO: Remember the last selected bug for each folder
+      $$grid.bind('Filtered', event => {
+        if ($$grid.view.members.length && !phone) {
+          $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
+        }
+      });
+
+      this.classic_thread_initialized = true;
+    }
+
+    // Change the date format on the thread pane
+    for (let $time of $$grid.view.$container.querySelectorAll('time')) {
+      $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
+      $time.dataset.simple = vertical;
+    }
+  }
+
+  // Render the thread
+  if (BzDeck.sidebar) {
+    BzDeck.sidebar.open_folder(BzDeck.sidebar.data.folder_id);
   }
 
   if ($$splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = BzDeck.model.data.prefs[`ui.home.preview.splitter.position.${orientation}`];
+        pref = prefs[`ui.home.preview.splitter.position.${orientation}`];
 
     $$splitter.data.orientation = orientation;
 
     if (pref) {
       $$splitter.data.position = pref;
     }
-  }
-
-  if (vertical && sort_grid) {
-    // Force to change the sort condition when switched to the mobile layout
-    let cond = $$grid.options.sort_conditions;
-
-    cond.key = 'last_change_time';
-    cond.order = 'descending';
   }
 };
 

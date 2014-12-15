@@ -141,8 +141,8 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   let update_list = bugs => {
     home.data.bugs = bugs;
     FlareTail.util.event.async(() => {
-      home.thread.filter(bugs);
-      document.querySelector('#home-list > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
+      home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
+      document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
     });
 
     let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,

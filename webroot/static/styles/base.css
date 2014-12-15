@@ -1357,6 +1357,110 @@ main {
   display: none;
 }
 
+[id$="vertical-thread"] {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+[id$="vertical-thread"][aria-busy="true"] > * {
+  display: none;
+}
+
+[id$="vertical-thread"] [role="listbox"] {
+  position: absolute;
+  width: 100%;
+  height: auto;
+}
+
+[id$="vertical-thread"] [role="option"] {
+  position: relative;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--grid-border-color);
+  padding: 1rem;
+  height: 3.2rem;
+}
+
+[data-device-type="mobile-phone"]:root [id$="vertical-thread"] [role="option"][data-unread="false"],
+[id$="vertical-thread"] [role="option"][data-unread="false"]:not([aria-selected="true"]) {
+  color: inherit;
+  background-color: var(--secondary-region-background-color);
+}
+
+[id$="vertical-thread"] [role="option"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1;
+  pointer-events: none;
+}
+
+[id$="vertical-thread"] [itemprop="image"] {
+  top: 1rem;
+  left: 1rem;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+[id$="vertical-thread"] [itemprop="image"][src] {
+  background-color: transparent !important;
+}
+
+[id$="vertical-thread"] [itemprop="id"] {
+  top: 1rem;
+  left: 5.2rem;
+  font-size: 1.1rem;
+}
+
+[id$="vertical-thread"] [itemprop="name"] {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+[id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="name"] {
+  font-weight: 500;
+}
+
+[id$="vertical-thread"] [itemprop="dateModified"] {
+  top: 1rem;
+  right: 3.2rem;
+  font-size: 1.1rem;
+}
+
+[id$="vertical-thread"] [data-field="_starred"] {
+  top: .4rem;
+  right: .4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  pointer-events: auto;
+}
+
+[id$="vertical-thread"] [data-field="_starred"]::before {
+  margin: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.6rem;
+  font-family: FontAwesome;
+}
+
+[id$="vertical-thread"] [data-field="_starred"][aria-checked="false"]::before {
+  content: "\F006";
+}
+
+[id$="vertical-thread"] [data-field="_starred"][aria-checked="true"]::before {
+  content: "\F005";
+}
+
 .bug-list col[data-id="id"][data-hidden="false"] {
   width: 5em;
 }
@@ -1422,7 +1526,7 @@ main {
   content: "\F0A3";
 }
 
-.bug-list > footer {
+[id$="list-pane"] > footer {
   position: absolute;
   z-index: 10;
   top: 0;
@@ -1431,113 +1535,25 @@ main {
   background-color: var(--region-background-color);
 }
 
-.bug-list > footer [role="status"] {
+[id$="list-pane"] > footer [role="status"] {
   display: table;
   width: 100%;
   height: 100%;
 }
 
-.bug-list > footer [role="status"] span {
+[id$="list-pane"] > footer [role="status"] span {
   display: table-cell;
   text-align: center;
   vertical-align: middle;  
 }
 
-[data-home-layout="vertical"]:root #home-list .grid-header {
+[data-home-layout="vertical"]:root #home-list,
+[data-home-layout="classic"]:root #home-vertical-thread {
   display: none;
 }
 
-[data-home-layout="vertical"]:root #home-list .grid-body {
-  height: 100%;
-}
-
-[data-home-layout="vertical"]:root #home-list .grid-body [role="row"] {
-  border-color: var(--grid-border-color);
-}
-
-[data-home-layout="classic"]:root #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+#home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
   background-color: var(--grid-even-row-background-color);
-}
-
-[data-device-type="mobile-phone"]:root #home-list .grid-body [role="row"]:active {
-  color: var(--selected-control-foreground-color) !important;
-  background-color: var(--selected-control-background-color) !important;
-}
-
-[data-device-type="mobile-phone"]:root #home-list .grid-body [role="row"][data-unread="false"],
-[data-home-layout="vertical"]:root #home-list .grid-body [role="row"][data-unread="false"]:not([aria-selected="true"]) {
-  color: inherit;
-  background-color: var(--secondary-region-background-color);
-}
-
-[data-home-layout="vertical"]:root #home-list :-moz-any(table, tbody, [role="row"]:not([aria-hidden="true"])) {
-  display: block;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="row"] {
-  position: relative;
-  border-width: 0 0 .1rem;
-  border-style: solid;
-  padding: 1rem 4rem 1rem .8rem;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="row"][data-unread="true"] {
-  font-weight: normal;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"] {
-  display: none;
-  height: auto;
-  line-height: 1.2;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"]:-moz-any([data-id="id"], [data-id="summary"], [data-id="last_change_time"], [data-id="_starred"]) {
-  display: block;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="id"] {
-  position: absolute;
-  top: 1rem;
-  left: .8rem;
-  font-size: 1.1rem;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="summary"] {
-  margin-top: 1.6rem;
-  font-size: 1.25rem;
-  line-height: 1.5;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="row"][data-unread="true"] [role="gridcell"][data-id="summary"] {
-  font-weight: 500;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="last_change_time"] {
-  position: absolute;
-  top: 1rem;
-  right: .8rem;
-  font-size: 1.1rem;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="_starred"] {
-  position: absolute;
-  top: 2.4rem;
-  right: .8rem;
-  width: 2.4rem;
-  height: 2.4rem;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="_starred"] [role="checkbox"]::before {
-  font-size: 1.6rem;
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"][data-id="_starred"] [aria-checked="false"]::before {
-  font-family: FontAwesome;
-  content: "\F006";
-}
-
-[data-home-layout="vertical"]:root #home-list [role="gridcell"] label {
-  white-space: normal;
 }
 
 article[id$="preview-bug"] > header {
