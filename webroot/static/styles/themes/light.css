@@ -112,6 +112,7 @@
   --selected-grid-header-foreground-color: var(--base-foreground-color-2);
   --selected-grid-header-background-color: var(--base-background-color-6);
   --grid-even-row-background-color: var(--base-background-color-6);
+  --secondary-grid-border-color: var(--base-background-color-5);
 
   --control-border-color: var(--base-background-color-4);
   --control-foreground-color: var(--base-foreground-color-2);

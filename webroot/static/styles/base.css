@@ -9,6 +9,13 @@
 
 @font-face {
   font-family: FiraSans;
+  font-weight: 300;
+  font-style: italic;
+  src: url(/static/fonts/FiraSans-LightItalic.woff?v=3.110) format('woff');
+}
+
+@font-face {
+  font-family: FiraSans;
   font-weight: normal;
   font-style: normal;
   src: url(/static/fonts/FiraSans-Regular.woff?v=3.110) format('woff');
@@ -33,6 +40,13 @@
   font-weight: normal;
   font-style: normal;
   src: url(/static/fonts/FontAwesome.woff?v=4.1.0) format('woff');
+}
+
+@font-face {
+  font-family: GaiaIcons;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/static/fonts/gaia-icons.ttf?v=0.7.5) format('truetype');
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -557,15 +571,15 @@ col[data-hidden="false"] {
   left: 0;
   width: 4rem;
   height: 4rem;
-  font-size: 2rem;
+  font-size: 2.4rem;
   line-height: 4rem;
-  font-family: FontAwesome;
+  font-family: GaiaIcons;
   text-align: center;
-  content: "\F060"; // left arrow icon
+  content: "\F112"; // back icon
 }
 
 [data-current-tab="home"]:root #banner-nav-button::before {
-  content: "\F0C9"; // hamburger menu icon
+  content: "\F176"; // hamburger menu icon
 }
 
 [data-device-type="desktop"]:root #banner-nav-button::before {
@@ -588,6 +602,14 @@ col[data-hidden="false"] {
 
 [data-device-type|="mobile"]:root [role="banner"] h1 {
   width: auto;
+}
+
+[data-device-type="mobile-phone"]:root [role="banner"] h1 {
+  right: 4rem;
+  font-size: 2rem;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
 }
 
 [data-device-type|="mobile"]:root [role="banner"].search h1 {
@@ -1313,10 +1335,6 @@ main {
   width: 100% !important;
 }
 
-[data-device-type="mobile-tablet"]:root #home-list-pane {
-  width: 32rem !important;
-}
-
 #home-preview-splitter {
   top: 21.6rem;
 }
@@ -1349,10 +1367,6 @@ main {
   border-width: 0 0 0 .1rem;
 }
 
-[data-device-type="mobile-tablet"]:root #home-preview-pane {
-  left: 32rem !important;
-}
-
 [data-device-type="mobile-phone"]:root #home-preview-pane {
   display: none;
 }
@@ -1378,7 +1392,7 @@ main {
   position: relative;
   border-width: 0 0 .1rem;
   border-style: solid;
-  border-color: var(--grid-border-color);
+  border-color: var(--secondary-grid-border-color);
   padding: 1rem;
   height: 3.2rem;
 }
@@ -2863,7 +2877,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 }
 
 [id^="settings-tabpanel"] > section > h3 {
-  padding: 1.2rem;
+  padding: .8rem 1.2rem;
   height: 1.4rem;
   color: var(--secondary-region-header-foreground-color);
   background-color: var(--secondary-region-header-background-color);
@@ -2904,8 +2918,8 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 }
 
 [data-device-type|="mobile"]:root [id^="settings-tabpanel"] > section > section > ul li {
-  margin: .8rem 0;
-  font-size: 1.5rem;
+  margin: .4rem 0;
+  font-size: 1.4rem;
 }
 
 [id^="settings-tabpanel"] > section > section > h4 ~ :-moz-any(p, ol) {
@@ -3217,16 +3231,16 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 @media (min-width: 981px) {
 
   [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
-    left: calc(32rem - 8rem);
+    left: calc(36rem - 8rem);
   }
 
   [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"],
   #home-preview-bug-info {
-    width: 32rem;
+    width: 36rem;
   }
 
   #home-preview-bug-timeline-wrapper {
-    left: 32rem;
+    left: 36rem;
   }
 
 }
