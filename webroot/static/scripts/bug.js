@@ -319,7 +319,9 @@ BzDeck.Bug.find_person = function (bug, email) {
 BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   let entries = new Map([for (c of bug.comments.entries())
         [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
-      sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending',
+      prefs = BzDeck.model.data.prefs,
+      show_cc_changes = prefs['ui.timeline.show_cc_changes'] === true,
+      sort_desc = prefs['ui.timeline.sort.order'] === 'descending',
       click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
       read_entries_num = 0,
       $timeline = $bug.querySelector('.bug-timeline'),
@@ -354,7 +356,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     // If the fill_bug_details function is called after the bug details are fetched,
     // the _last_viewed annotation is already true, so check the delayed argument here
     if (!delayed && bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
-      if (!$entry.matches('[data-changes="cc"][data-nocomment]')) {
+      if (show_cc_changes || !$entry.matches('[data-changes="cc"][data-nocomment]')) {
         read_entries_num++;
       }
 
@@ -365,7 +367,8 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     }
   }
 
-  let comments = [...$timeline.querySelectorAll('[itemprop="comment"]')];
+  let selector = '[itemprop="comment"]' + (show_cc_changes ? '' : '[data-comment-number]'),
+      comments = [...$timeline.querySelectorAll(selector)];
 
   // Unhide the latest comment
   comments[sort_desc ? 0 : comments.length - 1].removeAttribute('aria-hidden');
