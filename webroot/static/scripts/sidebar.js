@@ -134,7 +134,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   home.data.preview_id = null;
 
   let update_list = bugs => {
-    home.data.bugs = bugs;
+    home.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
     FlareTail.util.event.async(() => {
       home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
       document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');

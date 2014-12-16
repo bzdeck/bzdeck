@@ -59,7 +59,7 @@ BzDeck.HomePage = function HomePage () {
       if (prop === 'bugs') {
         // Return a sorted bug list
         let bugs = new Map([for (bug of obj.bugs) [bug.id, bug]]),
-            items = vertical ? document.querySelectorAll('#home-vertical-thread [role="options"]')
+            items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                              : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
         return [for ($item of items) bugs.get(Number($item.dataset.id))];
