@@ -1425,10 +1425,6 @@ main {
   text-align: center;
 }
 
-[id$="vertical-thread"] [itemprop="image"][src] {
-  background-color: transparent !important;
-}
-
 [id$="vertical-thread"] [itemprop="id"] {
   top: 1rem;
   left: 5.2rem;
@@ -2008,10 +2004,6 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   font-size: 2.4rem;
   line-height: 4rem;
   text-align: center;
-}
-
-.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"][src] {
-  background-color: transparent !important;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
