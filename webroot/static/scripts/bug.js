@@ -778,7 +778,8 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   this.$textbox.addEventListener('input', event => this.oninput());
 
   // Attach files using a file picker
-  this.$attach_button.addEventListener(click_event_type, event => this.$file_picker.click());
+  // The event here should be click; others including touchstart and mousedown don't work
+  this.$attach_button.addEventListener('click', event => this.$file_picker.click());
   this.$file_picker.addEventListener('change', event => this.onselect_files(event.target.files));
 
   // Attach files by drag & drop
