@@ -928,6 +928,10 @@ col[data-hidden="false"] {
   font-size: 1.25rem;
 }
 
+[data-device-type|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {
+  margin: .4em 0;
+}
+
 [data-device-type|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
   padding: .4rem 1.2rem;
   height: 2.4rem;
@@ -995,14 +999,13 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root #sidebar-menu {
-  border-width: .2rem 0 0;
+  border-width: .1rem 0 0;
   border-style: solid;
   border-color: var(--region-border-color);
 }
 
 [data-device-type|="mobile"]:root #sidebar-menu #main-menu--app-menu {
   position: relative;
-  margin: 0;
   border-radius: 0;
   padding: 0;
   background-color: transparent;
@@ -1875,6 +1878,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 
 .bug-info [itemtype="http://schema.org/Person"] [itemprop="image"] {
   margin-right: .4rem;
+  border-radius: .16rem;
   width: 1.6rem;
   height: 1.6rem;
 }
@@ -2518,6 +2522,13 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 
 :root:not([data-device-type="mobile-phone"]) .bug-attachments [itemprop="attachment"] > * {
   padding: 1.2rem;
+}
+
+.bug-attachments [itemprop="attachment"] [itemprop="creator"] [itemprop="image"] {
+  margin-right: .4rem;
+  border-radius: .16rem;
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 .bug-attachments section li {
@@ -3252,9 +3263,9 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 @media (max-width: 640px) {
 
   [data-device-type|="mobile"]:root #app-login header {
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 2rem;
+    left: 2rem;
+    width: 4rem;
     height: 4rem;
   }
 
@@ -3264,7 +3275,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   }
 
   [data-device-type|="mobile"]:root #app-login > div {
-    top: 4rem;
+    top: 4.8rem;
     left: 0;
     padding: 2.4rem;
     width: auto;

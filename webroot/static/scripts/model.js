@@ -466,7 +466,7 @@ BzDeck.model.get_subscription_by_id = function (id) {
 
   return new Promise(resolve => {
     this.get_all_bugs().then(bugs => {
-      if (id === 'cc') {
+      if (id === 'watching') {
         resolve([for (bug of bugs) if (bug.cc.includes(email)) bug]);
       }
 

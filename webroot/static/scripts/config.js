@@ -57,7 +57,7 @@ BzDeck.config = {
       { 'id': 'whiteboard', 'hidden': true },
       { 'id': 'keywords', 'hidden': true },
       { 'id': 'url', 'hidden': true },
-      // People
+      // Participants
       { 'id': 'creator', 'type': 'person', 'hidden': true },
       { 'id': 'assigned_to', 'type': 'person', 'hidden': true },
       { 'id': 'qa_contact', 'type': 'person', 'hidden': true },

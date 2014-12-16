@@ -45,24 +45,19 @@ BzDeck.Sidebar = function Sidebar () {
       'data': { 'id': 'starred' }
     },
     {
-      'id': 'sidebar-folders--recent',
-      'label': 'Recent',
-      'data': { 'id': 'recent' }
-    },
-    {
       'id': 'sidebar-folders--requests',
       'label': 'Requests',
       'data': { 'id': 'requests' }
     },
     {
-      'id': 'sidebar-folders--cc',
-      'label': 'CCed',
-      'data': { 'id': 'cc' }
-    },
-    {
       'id': 'sidebar-folders--reported',
       'label': 'Reported',
       'data': { 'id': 'reported' }
+    },
+    {
+      'id': 'sidebar-folders--watching',
+      'label': 'Watching', // was CCed
+      'data': { 'id': 'watching' }
     },
     {
       'id': 'sidebar-folders--assigned',
@@ -76,7 +71,7 @@ BzDeck.Sidebar = function Sidebar () {
     },
     {
       'id': 'sidebar-folders--qa',
-      'label': 'QA Contact',
+      'label': 'QA',
       'data': { 'id': 'qa' }
     },
     {
@@ -185,7 +180,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     });
   }
 
-  if (folder_id.match(/^(cc|reported|assigned|mentor|qa|requests)$/)) {
+  if (folder_id.match(/^(watching|reported|assigned|mentor|qa|requests)$/)) {
     BzDeck.model.get_subscription_by_id(folder_id).then(bugs => update_list(bugs));
   }
 
@@ -199,15 +194,6 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs().then(bugs => {
       update_list([for (bug of bugs) if (BzDeck.model.bug_is_starred(bug)) bug]);
-    });
-  }
-
-  if (folder_id === 'recent') {
-    // Recently selected bugs may include non-subscribed bugs, so get ALL bugs
-    // TODO: Bugs on threads should be sorted by the last viewed date, not by the last modified date.
-    BzDeck.model.get_all_bugs().then(bugs => {
-      update_list([for (bug of bugs) if (bug._last_viewed) bug]
-                    .sort((a, b) => a._last_viewed < b._last_viewed).slice(0, 50));
     });
   }
 
