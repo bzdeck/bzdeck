@@ -142,7 +142,7 @@
  * ---------------------------------------------------------------------------------------------- */
 
 ins, del {
-  -moz-text-decoration-color: rgba(99, 99, 99, .8); /* --secondary-content-foreground-color */
+  text-decoration-color: rgba(99, 99, 99, .8); /* --secondary-content-foreground-color */
 }
 
 ::-moz-selection {
