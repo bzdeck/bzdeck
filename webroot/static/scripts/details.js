@@ -229,7 +229,7 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
       'uploadDate': att.creation_time,
       'flag': [for (flag of att.flags) {
         'creator': {
-          'image': 'https://www.gravatar.com/avatar/' + md5(flag.setter) + '?d=mm',
+          'image': 'https://secure.gravatar.com/avatar/' + md5(flag.setter) + '?d=mm',
           'name': flag.setter, // email
           'email': flag.setter
         },
@@ -237,7 +237,7 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
         'status': flag.status
       }],
       'creator': {
-        'image': 'https://www.gravatar.com/avatar/' + md5(att.creator) + '?d=mm',
+        'image': 'https://secure.gravatar.com/avatar/' + md5(att.creator) + '?d=mm',
         'name': att.creator, // email
         'email': att.creator
       }

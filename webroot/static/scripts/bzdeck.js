@@ -459,7 +459,7 @@ BzDeck.core.set_avatar = function (person, $image) {
       $image.src = $_image.src;
     }
   });
-  $_image.src = `https://www.gravatar.com/avatar/${md5(person.email)}?d=404&s=160`;
+  $_image.src = `https://secure.gravatar.com/avatar/${md5(person.email)}?d=404&s=160`;
 };
 
 BzDeck.core.update_window_title = $tab => {

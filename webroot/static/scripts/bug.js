@@ -66,7 +66,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
         _bug.mentor = [for (person of this.bug.mentors_detail) {
           'name': BzDeck.core.get_name(person),
           'email': person.email,
-          'image': 'https://www.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
+          'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
         }];
       } else if (type === 'person') {
         if (this.bug[field]) {
@@ -75,7 +75,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
           _bug[field] = {
             'name': BzDeck.core.get_name(person),
             'email': person.email,
-            'image': 'https://www.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
+            'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
           };
         }
       } else {
@@ -134,7 +134,7 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
     'cc': [for (person of this.bug.cc_detail) {
       'name': BzDeck.core.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, ''), // Remove bracketed strings
       'email': person.email,
-      'image': 'https://www.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
+      'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
     }],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,
