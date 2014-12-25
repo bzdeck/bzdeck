@@ -8,6 +8,8 @@ AddType image/x-icon ico
 AddType text/cache-manifest appcache
 AddType application/javascript js
 AddType application/x-web-app-manifest+json webapp
+AddType application/font-sfnt ttf
+AddType application/font-woff woff
 
 # Options
 # Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
