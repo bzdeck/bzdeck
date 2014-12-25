@@ -113,12 +113,12 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
   }
 
   if (this.bug.comments && !this.bug._update_needed || partial) {
-    this.fill_details(partial, false);
+    FlareTail.util.event.async(() => this.fill_details(partial, false));
   } else {
     // Load comments, history, flags and attachments' metadata
     BzDeck.model.fetch_bug(this.bug, false).then(bug => {
       BzDeck.model.save_bug(bug);
-      this.fill_details(false, true);
+      FlareTail.util.event.async(() => this.fill_details(false, true));
     });
   }
 };
@@ -178,15 +178,17 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
   // TODO: Show Project Flags and Tracking Flags
 
   if (!partial) {
-    // Timeline: comments, attachments & history
-    this.timeline = new BzDeck.Bug.Timeline(this.bug, this.$bug, delayed);
+    FlareTail.util.event.async(() => {
+      // Timeline: comments, attachments & history
+      this.timeline = new BzDeck.Bug.Timeline(this.bug, this.$bug, delayed);
 
-    // Attachments and History, only on the details tabs
-    BzDeck.DetailsPage.attachments.render(this.$bug, this.bug.attachments);
-    BzDeck.DetailsPage.history.render(this.$bug, this.bug.history);
+      // Attachments and History, only on the details tabs
+      BzDeck.DetailsPage.attachments.render(this.$bug, this.bug.attachments);
+      BzDeck.DetailsPage.history.render(this.$bug, this.bug.history);
 
-    // Add tooltips to the related bugs
-    this.set_bug_tooltips();
+      // Add tooltips to the related bugs
+      this.set_bug_tooltips();
+    });
   }
 
   BzDeck.core.show_status('');
@@ -261,11 +263,9 @@ BzDeck.Bug.prototype.update = function (bug, changes) {
 
   if ($timeline) {
     let $parent = $timeline.querySelector('section, .scrollable-area-content'),
-        $entry = new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes),
-        sort_desc = BzDeck.model.data.prefs['ui.timeline.sort.order'] === 'descending';
+        $entry = new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes);
 
-    $parent.insertBefore($entry, sort_desc ? $timeline.querySelector('[itemprop="comment"]')
-                                           : $timeline.querySelector('[role="form"]'));
+    $parent.insertBefore($entry, $timeline.querySelector('[role="form"]'));
     $entry.scrollIntoView();
   }
 
@@ -317,83 +317,84 @@ BzDeck.Bug.find_person = function (bug, email) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
-  let entries = new Map([for (c of bug.comments.entries())
-        [c[1].creation_time, new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
+  let get_time = str => (new Date(str)).getTime(),
+      entries = new Map([for (c of bug.comments.entries())
+                             [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       prefs = BzDeck.model.data.prefs,
       show_cc_changes = prefs['ui.timeline.show_cc_changes'] === true,
-      sort_desc = prefs['ui.timeline.sort.order'] === 'descending',
       click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
-      read_entries_num = 0,
+      read_comments_num = 0,
+      last_comment_time,
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${$bug.id}-timeline`,
       comment_form = new BzDeck.Bug.Timeline.CommentForm(bug, timeline_id),
       $expander,
+      $fragment = new DocumentFragment(),
       $parent = $timeline.querySelector('section, .scrollable-area-content');
 
   for (let attachment of bug.attachments) {
-    entries.get(attachment.creation_time).set('attachment', attachment);
+    entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
   }
 
   for (let history of bug.history) if (entries.has(history.when)) {
-    entries.get(history.when).set('history', history);
+    entries.get(get_time(history.when)).set('history', history);
   } else {
-    entries.set(history.when, new Map([['history', history]]));
-  }
-
-  for (let [time, data] of entries) {
-    data.set('$entry', new BzDeck.Bug.Timeline.Entry(timeline_id, bug, data));
+    entries.set(get_time(history.when), new Map([['history', history]]));
   }
 
   // Sort by time
-  entries = [for (entry of entries) { 'time': entry[0], 'data': entry[1] }]
-    .sort((a, b) => sort_desc ? a.time < b.time : a.time > b.time);
+  entries = new Map([for (entry of entries) [entry[0], entry[1]]].sort((a, b) => a[0] > b[0]));
 
-  // Append to the timeline
-  for (let entry of entries) {
-    let $entry = $parent.appendChild(entry.data.get('$entry'));
-
-    // Collapse read comments
-    // If the fill_bug_details function is called after the bug details are fetched,
-    // the _last_viewed annotation is already true, so check the delayed argument here
-    if (!delayed && bug._last_viewed && bug._last_viewed > (new Date(entry.time)).getTime()) {
-      if (show_cc_changes || !$entry.matches('[data-changes="cc"][data-nocomment]')) {
-        read_entries_num++;
+  // Collapse read comments
+  // If the fill_bug_details function is called after the bug details are fetched,
+  // the _last_viewed annotation is already true, so check the delayed argument here
+  for (let [time, data] of entries) {
+    if (!delayed && bug._last_viewed && time < bug._last_viewed) {
+      if (data.has('comment')) {
+        read_comments_num++;
+        last_comment_time = time;
       }
-
-      $entry.setAttribute('data-unread', 'false');
-      $entry.setAttribute('aria-hidden', 'true');
     } else {
-      $entry.setAttribute('data-unread', 'true');
+      data.set('rendering', true);
     }
   }
 
-  let selector = '[itemprop="comment"]' + (show_cc_changes ? '' : '[data-comment-number]'),
-      comments = [...$timeline.querySelectorAll(selector)];
+  // Generate entries
+  for (let [time, data] of entries) if (data.has('rendering') || time >= last_comment_time) {
+    $fragment.appendChild(new BzDeck.Bug.Timeline.Entry(timeline_id, bug, data));
+    data.delete('rendering');
+    data.set('rendered', true);
+  }
 
-  // Unhide the latest comment
-  comments[sort_desc ? 0 : comments.length - 1].removeAttribute('aria-hidden');
+  // Append entries to the timeline
+  $parent.appendChild($fragment);
 
   // Show an expander if there are read comments
-  if (read_entries_num > 1) {
-    $expander = document.createElement('div');
+  if (read_comments_num > 1) {
+    // The last comment is rendered, so decrease the number
+    read_comments_num--;
 
-    $expander.textContent = read_entries_num === 2 ? '1 older comment'
-                                                   : `${read_entries_num - 1} older comments`;
+    $expander = document.createElement('div');
+    $expander.textContent = read_comments_num === 1 ? '1 older comment'
+                                                    : `${read_comments_num} older comments`; // l10n
     $expander.className = 'read-comments-expander';
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
     $expander.addEventListener(click_event_type, event => {
-      [for ($entry of $timeline.querySelectorAll('[itemprop="comment"]')) $entry.removeAttribute('aria-hidden')];
-      $timeline.removeAttribute('data-hide-read-comments');
+      $expander.textContent = 'Loading...'; // l10n
+      $fragment = new DocumentFragment();
+
+      for (let [time, data] of entries) if (!data.get('rendered')) {
+        $fragment.appendChild(new BzDeck.Bug.Timeline.Entry(timeline_id, bug, data));
+        data.set('rendered', true);
+      }
+
       $timeline.focus();
-      $expander.remove();
+      $parent.replaceChild($fragment, $expander);
 
       return FlareTail.util.event.ignore(event);
     });
-    $timeline.setAttribute('data-hide-read-comments', 'true');
-
-    sort_desc ? $parent.appendChild($expander)
-              : $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
+    $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
   }
 
   let $existing_form = $timeline.parentElement.querySelector('[id$="comment-form"]');

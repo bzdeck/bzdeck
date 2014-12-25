@@ -1886,6 +1886,18 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   width: 100%;
 }
 
+.bug-timeline > .scrollable-area-content {
+  display: flex;
+}
+
+[data-timeline-sort-order="ascending"]:root .bug-timeline > .scrollable-area-content {
+  flex-direction: column;
+}
+
+[data-timeline-sort-order="descending"]:root .bug-timeline > .scrollable-area-content {
+  flex-direction: column-reverse;
+}
+
 .bug-timeline h2 {
   display: none; /* Visible on mobile */
 }
@@ -1943,16 +1955,12 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   background-color: var(--content-background-color);
 }
 
-:root:not([data-device-type="mobile-phone"]) .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander):last-of-type {
-  margin-bottom: 0 !important;
-}
-
 [data-device-type="mobile-phone"]:root .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
-  margin: .8rem;
+  margin: .8rem .8rem 0;
 }
 
 :root:not([data-device-type="mobile-phone"]) .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
-  margin: 1.2rem;
+  margin: 1.2rem 1.2rem 0;
 }
 
 [data-device-type="mobile-phone"]:root .bug-timeline [itemprop="comment"] > * {

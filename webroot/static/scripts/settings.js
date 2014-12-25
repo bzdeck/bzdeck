@@ -105,17 +105,6 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
 
   // Timeline
   activate('ui.timeline.sort.order', 'ascending', value => {
-    for (let $timeline of document.querySelectorAll('.bug-timeline')) {
-      $timeline.setAttribute('aria-busy', 'true');
-
-      for (let $comment of [...$timeline.querySelectorAll('[itemprop="comment"], [role="form"], \
-                                                           .read-comments-expander')].reverse()) {
-        $comment.parentElement.appendChild($comment);
-      }
-
-      $timeline.removeAttribute('aria-busy');
-    }
-
     $root.setAttribute('data-timeline-sort-order', value);
   });
   activate('ui.timeline.font.family', 'proportional', value => {

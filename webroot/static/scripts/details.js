@@ -14,19 +14,24 @@ BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
   this.data = { id, ids };
   this.view = { $tab, $tabpanel };
 
-  BzDeck.model.get_bug_by_id(id).then(bug => {
-    // If no cache found, try to retrieve it from Bugzilla
-    if (!bug) {
-      this.fetch_bug(id);
-      bug = { id };
-    }
+  $tabpanel.setAttribute('aria-busy', 'true');
 
-    // Prepare the newly opened tabpanel
-    if ($tabpanel.firstElementChild.id === 'bug-TID') {
-      this.prep_tabpanel($tabpanel, bug, ids);
-      $tab.title = this.get_tab_title(bug);
-      BzDeck.core.update_window_title($tab);
-    }
+  FlareTail.util.event.async(() => {
+    BzDeck.model.get_bug_by_id(id).then(bug => {
+      // If no cache found, try to retrieve it from Bugzilla
+      if (!bug) {
+        this.fetch_bug(id);
+        bug = { id };
+      }
+
+      // Prepare the newly opened tabpanel
+      if ($tabpanel.firstElementChild.id === 'bug-TID') {
+        this.prep_tabpanel($tabpanel, bug, ids);
+        $tabpanel.removeAttribute('aria-busy');
+        $tab.title = this.get_tab_title(bug);
+        BzDeck.core.update_window_title($tab);
+      }
+    });
   });
 
   BzDeck.bugzfeed.subscribe([id]);
