@@ -467,7 +467,6 @@ BzDeck.core.update_window_title = $tab => {
     BzDeck.pages.home.update_window_title($tab.title);
   } else {
     document.title = $tab.title.replace('\n', ' – ');
-    document.querySelector('[role="banner"] h1').textContent = $tab.textContent;
   }
 };
 

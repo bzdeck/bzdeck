@@ -10,7 +10,21 @@ let BzDeck = BzDeck || {};
 BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.device.type.startsWith('mobile'),
-      prefs = BzDeck.model.data.prefs;
+      prefs = BzDeck.model.data.prefs,
+      $sidebar = document.querySelector('#sidebar');
+
+  // Prepare the Menu button on the mobile banner
+  if (mobile) {
+    document.querySelector('#tabpanel-home .banner-nav-button').addEventListener('touchstart', event => {
+      let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+
+      document.querySelector('#sidebar .scrollable-area-content').scrollTop = 0;
+      document.documentElement.setAttribute('data-sidebar-hidden', hidden);
+      $sidebar.setAttribute('aria-hidden', hidden);
+
+      return FlareTail.util.event.ignore(event);
+    });
+  }
 
   // A movable splitter between the thread pane and preview pane
   {
@@ -144,9 +158,14 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
     if (FlareTail.util.device.type.startsWith('mobile')) {
       let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
+          $_title = $timeline_content.querySelector('h3'),
           $title = $bug.querySelector('h3');
 
-      $timeline_content.insertBefore($title, $timeline_content.firstElementChild);
+      if ($_title) {
+        $timeline_content.replaceChild($title.cloneNode(true), $_title);
+      } else {
+        $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
+      }
     }
   });
 };
@@ -245,9 +264,7 @@ BzDeck.HomePage.prototype.update_window_title = function (title) {
     return;
   }
 
-  document.title = title;
-  document.querySelector('[role="banner"] h1').textContent = title.replace(/\s\(\d+\)$/, '');
-  document.querySelector('#tab-home').title = title;
-  document.querySelector('#tab-home label').textContent = title.replace(/\s\(\d+\)$/, '');
-  document.querySelector('#tabpanel-home h2').textContent = title;
+  document.title = document.querySelector('#tab-home').title = title;
+  document.querySelector('#tab-home label').textContent =
+      document.querySelector('#tabpanel-home h2').textContent = title.replace(/\s\(\d+\)$/, '');
 };

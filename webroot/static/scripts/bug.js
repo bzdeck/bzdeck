@@ -443,6 +443,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       attachment = data.get('attachment'),
       history = data.get('history'),
       $entry = FlareTail.util.content.get_fragment('timeline-comment').firstElementChild,
+      $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
       $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
@@ -644,8 +645,11 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   // Click to collapse/expand comments
   // TODO: Save the state in DB
   $entry.setAttribute('aria-expanded', 'true');
-  $entry.querySelector('header').addEventListener(click_event_type, event =>
-    $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false'));
+  $header.addEventListener(click_event_type, event => {
+    if (event.target === $header) {
+      $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
+    }
+  });
 
   return $entry;
 };

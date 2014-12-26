@@ -537,83 +537,20 @@ col[data-hidden="false"] {
 }
 
 [data-device-type|="mobile"]:root [role="banner"] {
-  pointer-events: auto;
+  height: 0;
 }
 
-#banner-nav-button {
+[role="banner"] h1 {
   position: absolute;
   top: 0;
   left: 0;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
   width: 4rem;
   height: 4rem;
-  color: var(--application-header-foreground-color);
-  background-color: transparent;
-}
-
-[data-device-type="desktop"]:root #banner-nav-button {
   background-image: url(/static/images/logo/icon-256-white.png);
   background-size: 2.8rem;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-[data-device-type|="mobile"]:root #banner-nav-button:active {
-  opacity: .8;
-}
-
-#banner-nav-button::before {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4rem;
-  height: 4rem;
-  font-size: 2.4rem;
-  line-height: 4rem;
-  font-family: GaiaIcons;
-  text-align: center;
-  content: "\F112"; // back icon
-}
-
-[data-current-tab="home"]:root #banner-nav-button::before {
-  content: "\F176"; // hamburger menu icon
-}
-
-[data-device-type="desktop"]:root #banner-nav-button::before {
-  display: none;
-}
-
-[role="banner"] h1 {
-  overflow: hidden;
-  position: absolute;
-  left: 4rem;
-  padding: 1rem 0;
-  height: 2rem;
-  font-size: 1.8rem;
-  line-height: 2rem;
-}
-
-[data-device-type="desktop"]:root [role="banner"] h1 {
-  width: 0;
-}
-
-[data-device-type|="mobile"]:root [role="banner"] h1 {
-  width: auto;
-}
-
-[data-device-type="mobile-phone"]:root [role="banner"] h1 {
-  right: 4rem;
-  font-size: 2rem;
-  font-weight: 300;
-  font-style: italic;
-  text-align: center;
-}
-
-[data-device-type|="mobile"]:root [role="banner"].search h1 {
-  display: none;
+  text-indent: -99999px;
 }
 
 [role="banner"] [role="toolbar"] {
@@ -631,19 +568,6 @@ col[data-hidden="false"] {
   width: 8rem;
 }
 
-[data-device-type="mobile-phone"]:root [role="banner"] [role="toolbar"] {
-  right: 0;
-  width: auto;
-}
-
-[data-device-type|="mobile"]:root:not([data-current-tab="home"]) [role="banner"] [role="toolbar"] {
-  display: none;
-}
-
-[data-device-type|="mobile"]:root [role="banner"].search [role="toolbar"] {
-  left: 0;
-}
-
 #toolbar--search-menu {
   position: absolute;
   right: 0;
@@ -654,7 +578,7 @@ col[data-hidden="false"] {
   width: 4rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"].search #toolbar--search-menu {
+[data-device-type|="mobile"][data-quicksearch]:root #toolbar--search-menu {
   left: 0;
   width: auto;
 }
@@ -745,27 +669,27 @@ col[data-hidden="false"] {
   font-size: 1.2rem;
 }
 
-[role="banner"] [role="search"] {
+#quicksearch {
   position: relative;
 }
 
-[data-device-type="desktop"]:root [role="banner"] [role="search"] {
+[data-device-type="desktop"]:root #quicksearch {
   margin: .8rem 0;
   width: 19.6rem;
   height: 2.4rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] [role="search"] {
+[data-device-type|="mobile"]:root #quicksearch {
   margin: .6rem .6rem .6rem 0;
   width: 2.8rem;
   height: 2.8rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"].search [role="search"] {
+[data-device-type|="mobile"][data-quicksearch]:root #quicksearch {
   width: calc(100% - 1.2rem);
 }
 
-[role="banner"] [role="search"] [role="textbox"] {
+#quicksearch [role="textbox"] {
   position: absolute;
   box-sizing: border-box;
   border-width: .1rem;
@@ -775,17 +699,17 @@ col[data-hidden="false"] {
   height: 100%;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] [role="search"] [role="textbox"] {
+[data-device-type|="mobile"]:root #quicksearch [role="textbox"] {
   display: none;
   font-size: 1.25rem;
   line-height: 2rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"].search [role="search"] [role="textbox"] {
+[data-device-type|="mobile"][data-quicksearch]:root #quicksearch [role="textbox"] {
   display: block;
 }
 
-[role="banner"] [role="search"] [role="button"] {
+#quicksearch [role="button"] {
   position: absolute;
   overflow: hidden;
   right: .4rem;
@@ -796,7 +720,7 @@ col[data-hidden="false"] {
   text-indent: -9999rem;
 }
 
-[role="banner"] [role="search"] [role="button"]::after {
+#quicksearch [role="button"]::after {
   display: block;
   width: 100%;
   height: 100%;
@@ -807,42 +731,43 @@ col[data-hidden="false"] {
   content: "\F002";
 }
 
-[data-device-type="desktop"]:root [role="banner"] [role="search"] [role="button"] {
+[data-device-type="desktop"]:root #quicksearch [role="button"] {
   width: 2.2rem;
   height: 2.2rem;
 }
 
-[data-device-type="desktop"]:root [role="banner"] [role="search"] [role="button"]::after {
+[data-device-type="desktop"]:root #quicksearch [role="button"]::after {
   font-size: 1.6rem;
   line-height: 2.2rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] [role="search"] [role="button"] {
+[data-device-type|="mobile"]:root #quicksearch [role="button"] {
   width: 2.6rem;
   height: 2.6rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"] [role="search"] [role="button"]::after {
+[data-device-type|="mobile"]:root #quicksearch [role="button"]::after {
   font-size: 2rem;
   line-height: 2.6rem;
 }
 
-[data-device-type|="mobile"]:root [role="banner"]:not(.search) [role="search"] [role="button"]::after {
+[data-device-type|="mobile"]:root:not([data-quicksearch]) #quicksearch [role="button"]::after {
   color: var(--application-header-foreground-color);
 }
 
+#quicksearch-dropdown {
+  right: 0;
+}
+
 [data-device-type="desktop"]:root #quicksearch-dropdown {
-  top: 3.2rem;
-  right: 4.1rem;
+  top: 2.4rem;
   min-width: 19.4rem;
   max-width: 40rem;
 }
 
 [data-device-type|="mobile"]:root #quicksearch-dropdown {
-  top: 3.4rem;
-  right: .7rem;
-  overflow: auto;
-  width: calc(100% - 1.4rem);
+  top: 2.8rem;
+  width: 100%;
 }
 
 [data-device-type|="mobile"]:root #quicksearch-dropdown [role="menuitem"] {
@@ -1023,16 +948,9 @@ col[data-hidden="false"] {
 
 main {
   position: fixed;
+  top: 0;
   bottom: 0;
   width: 100%;
-}
-
-[data-device-type="desktop"]:root main {
-  top: 0;
-}
-
-[data-device-type|="mobile"]:root main {
-  top: 4rem;
 }
 
 #main-tablist {
@@ -1109,12 +1027,24 @@ main {
   top: 0;
 }
 
-#main-tabpanels > [id^="tabpanel-details"] {
-  transition: left .5s;
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] {
+  top: 0;
+  left: 0;
+  background-color: var(--region-background-color);
+  transition: left .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transform: translateZ(0); /* Get hardware acceleration? */
 }
 
-[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] {
-  overflow: auto;
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"]:-moz-any([id|="tabpanel-profile"], #tabpanel-settings) {
+  z-index: 200;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"][aria-hidden="true"] {
+  display: block;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"][aria-hidden="true"]:not(#tabpanel-home):not(.fixed) {
+  left: 100%;
 }
 
 [data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"][aria-hidden="true"] * {
@@ -1125,59 +1055,124 @@ main {
   overflow: hidden;
 }
 
-#main-tabpanels > [role="tabpanel"][aria-busy="true"] > * {
+#main-tabpanels > [role="tabpanel"][aria-busy="true"] > * > :not(header) {
   display: none;
+}
+
+#main-tabpanels > [role="tabpanel"] > * {
+  display: flex;
+  flex-direction: column;
 }
 
 #main-tabpanels > [role="tabpanel"] > * > header {
-  overflow: hidden;
-  position: absolute;
-  left: -9999rem; /* Usually hide the header */
-  box-sizing: border-box;
-  padding: 0 .8rem;
-  width: 100%;
-  height: 3.2rem;
+  position: relative;
+  flex: 0 0 auto;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
 }
 
 [data-device-type="desktop"]:root #main-tabpanels > [role="tabpanel"] > * > header {
-  border-width: .1rem 0;
-  border-style: solid;
+  height: 0; /* Usually hide the header */
 }
 
-[data-device-type|="mobile"]:root #home-preview-bug > header,
 [data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header {
-  position: fixed;
-  top: .5rem;
+  position: relative;
+  height: 4rem;
+}
+
+[data-device-type="mobile-tablet"]:root #tabpanel-home > * > header > h2 {
+  width: 40%;
+}
+
+[data-device-type="mobile-tablet"]:root #tabpanel-home > * > header > [role="toolbar"] {
+  right: 60% !important;
+}
+
+[data-device-type|="mobile"][data-quicksearch]:root #tabpanel-home > * > header > [role="toolbar"] {
+  left: 0;
+  width: auto;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > :not(h2) {
+  position: absolute;
+  top: 0;
+  height: 4rem;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button {
+  left: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  width: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: transparent;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button:active {
+  opacity: .8;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button::before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
+  font-size: 2.4rem;
+  line-height: 4rem;
+  font-family: GaiaIcons;
+  text-align: center;
+}
+
+[data-device-type|="mobile"]:root [role="tabpanel"]:not(#tabpanel-home) > * > header .banner-nav-button::before {
+  content: "\F112"; // back icon
+}
+
+[data-device-type|="mobile"]:root #tabpanel-home > * > header .banner-nav-button::before {
+  content: "\F176"; // hamburger menu icon
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
+  overflow: hidden;
+  box-sizing: padding-box;
+  padding: 1rem 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  line-height: 2rem;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] {
   right: 0;
-  left: auto !important;
-  width: 12rem;
-  height: auto;
-  background: transparent;
+  min-width: 4rem;
 }
 
-[data-device-type|="mobile"]:root #home-preview-bug > header {
-  border-width: 0;
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] > ul {
+  margin: 0;
+  padding: 0;
+  min-width: 4rem;
+  height: 4rem;
 }
 
-[data-device-type|="mobile"]:root:-moz-any([data-current-tab="home"], [data-current-tab="settings"], [data-current-tab="profile"]) #main-tabpanels > [role="tabpanel"] > * > header {
-  display: none;
+[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] .iconic {
+  padding-left: 4rem;
+  height: 4rem;
 }
 
 #main-tabpanels > [role="tabpanel"] > * > div {
-  position: absolute;
-  right: 0;
-  left: 0;
+  position: relative;
+  flex: 1 1 auto;
   overflow: hidden;
 }
 
-[data-device-type="desktop"]:root #main-tabpanels > [role="tabpanel"] > * > div {
-  top: 0; /* Usually hide the header */
-  bottom: 0;
-}
-
-[data-device-type|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > div {
-  top: 0;
-  bottom: 0;
+[data-device-type="mobile-tablet"]:root #tabpanel-home > * > div {
+  overflow: visible;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > header {
@@ -1202,17 +1197,13 @@ main {
   -moz-user-select: text;
 }
 
-[itemtype="https://www.bzdeck.com/bug"] > header > :-moz-any(h2, h3) [itemprop="id"]::after {
+[itemtype="https://www.bzdeck.com/bug"] > header > :-moz-any(h2, h3) [itemprop="summary"]::before {
   content: ' - ';
 }
 
 [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] {
   flex: none;
   height: 3rem;
-}
-
-[data-device-type|="mobile"]:root [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] {
-  float: right;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] ul {
@@ -1230,7 +1221,7 @@ main {
   height: 2.2rem; 
 }
 
-[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] :-moz-any([role="checkbox"], [role="button"]) {
+[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] .iconic {
   position: relative;
   box-sizing: content-box;
   border-width: 0;
@@ -1242,30 +1233,30 @@ main {
   vertical-align: top;
 }
 
-[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] :-moz-any([role="checkbox"], [role="button"]) {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] .iconic {
   border-color: var(--alternate-button-border-color);
   color: var(--alternate-button-foreground-color);
 }
 
-[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] :-moz-any([role="checkbox"], [role="button"]):active {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] .iconic:active {
   color: var(--alternate-pressed-button-foreground-color);
 }
 
-[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] :-moz-any([role="checkbox"], [role="button"])[aria-disabled="true"] {
+[itemtype="https://www.bzdeck.com/bug"] > header > [role="toolbar"] .iconic[aria-disabled="true"] {
   color: var(--alternate-disabled-button-foreground-color);
 }
 
-[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] :-moz-any([role="checkbox"], [role="button"]).iconic {
+[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] .iconic {
   overflow: hidden;
   padding: 0 0 0 2.2rem;
   width: 0;
   height: 2.2rem;
 }
 
-[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] :-moz-any([role="checkbox"], [role="button"]).iconic::before {
+[itemtype="https://www.bzdeck.com/bug"] [role="toolbar"] .iconic::before {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: calc(50% - 1.1rem);
+  left: calc(50% - 1.1rem);
   display: inline-block;
   margin: 0;
   width: 2.2rem;
@@ -1313,11 +1304,12 @@ main {
  * Home
  * ---------------------------------------------------------------------------------------------- */
 
-[data-device-type="desktop"]:root #main-tabpanels > #tabpanel-home > section > div {
+[data-device-type="desktop"]:root #tabpanel-home > section > div {
   left: 16rem; /* A space for the sidebar */
+  width: calc(100% - 16rem);
 }
 
-[data-device-type|="mobile"]:root #main-tabpanels > #tabpanel-home > section > div {
+[data-device-type|="mobile"]:root #tabpanel-home > section > div {
   left: 0;
 }
 
@@ -1336,6 +1328,11 @@ main {
 
 [data-device-type="mobile-phone"]:root #home-list-pane {
   width: 100% !important;
+}
+
+[data-device-type="mobile-tablet"]:root #home-list-pane {
+  width: 40% !important;
+  min-width: 0 !important;
 }
 
 #home-preview-splitter {
@@ -1372,6 +1369,58 @@ main {
 
 [data-device-type="mobile-phone"]:root #home-preview-pane {
   display: none;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-pane {
+  top: -4rem;
+  left: 40%;
+  width: 60% !important;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header {
+  border-width: 0;
+  padding: 0;
+  width: 100%;
+  height: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header > h3 {
+  overflow: hidden;
+  padding: 1rem 4rem;
+  height: 2rem;
+  font-size: 2rem;
+  line-height: 2rem;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header > h3 [itemprop="summary"] {
+  display: none;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header > [role="toolbar"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 4rem;
+  height: 4rem;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header > [role="toolbar"] > ul {
+  margin: 0;
+  padding: 0;
+  min-width: 4rem;
+  height: 4rem;
+}
+
+[data-device-type="mobile-tablet"]:root #home-preview-bug > header > [role="toolbar"] .iconic {
+  padding-left: 4rem;
+  height: 4rem;
 }
 
 [id$="vertical-thread"] {
@@ -1628,6 +1677,12 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   left: 0;
 }
 
+[data-device-type="mobile-tablet"]:root #home-preview-bug-timeline-wrapper {
+  top: 4rem;
+  bottom: 0;
+  height: auto;
+}
+
 /* ----------------------------------------------------------------------------------------------
  * Details
  * ---------------------------------------------------------------------------------------------- */
@@ -1641,12 +1696,8 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   -moz-user-select: text;
 }
 
-[data-device-type="desktop"]:root [id|="tabpanel-details"][role="tabpanel"] > article > div {
-  top: 3.2rem !important; /* Show the header */
-}
-
-[data-device-type|="mobile"]:root [id|="tabpanel-details"][role="tabpanel"] > article > div {
-  top: 0 !important;
+[data-device-type|="mobile"]:root [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 [itemprop="summary"] {
+  display: none;
 }
 
 [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
@@ -1994,6 +2045,7 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
   overflow: hidden;
   font-size: 1.1rem;
   line-height: 1.5rem;
+  pointer-events: none;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] {
@@ -2975,7 +3027,6 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
  * ---------------------------------------------------------------------------------------------- */
 
 :root:not([data-device-type="mobile-phone"]) [id|="tabpanel-profile"] > section > div {
-  overflow: hidden;
   padding: 4rem;
 }
 
@@ -3128,26 +3179,37 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
  * Desktop Layout
  * ---------------------------------------------------------------------------------------------- */
 
+@media (min-width: 641px) {
+
+  .bug-info[id|="bug"],
+  .bug-info[id^="search"] {
+    width: 40%;
+  }
+
+  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"],
+  [itemtype="https://www.bzdeck.com/bug"] > div > [id$="tabpanels"],
+  .bug-timeline-wrapper[id^="search"] {
+    left: 40%;
+  }
+
+  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
+    width: 60%;
+  }
+
+}
+
 @media (min-width: 641px) and (max-width: 800px) {
 
-  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
-    left: calc(24rem - 8rem);
-  }
-
-  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"] {
-    width: 24rem;
-  }
-
-  [data-home-layout="vertical"]:root #home-list-pane {
-    width: 24rem !important;
+  [data-device-type="desktop"][data-home-layout="vertical"]:root #home-list-pane {
+    width: 40% !important;
   }
 
   [data-home-layout="vertical"]:root #home-preview-splitter {
     display: none;
   }
 
-  [data-home-layout="vertical"]:root #home-preview-pane {
-    left: 24rem !important;
+  [data-device-type="desktop"][data-home-layout="vertical"]:root #home-preview-pane {
+    left: 40% !important;
   }
 
   #home-preview-bug-info {
@@ -3158,64 +3220,25 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
     left: 0;
   }
 
-  [id|="bug"].bug-info,
-  [id^="search"].bug-info {
-    width: 24rem;
-  }
-
-  [id|="bug"].bug-info dt,
-  [id^="search"].bug-info dt {
+  .bug-info[id|="bug"] dt,
+  .bug-info[id^="search"] dt {
     float: none;
     padding-bottom: 0;
     width: 100%;
   }
 
-  [id|="bug"].bug-info dd,
-  [id^="search"].bug-info dd {
+  .bug-info[id|="bug"] dd,
+  .bug-info[id^="search"] dd {
     float: none;
     margin-left: 0;
     padding-left: 0;
     width: 100%;
   }
 
-  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"],
-  [itemtype="https://www.bzdeck.com/bug"] > div > [id$="tabpanels"],
-  [id^="search"].bug-timeline-wrapper {
-    left: 24rem;
-  }
-
-  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
-    width: calc(100% - 24rem);
-  }
-
-}
-
-@media (min-width: 801px) {
-
-  [id|="bug"].bug-info,
-  [id^="search"].bug-info {
-    width: 32rem;
-  }
-
-  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"],
-  [itemtype="https://www.bzdeck.com/bug"] > div > [id$="tabpanels"],
-  [id^="search"].bug-timeline-wrapper {
-    left: 32rem;
-  }
-
-  [itemtype="https://www.bzdeck.com/bug"] > div > [role="tablist"] {
-    width: calc(100% - 32rem);
-  }
-
 }
 
 @media (min-width: 801px) and (max-width: 980px) {
 
-  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
-    left: calc(22rem - 8rem);
-  }
-
-  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"],
   #home-preview-bug-info {
     width: 22rem;
   }
@@ -3241,11 +3264,6 @@ article[id$="preview-bug"] > .bug-timeline-wrapper {
 
 @media (min-width: 981px) {
 
-  [data-device-type="mobile-tablet"]:root [role="banner"] [role="toolbar"] {
-    left: calc(36rem - 8rem);
-  }
-
-  [data-device-type="mobile-tablet"]:root [role="banner"].search [role="toolbar"],
   #home-preview-bug-info {
     width: 36rem;
   }

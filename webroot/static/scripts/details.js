@@ -70,7 +70,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
       $bug_info = $tabpanel.querySelector('.bug-info');
 
   if (mobile) {
-    $timeline_content.insertBefore($title, $timeline_content.firstElementChild);
+    $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
   }
 
   if (phone) {

@@ -13,11 +13,6 @@ BzDeck.Sidebar = function Sidebar () {
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
-  if (mobile) {
-    document.querySelector('#sidebar-account').appendChild(document.querySelector('#main-menu--app--account'));
-    document.querySelector('#sidebar-menu').appendChild(document.querySelector('#main-menu--app-menu'));
-  }
-
   $root.setAttribute('data-sidebar-hidden', mobile);
   $sidebar.setAttribute('aria-hidden', mobile);
 

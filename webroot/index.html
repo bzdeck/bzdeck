@@ -403,7 +403,7 @@
       <div id="tabpanel-profile" tabindex="0" role="tabpanel" aria-labelledby="tab-profile">
         <section>
           <header>
-            <h2>User Profile</h2>
+            <h2>Profile</h2>
           </header>
           <div>
             <article id="profile-TID" role="article" itemscope itemtype="http://schema.org/Person http://bzdeck.com/Person">
@@ -594,8 +594,7 @@
     </section><!-- end #app-login -->
     <section id="app-body" aria-hidden="true">
       <header role="banner">
-        <div id="banner-nav-button" tabindex="0" role="button"></div>
-        <h1>Home</h1>
+        <h1>BzDeck</h1>
         <div role="toolbar">
           <ul id="toolbar--search-menu">
             <li role="presentation">
@@ -635,9 +634,12 @@
                 </li>
               </ul>
             </li>
-            <li title="Search for bugs" role="search"><input type="search" role="textbox" placeholder="Search for bugs" tabindex="1" aria-haspopup="true" aria-owns="quicksearch-dropdown"><span role="button" tabindex="0" title="Search">Go</span></li>
+            <li id="quicksearch" title="Search for bugs" role="search">
+              <input type="search" placeholder="Search for bugs" tabindex="1" role="textbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
+              <span tabindex="0" title="Search" role="button">Go</span>
+              <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
+            </li>
           </ul>
-          <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
         </div>
       </header>
       <aside id="sidebar" tabindex="0" role="complementary">
@@ -662,7 +664,9 @@
           <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
             <section>
               <header>
-                <h2>Welcome</h2>
+                <div class="banner-nav-button" tabindex="0" role="button" aria-label="Menu"></div>
+                <h2>Inbox</h2>
+                <div role="toolbar"></div>
               </header>
               <div>
                 <div id="home-list-pane" role="region">

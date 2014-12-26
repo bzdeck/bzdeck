@@ -71,15 +71,21 @@ BzDeck.Toolbar = function Toolbar () {
     }
   });
 
-  $app_menu.addEventListener('MenuClosed', event => {
-    if (mobile) {
+  // Switch to the mobile layout
+  if (mobile) {
+    document.querySelector('#sidebar-account').appendChild(document.querySelector('#main-menu--app--account'));
+    document.querySelector('#sidebar-menu').appendChild($app_menu);
+    document.querySelector('#tabpanel-home [role="toolbar"]')
+            .appendChild(document.querySelector('#toolbar--search-menu'));
+
+    $app_menu.addEventListener('MenuClosed', event => {
       // Keep the menu open
       $app_menu.removeAttribute('aria-expanded');
       // Hide the sidebar
       $root.setAttribute('data-sidebar-hidden', 'true');
       $sidebar.setAttribute('aria-hidden', 'true');
-    }
-  });
+    });
+  }
 
   $app_menu.setAttribute('aria-expanded', mobile);
 
@@ -111,22 +117,6 @@ BzDeck.Toolbar = function Toolbar () {
     document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
   }
 
-  if (mobile) {
-    document.querySelector('#banner-nav-button').addEventListener('touchstart', event => {
-      if ($root.getAttribute('data-current-tab') === 'home') {
-        let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
-
-        document.querySelector('#sidebar .scrollable-area-content').scrollTop = 0;
-        $root.setAttribute('data-sidebar-hidden', hidden);
-        $sidebar.setAttribute('aria-hidden', hidden);
-      } else {
-        history.back();
-      }
-
-      return FlareTail.util.event.ignore(event);
-    });
-  }
-
   // Account label & avatar
   {
     let account = BzDeck.model.data.account,
@@ -149,16 +139,15 @@ BzDeck.Toolbar = function Toolbar () {
     document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
   }).catch(error => {});
 
-  let $banner = document.querySelector('[role="banner"]'),
-      $search_box = document.querySelector('[role="banner"] [role="search"] input'),
-      $search_button = document.querySelector('[role="banner"] [role="search"] [role="button"]'),
+  let $search_box = document.querySelector('#quicksearch [role="textbox"]'),
+      $search_button = document.querySelector('#quicksearch [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
   this.$$search_dropdown = new FlareTail.widget.Menu($search_dropdown);
 
   let cleanup = () => {
     this.$$search_dropdown.close();
-    $banner.classList.remove('search');
+    $root.removeAttribute('data-quicksearch');
     $search_box.value = '';
     $search_button.focus();
   };
@@ -220,8 +209,8 @@ BzDeck.Toolbar = function Toolbar () {
     event.stopPropagation();
 
     if (mobile) {
-      if (!$banner.matches('.search')) {
-        $banner.classList.add('search');
+      if (!$root.hasAttribute('data-quicksearch')) {
+        $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here
         FlareTail.util.event.async(() => $search_box.focus());
       } else if ($search_box.value) {
@@ -266,6 +255,15 @@ BzDeck.Toolbar.prototype.open_tab = function (options) {
       $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`),
       $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
 
+  // Do not transition the current tabpanel if the new tab is a profile or settings
+  if (['profile', 'settings'].includes(page_category)) {
+    document.getElementById($$tablist.view.selected[0].getAttribute('aria-controls')).classList.add('fixed');
+  } else {
+    for (let $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {
+      $tabpanel.classList.remove('fixed');
+    }
+  }
+
   if (!pages) {
     pages = BzDeck.pages[`${page_category}_list`] = new Map();
   }
@@ -279,6 +277,24 @@ BzDeck.Toolbar.prototype.open_tab = function (options) {
     $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
     page = new page_constructor(...page_constructor_args);
     pages.set(page_id, page);
+
+    // Prepare the Back button on the mobile banner
+    if (FlareTail.util.device.type.startsWith('mobile') && !$tabpanel.querySelector('.banner-nav-button')) {
+      let $header = $tabpanel.querySelector('header'),
+          $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+
+      $button.setAttribute('aria-label', 'Back'); // l10n
+      $button.addEventListener('touchstart', event => {
+        if (history.state && history.state.previous) {
+          history.back();
+        } else {
+          BzDeck.router.navigate('/home/inbox');
+        }
+
+        return FlareTail.util.event.ignore(event);
+      });
+      $header.insertBefore($button, $header.firstElementChild);
+    }
   }
 
   $$tablist.view.selected = $$tablist.view.$focused = $tab

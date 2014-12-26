@@ -22,7 +22,7 @@ BzDeck.ProfilePage = function ProfilePage (name) {
     let name = user.real_name || user.name,
         gravatar = new BzDeck.services.Gravatar(user.name);
 
-    document.title = $tab.title = $tabpanel.querySelector('h2').textContent = `User Profile: ${name}`;
+    document.title = $tab.title = `User Profile: ${name}`;
 
     FlareTail.util.content.fill($profile, {
       'id': user.id,
