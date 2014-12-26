@@ -25,7 +25,7 @@ BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
       }
 
       // Prepare the newly opened tabpanel
-      if ($tabpanel.firstElementChild.id === 'bug-TID') {
+      if (!$tabpanel.querySelector('[itemprop="id"]').itemValue) {
         this.prep_tabpanel($tabpanel, bug, ids);
         $tabpanel.removeAttribute('aria-busy');
         $tab.title = this.get_tab_title(bug);

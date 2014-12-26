@@ -243,12 +243,12 @@ BzDeck.Toolbar = function Toolbar () {
 BzDeck.Toolbar.prototype.open_tab = function (options) {
   let page,
       page_category = options.page_category,
-      page_id = options.page_id || 'default',
+      page_id = options.page_id,
       page_constructor = options.page_constructor,
       page_constructor_args = options.page_constructor_args || [],
       pages = BzDeck.pages[`${page_category}_list`],
       $$tablist = BzDeck.toolbar.$$tablist,
-      tab_id = options.page_category + (page_id === 'default' ? '' : `-${page_id}`),
+      tab_id = options.page_category + (page_id ? '-' + page_id : ''),
       tab_label = options.tab_label,
       tab_desc = options.tab_desc || tab_label,
       tab_position = options.tab_position || 'last',
@@ -270,13 +270,13 @@ BzDeck.Toolbar.prototype.open_tab = function (options) {
 
   // Reuse a tabpanel if possible
   if ($tabpanel) {
-    page = pages.get(page_id);
+    page = pages.get(page_id || 'default');
     $tab = $tab || $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
   } else {
-    $tabpanel = FlareTail.util.content.get_fragment(`tabpanel-${page_category}-template`).firstElementChild;
+    $tabpanel = FlareTail.util.content.get_fragment(`tabpanel-${page_category}-template`, page_id).firstElementChild;
     $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
     page = new page_constructor(...page_constructor_args);
-    pages.set(page_id, page);
+    pages.set(page_id || 'default', page);
 
     // Prepare the Back button on the mobile banner
     if (FlareTail.util.device.type.startsWith('mobile') && !$tabpanel.querySelector('.banner-nav-button')) {
