@@ -588,7 +588,7 @@ window.addEventListener('click', event => {
     return true;
   }
 
-  if ($target.matches('[itemtype="http://schema.org/Person"]')) {
+  if ($target.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
     event.stopPropagation();
     event.preventDefault();
