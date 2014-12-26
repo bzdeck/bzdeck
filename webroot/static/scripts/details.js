@@ -251,7 +251,7 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
     });
   }
 
-  $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-hidden', 'false');
+  $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
     }
   }
 
-  $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-hidden', 'false');
+  $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
