@@ -136,7 +136,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
       index = ids.indexOf(this.data.id),
       prev = ids[index - 1],
       next = ids[index + 1],
-      set_keybind = FlareTail.util.event.set_keybind;
+      assign_key_binding = (...args) => FlareTail.util.event.assign_key_binding($tabpanel, ...args);
 
   let change_button_tooltip = (id, $$button) => {
     BzDeck.model.get_bug_by_id(id).then(bug => {
@@ -150,8 +150,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
     change_button_tooltip(prev, $$btn_back);
     $$btn_back.data.disabled = false;
     $$btn_back.bind('Pressed', event => this.navigate(prev));
-    // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'B', '', event => this.navigate(prev));
+    assign_key_binding('B', event => this.navigate(prev));
   } else {
     $$btn_back.data.disabled = true;
   }
@@ -160,8 +159,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
     change_button_tooltip(next, $$btn_forward);
     $$btn_forward.data.disabled = false;
     $$btn_forward.bind('Pressed', event => this.navigate(next));
-    // TODO: Add keyboard shortcut
-    // set_keybind($tabpanel, 'F', '', event => this.navigate(next));
+    assign_key_binding('F', event => this.navigate(next));
   } else {
     $$btn_forward.data.disabled = true;
   }

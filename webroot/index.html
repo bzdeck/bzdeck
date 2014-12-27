@@ -140,7 +140,7 @@
                 </div>
               </div><!-- end #bug-TID-tabpanel-timeline -->
               <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
-                <div id="bug-TID-info" class="bug-info" role="region">
+                <div id="bug-TID-info" class="bug-info" tabindex="0" role="region">
                   <section>
                     <h3>General</h3>
                     <dl>
@@ -233,14 +233,14 @@
                 </div><!-- end .bug-info -->
               </div><!-- end #bug-TID-tabpanel-info -->
               <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
-                <div class="bug-attachments" role="region">
+                <div class="bug-attachments" tabindex="0" role="region">
                   <section data-field="attachments">
                     <h3>Attachments</h3>
                   </section>
                 </div>
               </div><!-- end #bug-TID-tabpanel-attachments -->
               <div id="bug-TID-tabpanel-history" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
-                <div class="bug-history" role="region">
+                <div class="bug-history" tabindex="0" role="region">
                   <section data-field="history">
                     <h3>History</h3>
                     <table>
@@ -643,7 +643,7 @@
         </div>
       </header>
       <aside id="sidebar" tabindex="0" role="complementary">
-        <div role="region">
+        <div tabindex="0" role="region">
           <section id="sidebar-account">
             <h2>Account</h2>
           </section><!-- end #sidebar-account -->
@@ -669,7 +669,7 @@
                 <div role="toolbar"></div>
               </header>
               <div>
-                <div id="home-list-pane" role="region">
+                <div id="home-list-pane" tabindex="0" role="region">
                   <section id="home-list" class="bug-list" role="grid" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
                   </section>
                   <section id="home-vertical-thread" tabindex="0" role="region">
@@ -680,7 +680,7 @@
                   </footer>
                 </div><!-- end #home-list-pane -->
                 <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator" aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
-                <div id="home-preview-pane" role="region" aria-expanded="true">
+                <div id="home-preview-pane" tabindex="0" role="region" aria-expanded="true">
                   <article id="home-preview-bug" itemscope itemtype="http://bzdeck.com/Bug" role="article" aria-hidden="true">
                     <header>
                       <h3><span itemprop="id"></span> <span itemprop="summary"></span></h3>

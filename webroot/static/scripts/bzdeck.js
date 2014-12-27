@@ -625,6 +625,16 @@ window.addEventListener('click', event => {
   return true;
 });
 
+window.addEventListener('keydown', event => {
+  let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
+      tab = event.keyCode === event.DOM_VK_TAB;
+
+  // Stop showing the Search Bar in Firefox
+  if (!event.target.matches('[role="textbox"]') && !modifiers && !tab) {
+    event.preventDefault();
+  }
+});
+
 window.addEventListener('Bug:UnreadToggled', event => {
   BzDeck.core.toggle_unread_ui();
 });

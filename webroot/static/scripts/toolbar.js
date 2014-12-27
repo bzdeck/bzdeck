@@ -93,17 +93,15 @@ BzDeck.Toolbar = function Toolbar () {
     {
       let $menuitem = document.querySelector('#main-menu--app--fullscreen');
 
+      let toggle_fullScreen = () => {
+        document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
+      };
+
       $menuitem.removeAttribute('aria-hidden');
 
       // A workaround for Bug 779324
-      $menuitem.addEventListener('mousedown', event => {
-        document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
-      });
-      $menuitem.addEventListener('keydown', event => {
-        if (event.keyCode === event.DOM_VK_RETURN) {
-          document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
-        }
-      });
+      $menuitem.addEventListener('mousedown', event => toggle_fullScreen());
+      FlareTail.util.event.assign_key_binding($menuitem, 'RETURN', event => toggle_fullScreen());
 
       window.addEventListener('mozfullscreenchange', event => {
         $menuitem.querySelector('label').textContent = document.mozFullScreenElement ? 'Exit Full Screen'
@@ -167,11 +165,11 @@ BzDeck.Toolbar = function Toolbar () {
     cleanup();
   };
 
-  window.addEventListener('keydown', event => {
-    if (event.keyCode === event.DOM_VK_K && (event.metaKey || event.ctrlKey)) {
+  FlareTail.util.event.assign_key_bindings(window, {
+    'CTRL+K|META+K': event => {
       $search_box.focus();
       event.preventDefault();
-    }
+    },
   });
 
   window.addEventListener('mousedown', event => cleanup());
@@ -185,24 +183,22 @@ BzDeck.Toolbar = function Toolbar () {
     }
   });
 
-  $search_box.addEventListener('keydown', event => {
-    if ((event.keyCode === event.DOM_VK_UP || event.keyCode === event.DOM_VK_DOWN) &&
-        event.target.value.trim() && this.$$search_dropdown.closed) {
-      this.quicksearch(event);
-    }
-
-    if (event.keyCode === event.DOM_VK_RETURN) {
+  FlareTail.util.event.assign_key_bindings($search_box, {
+    'UP|DOWN': event => {
+      if (event.target.value.trim() && this.$$search_dropdown.closed) {
+        this.quicksearch(event);
+      }
+    },
+    'RETURN': event => {
       this.$$search_dropdown.close();
       exec_search();
-    }
+    },
   });
 
   $search_box.addEventListener('mousedown', event => event.stopPropagation());
 
-  $search_button.addEventListener('keydown', event => {
-    if (event.keyCode === event.DOM_VK_RETURN || event.keyCode === event.DOM_VK_SPACE) {
-      exec_search();
-    }
+  FlareTail.util.event.assign_key_bindings($search_button, {
+    'RETURN|SPACE': event => exec_search(),
   });
 
   $search_button.addEventListener('mousedown', event => {

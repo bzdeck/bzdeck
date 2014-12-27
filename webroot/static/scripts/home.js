@@ -59,10 +59,23 @@ BzDeck.HomePage = function HomePage () {
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
-      $$button = this.view.$$details_button = new FlareTail.widget.Button($button);
+      $$button = this.view.$$details_button = new FlareTail.widget.Button($button),
+      open_tab = () => BzDeck.router.navigate('/bug/' + this.data.preview_id,
+                                              { 'ids': [for (bug of this.data.bugs) bug.id] });
 
-  $$button.bind('Pressed', event =>
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] }));
+  $$button.bind('Pressed', event => open_tab());
+
+  // Assign keyboard shortcuts
+  FlareTail.util.event.assign_key_bindings($bug.querySelector('.bug-timeline'), {
+    // [B] previous bug or [F] next bug: handle on the home thread
+    'B|F': event => {
+      vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical';
+      document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list')
+              .dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': event.keyCode }));
+    },
+    // Open the bug in a new tab
+    'O': event => open_tab(),
+  });
 
   this.data = new Proxy({
     'bugs': [],

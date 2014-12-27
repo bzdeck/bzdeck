@@ -44,6 +44,14 @@ BzDeck.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
       columns = prefs[`${name}.list.columns`] || default_cols,
       field = BzDeck.model.data.server.config.field;
 
+  let toggle_prop = prop => {
+    for (let $item of this.$$grid.view.selected) {
+      let _data = this.$$grid.data.rows[$item.sectionRowIndex].data;
+
+      _data[prop] = _data[prop] !== true;
+    }
+  };
+
   this.consumer = consumer;
   this.bugs = [];
 
@@ -70,29 +78,16 @@ BzDeck.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
     }));
   });
 
-  this.$$grid.bind('keydown', event => {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        data = this.$$grid.data,
-        selected = this.$$grid.view.selected;
-
-    // [M] toggle read
-    if (!modifiers && event.keyCode === event.DOM_VK_M) {
-      for (let $item of selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-
-        _data._unread = _data._unread !== true;
-      }
-    }
-
-    // [S] toggle star
-    if (!modifiers && event.keyCode === event.DOM_VK_S) {
-      for (let $item of selected) {
-        let _data = data.rows[$item.sectionRowIndex].data;
-
-        _data._starred = _data._starred !== true;
-      }
-    }
-  }, true); // use capture
+  this.$$grid.assign_key_bindings({
+    // Show previous bug, an alias of UP
+    'B': event => FlareTail.util.event.dispatch_keydown($grid, event.DOM_VK_UP),
+    // Show next bug, an alias of DOWN
+    'F': event => FlareTail.util.event.dispatch_keydown($grid, event.DOM_VK_DOWN),
+    // Toggle read
+    'M': event => toggle_prop('_unread'),
+    // Toggle star
+    'S': event => toggle_prop('_starred'),
+  });
 
   window.addEventListener('Bug:StarToggled', event => {
     let bug = event.detail.bug,
@@ -211,25 +206,30 @@ BzDeck.VerticalThread = function VerticalThread (consumer, name, $outer, options
   this.$$listbox.bind('Selected', event => this.onselect(event));
   this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
 
-  this.$$listbox.bind('keydown', event => {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        selected = this.$$listbox.view.selected;
-
-    // [S] toggle star
-    if (!modifiers && event.keyCode === event.DOM_VK_S) {
-      for (let $item of selected) {
-        BzDeck.core.toggle_star(Number($item.dataset.id), $item.querySelector('[data-field="_starred"]')
-                                                               .getAttribute('aria-checked') === 'false');
-      }
-    }
-
-    // [M] toggle read
-    if (!modifiers && event.keyCode === event.DOM_VK_M) {
-      for (let $item of selected) {
+  this.$$listbox.assign_key_bindings({
+    // Show previous bug, an alias of UP
+    'B': event => FlareTail.util.event.dispatch_keydown(this.$listbox, event.DOM_VK_UP),
+    // Show next bug, an alias of DOWN
+    'F': event => FlareTail.util.event.dispatch_keydown(this.$listbox, event.DOM_VK_DOWN),
+    // Toggle read
+    'M': event => {
+      for (let $item of this.$$listbox.view.selected) {
         BzDeck.core.toggle_unread(Number($item.dataset.id), $item.dataset.unread === 'false');
       }
-    }
-  }, true); // use capture
+    },
+    // Toggle star
+    'S': event => {
+      for (let $item of this.$$listbox.view.selected) {
+        BzDeck.core.toggle_star(Number($item.dataset.id),
+            $item.querySelector('[data-field="_starred"]').getAttribute('aria-checked') === 'false');
+      }
+    },
+    // Open the bug in a new tab
+    'O|RETURN': event => {
+      BzDeck.router.navigate('/bug/' + this.consumer.data.preview_id,
+                             { 'ids': [for (bug of this.consumer.data.bugs) bug.id] });
+    },
+  });
 
   window.addEventListener('Bug:StarToggled', event => {
     let bug = event.detail.bug,

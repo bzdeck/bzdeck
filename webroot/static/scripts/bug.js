@@ -16,13 +16,7 @@ BzDeck.Bug = function Bug ($bug) {
 
   // Custom scrollbars
   for (let $area of this.$bug.querySelectorAll('[role="region"]')) {
-    let $$scrollbar = new FlareTail.widget.ScrollBar($area);
-
-    if ($$scrollbar && $area.matches('.bug-timeline')) {
-      $$scrollbar.onkeydown_extend = BzDeck.Bug.Timeline.handle_keydown.bind($$scrollbar);
-    }
-
-    $area.tabIndex = 0;
+    new FlareTail.widget.ScrollBar($area);
   }
 
   window.addEventListener('Bug:StarToggled', event => {
@@ -120,6 +114,39 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
       BzDeck.model.save_bug(bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
     });
+  }
+
+  // Focus management
+  let set_focus = shift => {
+    let ascending = BzDeck.model.data.prefs['ui.timeline.sort.order'] !== 'descending',
+        entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
+
+    entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+
+    // Focus the first (or last) visible entry
+    for (let $_entry of entries) if ($_entry.clientHeight) {
+      $_entry.focus();
+      $_entry.scrollIntoView(ascending);
+
+      break;
+    }
+  };
+
+  // Assign keyboard shortcuts
+  if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
+    FlareTail.util.event.assign_key_bindings($timeline, {
+      // Toggle read
+      'M': event => BzDeck.core.toggle_unread(this.bug.id, !this.bug._unread),
+      // Toggle star
+      'S': event => BzDeck.core.toggle_star(this.bug.id, !BzDeck.model.bug_is_starred(this.bug)),
+      // Reply
+      'R': event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
+      // Focus management
+      'PAGE_UP|SHIFT+SPACE': event => set_focus(true),
+      'PAGE_DOWN|SPACE': event => set_focus(false),
+    });
+
+    $timeline.setAttribute('keyboard-shortcuts-enabled', 'true');
   }
 };
 
@@ -473,13 +500,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       }
     });
 
-    // Make a quote
-    let quote_header = `(In reply to ${author.real_name || author.email} from comment #${comment.number})`,
-        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
-        quote = `${quote_header}\n${quote_lines.join('\n')}`;
-
-    // Activate the Star button
-    $star_button.addEventListener(click_event_type, event => {
+    let toggle_star = () => {
       if (!bug._starred_comments) {
         bug._starred_comments = new Set([comment.id]);
       } else if (bug._starred_comments.has(comment.id)) {
@@ -490,15 +511,13 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
 
       BzDeck.model.save_bug(bug);
       FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { bug }});
+    };
 
-      event.stopPropagation();
-    });
-
-    $star_button.setAttribute('aria-pressed', !!bug._starred_comments && bug._starred_comments.has(comment.id));
-
-    // Activate the Reply button
-    $reply_button.addEventListener(click_event_type, event => {
-      let $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
+    let reply = () => {
+      let quote_header = `(In reply to ${author.real_name || author.email} from comment #${comment.number})`,
+          quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
+          quote = `${quote_header}\n${quote_lines.join('\n')}`,
+          $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
           $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
       $textbox.focus();
@@ -508,8 +527,17 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       // Scroll unti the caret is visible
       $tabpanel.scrollTop = $tabpanel.scrollHeight;
       $entry.scrollIntoView();
+    };
 
-      event.stopPropagation();
+    // Activate the buttons
+    $star_button.addEventListener(click_event_type, event => { toggle_star(); event.stopPropagation(); });
+    $star_button.setAttribute('aria-pressed', !!bug._starred_comments && bug._starred_comments.has(comment.id));
+    $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
+
+    // Assign keyboard shortcuts
+    FlareTail.util.event.assign_key_bindings($entry, {
+      'R': event => reply(),
+      'S': event => toggle_star(),
     });
   } else {
     $entry.dataset.nocomment = true;
@@ -633,6 +661,30 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     $changes.remove();
   }
 
+  // Focus management
+  let move_focus = shift => {
+    if (!$entry.matches(':focus')) {
+      $entry.focus();
+      $entry.scrollIntoView(ascending);
+
+      return;
+    }
+
+    let ascending = BzDeck.model.data.prefs['ui.timeline.sort.order'] !== 'descending',
+        entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
+
+    entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+    entries = entries.slice(entries.indexOf($entry) + 1);
+
+    // Focus the next (or previous) visible entry
+    for (let $_entry of entries) if ($_entry.clientHeight) {
+      $_entry.focus();
+      $_entry.scrollIntoView(ascending);
+
+      break;
+    }
+  };
+
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
@@ -642,84 +694,28 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   // Mark unread
   $entry.setAttribute('data-unread', 'true');
 
-  // Click to collapse/expand comments
+  // Collapse/expand the comment
+  let collapse_comment = () => $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
+
+  // Assign keyboard shortcuts
+  FlareTail.util.event.assign_key_bindings($entry, {
+    // Collapse/expand the comment
+    'C': event => collapse_comment(),
+    // Focus management
+    'UP|PAGE_UP|SHIFT+SPACE': event => move_focus(true),
+    'DOWN|PAGE_DOWN|SPACE': event => move_focus(false),
+  });
+
+  // Click the header to collapse/expand the comment
   // TODO: Save the state in DB
   $entry.setAttribute('aria-expanded', 'true');
   $header.addEventListener(click_event_type, event => {
     if (event.target === $header) {
-      $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
+      collapse_comment();
     }
   });
 
   return $entry;
-};
-
-BzDeck.Bug.Timeline.handle_keydown = function (event) {
-  // this = a binded Scrollbar widget
-  let key = event.keyCode,
-      modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
-
-  // [Tab] move focus
-  if (key === event.DOM_VK_TAB) {
-    return true;
-  }
-
-  // [B] previous bug or [F] next bug
-  if (document.documentElement.getAttribute('data-current-tab') === 'home' &&
-      !modifiers && [event.DOM_VK_B, event.DOM_VK_F].includes(key)) {
-    let _event = document.createEvent("KeyboardEvent");
-
-    _event.initKeyEvent('keydown', true, true, null, false, false, false, false, key, 0);
-    document.querySelector('#home-list').dispatchEvent(_event);
-    this.view.$owner.focus();
-
-    return FlareTail.util.event.ignore(event);
-  }
-
-  // [M] toggle read or [S] toggle star
-  if (!modifiers && [event.DOM_VK_M, event.DOM_VK_S].includes(key)) {
-    let $parent = this.view.$owner.parentElement,
-        bug_id = Number.parseInt($parent.dataset.id || $parent.id.match(/^bug-(\d+)/)[1]);
-
-    BzDeck.model.get_bug_by_id(bug_id).then(bug => {
-      if (key === event.DOM_VK_M) {
-        BzDeck.core.toggle_unread(bug_id, !bug._unread);
-      }
-
-      if (key === event.DOM_VK_S) {
-        BzDeck.core.toggle_star(bug_id, !BzDeck.model.bug_is_starred(bug));
-      }
-    });
-
-    return FlareTail.util.event.ignore(event);
-  }
-
-  if (event.currentTarget !== this.view.$owner ||
-      ![event.DOM_VK_SPACE, event.DOM_VK_PAGE_UP, event.DOM_VK_PAGE_DOWN].includes(key)) {
-    this.scroll_with_keyboard(event); // Use default handler
-
-    return FlareTail.util.event.ignore(event);
-  }
-
-  let shift = key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey,
-      $timeline = event.currentTarget,
-      comments = [...$timeline.querySelectorAll('[itemprop="comment"]')];
-
-  for (let $comment of shift ? comments.reverse() : comments) {
-    if ($comment.clientHeight === 0) {
-      continue; // The comment is collapsed
-    }
-
-    let top = Math.round($comment.getBoxQuads({ 'relativeTo': $timeline })[0].bounds.top);
-
-    if (shift && top < 0 || !shift && top > 0) {
-      $timeline.scrollTop += top;
-
-      break;
-    }
-  }
-
-  return FlareTail.util.event.ignore(event);
 };
 
 BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
@@ -774,13 +770,13 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
   this.$textbox.value = '';
 
-  this.$textbox.addEventListener('keydown', event => {
-    event.stopPropagation();
-
-    if (this.has_text() && this.has_token() &&
-        event.keyCode === event.DOM_VK_RETURN && (event.metaKey || event.ctrlKey)) {
-      this.submit();
-    }
+  // Assign keyboard shortcuts
+  FlareTail.util.event.assign_key_bindings(this.$textbox, {
+    'CTRL+RETURN|META+RETURN': event => {
+      if (this.has_text() && this.has_token()) {
+        this.submit();
+      }
+    },
   });
 
   this.$textbox.addEventListener('input', event => this.oninput());
