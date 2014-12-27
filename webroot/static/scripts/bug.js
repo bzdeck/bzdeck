@@ -289,10 +289,10 @@ BzDeck.Bug.prototype.update = function (bug, changes) {
   let $timeline = this.$bug.querySelector('.bug-timeline');
 
   if ($timeline) {
-    let $parent = $timeline.querySelector('section, .scrollable-area-content'),
+    let $parent = $timeline.querySelector('.scrollable-area-content'),
         $entry = new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes);
 
-    $parent.insertBefore($entry, $timeline.querySelector('[role="form"]'));
+    $parent.appendChild($entry);
     $entry.scrollIntoView();
   }
 
@@ -357,7 +357,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       comment_form = new BzDeck.Bug.Timeline.CommentForm(bug, timeline_id),
       $expander,
       $fragment = new DocumentFragment(),
-      $parent = $timeline.querySelector('section, .scrollable-area-content');
+      $parent = $timeline.querySelector('.scrollable-area-content');
 
   for (let attachment of bug.attachments) {
     entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
