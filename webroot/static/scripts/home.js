@@ -66,12 +66,13 @@ BzDeck.HomePage = function HomePage () {
   $$button.bind('Pressed', event => open_tab());
 
   // Assign keyboard shortcuts
-  FlareTail.util.event.assign_key_bindings($bug.querySelector('.bug-timeline'), {
+  FlareTail.util.kbd.assign($bug.querySelector('.bug-timeline'), {
     // [B] previous bug or [F] next bug: handle on the home thread
     'B|F': event => {
-      vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical';
-      document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list')
-              .dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': event.keyCode }));
+      let vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical',
+          $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
+
+      FlareTail.util.kbd.dispatch($target, event.keyCode);
     },
     // Open the bug in a new tab
     'O': event => open_tab(),

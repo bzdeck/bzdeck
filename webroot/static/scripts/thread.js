@@ -80,9 +80,9 @@ BzDeck.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
 
   this.$$grid.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.event.dispatch_keydown($grid, event.DOM_VK_UP),
+    'B': event => FlareTail.util.kbd.dispatch($grid, event.DOM_VK_UP),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.event.dispatch_keydown($grid, event.DOM_VK_DOWN),
+    'F': event => FlareTail.util.kbd.dispatch($grid, event.DOM_VK_DOWN),
     // Toggle read
     'M': event => toggle_prop('_unread'),
     // Toggle star
@@ -208,9 +208,9 @@ BzDeck.VerticalThread = function VerticalThread (consumer, name, $outer, options
 
   this.$$listbox.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.event.dispatch_keydown(this.$listbox, event.DOM_VK_UP),
+    'B': event => FlareTail.util.kbd.dispatch(this.$listbox, event.DOM_VK_UP),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.event.dispatch_keydown(this.$listbox, event.DOM_VK_DOWN),
+    'F': event => FlareTail.util.kbd.dispatch(this.$listbox, event.DOM_VK_DOWN),
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {

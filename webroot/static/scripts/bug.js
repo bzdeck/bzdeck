@@ -134,7 +134,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
 
   // Assign keyboard shortcuts
   if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
-    FlareTail.util.event.assign_key_bindings($timeline, {
+    FlareTail.util.kbd.assign($timeline, {
       // Toggle read
       'M': event => BzDeck.core.toggle_unread(this.bug.id, !this.bug._unread),
       // Toggle star
@@ -535,7 +535,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
 
     // Assign keyboard shortcuts
-    FlareTail.util.event.assign_key_bindings($entry, {
+    FlareTail.util.kbd.assign($entry, {
       'R': event => reply(),
       'S': event => toggle_star(),
     });
@@ -698,7 +698,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   let collapse_comment = () => $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
 
   // Assign keyboard shortcuts
-  FlareTail.util.event.assign_key_bindings($entry, {
+  FlareTail.util.kbd.assign($entry, {
     // Collapse/expand the comment
     'C': event => collapse_comment(),
     // Focus management
@@ -771,7 +771,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   this.$textbox.value = '';
 
   // Assign keyboard shortcuts
-  FlareTail.util.event.assign_key_bindings(this.$textbox, {
+  FlareTail.util.kbd.assign(this.$textbox, {
     'CTRL+RETURN|META+RETURN': event => {
       if (this.has_text() && this.has_token()) {
         this.submit();

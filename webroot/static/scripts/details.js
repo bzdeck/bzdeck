@@ -136,7 +136,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
       index = ids.indexOf(this.data.id),
       prev = ids[index - 1],
       next = ids[index + 1],
-      assign_key_binding = (...args) => FlareTail.util.event.assign_key_binding($tabpanel, ...args);
+      assign_key_binding = (key, command) => FlareTail.util.kbd.assign($tabpanel, { key: command });
 
   let change_button_tooltip = (id, $$button) => {
     BzDeck.model.get_bug_by_id(id).then(bug => {
