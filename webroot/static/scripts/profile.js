@@ -18,6 +18,11 @@ BzDeck.ProfilePage = function ProfilePage (name) {
   $tabpanel.setAttribute('aria-busy', 'true');
   $status.textContent = 'Loading...'; // l10n
 
+  // Display the links to Gravatar if this is the user's self profile
+  if (name === BzDeck.model.data.account.name) {
+    $profile.classList.add('self');
+  }
+
   BzDeck.model.fetch_user(name).then(user => {
     let name = user.real_name || user.name,
         gravatar = new BzDeck.services.Gravatar(user.name);

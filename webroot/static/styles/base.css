@@ -3081,6 +3081,10 @@ article[id$="preview-bug"] > .bug-info {
   content: ":";
 }
 
+[id|="tabpanel-profile"] article:not(.self) [data-id|="gravatar"] {
+  display: none;
+}
+
 [id|="tabpanel-profile"] footer [role="status"] {
   position: absolute;
   top: calc(50% + 4rem);
