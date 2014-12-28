@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      mobile = FlareTail.util.ua.device.mobile,
       prefs = BzDeck.model.data.prefs,
       $sidebar = document.querySelector('#sidebar');
 
@@ -170,7 +170,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     $bug.setAttribute('aria-hidden', 'false');
     $$button.data.disabled = false;
 
-    if (FlareTail.util.device.type.startsWith('mobile')) {
+    if (FlareTail.util.ua.device.mobile) {
       let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
           $_title = $timeline_content.querySelector('h3'),
           $title = $bug.querySelector('h3');
@@ -185,8 +185,8 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 };
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
-  let vertical = FlareTail.util.device.type.startsWith('mobile') || !pref || pref === 'vertical',
-      phone = FlareTail.util.device.type === 'mobile-phone',
+  let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
+      phone = FlareTail.util.ua.device.phone,
       prefs = BzDeck.model.data.prefs,
       $$splitter = this.$$preview_splitter;
 

@@ -58,8 +58,8 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   this.$$bug = new BzDeck.Bug($tabpanel.querySelector('article'));
   this.$$bug.fill(bug);
 
-  let mobile = FlareTail.util.device.type.startsWith('mobile'),
-      phone = FlareTail.util.device.type === 'mobile-phone',
+  let mobile = FlareTail.util.ua.device.mobile,
+      phone = FlareTail.util.ua.device.phone,
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       $$tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),

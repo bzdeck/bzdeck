@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.Sidebar = function Sidebar () {
   let FTw = FlareTail.widget,
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      mobile = FlareTail.util.ua.device.mobile,
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -142,7 +142,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   };
 
   // Mobile compact layout
-  if (FlareTail.util.device.type.startsWith('mobile') &&
+  if (FlareTail.util.ua.device.mobile &&
       BzDeck.toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     BzDeck.toolbar.$$tablist.view.selected = BzDeck.toolbar.$$tablist.view.members[0];

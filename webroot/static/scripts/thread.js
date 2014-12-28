@@ -20,7 +20,7 @@ BzDeck.Thread.prototype.onselect = function (event) {
   let id = this.consumer.data.preview_id = Number.parseInt(ids[ids.length - 1]);
 
   // Mobile compact layout
-  if (FlareTail.util.device.type === 'mobile-phone') {
+  if (FlareTail.util.ua.device.phone) {
     BzDeck.router.navigate('/bug/' + id, { 'ids': [for (bug of this.consumer.data.bugs) bug.id] });
   }
 };
@@ -190,7 +190,7 @@ BzDeck.ClassicThread.prototype.filter = function (bugs) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.VerticalThread = function VerticalThread (consumer, name, $outer, options) {
-  let mobile = FlareTail.util.device.type.startsWith('mobile');
+  let mobile = FlareTail.util.ua.device.mobile;
 
   this.consumer = consumer;
   this.name = name;

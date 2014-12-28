@@ -10,7 +10,7 @@ let BzDeck = BzDeck || {};
 BzDeck.Toolbar = function Toolbar () {
   let FTw = FlareTail.widget,
       FTu = FlareTail.util,
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      mobile = FlareTail.util.ua.device.mobile,
       $$tablist = this.$$tablist = new FTw.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
@@ -275,7 +275,7 @@ BzDeck.Toolbar.prototype.open_tab = function (options) {
     pages.set(page_id || 'default', page);
 
     // Prepare the Back button on the mobile banner
-    if (FlareTail.util.device.type.startsWith('mobile') && !$tabpanel.querySelector('.banner-nav-button')) {
+    if (FlareTail.util.ua.device.mobile && !$tabpanel.querySelector('.banner-nav-button')) {
       let $header = $tabpanel.querySelector('header'),
           $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 

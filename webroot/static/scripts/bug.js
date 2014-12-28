@@ -349,7 +349,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
                              [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       prefs = BzDeck.model.data.prefs,
       show_cc_changes = prefs['ui.timeline.show_cc_changes'] === true,
-      click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+      click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
       last_comment_time,
       $timeline = $bug.querySelector('.bug-timeline'),
@@ -463,7 +463,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
 
 BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
-      click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+      click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       author,
       time,
       comment = data.get('comment'),
@@ -719,7 +719,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
 };
 
 BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
-  let click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
 
   this.$form = $fragment.firstElementChild;
@@ -919,7 +919,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
 };
 
 BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment) {
-  let click_event_type = FlareTail.util.device.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       $tbody = this.$attachments_tbody,
       $row = this.$attachments_row_tmpl.content.cloneNode(true).firstElementChild,
       $desc = $row.querySelector('[data-field="description"]');

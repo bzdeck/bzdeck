@@ -42,7 +42,7 @@ BzDeck.SearchPage = function SearchPage (search_id) {
       }
 
       if (prop === 'preview_id') {
-        if (!FlareTail.util.device.type.startsWith('mobile')) {
+        if (!FlareTail.util.ua.device.mobile) {
           FlareTail.util.event.async(() => {
             this.show_preview(oldval, newval);
           });
@@ -225,7 +225,7 @@ BzDeck.SearchPage.prototype.setup_basic_search_pane = function () {
 
 BzDeck.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
-      mobile = FlareTail.util.device.type.startsWith('mobile'),
+      mobile = FlareTail.util.ua.device.mobile,
       prefs = BzDeck.model.data.prefs;
 
   this.thread = new BzDeck.ClassicThread(this, 'search', $pane.querySelector('[role="grid"]'), {
