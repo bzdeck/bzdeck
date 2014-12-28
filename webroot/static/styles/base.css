@@ -413,7 +413,7 @@ col[data-hidden="false"] {
  * ---------------------------------------------------------------------------------------------- */
 
 #app-login {
-  position: fixed;
+  position: absolute;
   z-index: 200;
   width: 100%;
   height: 100%;
@@ -436,10 +436,6 @@ col[data-hidden="false"] {
 
 #app-login header {
   position: absolute;
-  top: calc(50% - 6.4rem);
-  left: calc(50% - 24rem);
-  width: 12.8rem;
-  height: 12.8rem;
 }
 
 [data-device|="mobile"]:root #app-login header {
@@ -459,17 +455,8 @@ col[data-hidden="false"] {
 
 #app-login > div {
   position: absolute;
-  top: calc(50% - 6.4rem);
-  left: calc(50% - 24rem + 14.4rem);
-  width: calc(48rem - 14.4rem);
   line-height: 1.6;
-}
-
-#app-login > div > div {
-  display: table-cell;
-  width: 100%;
-  height: 12.8rem;
-  vertical-align: middle;
+  text-align: center;
 }
 
 #app-login p {
@@ -3156,6 +3143,19 @@ article[id$="preview-bug"] > .bug-info {
 
 @media (min-width: 641px) {
 
+  #app-login header {
+    top: calc(50% - 12.8rem - 2rem);
+    left: calc(50% - 12.8rem / 2);
+    width: 12.8rem;
+    height: 12.8rem;
+  }
+
+  #app-login > div {
+    top: 50%;
+    left: calc(50% - 48rem / 2);
+    width: 48rem;
+  }
+
   .bug-info[id|="bug"],
   .bug-info[id^="search"] {
     width: 36%;
@@ -3222,26 +3222,20 @@ article[id$="preview-bug"] > .bug-info {
 
   [data-device|="mobile"]:root #app-login header {
     top: 2rem;
-    left: 2rem;
-    width: 4rem;
-    height: 4rem;
+    left: calc(50% - 8rem / 2);
+    width: 8rem;
+    height: 8rem;
   }
 
   [data-device|="mobile"]:root #app-login h1 {
-    background-position: .4rem .4rem;
-    background-size: 3.2rem;
+    background-size: 8rem;
   }
 
   [data-device|="mobile"]:root #app-login > div {
-    top: 4.8rem;
-    left: 0;
-    padding: 2.4rem;
-    width: auto;
-  }
-
-  [data-device|="mobile"]:root #app-login > div > div {
-    display: block;
-    height: auto;
+    top: 12rem;
+    box-sizing: padding-box;
+    padding: 0 2.4rem;
+    width: 100%;
   }
 
 }
@@ -3268,12 +3262,26 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 /* ----------------------------------------------------------------------------------------------
- * Mobile, Small Display
+ * Mobile, Small Display, Consider the keyboard's space
  * ---------------------------------------------------------------------------------------------- */
 
-@media (max-device-height: 480px) {
+@media (max-device-height: 639px) {
 
-  [data-device|="mobile"]:root #app-intro {
+  [data-device|="mobile"]:root #app-login header {
+    left: calc(50% - 4rem / 2);
+    width: 4rem;
+    height: 4rem;
+  }
+
+  [data-device|="mobile"]:root #app-login h1 {
+    background-size: 4rem;
+  }
+
+  [data-device|="mobile"]:root #app-login > div {
+    top: 8rem;
+  }
+
+  #app-intro {
     display: none;
   }
 
