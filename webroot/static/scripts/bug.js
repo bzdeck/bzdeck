@@ -15,9 +15,8 @@ BzDeck.Bug = function Bug ($bug) {
   this.$bug = $bug;
 
   // Custom scrollbars
-  for (let $area of this.$bug.querySelectorAll('[role="region"]')) {
-    new FlareTail.widget.ScrollBar($area);
-  }
+  this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
+                                  new FlareTail.widget.ScrollBar($area)]);
 
   window.addEventListener('Bug:StarToggled', event => {
     let _bug = event.detail.bug,
@@ -215,6 +214,9 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
 
       // Add tooltips to the related bugs
       this.set_bug_tooltips();
+
+      // Force updating the scrollbars because sometimes those are not automatically updated
+      this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
     });
   }
 
