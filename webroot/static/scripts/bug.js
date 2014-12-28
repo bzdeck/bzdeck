@@ -291,11 +291,8 @@ BzDeck.Bug.prototype.update = function (bug, changes) {
   let $timeline = this.$bug.querySelector('.bug-timeline');
 
   if ($timeline) {
-    let $parent = $timeline.querySelector('.scrollable-area-content'),
-        $entry = new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes);
-
-    $parent.appendChild($entry);
-    $entry.scrollIntoView();
+    $timeline.querySelector('.comments-wrapper')
+             .appendChild(new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes)).scrollIntoView();
   }
 
   if (changes.has('attachment') && this.$bug.querySelector('[data-field="attachments"]')) {
