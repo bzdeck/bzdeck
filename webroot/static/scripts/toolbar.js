@@ -166,7 +166,7 @@ BzDeck.Toolbar = function Toolbar () {
   };
 
   FlareTail.util.kbd.assign(window, {
-    'CTRL+K|META+K': event => {
+    'ACCEL+K': event => {
       $search_box.focus();
       event.preventDefault();
     },

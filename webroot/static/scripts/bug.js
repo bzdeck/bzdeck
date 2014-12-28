@@ -772,7 +772,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
 
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign(this.$textbox, {
-    'CTRL+RETURN|META+RETURN': event => {
+    'ACCEL+RETURN': event => {
       if (this.has_text() && this.has_token()) {
         this.submit();
       }
