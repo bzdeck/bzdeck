@@ -126,8 +126,6 @@ BzDeck.Sidebar = function Sidebar () {
 BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   let home = BzDeck.pages.home;
 
-  home.data.preview_id = null;
-
   let update_list = bugs => {
     home.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
     FlareTail.util.event.async(() => {

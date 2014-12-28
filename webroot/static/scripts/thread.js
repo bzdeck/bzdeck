@@ -12,16 +12,9 @@ BzDeck.Thread = function Thread () {};
 BzDeck.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
 
-  if (!ids.length) {
-    return;
-  }
-
-  // Show Bug in Preview Pane
-  let id = this.consumer.data.preview_id = Number.parseInt(ids[ids.length - 1]);
-
-  // Mobile compact layout
-  if (FlareTail.util.ua.device.phone) {
-    BzDeck.router.navigate('/bug/' + id, { 'ids': [for (bug of this.consumer.data.bugs) bug.id] });
+  if (ids.length) {
+    // Show the bug in the preview pane or a new tab
+    this.consumer.data.preview_id = Number.parseInt(ids[ids.length - 1]);
   }
 };
 

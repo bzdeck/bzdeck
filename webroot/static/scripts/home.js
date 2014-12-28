@@ -11,6 +11,7 @@ BzDeck.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
       prefs = BzDeck.model.data.prefs,
+      $preview_pane = document.querySelector('#home-preview-pane'),
       $sidebar = document.querySelector('#sidebar');
 
   // Prepare the Menu button on the mobile banner
@@ -98,12 +99,14 @@ BzDeck.HomePage = function HomePage () {
     'set': (obj, prop, newval) => {
       let oldval = obj[prop];
 
-      if (prop === 'preview_id' && oldval !== newval) {
-        FlareTail.util.event.async(() => {
-          this.show_preview(oldval, newval);
-        });
-
-        BzDeck.bugzfeed.subscribe([newval]);
+      if (prop === 'preview_id') {
+        // Show the bug preview only when the preview pane is visible (on desktop and tablet)
+        if (!$preview_pane.clientHeight) {
+          BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
+        } else if (oldval !== newval) {
+          FlareTail.util.event.async(() => this.show_preview(oldval, newval));
+          BzDeck.bugzfeed.subscribe([newval]);
+        }
       }
 
       obj[prop] = newval;
