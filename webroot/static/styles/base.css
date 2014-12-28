@@ -1923,15 +1923,15 @@ article[id$="preview-bug"] > .bug-info {
   width: 100%;
 }
 
-.bug-timeline > .scrollable-area-content {
+.bug-timeline .comments-wrapper {
   display: flex;
 }
 
-[data-timeline-sort-order="ascending"]:root .bug-timeline > .scrollable-area-content {
+[data-timeline-sort-order="ascending"]:root .bug-timeline .comments-wrapper {
   flex-direction: column;
 }
 
-[data-timeline-sort-order="descending"]:root .bug-timeline > .scrollable-area-content {
+[data-timeline-sort-order="descending"]:root .bug-timeline .comments-wrapper {
   flex-direction: column-reverse;
 }
 

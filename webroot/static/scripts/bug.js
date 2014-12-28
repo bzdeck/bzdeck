@@ -359,6 +359,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       comment_form = new BzDeck.Bug.Timeline.CommentForm(bug, timeline_id),
       $expander,
       $fragment = new DocumentFragment(),
+      $comments_wrapper = $timeline.querySelector('.comments-wrapper'),
       $parent = $timeline.querySelector('.scrollable-area-content');
 
   for (let attachment of bug.attachments) {
@@ -396,7 +397,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   }
 
   // Append entries to the timeline
-  $parent.appendChild($fragment);
+  $comments_wrapper.appendChild($fragment);
 
   // Show an expander if there are read comments
   if (read_comments_num > 1) {
@@ -419,11 +420,11 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       }
 
       $timeline.focus();
-      $parent.replaceChild($fragment, $expander);
+      $comments_wrapper.replaceChild($fragment, $expander);
 
       return FlareTail.util.event.ignore(event);
     });
-    $parent.insertBefore($expander, $parent.querySelector('[itemprop="comment"]'));
+    $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('[itemprop="comment"]'));
   }
 
   let $existing_form = $timeline.parentElement.querySelector('[id$="comment-form"]');
