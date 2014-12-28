@@ -366,7 +366,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
     entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
   }
 
-  for (let history of bug.history) if (entries.has(history.when)) {
+  for (let history of bug.history) if (entries.has(get_time(history.when))) {
     entries.get(get_time(history.when)).set('history', history);
   } else {
     entries.set(get_time(history.when), new Map([['history', history]]));
