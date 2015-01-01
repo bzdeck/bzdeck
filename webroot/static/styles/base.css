@@ -831,7 +831,7 @@ col[data-hidden="false"] {
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {
-  margin: .4em 0;
+  margin: .4rem 0;
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
@@ -1419,7 +1419,7 @@ main {
 }
 
 .bug-list col[data-id="id"][data-hidden="false"] {
-  width: 5em;
+  width: 5rem;
 }
 
 .bug-list col[data-id="summary"][data-hidden="false"] {
@@ -2931,7 +2931,7 @@ article[id$="preview-bug"] > .bug-info {
 
   [id^="settings-tabpanel"] > section > section > h4 {
     float: left;
-    width: calc(50% - 1em);
+    width: calc(50% - 1rem);
   }
 
   [id^="settings-tabpanel"] > section > section > h4 ~ * {
@@ -3193,7 +3193,7 @@ article[id$="preview-bug"] > .bug-info {
   [id|="tabpanel-profile"] article > header h3 {
     bottom: 1rem;
     left: 11.6rem;
-    width: calc(100% - 11.6rem - 1.2em);
+    width: calc(100% - 11.6rem - 1.2rem);
     font-size: 1.6rem;
   }
 
