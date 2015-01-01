@@ -59,7 +59,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   this.$$bug.fill(bug);
 
   let mobile = FlareTail.util.ua.device.mobile,
-      phone = FlareTail.util.ua.device.phone,
+      mql = window.matchMedia('(max-width: 1023px)'),
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       $$tablist = new FlareTail.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
@@ -73,18 +73,23 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
     $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
   }
 
-  if (phone) {
-    $info_tab.setAttribute('aria-hidden', 'false');
-    $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
-  } else {
-    if ($$tablist.view.selected[0] === $info_tab) {
-      $$tablist.view.selected = $$tablist.view.$focused = $timeline_tab;
-    }
+  let change_layout = mql => {
+    if (mql.matches) {  // Mobile layout
+      $info_tab.setAttribute('aria-hidden', 'false');
+      $tabpanel.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
+    } else {
+      if ($$tablist.view.selected[0] === $info_tab) {
+        $$tablist.view.selected = $$tablist.view.$focused = $timeline_tab;
+      }
 
-    $info_tab.setAttribute('aria-hidden', 'true');
-    $tabpanel.querySelector('article > div').appendChild($bug_info);
-    $tablist.removeAttribute('aria-hidden');
-  }
+      $info_tab.setAttribute('aria-hidden', 'true');
+      $tabpanel.querySelector('article > div').appendChild($bug_info);
+      $tablist.removeAttribute('aria-hidden');
+    }
+  };
+
+  mql.addListener(change_layout);
+  change_layout(mql);
 
   // Scroll a tabpanel to top when the tab is selected
   $$tablist.bind('Selected', event => {
@@ -95,24 +100,28 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   });
 
   // Hide tabs when scrolled down on mobile
-  for (let $tabpanel_content of $tabpanel.querySelectorAll('[role="tabpanel"] [role="region"]')) {
-    if (!mobile || !phone && $tabpanel_content.matches('.bug-info')) {
-      continue;
+  if (mobile) {
+    for (let $content of $tabpanel.querySelectorAll('.scrollable-area-content')) {
+      let info = $content.parentElement.matches('.bug-info'),
+          top = 0,
+          hidden = false;
+
+      $content.addEventListener('scroll', event => FlareTail.util.event.async(() => {
+        if (!mql.matches && info) {
+          return;
+        }
+
+        let _top = event.target.scrollTop,
+            _hidden = top <= _top;
+
+        if (hidden !== _hidden) {
+          hidden = _hidden;
+          $tablist.setAttribute('aria-hidden', hidden);
+        }
+
+        top = _top;
+      }));
     }
-
-    let scroll_top = $tabpanel_content.scrollTop,
-        tablist_hidden = false;
-
-    $tabpanel_content.querySelector('.scrollable-area-content').addEventListener('scroll', event => {
-      let value = event.target.scrollTop - scroll_top > 0;
-
-      if (tablist_hidden !== value) {
-        tablist_hidden = value;
-        $tablist.setAttribute('aria-hidden', String(value));
-      }
-
-      scroll_top = event.target.scrollTop;
-    });
   }
 
   // Set Back & Forward navigation

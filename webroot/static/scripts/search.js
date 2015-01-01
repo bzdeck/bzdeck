@@ -45,7 +45,11 @@ BzDeck.SearchPage = function SearchPage (search_id) {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (!this.view.panes['preview'].clientHeight) {
           BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
-        } else if (oldval !== newval) {
+
+          return; // Do not save the value
+        }
+
+        if (oldval !== newval) {
           FlareTail.util.event.async(() => this.show_preview(oldval, newval));
           BzDeck.bugzfeed.subscribe([newval]);
         }

@@ -103,7 +103,11 @@ BzDeck.HomePage = function HomePage () {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (!$preview_pane.clientHeight) {
           BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
-        } else if (oldval !== newval) {
+
+          return; // Do not save the value
+        }
+
+        if (oldval !== newval) {
           FlareTail.util.event.async(() => this.show_preview(oldval, newval));
           BzDeck.bugzfeed.subscribe([newval]);
         }
@@ -189,8 +193,8 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
-      phone = FlareTail.util.ua.device.phone,
       prefs = BzDeck.model.data.prefs,
+      mql = window.matchMedia('(max-width: 1023px)'),
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
@@ -198,16 +202,19 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   if (vertical) {
     let $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
 
+    let show_preview = mql => {
+      let $$listbox = this.thread.$$listbox;
+
+      if ($$listbox.view.members.length && document.querySelector('#home-preview-pane').clientHeight) {
+        $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
+      }
+    };
+
     if (!this.vertical_thread_initialized) {
       // Select the first bug on the list automatically when a folder is opened
       // TODO: Remember the last selected bug for each folder
-      $listbox.addEventListener('Updated', event => {
-        let $$listbox = this.thread.$$listbox;
-
-        if ($$listbox.view.members.length && !phone) {
-          $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.members[0];
-        }
-      });
+      $listbox.addEventListener('Updated', event => show_preview(mql));
+      mql.addListener(show_preview);
 
       // Star button
       $listbox.addEventListener('mousedown', event => {
@@ -244,7 +251,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
       // Select the first bug on the list automatically when a folder is opened
       // TODO: Remember the last selected bug for each folder
       $$grid.bind('Filtered', event => {
-        if ($$grid.view.members.length && !phone) {
+        if ($$grid.view.members.length) {
           $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
         }
       });

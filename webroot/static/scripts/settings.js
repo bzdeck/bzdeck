@@ -9,9 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.SettingsPage = function SettingsPage () {
   // Activate tabs
-  if (!FlareTail.util.ua.device.phone) {
-    this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
-  }
+  this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
 
   // Activate token input
   this.activate_token_input();
