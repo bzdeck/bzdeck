@@ -42,13 +42,6 @@
   src: url(/static/fonts/FontAwesome.woff?v=4.1.0) format('woff');
 }
 
-@font-face {
-  font-family: GaiaIcons;
-  font-weight: normal;
-  font-style: normal;
-  src: url(/static/fonts/gaia-icons.ttf?v=0.7.5) format('truetype');
-}
-
 /* ----------------------------------------------------------------------------------------------
  * General
  * ---------------------------------------------------------------------------------------------- */
@@ -1091,18 +1084,18 @@ main {
   left: 0;
   width: 4rem;
   height: 4rem;
-  font-size: 2.4rem;
+  font-size: 2rem;
   line-height: 4rem;
-  font-family: GaiaIcons;
+  font-family: FontAwesome;
   text-align: center;
 }
 
 [data-device|="mobile"]:root [role="tabpanel"]:not(#tabpanel-home) > * > header .banner-nav-button::before {
-  content: "\F112"; // back icon
+  content: "\F053"; // back icon
 }
 
 [data-device|="mobile"]:root #tabpanel-home > * > header .banner-nav-button::before {
-  content: "\F176"; // hamburger menu icon
+  content: "\F0C9"; // hamburger menu icon
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
