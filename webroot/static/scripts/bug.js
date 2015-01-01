@@ -190,8 +190,17 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
   }
 
   // See Also
-  for (let $li of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    $li.textContent = $li.getAttribute('href');
+  for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
+    let re = new RegExp(`^${BzDeck.model.data.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, "\\.")),
+        match = $link.href.match(re);
+
+    if (match) {
+      $link.text = match[1];
+      $link.setAttribute('data-bug-id', match[1]);
+      $link.setAttribute('role', 'button');
+    } else {
+      $link.text = $link.href;
+    }
   }
 
   // Flags

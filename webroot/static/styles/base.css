@@ -184,6 +184,8 @@ del a {
   height: 1.6rem;
   background-clip: padding-box;
   line-height: 1;
+  text-decoration: none;
+  cursor: default;
 }
 
 [role="textbox"] {
@@ -1768,6 +1770,11 @@ article[id$="preview-bug"] > .bug-info {
 .bug-info section > ul > li:last-of-type,
 .bug-info dd:last-of-type {
   border-width: 0;
+}
+
+.bug-info [role="link"][itemprop="see_also"]:after {
+  content: "\000A"; /* whitespace */
+  white-space: pre; /* = <br> */
 }
 
 .bug-info [role="button"], .bug-info [itemtype$="Person"] {
