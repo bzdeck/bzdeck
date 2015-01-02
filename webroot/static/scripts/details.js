@@ -31,6 +31,8 @@ BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
         $tab.title = this.get_tab_title(bug);
         BzDeck.core.update_window_title($tab);
       }
+
+      BzDeck.core.toggle_unread(id, false);
     });
   });
 
