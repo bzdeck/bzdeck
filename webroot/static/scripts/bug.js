@@ -109,8 +109,9 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
     FlareTail.util.event.async(() => this.fill_details(partial, false));
   } else {
     // Load comments, history, flags and attachments' metadata
-    BzDeck.model.fetch_bug(this.bug, false).then(bug => {
-      BzDeck.model.save_bug(bug);
+    BzDeck.model.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
+      this.bug = Object.assign(this.bug, bug_details); // Merge data
+      BzDeck.model.save_bug(this.bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
     });
   }
@@ -285,7 +286,7 @@ BzDeck.Bug.prototype.set_bug_tooltips = function () {
       bugs.map(set_tooltops);
 
       if (lookup_bug_ids.length) {
-        BzDeck.model.fetch_bugs_by_ids(lookup_bug_ids).then(bugs => {
+        BzDeck.model.fetch_bugs(lookup_bug_ids).then(bugs => {
           BzDeck.model.save_bugs(bugs);
           bugs.map(set_tooltops);
         });
@@ -1189,7 +1190,7 @@ BzDeck.bugzfeed.unsubscribe = function (bugs) {
 };
 
 BzDeck.bugzfeed.get_changes = function (message) {
-  BzDeck.model.fetch_bug({ 'id': message.bug }).then(bug => {
+  BzDeck.model.fetch_bug(message.bug).then(bug => {
     let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
         get_change = (field, time_field = 'creation_time') =>
           [for (item of bug[field]) if (new Date(item[time_field]) - time === 0) item][0],

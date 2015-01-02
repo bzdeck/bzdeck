@@ -185,7 +185,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
 
   BzDeck.core.show_status('Loading...'); // l10n
 
-  BzDeck.model.fetch_bug({ id }).then(bug => {
+  BzDeck.model.fetch_bug(id).then(bug => {
     // Save in DB
     BzDeck.model.save_bug(bug);
 
@@ -358,7 +358,10 @@ BzDeck.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
 
     if (!bug.comments) {
       // Prefetch the bug
-      BzDeck.model.fetch_bug(bug, false).then(bug => BzDeck.model.save_bug(bug));
+      BzDeck.model.fetch_bug(bug.id, false).then(bug_details => { // Exclude metadata
+        bug = Object.assign(bug, bug_details); // Merge data
+        BzDeck.model.save_bug(bug);
+      });
     }
   });
 };

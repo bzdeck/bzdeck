@@ -239,14 +239,57 @@ BzDeck.model.fetch_subscriptions = function () {
       last_loaded = prefs['subscriptions.last_loaded'],
       ignore_cc = prefs['notifications.ignore_cc_changes'] !== false,
       firstrun = !last_loaded,
+      caches = new Map(),
       params = new URLSearchParams(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
+
+  let initialize_bug = bug => new Promise(resolve => {
+    bug._unread = false; // Mark all bugs read if the session is firstrun
+    bug._update_needed = true; // Flag to fetch details
+    resolve(bug);
+  });
+
+  let parse_bug = bug => new Promise(resolve => {
+    let cache = caches.get(bug.id),
+        cmp_date;
+
+    if (cache) {
+      cmp_date = str => new Date(str) > new Date(cache.last_change_time);
+
+      // Copy annotations
+      for (let [key, value] of Iterator(cache)) if (key.startsWith('_')) {
+        bug[key] = value;
+      }
+    }
+
+    bug._update_needed = false;
+
+    // TODO: Check and notify what is changed
+
+    // Mark the bug unread if the user subscribes CC changes or the bug is already unread
+    if (!ignore_cc || !cache || cache._unread || !cache._last_viewed ||
+        // or there are unread comments
+        [for (c of bug.comments) if (cmp_date(c.creation_time)) c].length ||
+        // or there are unread attachments
+        [for (a of bug.attachments || []) if (cmp_date(a.creation_time)) a].length ||
+        // or there are unread non-CC changes
+        [for (h of bug.history || []) if (cmp_date(h.when) &&
+            [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
+      bug._unread = true;
+    } else {
+      // Looks like there are only CC changes, so mark the bug read
+      bug._unread = false;
+    }
+
+    resolve(bug);
+  });
 
   params.append('j_top', 'OR');
 
   if (last_loaded) {
-    let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), BzDeck.model.data.server.timezone);
+    let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), this.data.server.timezone);
 
+    params.append('include_fields', 'id');
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
   } else {
     // Fetch only solved bugs at initial startup
@@ -259,71 +302,47 @@ BzDeck.model.fetch_subscriptions = function () {
     params.append('v' + i, this.data.account.name);
   }
 
-  return new Promise((resolve, reject) => {
-    this.get_all_bugs().then(cached_bugs => {
-      // Append starred bugs to the query
-      params.append('f9', 'bug_id');
-      params.append('o9', 'anywords');
-      params.append('v9', [for (_bug of cached_bugs) if (BzDeck.model.bug_is_starred(_bug)) _bug.id].join());
+  return new Promise((resolve, reject) => this.get_all_bugs().then(cached_bugs => {
+    // Append starred bugs to the query
+    params.append('f9', 'bug_id');
+    params.append('o9', 'anywords');
+    params.append('v9', [for (bug of cached_bugs) if (this.bug_is_starred(bug)) bug.id].join());
 
-      this.request('GET', 'bug', params).then(result => {
-        last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
+    // Convert Array to Map for easier access
+    caches = new Map([for (bug of cached_bugs) [bug.id, bug]]);
 
-        let load_details = bug => new Promise(resolve => {
-          if (firstrun) {
-            bug._unread = false; // Mark all bugs read if the session is firstrun
-            bug._update_needed = true; // Flag to fetch details
-            resolve(bug);
+    this.request('GET', 'bug', params).then(result => {
+      last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
-            return;
-          }
+      if (firstrun) {
+        return Promise.all([for (bug of result.bugs) initialize_bug(bug)]).then(bugs => this.save_bugs(bugs));
+      }
 
-          this.fetch_bug(bug, false).then(bug => {
-            let cache = [for (_bug of cached_bugs) if (_bug.id === bug.id) _bug][0],
-                cmp_date;
+      if (result.bugs.length) {
+        return this.fetch_bugs([for (bug of result.bugs) bug.id])
+            .then(bugs => Promise.all([for (bug of bugs) parse_bug(bug)])).then(bugs => this.save_bugs(bugs));
+      }
 
-            if (cache) {
-              cmp_date = str => new Date(str) > new Date(cache.last_change_time);
-
-              // Copy annotations
-              for (let [key, value] of Iterator(cache)) if (key.startsWith('_')) {
-                bug[key] = value;
-              }
-            }
-
-            bug._update_needed = false;
-
-            // Mark the bug unread if the user subscribes CC changes or the bug is already unread
-            if (!ignore_cc || !cache || cache._unread || !cache._last_viewed ||
-                // or there are unread comments
-                [for (c of bug.comments) if (cmp_date(c.creation_time)) c].length ||
-                // or there are unread attachments
-                [for (a of bug.attachments || []) if (cmp_date(a.creation_time)) a].length ||
-                // or there are unread non-CC changes
-                [for (h of bug.history || []) if (cmp_date(h.when) &&
-                    [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
-              bug._unread = true;
-            } else {
-              // Looks like there are only CC changes, so mark the bug read
-              bug._unread = false;
-            }
-
-            resolve(bug);
-          });
-        });
-
-        return Promise.all([for (bug of result.bugs) load_details(bug)]).then(bugs => this.save_bugs(bugs));
-      }).then(() => resolve(), event => reject(new Error('Failed to load data.'))); // l10n
-    });
-  });
+      return true;
+    }).then(() => resolve(), event => reject(new Error('Failed to load data.'))); // l10n
+  }));
 };
 
-BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details = true) {
-  let fetch = (method, params) => new Promise((resolve, reject) => {
-    this.request('GET', `bug/${bug.id}${method ? '/' + method : ''}`,
-                 params ? new URLSearchParams(params) : null).then(result => {
-      resolve(result.bugs);
-    }).catch(event => reject(new Error()));
+BzDeck.model.fetch_bug = function (id, include_metadata = true, include_details = true) {
+  return new Promise((resolve, reject) => this.fetch_bugs([id], include_metadata, include_details)
+      .then(bugs => resolve(bugs[0]), error => reject(new Error(error.message))));
+};
+
+BzDeck.model.fetch_bugs = function (ids, include_metadata = true, include_details = true) {
+  // Sort the IDs to make sure the subsequent index access always works
+  ids.sort();
+
+  let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
+    let params = new URLSearchParams(param_str);
+
+    ids.forEach(id => params.append('ids', id));
+    this.request('GET', 'bug/' + (method ? ids[0] + '/' + method : ''), params)
+        .then(result => resolve(result.bugs), event => reject(new Error()));
   });
 
   let fetchers = [include_metadata ? fetch() : Promise.resolve()];
@@ -332,29 +351,18 @@ BzDeck.model.fetch_bug = function (bug, include_metadata = true, include_details
     fetchers.push(fetch('comment'), fetch('history'), fetch('attachment', 'exclude_fields=data'));
   }
 
-  return Promise.all(fetchers).then(values => {
-    bug = include_metadata ? values[0][0] : bug;
+  return Promise.all(fetchers).then(values => ids.map((id, index) => {
+    let bug = include_metadata ? values[0][index] : { id };
 
     if (include_details) {
-      bug.comments = values[1][bug.id].comments;
-      bug.history = values[2][0].history || [];
-      bug.attachments = values[3][bug.id] || [];
+      bug.comments = values[1][id].comments;
+      bug.history = values[2][index].history || [];
+      bug.attachments = values[3][id] || [];
       bug._update_needed = false;
     }
 
     return bug;
-  }).catch(error => bug);
-};
-
-BzDeck.model.fetch_bugs_by_ids = function (ids) {
-  let params = new URLSearchParams();
-
-  params.append('bug_id', ids.join());
-
-  return new Promise((resolve, reject) => {
-    this.request('GET', 'bug', params).then(result => resolve(result.bugs))
-                                      .catch(event => reject(new Error()));
-  });
+  })).catch(error => new Error('Failed to fetch bugs from Bugzilla.'));
 };
 
 BzDeck.model.get_bug_by_id = function (id, record_time = true) {
