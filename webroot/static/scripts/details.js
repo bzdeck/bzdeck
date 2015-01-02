@@ -106,13 +106,13 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
           top = 0,
           hidden = false;
 
-      $content.addEventListener('scroll', event => FlareTail.util.event.async(() => {
+      $content.addEventListener('scroll', event => {
         if (!mql.matches && info) {
           return;
         }
 
         let _top = event.target.scrollTop,
-            _hidden = top <= _top;
+            _hidden = top < _top;
 
         if (hidden !== _hidden) {
           hidden = _hidden;
@@ -120,7 +120,7 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
         }
 
         top = _top;
-      }));
+      });
     }
   }
 
