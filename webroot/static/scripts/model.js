@@ -33,15 +33,13 @@ BzDeck.model.request = function (method, path, params, data = null, listeners = 
   xhr.open(method, url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
-  if (listeners.upload && typeof listeners.upload.onprogress === 'function') {
-    xhr.upload.addEventListener('progress', event => listeners.upload.onprogress(event));
+  for (let [type, listener] of Iterator(listeners)) if (type !== 'upload') {
+    xhr.addEventListener(type, event => listener(event));
   }
 
-  xhr.addEventListener('progress', event => {
-    if (typeof listeners.onprogress === 'function') {
-      listeners.onprogress(event);
-    }
-  });
+  for (let [type, listener] of Iterator(listeners.upload || {})) {
+    xhr.upload.addEventListener(type, event => listener(event));
+  }
 
   return new Promise((resolve, reject) => {
     xhr.addEventListener('load', event => {

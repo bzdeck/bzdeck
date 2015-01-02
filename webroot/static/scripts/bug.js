@@ -1029,7 +1029,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
 
     BzDeck.model.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
       'upload': {
-        'onprogress': event => {
+        'progress': event => {
           if (method === 'attachment') {
             if (!size) {
               length_computable = event.lengthComputable;
