@@ -144,10 +144,11 @@ BzDeck.Toolbar = function Toolbar () {
   this.$$search_dropdown = new FlareTail.widget.Menu($search_dropdown);
 
   let cleanup = () => {
-    this.$$search_dropdown.close();
-    $root.removeAttribute('data-quicksearch');
-    $search_box.value = '';
-    $search_button.focus();
+    if ($root.hasAttribute('data-quicksearch')) {
+      this.$$search_dropdown.close();
+      $root.removeAttribute('data-quicksearch');
+      $search_box.value = '';
+    }
   };
 
   let exec_search = () => {

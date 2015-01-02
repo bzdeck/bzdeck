@@ -769,9 +769,6 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
     }
   });
 
-  this.$preview_tab.setAttribute('aria-disabled', 'true');
-  this.$attachments_tab.setAttribute('aria-disabled', 'true');
-
   for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
     new FlareTail.widget.ScrollBar($tabpanel);
   }
