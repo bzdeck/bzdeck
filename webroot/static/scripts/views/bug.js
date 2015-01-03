@@ -7,11 +7,13 @@
 
 let BzDeck = BzDeck || {};
 
+BzDeck.views = BzDeck.views || {};
+
 /* ------------------------------------------------------------------------------------------------------------------
  * Bug View
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.Bug = function Bug ($bug) {
+BzDeck.views.Bug = function Bug ($bug) {
   this.$bug = $bug;
 
   // Custom scrollbars
@@ -40,7 +42,7 @@ BzDeck.Bug = function Bug ($bug) {
   });
 };
 
-BzDeck.Bug.prototype.fill = function (bug, partial = false) {
+BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
   this.bug = bug;
   this.$bug.dataset.id = this.bug.id;
 
@@ -150,7 +152,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
   }
 };
 
-BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
+BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
   if (!this.$bug || Number.parseInt(this.$bug.dataset.id) !== this.bug.id) {
@@ -216,11 +218,11 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
   if (!partial) {
     FlareTail.util.event.async(() => {
       // Timeline: comments, attachments & history
-      this.timeline = new BzDeck.Bug.Timeline(this.bug, this.$bug, delayed);
+      this.timeline = new BzDeck.views.Bug.Timeline(this.bug, this.$bug, delayed);
 
       // Attachments and History, only on the details tabs
-      BzDeck.DetailsPage.attachments.render(this.$bug, this.bug.attachments);
-      BzDeck.DetailsPage.history.render(this.$bug, this.bug.history);
+      BzDeck.views.DetailsPage.attachments.render(this.$bug, this.bug.attachments);
+      BzDeck.views.DetailsPage.history.render(this.$bug, this.bug.history);
 
       // Add tooltips to the related bugs
       this.set_bug_tooltips();
@@ -233,7 +235,7 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
   BzDeck.core.show_status('');
 };
 
-BzDeck.Bug.prototype.set_product_tooltips = function () {
+BzDeck.views.Bug.prototype.set_product_tooltips = function () {
   let config = BzDeck.model.data.server.config,
       strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[this.bug.classification],
@@ -263,7 +265,7 @@ BzDeck.Bug.prototype.set_product_tooltips = function () {
   }
 };
 
-BzDeck.Bug.prototype.set_bug_tooltips = function () {
+BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   let related_bug_ids = new Set([for ($element of this.$bug.querySelectorAll('[data-bug-id]'))
                                 Number.parseInt($element.getAttribute('data-bug-id'))]);
   let set_tooltops = bug => {
@@ -295,18 +297,18 @@ BzDeck.Bug.prototype.set_bug_tooltips = function () {
   }
 };
 
-BzDeck.Bug.prototype.update = function (bug, changes) {
+BzDeck.views.Bug.prototype.update = function (bug, changes) {
   this.bug = bug;
 
   let $timeline = this.$bug.querySelector('.bug-timeline');
 
   if ($timeline) {
     $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.Bug.Timeline.Entry($timeline.id, this.bug, changes)).scrollIntoView();
+             .appendChild(new BzDeck.views.Bug.Timeline.Entry($timeline.id, this.bug, changes)).scrollIntoView();
   }
 
   if (changes.has('attachment') && this.$bug.querySelector('[data-field="attachments"]')) {
-    BzDeck.DetailsPage.attachments.render(this.$bug, [changes.get('attachment')], true);
+    BzDeck.views.DetailsPage.attachments.render(this.$bug, [changes.get('attachment')], true);
   }
 
   if (changes.has('history') && this.$bug.querySelector('[data-field="history"]')) {
@@ -318,11 +320,11 @@ BzDeck.Bug.prototype.update = function (bug, changes) {
     }
 
     this.fill(_bug, true);
-    BzDeck.DetailsPage.history.render(this.$bug, [changes.get('history')], true);
+    BzDeck.views.DetailsPage.history.render(this.$bug, [changes.get('history')], true);
   }
 };
 
-BzDeck.Bug.find_person = function (bug, email) {
+BzDeck.views.Bug.find_person = function (bug, email) {
   if (bug.creator === email) {
     return bug.creator_detail;
   }
@@ -352,7 +354,7 @@ BzDeck.Bug.find_person = function (bug, email) {
  * Timeline
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
+BzDeck.views.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   let get_time = str => (new Date(str)).getTime(),
       entries = new Map([for (c of bug.comments.entries())
                              [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
@@ -363,7 +365,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       last_comment_time,
       $timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${$bug.id}-timeline`,
-      comment_form = new BzDeck.Bug.Timeline.CommentForm(bug, timeline_id),
+      comment_form = new BzDeck.views.Bug.Timeline.CommentForm(bug, timeline_id),
       $expander,
       $fragment = new DocumentFragment(),
       $comments_wrapper = $timeline.querySelector('.comments-wrapper'),
@@ -398,7 +400,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
 
   // Generate entries
   for (let [time, data] of entries) if (data.has('rendering') || time >= last_comment_time) {
-    $fragment.appendChild(new BzDeck.Bug.Timeline.Entry(timeline_id, bug, data));
+    $fragment.appendChild(new BzDeck.views.Bug.Timeline.Entry(timeline_id, bug, data));
     data.delete('rendering');
     data.set('rendered', true);
   }
@@ -422,7 +424,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
       $fragment = new DocumentFragment();
 
       for (let [time, data] of entries) if (!data.get('rendered')) {
-        $fragment.appendChild(new BzDeck.Bug.Timeline.Entry(timeline_id, bug, data));
+        $fragment.appendChild(new BzDeck.views.Bug.Timeline.Entry(timeline_id, bug, data));
         data.set('rendered', true);
       }
 
@@ -471,7 +473,7 @@ BzDeck.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   window.addEventListener('hashchange', event => check_fragment());
 };
 
-BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
+BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
       click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       author,
@@ -495,7 +497,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
              ? comment.text : comment.raw_text;
 
     comment.number = data.get('comment_number');
-    author = BzDeck.Bug.find_person(bug, comment.creator);
+    author = BzDeck.views.Bug.find_person(bug, comment.creator);
     time = comment.creation_time;
     $entry.id = `${timeline_id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
@@ -631,7 +633,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       return $elm;
     };
 
-    author = author || BzDeck.Bug.find_person(bug, history.who);
+    author = author || BzDeck.views.Bug.find_person(bug, history.who);
     time = time || history.when;
     $entry.dataset.changes = [for (change of history.changes) change.field_name].join(' ');
 
@@ -728,7 +730,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   return $entry;
 };
 
-BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
+BzDeck.views.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
 
@@ -835,7 +837,7 @@ BzDeck.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) {
   }
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.oninput = function () {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
   this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
@@ -846,7 +848,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.oninput = function () {
   }
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.attach_text = function (str) {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.attach_text = function (str) {
   let reader = new FileReader(),
       blob = new Blob([str], { type: 'text/plain' }),
       is_ghpr = str.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/),
@@ -868,7 +870,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.attach_text = function (str) {
   reader.readAsDataURL(blob);
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
   let excess_files = new Set(),
       num_format = num => num.toLocaleString('en-US'),
       max_size = BzDeck.model.data.server.config.max_attachment_size,
@@ -925,7 +927,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
   }
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment) {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       $tbody = this.$attachments_tbody,
       $row = this.$attachments_row_tmpl.content.cloneNode(true).firstElementChild,
@@ -963,7 +965,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.add_attachment = function (attachment)
   this.update_parallel_ui();
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.remove_attachment = function (attachment) {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.remove_attachment = function (attachment) {
   let index = this.find_attachment(attachment);
 
   this.attachments.splice(index, 1);
@@ -978,7 +980,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.remove_attachment = function (attachme
   }
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.find_attachment = function (attachment) {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.find_attachment = function (attachment) {
   // A file with the same name and size might be the same file
   let index = [for (entry of this.attachments.entries())
                if (entry[1].file_name === (attachment.file_name || attachment.name) &&
@@ -987,7 +989,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.find_attachment = function (attachment
   return index === undefined ? -1 : index;
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.update_parallel_ui = function () {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.update_parallel_ui = function () {
   let disabled = this.attachments.length < 2 || this.parallel_upload;
 
   for (let $button of this.$attachments_tbody.querySelectorAll('[data-command|="move"]')) {
@@ -997,7 +999,7 @@ BzDeck.Bug.Timeline.CommentForm.prototype.update_parallel_ui = function () {
   this.$parallel_checkbox.setAttribute('aria-hidden', this.attachments.length < 2);
 };
 
-BzDeck.Bug.Timeline.CommentForm.prototype.submit = function () {
+BzDeck.views.Bug.Timeline.CommentForm.prototype.submit = function () {
   let data,
       hash = att => md5(att.file_name + String(att.size)),
       map_sum = map => [...map.values()].reduce((p, c) => p + c),

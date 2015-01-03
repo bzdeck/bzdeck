@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.ProfilePage = function ProfilePage (name) {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.ProfilePage = function ProfilePage (name) {
   let server = BzDeck.model.data.server,
       $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
       $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
@@ -59,13 +61,13 @@ BzDeck.ProfilePage = function ProfilePage (name) {
   });
 };
 
-BzDeck.ProfilePage.route = '/profile/(.+)';
+BzDeck.views.ProfilePage.route = '/profile/(.+)';
 
-BzDeck.ProfilePage.connect = function (name) {
+BzDeck.views.ProfilePage.connect = function (name) {
   BzDeck.toolbar.open_tab({
     'page_category': 'profile',
     'page_id': name,
-    'page_constructor': BzDeck.ProfilePage,
+    'page_constructor': BzDeck.views.ProfilePage,
     'page_constructor_args': [name],
     'tab_label': 'Profile', // l10n
     'tab_desc': 'User Profile', // l10n

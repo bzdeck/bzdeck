@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.HomePage = function HomePage () {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
       prefs = BzDeck.model.data.prefs,
@@ -118,9 +120,9 @@ BzDeck.HomePage = function HomePage () {
   });
 };
 
-BzDeck.HomePage.route = '/home/(\\w+)';
+BzDeck.views.HomePage.route = '/home/(\\w+)';
 
-BzDeck.HomePage.connect = function (folder_id) {
+BzDeck.views.HomePage.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
       $$tablist = BzDeck.toolbar.$$tablist;
@@ -145,7 +147,7 @@ BzDeck.HomePage.connect = function (folder_id) {
   BzDeck.core.update_window_title($tab);
 };
 
-BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
+BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
   let $pane = document.querySelector('#home-preview-pane'),
       $bug = document.querySelector('#home-preview-bug'),
       $$button = this.view.$$details_button;
@@ -168,7 +170,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
     }
 
     if (!this.$$bug) {
-      this.$$bug = new BzDeck.Bug($bug);
+      this.$$bug = new BzDeck.views.Bug($bug);
     }
 
     // Fill the content
@@ -191,7 +193,7 @@ BzDeck.HomePage.prototype.show_preview = function (oldval, newval) {
   });
 };
 
-BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
+BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
       prefs = BzDeck.model.data.prefs,
       mql = window.matchMedia('(max-width: 1023px)'),
@@ -228,11 +230,11 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
       this.vertical_thread_initialized = true;
     }
 
-    this.thread = new BzDeck.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
+    this.thread = new BzDeck.views.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
       'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
     });
   } else {
-    this.thread = new BzDeck.ClassicThread(this, 'home', document.querySelector('#home-list'), {
+    this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
       'date': { 'simple': false },
       'sortable': true,
       'reorderable': true,
@@ -283,7 +285,7 @@ BzDeck.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   }
 };
 
-BzDeck.HomePage.prototype.update_window_title = function (title) {
+BzDeck.views.HomePage.prototype.update_window_title = function (title) {
   if (!location.pathname.startsWith('/home/')) {
     return;
   }

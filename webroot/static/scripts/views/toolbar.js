@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.Toolbar = function Toolbar () {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.Toolbar = function Toolbar () {
   let FTw = FlareTail.widget,
       FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
@@ -237,7 +239,7 @@ BzDeck.Toolbar = function Toolbar () {
   $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
 };
 
-BzDeck.Toolbar.prototype.open_tab = function (options) {
+BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   let page,
       page_category = options.page_category,
       page_id = options.page_id,
@@ -302,7 +304,7 @@ BzDeck.Toolbar.prototype.open_tab = function (options) {
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };
 
-BzDeck.Toolbar.prototype.quicksearch = function (event) {
+BzDeck.views.Toolbar.prototype.quicksearch = function (event) {
   let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()],
       // Support for multiple aliases on Bugzilla 5.0+
       get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];

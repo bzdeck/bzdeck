@@ -173,10 +173,10 @@ BzDeck.bootstrap.setup_ui = function () {
 
   // Activate widgets
   BzDeck.pages = {};
-  BzDeck.pages.home = new BzDeck.HomePage();
-  BzDeck.toolbar = new BzDeck.Toolbar();
-  BzDeck.sidebar = new BzDeck.Sidebar();
-  // BzDeck.DetailsPage.swipe.init();
+  BzDeck.pages.home = new BzDeck.views.HomePage();
+  BzDeck.toolbar = new BzDeck.views.Toolbar();
+  BzDeck.sidebar = new BzDeck.views.Sidebar();
+  // BzDeck.views.DetailsPage.swipe.init();
 
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
@@ -227,7 +227,7 @@ BzDeck.bootstrap.finish = function () {
   BzDeck.core.register_activity_handler();
 
   // Connect to the push notification server
-  BzDeck.bugzfeed = new BzDeck.BugzfeedClient();
+  BzDeck.bugzfeed = new BzDeck.controllers.BugzfeedClient();
   BzDeck.bugzfeed.connect();
 
   BzDeck.core.show_status('Loading complete.'); // l10n

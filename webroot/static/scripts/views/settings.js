@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.SettingsPage = function SettingsPage () {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.SettingsPage = function SettingsPage () {
   // Activate tabs
   this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
 
@@ -19,12 +21,12 @@ BzDeck.SettingsPage = function SettingsPage () {
   this.activate_radiogroups();
 };
 
-BzDeck.SettingsPage.route = '/settings';
+BzDeck.views.SettingsPage.route = '/settings';
 
-BzDeck.SettingsPage.connect = function () {
+BzDeck.views.SettingsPage.connect = function () {
   BzDeck.toolbar.open_tab({
     'page_category': 'settings',
-    'page_constructor': BzDeck.SettingsPage,
+    'page_constructor': BzDeck.views.SettingsPage,
     'tab_label': 'Settings',
   });
 
@@ -36,7 +38,7 @@ BzDeck.SettingsPage.connect = function () {
   }
 };
 
-BzDeck.SettingsPage.prototype.activate_token_input = function () {
+BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
   let account = BzDeck.model.data.account,
       token = account.token,
       $input = document.querySelector('#tabpanel-settings-account-token'),
@@ -79,7 +81,7 @@ BzDeck.SettingsPage.prototype.activate_token_input = function () {
   });
 };
 
-BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
+BzDeck.views.SettingsPage.prototype.activate_radiogroups = function () {
   let $root = document.documentElement, // <html>
       activate = this.activate_radiogroup.bind(this);
 
@@ -128,7 +130,7 @@ BzDeck.SettingsPage.prototype.activate_radiogroups = function () {
   });
 };
 
-BzDeck.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
+BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
   let $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${pref}"]`),
       prefs = BzDeck.model.data.prefs,
       type = $rgroup.dataset.type || 'string',

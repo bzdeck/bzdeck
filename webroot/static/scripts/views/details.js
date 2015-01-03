@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.DetailsPage = function DetailsPage (id, ids = []) {
   let $tab = document.querySelector(`#tab-details-${id}`),
       $tabpanel = document.querySelector(`#tabpanel-details-${id}`);
 
@@ -39,25 +41,25 @@ BzDeck.DetailsPage = function DetailsPage (id, ids = []) {
   BzDeck.bugzfeed.subscribe([id]);
 };
 
-BzDeck.DetailsPage.route = '/bug/(\\d+)';
+BzDeck.views.DetailsPage.route = '/bug/(\\d+)';
 
-BzDeck.DetailsPage.connect = function () {
+BzDeck.views.DetailsPage.connect = function () {
   let id = Number.parseInt(arguments[0]);
 
   BzDeck.toolbar.open_tab({
     'page_category': 'details',
     'page_id': id,
-    'page_constructor': BzDeck.DetailsPage,
+    'page_constructor': BzDeck.views.DetailsPage,
     'page_constructor_args': [id, history.state ? history.state.ids : []],
     'tab_label': id,
     'tab_position': 'next',
   });
 };
 
-BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
+BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   $tabpanel = $tabpanel || FlareTail.util.content.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
 
-  this.$$bug = new BzDeck.Bug($tabpanel.querySelector('article'));
+  this.$$bug = new BzDeck.views.Bug($tabpanel.querySelector('article'));
   this.$$bug.fill(bug);
 
   let mobile = FlareTail.util.ua.device.mobile,
@@ -134,11 +136,11 @@ BzDeck.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   return $tabpanel;
 };
 
-BzDeck.DetailsPage.prototype.get_tab_title = function (bug) {
+BzDeck.views.DetailsPage.prototype.get_tab_title = function (bug) {
   return `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
 };
 
-BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
+BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
   let $current_tabpanel = this.view.$tabpanel,
       Button = FlareTail.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
@@ -176,7 +178,7 @@ BzDeck.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
   }
 };
 
-BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
+BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
     BzDeck.core.show_status('You have to go online to load the bug.'); // l10n
 
@@ -204,7 +206,7 @@ BzDeck.DetailsPage.prototype.fetch_bug = function (id) {
   });
 };
 
-BzDeck.DetailsPage.prototype.navigate = function (id) {
+BzDeck.views.DetailsPage.prototype.navigate = function (id) {
   let $current_tab = this.view.$tab;
 
   BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
@@ -215,9 +217,9 @@ BzDeck.DetailsPage.prototype.navigate = function (id) {
  * Attachments
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.DetailsPage.attachments = {};
+BzDeck.views.DetailsPage.attachments = {};
 
-BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = false) {
+BzDeck.views.DetailsPage.attachments.render = function ($bug, attachments, addition = false) {
   let $placeholder = $bug.querySelector('[data-field="attachments"]');
 
   if (!$placeholder || !attachments.length) {
@@ -267,9 +269,9 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
  * History
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.DetailsPage.history = {};
+BzDeck.views.DetailsPage.history = {};
 
-BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
+BzDeck.views.DetailsPage.history.render = function ($bug, history, addition = false) {
   let $placeholder = $bug.querySelector('[data-field="history"]');
 
   if (!$placeholder || !history.length) {
@@ -333,9 +335,9 @@ BzDeck.DetailsPage.history.render = function ($bug, history, addition = false) {
  * Swipe navigation
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.DetailsPage.swipe = {};
+BzDeck.views.DetailsPage.swipe = {};
 
-BzDeck.DetailsPage.swipe.init = function () {
+BzDeck.views.DetailsPage.swipe.init = function () {
   let $tabpanels = document.querySelector('#main-tabpanels');
 
   $tabpanels.addEventListener('touchstart', this);
@@ -343,7 +345,7 @@ BzDeck.DetailsPage.swipe.init = function () {
   $tabpanels.addEventListener('touchend', this);
 };
 
-BzDeck.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
+BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
   if (document.querySelector(`#tabpanel-details-${id}`)) {
     return;
   }
@@ -366,7 +368,7 @@ BzDeck.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
   });
 };
 
-BzDeck.DetailsPage.swipe.handleEvent = function (event) {
+BzDeck.views.DetailsPage.swipe.handleEvent = function (event) {
   let touch,
       delta,
       page = BzDeck.pages.details;

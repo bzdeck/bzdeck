@@ -7,7 +7,9 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.Sidebar = function Sidebar () {
+BzDeck.views = BzDeck.views || {};
+
+BzDeck.views.Sidebar = function Sidebar () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
       $root = document.documentElement, // <html>
@@ -123,7 +125,7 @@ BzDeck.Sidebar = function Sidebar () {
   });
 };
 
-BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
+BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
   let home = BzDeck.pages.home;
 
   let update_list = bugs => {
@@ -199,7 +201,7 @@ BzDeck.Sidebar.prototype.open_folder = function (folder_id) {
   }
 };
 
-BzDeck.Sidebar.prototype.toggle_unread_ui = function (num) {
+BzDeck.views.Sidebar.prototype.toggle_unread_ui = function (num) {
   let $label = document.querySelector('#sidebar-folders--inbox label'),
       $num = $label.querySelector('span');
 

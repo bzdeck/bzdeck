@@ -9,11 +9,13 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.BugzfeedClient = function BugzfeedClient () {
+BzDeck.controllers = BzDeck.controllers || {};
+
+BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
   this.subscription = new Set();
 };
 
-BzDeck.BugzfeedClient.prototype.connect = function () {
+BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
   let endpoint = BzDeck.model.data.server.endpoints.websocket;
 
   if (!endpoint || !navigator.onLine) {
@@ -57,19 +59,19 @@ BzDeck.BugzfeedClient.prototype.connect = function () {
   });
 };
 
-BzDeck.BugzfeedClient.prototype.disconnect = function () {
+BzDeck.controllers.BugzfeedClient.prototype.disconnect = function () {
   if (this.websocket) {
     this.websocket.close();
   }
 };
 
-BzDeck.BugzfeedClient.prototype.send = function (command, bugs) {
+BzDeck.controllers.BugzfeedClient.prototype.send = function (command, bugs) {
   if (this.websocket && this.websocket.readyState === 1) {
     this.websocket.send(JSON.stringify({ command, bugs }));
   }
 };
 
-BzDeck.BugzfeedClient.prototype.subscribe = function (bugs) {
+BzDeck.controllers.BugzfeedClient.prototype.subscribe = function (bugs) {
   for (let bug of bugs) {
     this.subscription.add(bug);
   }
@@ -77,7 +79,7 @@ BzDeck.BugzfeedClient.prototype.subscribe = function (bugs) {
   this.send('subscribe', bugs);
 };
 
-BzDeck.BugzfeedClient.prototype.unsubscribe = function (bugs) {
+BzDeck.controllers.BugzfeedClient.prototype.unsubscribe = function (bugs) {
   for (let bug of bugs) {
     this.subscription.delete(bug);
   }
@@ -85,7 +87,7 @@ BzDeck.BugzfeedClient.prototype.unsubscribe = function (bugs) {
   this.send('unsubscribe', bugs);
 };
 
-BzDeck.BugzfeedClient.prototype.get_changes = function (message) {
+BzDeck.controllers.BugzfeedClient.prototype.get_changes = function (message) {
   BzDeck.model.fetch_bug(message.bug).then(bug => {
     let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
         get_change = (field, time_field = 'creation_time') =>
@@ -113,7 +115,7 @@ BzDeck.BugzfeedClient.prototype.get_changes = function (message) {
   });
 };
 
-BzDeck.BugzfeedClient.prototype.save_changes = function (bug, changes) {
+BzDeck.controllers.BugzfeedClient.prototype.save_changes = function (bug, changes) {
   BzDeck.model.get_bug_by_id(bug.id).then(cache => {
     if (changes.has('comment')) {
       cache.comments.push(changes.get('comment'));

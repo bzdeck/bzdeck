@@ -7,9 +7,11 @@
 
 let BzDeck = BzDeck || {};
 
-BzDeck.Thread = function Thread () {};
+BzDeck.views = BzDeck.views || {};
 
-BzDeck.Thread.prototype.onselect = function (event) {
+BzDeck.views.Thread = function Thread () {};
+
+BzDeck.views.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
 
   if (ids.length) {
@@ -18,7 +20,7 @@ BzDeck.Thread.prototype.onselect = function (event) {
   }
 };
 
-BzDeck.Thread.prototype.ondblclick = function (event, selector) {
+BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
   let $target = event.originalTarget;
 
   if ($target.matches(selector)) {
@@ -31,7 +33,7 @@ BzDeck.Thread.prototype.ondblclick = function (event, selector) {
  * Classic Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
+BzDeck.views.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
   let prefs = BzDeck.model.data.prefs,
       default_cols = BzDeck.config.grid.default_columns,
       columns = prefs[`${name}.list.columns`] || default_cols,
@@ -102,11 +104,11 @@ BzDeck.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
   });
 };
 
-BzDeck.ClassicThread.prototype = Object.create(BzDeck.Thread.prototype);
+BzDeck.views.ClassicThread.prototype = Object.create(BzDeck.views.Thread.prototype);
 
-BzDeck.ClassicThread.prototype.constructor = BzDeck.ClassicThread;
+BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 
-BzDeck.ClassicThread.prototype.update = function (bugs) {
+BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
   this.$$grid.build_body(bugs.map(bug => {
@@ -174,7 +176,7 @@ BzDeck.ClassicThread.prototype.update = function (bugs) {
   }));
 };
 
-BzDeck.ClassicThread.prototype.filter = function (bugs) {
+BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
   this.$$grid.filter([for (bug of bugs) bug.id]);
 };
 
@@ -182,7 +184,7 @@ BzDeck.ClassicThread.prototype.filter = function (bugs) {
  * Vertical Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.VerticalThread = function VerticalThread (consumer, name, $outer, options) {
+BzDeck.views.VerticalThread = function VerticalThread (consumer, name, $outer, options) {
   let mobile = FlareTail.util.ua.device.mobile;
 
   this.consumer = consumer;
@@ -250,11 +252,11 @@ BzDeck.VerticalThread = function VerticalThread (consumer, name, $outer, options
   });
 };
 
-BzDeck.VerticalThread.prototype = Object.create(BzDeck.Thread.prototype);
+BzDeck.views.VerticalThread.prototype = Object.create(BzDeck.views.Thread.prototype);
 
-BzDeck.VerticalThread.prototype.constructor = BzDeck.VerticalThread;
+BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 
-BzDeck.VerticalThread.prototype.update = function (bugs) {
+BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   let cond = this.options.sort_conditions;
 
   if (cond) {
@@ -273,7 +275,7 @@ BzDeck.VerticalThread.prototype.update = function (bugs) {
   });
 };
 
-BzDeck.VerticalThread.prototype.render = function () {
+BzDeck.views.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 
   for (let bug of this.unrendered_bugs.splice(0, 50)) {
@@ -288,7 +290,7 @@ BzDeck.VerticalThread.prototype.render = function () {
       'aria-checked': BzDeck.model.bug_is_starred(bug)
     }));
 
-    BzDeck.core.set_avatar(bug.comments ? BzDeck.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
+    BzDeck.core.set_avatar(bug.comments ? BzDeck.views.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
                                         : bug.creator_detail, $option.querySelector('img'));
   }
 
