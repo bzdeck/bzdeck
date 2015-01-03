@@ -1,0 +1,138 @@
+/**
+ * Bugzilla Push Notifications support
+ * Copyright © 2015 Kohei Yoshino. All rights reserved.
+ *
+ * See https://wiki.mozilla.org/BMO/ChangeNotificationSystem for the details of the API.
+ */
+
+'use strict';
+
+let BzDeck = BzDeck || {};
+
+BzDeck.BugzfeedClient = function BugzfeedClient () {
+  this.subscription = new Set();
+};
+
+BzDeck.BugzfeedClient.prototype.connect = function () {
+  let endpoint = BzDeck.model.data.server.endpoints.websocket;
+
+  if (!endpoint || !navigator.onLine) {
+    return;
+  }
+
+  this.websocket = new WebSocket(endpoint);
+
+  this.websocket.addEventListener('open', event => {
+    if (this.reconnector) {
+      window.clearInterval(this.reconnector);
+      delete this.reconnector;
+    }
+
+    // Subscribe bugs once (re)connected
+    if (this.subscription.size) {
+      this.subscribe([...this.subscription]);
+    }
+  });
+
+  this.websocket.addEventListener('close', event => {
+    // Try to reconnect every 30 seconds when unexpectedly disconnected
+    if (!this.reconnector && ![1000, 1005].includes(event.code)) {
+      this.reconnector = window.setInterval(() => this.connect(), 30000);
+    }
+  });
+
+  this.websocket.addEventListener('error', event => {
+    // Try to reconnect every 30 seconds when unexpectedly disconnected
+    if (!this.reconnector) {
+      this.reconnector = window.setInterval(() => this.connect(), 30000);
+    }
+  });
+
+  this.websocket.addEventListener('message', event => {
+    let message = JSON.parse(event.data)
+
+    if (message.command === 'update') {
+      this.get_changes(message);
+    }
+  });
+};
+
+BzDeck.BugzfeedClient.prototype.disconnect = function () {
+  if (this.websocket) {
+    this.websocket.close();
+  }
+};
+
+BzDeck.BugzfeedClient.prototype.send = function (command, bugs) {
+  if (this.websocket && this.websocket.readyState === 1) {
+    this.websocket.send(JSON.stringify({ command, bugs }));
+  }
+};
+
+BzDeck.BugzfeedClient.prototype.subscribe = function (bugs) {
+  for (let bug of bugs) {
+    this.subscription.add(bug);
+  }
+
+  this.send('subscribe', bugs);
+};
+
+BzDeck.BugzfeedClient.prototype.unsubscribe = function (bugs) {
+  for (let bug of bugs) {
+    this.subscription.delete(bug);
+  }
+
+  this.send('unsubscribe', bugs);
+};
+
+BzDeck.BugzfeedClient.prototype.get_changes = function (message) {
+  BzDeck.model.fetch_bug(message.bug).then(bug => {
+    let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
+        get_change = (field, time_field = 'creation_time') =>
+          [for (item of bug[field]) if (new Date(item[time_field]) - time === 0) item][0],
+        changes = new Map(),
+        comment = get_change('comments'),
+        attachment = get_change('attachments'),
+        history = get_change('history', 'when');
+
+    if (comment) {
+      changes.set('comment', comment);
+    }
+
+    if (attachment) {
+      changes.set('attachment', attachment);
+    }
+
+    if (history) {
+      changes.set('history', history);
+    }
+
+    this.save_changes(bug, changes);
+
+    FlareTail.util.event.trigger(window, 'Bug:Updated', { 'detail': { bug, changes }});
+  });
+};
+
+BzDeck.BugzfeedClient.prototype.save_changes = function (bug, changes) {
+  BzDeck.model.get_bug_by_id(bug.id).then(cache => {
+    if (changes.has('comment')) {
+      cache.comments.push(changes.get('comment'));
+    }
+
+    if (changes.has('attachment')) {
+      cache.attachments = cache.attachments;
+      cache.attachments.push(changes.get('attachment'));
+    }
+
+    if (changes.has('history')) {
+      cache.history = cache.history;
+      cache.history.push(changes.get('history'));
+
+      for (let change in changes.get('history').changes) {
+        cache[change.field_name] = bug[change.field_name];
+      }
+    }
+
+    BzDeck.model.save_bug(cache);
+  });
+};
