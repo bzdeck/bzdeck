@@ -29,7 +29,7 @@ BzDeck.ProfilePage = function ProfilePage (name) {
 
     document.title = $tab.title = `User Profile: ${name}`;
 
-    FlareTail.util.content.fill($profile, {
+    FlareTail.util.content.render($profile, {
       'id': user.id,
       'email': user.name,
       'emailLink': 'mailto:' + user.name,

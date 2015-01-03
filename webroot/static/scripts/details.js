@@ -234,7 +234,7 @@ BzDeck.DetailsPage.attachments.render = function ($bug, attachments, addition = 
     let $attachment = $placeholder.appendChild(
       FlareTail.util.content.get_fragment('details-attachment').firstElementChild);
 
-    FlareTail.util.content.fill($attachment, {
+    FlareTail.util.content.render($attachment, {
       'url': `/attachment/${att.id}`,
       'description': att.summary,
       'name': att.file_name,

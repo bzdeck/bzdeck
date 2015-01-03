@@ -77,7 +77,7 @@ BzDeck.Bug.prototype.fill = function (bug, partial = false) {
     }
   }
 
-  FlareTail.util.content.fill(this.$bug, _bug);
+  FlareTail.util.content.render(this.$bug, _bug);
 
   this.set_product_tooltips();
 
@@ -180,7 +180,7 @@ BzDeck.Bug.prototype.fill_details = function (partial, delayed) {
     _bug.resolution = `DUPLICATE of ${this.bug.dupe_of}`;
   }
 
-  FlareTail.util.content.fill(this.$bug, _bug);
+  FlareTail.util.content.render(this.$bug, _bug);
 
   // Depends on & Blocks
   for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"]')) {
@@ -565,7 +565,7 @@ BzDeck.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
         $media,
         load_event = 'load';
 
-    FlareTail.util.content.fill($attachment, {
+    FlareTail.util.content.render($attachment, {
       'url': `/attachment/${attachment.id}`,
       'description': attachment.summary,
       'name': attachment.file_name,

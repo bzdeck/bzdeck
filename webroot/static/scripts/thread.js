@@ -277,7 +277,7 @@ BzDeck.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 
   for (let bug of this.unrendered_bugs.splice(0, 50)) {
-    let $option = $fragment.appendChild(FlareTail.util.content.fill(this.$option.cloneNode(true), {
+    let $option = $fragment.appendChild(FlareTail.util.content.render(this.$option.cloneNode(true), {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
