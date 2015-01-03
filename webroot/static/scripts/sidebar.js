@@ -1,6 +1,6 @@
 /**
  * BzDeck Global Sidebar
- * Copyright © 2014 Kohei Yoshino. All rights reserved.
+ * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
 'use strict';
