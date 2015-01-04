@@ -54,13 +54,14 @@ BzDeck.views.Toolbar = function Toolbar () {
       }
 
       case 'install-app': {
-        BzDeck.core.install_app();
+        BzDeck.controllers.app.install()
+            .then(() => document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true'));
 
         break;
       }
 
       case 'logout': {
-        BzDeck.session.logout();
+        BzDeck.controllers.session.logout();
 
         break;
       }
@@ -123,7 +124,7 @@ BzDeck.views.Toolbar = function Toolbar () {
         label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
         $menu_label = document.querySelector('#main-menu--app label'),
         $account_label = document.querySelector('#main-menu--app--account label'),
-        gravatar = new BzDeck.services.Gravatar(account.name);
+        gravatar = new BzDeck.controllers.Gravatar(account.name);
 
     $account_label.innerHTML = label;
     $account_label.style.backgroundImage = $menu_label.style.backgroundImage = `url(${gravatar.avatar_url})`;
@@ -245,8 +246,8 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
       page_id = options.page_id,
       page_constructor = options.page_constructor,
       page_constructor_args = options.page_constructor_args || [],
-      pages = BzDeck.pages[`${page_category}_list`],
-      $$tablist = BzDeck.toolbar.$$tablist,
+      pages = BzDeck.views.pages[`${page_category}_list`],
+      $$tablist = BzDeck.views.components.toolbar.$$tablist,
       tab_id = options.page_category + (page_id ? '-' + page_id : ''),
       tab_label = options.tab_label,
       tab_desc = options.tab_desc || tab_label,
@@ -264,7 +265,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   }
 
   if (!pages) {
-    pages = BzDeck.pages[`${page_category}_list`] = new Map();
+    pages = BzDeck.views.pages[`${page_category}_list`] = new Map();
   }
 
   // Reuse a tabpanel if possible
@@ -299,8 +300,8 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   $$tablist.view.selected = $$tablist.view.$focused = $tab
   $tabpanel.focus();
 
-  BzDeck.core.update_window_title($tab);
-  BzDeck.pages[page_category] = page;
+  BzDeck.views.core.update_window_title($tab);
+  BzDeck.views.pages[page_category] = page;
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };
 

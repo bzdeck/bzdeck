@@ -126,7 +126,8 @@ BzDeck.views.Sidebar = function Sidebar () {
 };
 
 BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
-  let home = BzDeck.pages.home;
+  let home = BzDeck.views.pages.home,
+      toolbar = BzDeck.views.components.toolbar;
 
   let update_list = bugs => {
     home.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
@@ -138,14 +139,14 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
     let folder_label = [for (f of this.folder_data) if (f.data.id === folder_id) f][0].label,
         unread = [for (bug of bugs) if (bug._unread) bug].length;
 
-    BzDeck.pages.home.update_window_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
+    BzDeck.views.pages.home.update_window_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
   };
 
   // Mobile compact layout
   if (FlareTail.util.ua.device.mobile &&
-      BzDeck.toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
+      toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
-    BzDeck.toolbar.$$tablist.view.selected = BzDeck.toolbar.$$tablist.view.members[0];
+    toolbar.$$tablist.view.selected = toolbar.$$tablist.view.members[0];
   }
 
   if (folder_id === 'inbox') {
@@ -188,7 +189,7 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
     BzDeck.model.get_all_bugs().then(bugs => {
-      update_list([for (bug of bugs) if (BzDeck.model.bug_is_starred(bug)) bug]);
+      update_list([for (bug of bugs) if (BzDeck.controllers.bugs.is_starred(bug)) bug]);
     });
   }
 

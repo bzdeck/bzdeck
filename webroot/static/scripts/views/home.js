@@ -111,7 +111,7 @@ BzDeck.views.HomePage = function HomePage () {
 
         if (oldval !== newval) {
           FlareTail.util.event.async(() => this.show_preview(oldval, newval));
-          BzDeck.bugzfeed.subscribe([newval]);
+          BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
 
@@ -125,7 +125,7 @@ BzDeck.views.HomePage.route = '/home/(\\w+)';
 BzDeck.views.HomePage.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
-      $$tablist = BzDeck.toolbar.$$tablist;
+      $$tablist = BzDeck.views.components.toolbar.$$tablist;
 
   if (!$folder) {
     // Unknown folder; ignore
@@ -138,13 +138,13 @@ BzDeck.views.HomePage.connect = function (folder_id) {
     $$tablist.view.selected = $$tablist.view.$focused = $tab;
   }
 
-  if (BzDeck.sidebar.data.folder_id !== folder_id) {
-    BzDeck.sidebar.$$folders.view.selected = $folder;
-    BzDeck.sidebar.open_folder(folder_id);
+  if (BzDeck.views.components.sidebar.data.folder_id !== folder_id) {
+    BzDeck.views.components.sidebar.$$folders.view.selected = $folder;
+    BzDeck.views.components.sidebar.open_folder(folder_id);
   }
 
-  BzDeck.toolbar.tab_path_map.set('tab-home', location.pathname);
-  BzDeck.core.update_window_title($tab);
+  BzDeck.views.components.toolbar.tab_path_map.set('tab-home', location.pathname);
+  BzDeck.views.core.update_window_title($tab);
 };
 
 BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
@@ -175,7 +175,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
 
     // Fill the content
     this.$$bug.fill(bug);
-    BzDeck.core.toggle_unread(bug.id, false);
+    BzDeck.controllers.bugs.toggle_unread(bug.id, false);
     $bug.setAttribute('aria-hidden', 'false');
     $$button.data.disabled = false;
 
@@ -221,8 +221,8 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
       // Star button
       $listbox.addEventListener('mousedown', event => {
         if (event.target.matches('[data-field="_starred"]')) {
-          BzDeck.core.toggle_star(Number(event.target.parentElement.dataset.id),
-                                  event.target.getAttribute('aria-checked') === 'false');
+          BzDeck.controllers.bugs.toggle_star(Number(event.target.parentElement.dataset.id),
+                                              event.target.getAttribute('aria-checked') === 'false');
           event.stopPropagation();
         }
       });
@@ -269,8 +269,8 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
   }
 
   // Render the thread
-  if (BzDeck.sidebar) {
-    BzDeck.sidebar.open_folder(BzDeck.sidebar.data.folder_id);
+  if (BzDeck.views.components.sidebar) {
+    BzDeck.views.components.sidebar.open_folder(BzDeck.views.components.sidebar.data.folder_id);
   }
 
   if ($$splitter) {

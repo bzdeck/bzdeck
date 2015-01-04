@@ -53,7 +53,7 @@ BzDeck.views.SearchPage = function SearchPage (search_id) {
 
         if (oldval !== newval) {
           FlareTail.util.event.async(() => this.show_preview(oldval, newval));
-          BzDeck.bugzfeed.subscribe([newval]);
+          BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
 
@@ -81,7 +81,7 @@ BzDeck.views.SearchPage = function SearchPage (search_id) {
 BzDeck.views.SearchPage.route = '/search/(\\d{13,})';
 
 BzDeck.views.SearchPage.connect = function (search_id) {
-  BzDeck.toolbar.open_tab({
+  BzDeck.views.components.toolbar.open_tab({
     'page_category': 'search',
     'page_id': search_id,
     'page_constructor': BzDeck.views.SearchPage,
@@ -322,7 +322,7 @@ BzDeck.views.SearchPage.prototype.exec_search = function (params) {
     this.thread.update([]); // Clear grid body
   });
 
-  BzDeck.model.request('GET', 'bug', params).then(result => {
+  BzDeck.controllers.core.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
       this.data.bugs = result.bugs;
 

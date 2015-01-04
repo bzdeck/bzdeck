@@ -24,14 +24,14 @@ BzDeck.views.SettingsPage = function SettingsPage () {
 BzDeck.views.SettingsPage.route = '/settings';
 
 BzDeck.views.SettingsPage.connect = function () {
-  BzDeck.toolbar.open_tab({
+  BzDeck.views.components.toolbar.open_tab({
     'page_category': 'settings',
     'page_constructor': BzDeck.views.SettingsPage,
     'tab_label': 'Settings',
   });
 
   let tab_id = history.state ? history.state.tab_id : undefined,
-      $$tablist = BzDeck.pages.settings.$$tablist;
+      $$tablist = BzDeck.views.pages.settings.$$tablist;
 
   if (tab_id) {
     $$tablist.view.selected = $$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
@@ -63,7 +63,7 @@ BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
 
     $output.textContent = 'Verifying...'; // l10n
 
-    BzDeck.model.request('GET', 'user', params).then(result => {
+    BzDeck.controllers.core.request('GET', 'user', params).then(result => {
       if (result.users) {
         // Save the token
         account.token = $input.value;
@@ -77,7 +77,7 @@ BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
         $input.setAttribute('aria-invalid', 'true');
         $output.textContent = 'Invalid, try again'; // l10n
       }
-    }).catch(error => BzDeck.core.show_status(error.message));
+    }).catch(error => BzDeck.views.core.show_status(error.message));
   });
 };
 
@@ -101,7 +101,7 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroups = function () {
   activate('notifications.ignore_cc_changes', true);
 
   // Home
-  activate('ui.home.layout', 'vertical', value => BzDeck.pages.home.change_layout(value, true));
+  activate('ui.home.layout', 'vertical', value => BzDeck.views.pages.home.change_layout(value, true));
 
   // Timeline
   activate('ui.timeline.sort.order', 'ascending', value => {

@@ -88,7 +88,7 @@ BzDeck.controllers.BugzfeedClient.prototype.unsubscribe = function (bugs) {
 };
 
 BzDeck.controllers.BugzfeedClient.prototype.get_changes = function (message) {
-  BzDeck.model.fetch_bug(message.bug).then(bug => {
+  BzDeck.controllers.bugs.fetch_bug(message.bug).then(bug => {
     let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
         get_change = (field, time_field = 'creation_time') =>
           [for (item of bug[field]) if (new Date(item[time_field]) - time === 0) item][0],

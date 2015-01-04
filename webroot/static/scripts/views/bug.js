@@ -59,7 +59,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
         _bug.mentor = [for (person of this.bug.mentors_detail) {
-          'name': BzDeck.core.get_name(person),
+          'name': BzDeck.controllers.users.get_name(person),
           'email': person.email,
           'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
         }];
@@ -68,7 +68,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
           let person = this.bug[`${field}_detail`];
 
           _bug[field] = {
-            'name': BzDeck.core.get_name(person),
+            'name': BzDeck.controllers.users.get_name(person),
             'email': person.email,
             'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
           };
@@ -88,9 +88,9 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
 
   // Star on the header
   if ($button) {
-    $button.setAttribute('aria-pressed', BzDeck.model.bug_is_starred(this.bug));
+    $button.setAttribute('aria-pressed', BzDeck.controllers.bugs.is_starred(this.bug));
     (new FlareTail.widget.Button($button)).bind('Pressed', event =>
-      BzDeck.core.toggle_star(this.bug.id, event.detail.pressed));
+      BzDeck.controllers.bugs.toggle_star(this.bug.id, event.detail.pressed));
   }
 
   if (!$timeline) {
@@ -98,7 +98,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
   }
 
   $timeline.setAttribute('aria-busy', 'true');
-  BzDeck.core.show_status('Loading...'); // l10n
+  BzDeck.views.core.show_status('Loading...'); // l10n
 
   // Empty timeline while keeping the scrollbar
   if (!partial) {
@@ -111,7 +111,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
     FlareTail.util.event.async(() => this.fill_details(partial, false));
   } else {
     // Load comments, history, flags and attachments' metadata
-    BzDeck.model.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
+    BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
       this.bug = Object.assign(this.bug, bug_details); // Merge data
       BzDeck.model.save_bug(this.bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
@@ -138,9 +138,9 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
   if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
     FlareTail.util.kbd.assign($timeline, {
       // Toggle read
-      'M': event => BzDeck.core.toggle_unread(this.bug.id, !this.bug._unread),
+      'M': event => BzDeck.controllers.bugs.toggle_unread(this.bug.id, !this.bug._unread),
       // Toggle star
-      'S': event => BzDeck.core.toggle_star(this.bug.id, !BzDeck.model.bug_is_starred(this.bug)),
+      'S': event => BzDeck.controllers.bugs.toggle_star(this.bug.id, !BzDeck.controllers.bugs.is_starred(this.bug)),
       // Reply
       'R': event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
       // Focus management
@@ -161,7 +161,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   let _bug = {
     'cc': [for (person of this.bug.cc_detail) {
-      'name': BzDeck.core.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, ''), // Remove bracketed strings
+      'name': BzDeck.controllers.users.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, ''), // Remove bracketed strings
       'email': person.email,
       'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
     }],
@@ -232,7 +232,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
     });
   }
 
-  BzDeck.core.show_status('');
+  BzDeck.views.core.show_status('');
 };
 
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
@@ -288,7 +288,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
       bugs.map(set_tooltops);
 
       if (lookup_bug_ids.length) {
-        BzDeck.model.fetch_bugs(lookup_bug_ids).then(bugs => {
+        BzDeck.controllers.bugs.fetch_bugs(lookup_bug_ids).then(bugs => {
           BzDeck.model.save_bugs(bugs);
           bugs.map(set_tooltops);
         });
@@ -503,7 +503,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-number', comment.number);
-    $comment.innerHTML = text ? BzDeck.core.parse_comment(text) : '';
+    $comment.innerHTML = text ? BzDeck.controllers.core.parse_comment(text) : '';
 
     // Append the comment number to the URL when clicked
     $entry.addEventListener(click_event_type, event => {
@@ -700,7 +700,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  BzDeck.core.set_avatar(author, $author.querySelector('[itemprop="image"]'));
+  BzDeck.views.core.set_avatar(author, $author.querySelector('[itemprop="image"]'));
   datetime.fill_element($time, time);
 
   // Mark unread
@@ -768,7 +768,7 @@ BzDeck.views.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) 
     }
 
     if (tab_id.endsWith('preview')) {
-      this.$preview.innerHTML = BzDeck.core.parse_comment(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.controllers.core.parse_comment(this.$textbox.value);
     }
   });
 
@@ -1027,7 +1027,7 @@ BzDeck.views.Bug.Timeline.CommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.model.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
+    BzDeck.controllers.core.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
       'upload': {
         'progress': event => {
           if (method === 'attachment') {

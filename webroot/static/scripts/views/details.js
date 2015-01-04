@@ -31,14 +31,14 @@ BzDeck.views.DetailsPage = function DetailsPage (id, ids = []) {
         this.prep_tabpanel($tabpanel, bug, ids);
         $tabpanel.removeAttribute('aria-busy');
         $tab.title = this.get_tab_title(bug);
-        BzDeck.core.update_window_title($tab);
+        BzDeck.views.core.update_window_title($tab);
       }
 
-      BzDeck.core.toggle_unread(id, false);
+      BzDeck.controllers.bugs.toggle_unread(id, false);
     });
   });
 
-  BzDeck.bugzfeed.subscribe([id]);
+  BzDeck.controllers.bugzfeed.subscribe([id]);
 };
 
 BzDeck.views.DetailsPage.route = '/bug/(\\d+)';
@@ -46,7 +46,7 @@ BzDeck.views.DetailsPage.route = '/bug/(\\d+)';
 BzDeck.views.DetailsPage.connect = function () {
   let id = Number.parseInt(arguments[0]);
 
-  BzDeck.toolbar.open_tab({
+  BzDeck.views.components.toolbar.open_tab({
     'page_category': 'details',
     'page_id': id,
     'page_constructor': BzDeck.views.DetailsPage,
@@ -180,14 +180,14 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
 
 BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
-    BzDeck.core.show_status('You have to go online to load the bug.'); // l10n
+    BzDeck.views.core.show_status('You have to go online to load the bug.'); // l10n
 
     return;
   }
 
-  BzDeck.core.show_status('Loading...'); // l10n
+  BzDeck.views.core.show_status('Loading...'); // l10n
 
-  BzDeck.model.fetch_bug(id).then(bug => {
+  BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
     // Save in DB
     BzDeck.model.save_bug(bug);
 
@@ -196,13 +196,13 @@ BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
 
     // Check if the tabpanel still exists
     if ($tabpanel) {
-      BzDeck.core.show_status('');
+      BzDeck.views.core.show_status('');
       // Update UI
       this.$$bug.fill(bug);
       $tab.title = this.get_tab_title(bug);
     }
   }).catch(bug => {
-    BzDeck.core.show_status('ERROR: Failed to load data.'); // l10n
+    BzDeck.views.core.show_status('ERROR: Failed to load data.'); // l10n
   });
 };
 
@@ -210,7 +210,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (id) {
   let $current_tab = this.view.$tab;
 
   BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
-  BzDeck.toolbar.$$tablist.close_tab($current_tab);
+  BzDeck.views.components.toolbar.$$tablist.close_tab($current_tab);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -351,7 +351,7 @@ BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
   }
 
   BzDeck.model.get_bug_by_id(id).then(bug => {
-    let page = BzDeck.pages.details,
+    let page = BzDeck.views.pages.details,
         $tabpanel = page.prep_tabpanel(undefined, bug, ids),
         $ref = position === 'prev' ? page.view.$tabpanel : page.view.$tabpanel.nextElementSibling;
 
@@ -360,7 +360,7 @@ BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
 
     if (!bug.comments) {
       // Prefetch the bug
-      BzDeck.model.fetch_bug(bug.id, false).then(bug_details => { // Exclude metadata
+      BzDeck.controllers.bugs.fetch_bug(bug.id, false).then(bug_details => { // Exclude metadata
         bug = Object.assign(bug, bug_details); // Merge data
         BzDeck.model.save_bug(bug);
       });
@@ -371,9 +371,9 @@ BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
 BzDeck.views.DetailsPage.swipe.handleEvent = function (event) {
   let touch,
       delta,
-      page = BzDeck.pages.details;
+      page = BzDeck.views.pages.details;
 
-  if (!BzDeck.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
+  if (!BzDeck.views.components.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
       !page || !page.data || !page.data.ids.length) {
     return;
   }

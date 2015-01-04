@@ -131,18 +131,18 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (person of bug['mentors_detail']) BzDeck.core.get_name(person)].join(', ');
+          value = [for (person of bug['mentors_detail']) BzDeck.controllers.users.get_name(person)].join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.core.get_name(bug[`${field}_detail`]);
+        value = BzDeck.controllers.users.get_name(bug[`${field}_detail`]);
       }
 
       if (field === '_starred') {
-        value = BzDeck.model.bug_is_starred(bug);
+        value = BzDeck.controllers.bugs.is_starred(bug);
       }
 
       if (field === '_unread') {
@@ -155,11 +155,11 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
     row.data = new Proxy(row.data, {
       'set': (obj, prop, value) => {
         if (prop === '_starred') {
-          BzDeck.core.toggle_star(obj.id, value);
+          BzDeck.controllers.bugs.toggle_star(obj.id, value);
         }
 
         if (prop === '_unread') {
-          BzDeck.core.toggle_unread(obj.id, value);
+          BzDeck.controllers.bugs.toggle_unread(obj.id, value);
 
           let row = [for (row of this.$$grid.data.rows) if (row.data.id === obj.id) row][0];
 
@@ -209,13 +209,13 @@ BzDeck.views.VerticalThread = function VerticalThread (consumer, name, $outer, o
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.core.toggle_unread(Number($item.dataset.id), $item.dataset.unread === 'false');
+        BzDeck.controllers.bugs.toggle_unread(Number($item.dataset.id), $item.dataset.unread === 'false');
       }
     },
     // Toggle star
     'S': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.core.toggle_star(Number($item.dataset.id),
+        BzDeck.controllers.bugs.toggle_star(Number($item.dataset.id),
             $item.querySelector('[data-field="_starred"]').getAttribute('aria-checked') === 'false');
       }
     },
@@ -287,11 +287,12 @@ BzDeck.views.VerticalThread.prototype.render = function () {
       'id': `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
       'data-unread': !!bug._unread,
-      'aria-checked': BzDeck.model.bug_is_starred(bug)
+      'aria-checked': BzDeck.controllers.bugs.is_starred(bug)
     }));
 
-    BzDeck.core.set_avatar(bug.comments ? BzDeck.views.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
-                                        : bug.creator_detail, $option.querySelector('img'));
+    BzDeck.views.core.set_avatar(
+        bug.comments ? BzDeck.views.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
+                     : bug.creator_detail, $option.querySelector('img'));
   }
 
   this.$listbox.appendChild($fragment);
