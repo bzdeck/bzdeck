@@ -21,7 +21,7 @@ BzDeck.views.core.init = function () {
   this.show_status('Loading UI...'); // l10n
 
   let datetime = FlareTail.util.datetime,
-      prefs = BzDeck.model.data.prefs,
+      prefs = BzDeck.models.data.prefs,
       value,
       theme = prefs['ui.theme.selected'],
       FTut = FlareTail.util.theme,
@@ -76,7 +76,7 @@ BzDeck.views.core.show_status = function (message) {
 };
 
 BzDeck.views.core.toggle_unread = function (loaded = false) {
-  BzDeck.model.get_all_bugs().then(bugs => {
+  BzDeck.models.bugs.get_all().then(bugs => {
     bugs = [for (bug of bugs) if (bug._unread) bug];
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
@@ -263,7 +263,7 @@ window.addEventListener('click', event => {
 
     // Attachment link: open in a new browser tab (TEMP)
     if ($target.hasAttribute('data-attachment-id')) {
-      window.open(BzDeck.model.data.server.url + '/attachment.cgi?id='
+      window.open(BzDeck.models.data.server.url + '/attachment.cgi?id='
                    + $target.getAttribute('data-attachment-id'), '_blank');
 
       event.preventDefault();

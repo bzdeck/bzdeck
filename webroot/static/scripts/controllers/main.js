@@ -18,8 +18,8 @@ BzDeck.controllers.core.notifications = new Set();
 BzDeck.controllers.core.timers = new Map();
 
 BzDeck.controllers.core.request = function (method, path, params, data = null, listeners = {}, options = {}) {
-  let server = BzDeck.model.data.server,
-      account = BzDeck.model.data.account,
+  let server = BzDeck.models.data.server,
+      account = BzDeck.models.data.account,
       xhr = new XMLHttpRequest(),
       url = new URL(server.url + server.endpoints.rest);
 
@@ -61,7 +61,7 @@ BzDeck.controllers.core.request = function (method, path, params, data = null, l
 };
 
 BzDeck.controllers.core.show_notification = function (title, body) {
-  if (BzDeck.model.data.prefs['notifications.show_desktop_notifications'] === false) {
+  if (BzDeck.models.data.prefs['notifications.show_desktop_notifications'] === false) {
     return;
   }
 
@@ -204,7 +204,7 @@ BzDeck.controllers.session.show_first_notification = function () {
   BzDeck.controllers.bugs.toggle_unread(true);
 
   // Notify requests
-  BzDeck.model.get_subscription_by_id('requests').then(bugs => {
+  BzDeck.models.bugs.get_subscription_by_id('requests').then(bugs => {
     let len = bugs.size;
 
     if (!len) {
@@ -234,10 +234,10 @@ BzDeck.controllers.session.logout = function () {
   this.clean();
 
   // Delete the account data
-  BzDeck.model.data.account.active = false;
-  BzDeck.model.save_account(BzDeck.model.data.account);
+  BzDeck.models.data.account.active = false;
+  BzDeck.models.accounts.save_account(BzDeck.models.data.account);
 
-  delete BzDeck.model.data.account;
+  delete BzDeck.models.data.account;
 };
 
 BzDeck.controllers.session.clean = function () {

@@ -123,7 +123,7 @@ BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
 
 BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
   let $pane = this.view.panes['basic-search'] = this.view.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
-      config = BzDeck.model.data.server.config;
+      config = BzDeck.models.data.server.config;
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
@@ -232,7 +232,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
 BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.view.panes['result'] = this.view.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = FlareTail.util.ua.device.mobile,
-      prefs = BzDeck.model.data.prefs;
+      prefs = BzDeck.models.data.prefs;
 
   this.thread = new BzDeck.views.ClassicThread(this, 'search', $pane.querySelector('[role="grid"]'), {
     'sortable': true,
@@ -278,7 +278,7 @@ BzDeck.views.SearchPage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval).then(bug => {
+  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
     if (!bug) {
       // Unknown bug
       $bug.setAttribute('aria-hidden', 'true');
@@ -327,10 +327,10 @@ BzDeck.views.SearchPage.prototype.exec_search = function (params) {
       this.data.bugs = result.bugs;
 
       // Save data
-      BzDeck.model.get_all_bugs().then(bugs => {
+      BzDeck.models.bugs.get_all().then(bugs => {
         let saved_ids = [for (bug of bugs) bug.id];
 
-        BzDeck.model.save_bugs([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
+        BzDeck.models.bugs.save_bugs([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
       });
 
       // Show results

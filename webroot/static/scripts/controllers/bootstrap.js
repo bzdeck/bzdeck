@@ -18,18 +18,18 @@ BzDeck.controllers.bootstrap.init = function () {
   // Delete the old DB
   indexedDB.deleteDatabase('BzDeck');
 
-  BzDeck.model.open_global_database().then(database => {
-    BzDeck.model.databases.global = database;
+  BzDeck.models.open_global_db().then(database => {
+    BzDeck.models.databases.global = database;
   }, error => {
     status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
   }).then(() => {
-    return BzDeck.model.get_active_account();
+    return BzDeck.models.accounts.get_active_account();
   }).then(account => {
-    BzDeck.model.data.account = account;
+    BzDeck.models.data.account = account;
   }).then(() => {
-    return BzDeck.model.get_server(BzDeck.model.data.account.host);
+    return BzDeck.models.servers.get_server(BzDeck.models.data.account.host);
   }).then(server => {
-    BzDeck.model.data.server = server;
+    BzDeck.models.data.server = server;
   }).catch(() => {
     status('');
 
@@ -40,9 +40,9 @@ BzDeck.controllers.bootstrap.init = function () {
         user = email;
 
         // TODO: Users will be able to choose an instance on the sign-in form
-        return BzDeck.model.get_server('mozilla');
+        return BzDeck.models.servers.get_server('mozilla');
       }).then(server => {
-        BzDeck.model.data.server = server;
+        BzDeck.models.data.server = server;
       }).then(() => {
         status('Verifying your account...'); // l10n
 
@@ -50,9 +50,9 @@ BzDeck.controllers.bootstrap.init = function () {
       }).then(account => {
         account.active = true;
         account.loaded = Date.now(); // key
-        account.host = BzDeck.model.data.server.name;
-        BzDeck.model.data.account = account;
-        BzDeck.model.save_account(account);
+        account.host = BzDeck.models.data.server.name;
+        BzDeck.models.data.account = account;
+        BzDeck.models.accounts.save_account(account);
         resolve();
       }).catch(error => {
         if (error.message === 'Network Error') {
@@ -67,13 +67,13 @@ BzDeck.controllers.bootstrap.init = function () {
       });
     });
   }).then(() => {
-    return BzDeck.model.open_account_database();
+    return BzDeck.models.open_account_db();
   }).then(database => {
-    BzDeck.model.databases.account = database;
+    BzDeck.models.databases.account = database;
   }, error => {
     status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
   }).then(() => {
-    return BzDeck.model.load_prefs();
+    return BzDeck.models.prefs.load();
   }).then(() => {
     status('Loading bugs...'); // l10n
     document.querySelector('#app-intro').style.display = 'none';
@@ -81,8 +81,8 @@ BzDeck.controllers.bootstrap.init = function () {
 
     return Promise.all([
       BzDeck.controllers.bugs.fetch_subscriptions(),
-      BzDeck.model.load_config().then(config => {
-        BzDeck.model.data.server.config = config
+      BzDeck.models.config.load().then(config => {
+        BzDeck.models.data.server.config = config
       }, error => {
         form.disable_input();
         status(error.message);

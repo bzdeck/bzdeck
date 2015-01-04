@@ -10,7 +10,7 @@ let BzDeck = BzDeck || {};
 BzDeck.views = BzDeck.views || {};
 
 BzDeck.views.ProfilePage = function ProfilePage (name) {
-  let server = BzDeck.model.data.server,
+  let server = BzDeck.models.data.server,
       $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
       $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
       $profile = $tabpanel.querySelector('article'),
@@ -21,7 +21,7 @@ BzDeck.views.ProfilePage = function ProfilePage (name) {
   $status.textContent = 'Loading...'; // l10n
 
   // Display the links to Gravatar if this is the user's self profile
-  if (name === BzDeck.model.data.account.name) {
+  if (name === BzDeck.models.data.account.name) {
     $profile.classList.add('self');
   }
 

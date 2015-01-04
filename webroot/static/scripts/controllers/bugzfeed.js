@@ -16,7 +16,7 @@ BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
 };
 
 BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
-  let endpoint = BzDeck.model.data.server.endpoints.websocket;
+  let endpoint = BzDeck.models.data.server.endpoints.websocket;
 
   if (!endpoint || !navigator.onLine) {
     return;
@@ -116,7 +116,7 @@ BzDeck.controllers.BugzfeedClient.prototype.get_changes = function (message) {
 };
 
 BzDeck.controllers.BugzfeedClient.prototype.save_changes = function (bug, changes) {
-  BzDeck.model.get_bug_by_id(bug.id).then(cache => {
+  BzDeck.models.bugs.get_bug_by_id(bug.id).then(cache => {
     if (changes.has('comment')) {
       cache.comments.push(changes.get('comment'));
     }
@@ -135,6 +135,6 @@ BzDeck.controllers.BugzfeedClient.prototype.save_changes = function (bug, change
       }
     }
 
-    BzDeck.model.save_bug(cache);
+    BzDeck.models.bugs.save_bug(cache);
   });
 };

@@ -113,14 +113,14 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
     // Load comments, history, flags and attachments' metadata
     BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
       this.bug = Object.assign(this.bug, bug_details); // Merge data
-      BzDeck.model.save_bug(this.bug);
+      BzDeck.models.bugs.save_bug(this.bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
     });
   }
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.model.data.prefs['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.data.prefs['ui.timeline.sort.order'] !== 'descending',
         entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -194,7 +194,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   // See Also
   for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    let re = new RegExp(`^${BzDeck.model.data.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, "\\.")),
+    let re = new RegExp(`^${BzDeck.models.data.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, "\\.")),
         match = $link.href.match(re);
 
     if (match) {
@@ -236,7 +236,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 };
 
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
-  let config = BzDeck.model.data.server.config,
+  let config = BzDeck.models.data.server.config,
       strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[this.bug.classification],
       product = config.product[this.bug.product],
@@ -281,7 +281,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   };
 
   if (related_bug_ids.size) {
-    BzDeck.model.get_bugs_by_ids(related_bug_ids).then(bugs => {
+    BzDeck.models.bugs.get_bugs_by_ids(related_bug_ids).then(bugs => {
       let found_bug_ids = [for (bug of bugs) bug.id],
           lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.includes(id)) id];
 
@@ -289,7 +289,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
 
       if (lookup_bug_ids.length) {
         BzDeck.controllers.bugs.fetch_bugs(lookup_bug_ids).then(bugs => {
-          BzDeck.model.save_bugs(bugs);
+          BzDeck.models.bugs.save_bugs(bugs);
           bugs.map(set_tooltops);
         });
       }
@@ -358,7 +358,7 @@ BzDeck.views.Bug.Timeline = function Timeline (bug, $bug, delayed) {
   let get_time = str => (new Date(str)).getTime(),
       entries = new Map([for (c of bug.comments.entries())
                              [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
-      prefs = BzDeck.model.data.prefs,
+      prefs = BzDeck.models.data.prefs,
       show_cc_changes = prefs['ui.timeline.show_cc_changes'] === true,
       click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
@@ -521,7 +521,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
         bug._starred_comments.add(comment.id);
       }
 
-      BzDeck.model.save_bug(bug);
+      BzDeck.models.bugs.save_bug(bug);
       FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { bug }});
     };
 
@@ -560,7 +560,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
 
   if (attachment) {
     // TODO: load the attachment data via API
-    let url = `${BzDeck.model.data.server.url}/attachment.cgi?id=${attachment.id}`,
+    let url = `${BzDeck.models.data.server.url}/attachment.cgi?id=${attachment.id}`,
         media_type = attachment.content_type.split('/')[0],
         $attachment = FlareTail.util.content.get_fragment('timeline-attachment').firstElementChild,
         $outer = $attachment.querySelector('div'),
@@ -604,7 +604,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       $outer.appendChild($media);
       $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
-      if (BzDeck.model.data.prefs['ui.timeline.display_attachments_inline'] !== false) {
+      if (BzDeck.models.data.prefs['ui.timeline.display_attachments_inline'] !== false) {
         $outer.setAttribute('aria-busy', 'true');
         $media.src = url;
       }
@@ -617,7 +617,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
   }
 
   if (history) {
-    let conf_field = BzDeck.model.data.server.config.field;
+    let conf_field = BzDeck.models.data.server.config.field;
 
     let generate_element = (change, how) => {
       let $elm = document.createElement('span');
@@ -682,7 +682,7 @@ BzDeck.views.Bug.Timeline.Entry = function Entry (timeline_id, bug, data) {
       return;
     }
 
-    let ascending = BzDeck.model.data.prefs['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.data.prefs['ui.timeline.sort.order'] !== 'descending',
         entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -752,7 +752,7 @@ BzDeck.views.Bug.Timeline.CommentForm = function CommentForm (bug, timeline_id) 
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
   this.bug = bug;
-  this.has_token = () => !!BzDeck.model.data.account.token;
+  this.has_token = () => !!BzDeck.models.data.account.token;
   this.has_text = () => !!this.$textbox.value.match(/\S/);
   this.attachments = [];
   this.has_attachments = () => this.attachments.length > 0;
@@ -873,7 +873,7 @@ BzDeck.views.Bug.Timeline.CommentForm.prototype.attach_text = function (str) {
 BzDeck.views.Bug.Timeline.CommentForm.prototype.onselect_files = function (files) {
   let excess_files = new Set(),
       num_format = num => num.toLocaleString('en-US'),
-      max_size = BzDeck.model.data.server.config.max_attachment_size,
+      max_size = BzDeck.models.data.server.config.max_attachment_size,
       max = num_format(max_size),
       message;
 

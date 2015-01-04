@@ -39,7 +39,7 @@ BzDeck.views.SettingsPage.connect = function () {
 };
 
 BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
-  let account = BzDeck.model.data.account,
+  let account = BzDeck.models.data.account,
       token = account.token,
       $input = document.querySelector('#tabpanel-settings-account-token'),
       $output = $input.nextElementSibling;
@@ -67,7 +67,7 @@ BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
       if (result.users) {
         // Save the token
         account.token = $input.value;
-        BzDeck.model.save_account(account);
+        BzDeck.models.accounts.save_account(account);
         // Update the view
         $input.setAttribute('aria-invalid', 'false');
         $output.textContent = 'Verified'; // l10n
@@ -132,7 +132,7 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroups = function () {
 
 BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (pref, default_value, callback) {
   let $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${pref}"]`),
-      prefs = BzDeck.model.data.prefs,
+      prefs = BzDeck.models.data.prefs,
       type = $rgroup.dataset.type || 'string',
       value = prefs[pref] !== undefined ? prefs[pref] : default_value;
 

@@ -12,7 +12,7 @@ BzDeck.views = BzDeck.views || {};
 BzDeck.views.HomePage = function HomePage () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
-      prefs = BzDeck.model.data.prefs,
+      prefs = BzDeck.models.data.prefs,
       $preview_pane = document.querySelector('#home-preview-pane'),
       $sidebar = document.querySelector('#sidebar');
 
@@ -161,7 +161,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.model.get_bug_by_id(newval).then(bug => {
+  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
     if (!bug) {
       $bug.setAttribute('aria-hidden', 'true');
       $$button.data.disabled = true;
@@ -195,7 +195,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
-      prefs = BzDeck.model.data.prefs,
+      prefs = BzDeck.models.data.prefs,
       mql = window.matchMedia('(max-width: 1023px)'),
       $$splitter = this.$$preview_splitter;
 
@@ -248,7 +248,7 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
 
     if (!this.classic_thread_initialized) {
       // Fill the thread with all saved bugs, and filter the rows later
-      BzDeck.model.get_all_bugs().then(bugs => this.thread.update(bugs));
+      BzDeck.models.bugs.get_all().then(bugs => this.thread.update(bugs));
 
       // Select the first bug on the list automatically when a folder is opened
       // TODO: Remember the last selected bug for each folder

@@ -36,7 +36,7 @@ BzDeck.views.Toolbar = function Toolbar () {
   $app_menu.addEventListener('MenuItemSelected', event => {
     switch (event.detail.command) {
       case 'show-profile': {
-        BzDeck.router.navigate('/profile/' + BzDeck.model.data.account.name);
+        BzDeck.router.navigate('/profile/' + BzDeck.models.data.account.name);
 
         break;
       }
@@ -120,7 +120,7 @@ BzDeck.views.Toolbar = function Toolbar () {
 
   // Account label & avatar
   {
-    let account = BzDeck.model.data.account,
+    let account = BzDeck.models.data.account,
         label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
         $menu_label = document.querySelector('#main-menu--app label'),
         $account_label = document.querySelector('#main-menu--app--account label'),
@@ -310,7 +310,7 @@ BzDeck.views.Toolbar.prototype.quicksearch = function (event) {
       // Support for multiple aliases on Bugzilla 5.0+
       get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
 
-  BzDeck.model.get_all_bugs().then(bugs => {
+  BzDeck.models.bugs.get_all().then(bugs => {
     let results = bugs.filter(bug => {
       return words.every(word => bug.summary.toLowerCase().includes(word)) ||
              words.every(word => get_aliases(bug).join().toLowerCase().includes(word)) ||

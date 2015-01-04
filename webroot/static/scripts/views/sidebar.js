@@ -119,7 +119,7 @@ BzDeck.views.Sidebar = function Sidebar () {
 
   window.addEventListener('Bug:UnreadToggled', event => {
     // Update the sidebar Inbox folder
-    BzDeck.model.get_subscribed_bugs().then(bugs => {
+    BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
       this.toggle_unread_ui([for (bug of bugs) if (bug._unread) bug].length);
     });
   });
@@ -150,7 +150,7 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id === 'inbox') {
-    BzDeck.model.get_subscribed_bugs().then(bugs => {
+    BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
       let recent_time = Date.now() - 1000 * 60 * 60 * 24 * 11;
       let is_new = bug => {
         if (bug._unread) {
@@ -159,7 +159,7 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
 
         // Ignore CC Changes option
         // At first startup, bug details are not loaded yet, so check if the comments exist
-        if (BzDeck.model.data.prefs['notifications.ignore_cc_changes'] !== false && bug.comments) {
+        if (BzDeck.models.data.prefs['notifications.ignore_cc_changes'] !== false && bug.comments) {
           // Check if there is a comment, attachment or non-CC change(s) on the last modified time
           return [for (c of bug.comments) if (c.creation_time === bug.last_change_time) c].length ||
                  [for (a of bug.attachments || []) if (a.creation_time === bug.last_change_time) a].length ||
@@ -177,24 +177,24 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
   }
 
   if (folder_id.match(/^(watching|reported|assigned|mentor|qa|requests)$/)) {
-    BzDeck.model.get_subscription_by_id(folder_id).then(bugs => update_list(bugs));
+    BzDeck.models.bugs.get_subscription_by_id(folder_id).then(bugs => update_list(bugs));
   }
 
   if (folder_id === 'all') {
-    BzDeck.model.get_subscribed_bugs().then(bugs => {
+    BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
       update_list(bugs);
     });
   }
 
   if (folder_id === 'starred') {
     // Starred bugs may include non-subscribed bugs, so get ALL bugs
-    BzDeck.model.get_all_bugs().then(bugs => {
+    BzDeck.models.bugs.get_all().then(bugs => {
       update_list([for (bug of bugs) if (BzDeck.controllers.bugs.is_starred(bug)) bug]);
     });
   }
 
   if (folder_id === 'important') {
-    BzDeck.model.get_subscribed_bugs().then(bugs => {
+    BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
       let severities = ['blocker', 'critical', 'major'];
 
       update_list([for (bug of bugs) if (severities.includes(bug.severity)) bug]);
