@@ -19,6 +19,9 @@ BzDeck.controllers.Session = function SessionController () {
   // Delete the old DB
   indexedDB.deleteDatabase('BzDeck');
 
+  BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
+  BzDeck.router = new FlareTail.app.Router(BzDeck);
+
   BzDeck.models.open_global_db().then(database => {
     BzDeck.models.databases.global = database;
   }, error => {
@@ -37,11 +40,10 @@ BzDeck.controllers.Session = function SessionController () {
     return new Promise(resolve => {
       let user;
 
-      form.show().then(email => {
-        user = email;
+      form.show().then(account => {
+        user = account.email;
 
-        // TODO: Users will be able to choose an instance on the sign-in form
-        return BzDeck.models.servers.get_server('mozilla');
+        return BzDeck.models.servers.get_server(account.host);
       }).then(server => {
         BzDeck.models.data.server = server;
       }).then(() => {
@@ -76,20 +78,33 @@ BzDeck.controllers.Session = function SessionController () {
   }).then(() => {
     return BzDeck.models.prefs.load();
   }).then(() => {
-    status('Loading bugs...'); // l10n
-    document.querySelector('#app-intro').style.display = 'none';
+    status('Loading Bugzilla config...'); // l10n
+
     form.hide();
+    form.hide_intro();
 
     return Promise.all([
       BzDeck.controllers.bugs.fetch_subscriptions(),
-      BzDeck.models.config.load().then(config => {
+      new Promise((resolve, reject) => BzDeck.models.config.load().then(config => {
+        resolve(config);
+      }, error => {
+        BzDeck.controllers.config.fetch().then(config => {
+          BzDeck.models.get_store('bugzilla').save({ 'host': BzDeck.models.data.server.name, config });
+          resolve(config);
+        }, error => {
+          reject(error);
+        });
+      })).then(config => {
         BzDeck.models.data.server.config = config
+        status('Loading your bugs...'); // l10n; fetch_subscriptions may be still working
       }, error => {
         form.disable_input();
         status(error.message);
       })
     ]);
   }).then(() => {
+    status('Loading UI...'); // l10n
+
     if (!this.relogin) {
       // Finally load the UI modules
       BzDeck.views.core.init();
@@ -98,11 +113,9 @@ BzDeck.controllers.Session = function SessionController () {
     status(error.message);
   }).then(() => {
     // Connect to the push notification server
-    BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
     BzDeck.controllers.bugzfeed.connect();
 
     // Activate the router
-    BzDeck.router = new FlareTail.app.Router(BzDeck);
     BzDeck.router.locate();
 
     // Timer to check for updates, call every 10 minutes
@@ -112,10 +125,9 @@ BzDeck.controllers.Session = function SessionController () {
     // Register the app for an activity on Firefox OS
     BzDeck.controllers.app.register_activity_handler();
 
-    BzDeck.views.statusbar.show('Loading complete.'); // l10n
+    status('Loading complete.'); // l10n
     this.show_first_notification();
     this.login();
-
     this.processing = false;
   });
 };

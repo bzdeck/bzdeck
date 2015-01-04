@@ -151,49 +151,9 @@ BzDeck.models.prefs.load = function () {
 BzDeck.models.config = {};
 
 BzDeck.models.config.load = function () {
-  let server_name = BzDeck.models.data.server.name;
-
   return new Promise((resolve, reject) => {
-    BzDeck.models.get_store('bugzilla').get(server_name).then(server => {
-      if (server) {
-        // Cache found
-        resolve(server.config);
-
-        return;
-      }
-
-      if (!navigator.onLine) {
-        // Offline; give up
-        reject(new Error('You have to go online to load data.')); // l10n
-
-        return;
-      }
-
-      // Load the Bugzilla config in background
-      let xhr = new XMLHttpRequest();
-
-      server = BzDeck.models.data.server;
-
-      // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-      xhr.open('GET', `${server.url}${server.endpoints.bzapi}configuration?cached_ok=1`, true);
-      xhr.setRequestHeader('Accept', 'application/json');
-
-      xhr.addEventListener('load', event => {
-        let data = JSON.parse(event.target.responseText);
-
-        if (!data || !data.version) {
-          // Give up
-          reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')); // l10n
-
-          return;
-        }
-
-        // The config is loaded successfully
-        BzDeck.models.get_store('bugzilla').save({ 'host': server_name, 'config': data });
-        resolve(data);
-      });
-
-      xhr.send(null);
+    BzDeck.models.get_store('bugzilla').get(BzDeck.models.data.server.name).then(server => {
+      server ? resolve(server.config) : reject(new Error('Config cache could not be found.'));
     });
   });
 };

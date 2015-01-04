@@ -17,9 +17,6 @@ BzDeck.views.pages = {};
 BzDeck.views.core = {}
 
 BzDeck.views.core.init = function () {
-  BzDeck.views.statusbar = new BzDeck.views.Statusbar();
-  BzDeck.views.statusbar.show('Loading UI...'); // l10n
-
   let datetime = FlareTail.util.datetime,
       prefs = BzDeck.models.data.prefs,
       value,
@@ -58,6 +55,7 @@ BzDeck.views.core.init = function () {
   BzDeck.views.pages.home = new BzDeck.views.HomePage();
   BzDeck.views.toolbar = new BzDeck.views.Toolbar();
   BzDeck.views.sidebar = new BzDeck.views.Sidebar();
+  BzDeck.views.statusbar = new BzDeck.views.Statusbar();
   // BzDeck.views.DetailsPage.swipe.init();
 
   // Change the theme
@@ -189,15 +187,16 @@ BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
 
   return new Promise((resolve, reject) => {
     this.$form.addEventListener('submit', event => {
-      if (!BzDeck.controllers.bootstrap.processing) {
+      if (!BzDeck.controllers.session.processing) {
         // User is trying to re-login
-        BzDeck.controllers.bootstrap.relogin = true;
-        BzDeck.controllers.bootstrap.processing = true;
+        BzDeck.controllers.session.relogin = true;
+        BzDeck.controllers.session.processing = true;
       }
 
       if (navigator.onLine) {
         this.$input.disabled = this.$button.disabled = true;
-        resolve(this.form.$input.value);
+        // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
+        resolve({ 'host': 'mozilla', 'email': this.$input.value });
       } else {
         reject(new Error('You have to go online to sign in.')); // l10n
       }
@@ -211,6 +210,10 @@ BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
 
 BzDeck.views.LoginForm.prototype.hide = function () {
   this.$form.setAttribute('aria-hidden', 'true');
+};
+
+BzDeck.views.LoginForm.prototype.hide_intro = function () {
+  document.querySelector('#app-intro').style.display = 'none';
 };
 
 BzDeck.views.LoginForm.prototype.show_status = function (message) {

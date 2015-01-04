@@ -91,7 +91,7 @@ BzDeck.models.bugs.get_all = function () {
 };
 
 BzDeck.models.bugs.save_bug = function (bug) {
-  return new Promise(resolve => this.save_bugs([bug]).then(resolve(bug)));
+  return new Promise(resolve => this.save_bugs([bug]).then(bugs => resolve(bug)));
 };
 
 BzDeck.models.bugs.save_bugs = function (bugs) {

@@ -107,7 +107,7 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
 
 BzDeck.controllers.bugs.fetch_bug = function (id, include_metadata = true, include_details = true) {
   return new Promise((resolve, reject) => this.fetch_bugs([id], include_metadata, include_details)
-      .then(bugs => resolve(bugs[0]), error => reject(new Error(error.message))));
+      .then(bugs => resolve(bugs[0]), error => reject(error)));
 };
 
 BzDeck.controllers.bugs.fetch_bugs = function (ids, include_metadata = true, include_details = true) {

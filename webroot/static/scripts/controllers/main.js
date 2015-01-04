@@ -151,6 +151,33 @@ BzDeck.controllers.core.parse_comment = function (str) {
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
+ * Config
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.controllers.config = {};
+
+BzDeck.controllers.config.fetch = function () {
+  // Load the Bugzilla config in background
+  let server = BzDeck.models.data.server;
+
+  return new Promise((resolve, reject) => {
+    if (!navigator.onLine) {
+      // Offline; give up
+      return reject(new Error('You have to go online to load data.')); // l10n
+    }
+
+    // The config is not available from the REST endpoint so use the BzAPI compat layer instead
+    FlareTail.util.network.json(server.url + server.endpoints.bzapi + 'configuration?cached_ok=1').then(data => {
+      if (data && data.version) {
+        resolve(data);
+      } else {
+        reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.')); // l10n
+      }
+    }).catch(error => reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')));
+  });
+};
+
+/* ------------------------------------------------------------------------------------------------------------------
  * App
  * ------------------------------------------------------------------------------------------------------------------ */
 
