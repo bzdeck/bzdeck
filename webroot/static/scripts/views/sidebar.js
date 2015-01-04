@@ -1,5 +1,5 @@
 /**
- * BzDeck Global Sidebar
+ * BzDeck Global Sidebar View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.Sidebar = function Sidebar () {
+BzDeck.views.Sidebar = function SidebarView () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
       $root = document.documentElement, // <html>
@@ -127,7 +127,7 @@ BzDeck.views.Sidebar = function Sidebar () {
 
 BzDeck.views.Sidebar.prototype.open_folder = function (folder_id) {
   let home = BzDeck.views.pages.home,
-      toolbar = BzDeck.views.components.toolbar;
+      toolbar = BzDeck.views.toolbar;
 
   let update_list = bugs => {
     home.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy

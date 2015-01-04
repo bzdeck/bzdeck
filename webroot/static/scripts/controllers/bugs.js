@@ -176,3 +176,29 @@ BzDeck.controllers.bugs.toggle_unread = function (id, value) {
 BzDeck.controllers.bugs.is_starred = function (bug) {
   return !!bug._starred_comments && !!bug._starred_comments.size;
 };
+
+BzDeck.controllers.bugs.find_person = function (bug, email) {
+  if (bug.creator === email) {
+    return bug.creator_detail;
+  }
+
+  if (bug.assigned_to === email) {
+    return bug.assigned_to_detail;
+  }
+
+  if (bug.qa_contact === email) {
+    return bug.qa_contact_detail;
+  }
+
+  if (bug.cc.includes(email)) {
+    return [for (person of bug.cc_detail) if (person.email === email) person][0];
+  }
+
+  if (bug.mentors.includes(email)) {
+    return [for (person of bug.mentors_detail) if (person.email === email) person][0];
+  }
+
+  // If the person is just watching the bug component, s/he might not be in any field of the bug
+  // and cannot be found. Then just return a simple object. TODO: fetch the account using the API
+  return { email, 'id': 0, 'name': email, 'real_name': '' };
+};

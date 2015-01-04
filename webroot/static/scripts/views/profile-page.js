@@ -1,5 +1,5 @@
 /**
- * BzDeck User Profile Page
+ * BzDeck User Profile Page View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.ProfilePage = function ProfilePage (name) {
+BzDeck.views.ProfilePage = function ProfilePageView (name) {
   let server = BzDeck.models.data.server,
       $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
       $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
@@ -64,7 +64,7 @@ BzDeck.views.ProfilePage = function ProfilePage (name) {
 BzDeck.views.ProfilePage.route = '/profile/(.+)';
 
 BzDeck.views.ProfilePage.connect = function (name) {
-  BzDeck.views.components.toolbar.open_tab({
+  BzDeck.views.toolbar.open_tab({
     'page_category': 'profile',
     'page_id': name,
     'page_constructor': BzDeck.views.ProfilePage,

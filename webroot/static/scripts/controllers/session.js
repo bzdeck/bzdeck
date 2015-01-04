@@ -1,5 +1,5 @@
 /**
- * BzDeck Bootstrapper
+ * BzDeck Session Controller
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,10 +9,11 @@ let BzDeck = BzDeck || {};
 
 BzDeck.controllers = BzDeck.controllers || {};
 
-BzDeck.controllers.bootstrap = {};
+// Bootstrapper
+BzDeck.controllers.Session = function SessionController () {
+  this.processing = true;
 
-BzDeck.controllers.bootstrap.init = function () {
-  let form = new BzDeck.views.LoginForm(),
+  let form = BzDeck.views.login_form = new BzDeck.views.LoginForm(),
       status = message => form.show_status(message);
 
   // Delete the old DB
@@ -111,18 +112,92 @@ BzDeck.controllers.bootstrap.init = function () {
     // Register the app for an activity on Firefox OS
     BzDeck.controllers.app.register_activity_handler();
 
-    BzDeck.views.core.show_status('Loading complete.'); // l10n
-    BzDeck.controllers.session.show_first_notification();
-    BzDeck.controllers.session.login();
+    BzDeck.views.statusbar.show('Loading complete.'); // l10n
+    this.show_first_notification();
+    this.login();
 
     this.processing = false;
   });
 };
 
-window.addEventListener('DOMContentLoaded', event => {
-  BzDeck.controllers.bootstrap.processing = true;
+BzDeck.controllers.Session.prototype.show_first_notification = function () {
+  // Authorize a notification
+  FlareTail.util.app.auth_notification();
 
-  if (FlareTail.util.compatible) {
-    BzDeck.controllers.bootstrap.init();
+  // Update UI & Show a notification
+  BzDeck.controllers.bugs.toggle_unread(true);
+
+  // Notify requests
+  BzDeck.models.bugs.get_subscription_by_id('requests').then(bugs => {
+    let len = bugs.size;
+
+    if (!len) {
+      return;
+    }
+
+    let title = len > 1 ? `You have ${len} requests`
+                        : 'You have 1 request'; // l10n
+    let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
+                       : 'Select the Requests folder to browse the bug.'; // l10n
+
+    // TODO: Improve the notification body to describe more about the requests,
+    // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
+
+    // Select the Requests folder when the notification is clicked
+    BzDeck.controllers.core.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+  });
+};
+
+BzDeck.controllers.Session.prototype.login = function () {
+  this.view = new BzDeck.views.Session();
+  this.view.login();
+};
+
+BzDeck.controllers.Session.prototype.logout = function () {
+  this.view.logout();
+
+  this.clean();
+
+  // Delete the account data
+  BzDeck.models.data.account.active = false;
+  BzDeck.models.accounts.save_account(BzDeck.models.data.account);
+
+  delete BzDeck.models.data.account;
+};
+
+BzDeck.controllers.Session.prototype.clean = function () {
+  // Terminate timers
+  for (let timer of BzDeck.controllers.core.timers.values()) {
+    window.clearInterval(timer);
   }
+
+  BzDeck.controllers.core.timers.clear();
+
+  // Destroy all notifications
+  for (let notification of BzDeck.controllers.core.notifications) {
+    notification.close()
+  };
+
+  BzDeck.controllers.core.notifications.clear();
+
+  // Disconnect from the Bugzfeed server
+  BzDeck.controllers.bugzfeed.disconnect();
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Events
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+window.addEventListener('DOMContentLoaded', event => {
+  if (FlareTail.util.compatible) {
+    BzDeck.controllers.session = new BzDeck.controllers.Session();
+  }
+});
+
+window.addEventListener('online', event => {
+  BzDeck.controllers.bugzfeed.connect();
+});
+
+window.addEventListener('beforeunload', event => {
+  BzDeck.controllers.session.clean();
 });

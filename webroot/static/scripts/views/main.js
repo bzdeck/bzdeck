@@ -9,7 +9,6 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 BzDeck.views.pages = {};
-BzDeck.views.components = {};
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Core
@@ -18,7 +17,8 @@ BzDeck.views.components = {};
 BzDeck.views.core = {}
 
 BzDeck.views.core.init = function () {
-  this.show_status('Loading UI...'); // l10n
+  BzDeck.views.statusbar = new BzDeck.views.Statusbar();
+  BzDeck.views.statusbar.show('Loading UI...'); // l10n
 
   let datetime = FlareTail.util.datetime,
       prefs = BzDeck.models.data.prefs,
@@ -56,8 +56,8 @@ BzDeck.views.core.init = function () {
 
   // Activate widgets
   BzDeck.views.pages.home = new BzDeck.views.HomePage();
-  BzDeck.views.components.toolbar = new BzDeck.views.Toolbar();
-  BzDeck.views.components.sidebar = new BzDeck.views.Sidebar();
+  BzDeck.views.toolbar = new BzDeck.views.Toolbar();
+  BzDeck.views.sidebar = new BzDeck.views.Sidebar();
   // BzDeck.views.DetailsPage.swipe.init();
 
   // Change the theme
@@ -67,12 +67,6 @@ BzDeck.views.core.init = function () {
 
   // Preload images from CSS
   FTut.preload_images();
-};
-
-BzDeck.views.core.show_status = function (message) {
-  if (this.$statusbar) {
-    this.$statusbar.textContent = message;
-  }
 };
 
 BzDeck.views.core.toggle_unread = function (loaded = false) {
@@ -92,7 +86,7 @@ BzDeck.views.core.toggle_unread = function (loaded = false) {
     }
 
     if (bugs.length === 0) {
-      this.show_status('No new bugs to download'); // l10n
+      BzDeck.views.statusbar.show('No new bugs to download'); // l10n
 
       return;
     }
@@ -102,7 +96,7 @@ BzDeck.views.core.toggle_unread = function (loaded = false) {
     let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
 
-    this.show_status(status);
+    BzDeck.views.statusbar.show(status);
 
     // Select Inbox when the notification is clicked
     BzDeck.controllers.core.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
@@ -135,10 +129,10 @@ BzDeck.views.core.update_window_title = $tab => {
  * Session
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.session = {};
+BzDeck.views.Session = function SessionView () {};
 
-BzDeck.views.session.login = function () {
-  BzDeck.views.core.$statusbar = document.querySelector('#statusbar');
+BzDeck.views.Session.prototype.login = function () {
+  BzDeck.views.statusbar.$statusbar = document.querySelector('#statusbar');
 
   this.$app_login = document.querySelector('#app-login'),
   this.$app_body = document.querySelector('#app-body');
@@ -149,21 +143,35 @@ BzDeck.views.session.login = function () {
   // TODO: focus handling
 };
 
-BzDeck.views.session.logout = function () {
-  BzDeck.views.core.$statusbar = $app_login.querySelector('[role="status"]');
-  BzDeck.views.core.show_status('You have logged out.'); // l10n
+BzDeck.views.Session.prototype.logout = function () {
+  BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('[role="status"]');
+  BzDeck.views.statusbar.show('You have logged out.'); // l10n
 
   this.$app_login.removeAttribute('aria-hidden');
   this.$app_body.setAttribute('aria-hidden', 'true');
 
-  BzDeck.controllers.bootstrap.show_login_form(false);
+  BzDeck.views.login_form.show(false);
+};
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Statusbar
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.views.Statusbar = function StatusbarView () {
+  this.$statusbar = document.querySelector('#app-login [role="status"]');
+};
+
+BzDeck.views.Statusbar.prototype.show = function (message) {
+  if (this.$statusbar) {
+    this.$statusbar.textContent = message;
+  }
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Log-in Form
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.LoginForm = function LoginForm () {
+BzDeck.views.LoginForm = function LoginFormView () {
   this.$form = document.querySelector('#app-login form');
   this.$input = this.$form.querySelector('[role="textbox"]');
   this.$button = this.$form.querySelector('[role="button"]');

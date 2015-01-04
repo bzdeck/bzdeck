@@ -1,5 +1,5 @@
 /**
- * BzDeck Home Page
+ * BzDeck Home Page View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.HomePage = function HomePage () {
+BzDeck.views.HomePage = function HomePageView () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,
       prefs = BzDeck.models.data.prefs,
@@ -125,7 +125,7 @@ BzDeck.views.HomePage.route = '/home/(\\w+)';
 BzDeck.views.HomePage.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
-      $$tablist = BzDeck.views.components.toolbar.$$tablist;
+      $$tablist = BzDeck.views.toolbar.$$tablist;
 
   if (!$folder) {
     // Unknown folder; ignore
@@ -138,12 +138,12 @@ BzDeck.views.HomePage.connect = function (folder_id) {
     $$tablist.view.selected = $$tablist.view.$focused = $tab;
   }
 
-  if (BzDeck.views.components.sidebar.data.folder_id !== folder_id) {
-    BzDeck.views.components.sidebar.$$folders.view.selected = $folder;
-    BzDeck.views.components.sidebar.open_folder(folder_id);
+  if (BzDeck.views.sidebar.data.folder_id !== folder_id) {
+    BzDeck.views.sidebar.$$folders.view.selected = $folder;
+    BzDeck.views.sidebar.open_folder(folder_id);
   }
 
-  BzDeck.views.components.toolbar.tab_path_map.set('tab-home', location.pathname);
+  BzDeck.views.toolbar.tab_path_map.set('tab-home', location.pathname);
   BzDeck.views.core.update_window_title($tab);
 };
 
@@ -269,8 +269,8 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
   }
 
   // Render the thread
-  if (BzDeck.views.components.sidebar) {
-    BzDeck.views.components.sidebar.open_folder(BzDeck.views.components.sidebar.data.folder_id);
+  if (BzDeck.views.sidebar) {
+    BzDeck.views.sidebar.open_folder(BzDeck.views.sidebar.data.folder_id);
   }
 
   if ($$splitter) {

@@ -1,5 +1,5 @@
 /**
- * BzDeck Global Toolbar
+ * BzDeck Global Toolbar View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.Toolbar = function Toolbar () {
+BzDeck.views.Toolbar = function ToolbarView () {
   let FTw = FlareTail.widget,
       FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
@@ -247,7 +247,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
       page_constructor = options.page_constructor,
       page_constructor_args = options.page_constructor_args || [],
       pages = BzDeck.views.pages[`${page_category}_list`],
-      $$tablist = BzDeck.views.components.toolbar.$$tablist,
+      $$tablist = BzDeck.views.toolbar.$$tablist,
       tab_id = options.page_category + (page_id ? '-' + page_id : ''),
       tab_label = options.tab_label,
       tab_desc = options.tab_desc || tab_label,

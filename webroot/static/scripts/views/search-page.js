@@ -1,5 +1,5 @@
 /**
- * BzDeck Search Page
+ * BzDeck Search Page View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.SearchPage = function SearchPage (search_id) {
+BzDeck.views.SearchPage = function SearchPageView (search_id) {
   let $tabpanel = document.querySelector(`#tabpanel-search-${search_id}`);
 
   this.view = {
@@ -81,7 +81,7 @@ BzDeck.views.SearchPage = function SearchPage (search_id) {
 BzDeck.views.SearchPage.route = '/search/(\\d{13,})';
 
 BzDeck.views.SearchPage.connect = function (search_id) {
-  BzDeck.views.components.toolbar.open_tab({
+  BzDeck.views.toolbar.open_tab({
     'page_category': 'search',
     'page_id': search_id,
     'page_constructor': BzDeck.views.SearchPage,

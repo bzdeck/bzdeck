@@ -1,5 +1,5 @@
 /**
- * BzDeck Settings Page
+ * BzDeck Settings Page View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.SettingsPage = function SettingsPage () {
+BzDeck.views.SettingsPage = function SettingsPageView () {
   // Activate tabs
   this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
 
@@ -24,7 +24,7 @@ BzDeck.views.SettingsPage = function SettingsPage () {
 BzDeck.views.SettingsPage.route = '/settings';
 
 BzDeck.views.SettingsPage.connect = function () {
-  BzDeck.views.components.toolbar.open_tab({
+  BzDeck.views.toolbar.open_tab({
     'page_category': 'settings',
     'page_constructor': BzDeck.views.SettingsPage,
     'tab_label': 'Settings',
@@ -77,7 +77,7 @@ BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
         $input.setAttribute('aria-invalid', 'true');
         $output.textContent = 'Invalid, try again'; // l10n
       }
-    }).catch(error => BzDeck.views.core.show_status(error.message));
+    }).catch(error => BzDeck.views.statusbar.show(error.message));
   });
 };
 

@@ -1,5 +1,5 @@
 /**
- * BzDeck Details Page
+ * BzDeck Details Page View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.DetailsPage = function DetailsPage (id, ids = []) {
+BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   let $tab = document.querySelector(`#tab-details-${id}`),
       $tabpanel = document.querySelector(`#tabpanel-details-${id}`);
 
@@ -46,7 +46,7 @@ BzDeck.views.DetailsPage.route = '/bug/(\\d+)';
 BzDeck.views.DetailsPage.connect = function () {
   let id = Number.parseInt(arguments[0]);
 
-  BzDeck.views.components.toolbar.open_tab({
+  BzDeck.views.toolbar.open_tab({
     'page_category': 'details',
     'page_id': id,
     'page_constructor': BzDeck.views.DetailsPage,
@@ -180,12 +180,12 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
 
 BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
   if (!navigator.onLine) {
-    BzDeck.views.core.show_status('You have to go online to load the bug.'); // l10n
+    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
 
     return;
   }
 
-  BzDeck.views.core.show_status('Loading...'); // l10n
+  BzDeck.views.statusbar.show('Loading...'); // l10n
 
   BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
     // Save in DB
@@ -196,13 +196,13 @@ BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
 
     // Check if the tabpanel still exists
     if ($tabpanel) {
-      BzDeck.views.core.show_status('');
+      BzDeck.views.statusbar.show('');
       // Update UI
       this.$$bug.fill(bug);
       $tab.title = this.get_tab_title(bug);
     }
   }).catch(bug => {
-    BzDeck.views.core.show_status('ERROR: Failed to load data.'); // l10n
+    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
   });
 };
 
@@ -210,7 +210,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (id) {
   let $current_tab = this.view.$tab;
 
   BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
-  BzDeck.views.components.toolbar.$$tablist.close_tab($current_tab);
+  BzDeck.views.toolbar.$$tablist.close_tab($current_tab);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -373,7 +373,7 @@ BzDeck.views.DetailsPage.swipe.handleEvent = function (event) {
       delta,
       page = BzDeck.views.pages.details;
 
-  if (!BzDeck.views.components.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
+  if (!BzDeck.views.toolbar.$$tablist.view.selected[0].id.startsWith('tab-details') ||
       !page || !page.data || !page.data.ids.length) {
     return;
   }

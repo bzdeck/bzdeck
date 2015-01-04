@@ -1,5 +1,5 @@
 /**
- * BzDeck Thread Panes
+ * BzDeck Thread Panes View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
@@ -9,7 +9,7 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.Thread = function Thread () {};
+BzDeck.views.Thread = function ThreadView () {};
 
 BzDeck.views.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
@@ -33,7 +33,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
  * Classic Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.ClassicThread = function ClassicThread (consumer, name, $grid, options) {
+BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
   let prefs = BzDeck.models.data.prefs,
       default_cols = BzDeck.config.grid.default_columns,
       columns = prefs[`${name}.list.columns`] || default_cols,
@@ -184,7 +184,7 @@ BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
  * Vertical Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.VerticalThread = function VerticalThread (consumer, name, $outer, options) {
+BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $outer, options) {
   let mobile = FlareTail.util.ua.device.mobile;
 
   this.consumer = consumer;
@@ -291,7 +291,7 @@ BzDeck.views.VerticalThread.prototype.render = function () {
     }));
 
     BzDeck.views.core.set_avatar(
-        bug.comments ? BzDeck.views.Bug.find_person(bug, bug.comments[bug.comments.length - 1].creator)
+        bug.comments ? BzDeck.controllers.bugs.find_person(bug, bug.comments[bug.comments.length - 1].creator)
                      : bug.creator_detail, $option.querySelector('img'));
   }
 
