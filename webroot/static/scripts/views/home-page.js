@@ -120,8 +120,6 @@ BzDeck.views.HomePage = function HomePageView () {
   });
 };
 
-BzDeck.views.HomePage.route = '/home/(\\w+)';
-
 BzDeck.views.HomePage.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
@@ -146,6 +144,9 @@ BzDeck.views.HomePage.connect = function (folder_id) {
   BzDeck.views.toolbar.tab_path_map.set('tab-home', location.pathname);
   BzDeck.views.core.update_window_title($tab);
 };
+
+BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
 
 BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
   let $pane = document.querySelector('#home-preview-pane'),

@@ -11,6 +11,18 @@ BzDeck.models = BzDeck.models || {};
 BzDeck.models.data = {};
 BzDeck.models.databases = {};
 
+/* ------------------------------------------------------------------------------------------------------------------
+ * Base Model
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.models.BaseModel = function BaseModel () {};
+BzDeck.models.BaseModel.prototype = Object.create(FlareTail.app.Model.prototype);
+BzDeck.models.BaseModel.prototype.constructor = BzDeck.models.BaseModel;
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Core
+ * ------------------------------------------------------------------------------------------------------------------ */
+
 BzDeck.models.get_store = function (name) {
   let type = name.match(/^accounts|bugzilla$/) ? 'global' : 'account',
       store = this.databases[type].transaction(name, 'readwrite').objectStore(name),

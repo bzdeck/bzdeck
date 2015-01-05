@@ -10,6 +10,14 @@ let BzDeck = BzDeck || {};
 BzDeck.controllers = BzDeck.controllers || {};
 
 /* ------------------------------------------------------------------------------------------------------------------
+ * Base Controller
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.controllers.BaseController = function BaseController () {};
+BzDeck.controllers.BaseController.prototype = Object.create(FlareTail.app.Controller.prototype);
+BzDeck.controllers.BaseController.prototype.constructor = BzDeck.controllers.BaseController;
+
+/* ------------------------------------------------------------------------------------------------------------------
  * Core
  * ------------------------------------------------------------------------------------------------------------------ */
 

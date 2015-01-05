@@ -41,23 +41,11 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   BzDeck.controllers.bugzfeed.subscribe([id]);
 };
 
-BzDeck.views.DetailsPage.route = '/bug/(\\d+)';
-
-BzDeck.views.DetailsPage.connect = function () {
-  let id = Number.parseInt(arguments[0]);
-
-  BzDeck.views.toolbar.open_tab({
-    'page_category': 'details',
-    'page_id': id,
-    'page_constructor': BzDeck.views.DetailsPage,
-    'page_constructor_args': [id, history.state ? history.state.ids : []],
-    'tab_label': id,
-    'tab_position': 'next',
-  });
-};
+BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPage.prototype.constructor = BzDeck.views.DetailsPage;
 
 BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
-  $tabpanel = $tabpanel || FlareTail.util.content.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
+  $tabpanel = $tabpanel || this.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
 
   this.$$bug = new BzDeck.views.Bug($tabpanel.querySelector('article'));
   this.$$bug.fill(bug);
@@ -65,7 +53,7 @@ BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids
   let mobile = FlareTail.util.ua.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
-      $$tablist = new FlareTail.widget.TabList($tablist),
+      $$tablist = new this.widget.TabList($tablist),
       $article = $tabpanel.querySelector('article'),
       $title = $tabpanel.querySelector('h2'),
       $timeline_content = $tabpanel.querySelector('.bug-timeline .scrollable-area-content'),
@@ -142,7 +130,7 @@ BzDeck.views.DetailsPage.prototype.get_tab_title = function (bug) {
 
 BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
   let $current_tabpanel = this.view.$tabpanel,
-      Button = FlareTail.widget.Button,
+      Button = this.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),

@@ -78,18 +78,8 @@ BzDeck.views.SearchPage = function SearchPageView (search_id) {
   }
 };
 
-BzDeck.views.SearchPage.route = '/search/(\\d{13,})';
-
-BzDeck.views.SearchPage.connect = function (search_id) {
-  BzDeck.views.toolbar.open_tab({
-    'page_category': 'search',
-    'page_id': search_id,
-    'page_constructor': BzDeck.views.SearchPage,
-    'page_constructor_args': [search_id],
-    'tab_label': 'Search', // l10n
-    'tab_desc': 'Search & Browse Bugs', // l10n
-  });
-};
+BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
 
 BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
   let buttons = this.view.buttons,
@@ -115,7 +105,7 @@ BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
   };
 
   for (let $button of this.view.$tabpanel.querySelectorAll('header [role="button"]')) {
-    let $$button = buttons[$button.dataset.command] = new FlareTail.widget.Button($button);
+    let $$button = buttons[$button.dataset.command] = new this.widget.Button($button);
 
     $$button.bind('Pressed', handler);
   }
@@ -127,7 +117,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new FlareTail.widget.ScrollBar($outer, true);
+    new this.widget.ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -168,7 +158,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
     'selected': !value // Select '---' to search open bugs
   }));
 
-  let ListBox = FlareTail.widget.ListBox,
+  let ListBox = this.widget.ListBox,
       $$classification_list = new ListBox($classification_list, classifications),
       $$product_list = new ListBox($product_list, products),
       $$component_list = new ListBox($component_list, components),
@@ -202,7 +192,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
   });
 
   let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
-      $$button = new FlareTail.widget.Button($pane.querySelector('.text-box [role="button"]'));
+      $$button = new this.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
   $$button.bind('Pressed', event => {
     let params = new URLSearchParams(),
@@ -263,7 +253,7 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
 BzDeck.views.SearchPage.prototype.setup_preview_pane = function () {
   let $pane = this.view.panes['preview'] = this.view.$tabpanel.querySelector('[id$="-preview-pane"]'),
       $bug = $pane.querySelector('article'),
-      $info = FlareTail.util.content.get_fragment('preview-bug-info').firstElementChild;
+      $info = this.get_fragment('preview-bug-info').firstElementChild;
 
   $bug.appendChild($info).id = `${$bug.id}-info`;
 };

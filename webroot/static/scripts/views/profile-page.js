@@ -31,7 +31,7 @@ BzDeck.views.ProfilePage = function ProfilePageView (name) {
 
     document.title = $tab.title = `User Profile: ${name}`;
 
-    FlareTail.util.content.render($profile, {
+    this.render($profile, {
       'id': user.id,
       'email': user.name,
       'emailLink': 'mailto:' + user.name,
@@ -61,15 +61,5 @@ BzDeck.views.ProfilePage = function ProfilePageView (name) {
   });
 };
 
-BzDeck.views.ProfilePage.route = '/profile/(.+)';
-
-BzDeck.views.ProfilePage.connect = function (name) {
-  BzDeck.views.toolbar.open_tab({
-    'page_category': 'profile',
-    'page_id': name,
-    'page_constructor': BzDeck.views.ProfilePage,
-    'page_constructor_args': [name],
-    'tab_label': 'Profile', // l10n
-    'tab_desc': 'User Profile', // l10n
-  });
-};
+BzDeck.views.ProfilePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.ProfilePage.prototype.constructor = BzDeck.views.ProfilePage;

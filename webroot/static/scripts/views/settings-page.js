@@ -9,9 +9,13 @@ let BzDeck = BzDeck || {};
 
 BzDeck.views = BzDeck.views || {};
 
-BzDeck.views.SettingsPage = function SettingsPageView () {
+BzDeck.views.SettingsPage = function SettingsPageView (tab_id) {
   // Activate tabs
   this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));
+
+  if (tab_id) {
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
+  }
 
   // Activate token input
   this.activate_token_input();
@@ -21,22 +25,8 @@ BzDeck.views.SettingsPage = function SettingsPageView () {
   this.activate_radiogroups();
 };
 
-BzDeck.views.SettingsPage.route = '/settings';
-
-BzDeck.views.SettingsPage.connect = function () {
-  BzDeck.views.toolbar.open_tab({
-    'page_category': 'settings',
-    'page_constructor': BzDeck.views.SettingsPage,
-    'tab_label': 'Settings',
-  });
-
-  let tab_id = history.state ? history.state.tab_id : undefined,
-      $$tablist = BzDeck.views.pages.settings.$$tablist;
-
-  if (tab_id) {
-    $$tablist.view.selected = $$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
-  }
-};
+BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.SettingsPage.prototype.constructor = BzDeck.views.SettingsPage;
 
 BzDeck.views.SettingsPage.prototype.activate_token_input = function () {
   let account = BzDeck.models.data.account,
@@ -141,7 +131,7 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (pref, defaul
     $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
   }
 
-  (new FlareTail.widget.RadioGroup($rgroup)).bind('Selected', event => {
+  (new this.widget.RadioGroup($rgroup)).bind('Selected', event => {
     let _value = event.detail.items[0].dataset.value,
         value = type === 'boolean' ? _value === 'true' : _value;
 
