@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data) {
   let datetime = FlareTail.util.datetime,
       click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',

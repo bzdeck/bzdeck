@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.HomePage = function HomePageView () {
   let FTw = FlareTail.widget,
       mobile = FlareTail.util.ua.device.mobile,

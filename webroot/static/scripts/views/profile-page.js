@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.ProfilePage = function ProfilePageView (name) {
   let server = BzDeck.models.data.server,
       $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),

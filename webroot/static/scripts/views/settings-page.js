@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.SettingsPage = function SettingsPageView (tab_id) {
   // Activate tabs
   this.$$tablist = new FlareTail.widget.TabList(document.querySelector('#settings-tablist'));

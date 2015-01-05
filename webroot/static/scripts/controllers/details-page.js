@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.controllers = BzDeck.controllers || {};
-
 BzDeck.controllers.DetailsPage = function DetailsPageController () {
   let id = Number.parseInt(arguments[0]);
 

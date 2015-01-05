@@ -5,12 +5,6 @@
  * See https://wiki.mozilla.org/BMO/ChangeNotificationSystem for the details of the API.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.controllers = BzDeck.controllers || {};
-
 BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
   this.subscription = new Set();
 };

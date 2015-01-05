@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.SearchPage = function SearchPageView (search_id) {
   let $tabpanel = document.querySelector(`#tabpanel-search-${search_id}`);
 

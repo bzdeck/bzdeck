@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.controllers = BzDeck.controllers || {};
-
 BzDeck.controllers.SearchPage = function SearchPageController (search_id) {
   BzDeck.views.toolbar.open_tab({
     'page_category': 'search',

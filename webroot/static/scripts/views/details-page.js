@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   let $tab = document.querySelector(`#tab-details-${id}`),
       $tabpanel = document.querySelector(`#tabpanel-details-${id}`);

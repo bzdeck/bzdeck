@@ -3,16 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.models = BzDeck.models || {};
-
-/* ------------------------------------------------------------------------------------------------------------------
- * Bugs
- * ------------------------------------------------------------------------------------------------------------------ */
-
 BzDeck.models.bugs = {};
 
 BzDeck.models.bugs.get_bug_by_id = function (id, record_time = true) {

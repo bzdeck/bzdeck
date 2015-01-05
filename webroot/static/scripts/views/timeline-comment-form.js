@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);

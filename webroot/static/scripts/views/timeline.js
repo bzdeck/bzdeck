@@ -3,12 +3,6 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-'use strict';
-
-let BzDeck = BzDeck || {};
-
-BzDeck.views = BzDeck.views || {};
-
 BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   let get_time = str => (new Date(str)).getTime(),
       entries = new Map([for (c of bug.comments.entries())
