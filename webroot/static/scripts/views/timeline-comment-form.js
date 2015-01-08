@@ -5,12 +5,12 @@
 
 BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
-      $fragment = FlareTail.util.content.get_fragment('timeline-comment-form', timeline_id);
+      $fragment = this.get_fragment('timeline-comment-form', timeline_id);
 
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-write"] [role="textbox"]');
-  this.$$tabs = new FlareTail.widget.TabList(this.$form.querySelector('[role="tablist"]'));
+  this.$$tabs = new this.widget.TabList(this.$form.querySelector('[role="tablist"]'));
   this.$write_tab = this.$form.querySelector('[id$="tab-write"]');
   this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
   this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
@@ -46,7 +46,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   });
 
   for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
-    new FlareTail.widget.ScrollBar($tabpanel);
+    new this.widget.ScrollBar($tabpanel);
   }
 
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
@@ -91,7 +91,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     event.preventDefault();
   });
 
-  (new FlareTail.widget.Checkbox(this.$parallel_checkbox)).bind('Toggled', event => {
+  (new this.widget.Checkbox(this.$parallel_checkbox)).bind('Toggled', event => {
     this.parallel_upload = event.detail.checked;
     this.update_parallel_ui();
   });
@@ -103,12 +103,15 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     this.$status.querySelector('strong').addEventListener(click_event_type, event =>
       BzDeck.router.navigate('/settings', { 'tab_id': 'account' }));
 
-    window.addEventListener('Account:AuthTokenVerified', event => {
+    this.subscribe('SettingsPageController:AuthTokenVerified', data => {
       this.$status.textContent = '';
       this.$submit.setAttribute('aria-disabled', !this.has_text() || !this.has_attachments());
     });
   }
 };
+
+BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCommentForm;
 
 BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
@@ -192,7 +195,7 @@ BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
     message += '<br><br>';
     message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
 
-    (new FlareTail.widget.Dialog({
+    (new this.widget.Dialog({
       'type': 'alert',
       'title': 'Error on attaching files',
       message

@@ -4,10 +4,9 @@
  */
 
 BzDeck.views.Toolbar = function ToolbarView () {
-  let FTw = FlareTail.widget,
-      FTu = FlareTail.util,
+  let FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
-      $$tablist = this.$$tablist = new FTw.TabList(document.querySelector('#main-tablist')),
+      $$tablist = this.$$tablist = new this.widget.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -23,7 +22,7 @@ BzDeck.views.Toolbar = function ToolbarView () {
     }
   });
 
-  new FTw.MenuBar(document.querySelector('#main-menu'));
+  new this.widget.MenuBar(document.querySelector('#main-menu'));
 
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
@@ -138,7 +137,7 @@ BzDeck.views.Toolbar = function ToolbarView () {
       $search_button = document.querySelector('#quicksearch [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
-  this.$$search_dropdown = new FlareTail.widget.Menu($search_dropdown);
+  this.$$search_dropdown = new this.widget.Menu($search_dropdown);
 
   let cleanup = () => {
     if ($root.hasAttribute('data-quicksearch')) {
@@ -234,6 +233,9 @@ BzDeck.views.Toolbar = function ToolbarView () {
   $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
 };
 
+BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
+
 BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   let page,
       page_category = options.page_category,
@@ -267,7 +269,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
     page = pages.get(page_id || 'default');
     $tab = $tab || $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
   } else {
-    $tabpanel = FlareTail.util.content.get_fragment(`tabpanel-${page_category}-template`, page_id).firstElementChild;
+    $tabpanel = this.get_fragment(`tabpanel-${page_category}-template`, page_id).firstElementChild;
     $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
     page = new page_constructor(...page_constructor_args);
     pages.set(page_id || 'default', page);
@@ -294,7 +296,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   $$tablist.view.selected = $$tablist.view.$focused = $tab
   $tabpanel.focus();
 
-  BzDeck.views.core.update_window_title($tab);
+  this.update_window_title($tab);
   BzDeck.views.pages[page_category] = page;
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };

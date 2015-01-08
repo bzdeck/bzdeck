@@ -66,5 +66,75 @@ BzDeck.config = {
       { 'id': 'creation_time', 'type': 'time', 'hidden': true },
       { 'id': 'last_change_time', 'type': 'time' },
     ]
-  }
+  },
+  'prefs': {
+    // Theme
+    'ui.theme.selected': { 'type': 'string', 'default': 'Light' },
+    // Timezone & Date Format
+    'ui.date.timezone': { 'type': 'string', 'default': 'local' },
+    'ui.date.relative': { 'type': 'boolean', 'default': true },
+    // Notifications
+    'notifications.show_desktop_notifications': { 'type': 'boolean', 'default': true },
+    'notifications.ignore_cc_changes': { 'type': 'boolean', 'default': true },
+    // Home
+    'ui.home.layout': { 'type': 'string', 'default': 'vertical' },
+    // Timeline
+    'ui.timeline.sort.order': { 'type': 'string', 'default': 'ascending' },
+    'ui.timeline.font.family': { 'type': 'string', 'default': 'proportional' },
+    'ui.timeline.show_cc_changes': { 'type': 'boolean', 'default': false },
+    'ui.timeline.display_attachments_inline': { 'type': 'boolean', 'default': true },
+  },
+  'folders': [
+    {
+      'id': 'sidebar-folders--inbox',
+      'label': 'Inbox',
+      'selected': true,
+      'data': { 'id': 'inbox' }
+    },
+    {
+      'id': 'sidebar-folders--starred',
+      'label': 'Starred',
+      'data': { 'id': 'starred' }
+    },
+    {
+      'id': 'sidebar-folders--requests',
+      'label': 'Requests',
+      'data': { 'id': 'requests' }
+    },
+    {
+      'id': 'sidebar-folders--reported',
+      'label': 'Reported',
+      'data': { 'id': 'reported' }
+    },
+    {
+      'id': 'sidebar-folders--watching',
+      'label': 'Watching', // was CCed
+      'data': { 'id': 'watching' }
+    },
+    {
+      'id': 'sidebar-folders--assigned',
+      'label': 'Assigned',
+      'data': { 'id': 'assigned' }
+    },
+    {
+      'id': 'sidebar-folders--mentor',
+      'label': 'Mentor',
+      'data': { 'id': 'mentor' }
+    },
+    {
+      'id': 'sidebar-folders--qa',
+      'label': 'QA',
+      'data': { 'id': 'qa' }
+    },
+    {
+      'id': 'sidebar-folders--important',
+      'label': 'Important',
+      'data': { 'id': 'important' }
+    },
+    {
+      'id': 'sidebar-folders--all',
+      'label': 'All Bugs',
+      'data': { 'id': 'all' }
+    }
+  ],
 };

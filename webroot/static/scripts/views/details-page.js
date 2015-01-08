@@ -4,35 +4,43 @@
  */
 
 BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
-  let $tab = document.querySelector(`#tab-details-${id}`),
-      $tabpanel = document.querySelector(`#tabpanel-details-${id}`);
-
   this.data = { id, ids };
-  this.view = { $tab, $tabpanel };
 
-  $tabpanel.setAttribute('aria-busy', 'true');
+  this.$tab = document.querySelector(`#tab-details-${id}`);
+  this.$tabpanel = document.querySelector(`#tabpanel-details-${id}`);
+  this.$tabpanel.setAttribute('aria-busy', 'true');
 
-  FlareTail.util.event.async(() => {
-    BzDeck.models.bugs.get_bug_by_id(id).then(bug => {
-      // If no cache found, try to retrieve it from Bugzilla
-      if (!bug) {
-        this.fetch_bug(id);
-        bug = { id };
-      }
-
-      // Prepare the newly opened tabpanel
-      if (!$tabpanel.querySelector('[itemprop="id"]').itemValue) {
-        this.prep_tabpanel($tabpanel, bug, ids);
-        $tabpanel.removeAttribute('aria-busy');
-        $tab.title = this.get_tab_title(bug);
-        BzDeck.views.core.update_window_title($tab);
-      }
-
-      BzDeck.controllers.bugs.toggle_unread(id, false);
-    });
+  this.subscribe('C:BugDataReady:' + this.id, data => {
+    // Prepare the newly opened tabpanel
+    if (!this.$tabpanel.querySelector('[itemprop="id"]').itemValue) {
+      this.prep_tabpanel(this.$tabpanel, data.bug, ids);
+      this.$tabpanel.removeAttribute('aria-busy');
+      this.$tab.title = this.get_tab_title(data.bug);
+      this.update_window_title(this.$tab);
+    }
   });
 
-  BzDeck.controllers.bugzfeed.subscribe([id]);
+  this.subscribe('C:Offline:' + this.id, data => {
+    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
+  });
+
+  this.subscribe('C:LoadingStarted:' + this.id, data => {
+    BzDeck.views.statusbar.show('Loading...'); // l10n
+  });
+
+  this.subscribe('C:LoadingComplete:' + this.id, data => {
+    // Check if the tabpanel still exists
+    if (this.$tabpanel) {
+      BzDeck.views.statusbar.show('');
+      // Update UI
+      this.$$bug.render(bug);
+      this.$tab.title = this.get_tab_title(bug);
+    }
+  });
+
+  this.subscribe('C:LoadingError:' + this.id, data => {
+    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
+  });
 };
 
 BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
@@ -42,7 +50,7 @@ BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids
   $tabpanel = $tabpanel || this.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
 
   this.$$bug = new BzDeck.views.Bug($tabpanel.querySelector('article'));
-  this.$$bug.fill(bug);
+  this.$$bug.render(bug);
 
   let mobile = FlareTail.util.ua.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
@@ -123,7 +131,7 @@ BzDeck.views.DetailsPage.prototype.get_tab_title = function (bug) {
 };
 
 BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) {
-  let $current_tabpanel = this.view.$tabpanel,
+  let $current_tabpanel = this.$tabpanel,
       Button = this.widget.Button,
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
@@ -160,36 +168,8 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
   }
 };
 
-BzDeck.views.DetailsPage.prototype.fetch_bug = function (id) {
-  if (!navigator.onLine) {
-    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
-
-    return;
-  }
-
-  BzDeck.views.statusbar.show('Loading...'); // l10n
-
-  BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
-    // Save in DB
-    BzDeck.models.bugs.save_bug(bug);
-
-    let $tab = document.querySelector(`#tab-details-${id}`),
-        $tabpanel = this.view.$tabpanel;
-
-    // Check if the tabpanel still exists
-    if ($tabpanel) {
-      BzDeck.views.statusbar.show('');
-      // Update UI
-      this.$$bug.fill(bug);
-      $tab.title = this.get_tab_title(bug);
-    }
-  }).catch(bug => {
-    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
-  });
-};
-
 BzDeck.views.DetailsPage.prototype.navigate = function (id) {
-  let $current_tab = this.view.$tab;
+  let $current_tab = this.$tab;
 
   BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
   BzDeck.views.toolbar.$$tablist.close_tab($current_tab);
@@ -218,7 +198,7 @@ BzDeck.views.DetailsPage.attachments.render = function ($bug, attachments, addit
     let $attachment = $placeholder.appendChild(
       FlareTail.util.content.get_fragment('details-attachment').firstElementChild);
 
-    FlareTail.util.content.render($attachment, {
+    FlareTail.util.content.fill($attachment, {
       'url': `/attachment/${att.id}`,
       'description': att.summary,
       'name': att.file_name,

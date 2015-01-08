@@ -8,10 +8,10 @@ BzDeck.views.Bug = function BugView ($bug) {
 
   // Custom scrollbars
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
-                                  new FlareTail.widget.ScrollBar($area)]);
+                                  new this.widget.ScrollBar($area)]);
 
-  window.addEventListener('Bug:StarToggled', event => {
-    let _bug = event.detail.bug,
+  this.subscribe('Bug:StarToggled', data => {
+    let _bug = data.bug,
         _starred = _bug._starred_comments;
 
     if (this.$bug && _bug.id === this.bug.id) {
@@ -25,14 +25,17 @@ BzDeck.views.Bug = function BugView ($bug) {
     }
   });
 
-  window.addEventListener('Bug:Updated', event => {
-    if (event.detail.bug.id === this.bug.id) {
-      this.update(event.detail.bug, event.detail.changes);
+  this.subscribe('Bug:Updated', data => {
+    if (data.bug.id === this.bug.id) {
+      this.update(data.bug, data.changes);
     }
   });
 };
 
-BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
+BzDeck.views.Bug.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
+
+BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
   this.bug = bug;
   this.$bug.dataset.id = this.bug.id;
 
@@ -69,7 +72,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
     }
   }
 
-  FlareTail.util.content.render(this.$bug, _bug);
+  this.fill(this.$bug, _bug);
 
   this.set_product_tooltips();
 
@@ -79,7 +82,7 @@ BzDeck.views.Bug.prototype.fill = function (bug, partial = false) {
   // Star on the header
   if ($button) {
     $button.setAttribute('aria-pressed', BzDeck.controllers.bugs.is_starred(this.bug));
-    (new FlareTail.widget.Button($button)).bind('Pressed', event =>
+    (new this.widget.Button($button)).bind('Pressed', event =>
       BzDeck.controllers.bugs.toggle_star(this.bug.id, event.detail.pressed));
   }
 
@@ -172,13 +175,13 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
     _bug.resolution = `DUPLICATE of ${this.bug.dupe_of}`;
   }
 
-  FlareTail.util.content.render(this.$bug, _bug);
+  this.fill(this.$bug, _bug);
 
   // Depends on & Blocks
   for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"]')) {
     $li.setAttribute('data-bug-id', $li.itemValue);
 
-    (new FlareTail.widget.Button($li)).bind('Pressed', event =>
+    (new this.widget.Button($li)).bind('Pressed', event =>
       BzDeck.router.navigate('/bug/' + event.target.textContent));
   }
 

@@ -159,6 +159,17 @@ BzDeck.controllers.core.parse_comment = function (str) {
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
+ * Base Statusbar
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+BzDeck.controllers.Statusbar = function StatusbarController () {
+  BzDeck.views.statusbar = new BzDeck.views.Statusbar();
+};
+
+BzDeck.controllers.Statusbar.prototype = Object.create(BzDeck.controllers.Statusbar.prototype);
+BzDeck.controllers.Statusbar.prototype.constructor = BzDeck.controllers.Statusbar;
+
+/* ------------------------------------------------------------------------------------------------------------------
  * Config
  * ------------------------------------------------------------------------------------------------------------------ */
 

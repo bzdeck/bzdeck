@@ -14,17 +14,7 @@ BzDeck.views.pages = {};
  * Base View
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.BaseView = function BaseView () {};
-BzDeck.views.BaseView.prototype = Object.create(FlareTail.app.View.prototype);
-BzDeck.views.BaseView.prototype.constructor = BzDeck.views.BaseView;
-
-/* ------------------------------------------------------------------------------------------------------------------
- * Core
- * ------------------------------------------------------------------------------------------------------------------ */
-
-BzDeck.views.core = {}
-
-BzDeck.views.core.init = function () {
+BzDeck.views.BaseView = function BaseView () {
   let datetime = FlareTail.util.datetime,
       prefs = BzDeck.models.data.prefs,
       value,
@@ -62,8 +52,6 @@ BzDeck.views.core.init = function () {
   // Activate widgets
   BzDeck.views.pages.home = new BzDeck.views.HomePage();
   BzDeck.views.toolbar = new BzDeck.views.Toolbar();
-  BzDeck.views.sidebar = new BzDeck.views.Sidebar();
-  BzDeck.views.statusbar = new BzDeck.views.Statusbar();
   // BzDeck.views.DetailsPage.swipe.init();
 
   // Change the theme
@@ -73,16 +61,21 @@ BzDeck.views.core.init = function () {
 
   // Preload images from CSS
   FTut.preload_images();
+
+  this.subscribe('Bug:UnreadToggled', data => this.toggle_unread());
 };
 
-BzDeck.views.core.toggle_unread = function (loaded = false) {
+BzDeck.views.BaseView.prototype = Object.create(FlareTail.app.View.prototype);
+BzDeck.views.BaseView.prototype.constructor = BzDeck.views.BaseView;
+
+BzDeck.views.BaseView.prototype.toggle_unread = function (loaded = false) {
   BzDeck.models.bugs.get_all().then(bugs => {
     bugs = [for (bug of bugs) if (bug._unread) bug];
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
       let unread_num = [for (bug of BzDeck.views.pages.home.data.bugs) if (bug._unread) bug].length;
 
-      BzDeck.views.pages.home.update_window_title(
+      BzDeck.views.pages.home.update_title(
         document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : '')
       );
     }
@@ -109,7 +102,7 @@ BzDeck.views.core.toggle_unread = function (loaded = false) {
   });
 };
 
-BzDeck.views.core.set_avatar = function (person, $image) {
+BzDeck.views.BaseView.prototype.set_avatar = function (person, $image) {
   let $_image = new Image();
 
   $image.alt = BzDeck.controllers.users.get_name(person).match(/^[\[\(\:]?(.)/)[1].toUpperCase();
@@ -123,9 +116,9 @@ BzDeck.views.core.set_avatar = function (person, $image) {
   $_image.src = `https://secure.gravatar.com/avatar/${md5(person.email)}?d=404&s=160`;
 };
 
-BzDeck.views.core.update_window_title = $tab => {
+BzDeck.views.BaseView.prototype.update_window_title = function ($tab) {
   if ($tab.id === 'tab-home') {
-    BzDeck.views.pages.home.update_window_title($tab.title);
+    BzDeck.views.pages.home.update_title($tab.title);
   } else {
     document.title = $tab.title.replace('\n', ' – ');
   }
@@ -136,6 +129,9 @@ BzDeck.views.core.update_window_title = $tab => {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.Session = function SessionView () {};
+
+BzDeck.views.Session.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Session.prototype.constructor = BzDeck.views.Session;
 
 BzDeck.views.Session.prototype.login = function () {
   BzDeck.views.statusbar.$statusbar = document.querySelector('#statusbar');
@@ -167,6 +163,9 @@ BzDeck.views.Statusbar = function StatusbarView () {
   this.$statusbar = document.querySelector('#app-login [role="status"]');
 };
 
+BzDeck.views.Statusbar.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Statusbar.prototype.constructor = BzDeck.views.Statusbar;
+
 BzDeck.views.Statusbar.prototype.show = function (message) {
   if (this.$statusbar) {
     this.$statusbar.textContent = message;
@@ -183,6 +182,9 @@ BzDeck.views.LoginForm = function LoginFormView () {
   this.$button = this.$form.querySelector('[role="button"]');
   this.$statusbar = document.querySelector('#app-login [role="status"]');
 };
+
+BzDeck.views.LoginForm.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.LoginForm.prototype.constructor = BzDeck.views.LoginForm;
 
 BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
   this.$form.setAttribute('aria-hidden', 'false');
@@ -307,8 +309,4 @@ window.addEventListener('keydown', event => {
   if (!event.target.matches('[role="textbox"]') && !modifiers && !tab) {
     event.preventDefault();
   }
-});
-
-window.addEventListener('Bug:UnreadToggled', event => {
-  BzDeck.views.core.toggle_unread();
 });

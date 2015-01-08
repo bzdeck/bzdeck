@@ -96,6 +96,20 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 
+// Show media when the pref is enabled
+  this.subscribe('SettingsPageView:PrefValueChanged', data => {
+    if (data.name === 'ui.timeline.display_attachments_inline' && data.value === true) {
+      for (let $attachment of $timeline.querySelectorAll('[itemprop="attachment"]')) {
+        let $media = $attachment.querySelector('img, audio, video');
+
+        if ($media && !$media.src) {
+          $media.parentElement.setAttribute('aria-busy', 'true');
+          $media.src = $attachment.querySelector('[itemprop="contentUrl"]').itemValue;
+        }
+      }
+    }
+  });
+
   let check_fragment = () => {
     let match = location.hash.match(/^#c(\d+)$/),
         comment_number = match ? Number.parseInt(match[1]) : undefined;
@@ -121,3 +135,6 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   window.addEventListener('popstate', event => check_fragment());
   window.addEventListener('hashchange', event => check_fragment());
 };
+
+BzDeck.views.Timeline.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;

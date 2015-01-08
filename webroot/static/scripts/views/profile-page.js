@@ -3,10 +3,9 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.ProfilePage = function ProfilePageView (name) {
-  let server = BzDeck.models.data.server,
-      $tab = document.querySelector(`#tab-profile-${CSS.escape(name)}`),
-      $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(name)}`),
+BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
+  let $tab = document.querySelector(`#tab-profile-${CSS.escape(email)}`),
+      $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(email)}`),
       $profile = $tabpanel.querySelector('article'),
       $header = $profile.querySelector('header'),
       $status = $tabpanel.querySelector('footer [role="status"]');
@@ -15,43 +14,39 @@ BzDeck.views.ProfilePage = function ProfilePageView (name) {
   $status.textContent = 'Loading...'; // l10n
 
   // Display the links to Gravatar if this is the user's self profile
-  if (name === BzDeck.models.data.account.name) {
+  if (self) {
     $profile.classList.add('self');
   }
 
-  BzDeck.controllers.users.fetch_user(name).then(user => {
-    let name = user.real_name || user.name,
-        gravatar = new BzDeck.controllers.Gravatar(user.name);
-
-    document.title = $tab.title = `User Profile: ${name}`;
-
-    this.render($profile, {
-      'id': user.id,
-      'email': user.name,
-      'emailLink': 'mailto:' + user.name,
-      'name': name,
-      'image': gravatar.avatar_url,
-    });
-
-    gravatar.get_profile().then(entry => {
-      if (entry.profileBackground && entry.profileBackground.url) {
-        $header.style.backgroundImage = `url(${entry.profileBackground.url})`;
-      }
-
+  this.subscribe('C:GravatarDataFound:' + email, data => {
+    if ($header) {
       // TODO: Add location and social accounts if provided
-    });
+      $header.style['background-image'] = data.style['background-image'];
+    }
+  });
 
-    $profile.id = 'profile-' + user.id;
-    $profile.querySelector('[data-id="bugzilla-profile"] a').href
-        = server.url + '/user_profile?login=' + encodeURI(user.name);
-    $profile.querySelector('[data-id="bugzilla-activity"] a').href
-        = server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(user.name);
-    $header.style.backgroundColor = BzDeck.controllers.users.get_color(user);
-  }).catch(error => {
-    $status.textContent = error.message;
-  }).then(() => {
-    $tabpanel.removeAttribute('aria-busy');
-    $status.textContent = '';
+  this.subscribe('C:BugzillaDataFound:' + email, data => {
+    if ($tab && $profile && $header) {
+      document.title = $tab.title = `User Profile: ${data.profile.name}`;
+      this.fill($profile, data.profile);
+      $profile.id = 'profile-' + data.profile.id;
+      $profile.querySelector('[data-id="bugzilla-profile"] a').href = data.links['bugzilla-profile'];
+      $profile.querySelector('[data-id="bugzilla-activity"] a').href = data.links['bugzilla-activity'];
+      $header.style['background-color'] = data.style['background-color'];
+    }
+  });
+
+  this.subscribe('C:BugzillaDataFetchingError:' + email, data => {
+    if ($status) {
+      $status.textContent = data.error.message;
+    }
+  });
+
+  this.subscribe('C:BugzillaDataFetchingComplete:' + email, data => {
+    if ($tabpanel && $status) {
+      $tabpanel.removeAttribute('aria-busy');
+      $status.textContent = '';
+    }
   });
 };
 

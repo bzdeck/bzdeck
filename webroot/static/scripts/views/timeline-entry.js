@@ -11,7 +11,7 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
       comment = data.get('comment'),
       attachment = data.get('attachment'),
       history = data.get('history'),
-      $entry = FlareTail.util.content.get_fragment('timeline-comment').firstElementChild,
+      $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
@@ -92,12 +92,12 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
     // TODO: load the attachment data via API
     let url = `${BzDeck.models.data.server.url}/attachment.cgi?id=${attachment.id}`,
         media_type = attachment.content_type.split('/')[0],
-        $attachment = FlareTail.util.content.get_fragment('timeline-attachment').firstElementChild,
+        $attachment = this.get_fragment('timeline-attachment').firstElementChild,
         $outer = $attachment.querySelector('div'),
         $media,
         load_event = 'load';
 
-    FlareTail.util.content.render($attachment, {
+    this.fill($attachment, {
       'url': `/attachment/${attachment.id}`,
       'description': attachment.summary,
       'name': attachment.file_name,
@@ -230,7 +230,7 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  BzDeck.views.core.set_avatar(author, $author.querySelector('[itemprop="image"]'));
+  BzDeck.views.BaseView.prototype.set_avatar(author, $author.querySelector('[itemprop="image"]'));
   datetime.fill_element($time, time);
 
   // Mark unread
@@ -259,3 +259,6 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
 
   return $entry;
 };
+
+BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;

@@ -5,6 +5,9 @@
 
 BzDeck.views.Thread = function ThreadView () {};
 
+BzDeck.views.Thread.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Thread.prototype.constructor = BzDeck.views.Thread;
+
 BzDeck.views.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
 
@@ -44,7 +47,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
   this.consumer = consumer;
   this.bugs = [];
 
-  this.$$grid = new FlareTail.widget.Grid($grid, {
+  this.$$grid = new this.widget.Grid($grid, {
     'rows': [],
     'columns': columns.map(col => {
       // Add labels
@@ -78,8 +81,8 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     'S': event => toggle_prop('_starred'),
   });
 
-  window.addEventListener('Bug:StarToggled', event => {
-    let bug = event.detail.bug,
+  this.subscribe('Bug:StarToggled', data => {
+    let bug = data.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
     if ($row) {
@@ -88,8 +91,8 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     }
   });
 
-  window.addEventListener('Bug:UnreadToggled', event => {
-    let bug = event.detail.bug,
+  this.subscribe('Bug:UnreadToggled', data => {
+    let bug = data.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
     if ($row) {
@@ -99,7 +102,6 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 };
 
 BzDeck.views.ClassicThread.prototype = Object.create(BzDeck.views.Thread.prototype);
-
 BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 
 BzDeck.views.ClassicThread.prototype.update = function (bugs) {
@@ -187,9 +189,9 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
   this.$outer = $outer;
   this.$listbox = $outer.querySelector('[role="listbox"]');
-  this.$$listbox = new FlareTail.widget.ListBox(this.$listbox, []);
-  this.$option = FlareTail.util.content.get_fragment('vertical-thread-item').firstElementChild;
-  this.$$scrollbar = new FlareTail.widget.ScrollBar($outer);
+  this.$$listbox = new this.widget.ListBox(this.$listbox, []);
+  this.$option = this.get_fragment('vertical-thread-item').firstElementChild;
+  this.$$scrollbar = new this.widget.ScrollBar($outer);
   this.$scrollable_area = mobile ? $outer.querySelector('.scrollable-area-content') : $outer;
 
   this.$$listbox.bind('Selected', event => this.onselect(event));
@@ -220,8 +222,8 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
   });
 
-  window.addEventListener('Bug:StarToggled', event => {
-    let bug = event.detail.bug,
+  this.subscribe('Bug:StarToggled', data => {
+    let bug = data.bug,
         $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
     if ($option) {
@@ -229,8 +231,8 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     }
   });
 
-  window.addEventListener('Bug:UnreadToggled', event => {
-    let bug = event.detail.bug,
+  this.subscribe('Bug:UnreadToggled', data => {
+    let bug = data.bug,
         $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
     if ($option) {
@@ -247,7 +249,6 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 };
 
 BzDeck.views.VerticalThread.prototype = Object.create(BzDeck.views.Thread.prototype);
-
 BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 
 BzDeck.views.VerticalThread.prototype.update = function (bugs) {
@@ -273,7 +274,7 @@ BzDeck.views.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 
   for (let bug of this.unrendered_bugs.splice(0, 50)) {
-    let $option = $fragment.appendChild(FlareTail.util.content.render(this.$option.cloneNode(true), {
+    let $option = $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
@@ -284,7 +285,7 @@ BzDeck.views.VerticalThread.prototype.render = function () {
       'aria-checked': BzDeck.controllers.bugs.is_starred(bug)
     }));
 
-    BzDeck.views.core.set_avatar(
+    this.set_avatar(
         bug.comments ? BzDeck.controllers.bugs.find_person(bug, bug.comments[bug.comments.length - 1].creator)
                      : bug.creator_detail, $option.querySelector('img'));
   }

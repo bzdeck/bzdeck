@@ -14,7 +14,6 @@ BzDeck.controllers.Session = function SessionController () {
   indexedDB.deleteDatabase('BzDeck');
 
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
-  BzDeck.router = new FlareTail.app.Router(BzDeck);
 
   BzDeck.models.open_global_db().then(database => {
     BzDeck.models.databases.global = database;
@@ -101,7 +100,9 @@ BzDeck.controllers.Session = function SessionController () {
 
     if (!this.relogin) {
       // Finally load the UI modules
-      BzDeck.views.core.init();
+      new BzDeck.views.BaseView();
+      BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
+      BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
     }
   }, error => {
     status(error.message);
