@@ -4,7 +4,11 @@
  */
 
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {
-  BzDeck.views.HomePage.connect(folder_id);
+  if (!BzDeck.views.pages.home) {
+    BzDeck.views.pages.home = new BzDeck.views.HomePage();
+  }
+
+  BzDeck.views.pages.home.connect(folder_id);
 };
 
 BzDeck.controllers.HomePage.route = '/home/(\\w+)';

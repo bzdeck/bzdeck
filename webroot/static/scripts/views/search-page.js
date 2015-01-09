@@ -3,7 +3,7 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.SearchPage = function SearchPageView (search_id, params) {
+BzDeck.views.SearchPage = function SearchPageView (search_id, params, config, prefs) {
   this.search_id = search_id;
   this.$tabpanel = document.querySelector(`#tabpanel-search-${search_id}`);
   this.$status = this.$tabpanel.querySelector('[role="status"]');
@@ -52,8 +52,8 @@ BzDeck.views.SearchPage = function SearchPageView (search_id, params) {
     }
   });
 
-  this.setup_basic_search_pane();
-  this.setup_result_pane();
+  this.setup_basic_search_pane(config);
+  this.setup_result_pane(prefs);
   this.setup_preview_pane();
   this.setup_toolbar();
 
@@ -124,9 +124,8 @@ BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
   }
 };
 
-BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
-  let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]'),
-      config = BzDeck.models.data.server.config;
+BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
+  let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
@@ -232,10 +231,9 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function () {
   });
 };
 
-BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
+BzDeck.views.SearchPage.prototype.setup_result_pane = function (prefs) {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
-      mobile = FlareTail.util.ua.device.mobile,
-      prefs = BzDeck.models.data.prefs;
+      mobile = FlareTail.util.ua.device.mobile;
 
   this.thread = new BzDeck.views.ClassicThread(this, 'search', $pane.querySelector('[role="grid"]'), {
     'sortable': true,

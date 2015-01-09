@@ -96,7 +96,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 
-// Show media when the pref is enabled
+  // Show media when the pref is enabled
   this.subscribe('SettingsPageView:PrefValueChanged', data => {
     if (data.name === 'ui.timeline.display_attachments_inline' && data.value === true) {
       for (let $attachment of $timeline.querySelectorAll('[itemprop="attachment"]')) {

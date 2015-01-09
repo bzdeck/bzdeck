@@ -46,8 +46,6 @@ BzDeck.views.HomePage = function HomePageView () {
 
   $bug.appendChild($info).id = 'home-preview-bug-info';
 
-  this.view = {};
-
   let layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
@@ -61,7 +59,7 @@ BzDeck.views.HomePage = function HomePageView () {
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
-      $$button = this.view.$$details_button = new FlareTail.widget.Button($button),
+      $$button = this.$$details_button = new FlareTail.widget.Button($button),
       open_tab = () => BzDeck.router.navigate('/bug/' + this.data.preview_id,
                                               { 'ids': [for (bug of this.data.bugs) bug.id] });
 
@@ -119,7 +117,10 @@ BzDeck.views.HomePage = function HomePageView () {
   });
 };
 
-BzDeck.views.HomePage.connect = function (folder_id) {
+BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
+
+BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
       $$tablist = BzDeck.views.toolbar.$$tablist;
@@ -144,13 +145,10 @@ BzDeck.views.HomePage.connect = function (folder_id) {
   BzDeck.views.BaseView.prototype.update_window_title($tab);
 };
 
-BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
-BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
-
 BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
   let $pane = document.querySelector('#home-preview-pane'),
       $bug = document.querySelector('#home-preview-bug'),
-      $$button = this.view.$$details_button;
+      $$button = this.$$details_button;
 
   // Remove the current preview if exists
 
@@ -196,76 +194,14 @@ BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
       prefs = BzDeck.models.data.prefs,
-      mql = window.matchMedia('(max-width: 1023px)'),
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
 
   if (vertical) {
-    let $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
-
-    let show_preview = mql => {
-      let $$listbox = this.thread.$$listbox;
-
-      if ($$listbox.view.members.length && document.querySelector('#home-preview-pane').clientHeight) {
-        $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
-      }
-    };
-
-    if (!this.vertical_thread_initialized) {
-      // Select the first bug on the list automatically when a folder is opened
-      // TODO: Remember the last selected bug for each folder
-      $listbox.addEventListener('Updated', event => show_preview(mql));
-      mql.addListener(show_preview);
-
-      // Star button
-      $listbox.addEventListener('mousedown', event => {
-        if (event.target.matches('[data-field="_starred"]')) {
-          BzDeck.controllers.bugs.toggle_star(Number(event.target.parentElement.dataset.id),
-                                              event.target.getAttribute('aria-checked') === 'false');
-          event.stopPropagation();
-        }
-      });
-
-      this.vertical_thread_initialized = true;
-    }
-
-    this.thread = new BzDeck.views.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
-      'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
-    });
+    this.apply_vertical_layout();
   } else {
-    this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
-      'date': { 'simple': false },
-      'sortable': true,
-      'reorderable': true,
-      'sort_conditions': prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
-    });
-
-    let $$grid = this.thread.$$grid;
-
-    $$grid.options.adjust_scrollbar = !vertical;
-    $$grid.options.date.simple = vertical;
-
-    if (!this.classic_thread_initialized) {
-      // Fill the thread with all saved bugs, and filter the rows later
-      BzDeck.models.bugs.get_all().then(bugs => this.thread.update(bugs));
-
-      // Select the first bug on the list automatically when a folder is opened
-      // TODO: Remember the last selected bug for each folder
-      $$grid.bind('Filtered', event => {
-        if ($$grid.view.members.length) {
-          $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
-        }
-      });
-
-      this.classic_thread_initialized = true;
-    }
-
-    // Change the date format on the thread pane
-    for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-      $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
-      $time.dataset.simple = vertical;
-    }
+    this.apply_classic_layout();
   }
 
   // Render the thread
@@ -282,6 +218,78 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
     if (pref) {
       $$splitter.data.position = pref;
     }
+  }
+};
+
+BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
+  let mql = window.matchMedia('(max-width: 1023px)'),
+      $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
+
+  let show_preview = mql => {
+    let $$listbox = this.thread.$$listbox;
+
+    if ($$listbox.view.members.length && document.querySelector('#home-preview-pane').clientHeight) {
+      $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
+    }
+  };
+
+  if (!this.vertical_thread_initialized) {
+    // Select the first bug on the list automatically when a folder is opened
+    // TODO: Remember the last selected bug for each folder
+    $listbox.addEventListener('Updated', event => show_preview(mql));
+    mql.addListener(show_preview);
+
+    // Star button
+    $listbox.addEventListener('mousedown', event => {
+      if (event.target.matches('[data-field="_starred"]')) {
+        BzDeck.controllers.bugs.toggle_star(Number(event.target.parentElement.dataset.id),
+                                            event.target.getAttribute('aria-checked') === 'false');
+        event.stopPropagation();
+      }
+    });
+
+    this.vertical_thread_initialized = true;
+  }
+
+  this.thread = new BzDeck.views.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
+    'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
+  });
+};
+
+BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
+  let prefs = BzDeck.models.data.prefs;
+
+  this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
+    'date': { 'simple': false },
+    'sortable': true,
+    'reorderable': true,
+    'sort_conditions': prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
+  });
+
+  let $$grid = this.thread.$$grid;
+
+  $$grid.options.adjust_scrollbar = !vertical;
+  $$grid.options.date.simple = vertical;
+
+  if (!this.classic_thread_initialized) {
+    // Fill the thread with all saved bugs, and filter the rows later
+    BzDeck.models.bugs.get_all().then(bugs => this.thread.update(bugs));
+
+    // Select the first bug on the list automatically when a folder is opened
+    // TODO: Remember the last selected bug for each folder
+    $$grid.bind('Filtered', event => {
+      if ($$grid.view.members.length) {
+        $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
+      }
+    });
+
+    this.classic_thread_initialized = true;
+  }
+
+  // Change the date format on the thread pane
+  for (let $time of $$grid.view.$container.querySelectorAll('time')) {
+    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
+    $time.dataset.simple = vertical;
   }
 };
 

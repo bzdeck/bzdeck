@@ -13,9 +13,42 @@ BzDeck.controllers = BzDeck.controllers || {};
  * Base Controller
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.controllers.BaseController = function BaseController () {};
+BzDeck.controllers.BaseController = function BaseController () {
+  this.view = new BzDeck.views.BaseView(BzDeck.models.data.prefs);
+  this.subscribe('Bug:UnreadToggled', data => this.toggle_unread());
+};
+
 BzDeck.controllers.BaseController.prototype = Object.create(FlareTail.app.Controller.prototype);
 BzDeck.controllers.BaseController.prototype.constructor = BzDeck.controllers.BaseController;
+
+BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = false) {
+  BzDeck.models.bugs.get_all().then(bugs => {
+    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
+        extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
+
+    bugs = [for (bug of bugs) if (bug._unread) bug];
+
+    // Update View
+    this.view.toggle_unread(bugs, loaded);
+
+    // Select Inbox when the notification is clicked
+    this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
+  });
+};
+
+BzDeck.controllers.BaseController.prototype.show_notification = function (title, body) {
+  if (BzDeck.models.data.prefs['notifications.show_desktop_notifications'] === false) {
+    return;
+  }
+
+  // Firefox OS requires a complete URL for the icon
+  let icon = location.origin + '/static/images/logo/icon-128.png',
+      notification = new Notification(title, { body, icon });
+
+  BzDeck.controllers.core.notifications.add(notification);
+
+  return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
+};
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Core
@@ -66,20 +99,6 @@ BzDeck.controllers.core.request = function (method, path, params, data = null, l
       reject(new Error('You have to go online to load data.')); // l10n
     }
   });
-};
-
-BzDeck.controllers.core.show_notification = function (title, body) {
-  if (BzDeck.models.data.prefs['notifications.show_desktop_notifications'] === false) {
-    return;
-  }
-
-  // Firefox OS requires a complete URL for the icon
-  let icon = location.origin + '/static/images/logo/icon-128.png',
-      notification = new Notification(title, { body, icon });
-
-  this.notifications.add(notification);
-
-  return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
 };
 
 BzDeck.controllers.core.parse_comment = function (str) {
@@ -201,10 +220,6 @@ BzDeck.controllers.config.fetch = function () {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.controllers.app = {};
-
-BzDeck.controllers.app.install = function () {
-  return FlareTail.util.app.install(BzDeck.config.app.manifest); // Promise
-};
 
 BzDeck.controllers.app.register_activity_handler = function () {
   // Match BMO's bug detail pages.

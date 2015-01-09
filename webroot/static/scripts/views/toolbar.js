@@ -3,7 +3,7 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.Toolbar = function ToolbarView () {
+BzDeck.views.Toolbar = function ToolbarView (account) {
   let FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
       $$tablist = this.$$tablist = new this.widget.TabList(document.querySelector('#main-tablist')),
@@ -27,44 +27,7 @@ BzDeck.views.Toolbar = function ToolbarView () {
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
   $app_menu.addEventListener('MenuItemSelected', event => {
-    switch (event.detail.command) {
-      case 'show-profile': {
-        BzDeck.router.navigate('/profile/' + BzDeck.models.data.account.name);
-
-        break;
-      }
-
-      case 'show-settings': {
-        BzDeck.router.navigate('/settings');
-
-        break;
-      }
-
-      case 'toggle-fullscreen': {
-        // Fullscreen requests from custom events are denied due to Bug 779324. A workaround below
-        // FTu.app.toggle_fullscreen();
-        break;
-      }
-
-      case 'install-app': {
-        BzDeck.controllers.app.install()
-            .then(() => document.querySelector('#main-menu--app--install').setAttribute('aria-disabled', 'true'));
-
-        break;
-      }
-
-      case 'logout': {
-        BzDeck.controllers.session.logout();
-
-        break;
-      }
-
-      case 'quit': {
-        window.close();
-
-        break;
-      }
-    }
+    this.publish(':AppMenuItemSelected', { 'command': event.detail.command });
   });
 
   // Switch to the mobile layout
@@ -113,8 +76,7 @@ BzDeck.views.Toolbar = function ToolbarView () {
 
   // Account label & avatar
   {
-    let account = BzDeck.models.data.account,
-        label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
+    let label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
         $menu_label = document.querySelector('#main-menu--app label'),
         $account_label = document.querySelector('#main-menu--app--account label'),
         gravatar = new BzDeck.controllers.Gravatar(account.name);
@@ -129,11 +91,23 @@ BzDeck.views.Toolbar = function ToolbarView () {
     });
   }
 
-  FTu.app.can_install(BzDeck.config.app.manifest).then(() => {
-    document.querySelector('#main-menu--app--install').removeAttribute('aria-hidden');
-  }).catch(error => {});
+  // App install
+  {
+    let $menuitem = document.querySelector('#main-menu--app--install');
 
-  let $search_box = document.querySelector('#quicksearch [role="textbox"]'),
+    this.subscribe('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'))
+    FTu.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
+  }
+
+  this.setup_searchbar();
+};
+
+BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
+
+BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
+  let $root = document.documentElement, // <html>
+      $search_box = document.querySelector('#quicksearch [role="textbox"]'),
       $search_button = document.querySelector('#quicksearch [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
@@ -147,18 +121,12 @@ BzDeck.views.Toolbar = function ToolbarView () {
     }
   };
 
-  let exec_search = () => {
-    let params = new URLSearchParams(),
-        terms = $search_box.value;
+  let exec_quick_search = () => {
+    this.publish(':QuickSearchRequested', { 'terms': $search_box.value });
+  };
 
-    if (terms) {
-      params.append('short_desc', terms);
-      params.append('short_desc_type', 'allwordssubstr');
-      params.append('resolution', '---'); // Search only open bugs
-    }
-
-    BzDeck.router.navigate('/search/' + Date.now(), { 'params' : params.toString() });
-
+  let exec_advanced_search = () => {
+    this.publish(':AdvancedSearchRequested', { 'terms': $search_box.value });
     cleanup();
   };
 
@@ -174,7 +142,7 @@ BzDeck.views.Toolbar = function ToolbarView () {
 
   $search_box.addEventListener('input', event => {
     if (event.target.value.trim()) {
-      this.quicksearch(event);
+      this.exec_quick_search();
     } else {
       this.$$search_dropdown.close();
     }
@@ -183,19 +151,19 @@ BzDeck.views.Toolbar = function ToolbarView () {
   FlareTail.util.kbd.assign($search_box, {
     'UP|DOWN': event => {
       if (event.target.value.trim() && this.$$search_dropdown.closed) {
-        this.quicksearch(event);
+        this.exec_quick_search();
       }
     },
     'RETURN': event => {
       this.$$search_dropdown.close();
-      exec_search();
+      exec_advanced_search();
     },
   });
 
   $search_box.addEventListener('mousedown', event => event.stopPropagation());
 
   FlareTail.util.kbd.assign($search_button, {
-    'RETURN|SPACE': event => exec_search(),
+    'RETURN|SPACE': event => exec_advanced_search(),
   });
 
   $search_button.addEventListener('mousedown', event => {
@@ -207,10 +175,10 @@ BzDeck.views.Toolbar = function ToolbarView () {
         // Somehow moving focus doesn't work, so use the async function here
         FlareTail.util.event.async(() => $search_box.focus());
       } else if ($search_box.value) {
-        exec_search();
+        exec_advanced_search();
       }
     } else {
-      exec_search();
+      exec_advanced_search();
     }
   });
 
@@ -225,16 +193,44 @@ BzDeck.views.Toolbar = function ToolbarView () {
     }
 
     if ($target.matches('#quicksearch-dropdown-more')) {
-      exec_search();
+      exec_advanced_search();
     }
   });
 
   // Suppress context menu
   $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
+
+  this.subscribe('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
 };
 
-BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.BaseView.prototype);
-BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
+BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
+  // Support for multiple aliases on Bugzilla 5.0+
+  let get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [],
+      $$dropdown = this.$$search_dropdown;
+
+  let data = [{
+    'id': 'quicksearch-dropdown-header',
+    'label': results.length ? 'Local Search' : 'Local Search: No Results', // l10n
+    'disabled': true
+  }];
+
+  for (let bug of results.reverse().slice(0, 20)) {
+    let aliases = get_aliases(bug);
+
+    data.push({
+      'id': 'quicksearch-dropdown-' + bug.id,
+      'label': bug.id + ' - ' + (aliases.length ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
+      'data': { 'id': bug.id }
+    });
+  }
+
+  data.push({ 'type': 'separator' });
+  data.push({ 'id': 'quicksearch-dropdown-more', 'label': 'Search All Bugs...' }); // l10n
+
+  $$dropdown.build(data);
+  $$dropdown.view.$container.scrollTop = 0;
+  $$dropdown.open();
+};
 
 BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   let page,
@@ -299,43 +295,4 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   this.update_window_title($tab);
   BzDeck.views.pages[page_category] = page;
   this.tab_path_map.set($tab.id, location.pathname + location.search);
-};
-
-BzDeck.views.Toolbar.prototype.quicksearch = function (event) {
-  let words = [for (word of event.target.value.trim().split(/\s+/)) word.toLowerCase()],
-      // Support for multiple aliases on Bugzilla 5.0+
-      get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
-
-  BzDeck.models.bugs.get_all().then(bugs => {
-    let results = bugs.filter(bug => {
-      return words.every(word => bug.summary.toLowerCase().includes(word)) ||
-             words.every(word => get_aliases(bug).join().toLowerCase().includes(word)) ||
-             words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
-    });
-
-    let data = [{
-      'id': 'quicksearch-dropdown-header',
-      'label': results.length ? 'Local Search' : 'Local Search: No Results', // l10n
-      'disabled': true
-    }];
-
-    for (let bug of results.reverse().slice(0, 20)) {
-      let aliases = get_aliases(bug);
-
-      data.push({
-        'id': `quicksearch-dropdown-${bug.id}`,
-        'label': bug.id + ' - ' + (aliases.length ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
-        'data': { 'id': bug.id }
-      });
-    }
-
-    data.push({ 'type': 'separator' });
-    data.push({ 'id': 'quicksearch-dropdown-more', 'label': 'Search All Bugs...' }); // l10n
-
-    let $$dropdown = this.$$search_dropdown;
-
-    $$dropdown.build(data);
-    $$dropdown.view.$container.scrollTop = 0;
-    $$dropdown.open();
-  });
 };

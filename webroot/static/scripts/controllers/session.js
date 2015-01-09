@@ -100,7 +100,8 @@ BzDeck.controllers.Session = function SessionController () {
 
     if (!this.relogin) {
       // Finally load the UI modules
-      new BzDeck.views.BaseView();
+      new BzDeck.controllers.BaseController();
+      BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar();
       BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
       BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
     }
@@ -127,12 +128,15 @@ BzDeck.controllers.Session = function SessionController () {
   });
 };
 
+BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
+
 BzDeck.controllers.Session.prototype.show_first_notification = function () {
   // Authorize a notification
   FlareTail.util.app.auth_notification();
 
   // Update UI & Show a notification
-  BzDeck.controllers.bugs.toggle_unread(true);
+  this.toggle_unread(true);
 
   // Notify requests
   BzDeck.models.bugs.get_subscription_by_id('requests').then(bugs => {
@@ -151,7 +155,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
     // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
     // Select the Requests folder when the notification is clicked
-    BzDeck.controllers.core.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+    this.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
   });
 };
 
@@ -170,6 +174,10 @@ BzDeck.controllers.Session.prototype.logout = function () {
   BzDeck.models.accounts.save_account(BzDeck.models.data.account);
 
   delete BzDeck.models.data.account;
+};
+
+BzDeck.controllers.Session.prototype.close = function () {
+  window.close();
 };
 
 BzDeck.controllers.Session.prototype.clean = function () {

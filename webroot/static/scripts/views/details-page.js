@@ -4,7 +4,8 @@
  */
 
 BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
-  this.data = { id, ids };
+  this.id = id;
+  this.ids = ids;
 
   this.$tab = document.querySelector(`#tab-details-${id}`);
   this.$tabpanel = document.querySelector(`#tabpanel-details-${id}`);
@@ -13,7 +14,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   this.subscribe('C:BugDataReady:' + this.id, data => {
     // Prepare the newly opened tabpanel
     if (!this.$tabpanel.querySelector('[itemprop="id"]').itemValue) {
-      this.prep_tabpanel(this.$tabpanel, data.bug, ids);
+      this.prep_tabpanel(this.$tabpanel, data.bug, this.ids);
       this.$tabpanel.removeAttribute('aria-busy');
       this.$tab.title = this.get_tab_title(data.bug);
       this.update_window_title(this.$tab);
@@ -136,7 +137,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
       $toolbar = $tabpanel.querySelector('header [role="toolbar"]'),
       $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
-      index = ids.indexOf(this.data.id),
+      index = ids.indexOf(this.id),
       prev = ids[index - 1],
       next = ids[index + 1],
       assign_key_binding = (key, command) => FlareTail.util.kbd.assign($tabpanel, { key: command });
@@ -171,7 +172,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
 BzDeck.views.DetailsPage.prototype.navigate = function (id) {
   let $current_tab = this.$tab;
 
-  BzDeck.router.navigate('/bug/' + id, { 'ids': this.data.ids });
+  BzDeck.router.navigate('/bug/' + id, { 'ids': this.ids });
   BzDeck.views.toolbar.$$tablist.close_tab($current_tab);
 };
 
@@ -179,9 +180,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (id) {
  * Attachments
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.DetailsPage.attachments = {};
-
-BzDeck.views.DetailsPage.attachments.render = function ($bug, attachments, addition = false) {
+BzDeck.views.DetailsPageAttachments = function DetailsPageAttachmentsView ($bug, attachments, addition = false) {
   let $placeholder = $bug.querySelector('[data-field="attachments"]');
 
   if (!$placeholder || !attachments.length) {
@@ -198,7 +197,7 @@ BzDeck.views.DetailsPage.attachments.render = function ($bug, attachments, addit
     let $attachment = $placeholder.appendChild(
       FlareTail.util.content.get_fragment('details-attachment').firstElementChild);
 
-    FlareTail.util.content.fill($attachment, {
+    this.fill($attachment, {
       'url': `/attachment/${att.id}`,
       'description': att.summary,
       'name': att.file_name,
@@ -227,13 +226,14 @@ BzDeck.views.DetailsPage.attachments.render = function ($bug, attachments, addit
   $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
 };
 
+BzDeck.views.DetailsPageAttachments.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPageAttachments.prototype.constructor = BzDeck.views.DetailsPageAttachments;
+
 /* ------------------------------------------------------------------------------------------------------------------
  * History
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.views.DetailsPage.history = {};
-
-BzDeck.views.DetailsPage.history.render = function ($bug, history, addition = false) {
+BzDeck.views.DetailsPageHistory = function DetailsPageHistoryView ($bug, history, addition = false) {
   let $placeholder = $bug.querySelector('[data-field="history"]');
 
   if (!$placeholder || !history.length) {
@@ -292,6 +292,9 @@ BzDeck.views.DetailsPage.history.render = function ($bug, history, addition = fa
 
   $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
 };
+
+BzDeck.views.DetailsPageHistory.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPageHistory.prototype.constructor = BzDeck.views.DetailsPageHistory;
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Swipe navigation

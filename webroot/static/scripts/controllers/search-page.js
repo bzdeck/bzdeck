@@ -12,7 +12,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (search_id) {
     'page_category': 'search',
     'page_id': this.search_id,
     'page_constructor': BzDeck.views.SearchPage,
-    'page_constructor_args': [this.search_id, params],
+    'page_constructor_args': [this.search_id, params, BzDeck.models.data.server.config, BzDeck.models.data.prefs],
     'tab_label': 'Search', // l10n
     'tab_desc': 'Search & Browse Bugs', // l10n
   });
