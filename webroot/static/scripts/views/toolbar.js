@@ -3,7 +3,7 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.Toolbar = function ToolbarView (account) {
+BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
   let FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
       $$tablist = this.$$tablist = new this.widget.TabList(document.querySelector('#main-tablist')),
@@ -78,15 +78,16 @@ BzDeck.views.Toolbar = function ToolbarView (account) {
   {
     let label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
         $menu_label = document.querySelector('#main-menu--app label'),
-        $account_label = document.querySelector('#main-menu--app--account label'),
-        gravatar = new BzDeck.controllers.Gravatar(account.name);
+        $account_label = document.querySelector('#main-menu--app--account label');
 
     $account_label.innerHTML = label;
-    $account_label.style.backgroundImage = $menu_label.style.backgroundImage = `url(${gravatar.avatar_url})`;
+    $account_label.style['background-image'] = $menu_label.style['background-image'] = `url(${gravatar.avatar_url})`;
 
-    gravatar.get_profile().then(entry => {
-      if (entry.profileBackground && entry.profileBackground.url) {
-        document.querySelector('#sidebar-account').style.backgroundImage = `url(${entry.profileBackground.url})`;
+    this.subscribe('C:GravatarProfileAvailable', data => {
+      let background = data.entry.profileBackground;
+
+      if (background && background.url) {
+        document.querySelector('#sidebar-account').style['background-image'] = `url(${background.url})`;
       }
     });
   }
@@ -169,7 +170,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   $search_button.addEventListener('mousedown', event => {
     event.stopPropagation();
 
-    if (mobile) {
+    if (FlareTail.util.ua.device.mobile) {
       if (!$root.hasAttribute('data-quicksearch')) {
         $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here
@@ -232,7 +233,7 @@ BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
   $$dropdown.open();
 };
 
-BzDeck.views.Toolbar.prototype.open_tab = function (options) {
+BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
   let page,
       page_category = options.page_category,
       page_id = options.page_id,
@@ -267,7 +268,8 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options) {
   } else {
     $tabpanel = this.get_fragment(`tabpanel-${page_category}-template`, page_id).firstElementChild;
     $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
-    page = new page_constructor(...page_constructor_args);
+    page = controller.view = new page_constructor(...page_constructor_args);
+    page.controller = controller;
     pages.set(page_id || 'default', page);
 
     // Prepare the Back button on the mobile banner

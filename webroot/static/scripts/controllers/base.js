@@ -24,12 +24,14 @@ BzDeck.controllers.BaseController.prototype.constructor = BzDeck.controllers.Bas
 BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = false) {
   BzDeck.models.bugs.get_all().then(bugs => {
     let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
-        extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n');
+        extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
+        unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs) if (bug._unread) bug].length;
+
 
     bugs = [for (bug of bugs) if (bug._unread) bug];
 
     // Update View
-    this.view.toggle_unread(bugs, loaded);
+    this.view.toggle_unread(bugs, loaded, unread_num);
 
     // Select Inbox when the notification is clicked
     this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));

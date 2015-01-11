@@ -3,59 +3,24 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.SearchPage = function SearchPageView (search_id, params, config, prefs) {
-  this.search_id = search_id;
-  this.$tabpanel = document.querySelector(`#tabpanel-search-${search_id}`);
+BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
+  this.id = id;
+  this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
   this.$status = this.$tabpanel.querySelector('[role="status"]');
   this.buttons = {};
   this.panes = {};
-
-  this.data = new Proxy({
-    'bugs': [],
-    'preview_id': null
-  },
-  {
-    'get': (obj, prop) => {
-      if (prop === 'bugs') {
-        // Return a sorted bug list
-        let bugs = new Map([for (bug of obj.bugs) [bug.id, bug]]),
-            rows = this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
-
-        return [for ($row of rows) bugs.get(Number($row.dataset.id))];
-      }
-
-      return obj[prop];
-    },
-    'set': (obj, prop, newval) => {
-      let oldval = obj[prop];
-
-      if (oldval === newval &&
-          this.panes['preview'].getAttribute('aria-hidden') === 'false') {
-        return;
-      }
-
-      if (prop === 'preview_id') {
-        // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-        if (!this.panes['preview'].clientHeight) {
-          BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
-
-          return; // Do not save the value
-        }
-
-        if (oldval !== newval) {
-          FlareTail.util.event.async(() => this.show_preview(oldval, newval));
-          BzDeck.controllers.bugzfeed._subscribe([newval]);
-        }
-      }
-
-      obj[prop] = newval;
-    }
-  });
 
   this.setup_basic_search_pane(config);
   this.setup_result_pane(prefs);
   this.setup_preview_pane();
   this.setup_toolbar();
+
+  Object.defineProperties(this, {
+    'preview_is_hidden': {
+      'enumerable': true,
+      'get': () => this.panes['preview'].getAttribute('aria-hidden') === 'true'
+    },
+  });
 
   if (params) {
     // TODO: support other params
@@ -64,18 +29,18 @@ BzDeck.views.SearchPage = function SearchPageView (search_id, params, config, pr
 
   let $grid = this.panes['result'].querySelector('[role="grid"]');
 
-  this.subscribe('C:Offline:' + search_id, data => {
+  this.subscribe('C:Offline', data => {
     this.show_status('You have to go online to search bugs.'); // l10n
   });
 
-  this.subscribe('C:SearchStarted:' + search_id, data => {
+  this.subscribe('C:SearchStarted', data => {
     $grid.removeAttribute('aria-hidden');
     $grid.setAttribute('aria-busy', 'true');
     this.hide_status();
     this.thread.update([]); // Clear grid body
   });
 
-  this.subscribe('C:SearchResultsAvailable:' + search_id, data => {
+  this.subscribe('C:SearchResultsAvailable', data => {
     if (data.bugs.length > 0) {
       this.thread.update(result.bugs);
       this.hide_status();
@@ -84,14 +49,18 @@ BzDeck.views.SearchPage = function SearchPageView (search_id, params, config, pr
     }
   });
 
-  this.subscribe('C:SearchError:' + search_id, data => {
+  this.subscribe('C:SearchError', data => {
     this.show_status(data.error.message);
   });
 
-  this.subscribe('C:SearchComplete:' + search_id, data => {
+  this.subscribe('C:SearchComplete', data => {
     $grid.removeAttribute('aria-busy');
     this.show_status(data.error.message);
   });
+
+  this.subscribe('C:BugDataUnavailable', data => this.show_preview(undefined));
+  this.subscribe('C:BugDataAvailable', data => this.show_preview(data.bug));
+  this.subscribe('C:ReturnToBasicSearchPane', data => this.show_basic_search_pane());
 };
 
 BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
@@ -99,22 +68,7 @@ BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
 
 BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
-    switch (event.target.dataset.command) {
-      case 'show-details': {
-        BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
-
-        break;
-      }
-
-      case 'show-basic-search-pane': {
-        this.panes['basic-search'].setAttribute('aria-hidden', 'false');
-        this.panes['preview'].setAttribute('aria-hidden', 'true');
-        this.buttons['show-details'].data.disabled = true;
-        this.buttons['show-basic-search-pane'].data.disabled = true;
-
-        break;
-      }
-    }
+    this.publish(':ToolbarButtonPressed', { 'command': event.target.dataset.command });
   };
 
   for (let $button of this.$tabpanel.querySelectorAll('header [role="button"]')) {
@@ -227,7 +181,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
       params.append('short_desc_type', 'allwordssubstr');
     }
 
-    this.publish(':SearchRequested:' + this.search_id, { params });
+    this.publish(':SearchRequested', { params });
   });
 };
 
@@ -269,41 +223,42 @@ BzDeck.views.SearchPage.prototype.setup_preview_pane = function () {
   $bug.appendChild($info).id = `${$bug.id}-info`;
 };
 
-BzDeck.views.SearchPage.prototype.show_preview = function (oldval, newval) {
+BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
+  let rows = this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+
+  return [for ($row of rows) bugs.get(Number($row.dataset.id))];
+};
+
+BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
   let $pane = this.panes['preview'],
       $bug = $pane.querySelector('[id$="-preview-bug"]');
 
-  if (!newval) {
+  if (!bug) {
     $bug.setAttribute('aria-hidden', 'true');
 
     return;
   }
 
-  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
-    if (!bug) {
-      // Unknown bug
-      $bug.setAttribute('aria-hidden', 'true');
+  // Show the preview pane
+  if ($pane.matches('[aria-hidden="true"]')) {
+    this.hide_status();
+    this.panes['basic-search'].setAttribute('aria-hidden', 'true');
+    $pane.setAttribute('aria-hidden', 'false');
+    this.buttons['show-details'].data.disabled = false;
+    this.buttons['show-basic-search-pane'].data.disabled = false;
+  }
 
-      return;
-    }
+  // Fill the content
+  this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
+  this.$$bug.render(bug);
+  $bug.setAttribute('aria-hidden', 'false');
+};
 
-    // Show the preview pane
-    if ($pane.matches('[aria-hidden="true"]')) {
-      this.hide_status();
-      this.panes['basic-search'].setAttribute('aria-hidden', 'true');
-      $pane.setAttribute('aria-hidden', 'false');
-      this.buttons['show-details'].data.disabled = false;
-      this.buttons['show-basic-search-pane'].data.disabled = false;
-    }
-
-    if (!this.$$bug) {
-      this.$$bug = new BzDeck.views.Bug($bug);
-    }
-
-    // Fill the content
-    this.$$bug.render(bug);
-    $bug.setAttribute('aria-hidden', 'false');
-  });
+BzDeck.views.SearchPage.prototype.show_basic_search_pane = function () {
+  this.panes['basic-search'].setAttribute('aria-hidden', 'false');
+  this.panes['preview'].setAttribute('aria-hidden', 'true');
+  this.buttons['show-details'].data.disabled = true;
+  this.buttons['show-basic-search-pane'].data.disabled = true;
 };
 
 BzDeck.views.SearchPage.prototype.show_status = function (str) {

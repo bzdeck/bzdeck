@@ -4,11 +4,16 @@
  */
 
 BzDeck.controllers.Toolbar = function ToolbarController () {
-  BzDeck.views.toolbar = new BzDeck.views.Toolbar(BzDeck.models.data.account);
+  let account = BzDeck.models.data.account,
+      gravatar = new BzDeck.controllers.Gravatar(account.name);
+
+  BzDeck.views.toolbar = new BzDeck.views.Toolbar(account, gravatar);
+
+  gravatar.get_profile().then(entry => this.publish(':GravatarProfileAvailable', { entry }));
 
   this.subscribe('V:AppMenuItemSelected', data => {
     let func = {
-      'show-profile': () => BzDeck.router.navigate('/profile/' + BzDeck.models.data.account.name),
+      'show-profile': () => BzDeck.router.navigate('/profile/' + account.name),
       'show-settings': () => BzDeck.router.navigate('/settings'),
       'install-app': () => FlareTail.util.app.install(),
       'logout': () => BzDeck.controllers.session.logout(),

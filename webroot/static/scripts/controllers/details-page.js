@@ -13,7 +13,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
     'page_constructor_args': [this.id, history.state ? history.state.ids : []],
     'tab_label': this.id,
     'tab_position': 'next',
-  });
+  }, this);
 
   BzDeck.models.bugs.get_bug_by_id(this.id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
@@ -22,7 +22,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
       bug = { 'id': this.id };
     }
 
-    this.publish(':BugDataReady:' + this.id, { bug });
+    this.publish(':BugDataReady', { bug });
     BzDeck.controllers.bugs.toggle_unread(this.id, false);
   });
 
@@ -36,18 +36,18 @@ BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.Detail
 
 BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {
   if (!navigator.onLine) {
-    this.publish(':Offline:' + this.id);
+    this.publish(':Offline');
 
     return;
   }
 
-  this.publish(':LoadingStarted:' + this.id);
+  this.publish(':LoadingStarted');
 
   BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
     // Save in DB
     BzDeck.models.bugs.save_bug(bug);
-    this.publish(':LoadingComplete:' + this.id, { bug });
+    this.publish(':LoadingComplete', { bug });
   }).catch(bug => {
-    this.publish(':LoadingError:' + this.id);
+    this.publish(':LoadingError');
   });
 };

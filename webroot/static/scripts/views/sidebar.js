@@ -39,7 +39,6 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
       unread = [for (bug of bugs) if (bug._unread) bug].length;
 
   home.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
-  home.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
   home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
   document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
 

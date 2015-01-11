@@ -3,11 +3,19 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.HomePage = function HomePageView () {
+BzDeck.views.HomePage = function HomePageView (prefs, controller) {
   let mobile = FlareTail.util.ua.device.mobile,
-      prefs = BzDeck.models.data.prefs,
       $preview_pane = document.querySelector('#home-preview-pane'),
       $sidebar = document.querySelector('#sidebar');
+
+  this.controller = controller;
+
+  Object.defineProperties(this, {
+    'preview_is_hidden': {
+      'enumerable': true,
+      'get': () => !$preview_pane.clientHeight
+    },
+  });
 
   // Prepare the Menu button on the mobile banner
   if (mobile) {
@@ -23,23 +31,7 @@ BzDeck.views.HomePage = function HomePageView () {
   }
 
   // A movable splitter between the thread pane and preview pane
-  {
-    let $$splitter = this.$$preview_splitter = new this.widget.Splitter(document.querySelector('#home-preview-splitter')),
-        prefix = 'ui.home.preview.splitter.position.',
-        pref = prefs[prefix + $$splitter.data.orientation];
-
-    if (pref) {
-      $$splitter.data.position = pref;
-    }
-
-    $$splitter.bind('Resized', event => {
-      let position = event.detail.position;
-
-      if (position) {
-        prefs[prefix + $$splitter.data.orientation] = position;
-      }
-    });
-  }
+  this.setup_splitter(prefs);
 
   let $bug = document.querySelector('#home-preview-pane article'),
       $info = this.get_fragment('preview-bug-info').firstElementChild;
@@ -57,11 +49,13 @@ BzDeck.views.HomePage = function HomePageView () {
     }
   });
 
+  this.subscribe('C:BugDataUnavailable', data => this.show_preview(undefined));
+  this.subscribe('C:BugDataAvailable', data => this.show_preview(data.bug));
+
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
       $$button = this.$$details_button = new FlareTail.widget.Button($button),
-      open_tab = () => BzDeck.router.navigate('/bug/' + this.data.preview_id,
-                                              { 'ids': [for (bug of this.data.bugs) bug.id] });
+      open_tab = () => this.publish(':OpeningTabRequested');
 
   $$button.bind('Pressed', event => open_tab());
 
@@ -76,44 +70,6 @@ BzDeck.views.HomePage = function HomePageView () {
     },
     // Open the bug in a new tab
     'O': event => open_tab(),
-  });
-
-  this.data = new Proxy({
-    'bugs': [],
-    'preview_id': null
-  },
-  {
-    'get': (obj, prop) => {
-      if (prop === 'bugs') {
-        // Return a sorted bug list
-        let bugs = new Map([for (bug of obj.bugs) [bug.id, bug]]),
-            items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
-                             : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
-
-        return [for ($item of items) bugs.get(Number($item.dataset.id))];
-      }
-
-      return obj[prop];
-    },
-    'set': (obj, prop, newval) => {
-      let oldval = obj[prop];
-
-      if (prop === 'preview_id') {
-        // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-        if (!$preview_pane.clientHeight) {
-          BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
-
-          return; // Do not save the value
-        }
-
-        if (oldval !== newval) {
-          FlareTail.util.event.async(() => this.show_preview(oldval, newval));
-          BzDeck.controllers.bugzfeed._subscribe([newval]);
-        }
-      }
-
-      obj[prop] = newval;
-    }
   });
 };
 
@@ -145,50 +101,62 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   BzDeck.views.BaseView.prototype.update_window_title($tab);
 };
 
-BzDeck.views.HomePage.prototype.show_preview = function (oldval, newval) {
-  let $pane = document.querySelector('#home-preview-pane'),
-      $bug = document.querySelector('#home-preview-bug'),
+BzDeck.views.HomePage.prototype.setup_splitter = function (prefs) {
+  let $$splitter = this.$$preview_splitter = new this.widget.Splitter(document.querySelector('#home-preview-splitter')),
+      prefix = 'ui.home.preview.splitter.position.',
+      pref = prefs[prefix + $$splitter.data.orientation];
+
+  if (pref) {
+    $$splitter.data.position = pref;
+  }
+
+  $$splitter.bind('Resized', event => {
+    let position = event.detail.position;
+
+    if (position) {
+      prefs[prefix + $$splitter.data.orientation] = position;
+    }
+  });
+};
+
+BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs, prefs) {
+  let mobile = FlareTail.util.ua.device.mobile,
+      layout_pref = prefs['ui.home.layout'],
+      vertical = mobile || !layout_pref || layout_pref === 'vertical',
+      items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
+                       : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+
+  return [for ($item of items) bugs.get(Number($item.dataset.id))];
+};
+
+BzDeck.views.HomePage.prototype.show_preview = function (bug) {
+  let $bug = document.querySelector('#home-preview-bug'),
       $$button = this.$$details_button;
 
-  // Remove the current preview if exists
-
-  if (!newval) {
+  if (!bug) {
     $bug.setAttribute('aria-hidden', 'true');
     $$button.data.disabled = true;
 
     return;
   }
 
-  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
-    if (!bug) {
-      $bug.setAttribute('aria-hidden', 'true');
-      $$button.data.disabled = true;
+  // Fill the content
+  this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
+  this.$$bug.render(bug);
+  $bug.setAttribute('aria-hidden', 'false');
+  $$button.data.disabled = false;
 
-      return;
+  if (FlareTail.util.ua.device.mobile) {
+    let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
+        $_title = $timeline_content.querySelector('h3'),
+        $title = $bug.querySelector('h3');
+
+    if ($_title) {
+      $timeline_content.replaceChild($title.cloneNode(true), $_title);
+    } else {
+      $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
     }
-
-    if (!this.$$bug) {
-      this.$$bug = new BzDeck.views.Bug($bug);
-    }
-
-    // Fill the content
-    this.$$bug.render(bug);
-    BzDeck.controllers.bugs.toggle_unread(bug.id, false);
-    $bug.setAttribute('aria-hidden', 'false');
-    $$button.data.disabled = false;
-
-    if (FlareTail.util.ua.device.mobile) {
-      let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
-          $_title = $timeline_content.querySelector('h3'),
-          $title = $bug.querySelector('h3');
-
-      if ($_title) {
-        $timeline_content.replaceChild($title.cloneNode(true), $_title);
-      } else {
-        $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
-      }
-    }
-  });
+  }
 };
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {

@@ -18,7 +18,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     'page_constructor': BzDeck.views.SettingsPage,
     'page_constructor_args': [tab_id, account.token, prefs],
     'tab_label': 'Settings',
-  });
+  }, this);
 
   this.subscribe('V:AuthTokenProvided', data => {
     let params = new URLSearchParams();
@@ -44,7 +44,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   this.subscribe('V:PrefValueChanged', data => {
     let { name, value } = data;
 
-    BzDeck.models.data.prefs[pref] = value;
+    BzDeck.models.data.prefs[name] = value;
 
     if (name === 'ui.theme.selected') {
       FlareTail.util.theme.selected = value;

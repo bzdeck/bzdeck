@@ -63,9 +63,7 @@ BzDeck.views.BaseView = function BaseView (prefs) {
 BzDeck.views.BaseView.prototype = Object.create(FlareTail.app.View.prototype);
 BzDeck.views.BaseView.prototype.constructor = BzDeck.views.BaseView;
 
-BzDeck.views.BaseView.prototype.toggle_unread = function (bugs, loaded) {
-  let unread_num = [for (bug of BzDeck.views.pages.home.data.bugs) if (bug._unread) bug].length;
-
+BzDeck.views.BaseView.prototype.toggle_unread = function (bugs, loaded, unread_num) {
   if (document.documentElement.getAttribute('data-current-tab') === 'home') {
     BzDeck.views.pages.home.update_title(document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : ''));
   }

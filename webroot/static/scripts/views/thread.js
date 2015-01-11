@@ -13,7 +13,7 @@ BzDeck.views.Thread.prototype.onselect = function (event) {
 
   if (ids.length) {
     // Show the bug in the preview pane or a new tab
-    this.consumer.data.preview_id = Number.parseInt(ids[ids.length - 1]);
+    this.consumer.controller.data.preview_id = Number.parseInt(ids[ids.length - 1]);
   }
 };
 
@@ -22,7 +22,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
 
   if ($target.matches(selector)) {
     // Open Bug in New Tab
-    BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [for (bug of this.consumer.data.bugs) bug.id] });
+    BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [for (bug of this.consumer.controller.data.bugs) bug.id] });
   }
 };
 
@@ -217,8 +217,8 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
     // Open the bug in a new tab
     'O|RETURN': event => {
-      BzDeck.router.navigate('/bug/' + this.consumer.data.preview_id,
-                             { 'ids': [for (bug of this.consumer.data.bugs) bug.id] });
+      BzDeck.router.navigate('/bug/' + this.consumer.controller.data.preview_id,
+                             { 'ids': [for (bug of this.consumer.controller.data.bugs) bug.id] });
     },
   });
 

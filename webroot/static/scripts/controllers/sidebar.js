@@ -49,7 +49,10 @@ BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.BaseCont
 BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
-  let update = bugs => this.publish(':FolderOpened', { folder_id, bugs });
+  let update = bugs => {
+    BzDeck.controllers.homepage.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
+    this.publish(':FolderOpened', { folder_id, bugs });
+  };
 
   if (folder_id === 'inbox') {
     BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {

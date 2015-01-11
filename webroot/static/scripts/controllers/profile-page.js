@@ -4,6 +4,8 @@
  */
 
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
+  this.id = email;
+
   let server = BzDeck.models.data.server,
       gravatar = new BzDeck.controllers.Gravatar(email),
       self = email === BzDeck.models.data.account.name;
@@ -15,18 +17,18 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
     'page_constructor_args': [email, self],
     'tab_label': 'Profile', // l10n
     'tab_desc': 'User Profile', // l10n
-  });
+  }, this);
 
   gravatar.get_profile().then(entry => {
     if (entry.profileBackground && entry.profileBackground.url) {
-      this.publish(':GravatarDataFound:' + email, {
+      this.publish(':GravatarDataFound', {
         'style': { 'background-image': `url(${entry.profileBackground.url})` }
       });
     }
   });
 
   BzDeck.controllers.users.fetch_user(email).then(user => {
-    this.publish(':BugzillaDataFound:' + email, {
+    this.publish(':BugzillaDataFound', {
       'profile': {
         'id': user.id,
         'email': email,
@@ -43,9 +45,9 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
       },
     });
   }).catch(error => {
-    this.publish(':BugzillaDataFetchingError:' + email, { error });
+    this.publish(':BugzillaDataFetchingError', { error });
   }).then(() => {
-    this.publish(':BugzillaDataFetchingComplete:' + email);
+    this.publish(':BugzillaDataFetchingComplete');
   });
 };
 
