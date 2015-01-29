@@ -15,7 +15,7 @@ BzDeck.controllers = BzDeck.controllers || {};
 
 BzDeck.controllers.BaseController = function BaseController () {
   this.view = new BzDeck.views.BaseView(BzDeck.models.data.prefs);
-  this.subscribe('Bug:UnreadToggled', data => this.toggle_unread());
+  this.on('Bug:UnreadToggled', data => this.toggle_unread());
 };
 
 BzDeck.controllers.BaseController.prototype = Object.create(FlareTail.app.Controller.prototype);

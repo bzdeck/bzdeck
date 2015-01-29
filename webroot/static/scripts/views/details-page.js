@@ -11,7 +11,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   this.$tabpanel = document.querySelector(`#tabpanel-details-${id}`);
   this.$tabpanel.setAttribute('aria-busy', 'true');
 
-  this.subscribe('C:BugDataReady', data => {
+  this.on('C:BugDataReady', data => {
     // Prepare the newly opened tabpanel
     if (!this.$tabpanel.querySelector('[itemprop="id"]').itemValue) {
       this.prep_tabpanel(this.$tabpanel, data.bug, this.ids);
@@ -21,15 +21,15 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
     }
   });
 
-  this.subscribe('C:Offline', data => {
+  this.on('C:Offline', data => {
     BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
   });
 
-  this.subscribe('C:LoadingStarted', data => {
+  this.on('C:LoadingStarted', data => {
     BzDeck.views.statusbar.show('Loading...'); // l10n
   });
 
-  this.subscribe('C:LoadingComplete', data => {
+  this.on('C:LoadingComplete', data => {
     // Check if the tabpanel still exists
     if (this.$tabpanel) {
       BzDeck.views.statusbar.show('');
@@ -39,7 +39,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
     }
   });
 
-  this.subscribe('C:LoadingError', data => {
+  this.on('C:LoadingError', data => {
     BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
   });
 };

@@ -21,14 +21,14 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
 
   gravatar.get_profile().then(entry => {
     if (entry.profileBackground && entry.profileBackground.url) {
-      this.publish(':GravatarDataFound', {
+      this.trigger(':GravatarDataFound', {
         'style': { 'background-image': `url(${entry.profileBackground.url})` }
       });
     }
   });
 
   BzDeck.controllers.users.fetch_user(email).then(user => {
-    this.publish(':BugzillaDataFound', {
+    this.trigger(':BugzillaDataFound', {
       'profile': {
         'id': user.id,
         'email': email,
@@ -45,9 +45,9 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
       },
     });
   }).catch(error => {
-    this.publish(':BugzillaDataFetchingError', { error });
+    this.trigger(':BugzillaDataFetchingError', { error });
   }).then(() => {
-    this.publish(':BugzillaDataFetchingComplete');
+    this.trigger(':BugzillaDataFetchingComplete');
   });
 };
 

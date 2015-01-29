@@ -43,19 +43,19 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
 
   this.change_layout(layout_pref);
 
-  this.subscribe('SettingsPageView:PrefValueChanged', data => {
+  this.on('SettingsPageView:PrefValueChanged', data => {
     if (data.name === 'ui.home.layout') {
       this.change_layout(data.value, true);
     }
   });
 
-  this.subscribe('C:BugDataUnavailable', data => this.show_preview(undefined));
-  this.subscribe('C:BugDataAvailable', data => this.show_preview(data.bug));
+  this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
+  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
       $$button = this.$$details_button = new FlareTail.widget.Button($button),
-      open_tab = () => this.publish(':OpeningTabRequested');
+      open_tab = () => this.trigger(':OpeningTabRequested');
 
   $$button.bind('Pressed', event => open_tab());
 

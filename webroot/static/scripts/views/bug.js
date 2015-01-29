@@ -10,7 +10,7 @@ BzDeck.views.Bug = function BugView ($bug) {
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
                                   new this.widget.ScrollBar($area)]);
 
-  this.subscribe('Bug:StarToggled', data => {
+  this.on('Bug:StarToggled', data => {
     let _bug = data.bug,
         _starred = _bug._starred_comments;
 
@@ -25,7 +25,7 @@ BzDeck.views.Bug = function BugView ($bug) {
     }
   });
 
-  this.subscribe('Bug:Updated', data => {
+  this.on('Bug:Updated', data => {
     if (data.bug.id === this.bug.id) {
       this.update(data.bug, data.changes);
     }

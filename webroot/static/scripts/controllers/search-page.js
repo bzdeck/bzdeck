@@ -36,7 +36,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
         if (oldval !== newval) {
           this.prep_preview(oldval, newval);
-          BzDeck.controllers.bugzfeed._subscribe([newval]);
+          BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
 
@@ -59,13 +59,13 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     this.exec_search(params);
   }
 
-  this.subscribe('V:SearchRequested', data => this.exec_search(data.params));
+  this.on('V:SearchRequested', data => this.exec_search(data.params));
 
-  this.subscribe('V:ToolbarButtonPressed', data => {
+  this.on('V:ToolbarButtonPressed', data => {
     let func = {
       'show-details': BzDeck.router.navigate('/bug/' + this.data.preview_id,
                                              { 'ids': [for (bug of this.data.bugs) bug.id] }),
-      'show-basic-search-pane': this.publish(':ReturnToBasicSearchPane'),
+      'show-basic-search-pane': this.trigger(':ReturnToBasicSearchPane'),
     }[data.command];
 
     if (func) {
@@ -81,7 +81,7 @@ BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchP
 
 BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval) {
   if (!newval) {
-    this.publish(':BugDataUnavailable');
+    this.trigger(':BugDataUnavailable');
 
     return;
   }
@@ -89,21 +89,21 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
   BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
     if (bug) {
       BzDeck.controllers.bugs.toggle_unread(bug.id, false);
-      this.publish(':BugDataAvailable', { bug });
+      this.trigger(':BugDataAvailable', { bug });
     } else {
-      this.publish(':BugDataUnavailable');
+      this.trigger(':BugDataUnavailable');
     }
   });
 };
 
 BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
-    this.publish('C:Offline');
+    this.trigger('C:Offline');
 
     return;
   }
 
-  this.publish('C:SearchStarted');
+  this.trigger('C:SearchStarted');
 
   BzDeck.controllers.core.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
@@ -118,10 +118,10 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
     }
 
     // Show results
-    this.publish('C:SearchResultsAvailable', { 'bugs': result.bugs });
+    this.trigger('C:SearchResultsAvailable', { 'bugs': result.bugs });
   }).catch(error => {
-    this.publish('C:SearchError', { error });
+    this.trigger('C:SearchError', { error });
   }).then(() => {
-    this.publish('C:SearchComplete');
+    this.trigger('C:SearchComplete');
   });
 };

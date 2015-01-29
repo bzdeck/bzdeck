@@ -26,7 +26,7 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
 
     // Subscribe bugs once (re)connected
     if (this.subscription.size) {
-      this._subscribe([...this.subscription]);
+      this.subscribe([...this.subscription]);
     }
   });
 
@@ -65,7 +65,7 @@ BzDeck.controllers.BugzfeedClient.prototype.send = function (command, bugs) {
   }
 };
 
-BzDeck.controllers.BugzfeedClient.prototype._subscribe = function (bugs) {
+BzDeck.controllers.BugzfeedClient.prototype.subscribe = function (bugs) {
   for (let bug of bugs) {
     this.subscription.add(bug);
   }

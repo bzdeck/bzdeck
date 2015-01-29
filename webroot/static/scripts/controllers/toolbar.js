@@ -9,9 +9,9 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
 
   BzDeck.views.toolbar = new BzDeck.views.Toolbar(account, gravatar);
 
-  gravatar.get_profile().then(entry => this.publish(':GravatarProfileAvailable', { entry }));
+  gravatar.get_profile().then(entry => this.trigger(':GravatarProfileAvailable', { entry }));
 
-  this.subscribe('V:AppMenuItemSelected', data => {
+  this.on('V:AppMenuItemSelected', data => {
     let func = {
       'show-profile': () => BzDeck.router.navigate('/profile/' + account.name),
       'show-settings': () => BzDeck.router.navigate('/settings'),
@@ -25,8 +25,8 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
     }
   });
 
-  this.subscribe('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.terms));
-  this.subscribe('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
+  this.on('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.terms));
+  this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
 };
 
 BzDeck.controllers.Toolbar.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
@@ -54,6 +54,6 @@ BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
     });
 
-    this.publish(':QuickSearchResultsAvailable', { results });
+    this.trigger(':QuickSearchResultsAvailable', { results });
   });
 };

@@ -35,24 +35,24 @@ BzDeck.views.SettingsPage.prototype.activate_token_input = function (token) {
 
   $input.addEventListener('input', event => {
     if ($input.value.length === 10) {
-      this.publish(':AuthTokenProvided', { 'token': $input.value })
+      this.trigger(':AuthTokenProvided', { 'token': $input.value })
       $output.textContent = 'Verifying...'; // l10n
     } else {
       $output.textContent = '';
     }
   });
 
-  this.subscribe('C:AuthTokenVerified', data => {
+  this.on('C:AuthTokenVerified', data => {
     $input.setAttribute('aria-invalid', 'false');
     $output.textContent = 'Verified'; // l10n
   });
 
-  this.subscribe('C:AuthTokenInvalid', data => {
+  this.on('C:AuthTokenInvalid', data => {
     $input.setAttribute('aria-invalid', 'true');
     $output.textContent = 'Invalid, try again'; // l10n
   });
 
-  this.subscribe('C:AuthTokenVerificationError', data => {
+  this.on('C:AuthTokenVerificationError', data => {
     BzDeck.views.statusbar.show(data.error.message);
   });
 };
@@ -71,7 +71,7 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, value)
   (new this.widget.RadioGroup($rgroup)).bind('Selected', event => {
     _value = event.detail.items[0].dataset.value;
     _value = value.type === 'boolean' ? _value === 'true' : _value;
-    this.publish(':PrefValueChanged', { name, _value });
+    this.trigger(':PrefValueChanged', { name, _value });
 
     if ($root.hasAttribute(attr)) {
       $root.setAttribute(attr, String(value));

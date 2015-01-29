@@ -22,11 +22,11 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
       bug = { 'id': this.id };
     }
 
-    this.publish(':BugDataReady', { bug });
+    this.trigger(':BugDataReady', { bug });
     BzDeck.controllers.bugs.toggle_unread(this.id, false);
   });
 
-  BzDeck.controllers.bugzfeed._subscribe([this.id]);
+  BzDeck.controllers.bugzfeed.subscribe([this.id]);
 };
 
 BzDeck.controllers.DetailsPage.route = '/bug/(\\d+)';
@@ -36,18 +36,18 @@ BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.Detail
 
 BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {
   if (!navigator.onLine) {
-    this.publish(':Offline');
+    this.trigger(':Offline');
 
     return;
   }
 
-  this.publish(':LoadingStarted');
+  this.trigger(':LoadingStarted');
 
   BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
     // Save in DB
     BzDeck.models.bugs.save_bug(bug);
-    this.publish(':LoadingComplete', { bug });
+    this.trigger(':LoadingComplete', { bug });
   }).catch(bug => {
-    this.publish(':LoadingError');
+    this.trigger(':LoadingError');
   });
 };

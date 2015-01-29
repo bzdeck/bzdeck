@@ -20,7 +20,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     'tab_label': 'Settings',
   }, this);
 
-  this.subscribe('V:AuthTokenProvided', data => {
+  this.on('V:AuthTokenProvided', data => {
     let params = new URLSearchParams();
 
     params.append('names', account.name);
@@ -32,16 +32,16 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
         account.token = data.token;
         BzDeck.models.accounts.save_account(account);
         // Update the view
-        this.publish(':AuthTokenVerified');
+        this.trigger(':AuthTokenVerified');
       } else {
-        this.publish(':AuthTokenInvalid');
+        this.trigger(':AuthTokenInvalid');
       }
     }).catch(error => {
-      this.publish(':AuthTokenVerificationError', { error });
+      this.trigger(':AuthTokenVerificationError', { error });
     });
   });
 
-  this.subscribe('V:PrefValueChanged', data => {
+  this.on('V:PrefValueChanged', data => {
     let { name, value } = data;
 
     BzDeck.models.data.prefs[name] = value;

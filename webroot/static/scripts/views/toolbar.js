@@ -27,7 +27,7 @@ BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
   $app_menu.addEventListener('MenuItemSelected', event => {
-    this.publish(':AppMenuItemSelected', { 'command': event.detail.command });
+    this.trigger(':AppMenuItemSelected', { 'command': event.detail.command });
   });
 
   // Switch to the mobile layout
@@ -83,7 +83,7 @@ BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
     $account_label.innerHTML = label;
     $account_label.style['background-image'] = $menu_label.style['background-image'] = `url(${gravatar.avatar_url})`;
 
-    this.subscribe('C:GravatarProfileAvailable', data => {
+    this.on('C:GravatarProfileAvailable', data => {
       let background = data.entry.profileBackground;
 
       if (background && background.url) {
@@ -96,7 +96,7 @@ BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
   {
     let $menuitem = document.querySelector('#main-menu--app--install');
 
-    this.subscribe('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'))
+    this.on('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'))
     FTu.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
   }
 
@@ -123,11 +123,11 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   };
 
   let exec_quick_search = () => {
-    this.publish(':QuickSearchRequested', { 'terms': $search_box.value });
+    this.trigger(':QuickSearchRequested', { 'terms': $search_box.value });
   };
 
   let exec_advanced_search = () => {
-    this.publish(':AdvancedSearchRequested', { 'terms': $search_box.value });
+    this.trigger(':AdvancedSearchRequested', { 'terms': $search_box.value });
     cleanup();
   };
 
@@ -201,7 +201,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   // Suppress context menu
   $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
 
-  this.subscribe('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
+  this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
 };
 
 BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {

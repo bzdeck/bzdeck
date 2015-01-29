@@ -18,14 +18,14 @@ BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
     $profile.classList.add('self');
   }
 
-  this.subscribe('C:GravatarDataFound:' + email, data => {
+  this.on('C:GravatarDataFound:' + email, data => {
     if ($header) {
       // TODO: Add location and social accounts if provided
       $header.style['background-image'] = data.style['background-image'];
     }
   });
 
-  this.subscribe('C:BugzillaDataFound:' + email, data => {
+  this.on('C:BugzillaDataFound:' + email, data => {
     if ($tab && $profile && $header) {
       document.title = $tab.title = `User Profile: ${data.profile.name}`;
       this.fill($profile, data.profile);
@@ -36,13 +36,13 @@ BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
     }
   });
 
-  this.subscribe('C:BugzillaDataFetchingError:' + email, data => {
+  this.on('C:BugzillaDataFetchingError:' + email, data => {
     if ($status) {
       $status.textContent = data.error.message;
     }
   });
 
-  this.subscribe('C:BugzillaDataFetchingComplete:' + email, data => {
+  this.on('C:BugzillaDataFetchingComplete:' + email, data => {
     if ($tabpanel && $status) {
       $tabpanel.removeAttribute('aria-busy');
       $status.textContent = '';

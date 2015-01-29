@@ -103,7 +103,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     this.$status.querySelector('strong').addEventListener(click_event_type, event =>
       BzDeck.router.navigate('/settings', { 'tab_id': 'account' }));
 
-    this.subscribe('SettingsPageController:AuthTokenVerified', data => {
+    this.on('SettingsPageController:AuthTokenVerified', data => {
       this.$status.textContent = '';
       this.$submit.setAttribute('aria-disabled', !this.has_text() || !this.has_attachments());
     });

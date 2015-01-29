@@ -37,11 +37,11 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 
   BzDeck.views.sidebar = new BzDeck.views.Sidebar();
 
-  this.subscribe('V:FolderSelected', data => this.data.folder_id = data.id);
+  this.on('V:FolderSelected', data => this.data.folder_id = data.id);
 
   // Update the sidebar Inbox folder
-  this.subscribe('Bug:UnreadToggled', data => BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
-    this.publish(':UnreadToggled', { 'number': [for (bug of bugs) if (bug._unread) bug].length });
+  this.on('Bug:UnreadToggled', data => BzDeck.models.bugs.get_subscribed_bugs().then(bugs => {
+    this.trigger(':UnreadToggled', { 'number': [for (bug of bugs) if (bug._unread) bug].length });
   }));
 };
 
@@ -51,7 +51,7 @@ BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
   let update = bugs => {
     BzDeck.controllers.homepage.data.bugs = [...bugs]; // Clone the array or somehow it cannot be saved by Proxy
-    this.publish(':FolderOpened', { folder_id, bugs });
+    this.trigger(':FolderOpened', { folder_id, bugs });
   };
 
   if (folder_id === 'inbox') {

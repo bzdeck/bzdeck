@@ -81,7 +81,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     'S': event => toggle_prop('_starred'),
   });
 
-  this.subscribe('Bug:StarToggled', data => {
+  this.on('Bug:StarToggled', data => {
     let bug = data.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
@@ -91,7 +91,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     }
   });
 
-  this.subscribe('Bug:UnreadToggled', data => {
+  this.on('Bug:UnreadToggled', data => {
     let bug = data.bug,
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
@@ -222,7 +222,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
   });
 
-  this.subscribe('Bug:StarToggled', data => {
+  this.on('Bug:StarToggled', data => {
     let bug = data.bug,
         $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
@@ -231,7 +231,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     }
   });
 
-  this.subscribe('Bug:UnreadToggled', data => {
+  this.on('Bug:UnreadToggled', data => {
     let bug = data.bug,
         $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 

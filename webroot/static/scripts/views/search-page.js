@@ -29,18 +29,18 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
 
   let $grid = this.panes['result'].querySelector('[role="grid"]');
 
-  this.subscribe('C:Offline', data => {
+  this.on('C:Offline', data => {
     this.show_status('You have to go online to search bugs.'); // l10n
   });
 
-  this.subscribe('C:SearchStarted', data => {
+  this.on('C:SearchStarted', data => {
     $grid.removeAttribute('aria-hidden');
     $grid.setAttribute('aria-busy', 'true');
     this.hide_status();
     this.thread.update([]); // Clear grid body
   });
 
-  this.subscribe('C:SearchResultsAvailable', data => {
+  this.on('C:SearchResultsAvailable', data => {
     if (data.bugs.length > 0) {
       this.thread.update(result.bugs);
       this.hide_status();
@@ -49,18 +49,18 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
     }
   });
 
-  this.subscribe('C:SearchError', data => {
+  this.on('C:SearchError', data => {
     this.show_status(data.error.message);
   });
 
-  this.subscribe('C:SearchComplete', data => {
+  this.on('C:SearchComplete', data => {
     $grid.removeAttribute('aria-busy');
     this.show_status(data.error.message);
   });
 
-  this.subscribe('C:BugDataUnavailable', data => this.show_preview(undefined));
-  this.subscribe('C:BugDataAvailable', data => this.show_preview(data.bug));
-  this.subscribe('C:ReturnToBasicSearchPane', data => this.show_basic_search_pane());
+  this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
+  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
+  this.on('C:ReturnToBasicSearchPane', data => this.show_basic_search_pane());
 };
 
 BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
@@ -68,7 +68,7 @@ BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
 
 BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
   let handler = event => {
-    this.publish(':ToolbarButtonPressed', { 'command': event.target.dataset.command });
+    this.trigger(':ToolbarButtonPressed', { 'command': event.target.dataset.command });
   };
 
   for (let $button of this.$tabpanel.querySelectorAll('header [role="button"]')) {
@@ -181,7 +181,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
       params.append('short_desc_type', 'allwordssubstr');
     }
 
-    this.publish(':SearchRequested', { params });
+    this.trigger(':SearchRequested', { params });
   });
 };
 

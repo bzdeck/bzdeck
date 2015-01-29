@@ -42,7 +42,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
 
         if (oldval !== newval) {
           this.prep_preview(oldval, newval);
-          BzDeck.controllers.bugzfeed._subscribe([newval]);
+          BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
 
@@ -50,7 +50,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
     }
   });
 
-  this.subscribe('V:OpeningTabRequested', data => {
+  this.on('V:OpeningTabRequested', data => {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
   });
 };
@@ -62,7 +62,7 @@ BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
 
 BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
   if (!newval) {
-    this.publish(':BugDataUnavailable');
+    this.trigger(':BugDataUnavailable');
 
     return;
   }
@@ -70,9 +70,9 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
   BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
     if (bug) {
       BzDeck.controllers.bugs.toggle_unread(bug.id, false);
-      this.publish(':BugDataAvailable', { bug });
+      this.trigger(':BugDataAvailable', { bug });
     } else {
-      this.publish(':BugDataUnavailable');
+      this.trigger(':BugDataUnavailable');
     }
   });
 };

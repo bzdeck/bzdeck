@@ -23,10 +23,10 @@ BzDeck.views.Sidebar = function SidebarView () {
   new this.widget.ScrollBar($sidebar.querySelector('div'));
 
   this.$$folders = new this.widget.ListBox(document.querySelector('#sidebar-folder-list'), BzDeck.config.folders);
-  this.$$folders.bind('Selected', event => this.publish(':FolderSelected', { 'id': event.detail.ids[0] }));
+  this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { 'id': event.detail.ids[0] }));
 
-  this.subscribe('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
-  this.subscribe('C:UnreadToggled', data => this.toggle_unread(data.number));
+  this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
+  this.on('C:UnreadToggled', data => this.toggle_unread(data.number));
 };
 
 BzDeck.views.Sidebar.prototype = Object.create(BzDeck.views.BaseView.prototype);
