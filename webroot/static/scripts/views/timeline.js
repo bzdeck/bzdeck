@@ -82,7 +82,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
 
       return FlareTail.util.event.ignore(event);
     });
-    $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('[itemprop="comment"]'));
+    $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('article'));
   }
 
   let $existing_form = $timeline.parentElement.querySelector('[id$="comment-form"]');

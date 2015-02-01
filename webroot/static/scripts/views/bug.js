@@ -95,7 +95,7 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
 
   // Empty timeline while keeping the scrollbar
   if (!partial) {
-    for (let $comment of $timeline.querySelectorAll('[itemprop="comment"], [role="form"], .read-comments-expander')) {
+    for (let $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
       $comment.remove();
     }
   }
@@ -154,7 +154,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   let _bug = {
     'cc': [for (person of this.bug.cc_detail) {
-      'name': BzDeck.controllers.users.get_name(person).replace(/\s?[\[\(].*[\)\]]/g, ''), // Remove bracketed strings
+      'name': BzDeck.controllers.users.get_name(person, true),
       'email': person.email,
       'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
     }],

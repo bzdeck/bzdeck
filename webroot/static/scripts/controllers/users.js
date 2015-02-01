@@ -19,8 +19,14 @@ BzDeck.controllers.users.fetch_user = function (email) {
   });
 };
 
-BzDeck.controllers.users.get_name = function (person) {
-  return person.real_name || person.email;
+BzDeck.controllers.users.get_name = function (person, remove_comment = false) {
+  let name = person.real_name;
+
+  if (name) {
+    return remove_comment ? name.replace(/\s[\[\(<‹].*[›>\)\]]/g, '') : name; // Remove bracketed strings if needed
+  }
+
+  return person.email.split('@')[0];
 };
 
 BzDeck.controllers.users.get_color = function (person) {

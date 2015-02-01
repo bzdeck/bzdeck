@@ -464,9 +464,19 @@
           </div>
         </header>
         <div itemprop="text"></div>
-        <ul class="changes"></ul>
       </article>
     </template><!-- end #timeline-comment -->
+    <template id="timeline-change">
+      <article tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change" role="article">
+        <header>
+          <div class="meta">
+            <span role="link" itemprop="author" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+            <span itemprop="how"></span>
+            <time itemprop="datePublished"></time>
+          </div>
+        </header>
+      </article>
+    </template><!-- end #timeline-change -->
     <template id="timeline-comment-form">
       <section id="TID-comment-form" role="form">
         <header>
@@ -574,6 +584,9 @@
         <span data-field="_starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
       </li>
     </template><!-- end #vertical-thread-item -->
+    <template id="person-without-image">
+      <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><span itemprop="name"></span><meta itemprop="email"></span>
+    </template><!-- end #person-without-image -->
   </head>
   <body role="application">
     <section id="app-login">

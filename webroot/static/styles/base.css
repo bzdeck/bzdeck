@@ -1864,10 +1864,6 @@ article[id$="preview-bug"] > .bug-info {
   background-color: var(--content-background-color);
 }
 
-[data-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="comment"][data-changes="cc"][data-nocomment] {
-  display: none;
-}
-
 .bug-timeline [itemprop="comment"]:focus {
   border-color: var(--base-accent-color-1);
 }
@@ -2028,35 +2024,35 @@ article[id$="preview-bug"] > .bug-info {
   opacity: 0;
 }
 
-.bug-timeline [itemprop="comment"] .changes {
-  border-radius: 0 0 .2rem .2rem;
-  border-width: .1rem 0 0;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
-  background-color: var(--secondary-region-background-color);
+.bug-timeline [itemprop="change"] {
+  margin: 1.2rem 2.5rem 0;
 }
 
-[data-device|="mobile"]:root .bug-timeline [itemprop="comment"] .changes {
-  font-size: 1rem;
-}
-
-.bug-timeline [itemprop="comment"] .changes li {
-  margin: .4rem 0;
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-[data-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="comment"][data-changes="cc"] .changes,
-[data-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="comment"] .changes li[data-change-field="cc"] {
+[data-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
   display: none;
 }
 
-.bug-timeline [itemprop="comment"] .changes ins {
-  text-decoration: none;
+.bug-timeline [itemprop="change"] .meta {
+  padding-left: 2.2rem;
+  line-height: 1.6rem;
 }
 
-.bug-timeline [itemprop="comment"] .changes a {
-  color: inherit;
+.bug-timeline [itemprop="change"] [itemprop="image"] {
+  display: inline-block;
+  float: left;
+  margin-right: .6rem;
+  margin-left: -2.2rem;
+  border-radius: .16rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: #FCFCFC;
+  font-size: 1rem;
+  line-height: 1.6rem;
+  text-align: center;
+}
+
+.bug-timeline [itemprop="change"] [itemprop="name"] {
+  font-weight: 500;
 }
 
 [id$="timeline-comment-form"] {
@@ -2919,10 +2915,6 @@ article[id$="preview-bug"] > .bug-info {
     padding: 0 1.2rem 1.2rem;
   }
 
-  .bug-timeline [itemprop="comment"] .changes {
-    padding: .8rem 1.2rem;
-  }
-
   [id^="settings-tabpanel"] > section > section > h4 {
     float: left;
     width: calc(50% - 1rem);
@@ -3120,10 +3112,6 @@ article[id$="preview-bug"] > .bug-info {
 
   [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
     padding: 0 .8rem .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] .changes {
-    padding: .4rem .8rem;
   }
 
   [data-device|="mobile"]:root [id$="timeline-comment-form"] {
