@@ -2738,12 +2738,12 @@ article[id$="preview-bug"] > .bug-info {
   background-repeat: no-repeat;
 }
 
-#tabpanel-settings-account-token {
-  width: 7rem;
+#settings-tabpanel-account input {
+  width: 12rem;
   text-align: center;
 }
 
-#tabpanel-settings-account-token + span {
+#settings-tabpanel-account output {
   display: inline-block;
   padding: .4rem .8rem;
   height: 1.6rem;

@@ -284,18 +284,9 @@
               <section>
                 <h3>Account</h3>
                 <section>
-                  <h4>Bugzilla Authentication Token</h4>
-                  <div><input id="tabpanel-settings-account-token" type="password" maxlength="10" role="textbox"><span></span></div>
-                  <p>Provide your auth token if you make changes to bugs. It will be saved in your browser and <strong>never sent to the BzDeck server or any other third parties</strong>. Your token can be found in your browser's Cookie Manager:</p>
-                  <ol>
-                    <li>Open Firefox Options or Preferences</li>
-                    <li>Select the Privacy tab</li>
-                    <li>Choose &quot;Use custom settings for history&quot; from the dropdown list under the History section</li>
-                    <li>Click the Show Cookies button</li>
-                    <li>Search &quot;Bugzilla_logincookie&quot;</li>
-                    <li>Copy the alphanumeric Content like 2cN9lgwhIm</li>
-                    <li>Paste it on the text field above</li>
-                  </ol>
+                  <h4>Bugzilla API Key</h4>
+                  <div><input maxlength="40" role="textbox"><output role="status"></div>
+                  <p>Provide your <a>API Key</a> if you'd make changes to bugs. It will be saved in your local browser storage, used only for Bugzilla user authentication when needed, and never sent to the BzDeck server nor any other third parties.</p>
                 </section>
               </section>
             </div><!-- end #settings-tabpanel-account -->

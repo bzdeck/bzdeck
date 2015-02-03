@@ -3,7 +3,7 @@
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  */
 
-BzDeck.views.SettingsPage = function SettingsPageView (tab_id, token, prefs) {
+BzDeck.views.SettingsPage = function SettingsPageView (tab_id, api_key, api_key_link, prefs) {
   // Activate tabs
   this.$$tablist = new this.widget.TabList(document.querySelector('#settings-tablist'));
 
@@ -11,8 +11,8 @@ BzDeck.views.SettingsPage = function SettingsPageView (tab_id, token, prefs) {
     this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
   }
 
-  // Activate token input
-  this.activate_token_input(token);
+  // Activate the API Key input widget
+  this.activate_api_key_input(api_key, api_key_link);
 
   // Currently the radiogroup/radio widget is not data driven.
   // A modern preference system is needed.
@@ -24,35 +24,38 @@ BzDeck.views.SettingsPage = function SettingsPageView (tab_id, token, prefs) {
 BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
 BzDeck.views.SettingsPage.prototype.constructor = BzDeck.views.SettingsPage;
 
-BzDeck.views.SettingsPage.prototype.activate_token_input = function (token) {
-  let $input = document.querySelector('#tabpanel-settings-account-token'),
-      $output = $input.nextElementSibling;
+BzDeck.views.SettingsPage.prototype.activate_api_key_input = function (api_key, api_key_link) {
+  let $input = document.querySelector('#settings-tabpanel-account input'),
+      $output = document.querySelector('#settings-tabpanel-account output'),
+      $link = document.querySelector('#settings-tabpanel-account a');
 
-  if (token) {
-    $input.value = token;
-    $output.textContent = 'Verified'; // l10n
+  if (api_key) {
+    $input.value = api_key;
+    $output.value = 'Verified'; // l10n
   }
 
+  $link.href = api_key_link;
+
   $input.addEventListener('input', event => {
-    if ($input.value.length === 10) {
-      this.trigger(':AuthTokenProvided', { 'token': $input.value })
-      $output.textContent = 'Verifying...'; // l10n
+    if ($input.value.length === $input.maxLength) {
+      this.trigger(':APIKeyProvided', { 'api_key': $input.value })
+      $output.value = 'Verifying...'; // l10n
     } else {
-      $output.textContent = '';
+      $output.value = '';
     }
   });
 
-  this.on('C:AuthTokenVerified', data => {
+  this.on('C:APIKeyVerified', data => {
     $input.setAttribute('aria-invalid', 'false');
-    $output.textContent = 'Verified'; // l10n
+    $output.value = 'Verified'; // l10n
   });
 
-  this.on('C:AuthTokenInvalid', data => {
+  this.on('C:APIKeyInvalid', data => {
     $input.setAttribute('aria-invalid', 'true');
-    $output.textContent = 'Invalid, try again'; // l10n
+    $output.value = 'Invalid, try again'; // l10n
   });
 
-  this.on('C:AuthTokenVerificationError', data => {
+  this.on('C:APIKeyVerificationError', data => {
     BzDeck.views.statusbar.show(data.error.message);
   });
 };

@@ -25,11 +25,14 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
   this.bug = bug;
-  this.has_token = () => !!BzDeck.models.data.account.token;
-  this.has_text = () => !!this.$textbox.value.match(/\S/);
   this.attachments = [];
-  this.has_attachments = () => this.attachments.length > 0;
   this.parallel_upload = true;
+
+  Object.defineProperties(this, {
+    'has_api_key': { 'enumerable': true, 'get': () => !!BzDeck.models.data.account.api_key },
+    'has_text': { 'enumerable': true, 'get': () => !!this.$textbox.value.match(/\S/) },
+    'has_attachments': { 'enumerable': true, 'get': () => !!this.attachments.length },
+  });
 
   this.$form.addEventListener('wheel', event => event.stopPropagation());
 
@@ -55,7 +58,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign(this.$textbox, {
     'ACCEL+RETURN': event => {
-      if (this.has_text() && this.has_token()) {
+      if (this.has_text && this.has_api_key) {
         this.submit();
       }
     },
@@ -98,14 +101,14 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
   this.$submit.addEventListener(click_event_type, event => this.submit());
 
-  if (!this.has_token()) {
-    this.$status.innerHTML = '<strong>Provide your auth token</strong> to post.';
+  if (!this.has_api_key) {
+    this.$status.innerHTML = '<strong>Provide your API Key</strong> to post.';
     this.$status.querySelector('strong').addEventListener(click_event_type, event =>
       BzDeck.router.navigate('/settings', { 'tab_id': 'account' }));
 
-    this.on('SettingsPageController:AuthTokenVerified', data => {
+    this.on('SettingsPageController:APIKeyVerified', data => {
       this.$status.textContent = '';
-      this.$submit.setAttribute('aria-disabled', !this.has_text() || !this.has_attachments());
+      this.$submit.setAttribute('aria-disabled', !this.has_text || !this.has_attachments);
     });
   }
 };
@@ -116,10 +119,10 @@ BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCo
 BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
-  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
-  this.$preview_tab.setAttribute('aria-disabled', !this.has_text());
+  this.$submit.setAttribute('aria-disabled', !(this.has_text || this.has_attachments) || !this.has_api_key);
+  this.$preview_tab.setAttribute('aria-disabled', !this.has_text);
 
-  if (this.has_token() && this.$status.textContent) {
+  if (this.has_api_key && this.$status.textContent) {
     this.$status.textContent = '';
   }
 };
@@ -237,7 +240,7 @@ BzDeck.views.TimelineCommentForm.prototype.add_attachment = function (attachment
 
   this.$attachments_tab.setAttribute('aria-disabled', 'false');
   this.$$tabs.view.selected = this.$attachments_tab;
-  this.$submit.setAttribute('aria-disabled', !this.has_token());
+  this.$submit.setAttribute('aria-disabled', !this.has_api_key);
   this.update_parallel_ui();
 };
 
@@ -247,11 +250,11 @@ BzDeck.views.TimelineCommentForm.prototype.remove_attachment = function (attachm
   this.attachments.splice(index, 1);
 
   this.$attachments_tbody.rows[index].remove();
-  this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments());
-  this.$submit.setAttribute('aria-disabled', !(this.has_text() || this.has_attachments()) || !this.has_token());
+  this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments);
+  this.$submit.setAttribute('aria-disabled', !(this.has_text || this.has_attachments) || !this.has_api_key);
   this.update_parallel_ui();
 
-  if (!this.has_attachments()) {
+  if (!this.has_attachments) {
     this.$$tabs.view.selected = this.$write_tab;
   }
 };

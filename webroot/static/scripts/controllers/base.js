@@ -69,7 +69,7 @@ BzDeck.controllers.core.request = function (method, path, params, data = null, l
   params = params || new URLSearchParams();
 
   if (options.auth) {
-    params.append('token', `${account.id}-${account.token}`);
+    params.append('api_key', account.api_key);
   }
 
   url.pathname += path;
