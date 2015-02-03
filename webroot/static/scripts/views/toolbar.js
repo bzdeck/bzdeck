@@ -143,7 +143,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
 
   $search_box.addEventListener('input', event => {
     if (event.target.value.trim()) {
-      this.exec_quick_search();
+      exec_quick_search();
     } else {
       this.$$search_dropdown.close();
     }
@@ -152,7 +152,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   FlareTail.util.kbd.assign($search_box, {
     'UP|DOWN': event => {
       if (event.target.value.trim() && this.$$search_dropdown.closed) {
-        this.exec_quick_search();
+        exec_quick_search();
       }
     },
     'RETURN': event => {

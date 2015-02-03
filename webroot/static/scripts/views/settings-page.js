@@ -60,21 +60,21 @@ BzDeck.views.SettingsPage.prototype.activate_api_key_input = function (api_key, 
   });
 };
 
-BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, value) {
+BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value) {
   let $root = document.documentElement,
       $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`),
-      _value = value.user !== undefined ? value.user : value.default,
+      value = _value.user !== undefined ? _value.user : _value.default,
       attr = 'data-' + name.replace(/[\._]/g, '-');
 
   for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
     $radio.tabIndex = 0;
-    $radio.setAttribute('aria-checked', $radio.dataset.value === String(_value));
+    $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
   }
 
   (new this.widget.RadioGroup($rgroup)).bind('Selected', event => {
-    _value = event.detail.items[0].dataset.value;
-    _value = value.type === 'boolean' ? _value === 'true' : _value;
-    this.trigger(':PrefValueChanged', { name, _value });
+    value = event.detail.items[0].dataset.value;
+    value = _value.type === 'boolean' ? value === 'true' : value;
+    this.trigger(':PrefValueChanged', { name, value });
 
     if ($root.hasAttribute(attr)) {
       $root.setAttribute(attr, String(value));

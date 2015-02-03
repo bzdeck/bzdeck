@@ -34,19 +34,19 @@ BzDeck.views.BaseView = function BaseView (prefs) {
 
   // Timeline: Font
   value = prefs['ui.timeline.font.family'];
-  $root.setAttribute('data-timeline-font-family', value || 'proportional');
+  $root.setAttribute('data-ui-timeline-font-family', value || 'proportional');
 
   // Timeline: Sort order
   value = prefs['ui.timeline.sort.order'];
-  $root.setAttribute('data-timeline-sort-order', value || 'ascending');
+  $root.setAttribute('data-ui-timeline-sort-order', value || 'ascending');
 
   // Timeline: Changes
   value = prefs['ui.timeline.show_cc_changes'];
-  $root.setAttribute('data-timeline-show-cc-changes', value !== undefined ? value : false);
+  $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
 
   // Timeline: Attachments
   value = prefs['ui.timeline.display_attachments_inline'];
-  $root.setAttribute('data-timeline-display-attachments-inline', value !== undefined ? value : true);
+  $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Activate widgets
   // BzDeck.views.DetailsPage.swipe.init();

@@ -98,12 +98,12 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
 
 BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
-    this.trigger('C:Offline');
+    this.trigger(':Offline');
 
     return;
   }
 
-  this.trigger('C:SearchStarted');
+  this.trigger(':SearchStarted');
 
   BzDeck.controllers.core.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
@@ -118,10 +118,10 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
     }
 
     // Show results
-    this.trigger('C:SearchResultsAvailable', { 'bugs': result.bugs });
+    this.trigger(':SearchResultsAvailable', { 'bugs': result.bugs });
   }).catch(error => {
-    this.trigger('C:SearchError', { error });
+    this.trigger(':SearchError', { error });
   }).then(() => {
-    this.trigger('C:SearchComplete');
+    this.trigger(':SearchComplete');
   });
 };

@@ -18,7 +18,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
   Object.defineProperties(this, {
     'preview_is_hidden': {
       'enumerable': true,
-      'get': () => this.panes['preview'].getAttribute('aria-hidden') === 'true'
+      'get': () => FlareTail.util.ua.device.mobile
     },
   });
 
@@ -42,7 +42,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
 
   this.on('C:SearchResultsAvailable', data => {
     if (data.bugs.length > 0) {
-      this.thread.update(result.bugs);
+      this.thread.update(data.bugs);
       this.hide_status();
     } else {
       this.show_status('Zarro Boogs found.'); // l10n
@@ -55,7 +55,6 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
 
   this.on('C:SearchComplete', data => {
     $grid.removeAttribute('aria-busy');
-    this.show_status(data.error.message);
   });
 
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));

@@ -18,7 +18,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
   BzDeck.models.bugs.get_bug_by_id(this.id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
-      this.fetch_bug(this.id);
+      this.fetch_bug();
       bug = { 'id': this.id };
     }
 
@@ -43,7 +43,7 @@ BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {
 
   this.trigger(':LoadingStarted');
 
-  BzDeck.controllers.bugs.fetch_bug(id).then(bug => {
+  BzDeck.controllers.bugs.fetch_bug(this.id).then(bug => {
     // Save in DB
     BzDeck.models.bugs.save_bug(bug);
     this.trigger(':LoadingComplete', { bug });

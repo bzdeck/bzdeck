@@ -22,6 +22,10 @@ BzDeck.controllers.BaseController.prototype = Object.create(FlareTail.app.Contro
 BzDeck.controllers.BaseController.prototype.constructor = BzDeck.controllers.BaseController;
 
 BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = false) {
+  if (!BzDeck.controllers.homepage) {
+    return;
+  }
+
   BzDeck.models.bugs.get_all().then(bugs => {
     let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),

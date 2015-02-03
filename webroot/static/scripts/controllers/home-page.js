@@ -6,14 +6,14 @@
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   let prefs = BzDeck.models.data.prefs;
 
-  if (!BzDeck.controllers.homepage) {
-    BzDeck.controllers.homepage = this;
+  if (BzDeck.controllers.homepage) {
+    BzDeck.views.pages.home.connect(folder_id);
+
+    return BzDeck.controllers.homepage;
   }
 
-  if (!this.view) {
-    this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(prefs, this);
-  }
-
+  BzDeck.controllers.homepage = this;
+  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(prefs, this);
   this.view.connect(folder_id);
 
   this.data = new Proxy({
@@ -53,6 +53,8 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   this.on('V:OpeningTabRequested', data => {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
   });
+
+  return this;
 };
 
 BzDeck.controllers.HomePage.route = '/home/(\\w+)';

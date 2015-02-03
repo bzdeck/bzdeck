@@ -45,7 +45,8 @@ BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
 };
 
 BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
-  let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()];
+  let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
+      get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
 
   BzDeck.models.bugs.get_all().then(bugs => {
     let results = bugs.filter(bug => {
