@@ -9,11 +9,7 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
 
 ## How to run the app locally
 
-1. Fork this repository, [flaretail.js](https://github.com/kyoshino/flaretail.js) and [JavaScript-MD5](https://github.com/blueimp/JavaScript-MD5)
-2. Copy or symlink 3 JavaScript files from flaretail.js to `/webroot/static/scripts/lib/flaretail/`
-3. Copy or symlink `md5.min.js` from JavaScript-MD5 to `/webroot/static/scripts/lib/crypto/`
-4. Copy or symlink `widget.css` from flaretail.js to `/webroot/static/styles/lib/flaretail/`
-5. Add a new virtual host in your Apache config:
+1. Add a new virtual host in your Apache config:
   ```conf
   <VirtualHost *:80>
     ServerName local.bzdeck.com
@@ -21,6 +17,6 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
   </VirtualHost>
   ```
 
-6. Add a new host in your `/etc/hosts`: `127.0.0.1 local.bzdeck.com`
-7. Restart your Apache server
-8. Open `http://local.bzdeck.com/` in your browser
+2. Add a new host in your `/etc/hosts`: `127.0.0.1 local.bzdeck.com`
+3. Restart your Apache server
+4. Open `http://local.bzdeck.com/` in your browser
