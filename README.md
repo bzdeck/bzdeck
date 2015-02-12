@@ -21,5 +21,6 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
   </VirtualHost>
   ```
 
-6. Restart your Apache server
-7. Open `http://local.bzdeck.com/` in your browser
+6. Add a new host in your `/etc/hosts`: `127.0.0.1 local.bzdeck.com`
+7. Restart your Apache server
+8. Open `http://local.bzdeck.com/` in your browser
