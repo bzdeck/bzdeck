@@ -378,6 +378,13 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     // All done, the timeline will soon be updated via Bugzfeed
     this.$textbox.value = '';
     this.oninput();
+
+    // Fetch the bug if the Bugzfeed client is not working for some reason
+    if (!BzDeck.controllers.bugzfeed.has(this.bug.id)) {
+      BzDeck.controllers.bugs.fetch_bug(this.bug.id)
+          .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
+          .then(bug => BzDeck.models.bugs.save_bug(bug));
+    }
   }, errors => {
     // Failed to post at least one attachment
     this.$submit.setAttribute('aria-disabled', 'false');

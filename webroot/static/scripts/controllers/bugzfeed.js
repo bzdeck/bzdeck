@@ -45,10 +45,12 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
   });
 
   this.websocket.addEventListener('message', event => {
-    let message = JSON.parse(event.data)
+    let message = JSON.parse(event.data);
 
     if (message.command === 'update') {
-      this.get_changes(message);
+      BzDeck.controllers.bugs.fetch_bug(message.bug) // message.bug = ID
+          .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
+          .then(bug => BzDeck.models.bugs.save_bug(bug));
     }
   });
 };
@@ -79,56 +81,4 @@ BzDeck.controllers.BugzfeedClient.prototype.unsubscribe = function (bugs) {
   }
 
   this.send('unsubscribe', bugs);
-};
-
-BzDeck.controllers.BugzfeedClient.prototype.get_changes = function (message) {
-  BzDeck.controllers.bugs.fetch_bug(message.bug).then(bug => {
-    let time = new Date(message.when + (message.when.endsWith('Z') ? '' : 'Z')),
-        get_change = (field, time_field = 'creation_time') =>
-          [for (item of bug[field]) if (new Date(item[time_field]) - time === 0) item][0],
-        changes = new Map(),
-        comment = get_change('comments'),
-        attachment = get_change('attachments'),
-        history = get_change('history', 'when');
-
-    if (comment) {
-      changes.set('comment', comment);
-    }
-
-    if (attachment) {
-      changes.set('attachment', attachment);
-    }
-
-    if (history) {
-      changes.set('history', history);
-    }
-
-    this.save_changes(bug, changes);
-
-    FlareTail.util.event.trigger(window, 'Bug:Updated', { 'detail': { bug, changes }});
-  });
-};
-
-BzDeck.controllers.BugzfeedClient.prototype.save_changes = function (bug, changes) {
-  BzDeck.models.bugs.get_bug_by_id(bug.id).then(cache => {
-    if (changes.has('comment')) {
-      cache.comments.push(changes.get('comment'));
-    }
-
-    if (changes.has('attachment')) {
-      cache.attachments = cache.attachments;
-      cache.attachments.push(changes.get('attachment'));
-    }
-
-    if (changes.has('history')) {
-      cache.history = cache.history;
-      cache.history.push(changes.get('history'));
-
-      for (let change in changes.get('history').changes) {
-        cache[change.field_name] = bug[change.field_name];
-      }
-    }
-
-    BzDeck.models.bugs.save_bug(cache);
-  });
 };

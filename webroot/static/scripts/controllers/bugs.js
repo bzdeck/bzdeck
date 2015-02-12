@@ -8,52 +8,9 @@ BzDeck.controllers.bugs = {};
 BzDeck.controllers.bugs.fetch_subscriptions = function () {
   let prefs = BzDeck.models.data.prefs,
       last_loaded = prefs['subscriptions.last_loaded'],
-      ignore_cc = prefs['notifications.ignore_cc_changes'] !== false,
       firstrun = !last_loaded,
-      caches = new Map(),
       params = new URLSearchParams(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
-
-  let initialize_bug = bug => new Promise(resolve => {
-    bug._unread = false; // Mark all bugs read if the session is firstrun
-    bug._update_needed = true; // Flag to fetch details
-    resolve(bug);
-  });
-
-  let parse_bug = bug => new Promise(resolve => {
-    let cache = caches.get(bug.id),
-        cmp_date;
-
-    if (cache) {
-      cmp_date = str => new Date(str) > new Date(cache.last_change_time);
-
-      // Copy annotations
-      for (let [key, value] of Iterator(cache)) if (key.startsWith('_')) {
-        bug[key] = value;
-      }
-    }
-
-    bug._update_needed = false;
-
-    // TODO: Check and notify what is changed
-
-    // Mark the bug unread if the user subscribes CC changes or the bug is already unread
-    if (!ignore_cc || !cache || cache._unread || !cache._last_viewed ||
-        // or there are unread comments
-        [for (c of bug.comments) if (cmp_date(c.creation_time)) c].length ||
-        // or there are unread attachments
-        [for (a of bug.attachments || []) if (cmp_date(a.creation_time)) a].length ||
-        // or there are unread non-CC changes
-        [for (h of bug.history || []) if (cmp_date(h.when) &&
-            [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
-      bug._unread = true;
-    } else {
-      // Looks like there are only CC changes, so mark the bug read
-      bug._unread = false;
-    }
-
-    resolve(bug);
-  });
 
   params.append('j_top', 'OR');
 
@@ -79,19 +36,16 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
     params.append('o9', 'anywords');
     params.append('v9', [for (bug of cached_bugs) if (this.is_starred(bug)) bug.id].join());
 
-    // Convert Array to Map for easier access
-    caches = new Map([for (bug of cached_bugs) [bug.id, bug]]);
-
     BzDeck.controllers.core.request('GET', 'bug', params).then(result => {
       last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
       if (firstrun) {
-        return Promise.all([for (bug of result.bugs) initialize_bug(bug)]).then(bugs => BzDeck.models.bugs.save_bugs(bugs));
+        return this.initialize_bugs(result.bugs).then(bugs => BzDeck.models.bugs.save_bugs(bugs));
       }
 
       if (result.bugs.length) {
         return this.fetch_bugs([for (bug of result.bugs) bug.id])
-            .then(bugs => Promise.all([for (bug of bugs) parse_bug(bug)])).then(bugs => BzDeck.models.bugs.save_bugs(bugs));
+            .then(bugs => this.parse_bugs(bugs)).then(bugs => BzDeck.models.bugs.save_bugs(bugs));
       }
 
       return true;
@@ -134,6 +88,84 @@ BzDeck.controllers.bugs.fetch_bugs = function (ids, include_metadata = true, inc
 
     return bug;
   })).catch(error => new Error('Failed to fetch bugs from Bugzilla.'));
+};
+
+BzDeck.controllers.bugs.initialize_bugs = function (bugs) {
+  return Promise.all([for (bug of bugs) this.initialize_bug(bug)]);
+};
+
+BzDeck.controllers.bugs.initialize_bug = function (bug) {
+  return new Promise(resolve => {
+    bug._unread = false; // Mark all bugs read if the session is firstrun
+    bug._update_needed = true; // Flag to fetch details
+    resolve(bug);
+  });
+};
+
+BzDeck.controllers.bugs.parse_bugs = function (bugs) {
+  return Promise.all([for (bug of bugs) this.parse_bug(bug)]);
+};
+
+BzDeck.controllers.bugs.parse_bug = function (bug) {
+  // Check if the bug has been cached, then identify the changes
+  return new Promise(resolve => BzDeck.models.bugs.get_bug_by_id(bug.id).then(cache => {
+    if (!cache) {
+      bug._unread = true;
+      resolve(bug);
+
+      return;
+    }
+
+    // Copy annotations
+    for (let [key, value] of Iterator(cache)) if (key.startsWith('_')) {
+      bug[key] = value;
+    }
+
+    let ignore_cc = BzDeck.models.data.prefs['notifications.ignore_cc_changes'] !== false,
+        cached_time = new Date(cache.last_change_time),
+        cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
+        new_comments = new Map([for (c of bug.comments) if (cmp_time(c)) [new Date(c.creation_time), c]]),
+        new_attachments = new Map([for (a of bug.attachments || []) if (cmp_time(a)) [new Date(a.creation_time), a]]),
+        new_history = new Map([for (h of bug.history || []) if (cmp_time(h)) [new Date(h.when), h]]),
+        timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
+
+    // Mark the bug unread if the user subscribes CC changes or the bug is already unread
+    if (!ignore_cc || cache._unread || !cache._last_viewed ||
+        // or there are unread comments or attachments
+        new_comments.size || new_attachments.size ||
+        // or there are unread non-CC changes
+        [for (h of new_history.values()) if ([for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
+      bug._unread = true;
+    } else {
+      // Looks like there are only CC changes, so mark the bug read
+      bug._unread = false;
+    }
+
+    bug._update_needed = false;
+    resolve(bug);
+
+    // Combine all changes into one Map, then notify
+    for (let time of timestamps) {
+      let changes = new Map(),
+          comment = new_comments.get(time),
+          attachment = new_attachments.get(time),
+          history = new_history.get(time);
+
+      if (comment) {
+        changes.set('comment', comment);
+      }
+
+      if (attachment) {
+        changes.set('attachment', attachment);
+      }
+
+      if (history) {
+        changes.set('history', history);
+      }
+
+      FlareTail.util.event.trigger(window, 'Bug:Updated', { 'detail': { bug, changes }});
+    }
+  }));
 };
 
 BzDeck.controllers.bugs.toggle_star = function (id, starred) {
