@@ -14,10 +14,12 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
 3. Copy or symlink `md5.min.js` from JavaScript-MD5 to `/webroot/static/scripts/lib/crypto/`
 4. Copy or symlink `widget.css` from flaretail.js to `/webroot/static/styles/lib/flaretail/`
 5. Add a new virtual host in your Apache config:
-  ```
+  ```conf
   <VirtualHost *:80>
     ServerName local.bzdeck.com
     DocumentRoot "/path/to/bzdeck/directory/"
-  </VirtualHost>```
+  </VirtualHost>
+  ```
+
 6. Restart your Apache server
 7. Open `http://local.bzdeck.com/` in your browser
