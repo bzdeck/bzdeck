@@ -51,10 +51,11 @@ $scripts = [
 
 error_reporting(0);
 header('Content-Type: application/javascript; charset=utf-8', true);
+define('SCRIPT_DIR', $_SERVER['DOCUMENT_ROOT'] . '/static/scripts/');
 ob_start();
 
 foreach ($scripts as $script) {
-  if ($contents = file_get_contents($script)) {
+  if ($contents = file_get_contents(SCRIPT_DIR . $script)) {
     echo $contents;
   }
 }

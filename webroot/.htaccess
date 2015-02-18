@@ -15,10 +15,6 @@ AddType application/x-web-app-manifest+json webapp
 AddType application/font-sfnt ttf
 AddType application/font-woff woff
 
-<Files "combined.js">
-  AddType application/x-httpd-php js
-</Files>
-
 # Options
 # Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
 Options SymLinksIfOwnerMatch -Indexes
@@ -44,6 +40,7 @@ RewriteRule ^(?:profile)/.+$ / [L]
 
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
+RewriteRule ^static/scripts/combined\.js$ /components/combine-scripts.php [L]
 
 # Performance: remove ETag
 FileETag None
