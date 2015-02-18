@@ -41,14 +41,15 @@ BzDeck.views.Session.prototype.logout = function () {
 
 BzDeck.views.LoginForm = function LoginFormView () {
   this.$form = document.querySelector('#app-login form');
-  this.$input = this.$form.querySelector('[role="textbox"]');
+  this.$email = this.$form.querySelector('[name="email"]');
+  this.$apikey = this.$form.querySelector('[name="apikey"]');
   this.$button = this.$form.querySelector('[role="button"]');
   this.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.$form.addEventListener('submit', event => {
     // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
-    this.trigger(':Submit', { 'host': 'mozilla', 'email': this.$input.value });
-    this.$input.disabled = this.$button.disabled = true;
+    this.trigger(':Submit', { 'host': 'mozilla', 'email': this.$email.value, 'api_key': this.$apikey.value });
+    this.$email.disabled = this.$apikey.disabled = this.$button.disabled = true;
     event.preventDefault();
 
     return false;
@@ -69,7 +70,7 @@ BzDeck.views.LoginForm = function LoginFormView () {
 
   this.on('SessionController:Error', data => {
     this.show_status(data.message);
-    this.$input.disabled = this.$button.disabled = false;
+    this.$email.disabled = this.$apikey.disabled = this.$button.disabled = false;
   });
 
   this.on('SessionController:Logout', data => {
@@ -82,8 +83,8 @@ BzDeck.views.LoginForm.prototype.constructor = BzDeck.views.LoginForm;
 
 BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
   this.$form.setAttribute('aria-hidden', 'false');
-  this.$input.disabled = this.$button.disabled = false;
-  this.$input.focus();
+  this.$email.disabled = this.$apikey.disabled = this.$button.disabled = false;
+  this.$email.focus();
 
   if (!firstrun) {
     return true;

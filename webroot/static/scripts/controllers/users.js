@@ -9,10 +9,14 @@
 
 BzDeck.controllers.users = {};
 
-BzDeck.controllers.users.fetch_user = function (email) {
+BzDeck.controllers.users.fetch_user = function (email, api_key = undefined) {
   let params = new URLSearchParams();
 
   params.append('names', email);
+
+  if (api_key) {
+    params.append('api_key', api_key);
+  }
 
   return new Promise((resolve, reject) => {
     BzDeck.controllers.core.request('GET', 'user', params).then(result => {

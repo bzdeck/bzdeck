@@ -64,11 +64,12 @@ BzDeck.controllers.Session.prototype.force_login = function () {
     BzDeck.models.servers.get_server(data.host).then(server => {
       BzDeck.models.data.server = server;
     }).then(() => {
-      return BzDeck.controllers.users.fetch_user(data.email);
+      return BzDeck.controllers.users.fetch_user(data.email, data.api_key);
     }).then(account => {
       account.active = true;
       account.loaded = Date.now(); // key
       account.host = BzDeck.models.data.server.name;
+      account.api_key = data.api_key || undefined;
       BzDeck.models.data.account = account;
       BzDeck.models.accounts.save_account(account);
 

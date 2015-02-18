@@ -457,26 +457,18 @@ col[data-hidden="false"] {
   margin-bottom: 1.2rem;
 }
 
-#app-login div > p:first-of-type {
-  margin-top: .4rem;
-}
-
 #app-login a {
   color: inherit;
   font-weight: 500;
-}
-
-#app-login [role="textbox"] {
-  margin-right: .8rem;
-  width: calc(100% - 10rem);
-}
-
-#app-login [role="button"] {
-  width: 7.2rem;
+  white-space: nowrap;
 }
 
 #app-login [role="textbox"],
 #app-login [role="button"] {
+  display: block;
+  margin: .8rem auto 0;
+  width: calc(100% - 1rem);
+  max-width: 32rem;
   background-repeat: repeat;
   font-size: 1.25rem;
 }
