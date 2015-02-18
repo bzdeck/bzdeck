@@ -19,5 +19,5 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
   ```
 
 3. Add a new host in your `/etc/hosts`: `127.0.0.1 local.bzdeck.com`
-4. Restart your Apache server
+4. Restart your Apache server with PHP 5.4+ enabled
 5. Open `http://local.bzdeck.com/` in your browser

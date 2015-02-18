@@ -15,6 +15,10 @@ AddType application/x-web-app-manifest+json webapp
 AddType application/font-sfnt ttf
 AddType application/font-woff woff
 
+<Files "combined.js">
+  AddType application/x-httpd-php js
+</Files>
+
 # Options
 # Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
 Options SymLinksIfOwnerMatch -Indexes
