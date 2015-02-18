@@ -59,10 +59,7 @@ BzDeck.models.open_global_db = function () {
     store.createIndex('name', 'name', { 'unique': false });
   });
 
-  return new Promise((resolve, reject) => {
-    req.addEventListener('success', event => resolve(event.target.result));
-    req.addEventListener('error', event => reject(new Error('Failed to open the database.'))); // l10n
-  });
+  return this.open_database(req);
 };
 
 BzDeck.models.open_account_db = function () {
@@ -81,9 +78,14 @@ BzDeck.models.open_account_db = function () {
     store = db.createObjectStore('prefs', { 'keyPath': 'name' });
   });
 
+  return this.open_database(req);
+};
+
+BzDeck.models.open_database = function (req) {
   return new Promise((resolve, reject) => {
     req.addEventListener('success', event => resolve(event.target.result));
-    req.addEventListener('error', event => reject(new Error('Failed to open the database.'))); // l10n
+    req.addEventListener('error', event => reject(new Error('Failed to open the database. Make sure you’re not using \
+                                                             private browsing mode or IndexedDB doesn’t work.')));
   });
 };
 

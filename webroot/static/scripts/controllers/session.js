@@ -9,20 +9,24 @@
 
 // Bootstrapper
 BzDeck.controllers.Session = function SessionController () {
-  this.processing = true;
+  this.bootstrapping = true;
 
-  let form = BzDeck.views.login_form = new BzDeck.views.LoginForm(),
-      status = message => form.show_status(message);
-
-  // Delete the old DB
-  indexedDB.deleteDatabase('BzDeck');
-
+  new BzDeck.views.Session();
+  new BzDeck.views.LoginForm();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
 
+  this.find_account();
+};
+
+BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
+
+// Bootstrap Step 1. Find a user account from the local database
+BzDeck.controllers.Session.prototype.find_account = function () {
   BzDeck.models.open_global_db().then(database => {
     BzDeck.models.databases.global = database;
   }, error => {
-    status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
+    this.trigger(':Error', { 'message': error.message });
   }).then(() => {
     return BzDeck.models.accounts.get_active_account();
   }).then(account => {
@@ -31,54 +35,61 @@ BzDeck.controllers.Session = function SessionController () {
     return BzDeck.models.servers.get_server(BzDeck.models.data.account.host);
   }).then(server => {
     BzDeck.models.data.server = server;
-  }).catch(() => {
-    status('');
-
-    return new Promise(resolve => {
-      let user;
-
-      form.show().then(account => {
-        user = account.email;
-
-        return BzDeck.models.servers.get_server(account.host);
-      }).then(server => {
-        BzDeck.models.data.server = server;
-      }).then(() => {
-        status('Verifying your account...'); // l10n
-
-        return BzDeck.controllers.users.fetch_user(user);
-      }).then(account => {
-        account.active = true;
-        account.loaded = Date.now(); // key
-        account.host = BzDeck.models.data.server.name;
-        BzDeck.models.data.account = account;
-        BzDeck.models.accounts.save_account(account);
-        resolve();
-      }).catch(error => {
-        if (error.message === 'Network Error') {
-          status('Failed to sign in. Network error?'); // l10n
-        } else if (error.message === 'User Not Found') {
-          status('Your account could not be found. Please check your email adress and try again.'); // l10n
-        } else {
-          status(error.message);
-        }
-
-        form.enable_input();
-      });
-    });
   }).then(() => {
-    return BzDeck.models.open_account_db();
-  }).then(database => {
+    this.load_data();
+  }).catch(() => {
+    this.force_login();
+  });
+};
+
+// Bootstrap Step 2. Let the user sign in if an active account is not found
+BzDeck.controllers.Session.prototype.force_login = function () {
+  this.trigger(':StatusUpdate', { 'status': 'ForcingLogin', 'message': '' });
+
+  this.on('LoginFormView:Submit', data => {
+    if (!navigator.onLine) {
+      this.trigger(':Error', { 'message': 'You have to go online to sign in.' }); // l10n
+
+      return;
+    }
+
+    if (!this.bootstrapping) {
+      // User is trying to re-login
+      this.relogin = true;
+      this.bootstrapping = true;
+    }
+
+    this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
+
+    BzDeck.models.servers.get_server(data.host).then(server => {
+      BzDeck.models.data.server = server;
+    }).then(() => {
+      return BzDeck.controllers.users.fetch_user(data.email);
+    }).then(account => {
+      account.active = true;
+      account.loaded = Date.now(); // key
+      account.host = BzDeck.models.data.server.name;
+      BzDeck.models.data.account = account;
+      BzDeck.models.accounts.save_account(account);
+
+      this.trigger(':UserFound');
+      this.load_data();
+    }).catch(error => {
+      this.trigger(':Error', { 'message': error.message || 'Failed to find your account.' }); // l10n
+    });
+  });
+};
+
+// Bootstrap Step 3. Load data from Bugzilla once the user account is set
+BzDeck.controllers.Session.prototype.load_data = function () {
+  BzDeck.models.open_account_db().then(database => {
     BzDeck.models.databases.account = database;
   }, error => {
-    status('Failed to open the database. Make sure you’re not using private browsing mode or IndexedDB doesn’t work.');
+    this.trigger(':Error', { 'message': error.message });
   }).then(() => {
     return BzDeck.models.prefs.load();
   }).then(() => {
-    status('Loading Bugzilla config...'); // l10n
-
-    form.hide();
-    form.hide_intro();
+    this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
       BzDeck.controllers.bugs.fetch_subscriptions(),
@@ -92,48 +103,50 @@ BzDeck.controllers.Session = function SessionController () {
           reject(error);
         });
       })).then(config => {
-        BzDeck.models.data.server.config = config
-        status('Loading your bugs...'); // l10n; fetch_subscriptions may be still working
+        BzDeck.models.data.server.config = config;
+        // fetch_subscriptions may be still working
+        this.trigger(':StatusUpdate', { 'message': 'Loading your bugs...' }); // l10n
       }, error => {
-        form.disable_input();
-        status(error.message);
+        this.trigger(':Error', { 'message': error.message });
       })
     ]);
   }).then(() => {
-    status('Loading UI...'); // l10n
-
-    if (!this.relogin) {
-      // Finally load the UI modules
-      new BzDeck.controllers.BaseController();
-      BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar();
-      BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
-      BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
-    }
-  }, error => {
-    status(error.message);
-  }).then(() => {
-    // Connect to the push notification server
-    BzDeck.controllers.bugzfeed.connect();
-
-    // Activate the router
-    BzDeck.router.locate();
-
-    // Timer to check for updates, call every 10 minutes
-    BzDeck.controllers.core.timers.set('fetch_subscriptions',
-        window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
-
-    // Register the app for an activity on Firefox OS
-    BzDeck.controllers.app.register_activity_handler();
-
-    status('Loading complete.'); // l10n
-    this.show_first_notification();
-    this.login();
-    this.processing = false;
+    this.init_components();
+  }).catch(error => {
+    this.trigger(':Error', { 'message': error.message });
   });
 };
 
-BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
-BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
+// Bootstrap Step 4. Setup everything including UI components
+BzDeck.controllers.Session.prototype.init_components = function () {
+  this.trigger(':StatusUpdate', { 'message': 'Initializing UI...' }); // l10n
+
+  // Finally load the UI modules
+  if (!this.relogin) {
+    new BzDeck.controllers.BaseController();
+    BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar();
+    BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
+    BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
+  }
+
+  // Connect to the push notification server
+  BzDeck.controllers.bugzfeed.connect();
+
+  // Activate the router
+  BzDeck.router.locate();
+
+  // Timer to check for updates, call every 10 minutes
+  BzDeck.controllers.core.timers.set('fetch_subscriptions',
+      window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
+
+  // Register the app for an activity on Firefox OS
+  BzDeck.controllers.app.register_activity_handler();
+
+  this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
+  this.show_first_notification();
+  this.login();
+  this.bootstrapping = false;
+};
 
 BzDeck.controllers.Session.prototype.show_first_notification = function () {
   // Authorize a notification
@@ -164,13 +177,11 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
 };
 
 BzDeck.controllers.Session.prototype.login = function () {
-  this.view = new BzDeck.views.Session();
-  this.view.login();
+  this.trigger(':Login');
 };
 
 BzDeck.controllers.Session.prototype.logout = function () {
-  this.view.logout();
-
+  this.trigger(':Logout');
   this.clean();
 
   // Delete the account data
@@ -178,6 +189,9 @@ BzDeck.controllers.Session.prototype.logout = function () {
   BzDeck.models.accounts.save_account(BzDeck.models.data.account);
 
   delete BzDeck.models.data.account;
+
+  // Refresh the page to ensure the app works properly
+  location.replace(BzDeck.config.app.root);
 };
 
 BzDeck.controllers.Session.prototype.close = function () {
@@ -194,14 +208,14 @@ BzDeck.controllers.Session.prototype.clean = function () {
 
   // Destroy all notifications
   for (let notification of BzDeck.controllers.core.notifications) {
-    notification.close()
-  };
+    notification.close();
+  }
 
   BzDeck.controllers.core.notifications.clear();
 
   // Disconnect from the Bugzfeed server
   BzDeck.controllers.bugzfeed.disconnect();
-}
+};
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Events

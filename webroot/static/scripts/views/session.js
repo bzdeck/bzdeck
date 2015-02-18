@@ -7,7 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.Session = function SessionView () {};
+BzDeck.views.Session = function SessionView () {
+  this.on('C:Login', () => this.login());
+  this.on('C:Logout', () => this.logout());
+};
 
 BzDeck.views.Session.prototype = Object.create(BzDeck.views.BaseView.prototype);
 BzDeck.views.Session.prototype.constructor = BzDeck.views.Session;
@@ -15,7 +18,7 @@ BzDeck.views.Session.prototype.constructor = BzDeck.views.Session;
 BzDeck.views.Session.prototype.login = function () {
   BzDeck.views.statusbar.$statusbar = document.querySelector('#statusbar');
 
-  this.$app_login = document.querySelector('#app-login'),
+  this.$app_login = document.querySelector('#app-login');
   this.$app_body = document.querySelector('#app-body');
 
   this.$app_login.setAttribute('aria-hidden', 'true');
@@ -30,8 +33,6 @@ BzDeck.views.Session.prototype.logout = function () {
 
   this.$app_login.removeAttribute('aria-hidden');
   this.$app_body.setAttribute('aria-hidden', 'true');
-
-  BzDeck.views.login_form.show(false);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -43,6 +44,37 @@ BzDeck.views.LoginForm = function LoginFormView () {
   this.$input = this.$form.querySelector('[role="textbox"]');
   this.$button = this.$form.querySelector('[role="button"]');
   this.$statusbar = document.querySelector('#app-login [role="status"]');
+
+  this.$form.addEventListener('submit', event => {
+    // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
+    this.trigger(':Submit', { 'host': 'mozilla', 'email': this.$input.value });
+    this.$input.disabled = this.$button.disabled = true;
+    event.preventDefault();
+
+    return false;
+  });
+
+  this.on('SessionController:StatusUpdate', data => {
+    this.show_status(data.message);
+
+    if (data.status === 'ForcingLogin') {
+      this.show();
+    }
+
+    if (data.status === 'LoadingData') {
+      this.hide();
+      this.hide_intro();
+    }
+  });
+
+  this.on('SessionController:Error', data => {
+    this.show_status(data.message);
+    this.$input.disabled = this.$button.disabled = false;
+  });
+
+  this.on('SessionController:Logout', data => {
+    this.show();
+  });
 };
 
 BzDeck.views.LoginForm.prototype = Object.create(BzDeck.views.BaseView.prototype);
@@ -56,28 +88,6 @@ BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
   if (!firstrun) {
     return true;
   }
-
-  return new Promise((resolve, reject) => {
-    this.$form.addEventListener('submit', event => {
-      if (!BzDeck.controllers.session.processing) {
-        // User is trying to re-login
-        BzDeck.controllers.session.relogin = true;
-        BzDeck.controllers.session.processing = true;
-      }
-
-      if (navigator.onLine) {
-        this.$input.disabled = this.$button.disabled = true;
-        // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
-        resolve({ 'host': 'mozilla', 'email': this.$input.value });
-      } else {
-        reject(new Error('You have to go online to sign in.')); // l10n
-      }
-
-      event.preventDefault();
-
-      return false;
-    });
-  });
 };
 
 BzDeck.views.LoginForm.prototype.hide = function () {
@@ -90,12 +100,4 @@ BzDeck.views.LoginForm.prototype.hide_intro = function () {
 
 BzDeck.views.LoginForm.prototype.show_status = function (message) {
   this.$statusbar.textContent = message;
-};
-
-BzDeck.views.LoginForm.prototype.enable_input = function () {
-  this.form.$input.disabled = this.form.$button.disabled = false;
-};
-
-BzDeck.views.LoginForm.prototype.disable_input = function () {
-  this.form.$input.disabled = this.form.$button.disabled = true;
 };
