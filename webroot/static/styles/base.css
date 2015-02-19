@@ -473,6 +473,12 @@ col[data-hidden="false"] {
   font-size: 1.25rem;
 }
 
+#app-login [role="button"] {
+  border-color: var(--highlighted-button-border-color);
+  color: var(--highlighted-button-foreground-color);
+  background-color: var(--highlighted-button-background-color);
+}
+
 #app-login [role="status"] {
   margin-bottom: 0;
 }
