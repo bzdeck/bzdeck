@@ -42,7 +42,7 @@ BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = f
     this.view.toggle_unread(bugs, loaded, unread_num);
 
     // Select Inbox when the notification is clicked
-    this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
+    // this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
   });
 };
 
