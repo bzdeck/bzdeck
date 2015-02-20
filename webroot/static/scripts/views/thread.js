@@ -131,14 +131,14 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (person of bug['mentors_detail']) BzDeck.controllers.users.get_name(person)].join(', ');
+          value = [for (person of bug['mentors_detail']) BzDeck.controllers.users.get_name(person).pretty].join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.controllers.users.get_name(bug[`${field}_detail`]);
+        value = BzDeck.controllers.users.get_name(bug[`${field}_detail`].pretty);
       }
 
       if (field === '_starred') {

@@ -27,14 +27,16 @@ BzDeck.controllers.users.fetch_user = function (email, api_key = undefined) {
   });
 };
 
-BzDeck.controllers.users.get_name = function (person, remove_comment = false) {
-  let name = person.real_name;
+BzDeck.controllers.users.get_name = function (person) {
+  let original = person.real_name || '',
+      // Remove bracketed strings
+      pretty = original.replace(/[\[\(<‹].*?[›>\)\]]/g, '').trim() || person.email.split('@')[0],
+      first = pretty.split(/\s/)[0],
+      initial = first.charAt(0).toUpperCase(),
+      nick_match = original.match(/\:([\w\-]+)/),
+      nick = nick_match ? nick_match[1] : undefined;
 
-  if (name) {
-    return remove_comment ? name.replace(/\s[\[\(<‹].*[›>\)\]]/g, '') : name; // Remove bracketed strings if needed
-  }
-
-  return person.email.split('@')[0];
+  return { original, pretty, first, initial, nick };
 };
 
 BzDeck.controllers.users.get_color = function (person) {

@@ -207,7 +207,7 @@ BzDeck.controllers.bugs.is_starred = function (bug) {
   return !!bug._starred_comments && !!bug._starred_comments.size;
 };
 
-BzDeck.controllers.bugs.find_person = function (bug, email) {
+BzDeck.controllers.bugs.find_person = function (bug, email, fallback = true) {
   if (bug.creator === email) {
     return bug.creator_detail;
   }
@@ -230,5 +230,5 @@ BzDeck.controllers.bugs.find_person = function (bug, email) {
 
   // If the person is just watching the bug component, s/he might not be in any field of the bug
   // and cannot be found. Then just return a simple object. TODO: fetch the account using the API
-  return { email, 'id': 0, 'name': email, 'real_name': '' };
+  return fallback ? { email, 'id': 0, 'name': email, 'real_name': '' } : false;
 };

@@ -92,7 +92,7 @@ BzDeck.views.BaseView.prototype.toggle_unread = function (bugs, loaded, unread_n
 BzDeck.views.BaseView.prototype.set_avatar = function (person, $image) {
   let $_image = new Image();
 
-  $image.alt = BzDeck.controllers.users.get_name(person).match(/^[\[\(\:]?(.)/)[1].toUpperCase();
+  $image.alt = BzDeck.controllers.users.get_name(person).initial;
   $image.style.setProperty('background-color', BzDeck.controllers.users.get_color(person));
   $_image.addEventListener('load', event => {
     if ($image) {

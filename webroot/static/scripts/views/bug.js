@@ -56,7 +56,7 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
         _bug.mentor = [for (person of this.bug.mentors_detail) {
-          'name': BzDeck.controllers.users.get_name(person),
+          'name': BzDeck.controllers.users.get_name(person).pretty,
           'email': person.email,
           'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
         }];
@@ -65,7 +65,7 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
           let person = this.bug[`${field}_detail`];
 
           _bug[field] = {
-            'name': BzDeck.controllers.users.get_name(person),
+            'name': BzDeck.controllers.users.get_name(person).pretty,
             'email': person.email,
             'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
           };
@@ -158,7 +158,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   let _bug = {
     'cc': [for (person of this.bug.cc_detail) {
-      'name': BzDeck.controllers.users.get_name(person, true),
+      'name': BzDeck.controllers.users.get_name(person).pretty,
       'email': person.email,
       'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
     }],

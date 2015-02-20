@@ -37,6 +37,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
       author = BzDeck.controllers.bugs.find_person(this.bug, comment.creator),
+      author_pretty_name = BzDeck.controllers.users.get_name(author).pretty,
       time = comment.creation_time,
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
@@ -66,7 +67,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   });
 
   let reply = () => {
-    let quote_header = `(In reply to ${author.real_name || author.email} from comment #${comment.number})`,
+    let quote_header = `(In reply to ${author_pretty_name} from comment #${comment.number})`,
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
         quote = `${quote_header}\n${quote_lines.join('\n')}`,
         $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
@@ -138,7 +139,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   });
 
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
-  $author.querySelector('[itemprop="name"]').itemValue = author.real_name || author.email;
+  $author.querySelector('[itemprop="name"]').itemValue = author_pretty_name;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
   BzDeck.views.BaseView.prototype.set_avatar(author, $author.querySelector('[itemprop="image"]'));
   FlareTail.util.datetime.fill_element($time, time);
@@ -266,7 +267,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   }
 
   this.fill($changer, {
-    'name': BzDeck.controllers.users.get_name(changer, true),
+    'name': BzDeck.controllers.users.get_name(changer).first,
     'email': changer.email
   }, {
     'title': `${changer.real_name ? changer.real_name + '\n' : ''}${changer.email}`
@@ -468,7 +469,7 @@ BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
         $person = this.get_fragment('person-without-image').firstElementChild;
 
     this.fill($person, {
-      'name': BzDeck.controllers.users.get_name(person, true),
+      'name': BzDeck.controllers.users.get_name(person).pretty,
       'email': email
     }, {
       'title': `${person.real_name ? person.real_name + '\n' : ''}${person.email}`
