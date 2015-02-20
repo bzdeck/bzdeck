@@ -17,7 +17,7 @@ AddType application/font-woff woff
 
 # Options
 # Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
-Options SymLinksIfOwnerMatch -Indexes
+Options +SymLinksIfOwnerMatch -Indexes
 RewriteEngine on
 
 # Rewrite: Force SSL
