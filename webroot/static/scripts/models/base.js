@@ -38,12 +38,18 @@ BzDeck.models.BaseModel.prototype.open_global_db = function () {
     let db = event.target.result,
         store;
 
-    store = db.createObjectStore('bugzilla', { 'keyPath': 'host' });
+    // Create stores when the database is created
+    if (event.oldVersion < 1) {
+      store = db.createObjectStore('bugzilla', { 'keyPath': 'host' });
 
-    store = db.createObjectStore('accounts', { 'keyPath': 'loaded' });
-    store.createIndex('host', 'host', { 'unique': false });
-    store.createIndex('id', 'id', { 'unique': false });
-    store.createIndex('name', 'name', { 'unique': false });
+      store = db.createObjectStore('accounts', { 'keyPath': 'loaded' });
+      store.createIndex('host', 'host', { 'unique': false });
+      store.createIndex('id', 'id', { 'unique': false });
+      store.createIndex('name', 'name', { 'unique': false });
+
+      // Delete the old database if exists
+      indexedDB.deleteDatabase('BzDeck');
+    }
   });
 
   req.addEventListener('success', event => {
@@ -60,13 +66,16 @@ BzDeck.models.BaseModel.prototype.open_account_db = function () {
     let db = event.target.result,
         store;
 
-    store = db.createObjectStore('bugs', { 'keyPath': 'id' });
-    store.createIndex('alias', 'alias', { 'unique': true });
+    // Create stores when the database is created
+    if (event.oldVersion < 1) {
+      store = db.createObjectStore('bugs', { 'keyPath': 'id' });
+      store.createIndex('alias', 'alias', { 'unique': true });
 
-    store = db.createObjectStore('users', { 'keyPath': 'name' });
-    store.createIndex('id', 'id', { 'unique': true });
+      store = db.createObjectStore('users', { 'keyPath': 'name' });
+      store.createIndex('id', 'id', { 'unique': true });
 
-    store = db.createObjectStore('prefs', { 'keyPath': 'name' });
+      store = db.createObjectStore('prefs', { 'keyPath': 'name' });
+    }
   });
 
   req.addEventListener('success', event => {
