@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.Toolbar = function ToolbarController () {
-  let account = BzDeck.models.data.account,
+  let account = BzDeck.models.account.data,
       gravatar = new BzDeck.controllers.Gravatar(account.name);
 
   BzDeck.views.toolbar = new BzDeck.views.Toolbar(account, gravatar);
@@ -52,7 +52,7 @@ BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
   let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
       get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
 
-  BzDeck.models.bugs.get_all().then(bugs => {
+  BzDeck.models.bug.get_all().then(bugs => {
     let results = bugs.filter(bug => {
       return words.every(word => bug.summary.toLowerCase().includes(word)) ||
              words.every(word => get_aliases(bug).join().toLowerCase().includes(word)) ||

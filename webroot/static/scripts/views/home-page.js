@@ -165,7 +165,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
-      prefs = BzDeck.models.data.prefs,
+      prefs = BzDeck.models.pref.data,
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
@@ -229,7 +229,7 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
 };
 
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
-  let prefs = BzDeck.models.data.prefs;
+  let prefs = BzDeck.models.pref.data;
 
   this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
     'date': { 'simple': false },
@@ -245,7 +245,7 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
 
   if (!this.classic_thread_initialized) {
     // Fill the thread with all saved bugs, and filter the rows later
-    BzDeck.models.bugs.get_all().then(bugs => this.thread.update(bugs));
+    BzDeck.models.bug.get_all().then(bugs => this.thread.update(bugs));
 
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder

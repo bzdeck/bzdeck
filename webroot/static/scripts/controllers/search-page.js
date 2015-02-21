@@ -54,7 +54,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     'page_category': 'search',
     'page_id': this.id,
     'page_constructor': BzDeck.views.SearchPage,
-    'page_constructor_args': [this.id, params, BzDeck.models.data.server.config, BzDeck.models.data.prefs],
+    'page_constructor_args': [this.id, params, BzDeck.models.server.data.config, BzDeck.models.pref.data],
     'tab_label': 'Search', // l10n
     'tab_desc': 'Search & Browse Bugs', // l10n
   }, this);
@@ -90,7 +90,7 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
     return;
   }
 
-  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
+  BzDeck.models.bug.get(newval).then(bug => {
     if (bug) {
       BzDeck.controllers.bugs.toggle_unread(bug.id, false);
       this.trigger(':BugDataAvailable', { bug });
@@ -114,10 +114,10 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
       this.data.bugs = result.bugs;
 
       // Save data
-      BzDeck.models.bugs.get_all().then(bugs => {
+      BzDeck.models.bug.get_all().then(bugs => {
         let saved_ids = [for (bug of bugs) bug.id];
 
-        BzDeck.models.bugs.save_bugs([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
+        BzDeck.models.bug.save_bugs([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
       });
     }
 

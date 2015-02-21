@@ -10,9 +10,9 @@
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   this.id = email;
 
-  let server = BzDeck.models.data.server,
+  let server = BzDeck.models.server.data,
       gravatar = new BzDeck.controllers.Gravatar(email),
-      self = email === BzDeck.models.data.account.name;
+      self = email === BzDeck.models.account.data.name;
 
   BzDeck.views.toolbar.open_tab({
     'page_category': 'profile',

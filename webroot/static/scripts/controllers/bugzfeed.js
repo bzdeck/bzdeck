@@ -14,7 +14,7 @@ BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
 };
 
 BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
-  let endpoint = BzDeck.models.data.server.endpoints.websocket;
+  let endpoint = BzDeck.models.server.data.endpoints.websocket;
 
   if (!endpoint || !navigator.onLine) {
     return;
@@ -54,7 +54,7 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
     if (message.command === 'update') {
       BzDeck.controllers.bugs.fetch_bug(message.bug) // message.bug = ID
           .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bugs.save_bug(bug));
+          .then(bug => BzDeck.models.bug.save(bug));
     }
   });
 };

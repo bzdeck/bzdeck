@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {
-  let prefs = BzDeck.models.data.prefs;
+  let prefs = BzDeck.models.pref.data;
 
   if (BzDeck.controllers.homepage) {
     BzDeck.views.pages.home.connect(folder_id);
@@ -73,7 +73,7 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
     return;
   }
 
-  BzDeck.models.bugs.get_bug_by_id(newval).then(bug => {
+  BzDeck.models.bug.get(newval).then(bug => {
     if (bug) {
       BzDeck.controllers.bugs.toggle_unread(bug.id, false);
       this.trigger(':BugDataAvailable', { bug });

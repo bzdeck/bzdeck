@@ -11,6 +11,12 @@
 BzDeck.controllers.Session = function SessionController () {
   this.bootstrapping = true;
 
+  // Define all models
+  BzDeck.models.account = new BzDeck.models.Account();
+  BzDeck.models.bug = new BzDeck.models.Bug();
+  BzDeck.models.pref = new BzDeck.models.Pref();
+  BzDeck.models.server = new BzDeck.models.Server();
+
   new BzDeck.views.Session();
   new BzDeck.views.LoginForm();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
@@ -23,19 +29,14 @@ BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
 
 // Bootstrap Step 1. Find a user account from the local database
 BzDeck.controllers.Session.prototype.find_account = function () {
-  BzDeck.models.open_global_db().then(database => {
-    BzDeck.models.databases.global = database;
+  BzDeck.models.account.open_global_db().then(database => {
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => {
-    return BzDeck.models.accounts.get_active_account();
+    return BzDeck.models.account.get_active_account();
   }).then(account => {
-    BzDeck.models.data.account = account;
-  }).then(() => {
-    return BzDeck.models.servers.get_server(BzDeck.models.data.account.host);
+    return BzDeck.models.server.get(BzDeck.models.account.data.host);
   }).then(server => {
-    BzDeck.models.data.server = server;
-  }).then(() => {
     this.load_data();
   }).catch(() => {
     this.force_login();
@@ -61,17 +62,14 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
     this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
 
-    BzDeck.models.servers.get_server(data.host).then(server => {
-      BzDeck.models.data.server = server;
-    }).then(() => {
+    BzDeck.models.server.get(data.host).then(server => {
       return BzDeck.controllers.users.fetch_user(data.email, data.api_key);
     }).then(account => {
       account.active = true;
       account.loaded = Date.now(); // key
-      account.host = BzDeck.models.data.server.name;
+      account.host = BzDeck.models.server.data.name;
       account.api_key = data.api_key || undefined;
-      BzDeck.models.data.account = account;
-      BzDeck.models.accounts.save_account(account);
+      BzDeck.models.account.save(account);
 
       this.trigger(':UserFound');
       this.load_data();
@@ -83,28 +81,26 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
 // Bootstrap Step 3. Load data from Bugzilla once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
-  BzDeck.models.open_account_db().then(database => {
-    BzDeck.models.databases.account = database;
+  BzDeck.models.account.open_account_db().then(database => {
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => {
-    return BzDeck.models.prefs.load();
+    return BzDeck.models.pref.load();
   }).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
       BzDeck.controllers.bugs.fetch_subscriptions(),
-      new Promise((resolve, reject) => BzDeck.models.config.load().then(config => {
+      new Promise((resolve, reject) => BzDeck.models.server.get_config().then(config => {
         resolve(config);
       }, error => {
         BzDeck.controllers.config.fetch().then(config => {
-          BzDeck.models.get_store('bugzilla').save({ 'host': BzDeck.models.data.server.name, config });
+          BzDeck.models.server.save_config(config);
           resolve(config);
         }, error => {
           reject(error);
         });
       })).then(config => {
-        BzDeck.models.data.server.config = config;
         // fetch_subscriptions may be still working
         this.trigger(':StatusUpdate', { 'message': 'Loading your bugs...' }); // l10n
       }, error => {
@@ -157,7 +153,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   this.toggle_unread(true);
 
   // Notify requests
-  BzDeck.models.bugs.get_subscription_by_id('requests').then(bugs => {
+  BzDeck.models.bug.get_subscription('requests').then(bugs => {
     let len = bugs.size;
 
     if (!len) {
@@ -186,10 +182,10 @@ BzDeck.controllers.Session.prototype.logout = function () {
   this.clean();
 
   // Delete the account data
-  BzDeck.models.data.account.active = false;
-  BzDeck.models.accounts.save_account(BzDeck.models.data.account);
+  BzDeck.models.account.data.active = false;
+  BzDeck.models.account.save(BzDeck.models.account.data);
 
-  delete BzDeck.models.data.account;
+  delete BzDeck.models.account.data;
 
   // Refresh the page to ensure the app works properly
   location.replace(BzDeck.config.app.root);

@@ -33,7 +33,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.parallel_upload = true;
 
   Object.defineProperties(this, {
-    'has_api_key': { 'enumerable': true, 'get': () => !!BzDeck.models.data.account.api_key },
+    'has_api_key': { 'enumerable': true, 'get': () => !!BzDeck.models.account.data.api_key },
     'has_text': { 'enumerable': true, 'get': () => !!this.$textbox.value.match(/\S/) },
     'has_attachments': { 'enumerable': true, 'get': () => !!this.attachments.length },
   });
@@ -156,7 +156,7 @@ BzDeck.views.TimelineCommentForm.prototype.attach_text = function (str) {
 BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
   let excess_files = new Set(),
       num_format = num => num.toLocaleString('en-US'),
-      max_size = BzDeck.models.data.server.config.max_attachment_size,
+      max_size = BzDeck.models.server.data.config.max_attachment_size,
       max = num_format(max_size),
       message;
 
@@ -387,7 +387,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     if (!BzDeck.controllers.bugzfeed.has(this.bug.id)) {
       BzDeck.controllers.bugs.fetch_bug(this.bug.id)
           .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bugs.save_bug(bug));
+          .then(bug => BzDeck.models.bug.save(bug));
     }
   }, errors => {
     // Failed to post at least one attachment

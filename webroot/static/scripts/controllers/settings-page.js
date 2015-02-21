@@ -9,12 +9,12 @@
 
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
-      account = BzDeck.models.data.account,
-      api_key_link = BzDeck.models.data.server.url + '/userprefs.cgi?tab=apikey',
+      account = BzDeck.models.account.data,
+      api_key_link = BzDeck.models.server.data.url + '/userprefs.cgi?tab=apikey',
       prefs = new Map();
 
   for (let [name, value] of Iterator(BzDeck.config.prefs)) {
-    value.user = BzDeck.models.data.prefs[name];
+    value.user = BzDeck.models.pref.data[name];
     prefs.set(name, value);
   }
 
@@ -37,7 +37,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
         delete account.token;
         // Save the new API Key
         account.api_key = data.api_key;
-        BzDeck.models.accounts.save_account(account);
+        BzDeck.models.account.save(account);
         // Update the view
         this.trigger(':APIKeyVerified');
       } else {
@@ -51,7 +51,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   this.on('V:PrefValueChanged', data => {
     let { name, value } = data;
 
-    BzDeck.models.data.prefs[name] = value;
+    BzDeck.models.pref.data[name] = value;
 
     if (name === 'ui.theme.selected') {
       FlareTail.util.theme.selected = value;

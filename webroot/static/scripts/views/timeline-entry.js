@@ -91,7 +91,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       this.bug._starred_comments.add(comment.id);
     }
 
-    BzDeck.models.bugs.save_bug(this.bug);
+    BzDeck.models.bug.save(this.bug);
     FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { 'bug': this.bug }});
   };
 
@@ -107,7 +107,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       return;
     }
 
-    let ascending = BzDeck.models.data.prefs['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.pref.data['ui.timeline.sort.order'] !== 'descending',
         entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -163,7 +163,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   // TODO: load the attachment data via API
   let attachment = this.data.get('attachment'),
       media_type = attachment.content_type.split('/')[0],
-      url = `${BzDeck.models.data.server.url}/attachment.cgi?id=${attachment.id}`,
+      url = `${BzDeck.models.server.data.url}/attachment.cgi?id=${attachment.id}`,
       $attachment = this.get_fragment('timeline-attachment').firstElementChild,
       $outer = $attachment.querySelector('div'),
       $media,
@@ -206,7 +206,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     $outer.appendChild($media);
     $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
-    if (BzDeck.models.data.prefs['ui.timeline.display_attachments_inline'] !== false) {
+    if (BzDeck.models.pref.data['ui.timeline.display_attachments_inline'] !== false) {
       $outer.setAttribute('aria-busy', 'true');
       $media.src = url;
     }
@@ -241,7 +241,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
       $changer = $change.querySelector('[itemprop="author"]'),
       $time = $change.querySelector('[itemprop="datePublished"]'),
       $how = $change.querySelector('[itemprop="how"]'),
-      conf_field = BzDeck.models.data.server.config.field,
+      conf_field = BzDeck.models.server.data.config.field,
       _field = conf_field[change.field_name] ||
                // Bug 909055 - Field name mismatch in history: group vs groups
                conf_field[change.field_name.replace(/s$/, '')] ||
@@ -499,7 +499,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_change_element = function (c
     $elm.innerHTML = `<a href="${change[how]}">${change[how]}</a>`;
   } else if (change.field_name === 'see_also') {
     $elm.innerHTML = change[how].split(', ').map(url => {
-      let prefix = BzDeck.models.data.server.url + '/show_bug.cgi?id=',
+      let prefix = BzDeck.models.server.data.url + '/show_bug.cgi?id=',
           bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
 
       if (bug_id) {

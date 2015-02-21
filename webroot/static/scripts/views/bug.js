@@ -110,14 +110,14 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
     // Load comments, history, flags and attachments' metadata
     BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
       this.bug = Object.assign(this.bug, bug_details); // Merge data
-      BzDeck.models.bugs.save_bug(this.bug);
+      BzDeck.models.bug.save(this.bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
     });
   }
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.models.data.prefs['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.pref.data['ui.timeline.sort.order'] !== 'descending',
         entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -191,7 +191,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   // See Also
   for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    let re = new RegExp(`^${BzDeck.models.data.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
+    let re = new RegExp(`^${BzDeck.models.server.data.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
         match = $link.href.match(re);
 
     if (match) {
@@ -233,7 +233,7 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 };
 
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
-  let config = BzDeck.models.data.server.config,
+  let config = BzDeck.models.server.data.config,
       strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[this.bug.classification],
       product = config.product[this.bug.product],
@@ -278,7 +278,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   };
 
   if (related_bug_ids.size) {
-    BzDeck.models.bugs.get_bugs_by_ids(related_bug_ids).then(bugs => {
+    BzDeck.models.bug.get_bugs(related_bug_ids).then(bugs => {
       let found_bug_ids = [for (bug of bugs) bug.id],
           lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.includes(id)) id];
 
@@ -286,7 +286,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
 
       if (lookup_bug_ids.length) {
         BzDeck.controllers.bugs.fetch_bugs(lookup_bug_ids).then(bugs => {
-          BzDeck.models.bugs.save_bugs(bugs);
+          BzDeck.models.bug.save_bugs(bugs);
           bugs.map(set_tooltops);
         });
       }

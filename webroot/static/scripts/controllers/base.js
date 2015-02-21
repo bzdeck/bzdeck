@@ -18,7 +18,7 @@ BzDeck.controllers = BzDeck.controllers || {};
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.controllers.BaseController = function BaseController () {
-  this.view = new BzDeck.views.BaseView(BzDeck.models.data.prefs);
+  this.view = new BzDeck.views.BaseView(BzDeck.models.pref.data);
   this.on('Bug:UnreadToggled', data => this.toggle_unread());
 };
 
@@ -30,7 +30,7 @@ BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = f
     return;
   }
 
-  BzDeck.models.bugs.get_all().then(bugs => {
+  BzDeck.models.bug.get_all().then(bugs => {
     let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
         unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs) if (bug._unread) bug].length;
@@ -47,7 +47,7 @@ BzDeck.controllers.BaseController.prototype.toggle_unread = function (loaded = f
 };
 
 BzDeck.controllers.BaseController.prototype.show_notification = function (title, body) {
-  if (BzDeck.models.data.prefs['notifications.show_desktop_notifications'] === false) {
+  if (BzDeck.models.pref.data['notifications.show_desktop_notifications'] === false) {
     return;
   }
 
@@ -69,8 +69,8 @@ BzDeck.controllers.core.notifications = new Set();
 BzDeck.controllers.core.timers = new Map();
 
 BzDeck.controllers.core.request = function (method, path, params, data = null, listeners = {}, options = {}) {
-  let server = BzDeck.models.data.server,
-      account = BzDeck.models.data.account,
+  let server = BzDeck.models.server.data,
+      account = BzDeck.models.account.data,
       xhr = new XMLHttpRequest(),
       url = new URL(server.url + server.endpoints.rest);
 
@@ -206,7 +206,7 @@ BzDeck.controllers.config = {};
 
 BzDeck.controllers.config.fetch = function () {
   // Load the Bugzilla config in background
-  let server = BzDeck.models.data.server;
+  let server = BzDeck.models.server.data;
 
   return new Promise((resolve, reject) => {
     if (!navigator.onLine) {

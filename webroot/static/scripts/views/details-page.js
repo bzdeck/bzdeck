@@ -147,7 +147,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function ($tabpanel, ids) 
       assign_key_binding = (key, command) => FlareTail.util.kbd.assign($tabpanel, { key: command });
 
   let change_button_tooltip = (id, $$button) => {
-    BzDeck.models.bugs.get_bug_by_id(id).then(bug => {
+    BzDeck.models.bug.get(id).then(bug => {
       if (bug && bug.summary) {
         $$button.view.$button.title = `Bug ${id}\n${bug.summary}`; // l10n
       }
@@ -245,7 +245,7 @@ BzDeck.views.DetailsPageHistory = function DetailsPageHistoryView ($bug, history
   }
 
   let datetime = FlareTail.util.datetime,
-      conf_field = BzDeck.models.data.server.config.field,
+      conf_field = BzDeck.models.server.data.config.field,
       $tbody = $placeholder.querySelector('tbody'),
       $template = document.querySelector('#details-change');
 
@@ -319,7 +319,7 @@ BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
     return;
   }
 
-  BzDeck.models.bugs.get_bug_by_id(id).then(bug => {
+  BzDeck.models.bug.get(id).then(bug => {
     let page = BzDeck.views.pages.details,
         $tabpanel = page.prep_tabpanel(undefined, bug, ids),
         $ref = position === 'prev' ? page.view.$tabpanel : page.view.$tabpanel.nextElementSibling;
@@ -331,7 +331,7 @@ BzDeck.views.DetailsPage.swipe.add_tabpanel = function (id, ids, position) {
       // Prefetch the bug
       BzDeck.controllers.bugs.fetch_bug(bug.id, false).then(bug_details => { // Exclude metadata
         bug = Object.assign(bug, bug_details); // Merge data
-        BzDeck.models.bugs.save_bug(bug);
+        BzDeck.models.bug.save(bug);
       });
     }
   });

@@ -35,10 +35,10 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
-  let prefs = BzDeck.models.data.prefs,
+  let prefs = BzDeck.models.pref.data,
       default_cols = BzDeck.config.grid.default_columns,
       columns = prefs[`${name}.list.columns`] || default_cols,
-      field = BzDeck.models.data.server.config.field;
+      field = BzDeck.models.server.data.config.field;
 
   let toggle_prop = prop => {
     for (let $item of this.$$grid.view.selected) {
