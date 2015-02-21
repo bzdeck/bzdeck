@@ -57,8 +57,13 @@ header('Content-Type: application/javascript; charset=utf-8', true);
 define('SCRIPT_DIR', $_SERVER['DOCUMENT_ROOT'] . '/static/scripts/');
 ob_start();
 
+// Use strict mode; this comment should go first
+echo "'use strict';\n";
+
 foreach ($scripts as $script) {
   if ($contents = file_get_contents(SCRIPT_DIR . $script)) {
+    // Remove block comments
+    $contents = preg_replace('/\/\*[\s\S]+\*\/\n/mU', '', $contents);
     echo $contents;
   }
 }
