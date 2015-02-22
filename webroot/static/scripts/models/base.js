@@ -26,7 +26,8 @@ BzDeck.models.BaseModel.prototype.get_store = function (name) {
     'save': obj => send(store.put(obj)),
     'get': key => send(store.get(key)),
     'get_all': () => send(store.mozGetAll()),
-    'delete': key => send(store.delete(key))
+    'delete': key => send(store.delete(key)),
+    'clear': () => send(store.clear()),
   };
 };
 

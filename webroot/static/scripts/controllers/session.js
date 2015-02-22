@@ -184,14 +184,9 @@ BzDeck.controllers.Session.prototype.logout = function () {
   this.trigger(':Logout');
   this.clean();
 
-  // Delete the account data
-  BzDeck.models.account.data.active = false;
-  BzDeck.models.account.save(BzDeck.models.account.data);
-
-  delete BzDeck.models.account.data;
-
-  // Refresh the page to ensure the app works properly
-  location.replace(BzDeck.config.app.root);
+  // Delete the account data and refresh the page to ensure the app works properly
+  // TODO: Support multiple account by removing only the current account
+  BzDeck.models.account.clear().then(() => location.replace(BzDeck.config.app.root));
 };
 
 BzDeck.controllers.Session.prototype.close = function () {

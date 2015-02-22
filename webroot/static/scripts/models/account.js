@@ -44,3 +44,9 @@ BzDeck.models.Account.prototype.save = function (account) {
         .catch(error => reject(new Error('Failed to save the account.'))); // l10n
   });
 };
+
+BzDeck.models.Account.prototype.clear = function (account) {
+  delete BzDeck.models.account.data;
+
+  return this.get_store('accounts').clear().then(() => Promise.resolve());
+};
