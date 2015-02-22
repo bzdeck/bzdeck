@@ -10,5 +10,5 @@
 BzDeck.controllers.Thread = function ThreadController () {
 };
 
-BzDeck.controllers.Thread.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Thread.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Thread.prototype.constructor = BzDeck.controllers.Thread;

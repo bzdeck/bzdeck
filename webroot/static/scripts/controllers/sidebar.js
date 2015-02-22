@@ -49,7 +49,7 @@ BzDeck.controllers.Sidebar = function SidebarController () {
   }));
 };
 
-BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {

@@ -48,7 +48,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     }
 
     if (tab_id.endsWith('preview')) {
-      this.$preview.innerHTML = BzDeck.controllers.core.parse_comment(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.controllers.global.parse_comment(this.$textbox.value);
     }
   });
 
@@ -117,7 +117,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   }
 };
 
-BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCommentForm;
 
 BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
@@ -310,7 +310,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.controllers.core.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
+    BzDeck.controllers.global.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
       'upload': {
         'progress': event => {
           if (method === 'attachment') {

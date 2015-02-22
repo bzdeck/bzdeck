@@ -107,7 +107,7 @@ BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
   this.setup_searchbar();
 };
 
-BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
 
 BzDeck.views.Toolbar.prototype.setup_searchbar = function () {

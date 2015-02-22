@@ -35,7 +35,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
 
 BzDeck.controllers.DetailsPage.route = '/bug/(\\d+)';
 
-BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
 
 BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {

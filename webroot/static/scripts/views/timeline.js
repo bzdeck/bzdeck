@@ -140,5 +140,5 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   window.addEventListener('hashchange', event => check_fragment());
 };
 
-BzDeck.views.Timeline.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Timeline.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;

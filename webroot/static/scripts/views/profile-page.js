@@ -54,5 +54,5 @@ BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
   });
 };
 
-BzDeck.views.ProfilePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.ProfilePage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.ProfilePage.prototype.constructor = BzDeck.views.ProfilePage;

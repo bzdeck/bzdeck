@@ -30,10 +30,10 @@ BzDeck.views.Sidebar = function SidebarView () {
   this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { 'id': event.detail.ids[0] }));
 
   this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
-  this.on('C:UnreadToggled', data => this.toggle_unread(data.number));
+  this.on('C:UnreadToggled', data => BzDeck.controllers.global.toggle_unread(data.number));
 };
 
-BzDeck.views.Sidebar.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Sidebar.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Sidebar.prototype.constructor = BzDeck.views.Sidebar;
 
 BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {

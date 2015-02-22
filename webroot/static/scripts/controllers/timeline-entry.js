@@ -10,5 +10,5 @@
 BzDeck.controllers.TimelineEntry = function TimelineEntryController () {
 };
 
-BzDeck.controllers.TimelineEntry.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.TimelineEntry.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.TimelineEntry.prototype.constructor = BzDeck.controllers.TimelineEntry;

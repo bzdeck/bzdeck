@@ -80,7 +80,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
 BzDeck.controllers.SearchPage.route = '/search/(\\d{13,})';
 
-BzDeck.controllers.SearchPage.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.SearchPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchPage;
 
 BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval) {
@@ -109,7 +109,7 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
 
   this.trigger(':SearchStarted');
 
-  BzDeck.controllers.core.request('GET', 'bug', params).then(result => {
+  this.request('GET', 'bug', params).then(result => {
     if (result.bugs.length > 0) {
       this.data.bugs = result.bugs;
 

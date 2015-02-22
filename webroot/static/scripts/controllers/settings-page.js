@@ -31,7 +31,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     params.append('names', account.name);
     params.append('api_key', data.api_key);
 
-    BzDeck.controllers.core.request('GET', 'user', params).then(result => {
+    this.request('GET', 'user', params).then(result => {
       if (result.users) {
         // Delete the previously-used auth token
         delete account.token;
@@ -75,5 +75,5 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
 
 BzDeck.controllers.SettingsPage.route = '/settings';
 
-BzDeck.controllers.SettingsPage.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.SettingsPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.SettingsPage.prototype.constructor = BzDeck.controllers.SettingsPage;

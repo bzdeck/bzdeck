@@ -17,14 +17,16 @@ BzDeck.controllers.Session = function SessionController () {
   BzDeck.models.pref = new BzDeck.models.Pref();
   BzDeck.models.server = new BzDeck.models.Server();
 
+  BzDeck.controllers.global = new BzDeck.controllers.Global();
+  BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
+
   new BzDeck.views.Session();
   new BzDeck.views.LoginForm();
-  BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
 
   this.find_account();
 };
 
-BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
 
 // Bootstrap Step 1. Find a user account from the local database
@@ -123,7 +125,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
 
   // Finally load the UI modules
   if (!this.relogin) {
-    new BzDeck.controllers.BaseController();
+    BzDeck.controllers.global.init();
     BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar();
     BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
     BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
@@ -136,7 +138,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   BzDeck.router.locate();
 
   // Timer to check for updates, call every 10 minutes
-  BzDeck.controllers.core.timers.set('fetch_subscriptions',
+  BzDeck.controllers.global.timers.set('fetch_subscriptions',
       window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
 
   // Register the app for an activity on Firefox OS
@@ -153,7 +155,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   FlareTail.util.app.auth_notification();
 
   // Update UI & Show a notification
-  this.toggle_unread(true);
+  BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
   BzDeck.models.bug.get_subscription('requests').then(bugs => {
@@ -172,7 +174,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
     // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
     // Select the Requests folder when the notification is clicked
-    this.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+    BzDeck.views.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
   });
 };
 
@@ -195,37 +197,19 @@ BzDeck.controllers.Session.prototype.close = function () {
 
 BzDeck.controllers.Session.prototype.clean = function () {
   // Terminate timers
-  for (let timer of BzDeck.controllers.core.timers.values()) {
+  for (let timer of BzDeck.controllers.global.timers.values()) {
     window.clearInterval(timer);
   }
 
-  BzDeck.controllers.core.timers.clear();
+  BzDeck.controllers.global.timers.clear();
 
   // Destroy all notifications
-  for (let notification of BzDeck.controllers.core.notifications) {
+  for (let notification of BzDeck.controllers.global.notifications) {
     notification.close();
   }
 
-  BzDeck.controllers.core.notifications.clear();
+  BzDeck.controllers.global.notifications.clear();
 
   // Disconnect from the Bugzfeed server
   BzDeck.controllers.bugzfeed.disconnect();
 };
-
-/* ------------------------------------------------------------------------------------------------------------------
- * Events
- * ------------------------------------------------------------------------------------------------------------------ */
-
-window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.util.compatible) {
-    BzDeck.controllers.session = new BzDeck.controllers.Session();
-  }
-});
-
-window.addEventListener('online', event => {
-  BzDeck.controllers.bugzfeed.connect();
-});
-
-window.addEventListener('beforeunload', event => {
-  BzDeck.controllers.session.clean();
-});

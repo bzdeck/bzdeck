@@ -33,7 +33,7 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
   this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
 };
 
-BzDeck.controllers.Toolbar.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Toolbar.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Toolbar.prototype.constructor = BzDeck.controllers.Toolbar;
 
 BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {

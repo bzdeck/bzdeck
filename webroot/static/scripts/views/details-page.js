@@ -48,7 +48,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
   });
 };
 
-BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.DetailsPage.prototype.constructor = BzDeck.views.DetailsPage;
 
 BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
@@ -230,7 +230,7 @@ BzDeck.views.DetailsPageAttachments = function DetailsPageAttachmentsView ($bug,
   $bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
 };
 
-BzDeck.views.DetailsPageAttachments.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPageAttachments.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.DetailsPageAttachments.prototype.constructor = BzDeck.views.DetailsPageAttachments;
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -297,7 +297,7 @@ BzDeck.views.DetailsPageHistory = function DetailsPageHistoryView ($bug, history
   $bug.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
 };
 
-BzDeck.views.DetailsPageHistory.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.DetailsPageHistory.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.DetailsPageHistory.prototype.constructor = BzDeck.views.DetailsPageHistory;
 
 /* ------------------------------------------------------------------------------------------------------------------

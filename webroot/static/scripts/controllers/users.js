@@ -19,7 +19,7 @@ BzDeck.controllers.users.fetch_user = function (email, api_key = undefined) {
   }
 
   return new Promise((resolve, reject) => {
-    BzDeck.controllers.core.request('GET', 'user', params).then(result => {
+    BzDeck.controllers.global.request('GET', 'user', params).then(result => {
       result.error ? reject(new Error(result.message || 'User Not Found')) : resolve(result.users[0]);
     }).catch(event => {
       reject(new Error('Network Error')); // l10n

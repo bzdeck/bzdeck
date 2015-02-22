@@ -25,7 +25,7 @@ BzDeck.views.SettingsPage = function SettingsPageView (tab_id, api_key, api_key_
   }
 };
 
-BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.SettingsPage.prototype.constructor = BzDeck.views.SettingsPage;
 
 BzDeck.views.SettingsPage.prototype.activate_api_key_input = function (api_key, api_key_link) {

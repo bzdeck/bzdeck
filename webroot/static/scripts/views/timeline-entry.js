@@ -30,7 +30,7 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
   return $fragment;
 };
 
-BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
@@ -57,7 +57,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   $entry.dataset.id = comment.id;
   $entry.dataset.time = (new Date(time)).getTime();
   $entry.setAttribute('data-comment-number', comment.number);
-  $comment_body.innerHTML = text ? BzDeck.controllers.core.parse_comment(text) : '';
+  $comment_body.innerHTML = text ? BzDeck.controllers.global.parse_comment(text) : '';
 
   // Append the comment number to the URL when clicked
   $entry.addEventListener(click_event_type, event => {
@@ -141,7 +141,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author_pretty_name;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  BzDeck.views.BaseView.prototype.set_avatar(author, $author.querySelector('[itemprop="image"]'));
+  BzDeck.views.global.set_avatar(author, $author.querySelector('[itemprop="image"]'));
   FlareTail.util.datetime.fill_element($time, time);
 
   // Mark unread
@@ -274,7 +274,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   });
 
   $change.setAttribute('data-change-field', change.field_name);
-  BzDeck.views.BaseView.prototype.set_avatar(changer, $changer.querySelector('[itemprop="image"]'));
+  BzDeck.views.global.set_avatar(changer, $changer.querySelector('[itemprop="image"]'));
   FlareTail.util.datetime.fill_element($time, time);
 
   let _reviews = { 'added': new Set(), 'removed': new Set() },

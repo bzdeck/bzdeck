@@ -57,5 +57,5 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
 
 BzDeck.controllers.ProfilePage.route = '/profile/(.+)';
 
-BzDeck.controllers.ProfilePage.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.ProfilePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.ProfilePage.prototype.constructor = BzDeck.controllers.ProfilePage;

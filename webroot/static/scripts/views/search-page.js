@@ -66,7 +66,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
   this.on('C:ReturnToBasicSearchPane', data => this.show_basic_search_pane());
 };
 
-BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
 
 BzDeck.views.SearchPage.prototype.setup_toolbar = function () {

@@ -9,7 +9,7 @@
 
 BzDeck.views.Thread = function ThreadView () {};
 
-BzDeck.views.Thread.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Thread.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Thread.prototype.constructor = BzDeck.views.Thread;
 
 BzDeck.views.Thread.prototype.onselect = function (event) {

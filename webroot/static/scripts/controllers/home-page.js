@@ -63,7 +63,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
 
 BzDeck.controllers.HomePage.route = '/home/(\\w+)';
 
-BzDeck.controllers.HomePage.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.HomePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
 
 BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {

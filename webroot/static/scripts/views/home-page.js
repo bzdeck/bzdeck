@@ -77,7 +77,7 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
   });
 };
 
-BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
 
 BzDeck.views.HomePage.prototype.connect = function (folder_id) {
@@ -102,7 +102,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   }
 
   BzDeck.views.toolbar.tab_path_map.set('tab-home', location.pathname);
-  BzDeck.views.BaseView.prototype.update_window_title($tab);
+  this.update_window_title($tab);
 };
 
 BzDeck.views.HomePage.prototype.setup_splitter = function (prefs) {

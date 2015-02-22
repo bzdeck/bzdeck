@@ -36,7 +36,7 @@ BzDeck.views.Bug = function BugView ($bug) {
   });
 };
 
-BzDeck.views.Bug.prototype = Object.create(BzDeck.views.BaseView.prototype);
+BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
 
 BzDeck.views.Bug.prototype.render = function (bug, partial = false) {

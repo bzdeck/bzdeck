@@ -10,5 +10,5 @@
 BzDeck.controllers.Bug = function BugController () {
 };
 
-BzDeck.controllers.Bug.prototype = Object.create(BzDeck.controllers.BaseController.prototype);
+BzDeck.controllers.Bug.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
