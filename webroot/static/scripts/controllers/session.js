@@ -37,9 +37,6 @@ BzDeck.controllers.Session.prototype.find_account = function () {
   }).then(() => {
     return BzDeck.models.account.get_active_account();
   }).then(account => {
-    // Require users to always authenticate (#220)
-    return account.api_key ? Promise.resolve() : Promise.reject(new Error('API Key Not Found'));
-  }).then(() => {
     return BzDeck.models.server.get(BzDeck.models.account.data.host);
   }).then(server => {
     this.load_data();
