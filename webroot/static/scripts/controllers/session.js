@@ -16,6 +16,7 @@ BzDeck.controllers.Session = function SessionController () {
   BzDeck.models.bug = new BzDeck.models.Bug();
   BzDeck.models.pref = new BzDeck.models.Pref();
   BzDeck.models.server = new BzDeck.models.Server();
+  BzDeck.models.user = new BzDeck.models.User();
 
   BzDeck.controllers.global = new BzDeck.controllers.Global();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
@@ -65,13 +66,24 @@ BzDeck.controllers.Session.prototype.force_login = function () {
     this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
 
     BzDeck.models.server.get(data.host).then(server => {
-      return BzDeck.controllers.users.fetch_user(data.email, data.api_key);
-    }).then(account => {
-      account.active = true;
-      account.loaded = Date.now(); // key
-      account.host = BzDeck.models.server.data.name;
-      account.api_key = data.api_key || undefined;
-      BzDeck.models.account.save(account);
+      let params = new URLSearchParams();
+
+      params.append('names', data.email);
+      params.append('api_key', data.api_key);
+
+      return new Promise((resolve, reject) => this.request('GET', 'user', params).then(result => {
+        result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
+      }).catch(error => reject(error)));
+    }).then(profiles => {
+      return profiles.error ? Promise.reject(new Error(profiles.error)) : Promise.resolve(profiles);
+    }).then(profiles => {
+      BzDeck.models.account.save({
+        'host': BzDeck.models.server.data.name,
+        'name': data.email,
+        'api_key': data.api_key || undefined,
+        'loaded': Date.now(), // key
+        'active': true,
+      });
 
       this.trigger(':UserFound');
       this.load_data();
@@ -120,31 +132,38 @@ BzDeck.controllers.Session.prototype.load_data = function () {
 BzDeck.controllers.Session.prototype.init_components = function () {
   this.trigger(':StatusUpdate', { 'message': 'Initializing UI...' }); // l10n
 
-  // Finally load the UI modules
-  if (!this.relogin) {
-    BzDeck.controllers.global.init();
-    BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar();
-    BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar();
-    BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar();
-  }
-
-  // Connect to the push notification server
-  BzDeck.controllers.bugzfeed.connect();
-
-  // Activate the router
-  BzDeck.router.locate();
-
-  // Timer to check for updates, call every 10 minutes
-  BzDeck.controllers.global.timers.set('fetch_subscriptions',
-      window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
-
-  // Register the app for an activity on Firefox OS
-  BzDeck.controllers.app.register_activity_handler();
-
-  this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
-  this.show_first_notification();
-  this.login();
-  this.bootstrapping = false;
+  new Promise((resolve, reject) => {
+    this.relogin ? resolve() : reject();
+  }).catch(error => {
+    // Finally load the UI modules
+    return Promise.all([
+      BzDeck.models.user.init(),
+    ]).then(() => Promise.all([
+      BzDeck.controllers.global.init(),
+      BzDeck.controllers.users = new BzDeck.controllers.Users(),
+      BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar(),
+      BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar(),
+      BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar(),
+    ]));
+  }).then(() => {
+    // Connect to the push notification server
+    BzDeck.controllers.bugzfeed.connect();
+  }).then(() => {
+    // Activate the router
+    BzDeck.router.locate();
+  }).then(() => {
+    // Timer to check for updates, call every 10 minutes
+    BzDeck.controllers.global.timers.set('fetch_subscriptions',
+        window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
+  }).then(() => {
+    // Register the app for an activity on Firefox OS
+    BzDeck.controllers.app.register_activity_handler();
+  }).then(() => {
+    this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
+    this.show_first_notification();
+    this.login();
+    this.bootstrapping = false;
+  });
 };
 
 BzDeck.controllers.Session.prototype.show_first_notification = function () {

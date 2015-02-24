@@ -36,8 +36,7 @@ BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
-      author = BzDeck.controllers.bugs.find_person(this.bug, comment.creator),
-      author_pretty_name = BzDeck.controllers.users.get_name(author).pretty,
+      author = BzDeck.controllers.users.get(comment.creator),
       time = comment.creation_time,
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
@@ -67,7 +66,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   });
 
   let reply = () => {
-    let quote_header = `(In reply to ${author_pretty_name} from comment #${comment.number})`,
+    let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
         quote = `${quote_header}\n${quote_lines.join('\n')}`,
         $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
@@ -138,10 +137,10 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     'DOWN|PAGE_DOWN|SPACE': event => move_focus(false),
   });
 
-  $author.title = `${author.real_name ? author.real_name + '\n' : ''}${author.email}`;
-  $author.querySelector('[itemprop="name"]').itemValue = author_pretty_name;
+  $author.title = `${author.original_name || author.name}\n${author.email}`;
+  $author.querySelector('[itemprop="name"]').itemValue = author.name;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  BzDeck.views.global.set_avatar(author, $author.querySelector('[itemprop="image"]'));
+  $author.querySelector('[itemprop="image"]').itemValue = author.image;
   FlareTail.util.datetime.fill_element($time, time);
 
   // Mark unread
@@ -221,7 +220,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
 BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
-      changer = BzDeck.controllers.bugs.find_person(this.bug, history.who),
+      changer = BzDeck.controllers.users.get(history.who),
       time = history.when,
       $fragment = new DocumentFragment();
 
@@ -267,14 +266,14 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   }
 
   this.fill($changer, {
-    'name': BzDeck.controllers.users.get_name(changer).first,
+    'name': changer.first_name,
     'email': changer.email
   }, {
-    'title': `${changer.real_name ? changer.real_name + '\n' : ''}${changer.email}`
+    'title': `${changer.original_name || changer.name}\n${changer.email}`
   });
 
   $change.setAttribute('data-change-field', change.field_name);
-  BzDeck.views.global.set_avatar(changer, $changer.querySelector('[itemprop="image"]'));
+  $changer.querySelector('[itemprop="image"]').itemValue = changer.image;
   FlareTail.util.datetime.fill_element($time, time);
 
   let _reviews = { 'added': new Set(), 'removed': new Set() },
@@ -465,14 +464,14 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
 
 BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(email => {
-    let person = BzDeck.controllers.bugs.find_person(this.bug, email),
+    let person = BzDeck.controllers.users.get(email),
         $person = this.get_fragment('person-without-image').firstElementChild;
 
     this.fill($person, {
-      'name': BzDeck.controllers.users.get_name(person).pretty,
+      'name': person.name,
       'email': email
     }, {
-      'title': `${person.real_name ? person.real_name + '\n' : ''}${person.email}`
+      'title': `${person.original_name || person.name}\n${person.email}`
     });
 
     return $person.outerHTML;

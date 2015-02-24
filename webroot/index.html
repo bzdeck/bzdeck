@@ -571,7 +571,10 @@
     </template><!-- end #details-change -->
     <template id="vertical-thread-item">
       <li tabindex="0" role="option" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
-        <img itemprop="image">
+        <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+          <img itemprop="image">
+          <meta itemprop="email">
+        </span>
         <span itemprop="id"></span>
         <span itemprop="name"></span>
         <time data-simple="true" itemprop="dateModified"></time>

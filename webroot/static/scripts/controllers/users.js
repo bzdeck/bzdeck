@@ -7,55 +7,42 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.controllers.users = {};
+BzDeck.controllers.Users = function UsersController () {
+  this.model = BzDeck.models.user;
+  this.cache = new Map();
+};
 
-BzDeck.controllers.users.fetch_user = function (email, api_key = undefined) {
-  let params = new URLSearchParams();
+BzDeck.controllers.Users.prototype = Object.create(BzDeck.controllers.Base.prototype);
+BzDeck.controllers.Users.prototype.constructor = BzDeck.controllers.Users;
 
-  params.append('names', email);
+BzDeck.controllers.Users.prototype.get = function (name, options = {}) {
+  let user = this.cache.get(name);
 
-  if (api_key) {
-    params.append('api_key', api_key);
+  if (name && (!user || options.refresh)) {
+    user = new BzDeck.controllers.User(name, undefined, options);
+    this.cache.set(name, user);
   }
 
-  return new Promise((resolve, reject) => {
-    BzDeck.controllers.global.request('GET', 'user', params).then(result => {
-      result.error ? reject(new Error(result.message || 'User Not Found')) : resolve(result.users[0]);
-    }).catch(event => {
-      reject(new Error('Network Error')); // l10n
-    });
-  });
+  return user;
 };
 
-BzDeck.controllers.users.get_name = function (person) {
-  let original = person.real_name || '',
-      // Remove bracketed strings
-      pretty = original.replace(/[\[\(<‹].*?[›>\)\]]/g, '').trim() || person.email.split('@')[0],
-      first = pretty.split(/\s/)[0],
-      initial = first.charAt(0).toUpperCase(),
-      nick_match = original.match(/\:([\w\-]+)/),
-      nick = nick_match ? nick_match[1] : undefined;
-
-  return { original, pretty, first, initial, nick };
+BzDeck.controllers.Users.prototype.add = function (name, profile) {
+  if (name && !this.cache.has(name) && !this.model.has(name)) {
+    this.cache.set(name, new BzDeck.controllers.User(name, profile));
+  }
 };
 
-BzDeck.controllers.users.get_color = function (person) {
-  return '#' + String(person.real_name ? person.real_name.length : 0).substr(-1, 1)
-             + String(person.name.length).substr(-1, 1) + String(person.name.length).substr(0, 1);
-};
+BzDeck.controllers.Users.prototype.add_from_bug = function (bug) {
+  let people = new Set([bug.creator_detail, bug.assigned_to_detail, bug.qa_contact_detail,
+                        ...bug.cc_detail, ...bug.mentors_detail],
+                        // The following fields are emails only
+                        ...[for (c of bug.comments || []) c.creator],
+                        ...[for (h of bug.history || []) h.who],
+                        ...[for (a of bug.attachments || []) a.creator]);
 
-/* ------------------------------------------------------------------------------------------------------------------
- * Gravatar
- * ------------------------------------------------------------------------------------------------------------------ */
+  for (let person of people) {
+    let profile = typeof person === 'object' ? person : { 'name': person };
 
-BzDeck.controllers.Gravatar = function Gravatar (email) {
-  this.hash = md5(email);
-  this.avatar_url = this.endpoint + '/avatar/' + this.hash + '?s=160&d=mm';
-  this.profile_url = this.endpoint + '/' + this.hash + '.json';
-};
-
-BzDeck.controllers.Gravatar.prototype.endpoint = 'https://secure.gravatar.com';
-
-BzDeck.controllers.Gravatar.prototype.get_profile = function () {
-  return new Promise(resolve => FlareTail.util.network.jsonp(this.profile_url).then(data => resolve(data.entry[0])));
+    this.add(profile.name, { 'bugzilla': profile });
+  }
 };

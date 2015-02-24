@@ -1348,9 +1348,10 @@ main {
   pointer-events: none;
 }
 
-[id$="vertical-thread"] [itemprop="image"] {
+[id$="vertical-thread"] [itemprop="contributor"] {
   top: 1rem;
   left: 1rem;
+  overflow: hidden;
   border-radius: .32rem;
   width: 3.2rem;
   height: 3.2rem;
@@ -1358,6 +1359,12 @@ main {
   font-size: 1.6rem;
   line-height: 3.2rem;
   text-align: center;
+}
+
+[id$="vertical-thread"] [itemprop="contributor"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 [id$="vertical-thread"] [itemprop="id"] {

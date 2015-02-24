@@ -131,14 +131,14 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (person of bug['mentors_detail']) BzDeck.controllers.users.get_name(person).pretty].join(', ');
+          value = [for (email of bug[field]) BzDeck.controllers.users.get(email).name].join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.controllers.users.get_name(bug[`${field}_detail`].pretty);
+        value = BzDeck.controllers.users.get(value.name).name;
       }
 
       if (field === '_starred') {
@@ -278,20 +278,20 @@ BzDeck.views.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 
   for (let bug of this.unrendered_bugs.splice(0, 50)) {
+    // TODO: combine primary participants' avatars/initials (#124)
+    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+
     let $option = $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
+      'contributor': BzDeck.controllers.users.get(contributor).properties,
     }, {
       'id': `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
       'data-unread': !!bug._unread,
       'aria-checked': BzDeck.controllers.bugs.is_starred(bug)
     }));
-
-    this.set_avatar(
-        bug.comments ? BzDeck.controllers.bugs.find_person(bug, bug.comments[bug.comments.length - 1].creator)
-                     : bug.creator_detail, $option.querySelector('img'));
   }
 
   this.$listbox.appendChild($fragment);

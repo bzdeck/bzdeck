@@ -208,20 +208,12 @@ BzDeck.views.DetailsPageAttachments = function DetailsPageAttachmentsView ($bug,
       'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
       'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
       'uploadDate': att.creation_time,
+      'creator': BzDeck.controllers.users.get(att.creator).properties,
       'flag': [for (flag of att.flags) {
-        'creator': {
-          'image': 'https://secure.gravatar.com/avatar/' + md5(flag.setter) + '?d=mm',
-          'name': flag.setter, // email
-          'email': flag.setter
-        },
+        'creator': BzDeck.controllers.users.get(flag.setter).properties,
         'name': flag.name,
         'status': flag.status
       }],
-      'creator': {
-        'image': 'https://secure.gravatar.com/avatar/' + md5(att.creator) + '?d=mm',
-        'name': att.creator, // email
-        'email': att.creator
-      }
     }, {
       'data-attachment-id': att.id
     });

@@ -19,6 +19,7 @@ $scripts = [
   './models/bug.js',
   './models/pref.js',
   './models/server.js',
+  './models/user.js',
   './views/base.js',
   './views/bug.js',
   './views/details-page.js',
@@ -54,6 +55,7 @@ $scripts = [
   './controllers/timeline-entry.js',
   './controllers/timeline.js',
   './controllers/toolbar.js',
+  './controllers/user.js',
   './controllers/users.js',
 ];
 

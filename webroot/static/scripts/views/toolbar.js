@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
+BzDeck.views.Toolbar = function ToolbarView (user) {
   let FTu = FlareTail.util,
       mobile = FlareTail.util.ua.device.mobile,
       $$tablist = this.$$tablist = new this.widget.TabList(document.querySelector('#main-tablist')),
@@ -80,19 +80,15 @@ BzDeck.views.Toolbar = function ToolbarView (account, gravatar) {
 
   // Account label & avatar
   {
-    let label = `${account.real_name ? `<strong>${account.real_name}</strong><br>` : ''}${account.name}`,
+    let label = `<strong>${user.name}</strong><br>${user.email}`,
         $menu_label = document.querySelector('#main-menu--app label'),
         $account_label = document.querySelector('#main-menu--app--account label');
 
     $account_label.innerHTML = label;
-    $account_label.style['background-image'] = $menu_label.style['background-image'] = `url(${gravatar.avatar_url})`;
+    $account_label.style['background-image'] = $menu_label.style['background-image'] = `url(${user.image})`;
 
-    this.on('C:GravatarProfileAvailable', data => {
-      let background = data.entry.profileBackground;
-
-      if (background && background.url) {
-        document.querySelector('#sidebar-account').style['background-image'] = `url(${background.url})`;
-      }
+    this.on('C:GravatarProfileFound', data => {
+      document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];
     });
   }
 

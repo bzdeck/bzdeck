@@ -51,6 +51,30 @@ BzDeck.views.Global = function GlobalView (prefs) {
 
   // Preload images from CSS
   FTut.preload_images();
+
+  // Update user name & image asynchronously
+  this.on('UserController:UserInfoUpdated', data => {
+    let user = BzDeck.controllers.users.get(data.name);
+
+    for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
+      let title = `${user.original_name || user.name}\n${user.email}`,
+          $person = $email.closest('[itemtype$="Person"]'),
+          $name = $person.querySelector('[itemprop="name"]'),
+          $image = $person.querySelector('[itemprop="image"]');
+
+      if ($person.title && $person.title !== title) {
+        $person.title = title;
+      }
+
+      if ($name && $name.itemValue !== user.name) {
+        $name.itemValue = user.name;
+      }
+
+      if ($image && $image.itemValue !== user.image) {
+        $image.itemValue = user.image; // Blob URL
+      }
+    }
+  });
 };
 
 BzDeck.views.Global.prototype = Object.create(BzDeck.views.Base.prototype);

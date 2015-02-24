@@ -43,6 +43,9 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
   this.bug = bug;
   this.$bug.dataset.id = this.bug.id;
 
+  // TEMP: Add users when a bug is loaded; this should be in the controller
+  BzDeck.controllers.users.add_from_bug(bug);
+
   if (!this.bug.summary && !this.bug._update_needed) {
     // The bug is being loaded
     return;
@@ -55,20 +58,10 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
-        _bug.mentor = [for (person of this.bug.mentors_detail) {
-          'name': BzDeck.controllers.users.get_name(person).pretty,
-          'email': person.email,
-          'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
-        }];
+        _bug.mentor = [for (email of this.bug.mentors) BzDeck.controllers.users.get(email).properties];
       } else if (type === 'person') {
         if (this.bug[field]) {
-          let person = this.bug[`${field}_detail`];
-
-          _bug[field] = {
-            'name': BzDeck.controllers.users.get_name(person).pretty,
-            'email': person.email,
-            'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
-          };
+          _bug[field] = BzDeck.controllers.users.get(this.bug[field]).properties;
         }
       } else {
         _bug[field] = this.bug[field] || '';
@@ -157,19 +150,12 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
   }
 
   let _bug = {
-    'cc': [for (person of this.bug.cc_detail) {
-      'name': BzDeck.controllers.users.get_name(person).pretty,
-      'email': person.email,
-      'image': 'https://secure.gravatar.com/avatar/' + md5(person.email) + '?d=mm'
-    }],
+    'cc': [for (email of this.bug.cc) BzDeck.controllers.users.get(email).properties],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,
     'see_also': this.bug.see_also,
     'flag': [for (flag of this.bug.flags) {
-      'creator': {
-        'name': flag.setter, // email
-        'email': flag.setter
-      },
+      'creator': BzDeck.controllers.users.get(flag.setter).properties,
       'name': flag.name,
       'status': flag.status
     }]

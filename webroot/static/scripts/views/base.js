@@ -15,20 +15,6 @@ BzDeck.views.Base = function BaseView () {};
 BzDeck.views.Base.prototype = Object.create(FlareTail.app.View.prototype);
 BzDeck.views.Base.prototype.constructor = BzDeck.views.Base;
 
-BzDeck.views.Base.prototype.set_avatar = function (person, $image) {
-  let $_image = new Image();
-
-  $image.alt = BzDeck.controllers.users.get_name(person).initial;
-  $image.style.setProperty('background-color', BzDeck.controllers.users.get_color(person));
-  $_image.addEventListener('load', event => {
-    if ($image) {
-      $image.style.removeProperty('background-color');
-      $image.src = $_image.src;
-    }
-  });
-  $_image.src = `https://secure.gravatar.com/avatar/${md5(person.email)}?d=404&s=160`;
-};
-
 BzDeck.views.Base.prototype.update_window_title = function ($tab) {
   if ($tab.id === 'tab-home') {
     BzDeck.views.pages.home.update_title($tab.title);

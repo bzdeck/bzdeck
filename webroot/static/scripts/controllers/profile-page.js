@@ -9,9 +9,9 @@
 
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   this.id = email;
+  this.user = BzDeck.controllers.users.get(email);
 
   let server = BzDeck.models.server.data,
-      gravatar = new BzDeck.controllers.Gravatar(email),
       self = email === BzDeck.models.account.data.name;
 
   BzDeck.views.toolbar.open_tab({
@@ -23,35 +23,33 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
     'tab_desc': 'User Profile', // l10n
   }, this);
 
-  gravatar.get_profile().then(entry => {
-    if (entry.profileBackground && entry.profileBackground.url) {
-      this.trigger(':GravatarDataFound', {
-        'style': { 'background-image': `url(${entry.profileBackground.url})` }
-      });
-    }
+  this.user.get_gravatar_profile().then(profile => {
+    this.trigger(':GravatarProfileFound', {
+      'style': { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
+    });
   });
 
-  BzDeck.controllers.users.fetch_user(email).then(user => {
-    this.trigger(':BugzillaDataFound', {
+  this.user.get_bugzilla_profile().then(profile => {
+    this.trigger(':BugzillaProfileFound', {
       'profile': {
-        'id': user.id,
+        'id': profile.id,
         'email': email,
         'emailLink': 'mailto:' + email,
-        'name': user.real_name || email,
-        'image': gravatar.avatar_url,
+        'name': this.user.original_name || this.user.name,
+        'image': this.user.image,
       },
       'links': {
         'bugzilla-profile': server.url + '/user_profile?login=' + encodeURI(email),
         'bugzilla-activity': server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
       },
       'style': {
-        'background-color': BzDeck.controllers.users.get_color(user),
+        'background-color': user.color,
       },
     });
   }).catch(error => {
-    this.trigger(':BugzillaDataFetchingError', { error });
+    this.trigger(':BugzillaProfileFetchingError', { error });
   }).then(() => {
-    this.trigger(':BugzillaDataFetchingComplete');
+    this.trigger(':BugzillaProfileFetchingComplete');
   });
 };
 
