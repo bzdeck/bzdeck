@@ -43,7 +43,7 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
         'bugzilla-activity': server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
       },
       'style': {
-        'background-color': user.color,
+        'background-color': this.user.color,
       },
     });
   }).catch(error => {
