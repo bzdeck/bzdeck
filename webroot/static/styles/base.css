@@ -867,7 +867,7 @@ col[data-hidden="false"] {
 }
 
 [data-device|="mobile"]:root #sidebar [role="option"]:last-of-type,
-[data-device|="mobile"]:root #sidebar [role="presentation"]:last-of-type [role="menuitem"],
+[data-device|="mobile"]:root #sidebar [role="none"]:last-of-type [role="menuitem"],
 [data-device|="mobile"]:root #sidebar-account #main-menu--app--account {
   border-bottom-width: 0;
 }
