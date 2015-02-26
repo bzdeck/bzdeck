@@ -1,3 +1,3 @@
 Copyright © 2015 Kohei Yoshino. All rights reserved.
 
-You are allowed to view and fork this repository as explained in the [GitHub Terms of Service](https://help.github.com/articles/github-terms-of-service). An open source license may apply in the future.
+You are allowed to view and fork this repository as explained in the [GitHub Terms of Service](https://help.github.com/articles/github-terms-of-service). The code is licensed under the [Mozilla Public License, version 2.0](https://www.mozilla.org/MPL/2.0/).
