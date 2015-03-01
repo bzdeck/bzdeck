@@ -49,7 +49,8 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
 
       if (result.bugs.length) {
         return this.fetch_bugs([for (bug of result.bugs) bug.id])
-            .then(bugs => this.parse_bugs(bugs)).then(bugs => BzDeck.models.bug.save_bugs(bugs));
+            .then(bugs => this.parse_bugs(bugs)).then(bugs => BzDeck.models.bug.save_bugs(bugs))
+            .then(bugs => FlareTail.util.event.trigger(window, 'Bugs:Updated', { 'detail': { bugs }}));
       }
 
       return true;

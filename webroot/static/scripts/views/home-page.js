@@ -75,6 +75,14 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
     // Open the bug in a new tab
     'O': event => open_tab(),
   });
+
+  // Refresh the thread when bugs are updated
+  // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
+  this.on('Bugs:Updated', data => {
+    if (BzDeck.controllers.sidebar) {
+      BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
+    }
+  });
 };
 
 BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.Base.prototype);
