@@ -67,9 +67,9 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
   this.on('V:ToolbarButtonPressed', data => {
     let func = {
-      'show-details': BzDeck.router.navigate('/bug/' + this.data.preview_id,
-                                             { 'ids': [for (bug of this.data.bugs) bug.id] }),
-      'show-basic-search-pane': this.trigger(':ReturnToBasicSearchPane'),
+      'show-details': () => BzDeck.router.navigate('/bug/' + this.data.preview_id,
+                                                   { 'ids': [for (bug of this.data.bugs) bug.id] }),
+      'show-basic-search-pane': () => this.trigger(':ReturnToBasicSearchPane'),
     }[data.command];
 
     if (func) {
