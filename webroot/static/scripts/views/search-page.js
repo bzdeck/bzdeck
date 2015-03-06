@@ -224,6 +224,7 @@ BzDeck.views.SearchPage.prototype.setup_preview_pane = function () {
       $info = this.get_fragment('preview-bug-info').firstElementChild;
 
   $bug.appendChild($info).id = `${$bug.id}-info`;
+  new this.widget.Button($bug.querySelector('[data-command="show-menu"]'));
 };
 
 BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
@@ -255,6 +256,8 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
   this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
   this.$$bug.render(bug);
   $bug.setAttribute('aria-hidden', 'false');
+  $bug.querySelector('[data-command="open-bugzilla"]')
+      .href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
 };
 
 BzDeck.views.SearchPage.prototype.show_basic_search_pane = function () {

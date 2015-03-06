@@ -58,10 +58,14 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
 
   // Show Details button
   let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
-      $$button = this.$$details_button = new FlareTail.widget.Button($button),
+      $$button = this.$$details_button = new this.widget.Button($button),
       open_tab = () => this.trigger(':OpeningTabRequested');
 
   $$button.bind('Pressed', event => open_tab());
+
+  // Activate the menu button
+  this.$$menu_button = new this.widget.Button($bug.querySelector('[data-command="show-menu"]'));
+  this.$bugzilla_link = $bug.querySelector('[data-command="open-bugzilla"]');
 
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign($bug.querySelector('.bug-timeline'), {
@@ -145,18 +149,18 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
   let $bug = document.querySelector('#home-preview-bug'),
       $$button = this.$$details_button;
 
-  if (!bug) {
-    $bug.setAttribute('aria-hidden', 'true');
-    $$button.data.disabled = true;
+  $bug.setAttribute('aria-hidden', !bug);
+  $$button.data.disabled = !bug;
+  this.$bugzilla_link.setAttribute('aria-disabled', !bug);
 
+  if (!bug) {
     return;
   }
 
   // Fill the content
   this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
   this.$$bug.render(bug);
-  $bug.setAttribute('aria-hidden', 'false');
-  $$button.data.disabled = false;
+  this.$bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
 
   if (FlareTail.util.ua.device.mobile) {
     let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),

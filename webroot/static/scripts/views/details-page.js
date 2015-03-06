@@ -68,6 +68,11 @@ BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
 
+  // Activate the menu button
+  new this.widget.Button($article.querySelector('[data-command="show-menu"]'));
+  $article.querySelector('[data-command="open-bugzilla"]')
+           .href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
+
   if (mobile) {
     $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
   }
