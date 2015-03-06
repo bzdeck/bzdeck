@@ -158,6 +158,10 @@ FlareTail.widget.Button = function Button ($button) {
   };
 
   FlareTail.util.event.bind(this, $button, ['click', 'keydown']);
+
+  if ($button.matches('[aria-haspopup="true"]')) {
+    this.activate_popup();
+  }
 };
 
 FlareTail.widget.Button.prototype = Object.create(FlareTail.widget.Command.prototype);
@@ -180,13 +184,65 @@ FlareTail.widget.Button.prototype.onclick = function (event) {
 };
 
 FlareTail.widget.Button.prototype.onkeydown = function (event) {
-  if (event.keyCode === event.DOM_VK_SPACE) {
+  let kcode = event.keyCode;
+
+  if (kcode === event.DOM_VK_SPACE || kcode === event.DOM_VK_RETURN) {
     this.onclick(event);
+  }
+
+  // Support menu button
+  if (this.view.$$menu) {
+    let menuitems = this.view.$$menu.view.members;
+
+    if (kcode === event.DOM_VK_DOWN) {
+      this.view.$$menu.view.selected = this.view.$$menu.view.$focused = menuitems[0];
+    }
+
+    if (kcode === event.DOM_VK_UP) {
+      this.view.$$menu.view.selected = this.view.$$menu.view.$focused = menuitems[menuitems.length -1];
+    }
+
+    if (kcode === event.DOM_VK_ESCAPE) {
+      this.view.$$menu.close();
+      this.view.$button.focus();
+      this.data.pressed = false;
+    }
   }
 };
 
 FlareTail.widget.Button.prototype.bind = function (...args) {
   this.view.$button.addEventListener(...args);
+};
+
+FlareTail.widget.Button.prototype.activate_popup = function () {
+  this.view.$popup = document.getElementById(this.view.$button.getAttribute('aria-owns'));
+
+  // Implement menu button
+  // http://www.w3.org/TR/wai-aria-practices/#menubutton
+  if (this.view.$popup.matches('[role="menu"]')) {
+    this.view.$menu = this.view.$popup;
+    this.view.$$menu = new FlareTail.widget.Menu(this.view.$menu);
+    this.view.$$menu.bind('MenuItemSelected', event => this.view.$button.focus());
+
+    this.bind('Pressed', event => {
+      if (event.detail.pressed) {
+        this.view.$$menu.open();
+      } else {
+        this.view.$$menu.close();
+        this.view.$button.focus();
+      }
+    });
+  } else {
+    this.bind('Pressed', event => {
+      this.view.$popup.setAttribute('aria-expanded', event.detail.pressed);
+
+      if (event.detail.pressed) {
+        this.view.$popup.focus();
+      } else {
+        this.view.$button.focus();
+      }
+    });
+  }
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -2083,11 +2139,11 @@ FlareTail.widget.Tree.prototype.build = function () {
       map = this.data.map = new WeakMap(),
       level = 1;
 
-  $outer.setAttribute('role', 'presentation');
+  $outer.setAttribute('role', 'none');
   $treeitem.setAttribute('role', 'treeitem');
   $treeitem.appendChild(document.createElement('label'));
   $expander.className = 'expander';
-  $expander.setAttribute('role', 'presentation');
+  $expander.setAttribute('role', 'none');
   $group.setAttribute('role', 'group');
 
   let get_item = obj => {
