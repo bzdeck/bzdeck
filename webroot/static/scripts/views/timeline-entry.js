@@ -90,7 +90,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       this.bug._starred_comments.add(comment.id);
     }
 
-    BzDeck.models.bug.save(this.bug);
+    BzDeck.models.bugs.save(this.bug);
     FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { 'bug': this.bug }});
   };
 
@@ -106,7 +106,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       return;
     }
 
-    let ascending = BzDeck.models.pref.data['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.prefs.data['ui.timeline.sort.order'] !== 'descending',
         entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -205,7 +205,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     $outer.appendChild($media);
     $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
-    if (BzDeck.models.pref.data['ui.timeline.display_attachments_inline'] !== false) {
+    if (BzDeck.models.prefs.data['ui.timeline.display_attachments_inline'] !== false) {
       $outer.setAttribute('aria-busy', 'true');
       $media.src = url;
     }

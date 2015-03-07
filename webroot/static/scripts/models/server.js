@@ -7,27 +7,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.models.Server = function ServerModel () {};
+BzDeck.models.Server = function ServerModel (server) {
+  this.data = server;
 
-BzDeck.models.Server.prototype = Object.create(BzDeck.models.BaseModel.prototype);
-BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
-
-BzDeck.models.Server.prototype.get = function (name) {
-  let server = [for (server of BzDeck.config.servers) if (server.name === name) server][0];
-
-  return new Promise((resolve, reject) => {
-    if (server) {
-      this.data = server;
-      resolve(server);
-    } else {
-      reject(new Error('Server Not Found'));
-    }
+  Object.defineProperties(this, {
+    'store': { 'enumerable': true, 'get': () => this.get_store('global', 'bugzilla') },
   });
 };
 
+BzDeck.models.Server.prototype = Object.create(BzDeck.models.Base.prototype);
+BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
+
 BzDeck.models.Server.prototype.get_config = function () {
   return new Promise((resolve, reject) => {
-    this.get_store('bugzilla').get(this.data.name).then(server => {
+    this.store.get(this.data.name).then(server => {
       if (server) {
         this.data.config = server.config;
         resolve(server.config);
@@ -40,5 +33,5 @@ BzDeck.models.Server.prototype.get_config = function () {
 
 BzDeck.models.Server.prototype.save_config = function (config) {
   this.data.config = config;
-  this.get_store('bugzilla').save({ 'host': this.data.name, config });
+  this.store.save({ 'host': this.data.name, config });
 };

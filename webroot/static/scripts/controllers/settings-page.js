@@ -9,35 +9,35 @@
 
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
-      account = BzDeck.models.account.data,
+      account = BzDeck.models.account,
       api_key_link = BzDeck.models.server.data.url + '/userprefs.cgi?tab=apikey',
       prefs = new Map();
 
   for (let [name, value] of Iterator(BzDeck.config.prefs)) {
-    value.user = BzDeck.models.pref.data[name];
+    value.user = BzDeck.models.prefs.data[name];
     prefs.set(name, value);
   }
 
   BzDeck.views.toolbar.open_tab({
     'page_category': 'settings',
     'page_constructor': BzDeck.views.SettingsPage,
-    'page_constructor_args': [tab_id, account.api_key, api_key_link, prefs],
+    'page_constructor_args': [tab_id, account.data.api_key, api_key_link, prefs],
     'tab_label': 'Settings',
   }, this);
 
   this.on('V:APIKeyProvided', data => {
     let params = new URLSearchParams();
 
-    params.append('names', account.name);
+    params.append('names', account.data.name);
     params.append('api_key', data.api_key);
 
     this.request('GET', 'user', params).then(result => {
       if (result.users) {
         // Delete the previously-used auth token
-        delete account.token;
+        delete account.data.token;
         // Save the new API Key
-        account.api_key = data.api_key;
-        BzDeck.models.account.save(account);
+        account.data.api_key = data.api_key;
+        account.save();
         // Update the view
         this.trigger(':APIKeyVerified');
       } else {
@@ -51,7 +51,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   this.on('V:PrefValueChanged', data => {
     let { name, value } = data;
 
-    BzDeck.models.pref.data[name] = value;
+    BzDeck.models.prefs.data[name] = value;
 
     if (name === 'ui.theme.selected') {
       FlareTail.util.theme.selected = value;

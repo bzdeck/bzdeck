@@ -387,7 +387,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     if (!BzDeck.controllers.bugzfeed.has(this.bug.id)) {
       BzDeck.controllers.bugs.fetch_bug(this.bug.id)
           .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bug.save(bug));
+          .then(bug => BzDeck.models.bugs.save(bug));
     }
   }, errors => {
     // Failed to post at least one attachment

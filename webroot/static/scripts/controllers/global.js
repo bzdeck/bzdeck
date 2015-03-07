@@ -19,7 +19,7 @@ BzDeck.controllers.Global.prototype.timers = new Map();
 
 BzDeck.controllers.Global.prototype.init = function () {
   // This should be called after prefs are retrieved
-  this.view = BzDeck.views.global = new BzDeck.views.Global(BzDeck.models.pref.data);
+  this.view = BzDeck.views.global = new BzDeck.views.Global(BzDeck.models.prefs.data);
 };
 
 BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
@@ -27,7 +27,7 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
     return;
   }
 
-  BzDeck.models.bug.get_all().then(bugs => {
+  BzDeck.models.bugs.get_all().then(bugs => {
     let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
         extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
         unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs) if (bug._unread) bug].length;
@@ -44,7 +44,7 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
 };
 
 BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
-  if (BzDeck.models.pref.data['notifications.show_desktop_notifications'] === false) {
+  if (BzDeck.models.prefs.data['notifications.show_desktop_notifications'] === false) {
     return;
   }
 

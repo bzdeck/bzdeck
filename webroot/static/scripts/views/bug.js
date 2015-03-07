@@ -103,14 +103,14 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
     // Load comments, history, flags and attachments' metadata
     BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
       this.bug = Object.assign(this.bug, bug_details); // Merge data
-      BzDeck.models.bug.save(this.bug);
+      BzDeck.models.bugs.save(this.bug);
       FlareTail.util.event.async(() => this.fill_details(false, true));
     });
   }
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.models.pref.data['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.models.prefs.data['ui.timeline.sort.order'] !== 'descending',
         entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -264,7 +264,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   };
 
   if (related_bug_ids.size) {
-    BzDeck.models.bug.get_bugs(related_bug_ids).then(bugs => {
+    BzDeck.models.bugs.get(related_bug_ids).then(bugs => {
       let found_bug_ids = [for (bug of bugs) bug.id],
           lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.includes(id)) id];
 
@@ -272,7 +272,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
 
       if (lookup_bug_ids.length) {
         BzDeck.controllers.bugs.fetch_bugs(lookup_bug_ids).then(bugs => {
-          BzDeck.models.bug.save_bugs(bugs);
+          BzDeck.models.bugs.save(bugs);
           bugs.map(set_tooltops);
         });
       }

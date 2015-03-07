@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.User = function UserController (name, profile = undefined, options = {}) {
-  this.model = BzDeck.models.user;
+  this.model = BzDeck.models.users;
   this.profiles = this.model.get(name) || profile || { 'bugzilla': { name }};
   this.email = name;
 
@@ -103,6 +103,7 @@ BzDeck.controllers.User.prototype.fetch_data = function (options = {}) {
     ]).then(results => {
       this.profiles = {
         'name': this.email, // String
+        'id': results[0].id, // Integer
         'bugzilla': results[0], // Object
         'image_blob': results[1], // Blob
         'image_src': results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
@@ -112,6 +113,7 @@ BzDeck.controllers.User.prototype.fetch_data = function (options = {}) {
     }).catch(error => {
       this.profiles = {
         'name': this.email,
+        'id': 0,
         'error': error.message,
         'updated': Date.now(),
       };

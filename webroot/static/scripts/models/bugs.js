@@ -1,5 +1,5 @@
 /**
- * BzDeck Bug Model
+ * BzDeck Bugs Model
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,14 +7,24 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.models.Bug = function BugModel () {};
+BzDeck.models.Bugs = function BugsModel () {
+  Object.defineProperties(this, {
+    'store': { 'enumerable': true, 'get': () => this.get_store('account', 'bugs') },
+    'transaction': { 'enumerable': true, 'get': () => this.get_transaction('account', 'bugs') },
+  });
+};
 
-BzDeck.models.Bug.prototype = Object.create(BzDeck.models.BaseModel.prototype);
-BzDeck.models.Bug.prototype.constructor = BzDeck.models.Bug;
+BzDeck.models.Bugs.prototype = Object.create(BzDeck.models.Base.prototype);
+BzDeck.models.Bugs.prototype.constructor = BzDeck.models.Bugs;
 
-BzDeck.models.Bug.prototype.get = function (id, record_time = true) {
+BzDeck.models.Bugs.prototype.get = function () {
+  return Array.isArray(arguments[0]) ? this.get_multiple(arguments[0])
+                                     : this.get_single(arguments[0], arguments[1]);
+};
+
+BzDeck.models.Bugs.prototype.get_single = function (id, record_time = true) {
   let cache = this.data,
-      store = this.get_store('bugs');
+      store = this.store;
 
   return new Promise(resolve => {
     if (cache) {
@@ -49,7 +59,7 @@ BzDeck.models.Bug.prototype.get = function (id, record_time = true) {
   });
 };
 
-BzDeck.models.Bug.prototype.get_bugs = function (ids) {
+BzDeck.models.Bugs.prototype.get_multiple = function (ids) {
   let cache = this.data;
 
   ids = [...ids]; // Accept both an Array and a Set as the first argument
@@ -61,13 +71,13 @@ BzDeck.models.Bug.prototype.get_bugs = function (ids) {
       return;
     }
 
-    this.get_store('bugs').get_all().then(bugs => {
+    this.store.get_all().then(bugs => {
       resolve([for (bug of bugs) if (ids.includes(bug.id)) bug]);
     });
   });
 };
 
-BzDeck.models.Bug.prototype.get_all = function () {
+BzDeck.models.Bugs.prototype.get_all = function () {
   let cache = this.data;
 
   return new Promise(resolve => {
@@ -77,7 +87,7 @@ BzDeck.models.Bug.prototype.get_all = function () {
       return;
     }
 
-    this.get_store('bugs').get_all().then(bugs => {
+    this.store.get_all().then(bugs => {
       resolve(bugs || []);
 
       if (bugs && !cache) {
@@ -87,13 +97,18 @@ BzDeck.models.Bug.prototype.get_all = function () {
   });
 };
 
-BzDeck.models.Bug.prototype.save = function (bug) {
-  return new Promise(resolve => this.save_bugs([bug]).then(bugs => resolve(bug)));
+BzDeck.models.Bugs.prototype.save = function () {
+  return Array.isArray(arguments[0]) ? this.save_multiple(arguments[0])
+                                     : this.save_single(arguments[0]);
 };
 
-BzDeck.models.Bug.prototype.save_bugs = function (bugs) {
+BzDeck.models.Bugs.prototype.save_single = function (bug) {
+  return new Promise(resolve => this.save_multiple([bug]).then(bugs => resolve(bug)));
+};
+
+BzDeck.models.Bugs.prototype.save_multiple = function (bugs) {
   let cache = this.data,
-      transaction = BzDeck.models.databases.account.transaction('bugs', 'readwrite'),
+      transaction = this.transaction,
       store = transaction.objectStore('bugs');
 
   return new Promise(resolve => {
@@ -110,7 +125,7 @@ BzDeck.models.Bug.prototype.save_bugs = function (bugs) {
   });
 };
 
-BzDeck.models.Bug.prototype.get_subscription = function (id) {
+BzDeck.models.Bugs.prototype.get_subscription = function (id) {
   let email = BzDeck.models.account.data.name;
 
   return new Promise(resolve => {
@@ -142,7 +157,7 @@ BzDeck.models.Bug.prototype.get_subscription = function (id) {
   });
 };
 
-BzDeck.models.Bug.prototype.get_subscribed_bugs = function () {
+BzDeck.models.Bugs.prototype.get_subscribed_bugs = function () {
   let email = BzDeck.models.account.data.name;
 
   return new Promise(resolve => {

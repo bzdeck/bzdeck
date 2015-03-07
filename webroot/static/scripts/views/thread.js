@@ -35,7 +35,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
-  let prefs = BzDeck.models.pref.data,
+  let prefs = BzDeck.models.prefs.data,
       default_cols = BzDeck.config.grid.default_columns,
       columns = prefs[`${name}.list.columns`] || default_cols,
       field = BzDeck.models.server.data.config.field;

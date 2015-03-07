@@ -10,7 +10,7 @@
 BzDeck.controllers.bugs = {};
 
 BzDeck.controllers.bugs.fetch_subscriptions = function () {
-  let prefs = BzDeck.models.pref.data,
+  let prefs = BzDeck.models.prefs.data,
       last_loaded = prefs['subscriptions.last_loaded'],
       firstrun = !last_loaded,
       params = new URLSearchParams(),
@@ -34,7 +34,7 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
     params.append('v' + i, BzDeck.models.account.data.name);
   }
 
-  return new Promise((resolve, reject) => BzDeck.models.bug.get_all().then(cached_bugs => {
+  return new Promise((resolve, reject) => BzDeck.models.bugs.get_all().then(cached_bugs => {
     // Append starred bugs to the query
     params.append('f9', 'bug_id');
     params.append('o9', 'anywords');
@@ -44,12 +44,12 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
       last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
       if (firstrun) {
-        return this.initialize_bugs(result.bugs).then(bugs => BzDeck.models.bug.save_bugs(bugs));
+        return this.initialize_bugs(result.bugs).then(bugs => BzDeck.models.bugs.save(bugs));
       }
 
       if (result.bugs.length) {
         return this.fetch_bugs([for (bug of result.bugs) bug.id])
-            .then(bugs => this.parse_bugs(bugs)).then(bugs => BzDeck.models.bug.save_bugs(bugs))
+            .then(bugs => this.parse_bugs(bugs)).then(bugs => BzDeck.models.bugs.save(bugs))
             .then(bugs => FlareTail.util.event.trigger(window, 'Bugs:Updated', { 'detail': { bugs }}));
       }
 
@@ -113,7 +113,7 @@ BzDeck.controllers.bugs.parse_bugs = function (bugs) {
 
 BzDeck.controllers.bugs.parse_bug = function (bug) {
   // Check if the bug has been cached, then identify the changes
-  return new Promise(resolve => BzDeck.models.bug.get(bug.id).then(cache => {
+  return new Promise(resolve => BzDeck.models.bugs.get(bug.id).then(cache => {
     if (!cache) {
       bug._unread = true;
       resolve(bug);
@@ -126,7 +126,7 @@ BzDeck.controllers.bugs.parse_bug = function (bug) {
       bug[key] = value;
     }
 
-    let ignore_cc = BzDeck.models.pref.data['notifications.ignore_cc_changes'] !== false,
+    let ignore_cc = BzDeck.models.prefs.data['notifications.ignore_cc_changes'] !== false,
         cached_time = new Date(cache.last_change_time),
         cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
         new_comments = new Map([for (c of bug.comments) if (cmp_time(c)) [new Date(c.creation_time), c]]),
@@ -175,7 +175,7 @@ BzDeck.controllers.bugs.parse_bug = function (bug) {
 
 BzDeck.controllers.bugs.toggle_star = function (id, starred) {
   // Save in DB
-  BzDeck.models.bug.get(id).then(bug => {
+  BzDeck.models.bugs.get(id).then(bug => {
     if (bug && bug.comments) {
       if (!bug._starred_comments) {
         bug._starred_comments = new Set();
@@ -187,7 +187,7 @@ BzDeck.controllers.bugs.toggle_star = function (id, starred) {
         bug._starred_comments.clear();
       }
 
-      BzDeck.models.bug.save(bug);
+      BzDeck.models.bugs.save(bug);
       FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { bug }});
     }
   });
@@ -195,10 +195,10 @@ BzDeck.controllers.bugs.toggle_star = function (id, starred) {
 
 BzDeck.controllers.bugs.toggle_unread = function (id, value) {
   // Save in DB
-  BzDeck.models.bug.get(id).then(bug => {
+  BzDeck.models.bugs.get(id).then(bug => {
     if (bug && bug._unread !== value) {
       bug._unread = value;
-      BzDeck.models.bug.save(bug);
+      BzDeck.models.bugs.save(bug);
       FlareTail.util.event.trigger(window, 'Bug:UnreadToggled', { 'detail': { bug }});
     }
   });

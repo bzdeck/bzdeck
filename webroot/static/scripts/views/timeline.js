@@ -11,7 +11,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
   let get_time = str => (new Date(str)).getTime(),
       entries = new Map([for (c of bug.comments.entries())
                              [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
-      prefs = BzDeck.models.pref.data,
+      prefs = BzDeck.models.prefs.data,
       show_cc_changes = prefs['ui.timeline.show_cc_changes'] === true,
       click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,

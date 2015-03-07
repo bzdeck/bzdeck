@@ -1,5 +1,5 @@
 /**
- * BzDeck Pref Model
+ * BzDeck Prefs Model
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,16 +7,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.models.Pref = function PrefsModel () {};
+BzDeck.models.Prefs = function PrefsModel () {
+  Object.defineProperties(this, {
+    'store': { 'enumerable': true, 'get': () => this.get_store('account', 'prefs') },
+  });
+};
 
-BzDeck.models.Pref.prototype = Object.create(BzDeck.models.BaseModel.prototype);
-BzDeck.models.Pref.prototype.constructor = BzDeck.models.Pref;
+BzDeck.models.Prefs.prototype = Object.create(BzDeck.models.Base.prototype);
+BzDeck.models.Prefs.prototype.constructor = BzDeck.models.Prefs;
 
-BzDeck.models.Pref.prototype.load = function () {
+BzDeck.models.Prefs.prototype.load = function () {
   let prefs = {};
 
   return new Promise(resolve => {
-    this.get_store('prefs').get_all().then(result => {
+    this.store.get_all().then(result => {
       for (let pref of result) {
         prefs[pref.name] = pref.value;
       }
@@ -24,7 +28,7 @@ BzDeck.models.Pref.prototype.load = function () {
       this.data = new Proxy(prefs, {
         'set': (obj, key, value) => {
           obj[key] = value;
-          this.get_store('prefs').save({ 'name': key, value });
+          this.store.save({ 'name': key, value });
         }
       });
 

@@ -19,7 +19,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
     'tab_position': 'next',
   }, this);
 
-  BzDeck.models.bug.get(this.id).then(bug => {
+  BzDeck.models.bugs.get(this.id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
     if (!bug) {
       this.fetch_bug();
@@ -49,7 +49,7 @@ BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {
 
   BzDeck.controllers.bugs.fetch_bug(this.id).then(bug => {
     // Save in DB
-    BzDeck.models.bug.save(bug);
+    BzDeck.models.bugs.save(bug);
     this.trigger(':LoadingComplete', { bug });
   }).catch(bug => {
     this.trigger(':LoadingError');

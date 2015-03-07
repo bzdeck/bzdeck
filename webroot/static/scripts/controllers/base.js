@@ -17,14 +17,13 @@ BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 BzDeck.controllers.Base.prototype.request = function (method, path, params, data = null,
                                                                 listeners = {}, options = {}) {
   let server = BzDeck.models.server.data,
-      account = BzDeck.models.account.data,
       xhr = new XMLHttpRequest(),
       url = new URL(server.url + server.endpoints.rest);
 
   params = params || new URLSearchParams();
 
   if (options.auth) {
-    params.append('api_key', account.api_key);
+    params.append('api_key', BzDeck.models.account.data.api_key);
   }
 
   url.pathname += path;

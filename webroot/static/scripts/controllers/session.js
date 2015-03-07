@@ -11,13 +11,7 @@
 BzDeck.controllers.Session = function SessionController () {
   this.bootstrapping = true;
 
-  // Define all models
-  BzDeck.models.account = new BzDeck.models.Account();
-  BzDeck.models.bug = new BzDeck.models.Bug();
-  BzDeck.models.pref = new BzDeck.models.Pref();
-  BzDeck.models.server = new BzDeck.models.Server();
-  BzDeck.models.user = new BzDeck.models.User();
-
+  BzDeck.models.global = new BzDeck.models.Global();
   BzDeck.controllers.global = new BzDeck.controllers.Global();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
 
@@ -32,14 +26,16 @@ BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
 
 // Bootstrap Step 1. Find a user account from the local database
 BzDeck.controllers.Session.prototype.find_account = function () {
-  BzDeck.models.account.open_global_db().then(database => {
+  BzDeck.models.global.get_database().then(database => {
+    return BzDeck.models.global.get_active_account();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
-  }).then(() => {
-    return BzDeck.models.account.get_active_account();
   }).then(account => {
-    return BzDeck.models.server.get(BzDeck.models.account.data.host);
+    BzDeck.models.account = account; // Model
+
+    return BzDeck.models.global.get_server(account.data.host);
   }).then(server => {
+    BzDeck.models.server = server; // Model
     this.load_data();
   }).catch(() => {
     this.force_login();
@@ -65,7 +61,9 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
     this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
 
-    BzDeck.models.server.get(data.host).then(server => {
+    BzDeck.models.global.get_server(data.host).then(server => {
+      BzDeck.models.server = server; // Model
+
       let params = new URLSearchParams();
 
       params.append('names', data.email);
@@ -77,7 +75,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
     }).then(profiles => {
       return profiles.error ? Promise.reject(new Error(profiles.error)) : Promise.resolve(profiles);
     }).then(profiles => {
-      BzDeck.models.account.save({
+      let account = BzDeck.models.account = new BzDeck.models.Account({
         'host': BzDeck.models.server.data.name,
         'name': data.email,
         'api_key': data.api_key || undefined,
@@ -85,6 +83,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
         'active': true,
       });
 
+      account.save();
       this.trigger(':UserFound');
       this.load_data();
     }).catch(error => {
@@ -95,11 +94,14 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
 // Bootstrap Step 3. Load data from Bugzilla once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
-  BzDeck.models.account.open_account_db().then(database => {
+  BzDeck.models.account.get_database().then(database => {
+    BzDeck.models.bugs = new BzDeck.models.Bugs();
+    BzDeck.models.prefs = new BzDeck.models.Prefs();
+    BzDeck.models.users = new BzDeck.models.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => {
-    return BzDeck.models.pref.load();
+    return BzDeck.models.prefs.load();
   }).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
@@ -137,7 +139,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).catch(error => {
     // Finally load the UI modules
     return Promise.all([
-      BzDeck.models.user.init(),
+      BzDeck.models.users.init(),
     ]).then(() => Promise.all([
       BzDeck.controllers.global.init(),
       BzDeck.controllers.users = new BzDeck.controllers.Users(),
@@ -174,7 +176,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
-  BzDeck.models.bug.get_subscription('requests').then(bugs => {
+  BzDeck.models.bugs.get_subscription('requests').then(bugs => {
     let len = bugs.size;
 
     if (!len) {

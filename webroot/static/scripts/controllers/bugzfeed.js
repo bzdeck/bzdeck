@@ -54,7 +54,7 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
     if (message.command === 'update') {
       BzDeck.controllers.bugs.fetch_bug(message.bug) // message.bug = ID
           .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bug.save(bug));
+          .then(bug => BzDeck.models.bugs.save(bug));
     }
   });
 };

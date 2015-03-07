@@ -8,15 +8,17 @@
  */
 
 BzDeck.models = BzDeck.models || {};
-BzDeck.models.databases = {};
 
-BzDeck.models.BaseModel = function BaseModel () {};
-BzDeck.models.BaseModel.prototype = Object.create(FlareTail.app.Model.prototype);
-BzDeck.models.BaseModel.prototype.constructor = BzDeck.models.BaseModel;
+BzDeck.models.Base = function BaseModel () {};
+BzDeck.models.Base.prototype = Object.create(FlareTail.app.Model.prototype);
+BzDeck.models.Base.prototype.constructor = BzDeck.models.Base;
 
-BzDeck.models.BaseModel.prototype.get_store = function (name) {
-  let type = name.match(/^accounts|bugzilla$/) ? 'global' : 'account',
-      store = BzDeck.models.databases[type].transaction(name, 'readwrite').objectStore(name),
+BzDeck.models.Base.prototype.get_transaction = function (db_name, store_name) {
+  return BzDeck.models[db_name].database.transaction(store_name, 'readwrite');
+};
+
+BzDeck.models.Base.prototype.get_store = function (db_name, store_name) {
+  let store = this.get_transaction(db_name, store_name).objectStore(store_name),
       send = request => new Promise((resolve, reject) => {
         request.addEventListener('success', event => resolve(event.target.result));
         request.addEventListener('error', event => reject(new Error(event)));
@@ -31,62 +33,7 @@ BzDeck.models.BaseModel.prototype.get_store = function (name) {
   };
 };
 
-BzDeck.models.BaseModel.prototype.open_global_db = function () {
-  let req = indexedDB.open('global');
-
-  // The database is created or upgraded
-  req.addEventListener('upgradeneeded', event => {
-    let db = event.target.result,
-        store;
-
-    // Create stores when the database is created
-    if (event.oldVersion < 1) {
-      store = db.createObjectStore('bugzilla', { 'keyPath': 'host' });
-
-      store = db.createObjectStore('accounts', { 'keyPath': 'loaded' });
-      store.createIndex('host', 'host', { 'unique': false });
-      store.createIndex('id', 'id', { 'unique': false });
-      store.createIndex('name', 'name', { 'unique': false });
-
-      // Delete the old database if exists
-      indexedDB.deleteDatabase('BzDeck');
-    }
-  });
-
-  req.addEventListener('success', event => {
-    BzDeck.models.databases.global = event.target.result;
-  });
-
-  return this.open_database(req);
-};
-
-BzDeck.models.BaseModel.prototype.open_account_db = function () {
-  let req = indexedDB.open(`${BzDeck.models.server.data.name}::${BzDeck.models.account.data.name}`);
-
-  req.addEventListener('upgradeneeded', event => {
-    let db = event.target.result,
-        store;
-
-    // Create stores when the database is created
-    if (event.oldVersion < 1) {
-      store = db.createObjectStore('bugs', { 'keyPath': 'id' });
-      store.createIndex('alias', 'alias', { 'unique': true });
-
-      store = db.createObjectStore('users', { 'keyPath': 'name' });
-      store.createIndex('id', 'id', { 'unique': true });
-
-      store = db.createObjectStore('prefs', { 'keyPath': 'name' });
-    }
-  });
-
-  req.addEventListener('success', event => {
-    BzDeck.models.databases.account = event.target.result;
-  });
-
-  return this.open_database(req);
-};
-
-BzDeck.models.BaseModel.prototype.open_database = function (req) {
+BzDeck.models.Base.prototype.open_database = function (req) {
   return new Promise((resolve, reject) => {
     req.addEventListener('success', event => resolve(event.target.result));
     req.addEventListener('error', event => reject(new Error('Failed to open the database. Make sure you’re not using \

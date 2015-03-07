@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.Users = function UsersController () {
-  this.model = BzDeck.models.user;
+  this.model = BzDeck.models.users;
   this.cache = new Map();
 };
 
