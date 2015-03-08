@@ -41,9 +41,6 @@ BzDeck.views.Global = function GlobalView (prefs) {
   value = prefs['ui.timeline.display_attachments_inline'];
   $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
 
-  // Activate widgets
-  // BzDeck.views.DetailsPage.swipe.init();
-
   // Change the theme
   if (theme && FTut.list.contains(theme)) {
     FTut.selected = theme;
