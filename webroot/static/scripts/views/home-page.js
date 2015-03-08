@@ -37,11 +37,6 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
   // A movable splitter between the thread pane and preview pane
   this.setup_splitter(prefs);
 
-  let $bug = document.querySelector('#home-preview-pane article'),
-      $info = this.get_fragment('preview-bug-info').firstElementChild;
-
-  $bug.appendChild($info).id = 'home-preview-bug-info';
-
   let layout_pref = prefs['ui.home.layout'],
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
@@ -53,32 +48,8 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
     }
   });
 
-  this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
-  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
-
-  // Show Details button
-  let $button = document.querySelector('#home-preview-bug [data-command="show-details"]'),
-      $$button = this.$$details_button = new this.widget.Button($button),
-      open_tab = () => this.trigger(':OpeningTabRequested');
-
-  $$button.bind('Pressed', event => open_tab());
-
-  // Activate the menu button
-  this.$$menu_button = new this.widget.Button($bug.querySelector('[data-command="show-menu"]'));
-  this.$bugzilla_link = $bug.querySelector('[data-command="open-bugzilla"]');
-
-  // Assign keyboard shortcuts
-  FlareTail.util.kbd.assign($bug.querySelector('.bug-timeline'), {
-    // [B] previous bug or [F] next bug: handle on the home thread
-    'B|F': event => {
-      let vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical',
-          $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
-
-      FlareTail.util.kbd.dispatch($target, event.keyCode);
-    },
-    // Open the bug in a new tab
-    'O': event => open_tab(),
-  });
+  this.on('C:BugDataUnavailable', data => this.show_preview(undefined, prefs));
+  this.on('C:BugDataAvailable', data => this.show_preview(data.bug, prefs));
 
   // Refresh the thread when bugs are updated
   // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
@@ -145,24 +116,42 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs, prefs) {
   return [for ($item of items) bugs.get(Number($item.dataset.id))];
 };
 
-BzDeck.views.HomePage.prototype.show_preview = function (bug) {
-  let $bug = document.querySelector('#home-preview-bug'),
-      $$button = this.$$details_button;
+BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
+  let mobile = FlareTail.util.ua.device.mobile,
+      $pane = document.querySelector('#home-preview-pane');
 
-  $bug.setAttribute('aria-hidden', !bug);
-  $$button.data.disabled = !bug;
-  this.$bugzilla_link.setAttribute('aria-disabled', !bug);
+  $pane.innerHTML = '';
 
   if (!bug) {
     return;
   }
 
-  // Fill the content
-  this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
-  this.$$bug.render(bug);
-  this.$bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
+  let $bug = $pane.appendChild(this.get_fragment('home-preview-bug-template').firstElementChild),
+      $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
 
-  if (FlareTail.util.ua.device.mobile) {
+  // Activate the toolbar buttons
+  new this.widget.Button($bug.querySelector('[data-command="show-details"]'))
+      .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
+
+  // Assign keyboard shortcuts
+  FlareTail.util.kbd.assign($bug, {
+    // [B] previous bug or [F] next bug: handle on the home thread
+    'B|F': event => {
+      let vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical',
+          $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
+
+      FlareTail.util.kbd.dispatch($target, event.keyCode);
+    },
+    // Open the bug in a new tab
+    'O': event => this.trigger(':OpeningTabRequested'),
+  });
+
+  // Fill the content
+  this.$$bug = new BzDeck.views.Bug($bug, bug);
+  $info.id = 'home-preview-bug-info';
+  $bug.removeAttribute('aria-hidden');
+
+  if (mobile) {
     let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
         $_title = $timeline_content.querySelector('h3'),
         $title = $bug.querySelector('h3');

@@ -7,8 +7,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.Bug = function BugView ($bug) {
+BzDeck.views.Bug = function BugView ($bug, bug) {
   this.$bug = $bug;
+  this.bug = bug;
+
+  this.setup_toolbar();
+  this.render();
 
   // Custom scrollbars
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
@@ -39,12 +43,24 @@ BzDeck.views.Bug = function BugView ($bug) {
 BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
 
-BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
-  this.bug = bug;
+BzDeck.views.Bug.prototype.setup_toolbar = function () {
+  let $menu_button = this.$bug.querySelector('[data-command="show-menu"]'),
+      $bugzilla_link = this.$bug.querySelector('[data-command="open-bugzilla"]');
+
+  if ($menu_button) {
+    new this.widget.Button($menu_button);
+  }
+
+  if ($bugzilla_link) {
+    $bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${this.bug.id}`;
+  }
+};
+
+BzDeck.views.Bug.prototype.render = function () {
   this.$bug.dataset.id = this.bug.id;
 
   // TEMP: Add users when a bug is loaded; this should be in the controller
-  BzDeck.controllers.users.add_from_bug(bug);
+  BzDeck.controllers.users.add_from_bug(this.bug);
 
   if (!this.bug.summary && !this.bug._update_needed) {
     // The bug is being loaded
@@ -91,20 +107,18 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
   BzDeck.views.statusbar.show('Loading...'); // l10n
 
   // Empty timeline while keeping the scrollbar
-  if (!partial) {
-    for (let $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
-      $comment.remove();
-    }
+  for (let $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
+    $comment.remove();
   }
 
-  if (this.bug.comments && !this.bug._update_needed || partial) {
-    FlareTail.util.event.async(() => this.fill_details(partial, false));
+  if (this.bug.comments && !this.bug._update_needed) {
+    FlareTail.util.event.async(() => this.fill_details(false));
   } else {
     // Load comments, history, flags and attachments' metadata
     BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
       this.bug = Object.assign(this.bug, bug_details); // Merge data
       BzDeck.models.bugs.save(this.bug);
-      FlareTail.util.event.async(() => this.fill_details(false, true));
+      FlareTail.util.event.async(() => this.fill_details(true));
     });
   }
 
@@ -142,7 +156,7 @@ BzDeck.views.Bug.prototype.render = function (bug, partial = false) {
   }
 };
 
-BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
+BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
   if (!this.$bug || Number.parseInt(this.$bug.dataset.id) !== this.bug.id) {
@@ -198,22 +212,20 @@ BzDeck.views.Bug.prototype.fill_details = function (partial, delayed) {
 
   // TODO: Show Project Flags and Tracking Flags
 
-  if (!partial) {
-    FlareTail.util.event.async(() => {
-      // Timeline: comments, attachments & history
-      this.timeline = new BzDeck.views.Timeline(this.bug, this.$bug, delayed);
+  FlareTail.util.event.async(() => {
+    // Timeline: comments, attachments & history
+    this.timeline = new BzDeck.views.Timeline(this.bug, this.$bug, delayed);
 
-      // Attachments and History, only on the details tabs
-      new BzDeck.views.DetailsPageAttachments(this.$bug, this.bug.attachments);
-      new BzDeck.views.DetailsPageHistory(this.$bug, this.bug.history);
+    // Attachments and History, only on the details tabs
+    new BzDeck.views.DetailsPageAttachments(this.$bug, this.bug.attachments);
+    new BzDeck.views.DetailsPageHistory(this.$bug, this.bug.history);
 
-      // Add tooltips to the related bugs
-      this.set_bug_tooltips();
+    // Add tooltips to the related bugs
+    this.set_bug_tooltips();
 
-      // Force updating the scrollbars because sometimes those are not automatically updated
-      this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
-    });
-  }
+    // Force updating the scrollbars because sometimes those are not automatically updated
+    this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
+  });
 
   BzDeck.views.statusbar.show('');
 };

@@ -10,14 +10,12 @@
 BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
   this.id = id;
   this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
+  this.$grid = this.$tabpanel.querySelector('[id$="-result-pane"] [role="grid"]');
   this.$status = this.$tabpanel.querySelector('[role="status"]');
-  this.buttons = {};
   this.panes = {};
 
   this.setup_basic_search_pane(config);
   this.setup_result_pane(prefs);
-  this.setup_preview_pane();
-  this.setup_toolbar();
 
   Object.defineProperties(this, {
     'preview_is_hidden': {
@@ -31,15 +29,13 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
     this.panes['basic-search'].querySelector('.text-box [role="textbox"]').value = params.get('short_desc') || '';
   }
 
-  let $grid = this.panes['result'].querySelector('[role="grid"]');
-
   this.on('C:Offline', data => {
     this.show_status('You have to go online to search bugs.'); // l10n
   });
 
   this.on('C:SearchStarted', data => {
-    $grid.removeAttribute('aria-hidden');
-    $grid.setAttribute('aria-busy', 'true');
+    this.$grid.removeAttribute('aria-hidden');
+    this.$grid.setAttribute('aria-busy', 'true');
     this.hide_status();
     this.thread.update([]); // Clear grid body
   });
@@ -58,28 +54,15 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
   });
 
   this.on('C:SearchComplete', data => {
-    $grid.removeAttribute('aria-busy');
+    this.$grid.removeAttribute('aria-busy');
   });
 
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
   this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
-  this.on('C:ReturnToBasicSearchPane', data => this.show_basic_search_pane());
 };
 
 BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
-
-BzDeck.views.SearchPage.prototype.setup_toolbar = function () {
-  let handler = event => {
-    this.trigger(':ToolbarButtonPressed', { 'command': event.target.dataset.command });
-  };
-
-  for (let $button of this.$tabpanel.querySelectorAll('header [role="button"]')) {
-    let $$button = this.buttons[$button.dataset.command] = new this.widget.Button($button);
-
-    $$button.bind('Pressed', handler);
-  }
-};
 
 BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
@@ -192,7 +175,7 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function (prefs) {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = FlareTail.util.ua.device.mobile;
 
-  this.thread = new BzDeck.views.ClassicThread(this, 'search', $pane.querySelector('[role="grid"]'), {
+  this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
@@ -218,15 +201,6 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function (prefs) {
   });
 };
 
-BzDeck.views.SearchPage.prototype.setup_preview_pane = function () {
-  let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]'),
-      $bug = $pane.querySelector('article'),
-      $info = this.get_fragment('preview-bug-info').firstElementChild;
-
-  $bug.appendChild($info).id = `${$bug.id}-info`;
-  new this.widget.Button($bug.querySelector('[data-command="show-menu"]'));
-};
-
 BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
   let rows = this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
@@ -234,43 +208,53 @@ BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
 };
 
 BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
-  let $pane = this.panes['preview'],
-      $bug = $pane.querySelector('[id$="-preview-bug"]');
+  let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
+
+  $pane.innerHTML = '';
 
   if (!bug) {
-    $bug.setAttribute('aria-hidden', 'true');
-
     return;
   }
+
+  let $bug = $pane.appendChild(this.get_fragment('search-preview-bug-template', this.id).firstElementChild),
+      $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
+
+  // Activate the toolbar buttons
+  new this.widget.Button($bug.querySelector('[data-command="show-details"]'))
+      .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
+  new this.widget.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
+      .bind('Pressed', event => this.show_basic_search_pane());
+
+  // Assign keyboard shortcuts
+  FlareTail.util.kbd.assign($bug, {
+    // [B] previous bug or [F] next bug: handle on the search thread
+    'B|F': event => FlareTail.util.kbd.dispatch(this.$grid, event.keyCode),
+    // Open the bug in a new tab
+    'O': event => this.trigger(':OpeningTabRequested'),
+  });
+
+  // Fill the content
+  this.$$bug = new BzDeck.views.Bug($bug, bug);
+  $info.id = `search-${this.id}-preview-bug-info`;
+  $bug.removeAttribute('aria-hidden');
 
   // Show the preview pane
   if ($pane.matches('[aria-hidden="true"]')) {
     this.hide_status();
     this.panes['basic-search'].setAttribute('aria-hidden', 'true');
     $pane.setAttribute('aria-hidden', 'false');
-    this.buttons['show-details'].data.disabled = false;
-    this.buttons['show-basic-search-pane'].data.disabled = false;
   }
-
-  // Fill the content
-  this.$$bug = this.$$bug || new BzDeck.views.Bug($bug);
-  this.$$bug.render(bug);
-  $bug.setAttribute('aria-hidden', 'false');
-  $bug.querySelector('[data-command="open-bugzilla"]')
-      .href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
 };
 
 BzDeck.views.SearchPage.prototype.show_basic_search_pane = function () {
   this.panes['basic-search'].setAttribute('aria-hidden', 'false');
   this.panes['preview'].setAttribute('aria-hidden', 'true');
-  this.buttons['show-details'].data.disabled = true;
-  this.buttons['show-basic-search-pane'].data.disabled = true;
 };
 
 BzDeck.views.SearchPage.prototype.show_status = function (str) {
   this.$status.firstElementChild.textContent = str;
   this.$status.setAttribute('aria-hidden', str === '');
-  this.panes['result'].querySelector('[role="grid"]').setAttribute('aria-hidden', str !== '');
+  this.$grid.setAttribute('aria-hidden', str !== '');
 };
 
 BzDeck.views.SearchPage.prototype.hide_status = function () {

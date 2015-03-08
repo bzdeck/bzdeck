@@ -17,7 +17,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
 
   this.on('C:BugDataReady', data => {
     // Prepare the newly opened tabpanel
-    if (!this.$tabpanel.querySelector('[itemprop="id"]').itemValue) {
+    if (!this.$bug) {
       this.prep_tabpanel(this.$tabpanel, data.bug, this.ids);
       this.$tabpanel.removeAttribute('aria-busy');
       this.$tab.title = this.get_tab_title(data.bug);
@@ -38,8 +38,9 @@ BzDeck.views.DetailsPage = function DetailsPageView (id, ids = []) {
     if (this.$tabpanel) {
       BzDeck.views.statusbar.show('');
       // Update UI
-      this.$$bug.render(bug);
-      this.$tab.title = this.get_tab_title(bug);
+      this.$$bug.bug = data.bug;
+      this.$$bug.render();
+      this.$tab.title = this.get_tab_title(data.bug);
     }
   });
 
@@ -54,24 +55,19 @@ BzDeck.views.DetailsPage.prototype.constructor = BzDeck.views.DetailsPage;
 BzDeck.views.DetailsPage.prototype.prep_tabpanel = function ($tabpanel, bug, ids) {
   $tabpanel = $tabpanel || this.get_fragment('tabpanel-details-template', bug.id).firstElementChild;
 
-  this.$$bug = new BzDeck.views.Bug($tabpanel.querySelector('article'));
-  this.$$bug.render(bug);
+  this.$bug = $tabpanel.appendChild(this.get_fragment('bug-details-template', bug.id).firstElementChild);
+  this.$$bug = new BzDeck.views.Bug(this.$bug, bug);
+  this.$bug.removeAttribute('aria-hidden');
 
   let mobile = FlareTail.util.ua.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
       $tablist = $tabpanel.querySelector('[role="tablist"]'),
       $$tablist = new this.widget.TabList($tablist),
-      $article = $tabpanel.querySelector('article'),
       $title = $tabpanel.querySelector('h2'),
       $timeline_content = $tabpanel.querySelector('.bug-timeline .scrollable-area-content'),
       $info_tab = $tabpanel.querySelector('[id$="-tab-info"]'),
       $timeline_tab = $tabpanel.querySelector('[id$="-tab-timeline"]'),
       $bug_info = $tabpanel.querySelector('.bug-info');
-
-  // Activate the menu button
-  new this.widget.Button($article.querySelector('[data-command="show-menu"]'));
-  $article.querySelector('[data-command="open-bugzilla"]')
-           .href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${bug.id}`;
 
   if (mobile) {
     $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
