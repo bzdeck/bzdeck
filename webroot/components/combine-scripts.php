@@ -39,6 +39,7 @@ $scripts = [
   './views/timeline-entry.js',
   './views/timeline.js',
   './views/toolbar.js',
+  './views/tooltip.js',
   './controllers/base.js',
   './controllers/bug.js',
   './controllers/bugs.js',

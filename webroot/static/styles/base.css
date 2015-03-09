@@ -2827,6 +2827,74 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 /* ----------------------------------------------------------------------------------------------
+ * Tooltips
+ * ---------------------------------------------------------------------------------------------- */
+
+[role="tooltip"][itemtype$="Bug"] {
+  position: absolute;
+  z-index: 1000;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--control-border-color);
+  padding: 1rem;
+  width: 32rem;
+  height: 3.2rem;
+  background-color: var(--control-background-color);
+  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+  pointer-events: auto;
+}
+
+[role="tooltip"][itemtype$="Bug"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1;
+  pointer-events: none;
+}
+
+[role="tooltip"][itemtype$="Bug"] [itemprop="contributor"] {
+  top: 1rem;
+  left: 1rem;
+  overflow: hidden;
+  border-radius: .32rem;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+[role="tooltip"][itemtype$="Bug"] [itemprop="contributor"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+[role="tooltip"][itemtype$="Bug"] [itemprop="id"] {
+  top: 1rem;
+  left: 5.2rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+[role="tooltip"][itemtype$="Bug"] [itemprop="name"] {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+[role="tooltip"][itemtype$="Bug"] [itemprop="dateModified"] {
+  top: 1rem;
+  right: 1rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+/* ----------------------------------------------------------------------------------------------
  * Animations
  * ---------------------------------------------------------------------------------------------- */
 

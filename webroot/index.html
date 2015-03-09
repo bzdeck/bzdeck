@@ -617,6 +617,17 @@
         <span data-field="_starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
       </li>
     </template><!-- end #vertical-thread-item -->
+    <template id="bug-tooltip">
+      <aside role="tooltip" data-attrs="data-id" itemscope itemtype="http://bzdeck.com/Bug">
+        <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+          <img itemprop="image">
+          <meta itemprop="email">
+        </span>
+        <span itemprop="id"></span>
+        <span itemprop="name"></span>
+        <time data-simple="true" itemprop="dateModified"></time>
+      </aside>
+    </template><!-- end #bug-tooltip -->
     <template id="person-without-image">
       <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><span itemprop="name"></span><meta itemprop="email"></span>
     </template><!-- end #person-without-image -->
