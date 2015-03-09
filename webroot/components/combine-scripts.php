@@ -23,6 +23,7 @@ $scripts = [
   './models/users.js',
   './views/base.js',
   './views/bug.js',
+  './views/bug-details.js', // extends bug.js
   './views/details-page.js',
   './views/global.js',
   './views/home-page.js',

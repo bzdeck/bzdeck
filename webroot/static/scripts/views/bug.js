@@ -11,6 +11,13 @@ BzDeck.views.Bug = function BugView ($bug, bug) {
   this.$bug = $bug;
   this.bug = bug;
 
+  this.init();
+};
+
+BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
+
+BzDeck.views.Bug.prototype.init = function () {
   this.setup_toolbar();
   this.render();
 
@@ -39,9 +46,6 @@ BzDeck.views.Bug = function BugView ($bug, bug) {
     }
   });
 };
-
-BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
 
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
   let $menu_button = this.$bug.querySelector('[data-command="show-menu"]'),
@@ -216,9 +220,15 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     // Timeline: comments, attachments & history
     this.timeline = new BzDeck.views.Timeline(this.bug, this.$bug, delayed);
 
-    // Attachments and History, only on the details tabs
-    new BzDeck.views.DetailsPageAttachments(this.$bug, this.bug.attachments);
-    new BzDeck.views.DetailsPageHistory(this.$bug, this.bug.history);
+    // Attachments, only on the details tabs
+    if (this.render_attachments) {
+      this.render_attachments();
+    }
+
+    // History, only on the details tabs
+    if (this.render_history) {
+      this.render_history();
+    }
 
     // Add tooltips to the related bugs
     this.set_bug_tooltips();
@@ -302,11 +312,11 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
              .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes)).scrollIntoView();
   }
 
-  if (changes.has('attachment') && this.$bug.querySelector('[data-field="attachments"]')) {
-    new BzDeck.views.DetailsPageAttachments(this.$bug, [changes.get('attachment')], true);
+  if (changes.has('attachment') && this.render_attachments) {
+    this.render_attachments([changes.get('attachment')]);
   }
 
-  if (changes.has('history') && this.$bug.querySelector('[data-field="history"]')) {
+  if (changes.has('history') && this.render_history) {
     let _bug = { 'id': this.bug.id, '_update_needed': true };
 
     // Prep partial data
@@ -315,6 +325,6 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
     }
 
     this.fill(_bug, true);
-    new BzDeck.views.DetailsPageHistory(this.$bug, [changes.get('history')], true);
+    this.render_history([changes.get('history')]);
   }
 };
