@@ -21,14 +21,14 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
 
   params = params || new URLSearchParams();
 
-  if (options.auth) {
-    params.append('api_key', BzDeck.models.account.data.api_key);
-  }
-
   url.pathname += path;
   url.searchParams = params;
   xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
+
+  if (options.api_key || options.auth) {
+    xhr.setRequestHeader('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
+  }
 
   for (let [type, listener] of Iterator(options.listeners || {})) {
     xhr.addEventListener(type, event => listener(event));

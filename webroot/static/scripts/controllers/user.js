@@ -135,16 +135,13 @@ BzDeck.controllers.User.prototype.get_bugzilla_profile = function (options = {})
     return Promise.reject(new Error(this.profiles.error));
   }
 
-  let params = new URLSearchParams();
+  let params = new URLSearchParams(),
+      _options = { 'api_key': options.api_key || undefined };
 
   params.append('names', this.email);
 
-  if (options.api_key) {
-    params.append('api_key', options.api_key);
-  }
-
   return new Promise((resolve, reject) => {
-    this.request('user', params).then(result => {
+    this.request('user', params, _options).then(result => {
       result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
     }).catch(error => reject(error));
   });
