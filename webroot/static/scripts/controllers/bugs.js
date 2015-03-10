@@ -40,7 +40,7 @@ BzDeck.controllers.bugs.fetch_subscriptions = function () {
     params.append('o9', 'anywords');
     params.append('v9', [for (bug of cached_bugs) if (this.is_starred(bug)) bug.id].join());
 
-    BzDeck.controllers.global.request('GET', 'bug', params).then(result => {
+    BzDeck.controllers.global.request('bug', params).then(result => {
       last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
       if (firstrun) {
@@ -71,7 +71,7 @@ BzDeck.controllers.bugs.fetch_bugs = function (ids, include_metadata = true, inc
     let params = new URLSearchParams(param_str);
 
     ids.forEach(id => params.append('ids', id));
-    BzDeck.controllers.global.request('GET', 'bug/' + (method ? ids[0] + '/' + method : ''), params)
+    BzDeck.controllers.global.request('bug/' + (method ? ids[0] + '/' + method : ''), params)
         .then(result => resolve(result.bugs), event => reject(new Error()));
   });
 

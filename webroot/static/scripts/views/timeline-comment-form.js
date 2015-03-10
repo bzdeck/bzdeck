@@ -445,8 +445,10 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.controllers.global.request('POST', `bug/${this.bug.id}${method}`, null, JSON.stringify(data), {
-      'upload': {
+    BzDeck.controllers.global.request(`bug/${this.bug.id}${method}`, null, {
+      'data': data,
+      'auth': true,
+      'upload_listeners': {
         'progress': event => {
           if (method === 'attachment') {
             if (!size) {
@@ -461,8 +463,6 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
           }
         }
       }
-    }, {
-      'auth': true // Enable auth
     }).then(result => {
       if (result.ids) {
         if (method === 'attachment') {

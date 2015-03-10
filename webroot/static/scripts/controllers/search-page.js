@@ -101,7 +101,7 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
 
   this.trigger(':SearchStarted');
 
-  this.request('GET', 'bug', params).then(result => {
+  this.request('bug', params).then(result => {
     if (result.bugs.length > 0) {
       this.data.bugs = result.bugs;
 

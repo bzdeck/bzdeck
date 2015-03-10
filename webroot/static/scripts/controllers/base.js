@@ -14,8 +14,7 @@ BzDeck.controllers.Base = function BaseController () {};
 BzDeck.controllers.Base.prototype = Object.create(FlareTail.app.Controller.prototype);
 BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 
-BzDeck.controllers.Base.prototype.request = function (method, path, params, data = null,
-                                                                listeners = {}, options = {}) {
+BzDeck.controllers.Base.prototype.request = function (path, params, options = {}) {
   let server = BzDeck.models.server.data,
       xhr = new XMLHttpRequest(),
       url = new URL(server.url + server.endpoints.rest);
@@ -28,14 +27,14 @@ BzDeck.controllers.Base.prototype.request = function (method, path, params, data
 
   url.pathname += path;
   url.searchParams = params;
-  xhr.open(method, url.toString(), true);
+  xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
-  for (let [type, listener] of Iterator(listeners)) if (type !== 'upload') {
+  for (let [type, listener] of Iterator(options.listeners || {})) {
     xhr.addEventListener(type, event => listener(event));
   }
 
-  for (let [type, listener] of Iterator(listeners.upload || {})) {
+  for (let [type, listener] of Iterator(options.upload_listeners || {})) {
     xhr.upload.addEventListener(type, event => listener(event));
   }
 
@@ -50,7 +49,7 @@ BzDeck.controllers.Base.prototype.request = function (method, path, params, data
     xhr.addEventListener('abort', event => reject(new Error('Connection aborted.')));
 
     if (navigator.onLine) {
-      xhr.send(data);
+      xhr.send(options.data ? JSON.stringify(options.data) : null);
     } else {
       reject(new Error('You have to go online to load data.')); // l10n
     }

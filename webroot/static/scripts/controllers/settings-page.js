@@ -31,7 +31,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     params.append('names', account.data.name);
     params.append('api_key', data.api_key);
 
-    this.request('GET', 'user', params).then(result => {
+    this.request('user', params).then(result => {
       if (result.users) {
         // Delete the previously-used auth token
         delete account.data.token;

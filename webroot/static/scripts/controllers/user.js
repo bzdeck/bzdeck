@@ -144,7 +144,7 @@ BzDeck.controllers.User.prototype.get_bugzilla_profile = function (options = {})
   }
 
   return new Promise((resolve, reject) => {
-    this.request('GET', 'user', params).then(result => {
+    this.request('user', params).then(result => {
       result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
     }).catch(error => reject(error));
   });
