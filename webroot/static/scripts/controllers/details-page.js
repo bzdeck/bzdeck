@@ -13,7 +13,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController () {
 
   // Find an existing tab
   for (let [page_id, page_view] of BzDeck.views.pages.details_list || []) {
-    if (page_view.bug_id === bug_id) {
+    if (page_view.bug_id === bug_id && page_view.$tab.parentElement) {
       $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
 
       return page_view.controller;
