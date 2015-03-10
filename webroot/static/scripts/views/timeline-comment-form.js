@@ -13,9 +13,9 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
-  this.$textbox = this.$form.querySelector('[id$="tabpanel-write"] [role="textbox"]');
+  this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
   this.$$tabs = new this.widget.TabList(this.$form.querySelector('[role="tablist"]'));
-  this.$write_tab = this.$form.querySelector('[id$="tab-write"]');
+  this.$comment_tab = this.$form.querySelector('[id$="tab-comment"]');
   this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
   this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
   this.$preview = this.$form.querySelector('[id$="tabpanel-preview"] [itemprop="text"]');
@@ -267,7 +267,7 @@ BzDeck.views.TimelineCommentForm.prototype.remove_attachment = function (attachm
   this.update_parallel_ui();
 
   if (!this.has_attachments) {
-    this.$$tabs.view.selected = this.$write_tab;
+    this.$$tabs.view.selected = this.$comment_tab;
   }
 };
 

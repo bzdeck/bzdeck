@@ -69,7 +69,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
         quote = `${quote_header}\n${quote_lines.join('\n')}`,
-        $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-write`),
+        $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-comment`),
         $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
     $textbox.focus();
