@@ -425,7 +425,7 @@ col[data-hidden="false"] {
   background-color: #545454; /* Fallback */
   background-color: var(--application-background-color);
   opacity: 1;
-  /* transition: opacity 1.5s; */ /* Disable transition to workaround Bug 1089095 */
+  transition: opacity 1.5s;
 }
 
 #app-login[aria-hidden="true"] {
