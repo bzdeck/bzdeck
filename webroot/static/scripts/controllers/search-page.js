@@ -48,7 +48,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     }
   });
 
-  let params = new URLSearchParams(location.search.substr(1) || history.state ? history.state.params : undefined);
+  let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
   BzDeck.views.toolbar.open_tab({
     'page_category': 'search',
@@ -59,7 +59,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     'tab_desc': 'Search & Browse Bugs', // l10n
   }, this);
 
-  if (params) {
+  if (params.toString()) {
     this.exec_search(params);
   }
 
