@@ -21,7 +21,7 @@ BzDeck.controllers.User = function UserController (name, profile = undefined, op
     // Replace both 'Kohei Yoshino [:Kohei]' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
     'name': {
       'enumerable': true,
-      'get': () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/, '').trim()
+      'get': () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/g, '').trim()
                       || this.email.split('@')[0]
     },
     // Other name props
@@ -37,9 +37,9 @@ BzDeck.controllers.User = function UserController (name, profile = undefined, op
       'enumerable': true,
       'get': () => this.first_name.charAt(0).toUpperCase()
     },
-    'nick_name': {
+    'nick_names': {
       'enumerable': true,
-      'get': () => (this.original_name.match(/\:([\w\-]+)/) || [])[1]
+      'get': () => [for (name of this.original_name.match(/\:[\w\-]+/g) || []) name.substr(1)] // Consider multiple nick
     },
     // Images
     'image': {
