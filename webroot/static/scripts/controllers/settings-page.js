@@ -37,6 +37,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
         delete account.data.token;
         // Save the new API Key
         account.data.api_key = data.api_key;
+        account.data.bugzilla = result.users[0];
         account.save();
         // Update the view
         this.trigger(':APIKeyVerified');

@@ -72,15 +72,16 @@ BzDeck.controllers.Session.prototype.force_login = function () {
       return new Promise((resolve, reject) => this.request('GET', 'user', params).then(result => {
         result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
       }).catch(error => reject(error)));
-    }).then(profiles => {
-      return profiles.error ? Promise.reject(new Error(profiles.error)) : Promise.resolve(profiles);
-    }).then(profiles => {
+    }).then(user => {
+      return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
+    }).then(user => {
       let account = BzDeck.models.account = new BzDeck.models.Account({
         'host': BzDeck.models.server.data.name,
         'name': data.email,
         'api_key': data.api_key || undefined,
         'loaded': Date.now(), // key
         'active': true,
+        'bugzilla': user,
       });
 
       account.save();

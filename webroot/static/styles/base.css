@@ -89,6 +89,10 @@ pre {
   white-space: pre-wrap;
 }
 
+select {
+  font-family: inherit; /* Suppress the default style */
+}
+
 table {
   width: 100%;
   color: var(--grid-foreground-color);
@@ -2282,6 +2286,20 @@ article[id$="preview-bug"] > .bug-info {
 
 [id$="timeline-comment-form"] [id$="tabpanel-attachments"] [role="button"][data-command="move-down"]::before {
   content: "\F078";
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-status"] :-moz-any(select, input) {
+  margin: .2rem;
+  padding: .2rem;
+  vertical-align: middle;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-status"] option:disabled {
+  display: none;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-status"] [id$="status-dupe"][aria-hidden="false"] {
+  display: inline-block;
 }
 
 [id$="timeline-comment-form"] > footer {

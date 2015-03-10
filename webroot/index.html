@@ -517,6 +517,7 @@
             <li id="TID-comment-form-tab-write" role="tab" aria-controls="TID-comment-form-tabpanel-write" aria-selected="true"><label>Write</label></li>
             <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
             <li id="TID-comment-form-tab-attachments" role="tab" aria-controls="TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
+            <li id="TID-comment-form-tab-status" role="tab" aria-controls="TID-comment-form-tabpanel-status" aria-selected="false" aria-disabled="true"><label>Status</label></li>
           </ul>
           <div id="TID-comment-form-tabpanel-write" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-comment-form-tab-write">
             <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
@@ -534,6 +535,13 @@
                 <colgroup><col class="description"><col class="actions"></colgroup>
                 <tbody></tbody>
               </table>
+            </div>
+          </div>
+          <div id="TID-comment-form-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-status">
+            <div>
+              <select role="combobox" name="status"></select>
+              <select role="combobox" name="resolution" aria-hidden="true"></select>
+              <label id="TID-comment-form-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="textbox"></label>
             </div>
           </div>
         </div>

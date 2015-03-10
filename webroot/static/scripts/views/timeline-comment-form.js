@@ -31,11 +31,16 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.bug = bug;
   this.attachments = [];
   this.parallel_upload = true;
+  this.changes = new Map();
 
   Object.defineProperties(this, {
     'has_api_key': { 'enumerable': true, 'get': () => !!BzDeck.models.account.data.api_key },
-    'has_text': { 'enumerable': true, 'get': () => !!this.$textbox.value.match(/\S/) },
+    'has_comment': { 'enumerable': true, 'get': () => !!this.$textbox.value.match(/\S/) },
     'has_attachments': { 'enumerable': true, 'get': () => !!this.attachments.length },
+    'has_changes': { 'enumerable': true, 'get': () => !!this.changes.size },
+    'has_errors': { 'enumerable': true, 'get': () => !!this.find_errors().size },
+    'can_submit': { 'enumerable': true, 'get': () => this.has_api_key && !this.has_errors &&
+                                                      (this.has_comment || this.has_attachments || this.has_changes) },
   });
 
   this.$form.addEventListener('wheel', event => event.stopPropagation());
@@ -62,7 +67,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign(this.$textbox, {
     'ACCEL+RETURN': event => {
-      if (this.has_text && this.has_api_key) {
+      if (this.can_submit) {
         this.submit();
       }
     },
@@ -112,9 +117,12 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
     this.on('SettingsPageController:APIKeyVerified', data => {
       this.$status.textContent = '';
-      this.$submit.setAttribute('aria-disabled', !this.has_text || !this.has_attachments);
+      this.$submit.setAttribute('aria-disabled', !this.can_submit);
+      this.prep_status_tabpanel();
     });
   }
+
+  this.prep_status_tabpanel();
 };
 
 BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -123,8 +131,8 @@ BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCo
 BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
-  this.$submit.setAttribute('aria-disabled', !(this.has_text || this.has_attachments) || !this.has_api_key);
-  this.$preview_tab.setAttribute('aria-disabled', !this.has_text);
+  this.$submit.setAttribute('aria-disabled', !this.can_submit);
+  this.$preview_tab.setAttribute('aria-disabled', !this.has_comment);
 
   if (this.has_api_key && this.$status.textContent) {
     this.$status.textContent = '';
@@ -244,7 +252,7 @@ BzDeck.views.TimelineCommentForm.prototype.add_attachment = function (attachment
 
   this.$attachments_tab.setAttribute('aria-disabled', 'false');
   this.$$tabs.view.selected = this.$attachments_tab;
-  this.$submit.setAttribute('aria-disabled', !this.has_api_key);
+  this.$submit.setAttribute('aria-disabled', !this.can_submit);
   this.update_parallel_ui();
 };
 
@@ -255,7 +263,7 @@ BzDeck.views.TimelineCommentForm.prototype.remove_attachment = function (attachm
 
   this.$attachments_tbody.rows[index].remove();
   this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments);
-  this.$submit.setAttribute('aria-disabled', !(this.has_text || this.has_attachments) || !this.has_api_key);
+  this.$submit.setAttribute('aria-disabled', !this.can_submit);
   this.update_parallel_ui();
 
   if (!this.has_attachments) {
@@ -282,8 +290,135 @@ BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function () {
   this.$parallel_checkbox.setAttribute('aria-hidden', this.attachments.length < 2);
 };
 
+BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
+  let user = BzDeck.models.account.data.bugzilla;
+
+  // Enable the status tabpanel only for those who have the editbugs permission
+  if (this.status_panel_enabled || !user || ![for (group of user.groups) group.name].includes('editbugs')) {
+    return;
+  }
+
+  // TODO: use custom widget for <select> and <option>
+  // TODO: complete MVC migration
+
+  let fields = BzDeck.models.server.data.config.field,
+      closed_statuses = fields.status.closed,
+      $tab = this.$form.querySelector('[id$="tab-status"]'),
+      $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]'),
+      $status = this.$status_options = $tabpanel.querySelector('[name="status"]'),
+      $resolution = this.$resolution_options = $tabpanel.querySelector('[name="resolution"]'),
+      $dupe_label = $tabpanel.querySelector('[id$="status-dupe"]'),
+      $dupe_input = this.$dupe_input = $dupe_label.querySelector('input');
+
+  for (let value of fields.status.transitions[this.bug.status]) {
+    let $option = document.createElement('option');
+
+    $option.value = $option.text = value;
+    $option.defaultSelected = value === this.bug.status;
+    $status.add($option);
+  }
+
+  $status.addEventListener('change', event => {
+    let closed = closed_statuses.includes(event.target.value);
+
+    $resolution.setAttribute('aria-hidden', !closed);
+    $resolution.options[0].disabled = closed; // '' (an empty string)
+    $resolution.selectedIndex = closed ? 1 : 0; // FIXED or ''
+    $dupe_label.setAttribute('aria-hidden', 'true');
+    $dupe_input.value = '';
+
+    this.update_changes();
+  });
+
+  for (let value of fields.resolution.values) {
+    let $option = document.createElement('option');
+
+    $option.value = $option.text = value;
+    $option.defaultSelected = value === this.bug.resolution;
+    $resolution.add($option);
+  }
+
+  $resolution.setAttribute('aria-hidden', !closed_statuses.includes(this.bug.status));
+  $resolution.options[0].disabled = closed_statuses.includes(this.bug.status);
+  $resolution.addEventListener('change', event => {
+    let marking_dupe = event.target.value === 'DUPLICATE';
+
+    $dupe_label.setAttribute('aria-hidden', !marking_dupe);
+    $dupe_input.value = marking_dupe && this.bug.dupe_of ? this.bug.dupe_of : '';
+
+    if (marking_dupe) {
+      $dupe_input.focus();
+    }
+
+    this.update_changes();
+  });
+
+  $dupe_label.setAttribute('aria-hidden', this.bug.resolution !== 'DUPLICATE');
+  $dupe_input.value = this.bug.dupe_of || '';
+  $dupe_input.addEventListener('input', event => this.update_changes());
+  new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
+
+  $tab.setAttribute('aria-disabled', 'false');
+  this.status_panel_enabled = true;
+};
+
+BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
+  let fields = BzDeck.models.server.data.config.field,
+      closed_statuses = fields.status.closed,
+      status = this.$status_options.options[this.$status_options.selectedIndex].value,
+      resolution = this.$resolution_options.options[this.$resolution_options.selectedIndex].value,
+      dupe_of = this.$dupe_input.value.match(/^\d+$/) ? parseInt(this.$dupe_input.value) : null;
+
+  if (status === this.bug.status) {
+    this.changes.delete('status');
+  } else {
+    this.changes.set('status', status);
+  }
+
+  if (resolution === this.bug.resolution) {
+    this.changes.delete('resolution');
+  } else if (closed_statuses.includes(status)) {
+    this.changes.set('resolution', resolution);
+  } else {
+    this.changes.set('resolution', '');
+    this.changes.delete('dupe_of');
+  }
+
+  if (dupe_of === this.bug.dupe_of) {
+    this.changes.delete('dupe_of');
+  } else {
+    this.changes.set('dupe_of', dupe_of);
+    // These fields will automatically be set by Bugzilla
+    // http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug
+    this.changes.delete('status');
+    this.changes.delete('resolution');
+  }
+
+  this.$submit.setAttribute('aria-disabled', !this.can_submit);
+};
+
+BzDeck.views.TimelineCommentForm.prototype.find_errors = function () {
+  let errors = new Set();
+
+  if (this.changes.get('resolution') === 'DUPLICATE' && !this.changes.get('dupe_of')) {
+    errors.add('Please specify a valid duplicate bug ID.'); // l10n
+  }
+
+  // Any other errors go here
+
+  return errors;
+};
+
 BzDeck.views.TimelineCommentForm.prototype.submit = function () {
-  let data,
+  let errors = this.find_errors();
+
+  if (errors.size) {
+    this.$status.textContent = [...errors][0];
+
+    return;
+  }
+
+  let data = {},
       hash = att => md5(att.file_name + String(att.size)),
       map_sum = map => [...map.values()].reduce((p, c) => p + c),
       comment = this.$textbox.value,
@@ -299,18 +434,18 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
   };
 
   let post = data => new Promise((resolve, reject) => {
-    let method = data.file_name ? 'attachment' : 'comment',
+    let method = data.file_name ? '/attachment' : '',
         length_computable,
         size = 0;
 
-    // If there is no comment, go ahead with attachments
-    if (method === 'comment' && !data.comment) {
+    // If there is no comment nor changes, go ahead with attachments
+    if (!Object.keys(data).length) {
       resolve();
 
       return;
     }
 
-    BzDeck.controllers.global.request('POST', `bug/${this.bug.id}/${method}`, null, JSON.stringify(data), {
+    BzDeck.controllers.global.request('POST', `bug/${this.bug.id}${method}`, null, JSON.stringify(data), {
       'upload': {
         'progress': event => {
           if (method === 'attachment') {
@@ -351,18 +486,25 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
   this.$submit.setAttribute('aria-disabled', 'true');
   this.$status.textContent = 'Submitting...';
 
-  if (att_num === 1) {
-    // If there's a single attachment, send it with the comment
+  if (att_num === 1 && !this.changes.size) {
+    // If there's a single attachment and no changed fields, send it with the comment
     data = this.attachments[0];
     data.comment = comment;
   } else {
     // If there's no attachment, just send the comment. If there are 2 or more attachments,
-    // send the comment first then send the attachments in parallel
-    data = { comment };
+    // send the comment first then send the attachments in parallel or series
+    if (comment) {
+      data.comment = { 'body': comment };
+    }
+
+    // Append the changed fields if any
+    for (let [key, value] of this.changes) {
+      data[key] = value;
+    }
   }
 
   post(data).then(value => {
-    if (att_num < 2) {
+    if (!att_num || (att_num === 1 && !this.changes.size)) {
       return true;
     }
 
