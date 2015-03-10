@@ -384,7 +384,7 @@ BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
     this.changes.delete('dupe_of');
   }
 
-  if (dupe_of === this.bug.dupe_of) {
+  if (dupe_of === this.bug.dupe_of || dupe_of === this.bug.id) {
     this.changes.delete('dupe_of');
   } else {
     this.changes.set('dupe_of', dupe_of);
