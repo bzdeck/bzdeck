@@ -273,22 +273,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
     pages.set(page_id || 'default', page);
 
     // Prepare the Back button on the mobile banner
-    if (FlareTail.util.ua.device.mobile && !$tabpanel.querySelector('.banner-nav-button')) {
-      let $header = $tabpanel.querySelector('header'),
-          $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
-
-      $button.setAttribute('aria-label', 'Back'); // l10n
-      $button.addEventListener('touchstart', event => {
-        if (history.state && history.state.previous) {
-          history.back();
-        } else {
-          BzDeck.router.navigate('/home/inbox');
-        }
-
-        return FlareTail.util.event.ignore(event);
-      });
-      $header.insertBefore($button, $header.firstElementChild);
-    }
+    this.add_back_button($tabpanel);
   }
 
   $$tablist.view.selected = $$tablist.view.$focused = $tab
@@ -297,4 +282,24 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
   this.update_window_title($tab);
   BzDeck.views.pages[page_category] = page;
   this.tab_path_map.set($tab.id, location.pathname + location.search);
+};
+
+BzDeck.views.Toolbar.prototype.add_back_button = function ($parent) {
+  let $header = $parent.querySelector('header'),
+      $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+
+  if (FlareTail.util.ua.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
+    $button.setAttribute('aria-label', 'Back'); // l10n
+    $button.addEventListener('touchstart', event => {
+      if (history.state && history.state.previous) {
+        history.back();
+      } else {
+        BzDeck.router.navigate('/home/inbox');
+      }
+
+      return FlareTail.util.event.ignore(event);
+    });
+
+    $header.insertBefore($button, $header.firstElementChild);
+  }
 };

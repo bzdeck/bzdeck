@@ -99,6 +99,9 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
   } else {
     $$btn_forward.data.disabled = true;
   }
+
+  // Prepare the Back button on the mobile banner
+  BzDeck.views.toolbar.add_back_button(this.$bug);
 };
 
 BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
