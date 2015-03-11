@@ -2202,6 +2202,10 @@ article[id$="preview-bug"] > .bug-info {
   resize: none;
 }
 
+[id$="timeline-comment-form"] [role="textbox"][aria-multiline="true"]::-moz-placeholder {
+  font-style: italic;
+}
+
 [data-ui-timeline-font-family="monospace"]:root [id$="timeline-comment-form"] [role="textbox"] {
   font-family: FiraMono, monospace;
 }
@@ -3163,11 +3167,6 @@ article[id$="preview-bug"] > .bug-info {
     display: none;
   }
 
-  [data-device|="mobile"]:root [itemtype$="Bug"] [role="toolbar"] [data-command="reply"] {
-    display: none !important; /* TEMP, mobile comment form UI is not ready */
-  }
-
-  
   [data-home-layout="vertical"]:root #home-list-pane {
     width: 100% !important;
   }
@@ -3221,7 +3220,74 @@ article[id$="preview-bug"] > .bug-info {
   }
 
   [data-device|="mobile"]:root [id$="timeline-comment-form"] {
-    display: none !important; /* TEMP, mobile comment form UI is not ready */
+    margin: 0;
+    border-width: .1rem 0 0;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] [role="tablist"] {
+    display: none; /* TBD */
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > div {
+    margin: 0 3.8rem -3.8rem; /* 3.8rem = the height of the footer */
+    padding: 1rem 0;
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] [role="textbox"][aria-multiline="true"] {
+    min-height: 1.6rem;
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer {
+    height: 3.8rem;
+    background-color: transparent;
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="status"] {
+    visibility: hidden; /* TBD */
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="toolbar"] {
+    margin: .4rem;
+  }
+
+  /* Almost same as [itemtype$="Bug"] [role="toolbar"] .iconic */
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="toolbar"] [role="button"][data-command="submit"] {
+    position: relative;
+    overflow: hidden;
+    box-sizing: content-box;
+    border-width: 0;
+    border-radius: 0;
+    padding: 0 !important;
+    width: 3.2rem;
+    height: 3.2rem;
+    background: transparent;
+    line-height: 1;
+    text-indent: -99999px;
+    vertical-align: top;
+  }
+
+  /* Almost same as [itemtype$="Bug"] [role="toolbar"] .iconic::before */
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="toolbar"] [role="button"][data-command="submit"]::before {
+    display: inline-block;
+    position: absolute;
+    top: calc(50% - 1.6rem);
+    left: calc(50% - 1.6rem);
+    margin: 0;
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 2rem;
+    line-height: 3.2rem;
+    font-family: FontAwesome;
+    text-align: center;
+    text-indent: 0;
+    vertical-align: top;
+    content: '\F1D8';
+  }
+
+  [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="button"][aria-disabled="false"] {
+    color: var(--highlighted-button-background-color);
   }
 
   [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] {
