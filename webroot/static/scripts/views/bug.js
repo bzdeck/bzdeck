@@ -49,7 +49,8 @@ BzDeck.views.Bug.prototype.init = function () {
 
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
   let $menu_button = this.$bug.querySelector('[data-command="show-menu"]'),
-      $bugzilla_link = this.$bug.querySelector('[data-command="open-bugzilla"]');
+      $bugzilla_link = this.$bug.querySelector('[data-command="open-bugzilla"]'),
+      $tweet_link = this.$bug.querySelector('[data-command="tweet"]');
 
   if ($menu_button) {
     new this.widget.Button($menu_button);
@@ -57,6 +58,18 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
 
   if ($bugzilla_link) {
     $bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${this.bug.id}`;
+  }
+
+  if ($tweet_link) {
+    // https://dev.twitter.com/web/tweet-button/web-intent
+    let url = new URL('https://twitter.com/intent/tweet'),
+        params = url.searchParams,
+        summary = this.bug.summary;
+
+    params.append('text', `Bug ${this.bug.id} - ${summary.substr(0, 80)}${summary.length > 80 ? '...' : ''}`);
+    params.append('url', `${location.origin}/bug/${this.bug.id}`);
+    params.append('via', 'BzDeck');
+    $tweet_link.href = url.toString();
   }
 };
 
