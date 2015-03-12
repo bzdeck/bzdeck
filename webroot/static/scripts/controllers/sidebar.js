@@ -17,7 +17,7 @@ BzDeck.controllers.Sidebar = function SidebarController () {
       let oldval = obj[prop];
 
       // On mobile, the same folder can be selected
-      if (!mobile && oldval === newval) {
+      if (!mobile && document.documentElement.getAttribute('data-current-tab') === 'home' && oldval === newval) {
         return;
       }
 

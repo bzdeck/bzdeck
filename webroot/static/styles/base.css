@@ -775,22 +775,22 @@ col[data-hidden="false"] {
   z-index: 200;
   overflow: hidden;
   box-sizing: border-box;
-  border-width: 0 .1rem 0 0;
-  border-style: solid;
-  border-color: var(--region-border-color);
-  background-color: var(--region-background-color);
 }
 
 [data-device="desktop"]:root #sidebar {
   top: 4rem;
   bottom: 0;
   width: 16rem;
+  border-width: 0 .1rem 0 0;
+  border-style: solid;
+  border-color: var(--application-header-border-color);
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
 }
 
 [data-device|="mobile"]:root #sidebar {
   top: 0;
   bottom: 0;
-  border-right-width: 0;
   width: 100%;
   background-color: rgba(0, 0, 0, .3) !important;
   transition: background-color .2s ease .4s; /* Set a delay for the transitioning sidebar */
@@ -801,10 +801,6 @@ col[data-hidden="false"] {
   display: block;
   background-color: rgba(0, 0, 0, 0) !important;
   pointer-events: none;
-}
-
-:root:not([data-current-tab="home"]) #sidebar {
-  display: none !important;
 }
 
 #sidebar > div {
@@ -840,8 +836,19 @@ col[data-hidden="false"] {
 }
 
 [data-device="desktop"]:root #sidebar [role="option"] {
+  border-width: 0 0 0 .4rem;
+  border-style: solid;
+  border-color: transparent;
   padding: .4rem 1.2rem;
   font-size: 1.25rem;
+  color: var(--secondary-application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
+  border-color: var(--highlighted-button-border-color);
+  color: var(--region-header-foreground-color);
+  background-color: var(--region-header-background-color);
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {
@@ -1005,17 +1012,19 @@ main {
 
 #main-tabpanels {
   position: absolute;
-  width: 100%;
   bottom: 0;
   background-color: var(--region-background-color);
 }
 
 [data-device="desktop"]:root #main-tabpanels {
   top: 4rem;
+  right: 0;
+  left: 16rem; /* A space for the sidebar */
 }
 
 [data-device|="mobile"]:root #main-tabpanels {
   top: 0;
+  width: 100%;
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] {
@@ -1293,11 +1302,6 @@ main {
 
 [data-home-layout="classic"]:root #tabpanel-home > section > div {
   flex-direction: column;
-}
-
-[data-device="desktop"]:root #tabpanel-home > section > div {
-  left: 16rem; /* A space for the sidebar */
-  width: calc(100% - 16rem);
 }
 
 [data-device|="mobile"]:root #tabpanel-home > section > div {
