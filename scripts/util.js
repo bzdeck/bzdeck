@@ -520,6 +520,8 @@ FlareTail.util.datetime.options = new Proxy({
         dt.stop_updater();
       }
     }
+
+    return true;
   }
 });
 

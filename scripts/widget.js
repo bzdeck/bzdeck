@@ -150,6 +150,8 @@ FlareTail.widget.Button = function Button ($button) {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -588,6 +590,8 @@ FlareTail.widget.Composite.prototype.update_view = function (obj, prop, newval) 
   }
 
   obj[prop] = newval; // The default behavior
+
+  return true;
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -655,6 +659,8 @@ FlareTail.widget.Grid = function Grid ($container, data, options) {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -697,6 +703,8 @@ FlareTail.widget.Grid.prototype.activate_extend = function () {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -757,6 +765,8 @@ FlareTail.widget.Grid.prototype.activate_columns = function () {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   };
 
@@ -774,6 +784,8 @@ FlareTail.widget.Grid.prototype.activate_rows = function () {
 
       this.data.columns[prop].type === 'boolean' ? $elm.setAttribute('aria-checked', value) : $elm.textContent = value;
       obj[prop] = value;
+
+      return true;
     }
   };
 
@@ -796,6 +808,8 @@ FlareTail.widget.Grid.prototype.activate_rows = function () {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -1093,7 +1107,7 @@ FlareTail.widget.Grid.prototype.sort = function (cond, prop, value, receiver, da
     cond.order = cond.order || 'ascending';
     FlareTail.util.array.sort(this.data.rows, cond);
 
-    return;
+    return true;
   }
 
   if (prop === 'order') {
@@ -1130,6 +1144,8 @@ FlareTail.widget.Grid.prototype.sort = function (cond, prop, value, receiver, da
   if (selected && selected.length) {
     this.ensure_row_visibility(selected[selected.length - 1]);
   }
+
+  return true;
 };
 
 FlareTail.widget.Grid.prototype.init_columnpicker = function () {
@@ -1272,6 +1288,8 @@ FlareTail.widget.Grid.prototype.start_column_reordering = function (event) {
         }
 
         obj[prop] = value;
+
+        return true;
       }
     }));
   }
@@ -1434,6 +1452,8 @@ FlareTail.widget.ListBox = function ListBox ($container, data) {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   };
 
@@ -1617,6 +1637,8 @@ FlareTail.widget.Menu.prototype.activate_extend = function (rebuild = false) {
       }
 
       obj[prop] = newval;
+
+      return true;
     }
   });
 }
@@ -2306,6 +2328,8 @@ FlareTail.widget.TabList = function TabList ($container) {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -3040,6 +3064,8 @@ FlareTail.widget.Splitter = function Splitter ($splitter) {
       }
 
       obj[prop] = value;
+
+      return true;
     }
   });
 
@@ -3071,6 +3097,8 @@ FlareTail.widget.Splitter = function Splitter ($splitter) {
         }
 
         obj[prop] = value;
+
+        return true;
       }
     });
 
