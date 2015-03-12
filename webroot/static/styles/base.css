@@ -544,34 +544,35 @@ col[data-hidden="false"] {
 
 [data-device="desktop"]:root [role="banner"] [role="toolbar"] {
   right: 0;
-  width: 24.4rem;
+  left: 4rem;
 }
 
-#toolbar--search-menu {
+#toolbar-buttons {
   position: absolute;
+  top: 0;
   right: 0;
   height: 4rem;
 }
 
-[data-device|="mobile"]:root #toolbar--search-menu {
+[data-device|="mobile"]:root #toolbar-buttons {
   width: 4rem;
 }
 
-[data-device|="mobile"][data-quicksearch]:root #toolbar--search-menu {
+[data-device|="mobile"][data-quicksearch]:root #toolbar-buttons {
   left: 0;
   width: auto;
 }
 
-#toolbar--search-menu > li {
+#toolbar-buttons > li {
   float: right;
 }
 
-#toolbar--search-menu > li:first-of-type {
+#toolbar-buttons > li:first-of-type {
   width: 4rem;
   height: 4rem;
 }
 
-[data-device|="mobile"]:root #toolbar--search-menu > li:first-of-type {
+[data-device|="mobile"]:root #toolbar-buttons > li:first-of-type {
   display: none;
 }
 
@@ -653,13 +654,13 @@ col[data-hidden="false"] {
 }
 
 [data-device="desktop"]:root #quicksearch {
-  margin: .8rem 0;
-  width: 19.6rem;
-  height: 2.4rem;
+  margin: .6rem 0;
+  width: 40rem;
+  height: 2.8rem; /* same as the logo */
 }
 
 [data-device|="mobile"]:root #quicksearch {
-  margin: .6rem .6rem .6rem 0;
+  margin: .6rem;
   width: 2.8rem;
   height: 2.8rem;
 }
@@ -676,11 +677,11 @@ col[data-hidden="false"] {
   padding: .4rem 3.2rem .4rem .8rem;
   width: 100%;
   height: 100%;
+  font-size: 1.25rem;
 }
 
 [data-device|="mobile"]:root #quicksearch [role="textbox"] {
   display: none;
-  font-size: 1.25rem;
   line-height: 2rem;
 }
 
@@ -740,13 +741,16 @@ col[data-hidden="false"] {
 
 [data-device="desktop"]:root #quicksearch-dropdown {
   top: 2.4rem;
-  min-width: 19.4rem;
-  max-width: 40rem;
+  width: 40rem;
 }
 
 [data-device|="mobile"]:root #quicksearch-dropdown {
   top: 2.8rem;
   width: 100%;
+}
+
+[data-device="desktop"]:root #quicksearch-dropdown [role="menuitem"] {
+  padding: 0 1.2rem;
 }
 
 [data-device|="mobile"]:root #quicksearch-dropdown [role="menuitem"] {
@@ -934,9 +938,9 @@ main {
 
 #main-tablist {
   position: absolute;
-  left: 4rem;
+  right: 12rem;
+  left: 44.6rem;
   z-index: 200;
-  right: 24.4rem;
   height: 4rem;
 }
 

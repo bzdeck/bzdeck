@@ -39,7 +39,9 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
     document.querySelector('#sidebar-account').appendChild(document.querySelector('#main-menu--app--account'));
     document.querySelector('#sidebar-menu').appendChild($app_menu);
     document.querySelector('#tabpanel-home [role="toolbar"]')
-            .appendChild(document.querySelector('#toolbar--search-menu'));
+            .appendChild(document.querySelector('#quicksearch'));
+    document.querySelector('#tabpanel-home [role="toolbar"]')
+            .appendChild(document.querySelector('#toolbar-buttons'));
 
     $app_menu.addEventListener('MenuClosed', event => {
       // Keep the menu open

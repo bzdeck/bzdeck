@@ -663,7 +663,12 @@
       <header role="banner">
         <h1>BzDeck</h1>
         <div role="toolbar">
-          <ul id="toolbar--search-menu">
+          <div id="quicksearch" title="Search for bugs" role="search">
+            <input type="search" placeholder="Search for bugs" tabindex="1" role="textbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
+            <span tabindex="0" title="Search" role="button">Go</span>
+            <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
+          </div>
+          <ul id="toolbar-buttons">
             <li role="none">
               <ul id="main-menu" role="menubar">
                 <li role="none">
@@ -700,11 +705,6 @@
                   </ul>
                 </li>
               </ul>
-            </li>
-            <li id="quicksearch" title="Search for bugs" role="search">
-              <input type="search" placeholder="Search for bugs" tabindex="1" role="textbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
-              <span tabindex="0" title="Search" role="button">Go</span>
-              <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
             </li>
           </ul>
         </div>
