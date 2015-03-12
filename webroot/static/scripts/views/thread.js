@@ -169,6 +169,8 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
         }
 
         obj[prop] = value;
+
+        return true;
       }
     });
 

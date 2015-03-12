@@ -26,9 +26,12 @@ BzDeck.models.Prefs.prototype.load = function () {
       }
 
       this.data = new Proxy(prefs, {
+        'get': (obj, prop) => obj[prop], // Always require the get trap (Bug 895223)
         'set': (obj, key, value) => {
           obj[key] = value;
           this.store.save({ 'name': key, value });
+
+          return true;
         }
       });
 

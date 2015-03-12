@@ -27,7 +27,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
       let oldval = obj[prop];
 
       if (oldval === newval && !this.view.preview_is_hidden) {
-        return;
+        return true;
       }
 
       if (prop === 'preview_id') {
@@ -35,7 +35,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
         if (this.view.preview_is_hidden) {
           BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
 
-          return; // Do not save the value
+          return true; // Do not save the value
         }
 
         if (oldval !== newval) {
@@ -45,6 +45,8 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
       }
 
       obj[prop] = newval;
+
+      return true;
     }
   });
 

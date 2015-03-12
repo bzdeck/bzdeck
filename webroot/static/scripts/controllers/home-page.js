@@ -41,7 +41,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
         if (this.view.preview_is_hidden) {
           BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
 
-          return; // Do not save the value
+          return true; // Do not save the value
         }
 
         if (oldval !== newval) {
@@ -51,6 +51,8 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
       }
 
       obj[prop] = newval;
+
+      return true;
     }
   });
 

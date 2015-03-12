@@ -18,7 +18,7 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 
       // On mobile, the same folder can be selected
       if (!mobile && document.documentElement.getAttribute('data-current-tab') === 'home' && oldval === newval) {
-        return;
+        return true;
       }
 
       if (prop === 'folder_id' && oldval) {
@@ -29,13 +29,15 @@ BzDeck.controllers.Sidebar = function SidebarController () {
             obj[prop] = newval;
           }, 600);
 
-          return;
+          return true;
         }
 
         BzDeck.router.navigate('/home/' + newval);
       }
 
       obj[prop] = newval;
+
+      return true;
     }
   });
 
