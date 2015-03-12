@@ -720,6 +720,7 @@ col[data-hidden="false"] {
 }
 
 [data-device="desktop"]:root #quicksearch [role="button"] {
+  top: .2rem;
   width: 2.2rem;
   height: 2.2rem;
 }
@@ -835,19 +836,31 @@ col[data-hidden="false"] {
   background: transparent;
 }
 
+[data-device="desktop"]:root #sidebar-folders {
+  margin: .8rem 0;
+}
+
 [data-device="desktop"]:root #sidebar [role="option"] {
   border-width: 0 0 0 .4rem;
   border-style: solid;
   border-color: transparent;
   padding: .4rem 1.2rem;
+  background-color: transparent;
   font-size: 1.25rem;
+  transition: all .2s;
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"] {
   color: var(--secondary-application-header-foreground-color);
-  background-color: var(--application-header-background-color);
 }
 
 [data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
   border-color: var(--highlighted-button-border-color);
   color: var(--region-header-foreground-color);
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"]:hover,
+[data-current-tab="home"][data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
   background-color: var(--region-header-background-color);
 }
 
