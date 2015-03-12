@@ -26,6 +26,10 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
     }
   });
 
+  // Make the logo clickable
+  document.querySelector('[role="banner"] h1')
+          .addEventListener('mousedown', event => BzDeck.router.navigate('/home/inbox'));
+
   new this.widget.MenuBar(document.querySelector('#main-menu'));
 
   let $app_menu = document.querySelector('#main-menu--app-menu');
