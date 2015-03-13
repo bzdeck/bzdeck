@@ -1938,20 +1938,24 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header .meta {
   flex: auto;
   overflow: hidden;
+  min-height: 4rem;
   font-size: 1.1rem;
   line-height: 1.5rem;
   pointer-events: none;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] {
-  display: block;
+  display: inline-block;
+  position: relative;
+  padding-left: 4.8rem;
+  max-width: calc(100% - 4.8rem);
   line-height: 1;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
-  display: inline-block;
+  display: block;
   float: left;
-  margin-right: .8rem;
+  margin-left: -4.8rem;
   border-radius: .4rem;
   width: 4rem;
   height: 4rem;
@@ -1964,12 +1968,30 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
   display: inline-block;
   overflow: hidden;
-  margin-top: .6rem;
-  max-width: calc(100% - 4.8rem);
-  font-size: 1.25rem;
+  margin: .4rem .8rem 0 0;
+  font-size: 1.3rem;
   font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="role"] {
+  display: inline-block;
+  margin-right: .4rem;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--button-border-color);
+  border-radius: .4rem;
+  padding: .1rem .4rem;
+  font-size: 1.1rem;
+  line-height: 1.5rem;
+  vertical-align: top;
+  color: var(--disabled-button-foreground-color);
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="datePublished"] {
+  display: block;
+  margin: -1.8rem 0 0 4.8rem;
 }
 
 .bug-timeline [itemprop="comment"] header [role="toolbar"] {

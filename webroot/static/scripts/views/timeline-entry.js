@@ -137,6 +137,35 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     'DOWN|PAGE_DOWN|SPACE': event => move_focus(false),
   });
 
+  // The author's role(s)
+  {
+    let roles = new Set();
+
+    if (author.email === this.bug.creator) {
+      roles.add('Repoter'); // l10n
+    }
+
+    if (author.email === this.bug.assigned_to) {
+      roles.add('Assignee'); // l10n
+    }
+
+    if (this.bug.mentors.includes(author.email)) {
+      roles.add('Mentor'); // l10n
+    }
+
+    if (author.email === this.bug.qa_contact) {
+      roles.add('QA'); // l10n
+    }
+
+    for (let role of roles) {
+      let $role = document.createElement('span');
+
+      $role.itemProp.add('role'); // Not in Schema.org
+      $role.itemValue = role;
+      $author.appendChild($role);
+    }
+  }
+
   $author.title = `${author.original_name || author.name}\n${author.email}`;
   $author.querySelector('[itemprop="name"]').itemValue = author.name;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
