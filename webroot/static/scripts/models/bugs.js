@@ -18,8 +18,9 @@ BzDeck.models.Bugs.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Bugs.prototype.constructor = BzDeck.models.Bugs;
 
 BzDeck.models.Bugs.prototype.get = function () {
-  return Array.isArray(arguments[0]) ? this.get_multiple(arguments[0])
-                                     : this.get_single(arguments[0], arguments[1]);
+  // The argument could be a string, integer, Array or Set
+  return typeof arguments[0] === 'object' ? this.get_multiple([...arguments[0]])
+                                          : this.get_single(Number.parseInt(arguments[0]), arguments[1]);
 };
 
 BzDeck.models.Bugs.prototype.get_single = function (id, record_time = true) {
@@ -61,8 +62,6 @@ BzDeck.models.Bugs.prototype.get_single = function (id, record_time = true) {
 
 BzDeck.models.Bugs.prototype.get_multiple = function (ids) {
   let cache = this.data;
-
-  ids = [...ids]; // Accept both an Array and a Set as the first argument
 
   return new Promise(resolve => {
     if (cache) {
