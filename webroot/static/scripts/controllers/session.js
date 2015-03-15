@@ -9,6 +9,10 @@
 
 // Bootstrapper
 BzDeck.controllers.Session = function SessionController () {
+  let params = new URLSearchParams(location.search.substr(1));
+
+  BzDeck.config.debug = params.get('debug') === 'true';
+
   this.bootstrapping = true;
 
   BzDeck.models.global = new BzDeck.models.Global();
