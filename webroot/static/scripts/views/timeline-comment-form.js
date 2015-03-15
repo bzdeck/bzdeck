@@ -294,7 +294,7 @@ BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
   let user = BzDeck.models.account.data.bugzilla;
 
   // Enable the status tabpanel only for those who have the editbugs permission
-  if (this.status_panel_enabled || !user || ![for (group of user.groups) group.name].includes('editbugs')) {
+  if (this.status_panel_enabled || !user || ![for (group of user.groups || []) group.name].includes('editbugs')) {
     return;
   }
 
