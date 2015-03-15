@@ -1938,6 +1938,7 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header .meta {
   flex: auto;
   overflow: hidden;
+  max-width: calc(100% - 4.8rem);
   min-height: 4rem;
   font-size: 1.1rem;
   line-height: 1.5rem;
@@ -1947,15 +1948,16 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header [itemprop="author"] {
   display: inline-block;
   position: relative;
+  z-index: 10;
   padding-left: 4.8rem;
-  max-width: calc(100% - 4.8rem);
   line-height: 1;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
   display: block;
-  float: left;
-  margin-left: -4.8rem;
+  position: absolute;
+  top: 0;
+  left: 0;
   border-radius: .4rem;
   width: 4rem;
   height: 4rem;
@@ -1963,6 +1965,7 @@ article[id$="preview-bug"] > .bug-info {
   font-size: 2.4rem;
   line-height: 4rem;
   text-align: center;
+  pointer-events: auto; /* Enable clicks to show the profile page */
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
@@ -1975,6 +1978,13 @@ article[id$="preview-bug"] > .bug-info {
   text-overflow: ellipsis;
 }
 
+.bug-timeline [itemprop="comment"] header [itemprop="author"] .roles {
+  display: inline-block;
+  margin: 0 0 .4rem 0;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="role"] {
   display: inline-block;
   margin-right: .4rem;
@@ -1985,13 +1995,13 @@ article[id$="preview-bug"] > .bug-info {
   padding: .1rem .4rem;
   font-size: 1.1rem;
   line-height: 1.5rem;
-  vertical-align: top;
   color: var(--disabled-button-foreground-color);
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="datePublished"] {
   display: block;
-  margin: -1.8rem 0 0 4.8rem;
+  margin: 0 0 0 4.8rem;
+  pointer-events: auto; /* Show the tooltip */
 }
 
 .bug-timeline [itemprop="comment"] header [role="toolbar"] {

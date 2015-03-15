@@ -41,6 +41,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
+      $roles = $author.querySelector('.roles'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
       $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
       $reply_button = $entry.querySelector('[data-command="reply"]'),
@@ -162,7 +163,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
       $role.itemProp.add('role'); // Not in Schema.org
       $role.itemValue = role;
-      $author.appendChild($role);
+      $roles.appendChild($role);
     }
   }
 
