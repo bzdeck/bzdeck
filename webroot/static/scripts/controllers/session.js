@@ -164,7 +164,8 @@ BzDeck.controllers.Session.prototype.init_components = function () {
         window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
   }).then(() => {
     // Register the app for an activity on Firefox OS
-    BzDeck.controllers.app.register_activity_handler();
+    // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
+    // BzDeck.controllers.app.register_activity_handler();
   }).then(() => {
     this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
     this.show_first_notification();
