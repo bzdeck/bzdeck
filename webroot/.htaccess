@@ -17,21 +17,20 @@ AddType application/font-woff woff
 AddType application/font-woff2 woff2
 
 # Options
-# Note that the FollowSymLinks and MultiViews options cause an Internal Server Error on the production server
 Options +SymLinksIfOwnerMatch -Indexes
 RewriteEngine on
 
-# Rewrite: Force SSL
+# Force SSL
 RewriteCond %{HTTP_HOST} ^www\.bzdeck\.com$
 RewriteCond %{HTTPS} off
 RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
 
-# Rewrite: info
+# Redirects
 RewriteRule ^about/?$       https://github.com/kyoshino/bzdeck/wiki [R,L]
 RewriteRule ^faq/?$         https://github.com/kyoshino/bzdeck/wiki/FAQ [R,L]
 RewriteRule ^privacy/?$     https://marketplace.firefox.com/app/bzdeck/privacy [R,L]
 RewriteRule ^support/?$     https://github.com/kyoshino/bzdeck/wiki/FAQ [R,L]
-RewriteRule ^screenshots/?$ https://www.facebook.com/media/set/?set=a.271135819678801.63434.240285432763840 [R,L]
+RewriteRule ^screenshots/?$ https://www.facebook.com/BzDeck/photos_stream [R,L]
 
 # Rewrite: static URLs
 RewriteRule ^home/\w+$ / [L]
