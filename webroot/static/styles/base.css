@@ -1328,7 +1328,6 @@ main {
 [data-home-layout="vertical"]:root #home-list-pane {
   width: 40%;
   min-width: 24rem;
-  height: 100% !important;
 }
 
 [data-home-layout="classic"]:root #home-list-pane {
