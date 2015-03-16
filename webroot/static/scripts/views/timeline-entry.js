@@ -143,7 +143,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     let roles = new Set();
 
     if (author.email === this.bug.creator) {
-      roles.add('Repoter'); // l10n
+      roles.add('Reporter'); // l10n
     }
 
     if (author.email === this.bug.assigned_to) {
