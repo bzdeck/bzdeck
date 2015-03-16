@@ -68,12 +68,12 @@ BzDeck.controllers.Session.prototype.force_login = function () {
     BzDeck.models.global.get_server(data.host).then(server => {
       BzDeck.models.server = server; // Model
 
-      let params = new URLSearchParams(),
-          options = { 'api_key': data.api_key };
+      let params = new URLSearchParams();
 
       params.append('names', data.email);
+      params.append('api_key', data.api_key);
 
-      return new Promise((resolve, reject) => this.request('user', params, options).then(result => {
+      return new Promise((resolve, reject) => this.request('user', params).then(result => {
         result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
       }).catch(error => reject(error)));
     }).then(user => {

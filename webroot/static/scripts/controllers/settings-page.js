@@ -26,12 +26,12 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   }, this);
 
   this.on('V:APIKeyProvided', data => {
-    let params = new URLSearchParams(),
-        options = { 'api_key': data.api_key };
+    let params = new URLSearchParams();
 
     params.append('names', account.data.name);
+    params.append('api_key', data.api_key);
 
-    this.request('user', params, options).then(result => {
+    this.request('user', params).then(result => {
       if (result.users) {
         // Delete the previously-used auth token
         delete account.data.token;
