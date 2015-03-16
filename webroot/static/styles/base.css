@@ -1217,6 +1217,7 @@ main {
 
 [itemtype$="Bug"] [role="toolbar"] li {
   display: inline-block;
+  vertical-align: top;
 }
 
 [itemtype$="Bug"] [role="toolbar"] .iconic {
@@ -3255,6 +3256,11 @@ article[id$="preview-bug"] > .bug-info {
 
   [data-device|="mobile"]:root .bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
     margin: .8rem .8rem 0;
+  }
+
+  [data-device|="mobile"][data-ui-timeline-sort-order="ascending"]:root .comments-wrapper > :last-child,
+  [data-device|="mobile"][data-ui-timeline-sort-order="descending"]:root .comments-wrapper > :first-child {
+    margin-bottom: .8rem;
   }
 
   [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] > * {
