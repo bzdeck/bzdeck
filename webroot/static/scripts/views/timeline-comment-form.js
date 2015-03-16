@@ -434,7 +434,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
   };
 
   let post = data => new Promise((resolve, reject) => {
-    let method = data.file_name ? '/attachment' : '',
+    let method = data.file_name ? 'attachment' : '',
         length_computable,
         size = 0;
 
@@ -445,7 +445,8 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
       return;
     }
 
-    BzDeck.controllers.global.request(`bug/${this.bug.id}${method}`, null, {
+    BzDeck.controllers.global.request(`bug/${this.bug.id}${method ? '/' + method : ''}`, null, {
+      'method': method === 'attachment' ? 'POST' : 'PUT',
       'data': data,
       'auth': true,
       'upload_listeners': {
@@ -526,7 +527,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     this.oninput();
 
     // Fetch the bug if the Bugzfeed client is not working for some reason
-    if (!BzDeck.controllers.bugzfeed.has(this.bug.id)) {
+    if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
       BzDeck.controllers.bugs.fetch_bug(this.bug.id)
           .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
           .then(bug => BzDeck.models.bugs.save(bug));
