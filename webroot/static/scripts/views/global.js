@@ -134,7 +134,7 @@ window.addEventListener('click', event => {
   }
 
   // Support clicks on the avatar image in a comment
-  if ($target.parentElement.matches('[itemtype$="Person"]')) {
+  if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
     event.stopPropagation();
     event.preventDefault();

@@ -21,7 +21,7 @@ BzDeck.models.Base.prototype.get_store = function (db_name, store_name) {
   let store = this.get_transaction(db_name, store_name).objectStore(store_name),
       send = request => new Promise((resolve, reject) => {
         request.addEventListener('success', event => resolve(event.target.result));
-        request.addEventListener('error', event => reject(new Error(event)));
+        request.addEventListener('error', event => reject(event.target.error));
       });
 
   return {
