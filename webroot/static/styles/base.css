@@ -3280,6 +3280,75 @@ article[id$="preview-bug"] > .bug-info {
     padding: 0 .8rem .8rem;
   }
 
+  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] {
+    margin: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] > * {
+    padding: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history tr {
+    margin: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
+    padding: .4rem .8rem;
+  }
+
+  [data-device|="mobile"]:root #settings-tablist {
+    display: none;
+  }
+
+  [data-device|="mobile"]:root [id^="settings-tabpanel"],
+  [data-device|="mobile"]:root [id^="settings-tabpanel"] > * {
+    position: static;
+    height: auto; 
+  }
+
+  [data-device|="mobile"]:root [id^="settings-tabpanel"][aria-hidden="true"] {
+    display: block;
+  }
+
+  [id^="settings-tabpanel"] > section > section > h4 {
+    margin-bottom: 1.2rem;
+  }
+
+  [id|="tabpanel-profile"] > section > div {
+    overflow: auto;
+    padding: 2rem;
+    pointer-events: auto;
+  }
+
+  [id|="tabpanel-profile"] article > header {
+    margin: -2rem -2rem 4rem;
+  }
+
+  [id|="tabpanel-profile"] article > header div {
+    height: 14rem;
+  }
+
+  [id|="tabpanel-profile"] article > header [itemprop="image"] {
+    left: 2rem;
+    width: 8rem;
+    height: 8rem;
+  }
+
+  [id|="tabpanel-profile"] article > header h3 {
+    bottom: 1rem;
+    left: 11.6rem;
+    width: calc(100% - 11.6rem - 1.2rem);
+    font-size: 1.6rem;
+  }
+
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Tablet & Mobile
+ * ---------------------------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+
   [data-device|="mobile"]:root [id$="timeline-comment-form"] {
     margin: 0;
     border-width: .1rem 0 0;
@@ -3349,67 +3418,6 @@ article[id$="preview-bug"] > .bug-info {
 
   [data-device|="mobile"]:root [id$="timeline-comment-form"] > footer [role="button"][aria-disabled="false"] {
     color: var(--highlighted-button-background-color);
-  }
-
-  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] {
-    margin: .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] > * {
-    padding: .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-history tr {
-    margin: .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
-    padding: .4rem .8rem;
-  }
-
-  [data-device|="mobile"]:root #settings-tablist {
-    display: none;
-  }
-
-  [data-device|="mobile"]:root [id^="settings-tabpanel"],
-  [data-device|="mobile"]:root [id^="settings-tabpanel"] > * {
-    position: static;
-    height: auto; 
-  }
-
-  [data-device|="mobile"]:root [id^="settings-tabpanel"][aria-hidden="true"] {
-    display: block;
-  }
-
-  [id^="settings-tabpanel"] > section > section > h4 {
-    margin-bottom: 1.2rem;
-  }
-
-  [id|="tabpanel-profile"] > section > div {
-    overflow: auto;
-    padding: 2rem;
-    pointer-events: auto;
-  }
-
-  [id|="tabpanel-profile"] article > header {
-    margin: -2rem -2rem 4rem;
-  }
-
-  [id|="tabpanel-profile"] article > header div {
-    height: 14rem;
-  }
-
-  [id|="tabpanel-profile"] article > header [itemprop="image"] {
-    left: 2rem;
-    width: 8rem;
-    height: 8rem;
-  }
-
-  [id|="tabpanel-profile"] article > header h3 {
-    bottom: 1rem;
-    left: 11.6rem;
-    width: calc(100% - 11.6rem - 1.2rem);
-    font-size: 1.6rem;
   }
 
 }
