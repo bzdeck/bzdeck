@@ -75,6 +75,9 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
   this.$textbox.addEventListener('input', event => this.oninput());
 
+  // Prevent the keyboard shortcuts on the timeline from being fired
+  this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
+
   // Attach files using a file picker
   // The event here should be click; others including touchstart and mousedown don't work
   this.$attach_button.addEventListener('click', event => this.$file_picker.click());
