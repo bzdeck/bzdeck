@@ -114,7 +114,7 @@ BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
 
 BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   let $root = document.documentElement, // <html>
-      $search_box = document.querySelector('#quicksearch [role="textbox"]'),
+      $search_box = document.querySelector('#quicksearch [role="searchbox"]'),
       $search_button = document.querySelector('#quicksearch [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 

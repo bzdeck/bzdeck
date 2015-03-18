@@ -176,7 +176,7 @@ window.addEventListener('keydown', event => {
       tab = event.keyCode === event.DOM_VK_TAB;
 
   // Stop showing the Search Bar in Firefox
-  if (!event.target.matches('[role="textbox"]') && !modifiers && !tab) {
+  if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
     event.preventDefault();
   }
 });

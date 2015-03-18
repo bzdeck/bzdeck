@@ -26,7 +26,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
 
   if (params) {
     // TODO: support other params
-    this.panes['basic-search'].querySelector('.text-box [role="textbox"]').value = params.get('short_desc') || '';
+    this.panes['basic-search'].querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
   }
 
   this.on('C:Offline', data => {
@@ -143,7 +143,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
     $$component_list.filter(components);
   });
 
-  let $textbox = $pane.querySelector('.text-box [role="textbox"]'),
+  let $textbox = $pane.querySelector('.text-box [role="searchbox"]'),
       $$button = new this.widget.Button($pane.querySelector('.text-box [role="button"]'));
 
   $$button.bind('Pressed', event => {

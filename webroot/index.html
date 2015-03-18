@@ -73,7 +73,7 @@
                   <h3>Search Terms</h3>
                   <dl>
                     <dt>Summary</dt>
-                    <dd><input type="search" role="textbox"></dd>
+                    <dd><input type="search" role="searchbox"></dd>
                     <dd><span role="button">Search</span></dd>
                   </dl>
                 </section>
@@ -527,7 +527,7 @@
           </div>
           <div id="TID-comment-form-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
-              <div itemprop="text"></div>
+              <div role="text" itemprop="text"></div>
             </article>
           </div>
           <div id="TID-comment-form-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-attachments">
@@ -617,7 +617,7 @@
       </tr>
     </template><!-- end #details-change -->
     <template id="vertical-thread-item">
-      <li tabindex="0" role="option" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
+      <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
         <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
           <img itemprop="image">
           <meta itemprop="email">
@@ -664,7 +664,7 @@
         <h1 role="button">BzDeck</h1>
         <div role="toolbar">
           <div id="quicksearch" title="Search for bugs" role="search">
-            <input type="search" placeholder="Search for bugs" tabindex="1" role="textbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
+            <input type="search" placeholder="Search for bugs" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
             <span tabindex="0" title="Search" role="button">Go</span>
             <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
           </div>

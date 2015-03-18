@@ -163,11 +163,11 @@ ins, del {
   box-shadow: 0 0 .4rem rgba(28, 28, 28, .8); /* --control-shadow-color */
 }
 
-[role="textbox"] {
+[role="textbox"], [role="searchbox"] {
   box-shadow: inset 0 0 .2rem rgba(28, 28, 28, .2); /* --control-shadow-color */
 }
 
-[role="textbox"]:focus {
+[role="textbox"]:focus, [role="searchbox"]:focus {
   box-shadow: 0 0 .4rem rgba(26, 96, 143, .6), /* --active-textbox-border-color */
               inset 0 0 .4rem rgba(28, 28, 28, .2); /* --control-shadow-color */
 }
