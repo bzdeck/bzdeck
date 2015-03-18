@@ -2837,6 +2837,7 @@ FlareTail.widget.Dialog.prototype.build = function () {
   $dialog.tabIndex = 0;
   $dialog.setAttribute('role', options.type === 'alert' ? 'alertdialog' : 'dialog');
   $dialog.setAttribute('aria-describedby', `dialog-${options.id}-message`);
+  $dialog.setAttribute('aria-modal', 'true');
 
   if (options.title) {
     $title = $header.appendChild(document.createElement('h2'));

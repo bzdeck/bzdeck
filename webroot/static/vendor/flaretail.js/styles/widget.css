@@ -593,7 +593,7 @@ a[role="menuitem"] {
  * Textbox
  * ---------------------------------------------------------------------------------------------- */
 
-[role="textbox"] {
+[role="textbox"], [role="searchbox"] {
   display: inline-block;
   pointer-events: auto;
   background-color: transparent;
