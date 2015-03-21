@@ -2113,6 +2113,7 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div * {
   max-width: 100%;
+  max-height: 80rem;
   opacity: 1;
   transition: opacity 1s;
 }
