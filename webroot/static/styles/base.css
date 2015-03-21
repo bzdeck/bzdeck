@@ -415,6 +415,15 @@ col[data-hidden="false"] {
   animation: throbber 1s linear 0s infinite;
 }
 
+[itemtype$="Person"] [itemprop="image"][src=""] {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 /* ----------------------------------------------------------------------------------------------
  * App Log-in
  * ---------------------------------------------------------------------------------------------- */
