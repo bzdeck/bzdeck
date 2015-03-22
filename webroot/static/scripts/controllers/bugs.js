@@ -207,3 +207,37 @@ BzDeck.controllers.bugs.toggle_unread = function (id, value) {
 BzDeck.controllers.bugs.is_starred = function (bug) {
   return !!bug._starred_comments && !!bug._starred_comments.size;
 };
+
+BzDeck.controllers.bugs.get_participants = function (bug) {
+  let participants = new Map([[bug.creator, bug.creator_detail]]);
+
+  if (bug.assigned_to && !participants.has(bug.assigned_to)) {
+    participants.set(bug.assigned_to, bug.assigned_to_detail);
+  }
+
+  if (bug.qa_contact && !participants.has(bug.qa_contact)) {
+    participants.set(bug.qa_contact, bug.qa_contact_detail);
+  }
+
+  for (let cc of bug.cc_detail || []) if (!participants.has(cc.name)) {
+    participants.set(cc.name, cc);
+  }
+
+  for (let mentor of bug.mentors_detail || []) if (!participants.has(mentor.name)) {
+    participants.set(mentor.name, mentor);
+  }
+
+  for (let c of bug.comments || []) if (!participants.has(c.creator)) {
+    participants.set(c.creator, { 'name': c.creator });
+  }
+
+  for (let a of bug.attachments || []) if (!participants.has(a.creator)) {
+    participants.set(a.creator, { 'name': a.creator });
+  }
+
+  for (let h of bug.history || []) if (!participants.has(h.who)) {
+    participants.set(h.who, { 'name': h.who });
+  }
+
+  return participants;
+};

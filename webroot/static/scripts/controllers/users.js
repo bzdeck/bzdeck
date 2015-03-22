@@ -33,16 +33,7 @@ BzDeck.controllers.Users.prototype.add = function (name, profile) {
 };
 
 BzDeck.controllers.Users.prototype.add_from_bug = function (bug) {
-  let people = new Set([bug.creator_detail, bug.assigned_to_detail, bug.qa_contact_detail,
-                        ...bug.cc_detail, ...bug.mentors_detail],
-                        // The following fields are emails only
-                        ...[for (c of bug.comments || []) c.creator],
-                        ...[for (h of bug.history || []) h.who],
-                        ...[for (a of bug.attachments || []) a.creator]);
-
-  for (let person of people) {
-    let profile = typeof person === 'object' ? person : { 'name': person };
-
-    this.add(profile.name, { 'bugzilla': profile });
+  for (let [name, person] of BzDeck.controllers.bugs.get_participants(bug)) {
+    this.add(name, { 'bugzilla': person });
   }
 };
