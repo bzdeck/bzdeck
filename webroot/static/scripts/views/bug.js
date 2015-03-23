@@ -149,7 +149,7 @@ BzDeck.views.Bug.prototype.render = function () {
     // Focus the first (or last) visible entry
     for (let $_entry of entries) if ($_entry.clientHeight) {
       $_entry.focus();
-      $_entry.scrollIntoView(ascending);
+      $_entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
 
       break;
     }
@@ -322,7 +322,8 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
 
   if ($timeline) {
     $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes)).scrollIntoView();
+             .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes))
+             .scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   }
 
   if (changes.has('attachment') && this.render_attachments) {

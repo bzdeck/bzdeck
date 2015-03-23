@@ -79,7 +79,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     FlareTail.util.event.trigger($textbox, 'input', {}, false);
     // Scroll unti the caret is visible
     $tabpanel.scrollTop = $tabpanel.scrollHeight;
-    $entry.scrollIntoView();
+    $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   };
 
   let toggle_star = () => {
@@ -102,7 +102,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   let move_focus = shift => {
     if (!$entry.matches(':focus')) {
       $entry.focus();
-      $entry.scrollIntoView(ascending);
+      $entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
 
       return;
     }
@@ -116,7 +116,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     // Focus the next (or previous) visible entry
     for (let $_entry of entries) if ($_entry.clientHeight) {
       $_entry.focus();
-      $_entry.scrollIntoView(ascending);
+      $_entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
 
       break;
     }

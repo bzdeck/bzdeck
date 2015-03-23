@@ -128,7 +128,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
           $expander.dispatchEvent(new CustomEvent(click_event_type));
         }
 
-        $comment.scrollIntoView();
+        $comment.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
         $comment.focus();
       }
     }
