@@ -70,7 +70,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
 
       // A workaround for Bug 779324
       $menuitem.addEventListener('mousedown', event => toggle_fullScreen());
-      FlareTail.util.kbd.assign($menuitem, { 'RETURN': event => toggle_fullScreen() });
+      FlareTail.util.kbd.assign($menuitem, { 'Enter': event => toggle_fullScreen() });
 
       window.addEventListener('mozfullscreenchange', event => {
         $menuitem.querySelector('label').textContent = document.mozFullScreenElement ? 'Exit Full Screen'
@@ -138,7 +138,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   };
 
   FlareTail.util.kbd.assign(window, {
-    'ACCEL+K': event => {
+    'Accel+K': event => {
       $search_box.focus();
       event.preventDefault();
     },
@@ -156,12 +156,12 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   });
 
   FlareTail.util.kbd.assign($search_box, {
-    'UP|DOWN': event => {
+    'ArrowUp|ArrowDown': event => {
       if (event.target.value.trim() && this.$$search_dropdown.closed) {
         exec_quick_search();
       }
     },
-    'RETURN': event => {
+    'Enter': event => {
       this.$$search_dropdown.close();
       exec_advanced_search();
     },
@@ -170,7 +170,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   $search_box.addEventListener('mousedown', event => event.stopPropagation());
 
   FlareTail.util.kbd.assign($search_button, {
-    'RETURN|SPACE': event => exec_advanced_search(),
+    'Enter|Space': event => exec_advanced_search(),
   });
 
   $search_button.addEventListener('mousedown', event => {

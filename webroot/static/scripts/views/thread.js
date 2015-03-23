@@ -76,9 +76,9 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 
   this.$$grid.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.kbd.dispatch($grid, event.DOM_VK_UP),
+    'B': event => FlareTail.util.kbd.dispatch($grid, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.kbd.dispatch($grid, event.DOM_VK_DOWN),
+    'F': event => FlareTail.util.kbd.dispatch($grid, 'ArrowDown'),
     // Toggle read
     'M': event => toggle_prop('_unread'),
     // Toggle star
@@ -205,9 +205,9 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
   this.$$listbox.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.kbd.dispatch(this.$listbox, event.DOM_VK_UP),
+    'B': event => FlareTail.util.kbd.dispatch(this.$listbox, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.kbd.dispatch(this.$listbox, event.DOM_VK_DOWN),
+    'F': event => FlareTail.util.kbd.dispatch(this.$listbox, 'ArrowDown'),
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
@@ -222,7 +222,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
       }
     },
     // Open the bug in a new tab
-    'O|RETURN': event => {
+    'O|Enter': event => {
       BzDeck.router.navigate('/bug/' + this.consumer.controller.data.preview_id,
                              { 'ids': [for (bug of this.consumer.controller.data.bugs) bug.id] });
     },

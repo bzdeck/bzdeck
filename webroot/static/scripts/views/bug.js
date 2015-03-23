@@ -165,8 +165,8 @@ BzDeck.views.Bug.prototype.render = function () {
       // Reply
       'R': event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
       // Focus management
-      'PAGE_UP|SHIFT+SPACE': event => set_focus(true),
-      'PAGE_DOWN|SPACE': event => set_focus(false),
+      'PageUp|Shift+Space': event => set_focus(true),
+      'PageDown|Space': event => set_focus(false),
     });
 
     $timeline.setAttribute('keyboard-shortcuts-enabled', 'true');

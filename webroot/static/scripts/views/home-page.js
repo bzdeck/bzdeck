@@ -140,7 +140,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
       let vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical',
           $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
-      FlareTail.util.kbd.dispatch($target, event.keyCode);
+      FlareTail.util.kbd.dispatch($target, event.key);
     },
     // Open the bug in a new tab
     'O': event => this.trigger(':OpeningTabRequested'),

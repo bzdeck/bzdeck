@@ -134,8 +134,8 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     // Collapse/expand the comment
     'C': event => collapse_comment(),
     // Focus management
-    'UP|PAGE_UP|SHIFT+SPACE': event => move_focus(true),
-    'DOWN|PAGE_DOWN|SPACE': event => move_focus(false),
+    'ArrowUp|PageUp|Shift+Space': event => move_focus(true),
+    'ArrowDown|PageDown|Space': event => move_focus(false),
   });
 
   // The author's role(s)

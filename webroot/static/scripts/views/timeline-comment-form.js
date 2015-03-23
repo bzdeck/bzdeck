@@ -66,7 +66,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign(this.$textbox, {
-    'ACCEL+RETURN': event => {
+    'Accel+Enter': event => {
       if (this.can_submit) {
         this.submit();
       }

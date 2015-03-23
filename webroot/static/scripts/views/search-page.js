@@ -228,7 +228,7 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the search thread
-    'B|F': event => FlareTail.util.kbd.dispatch(this.$grid, event.keyCode),
+    'B|F': event => FlareTail.util.kbd.dispatch(this.$grid, event.key),
     // Open the bug in a new tab
     'O': event => this.trigger(':OpeningTabRequested'),
   });
