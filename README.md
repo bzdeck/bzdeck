@@ -1,23 +1,9 @@
-# BzDeck
+# FlareTail.js
 
-A useful experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA.
+A JavaScript library for Firefox OS application development, consisting of WAI-ARIA-driven accessible widgets, a lightweight app framework, and convenient utility functions.
 
-* [BzDeck](https://www.bzdeck.com/)
-* [Introducing BzDeck](https://www.bzdeck.com/about/)
-* [BzDeck FAQ](https://www.bzdeck.com/faq/)
-* [FlareTail.js](https://github.com/kyoshino/flaretail.js) integrated as a [Git subtree](http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/)
+This is the core of [BzDeck](https://github.com/kyoshino/bzdeck) and not intended for general use at this time.
 
-## How to run the app locally
-
-1. Fork this repository
-2. Add a new virtual host in your Apache config:
-  ```conf
-  <VirtualHost *:80>
-    ServerName local.bzdeck.com
-    DocumentRoot "/path/to/bzdeck/webroot/"
-  </VirtualHost>
-  ```
-
-3. Add a new host in your `/etc/hosts`: `127.0.0.1 local.bzdeck.com`
-4. Restart your Apache server with PHP 5.4+ enabled
-5. Open `http://local.bzdeck.com/` in your browser
+* `flaretail.widget.js`: a collection of WAI-ARIA-driven accessible widgets. This will use Web Components once these are implemented in Firefox.
+* `flaretail.app.js`: a lightweight app framework featuring the MVC+events pattern and HTML5-compatible rendering.
+* `flaretail.util.js`: convenient utility functions to handle variety of stuff in apps.

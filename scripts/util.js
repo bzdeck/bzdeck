@@ -242,22 +242,19 @@ FlareTail.util.kbd = {};
  * Assign keyboard shortcuts on a specific element
  *
  * @param   {Element} $target
- * @param   {Object} map of keybind patterns ('S', 'ACCEL+SHIFT+R', 'CTRL+O', etc.
-                     multiple pattern should be separated with '|') and function
+ * @param   {Object} A map of keybind patterns ('S', 'Accel+Shift+R', 'Control+O', etc.
+                     Multiple pattern should be separated with '|') and function.
+                     Possible key values can be found at MDN:
+                     https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key
+                     https://developer.mozilla.org/docs/Web/API/KeyboardEvent/getModifierState
  * ------------------------------------------------------------------------------------------------------------------ */
 FlareTail.util.kbd.assign = function ($target, map) {
   let bindings = new Set();
 
   for (let [_combos, command] of Iterator(map)) for (let _combo of _combos.split('|')) {
     let combo = _combo.split('+'),
-        key = combo.pop().toUpperCase(),
-        modifiers = new Set([for (mod of combo) mod.toLowerCase()]);
-
-    // Support the Accel key which is Command (Meta) on OS X and Ctrl on other platforms
-    if (modifiers.has('accel')) {
-      modifiers.add(FlareTail.util.ua.platform.macintosh ? 'meta' : 'ctrl');
-      modifiers.delete('accel');
-    }
+        key = combo.pop().toLowerCase().replace('Space', ' '), // Space is an exception
+        modifiers = new Set(combo);
 
     bindings.add([key, modifiers, command]);
   }
@@ -266,14 +263,15 @@ FlareTail.util.kbd.assign = function ($target, map) {
     let found = false;
 
     outer: for (let [key, modifiers, command] of bindings) {
-      // Check the key code
-      if (event.keyCode !== event[`DOM_VK_${key}`]) {
+      // Check the key value
+      if (event.key.toLowerCase() !== key) {
         continue;
       }
 
       // Check modifier keys
-      for (let mod of ['shift', 'ctrl', 'meta', 'alt']) {
-        if (modifiers.has(mod) && !event[`${mod}Key`] || !modifiers.has(mod) && event[`${mod}Key`]) {
+      for (let mod of ['Alt', 'Shift', 'Control', 'Meta', 'Accel']) {
+        if (modifiers.has(mod) && !event.getModifierState(mod) ||
+            !modifiers.has(mod) && event.getModifierState(mod)) {
           continue outer;
         }
       }
@@ -296,7 +294,7 @@ FlareTail.util.kbd.assign = function ($target, map) {
  * @param   {Integer} key
  * ------------------------------------------------------------------------------------------------------------------ */
 FlareTail.util.kbd.dispatch = function ($target, key) {
-  $target.dispatchEvent(new KeyboardEvent('keydown', { 'keyCode': key }));
+  $target.dispatchEvent(new KeyboardEvent('keydown', { key }));
 };
 
 /* ------------------------------------------------------------------------------------------------------------------

@@ -186,9 +186,9 @@ FlareTail.widget.Button.prototype.onclick = function (event) {
 };
 
 FlareTail.widget.Button.prototype.onkeydown = function (event) {
-  let kcode = event.keyCode;
+  let key = event.key;
 
-  if (kcode === event.DOM_VK_SPACE || kcode === event.DOM_VK_RETURN) {
+  if (key === ' ' || key === 'Enter') { // Space or Enter
     this.onclick(event);
   }
 
@@ -196,15 +196,15 @@ FlareTail.widget.Button.prototype.onkeydown = function (event) {
   if (this.view.$$menu) {
     let menuitems = this.view.$$menu.view.members;
 
-    if (kcode === event.DOM_VK_DOWN) {
+    if (key === 'ArrowDown') {
       this.view.$$menu.view.selected = this.view.$$menu.view.$focused = menuitems[0];
     }
 
-    if (kcode === event.DOM_VK_UP) {
+    if (key === 'ArrowUp') {
       this.view.$$menu.view.selected = this.view.$$menu.view.$focused = menuitems[menuitems.length -1];
     }
 
-    if (kcode === event.DOM_VK_ESCAPE) {
+    if (key === 'Escape') {
       this.view.$$menu.close();
       this.view.$button.focus();
       this.data.pressed = false;
@@ -269,7 +269,7 @@ FlareTail.widget.Composite.prototype.onblur = function (event) {
 };
 
 FlareTail.widget.Composite.prototype.onmousedown = function (event) {
-  if (!this.view.members.includes(event.target) || event.button !== 0) {
+  if (!this.view.members.includes(event.target) || event.buttons !== 1) {
     return;
   }
 
@@ -309,10 +309,10 @@ FlareTail.widget.Composite.prototype.select_with_mouse = function (event) {
 };
 
 FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
-  let kcode = event.keyCode;
+  let key = event.key;
 
   // Focus shift with tab key
-  if (kcode === event.DOM_VK_TAB) {
+  if (key === 'Tab') {
     return true;
   }
 
@@ -332,8 +332,8 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
       multi = options.multiselectable,
       expanding = multi && event.shiftKey;
 
-  switch (kcode) {
-    case event.DOM_VK_SPACE: {
+  switch (key) {
+    case ' ': { // Space
       if (ctrl) {
         break; // Move focus only
       }
@@ -359,8 +359,8 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
 
     // TODO: The behavior with Page Up/Down should be different
 
-    case event.DOM_VK_HOME:
-    case event.DOM_VK_PAGE_UP: {
+    case 'Home':
+    case 'PageUp': {
       this.view.$focused = items[0];
 
       if (ctrl) {
@@ -378,8 +378,8 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
       break;
     }
 
-    case event.DOM_VK_END:
-    case event.DOM_VK_PAGE_DOWN: {
+    case 'End':
+    case 'PageDown': {
       this.view.$focused = items[items.length - 1];
 
       if (ctrl) {
@@ -397,8 +397,8 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
       break;
     }
 
-    case event.DOM_VK_UP:
-    case event.DOM_VK_LEFT: {
+    case 'ArrowUp':
+    case 'ArrowLeft': {
       if (focused_idx > 0) {
         this.view.$focused = items[focused_idx - 1];
       } else if (cycle) {
@@ -431,8 +431,8 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
       break;
     }
 
-    case event.DOM_VK_DOWN:
-    case event.DOM_VK_RIGHT: {
+    case 'ArrowDown':
+    case 'ArrowRight': {
       if (focused_idx < items.length - 1) {
         this.view.$focused = items[focused_idx + 1];
       } else if (cycle) {
@@ -467,7 +467,7 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
 
     default: {
       // Select All
-      if (multi && ctrl && kcode === event.DOM_VK_A) {
+      if (multi && ctrl && key.toUpperCase() === 'A') {
         this.view.selected = items;
         this.view.$focused = items[0];
 
@@ -479,7 +479,7 @@ FlareTail.widget.Composite.prototype.select_with_keyboard = function (event) {
       }
 
       // Find As You Type: Incremental Search for simple list like ListBox or Tree
-      let input = String.fromCharCode(kcode),
+      let input = key,
           char = this.data.search_key || '';
 
       char = char === input ? input : char + input;
@@ -824,11 +824,11 @@ FlareTail.widget.Grid.prototype.onmousedown_extend = function (event) {
   let $target = event.target;
 
   if ($target.matches('[role="columnheader"]')) {
-    if (event.button === 0 && this.options.reorderable) {
+    if (event.buttons === 1 && this.options.reorderable) {
       FlareTail.util.event.bind(this, window, ['mousemove', 'mouseup']);
     }
 
-    if (event.button === 2) {
+    if (event.buttons === 2) {
       this.build_columnpicker();
     }
 
@@ -858,7 +858,7 @@ FlareTail.widget.Grid.prototype.onmouseup = function (event) {
   FlareTail.util.event.ignore(event);
   FlareTail.util.event.unbind(this, window, ['mousemove', 'mouseup']);
 
-  if (event.button !== 0) {
+  if (event.button !== 0) {  // event.buttons is 0 since this is a mouseup event handler
     return;
   }
 
@@ -877,10 +877,10 @@ FlareTail.widget.Grid.prototype.onmouseup = function (event) {
 };
 
 FlareTail.widget.Grid.prototype.onkeydown_extend = function (event) {
-  let kcode = event.keyCode;
+  let key = event.key;
 
   // Focus shift with tab key
-  if (kcode === event.DOM_VK_TAB) {
+  if (key === 'Tab') {
     return true;
   }
 
@@ -888,16 +888,16 @@ FlareTail.widget.Grid.prototype.onkeydown_extend = function (event) {
       focused_idx = items.indexOf(this.view.$focused),
       modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
 
-  switch (kcode) {
-    case event.DOM_VK_LEFT:
-    case event.DOM_VK_RIGHT: {
+  switch (key) {
+    case 'ArrowLeft':
+    case 'ArrowRight': {
       // Do nothing
       break;
     }
 
-    case event.DOM_VK_PAGE_UP:
-    case event.DOM_VK_PAGE_DOWN:
-    case event.DOM_VK_SPACE: {
+    case 'PageUp':
+    case 'PageDown':
+    case ' ' : { // Space
       // Handled by the ScrollBar widget
       return true;
     }
@@ -1224,11 +1224,11 @@ FlareTail.widget.Grid.prototype.ensure_row_visibility = function ($row) {
       roh = $row.offsetHeight;
 
   if (ost > rot) {
-    $row.scrollIntoView(true);
+    $row.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   }
 
   if (ost + ooh < rot + roh) {
-    $row.scrollIntoView(false);
+    $row.scrollIntoView({ 'block': 'end', 'behavior': 'smooth' });
   }
 };
 
@@ -1645,14 +1645,14 @@ FlareTail.widget.Menu.prototype.activate_extend = function (rebuild = false) {
 
 FlareTail.widget.Menu.prototype.onmousedown = function (event) {
   // Open link in a new tab
-  if (event.target.href && event.button === 0) {
+  if (event.target.href && event.buttons === 1) {
     event.stopPropagation();
     event.target.target = '_blank';
 
     return;
   }
 
-  if (event.button !== 0) {
+  if (event.buttons !== 1) {
     FlareTail.util.event.ignore(event);
 
     return;
@@ -1711,10 +1711,10 @@ FlareTail.widget.Menu.prototype.onkeydown_extend = function (event) {
       menus = this.data.menus,
       has_submenu = menus.has(event.target),
       $owner = this.view.$owner,
-      kcode = event.keyCode;
+      key = event.key;
 
   // Open link in a new tab
-  if (event.target.href && event.keyCode === event.DOM_VK_RETURN) {
+  if (event.target.href && event.key === 'Enter') {
     event.stopPropagation();
     event.target.target = '_blank';
 
@@ -1726,24 +1726,24 @@ FlareTail.widget.Menu.prototype.onkeydown_extend = function (event) {
     let view = this.view,
         items = view.members;
 
-    switch (kcode) {
-      case event.DOM_VK_UP:
-      case event.DOM_VK_END: {
+    switch (key) {
+      case 'ArrowUp':
+      case 'End': {
         view.selected = view.$focused = items[items.length - 1];
 
         break;
       }
 
-      case event.DOM_VK_DOWN:
-      case event.DOM_VK_RIGHT:
-      case event.DOM_VK_HOME: {
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'Home': {
         view.selected = view.$focused = items[0];
 
         break;
       }
 
-      case event.DOM_VK_ESCAPE:
-      case event.DOM_VK_TAB: {
+      case 'Escape':
+      case 'Tab': {
         this.close();
 
         break;
@@ -1755,8 +1755,8 @@ FlareTail.widget.Menu.prototype.onkeydown_extend = function (event) {
 
   FlareTail.util.event.ignore(event);
 
-  switch (kcode) {
-    case event.DOM_VK_RIGHT: {
+  switch (key) {
+    case 'ArrowRight': {
       if (has_submenu) {
         // Select the first item in the submenu
         let view = menus.get(event.target).view;
@@ -1774,7 +1774,7 @@ FlareTail.widget.Menu.prototype.onkeydown_extend = function (event) {
       break;
     }
 
-    case event.DOM_VK_LEFT: {
+    case 'ArrowLeft': {
       if (parent) {
         let view = parent.view,
             items = view.members,
@@ -1787,14 +1787,14 @@ FlareTail.widget.Menu.prototype.onkeydown_extend = function (event) {
       break;
     }
 
-    case event.DOM_VK_ESCAPE: {
+    case 'Escape': {
       this.close();
 
       break;
     }
 
-    case event.DOM_VK_RETURN:
-    case event.DOM_VK_SPACE: {
+    case 'Enter':
+    case ' ': { // Space
       if (!has_submenu) {
         this.select(event);
         this.close(true);
@@ -1948,7 +1948,7 @@ FlareTail.widget.MenuBar.prototype = Object.create(FlareTail.widget.Menu.prototy
 FlareTail.widget.MenuBar.prototype.constructor = FlareTail.widget.MenuBar;
 
 FlareTail.widget.MenuBar.prototype.onmousedown = function (event) {
-  if (event.button !== 0) {
+  if (event.buttons !== 1) {
     FlareTail.util.event.ignore(event);
 
     return;
@@ -1975,26 +1975,26 @@ FlareTail.widget.MenuBar.prototype.onkeydown_extend = function (event) {
   let menu = this.data.menus.get(event.target).view,
       menuitems = menu.members;
 
-  switch (event.keyCode) {
-    case event.DOM_VK_TAB: {
+  switch (event.key) {
+    case 'Tab': {
       return true; // Focus management
     }
 
-    case event.DOM_VK_HOME:
-    case event.DOM_VK_DOWN: {
+    case 'Home':
+    case 'ArrowDown': {
       menu.selected = menu.$focused = menuitems[0];
 
       break;
     }
 
-    case event.DOM_VK_END:
-    case event.DOM_VK_UP: {
+    case 'End':
+    case 'ArrowUp': {
       menu.selected = menu.$focused = menuitems[menuitems.length - 1];
 
       break;
     }
 
-    case event.DOM_VK_SPACE: {
+    case ' ': { // Space
       if (event.target.matches('[aria-selected="true"]')) {
         menu.$container.setAttribute('aria-expanded', 'false');
         this.view.selected = [];
@@ -2006,7 +2006,7 @@ FlareTail.widget.MenuBar.prototype.onkeydown_extend = function (event) {
       break;
     }
 
-    case event.DOM_VK_ESCAPE: {
+    case 'Escape': {
       if (event.target.matches('[aria-selected="true"]')) {
         menu.$container.setAttribute('aria-expanded', 'false');
         this.view.selected = [];
@@ -2101,8 +2101,8 @@ FlareTail.widget.Tree.prototype.onkeydown_extend = function (event) {
   let $item = event.target,
       items = this.view.members;
 
-  switch (event.keyCode) {
-    case event.DOM_VK_LEFT: {
+  switch (event.key) {
+    case 'ArrowLeft': {
       if ($item.matches('[aria-expanded="true"]')) {
         this.expand($item); // Collapse the subgroup
       } else {
@@ -2124,7 +2124,7 @@ FlareTail.widget.Tree.prototype.onkeydown_extend = function (event) {
       break;
     }
 
-    case event.DOM_VK_RIGHT: {
+    case 'ArrowRight': {
       if ($item.matches('[aria-expanded="false"]')) {
         this.expand($item); // Expand the subgroup
       } else if ($item.hasAttribute('aria-expanded')) {
@@ -2482,7 +2482,7 @@ FlareTail.widget.Checkbox.prototype = Object.create(FlareTail.widget.Input.proto
 FlareTail.widget.Checkbox.prototype.constructor = FlareTail.widget.Checkbox;
 
 FlareTail.widget.Checkbox.prototype.onkeydown = function (event) {
-  if (event.keyCode === event.DOM_VK_SPACE) {
+  if (event.key === ' ') { // Space
     this.view.$checkbox.click();
   }
 }
@@ -2691,35 +2691,35 @@ FlareTail.widget.ScrollBar.prototype.scroll_with_keyboard = function (event) {
       $controller = this.view.$controller,
       adjusted = this.options.adjusted,
       arrow = this.options.arrow_keys_enabled,
-      key = event.keyCode,
+      key = event.key,
       ch = $owner.clientHeight;
 
   switch (key) {
-    case event.DOM_VK_TAB: {
+    case 'Tab': {
       return true; // Focus management
     }
 
-    case event.DOM_VK_HOME:
-    case event.DOM_VK_END: {
+    case 'Home':
+    case 'End': {
       if (!adjusted) {
-        $owner.scrollTop = key === event.DOM_VK_HOME ? 0 : $owner.scrollTopMax;
+        $owner.scrollTop = key === 'Home' ? 0 : $owner.scrollTopMax;
       }
 
       break;
     }
 
-    case event.DOM_VK_SPACE:
-    case event.DOM_VK_PAGE_UP:
-    case event.DOM_VK_PAGE_DOWN: {
-      $owner.scrollTop += key === event.DOM_VK_PAGE_UP || key === event.DOM_VK_SPACE && event.shiftKey ? -ch : ch;
+    case ' ': // Space
+    case 'PageUp':
+    case 'PageDown': {
+      $owner.scrollTop += key === 'PageUp' || key === ' ' && event.shiftKey ? -ch : ch;
 
       break;
     }
 
-    case event.DOM_VK_UP:
-    case event.DOM_VK_DOWN: {
+    case 'ArrowUp':
+    case 'ArrowDown': {
       if (!adjusted && (event.target === $controller || event.currentTarget === $owner && arrow)) {
-        $owner.scrollTop += key === event.DOM_VK_UP ? -40 : 40;
+        $owner.scrollTop += key === 'ArrowUp' ? -40 : 40;
       }
 
       break;
@@ -2880,11 +2880,11 @@ FlareTail.widget.Dialog.prototype.activate = function () {
 };
 
 FlareTail.widget.Dialog.prototype.onkeypress = function (event) {
-  if (event.keyCode === event.DOM_VK_RETURN) {
+  if (event.key === 'Enter') {
     this.hide('accept');
   }
 
-  if (event.keyCode === event.DOM_VK_ESCAPE) {
+  if (event.key === 'Escape') {
     this.hide('cancel');
   }
 
@@ -3111,7 +3111,7 @@ FlareTail.widget.Splitter.prototype = Object.create(FlareTail.widget.Separator.p
 FlareTail.widget.Splitter.prototype.constructor = FlareTail.widget.Splitter;
 
 FlareTail.widget.Splitter.prototype.onmousedown = function (event) {
-  if (event.button !== 0) {
+  if (event.buttons !== 1) {
     event.preventDefault();
 
     return;
@@ -3156,23 +3156,23 @@ FlareTail.widget.Splitter.prototype.onkeydown = function (event) {
       before = this.data.controls.before,
       after = this.data.controls.after;
 
-  switch (event.keyCode) {
-    case event.DOM_VK_HOME: {
+  switch (event.key) {
+    case 'Home': {
       value = !before.min || before.collapsible ? 0 : before.min;
 
       break;
     }
 
-    case event.DOM_VK_END: {
+    case 'End': {
       value = !after.min || after.collapsible ? '100%' : outer.size - after.min;
 
       break;
     }
 
-    case event.DOM_VK_PAGE_UP:
-    case event.DOM_VK_UP:
-    case event.DOM_VK_LEFT: {
-      let delta = event.keyCode === event.DOM_VK_PAGE_UP || event.shiftKey ? 50 : 10;
+    case 'PageUp':
+    case 'ArrowUp':
+    case 'ArrowLeft': {
+      let delta = event.key === 'PageUp' || event.shiftKey ? 50 : 10;
 
       if (position === '100%') {
         value = outer.size - (this.data.controls.after.min || delta);
@@ -3183,10 +3183,10 @@ FlareTail.widget.Splitter.prototype.onkeydown = function (event) {
       break;
     }
 
-    case event.DOM_VK_PAGE_DOWN:
-    case event.DOM_VK_DOWN:
-    case event.DOM_VK_RIGHT: {
-      let delta = event.keyCode === event.DOM_VK_PAGE_DOWN || event.shiftKey ? 50 : 10;
+    case 'PageDown':
+    case 'ArrowDown':
+    case 'ArrowRight': {
+      let delta = event.key === 'PageDown' || event.shiftKey ? 50 : 10;
 
       if (Number.parseInt(position) === 0) {
         value = this.data.controls.before.min || delta;
