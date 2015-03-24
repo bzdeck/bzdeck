@@ -14,7 +14,7 @@ ob_start();
 
 if ($_GET['debug'] && $_GET['debug'] === 'true') {
   foreach ($scripts as $script) {
-    echo "    <script type=\"application/javascript;version=1.8\" src=\"/static/scripts/{$script}\"></script>\n";
+    echo "    <script type=\"application/javascript;version=1.8\" src=\"{$script}\"></script>\n";
   }
 } else {
   echo "    <script type=\"application/javascript;version=1.8\" src=\"/static/scripts/combined.js\"></script>\n";

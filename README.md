@@ -5,7 +5,7 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
 * [BzDeck](https://www.bzdeck.com/)
 * [Introducing BzDeck](https://www.bzdeck.com/about/)
 * [BzDeck FAQ](https://www.bzdeck.com/faq/)
-* [FlareTail.js](https://github.com/kyoshino/flaretail.js) integrated as a [Git subtree](http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/)
+* [FlareTail.js](https://github.com/kyoshino/flaretail.js) integrated as a submodule
 
 ## How to run the app locally
 
