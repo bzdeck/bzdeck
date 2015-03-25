@@ -14,6 +14,7 @@ BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefi
   this.results = new Map();
 
   this.$combobox = this.get_fragment('person-finder').firstElementChild;
+  this.$input = this.$combobox.querySelector('input');
   this.$option = this.get_fragment('person-finder-item').firstElementChild;
 
   this.$$combobox = new this.widget.ComboBox(this.$combobox);
@@ -25,7 +26,7 @@ BzDeck.views.PersonFinder.prototype = Object.create(BzDeck.views.Base.prototype)
 BzDeck.views.PersonFinder.prototype.constructor = BzDeck.views.PersonFinder;
 
 BzDeck.views.PersonFinder.prototype.oninput = function (event) {
-  this.value = event.detail.value.toLowerCase(),
+  this.value = event.detail.value.toLowerCase();
   this.results.clear();
   window.clearTimeout(this.timer);
 
@@ -119,11 +120,15 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
   }
 
   for (let [name, user] of results) {
-    let props = { 'name': user.name, 'nick': user.nick_names[0] || '', 'email': user.email, 'image': user.image };
+    let data = { 'name': user.name, 'nick': user.nick_names[0] || '', 'email': user.email, 'image': user.image },
+        attrs = { 'id': `${this.combobox_id}-${user.profiles.bugzilla.id}`, 'data-value': user.email };
 
-    $fragment.appendChild(this.fill(this.$option.cloneNode(true), props,
-                                    { 'id': `${this.combobox_id}-${CSS.escape(user.email)}` }));
+    $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
   }
 
   this.$$combobox.show_results($fragment);
+};
+
+BzDeck.views.PersonFinder.prototype.clear = function () {
+  this.$$combobox.clear_input();
 };

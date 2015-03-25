@@ -3080,6 +3080,7 @@ article[id$="preview-bug"] > .bug-info {
   margin-left: .4rem;
   opacity: .5;
   font-size: 1.1rem;
+  line-height: 1.6rem;
 }
 
 .person-finder [role="option"] [itemprop="nick"]:empty {

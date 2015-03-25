@@ -453,10 +453,11 @@ BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () 
 
   $finder_outer.appendChild($finder);
   $finder.addEventListener('Change', event => {
-    let requestee = event.detail.target.querySelector('[itemprop="email"]').itemValue;
+    let requestee = event.detail.$target.dataset.value;
 
     add_row(requestee, true);
     $$finder.exclude.add(requestee);
+    $$finder.clear();
   });
 
   $tab.setAttribute('aria-disabled', 'false');
