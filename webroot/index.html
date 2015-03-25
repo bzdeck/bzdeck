@@ -521,6 +521,7 @@
             <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
             <li id="TID-comment-form-tab-attachments" role="tab" aria-controls="TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
             <li id="TID-comment-form-tab-status" role="tab" aria-controls="TID-comment-form-tabpanel-status" aria-selected="false" aria-disabled="true"><label>Status</label></li>
+            <li id="TID-comment-form-tab-needinfo" role="tab" aria-controls="TID-comment-form-tabpanel-needinfo" aria-selected="false" aria-disabled="true"><label>Need Info</label></li>
           </ul>
           <div id="TID-comment-form-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-comment-form-tab-comment">
             <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
@@ -542,10 +543,17 @@
           </div>
           <div id="TID-comment-form-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-status">
             <div>
-              <select role="combobox" name="status"></select>
-              <select role="combobox" name="resolution" aria-hidden="true"></select>
-              <label id="TID-comment-form-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="textbox"></label>
+              <select name="status"></select>
+              <select name="resolution" aria-hidden="true"></select>
+              <label id="TID-comment-form-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="searchbox"></label>
             </div>
+          </div>
+          <div id="TID-comment-form-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-needinfo">
+            <div>
+              <div class="requestee-finder-outer">
+                <label>Ask someone else:</label>
+              </div>
+            </div> 
           </div>
         </div>
         <footer>
@@ -564,6 +572,16 @@
         <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
       </section>
     </template><!-- end #timeline-comment-form -->
+    <template id="timeline-comment-form-request-needinfo-row">
+      <div class="request-needinfo-row">
+        <span tabindex="0" role="checkbox">Ask <strong></strong> <span></span></span>
+      </div>
+    </template><!-- end #timeline-comment-form-request-needinfo-row -->
+    <template id="timeline-comment-form-clear-needinfo-row">
+      <div class="clear-needinfo-row">
+        <span tabindex="0" role="checkbox">Provide information as <strong></strong></span>
+      </div>
+    </template><!-- end #timeline-comment-form-clear-needinfo-row -->
     <template id="timeline-comment-form-attachments-row">
       <tr>
         <td><input spellcheck="false" role="textbox" data-field="description"></td>
@@ -639,6 +657,23 @@
         <time data-simple="true" itemprop="dateModified"></time>
       </aside>
     </template><!-- end #bug-tooltip -->
+    <template id="person-finder">
+      <span class="person-finder" role="combobox" aria-autocomplete="list" aria-label="Need Info requestee finder" aria-expanded="false">
+        <input spellcheck="false" role="searchbox">
+        <ul role="listbox"></ul>
+      </span>
+    </template><!-- end #person-finder -->
+    <template id="person-finder-item">
+      <li tabindex="-1" role="option" aria-selected="false" data-attrs="id" itemscope itemtype="http://schema.org/Person">
+        <img alt="" itemprop="image">
+        <span itemprop="name"></span>
+        <span itemprop="nick"></span>
+        <meta itemprop="email">
+      </li>
+    </template><!-- end #person-finder-item -->
+    <template id="person-with-image">
+      <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+    </template><!-- end #person-with-image -->
     <template id="person-without-image">
       <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><span itemprop="name"></span><meta itemprop="email"></span>
     </template><!-- end #person-without-image -->

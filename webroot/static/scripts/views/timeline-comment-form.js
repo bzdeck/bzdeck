@@ -28,6 +28,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
+  this.timeline_id = timeline_id;
   this.bug = bug;
   this.attachments = [];
   this.parallel_upload = true;
@@ -121,11 +122,11 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     this.on('SettingsPageController:APIKeyVerified', data => {
       this.$status.textContent = '';
       this.$submit.setAttribute('aria-disabled', !this.can_submit);
-      this.prep_status_tabpanel();
+      this.prep_editor_tabpanels();
     });
   }
 
-  this.prep_status_tabpanel();
+  this.prep_editor_tabpanels();
 };
 
 BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -293,14 +294,20 @@ BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function () {
   this.$parallel_checkbox.setAttribute('aria-hidden', this.attachments.length < 2);
 };
 
-BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
+BzDeck.views.TimelineCommentForm.prototype.prep_editor_tabpanels = function () {
   let user = BzDeck.models.account.data.bugzilla;
 
   // Enable the status tabpanel only for those who have the editbugs permission
-  if (this.status_panel_enabled || !user || ![for (group of user.groups || []) group.name].includes('editbugs')) {
+  if (this.editor_tabpanels_enabled || !user || ![for (group of user.groups || []) group.name].includes('editbugs')) {
     return;
   }
 
+  this.prep_status_tabpanel();
+  this.prep_needinfo_tabpanel();
+  this.editor_tabpanels_enabled = true;
+};
+
+BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
   // TODO: use custom widget for <select> and <option>
   // TODO: complete MVC migration
 
@@ -358,11 +365,11 @@ BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
 
   $dupe_label.setAttribute('aria-hidden', this.bug.resolution !== 'DUPLICATE');
   $dupe_input.value = this.bug.dupe_of || '';
+  $dupe_input.addEventListener('keydown', event => event.stopPropagation());
   $dupe_input.addEventListener('input', event => this.update_changes());
   new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
 
   $tab.setAttribute('aria-disabled', 'false');
-  this.status_panel_enabled = true;
 };
 
 BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
@@ -397,6 +404,82 @@ BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
     this.changes.delete('resolution');
   }
 
+  this.$submit.setAttribute('aria-disabled', !this.can_submit);
+};
+
+BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () {
+  let flags = [for (flag of this.bug.flags || []) if (flag.name === 'needinfo') flag],
+      names = [for (flag of flags) flag.requestee],
+      self_assigned = this.bug.creator === this.bug.assigned_to,
+      $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
+      $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
+      $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
+      $$finder = new BzDeck.views.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
+                                               [this.bug.creator, this.bug.assigned_to]),
+      $finder = $$finder.$combobox;
+
+  let add_row = (requestee, checked, options = {}) => {
+    let type = options.id ? 'clear' : 'request',
+        $row = this.get_fragment(`timeline-comment-form-${type}-needinfo-row`).firstElementChild,
+        $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
+                            BzDeck.controllers.users.get(requestee).properties),
+        $checkbox = $row.querySelector('[role="checkbox"]'),
+        $$checkbox = new this.widget.Checkbox($checkbox),
+        $label = $checkbox.querySelector('span');
+
+    $checkbox.replaceChild($person, $checkbox.querySelector('strong'));
+    $$checkbox.bind('Toggled', event => this.update_needinfos(event.detail.checked, requestee, options.id));
+    $$checkbox.checked = checked;
+
+    if ($label && options.label) {
+      $label.textContent = options.label;
+    }
+
+    $finder_outer.parentElement.insertBefore($row, $finder_outer);
+  };
+
+  for (let flag of flags) {
+    add_row(flag.requestee, flag.requestee === BzDeck.models.account.data.name, { 'id': flag.id });
+  }
+
+  if (!names.includes(this.bug.creator)) {
+    add_row(this.bug.creator, false, { 'label': self_assigned ? '(reporter/assignee)' : '(reporter)' });
+  }
+
+  if (!names.includes(this.bug.assigned_to) && !self_assigned &&
+      !this.bug.assigned_to.startsWith('nobody@')) { // Is this BMO-specific?
+    add_row(this.bug.assigned_to, false, { 'label': '(assignee)' });
+  }
+
+  $finder_outer.appendChild($finder);
+  $finder.addEventListener('Change', event => {
+    let requestee = event.detail.target.querySelector('[itemprop="email"]').itemValue;
+
+    add_row(requestee, true);
+    $$finder.exclude.add(requestee);
+  });
+
+  $tab.setAttribute('aria-disabled', 'false');
+};
+
+BzDeck.views.TimelineCommentForm.prototype.update_needinfos = function (addition, requestee, id = undefined) {
+  let changes = this.flag_changes || new Map(); // key: requestee, value: partial flag
+
+  if (!addition) {
+    changes.delete(requestee);
+  } else if (id) { // Clear an existing needinfo flag
+    changes.set(requestee, { id, 'status': 'X' });
+  } else { // Add a new needinfo flag
+    changes.set(requestee, { 'new': true, 'name': 'needinfo', 'status': '?', requestee });
+  }
+
+  if (changes.size) {
+    this.changes.set('flags', [...changes.values()]);
+  } else {
+    this.changes.delete('flags');
+  }
+
+  this.flag_changes = changes;
   this.$submit.setAttribute('aria-disabled', !this.can_submit);
 };
 

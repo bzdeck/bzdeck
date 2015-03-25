@@ -26,6 +26,10 @@ BzDeck.controllers.Users.prototype.get = function (name, options = {}) {
   return user;
 };
 
+BzDeck.controllers.Users.prototype.has = function (name) {
+  return this.cache.has(name) || this.model.has(name);
+};
+
 BzDeck.controllers.Users.prototype.add = function (name, profile) {
   if (name && !this.cache.has(name) && !this.model.has(name)) {
     this.cache.set(name, new BzDeck.controllers.User(name, profile));

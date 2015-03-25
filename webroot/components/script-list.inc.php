@@ -28,6 +28,7 @@ $scripts = [
   '/static/scripts/views/global.js',
   '/static/scripts/views/home-page.js',
   '/static/scripts/views/login-form.js',
+  '/static/scripts/views/person-finder.js',
   '/static/scripts/views/profile-page.js',
   '/static/scripts/views/search-page.js',
   '/static/scripts/views/session.js',

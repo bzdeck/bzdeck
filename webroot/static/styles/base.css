@@ -2306,7 +2306,8 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 [id$="timeline-comment-form"] [id$="tabpanel-attachments"] [role="checkbox"][aria-checked="true"]::before {
-  content: "\F046";
+  color: var(--base-accent-color-1);
+  content: '\F14A';
 }
 
 [id$="timeline-comment-form"] [id$="tabpanel-attachments"] table {
@@ -2367,9 +2368,19 @@ article[id$="preview-bug"] > .bug-info {
   content: "\F078";
 }
 
-[id$="timeline-comment-form"] [id$="tabpanel-status"] :-moz-any(select, input) {
+[id$="timeline-comment-form"] [id$="tabpanel-status"] select,
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] select {
   margin: .2rem;
   padding: .2rem;
+  line-height: 1.6rem;
+  vertical-align: middle;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-status"] [role="searchbox"],
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [role="searchbox"] {
+  margin: 0 .2rem;
+  padding: .4rem .8rem;
+  line-height: 1.6rem;
   vertical-align: middle;
 }
 
@@ -2379,6 +2390,50 @@ article[id$="preview-bug"] > .bug-info {
 
 [id$="timeline-comment-form"] [id$="tabpanel-status"] [id$="status-dupe"][aria-hidden="false"] {
   display: inline-block;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"],
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] .scrollable-area-content {
+  overflow: visible; /* Show the Person Finder results */
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [role="scrollbar"] {
+  display: none;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] {
+  padding: .4rem;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="Person"] [itemprop="image"] {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-right: .4rem;
+  border-radius: .16rem;
+  vertical-align: text-bottom;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"]::before {
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  font-family: FontAwesome;
+  vertical-align: middle;
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"][aria-checked="true"]::before {
+  color: var(--base-accent-color-1);
+  content: '\F14A';
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"][aria-checked="false"]::before {
+  content: '\F096';
+}
+
+[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] .requestee-finder-outer {
+  margin-top: .8rem;
 }
 
 [id$="timeline-comment-form"] > footer {
@@ -2989,6 +3044,54 @@ article[id$="preview-bug"] > .bug-info {
   right: 1rem;
   opacity: .8;
   font-size: 1.1rem;
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * Person Finder (combobox)
+ * ---------------------------------------------------------------------------------------------- */
+
+.person-finder [role="listbox"] {
+  bottom: calc(100% + .8rem);
+  border-radius: .2rem;
+  padding: .4rem 0;
+  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+}
+
+.person-finder [role="option"] {
+  overflow: hidden;
+  padding: .4rem .8rem;
+  max-width: 40rem;
+  height: 1.6rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.person-finder [role="option"] [itemprop="image"] {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-right: .4rem;
+  border-radius: .16rem;
+  vertical-align: text-bottom;
+}
+
+.person-finder [role="option"] [itemprop="nick"],
+.person-finder [role="option"] [itemprop="email"] {
+  display: inline;
+  margin-left: .4rem;
+  opacity: .5;
+  font-size: 1.1rem;
+}
+
+.person-finder [role="option"] [itemprop="nick"]:empty {
+  display: none;
+}
+
+.person-finder [role="option"] [itemprop="nick"]::before {
+  content: ':';
+}
+
+.person-finder [role="option"] [itemprop="email"]::before {
+  content: attr(content);
 }
 
 /* ----------------------------------------------------------------------------------------------
