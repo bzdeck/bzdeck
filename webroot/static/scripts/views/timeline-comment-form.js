@@ -30,8 +30,9 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
 
   this.timeline_id = timeline_id;
   this.bug = bug;
-  this.attachments = [];
   this.parallel_upload = true;
+
+  this.attachments = [];
   this.changes = new Map();
 
   Object.defineProperties(this, {
@@ -141,6 +142,11 @@ BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
   if (this.has_api_key && this.$status.textContent) {
     this.$status.textContent = '';
   }
+};
+
+BzDeck.views.TimelineCommentForm.prototype.clear_comment = function () {
+  this.$textbox.value = '';
+  this.oninput();
 };
 
 BzDeck.views.TimelineCommentForm.prototype.attach_text = function (str) {
@@ -302,12 +308,12 @@ BzDeck.views.TimelineCommentForm.prototype.prep_editor_tabpanels = function () {
     return;
   }
 
-  this.prep_status_tabpanel();
-  this.prep_needinfo_tabpanel();
+  this.init_status_tabpanel();
+  this.init_needinfo_tabpanel();
   this.editor_tabpanels_enabled = true;
 };
 
-BzDeck.views.TimelineCommentForm.prototype.prep_status_tabpanel = function () {
+BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   // TODO: use custom widget for <select> and <option>
   // TODO: complete MVC migration
 
@@ -407,7 +413,7 @@ BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
   this.$submit.setAttribute('aria-disabled', !this.can_submit);
 };
 
-BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () {
+BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () {
   let flags = [for (flag of this.bug.flags || []) if (flag.name === 'needinfo') flag],
       names = [for (flag of flags) flag.requestee],
       self_assigned = this.bug.creator === this.bug.assigned_to,
@@ -417,6 +423,8 @@ BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () 
       $$finder = new BzDeck.views.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
                                                [this.bug.creator, this.bug.assigned_to]),
       $finder = $$finder.$combobox;
+
+  this.needinfo_changes = new Map();
 
   let add_row = (requestee, checked, options = {}) => {
     let type = options.id ? 'clear' : 'request',
@@ -437,6 +445,11 @@ BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () 
 
     $finder_outer.parentElement.insertBefore($row, $finder_outer);
   };
+
+  // Remove the rows first if exist
+  for (let $element of $tabpanel.querySelectorAll('[class$="row"]')) {
+    $element.remove();
+  }
 
   for (let flag of flags) {
     add_row(flag.requestee, flag.requestee === BzDeck.models.account.data.name, { 'id': flag.id });
@@ -464,7 +477,7 @@ BzDeck.views.TimelineCommentForm.prototype.prep_needinfo_tabpanel = function () 
 };
 
 BzDeck.views.TimelineCommentForm.prototype.update_needinfos = function (addition, requestee, id = undefined) {
-  let changes = this.flag_changes || new Map(); // key: requestee, value: partial flag
+  let changes = this.needinfo_changes; // Map; key: requestee, value: partial flag
 
   if (!addition) {
     changes.delete(requestee);
@@ -480,7 +493,7 @@ BzDeck.views.TimelineCommentForm.prototype.update_needinfos = function (addition
     this.changes.delete('flags');
   }
 
-  this.flag_changes = changes;
+  this.needinfo_changes = changes;
   this.$submit.setAttribute('aria-disabled', !this.can_submit);
 };
 
@@ -610,8 +623,10 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
                              : 'Failed to post your comment or attachment. Try again later.';
   }).then(() => {
     // All done, the timeline will soon be updated via Bugzfeed
-    this.$textbox.value = '';
-    this.oninput();
+    this.changes.clear();
+    this.clear_comment();
+    this.attachments = [];
+    this.init_needinfo_tabpanel();
 
     // Fetch the bug if the Bugzfeed client is not working for some reason
     if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
