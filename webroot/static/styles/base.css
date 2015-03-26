@@ -1438,6 +1438,13 @@ main {
   font-size: 1.25rem;
   white-space: nowrap;
   text-overflow: ellipsis;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+[id$="vertical-thread"] [role="listbox"]:not([aria-activedescendant]) [itemprop="name"],
+[id$="vertical-thread"] [role="option"][aria-selected="false"] [itemprop="name"] {
+  animation-name: none !important;
 }
 
 [id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="name"] {

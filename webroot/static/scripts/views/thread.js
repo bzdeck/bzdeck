@@ -18,6 +18,27 @@ BzDeck.views.Thread.prototype.onselect = function (event) {
   if (ids.length) {
     // Show the bug in the preview pane or a new tab
     this.consumer.controller.data.preview_id = Number.parseInt(ids[ids.length - 1]);
+
+    // Create a marquee effect when the bug title is overflowing
+    for (let $option of event.detail.items) {
+      let $name = $option.querySelector('[itemprop="name"]'),
+          width = $name.scrollWidth;
+
+      if (width > $name.clientWidth) {
+        let name = `${$option.id}-name-marquee`,
+            sheet = document.styleSheets[1],
+            index = [for (r of Iterator(sheet.cssRules)) if (r[1].type === 7 && r[1].name === name) r[0]][0];
+
+        // Delete the rule first in case of any width changes
+        if (index) {
+          sheet.deleteRule(index);
+        }
+
+        sheet.insertRule(`@keyframes ${name} { 0%, 10% { text-indent: 0 } 100% { text-indent: -${width+10}px } }`, 0);
+        $name.style.setProperty('animation-name', name);
+        $name.style.setProperty('animation-duration', `${width/25}s`);
+      }
+    }
   }
 };
 
