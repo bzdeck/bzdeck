@@ -32,5 +32,6 @@ BzDeck.models.Users.prototype.get = function (email) {
 };
 
 BzDeck.models.Users.prototype.save = function (user) {
+  this.data.set(user.name, user);
   this.store.save(user);
 };
