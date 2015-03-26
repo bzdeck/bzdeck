@@ -1408,7 +1408,7 @@ main {
   top: 1rem;
   left: 1rem;
   overflow: hidden;
-  border-radius: .32rem;
+  border-radius: 10%;
   width: 3.2rem;
   height: 3.2rem;
   color: #FCFCFC;
@@ -1862,7 +1862,7 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-info [itemtype$="Person"] [itemprop="image"] {
   margin-right: .4rem;
-  border-radius: .16rem;
+  border-radius: 10%;
   width: 1.6rem;
   height: 1.6rem;
 }
@@ -1977,7 +1977,7 @@ article[id$="preview-bug"] > .bug-info {
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: .4rem;
+  border-radius: 10%;
   width: 4rem;
   height: 4rem;
   color: #FCFCFC;
@@ -2147,7 +2147,7 @@ article[id$="preview-bug"] > .bug-info {
   float: left;
   margin-right: .6rem;
   margin-left: -2.2rem;
-  border-radius: .16rem;
+  border-radius: 10%;
   width: 1.6rem;
   height: 1.6rem;
   color: #FCFCFC;
@@ -2413,10 +2413,10 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 [id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="Person"] [itemprop="image"] {
+  margin-right: .4rem;
+  border-radius: 10%;
   width: 1.6rem;
   height: 1.6rem;
-  margin-right: .4rem;
-  border-radius: .16rem;
   vertical-align: text-bottom;
 }
 
@@ -2528,7 +2528,7 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-attachments [itemprop="attachment"] [itemprop="creator"] [itemprop="image"] {
   margin-right: .4rem;
-  border-radius: .16rem;
+  border-radius: 10%;
   width: 1.6rem;
   height: 1.6rem;
 }
@@ -3014,7 +3014,7 @@ article[id$="preview-bug"] > .bug-info {
   top: 1rem;
   left: 1rem;
   overflow: hidden;
-  border-radius: .32rem;
+  border-radius: 10%;
   width: 3.2rem;
   height: 3.2rem;
   color: #FCFCFC;
@@ -3074,10 +3074,10 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 .person-finder [role="option"] [itemprop="image"] {
+  margin-right: .4rem;
+  border-radius: 10%;
   width: 1.6rem;
   height: 1.6rem;
-  margin-right: .4rem;
-  border-radius: .16rem;
   vertical-align: text-bottom;
 }
 
