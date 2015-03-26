@@ -14,12 +14,12 @@ BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefi
   this.results = new Map();
 
   this.$combobox = this.get_fragment('person-finder').firstElementChild;
-  this.$input = this.$combobox.querySelector('input');
+  this.$input = this.$combobox.querySelector('[role="searchbox"]');
   this.$option = this.get_fragment('person-finder-item').firstElementChild;
 
   this.$$combobox = new this.widget.ComboBox(this.$combobox);
   this.$$combobox.$container.id = this.combobox_id = combobox_id;
-  this.$$combobox.bind('Input', event => this.oninput(event));
+  this.$$combobox.on('Input', event => this.oninput(event));
 };
 
 BzDeck.views.PersonFinder.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -29,10 +29,9 @@ BzDeck.views.PersonFinder.prototype.oninput = function (event) {
   this.value = event.detail.value.toLowerCase();
   this.results.clear();
   window.clearTimeout(this.timer);
+  this.$$combobox.hide_dropdown();
 
   if (this.value === ':') {
-    this.$$combobox.hide_results();
-
     return;
   }
 
@@ -126,7 +125,8 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
     $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
   }
 
-  this.$$combobox.show_results($fragment);
+  this.$$combobox.fill_dropdown($fragment);
+  this.$$combobox.show_dropdown();
 };
 
 BzDeck.views.PersonFinder.prototype.clear = function () {

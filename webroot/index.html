@@ -543,8 +543,8 @@
           </div>
           <div id="TID-comment-form-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-status">
             <div>
-              <select name="status"></select>
-              <select name="resolution" aria-hidden="true"></select>
+              <span class="status" role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true"></span>
+              <span class="resolution" role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true" aria-hidden="true"></span>
               <label id="TID-comment-form-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="searchbox"></label>
             </div>
           </div>
@@ -658,8 +658,8 @@
       </aside>
     </template><!-- end #bug-tooltip -->
     <template id="person-finder">
-      <span class="person-finder" role="combobox" aria-autocomplete="list" aria-label="Need Info requestee finder" aria-expanded="false">
-        <input spellcheck="false" role="searchbox">
+      <span class="person-finder" role="combobox" aria-autocomplete="none" aria-label="Need Info requestee finder" data-autoexpand="true" data-nobutton="true">
+        <span spellcheck="false" role="searchbox"></span>
         <ul role="listbox"></ul>
       </span>
     </template><!-- end #person-finder -->

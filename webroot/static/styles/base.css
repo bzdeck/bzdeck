@@ -213,6 +213,24 @@ del a {
   background-color: var(--active-textbox-background-color);
 }
 
+[role="combobox"] [role="textbox"] {
+  box-shadow: none;
+}
+
+[role="combobox"] [role="button"]::after {
+  font-family: FontAwesome;
+  content: '\F0DC';
+}
+
+[role="combobox"] [role="textbox"]:focus ~ [role="button"]::after {
+  color: var(--highlighted-button-background-color);
+}
+
+[role="combobox"] [role="listbox"] {
+  border-color: var(--control-border-color);
+  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+}
+
 [role="grid"] {
   height: 100%;
   color: var(--grid-foreground-color);
@@ -331,7 +349,8 @@ col[data-hidden="false"] {
 }
 
 [role="listbox"] {
-  background-color: var(--grid-background-color);
+  color: var(--control-foreground-color);
+  background-color: var(--control-background-color);
 }
 
 [role="listbox"] [role="option"] {
@@ -2375,30 +2394,31 @@ article[id$="preview-bug"] > .bug-info {
   content: "\F078";
 }
 
-[id$="timeline-comment-form"] [id$="tabpanel-status"] select,
-[id$="timeline-comment-form"] [id$="tabpanel-needinfo"] select {
+[id$="timeline-comment-form"] [id$="tabpanel-status"] [role="combobox"] {
   margin: .2rem;
-  padding: .2rem;
-  line-height: 1.6rem;
-  vertical-align: middle;
 }
 
 [id$="timeline-comment-form"] [id$="tabpanel-status"] [role="searchbox"],
 [id$="timeline-comment-form"] [id$="tabpanel-needinfo"] [role="searchbox"] {
-  margin: 0 .2rem;
-  padding: .4rem .8rem;
-  line-height: 1.6rem;
+  box-sizing: border-box;
+  margin: .2rem;
+  padding: 0 .4rem;
+  height: 2rem;
+  line-height: 2rem;
   vertical-align: middle;
 }
 
-[id$="timeline-comment-form"] [id$="tabpanel-status"] option:disabled {
+[id$="timeline-comment-form"] [id$="tabpanel-status"] [role="option"][aria-disabled="true"] {
   display: none;
 }
 
 [id$="timeline-comment-form"] [id$="tabpanel-status"] [id$="status-dupe"][aria-hidden="false"] {
   display: inline-block;
+  vertical-align: top;
 }
 
+[id$="timeline-comment-form"] [id$="tabpanel-status"],
+[id$="timeline-comment-form"] [id$="tabpanel-status"] .scrollable-area-content,
 [id$="timeline-comment-form"] [id$="tabpanel-needinfo"],
 [id$="timeline-comment-form"] [id$="tabpanel-needinfo"] .scrollable-area-content {
   overflow: visible; /* Show the Person Finder results */
@@ -3057,11 +3077,12 @@ article[id$="preview-bug"] > .bug-info {
  * Person Finder (combobox)
  * ---------------------------------------------------------------------------------------------- */
 
+.person-finder {
+  width: 16rem;
+}
+
 .person-finder [role="listbox"] {
-  bottom: calc(100% + .8rem);
-  border-radius: .2rem;
   padding: .4rem 0;
-  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
 }
 
 .person-finder [role="option"] {

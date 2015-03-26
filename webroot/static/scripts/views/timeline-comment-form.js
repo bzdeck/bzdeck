@@ -321,25 +321,29 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
       closed_statuses = fields.status.closed,
       $tab = this.$form.querySelector('[id$="tab-status"]'),
       $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]'),
-      $status = this.$status_options = $tabpanel.querySelector('[name="status"]'),
-      $resolution = this.$resolution_options = $tabpanel.querySelector('[name="resolution"]'),
+      $status = $tabpanel.querySelector('.status'),
+      $resolution = $tabpanel.querySelector('.resolution'),
       $dupe_label = $tabpanel.querySelector('[id$="status-dupe"]'),
       $dupe_input = this.$dupe_input = $dupe_label.querySelector('input');
 
-  for (let value of fields.status.transitions[this.bug.status]) {
-    let $option = document.createElement('option');
+  this.$$status = new this.widget.ComboBox($status);
+  this.$$resolution = new this.widget.ComboBox($resolution);
 
-    $option.value = $option.text = value;
-    $option.defaultSelected = value === this.bug.status;
-    $status.add($option);
+  for (let value of fields.status.transitions[this.bug.status]) {
+    this.$$status.add(value, value === this.bug.status);
   }
 
-  $status.addEventListener('change', event => {
-    let closed = closed_statuses.includes(event.target.value);
+  this.$$status.on('Change', event => {
+    let closed = closed_statuses.includes(event.detail.value);
 
     $resolution.setAttribute('aria-hidden', !closed);
-    $resolution.options[0].disabled = closed; // '' (an empty string)
-    $resolution.selectedIndex = closed ? 1 : 0; // FIXED or ''
+    this.$$resolution.options[0].setAttribute('aria-disabled', closed); // '' (an empty string)
+    this.$$resolution.selectedIndex = closed ? 1 : 0; // FIXED or ''
+
+    if (closed) {
+      this.$$resolution.$input.focus();
+    }
+
     $dupe_label.setAttribute('aria-hidden', 'true');
     $dupe_input.value = '';
 
@@ -347,17 +351,13 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   });
 
   for (let value of fields.resolution.values) {
-    let $option = document.createElement('option');
-
-    $option.value = $option.text = value;
-    $option.defaultSelected = value === this.bug.resolution;
-    $resolution.add($option);
+    this.$$resolution.add(value, value === this.bug.resolution);
   }
 
   $resolution.setAttribute('aria-hidden', !closed_statuses.includes(this.bug.status));
-  $resolution.options[0].disabled = closed_statuses.includes(this.bug.status);
-  $resolution.addEventListener('change', event => {
-    let marking_dupe = event.target.value === 'DUPLICATE';
+  this.$$resolution.options[0].setAttribute('aria-disabled', closed_statuses.includes(this.bug.status));
+  this.$$resolution.on('Change', event => {
+    let marking_dupe = event.detail.value === 'DUPLICATE';
 
     $dupe_label.setAttribute('aria-hidden', !marking_dupe);
     $dupe_input.value = marking_dupe && this.bug.dupe_of ? this.bug.dupe_of : '';
@@ -381,8 +381,8 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
 BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
   let fields = BzDeck.models.server.data.config.field,
       closed_statuses = fields.status.closed,
-      status = this.$status_options.options[this.$status_options.selectedIndex].value,
-      resolution = this.$resolution_options.options[this.$resolution_options.selectedIndex].value,
+      status = this.$$status.selected.dataset.value,
+      resolution = this.$$resolution.selected.dataset.value,
       dupe_of = this.$dupe_input.value.match(/^\d+$/) ? parseInt(this.$dupe_input.value) : null;
 
   if (status === this.bug.status) {
