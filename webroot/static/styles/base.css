@@ -153,7 +153,7 @@ del a {
   outline: 0;
 }
 
-::-moz-selection:-moz-window-inactive {
+:root:-moz-window-inactive ::-moz-selection {
   background-color: var(--inactive-selected-text-background-color); /* Doesn't work due to Bug 706209 */
 }
 
@@ -1163,11 +1163,11 @@ main {
 }
 
 [data-device|="mobile"]:root [role="tabpanel"]:not(#tabpanel-home) > * > header .banner-nav-button::before {
-  content: "\F053"; // back icon
+  content: "\F053"; /* back icon */
 }
 
 [data-device|="mobile"]:root #tabpanel-home > * > header .banner-nav-button::before {
-  content: "\F0C9"; // hamburger menu icon
+  content: "\F0C9"; /* hamburger menu icon */
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
