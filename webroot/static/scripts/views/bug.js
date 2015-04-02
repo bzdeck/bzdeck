@@ -57,7 +57,7 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
   }
 
   if ($bugzilla_link) {
-    $bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${this.bug.id}`;
+    $bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
   }
 
   if ($tweet_link) {
