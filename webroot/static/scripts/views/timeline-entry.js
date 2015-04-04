@@ -472,10 +472,13 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
       }
     } else if (_needinfos.removed.size) {
       $how.innerHTML = `requested information from ${added_needinfos} instead of ${removed_needinfos}`; // l10n
-    } else if (change.field_name === 'assigned_to' && change.removed.startsWith('nobody@') &&
-        change.added === changer.email) {
+    } else if (change.field_name === 'assigned_to' && change.removed.startsWith('nobody@')) {
       // TODO: nobody@mozilla.org is the default assignee on BMO. It might be different on other Bugzilla instances
-      $how.innerHTML = `self-assigned to the bug`; // l10n
+      if (change.added === changer.email) {
+        $how.innerHTML = `self-assigned to the bug`; // l10n
+      } else {
+        $how.innerHTML = `assigned ${additions} to the bug`; // l10n
+      }
     } else if (change.field_name === 'assigned_to' && change.added.startsWith('nobody@')) {
       $how.innerHTML = `removed ${removals} from the assignee`; // l10n
     } else if (change.field_name === 'keywords') {
@@ -495,12 +498,9 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
 BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(email => {
     let person = BzDeck.controllers.users.get(email),
-        $person = this.get_fragment('person-without-image').firstElementChild;
+        $person = this.get_fragment('person-with-image').firstElementChild;
 
-    this.fill($person, {
-      'name': person.name,
-      'email': email
-    }, {
+    this.fill($person, person.properties, {
       'title': `${person.original_name || person.name}\n${person.email}`
     });
 

@@ -2170,19 +2170,28 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-timeline [itemprop="change"] [itemprop="image"] {
   display: inline-block;
-  float: left;
-  margin-right: .6rem;
-  margin-left: -2.2rem;
+  margin-right: .4rem;
   width: 1.6rem;
   height: 1.6rem;
   color: #FCFCFC;
   font-size: 1rem;
   line-height: 1.6rem;
   text-align: center;
+  vertical-align: top;
+}
+
+.bug-timeline [itemprop="change"] [itemprop="author"] [itemprop="image"] {
+  float: left;
+  margin-left: -2.2rem;
 }
 
 .bug-timeline [itemprop="change"] [itemprop="name"] {
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.bug-timeline [itemprop="change"] time {
+  text-transform: lowercase;
 }
 
 [id$="timeline-comment-form"] {
