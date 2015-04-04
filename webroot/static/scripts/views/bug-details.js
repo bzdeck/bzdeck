@@ -15,12 +15,18 @@ BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
   this.$tablist = this.$bug.querySelector('[role="tablist"]');
   this.$$tablist = new this.widget.TabList(this.$tablist);
 
-  // Scroll a tabpanel to top when the tab is selected
   this.$$tablist.bind('Selected', event => {
-    let $tabpanel = this.$bug.querySelector(`#${event.detail.items[0].getAttribute('aria-controls')}`);
+    let $selected = event.detail.items[0],
+        $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
 
+    // Scroll a tabpanel to top when the tab is selected
     $tabpanel.querySelector('[role="region"]').scrollTop = 0; // Mobile
     $tabpanel.querySelector('.scrollable-area-content').scrollTop = 0; // Desktop
+
+    // Desktop: Show the info pane only when the timeline tab is selected
+    if (!mql.matches && FlareTail.util.ua.device.desktop) {
+      this.$bug.querySelector('.bug-info').setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
+    }
   });
 
   // Call BzDeck.views.Bug.prototype.init
@@ -39,19 +45,25 @@ BzDeck.views.BugDetails.prototype.constructor = BzDeck.views.BugDetails;
 
 BzDeck.views.BugDetails.prototype.change_layout = function (mql) {
   let $info_tab = this.$bug.querySelector('[id$="-tab-info"]'),
+      $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]'),
       $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]'),
-      $bug_info = this.$bug.querySelector('.bug-info');
+      $bug_info = this.$bug.querySelector('.bug-info'),
+      $bug_participants = this.$bug.querySelector('.bug-participants');
 
-  if (mql.matches) {  // Mobile layout
+  if (mql.matches || FlareTail.util.ua.device.mobile) {  // Mobile layout
     $info_tab.setAttribute('aria-hidden', 'false');
+    $participants_tab.setAttribute('aria-hidden', 'false');
     this.$bug.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
+    this.$bug.querySelector('[id$="-tabpanel-participants"]').appendChild($bug_participants);
   } else {
-    if (this.$$tablist.view.selected[0] === $info_tab) {
+    if ([$info_tab, $participants_tab].includes(this.$$tablist.view.selected[0])) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
     }
 
     $info_tab.setAttribute('aria-hidden', 'true');
+    $participants_tab.setAttribute('aria-hidden', 'true');
     this.$bug.querySelector('article > div').appendChild($bug_info);
+    this.$bug.querySelector('article > div').appendChild($bug_participants);
     this.$tablist.removeAttribute('aria-hidden');
   }
 };

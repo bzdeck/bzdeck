@@ -327,6 +327,7 @@
           <ul id="bug-TID-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
             <li id="bug-TID-tab-timeline" role="tab" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></li>
             <li id="bug-TID-tab-info" role="tab" aria-controls="bug-TID-tabpanel-info" aria-selected="false"><label>Info</label></li>
+            <li id="bug-TID-tab-participants" role="tab" aria-controls="bug-TID-tabpanel-participants" aria-selected="false"><label>Participants</label></li>
             <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-disabled="true" aria-selected="false"><label>Attachments</label></li>
             <li id="bug-TID-tab-history" role="tab" aria-controls="bug-TID-tabpanel-history" aria-disabled="true" aria-selected="false"><label>History</label></li>
           </ul>
@@ -417,6 +418,10 @@
                   <dl></dl>
                 </section>
                 -->
+              </div><!-- end .bug-info -->
+            </div><!-- end #bug-TID-tabpanel-info -->
+            <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
+              <div id="bug-TID-participants" class="bug-participants" tabindex="0" role="region">
                 <section>
                   <h3>Participants</h3>
                   <dl>
@@ -426,14 +431,14 @@
                     <dd><span tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                     <dt>Mentors</dt>
                     <dd><span tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                    <dt>QA Contact</dt>
+                    <dt>QA</dt>
                     <dd><span tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                     <dt>Cc</dt>
                     <dd><span tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                   </dl>
                 </section>
-              </div><!-- end .bug-info -->
-            </div><!-- end #bug-TID-tabpanel-info -->
+              </div><!-- end .bug-participants -->
+            </div><!-- end #bug-TID-tabpanel-participants -->
             <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
               <div class="bug-attachments" tabindex="0" role="region">
                 <section data-field="attachments">
