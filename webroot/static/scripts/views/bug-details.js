@@ -100,47 +100,105 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
 };
 
 BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
-  let $placeholder = this.$bug.querySelector('[data-field="attachments"]');
+  let $attachments = this.$bug.querySelector('[data-field="attachments"]');
 
-  if (!$placeholder) {
+  if (!$attachments) {
     return;
   }
 
   if (!attachments) {
     attachments = this.bug.attachments;
 
-    for (let $attachment of $placeholder.querySelectorAll('[itemprop="attachment"]')) {
+    for (let $attachment of $attachments.querySelectorAll('[itemprop="attachment"]')) {
       $attachment.remove();
     }
   }
 
-  if (!attachments.length) {
+  let len = attachments.length;
+
+  if (!len) {
     return;
   }
 
-  for (let att of attachments) {
-    let $attachment = $placeholder.appendChild(
-      FlareTail.util.content.get_fragment('details-attachment').firstElementChild);
+  // TODO: Allow hiding obsolete patches
+  // TODO: Fetch the attachments using the API
+  // TODO: Prettyprint patches
+  // TODO: Add comment form, flag selector, etc.
+  // TODO: Cache files
 
-    this.fill($attachment, {
-      'url': `/attachment/${att.id}`,
-      'description': att.summary,
-      'name': att.file_name,
-      'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
-      'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
-      'uploadDate': att.creation_time,
-      'creator': BzDeck.controllers.users.get(att.creator).properties,
-      'flag': [for (flag of att.flags) {
-        'creator': BzDeck.controllers.users.get(flag.setter).properties,
-        'name': flag.name,
-        'status': flag.status
-      }],
-    }, {
-      'data-attachment-id': att.id
+  let mobile = FlareTail.util.ua.device.mobile,
+      mql = window.matchMedia('(max-width: 1023px)'),
+      $listbox = $attachments.querySelector('[role="listbox"]'),
+      $fragment = new DocumentFragment(),
+      $title = $attachments.querySelector('h4'),
+      $listitem = FlareTail.util.content.get_fragment('details-attachment-listitem').firstElementChild,
+      $content = FlareTail.util.content.get_fragment('details-attachment-content').firstElementChild;
+
+  if (!this.$$attachment_list) {
+    this.$$attachment_list = new this.widget.ListBox($listbox, []);
+
+    this.$$attachment_list.bind('click', event => {
+      let $selected = this.$$attachment_list.view.selected[0];
+
+      if ($selected && mobile && mql.matches) {
+        window.open(`${BzDeck.models.server.data.url}/attachment.cgi?id=${$selected.dataset.id}`);
+      }
+    });
+
+    this.$$attachment_list.bind('Selected', event => {
+      if (!event.detail.items[0] || (mobile && mql.matches)) {
+        return;
+      }
+
+      let att = [for (att of attachments) if (att.id === Number.parseInt(event.detail.items[0].dataset.id)) att][0],
+          src = att.content_type.match(/^(image|audio|video)\//) || att.is_patch
+              ? `${BzDeck.models.server.data.url}/attachment.cgi?id=${att.id}` : 'about:blank',
+          $placeholder = $attachments.querySelector('.content .scrollable-area-content');
+
+      $placeholder.innerHTML = '';
+      this.fill($placeholder.appendChild($content.cloneNode(true)), {
+        'url': `/attachment/${att.id}`,
+        'description': att.summary,
+        'name': att.file_name,
+        'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
+        'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
+        'dateCreated': att.creation_time,
+        'dateModified': att.last_change_time,
+        'creator': BzDeck.controllers.users.get(att.creator).properties,
+        'flag': [for (flag of att.flags) {
+          'creator': BzDeck.controllers.users.get(flag.setter).properties,
+          'name': flag.name,
+          'status': flag.status
+        }],
+      }, {
+        'data-attachment-id': att.id,
+        'src': src,
+      });
     });
   }
 
+  for (let att of attachments) {
+    this.fill($fragment.appendChild($listitem.cloneNode(true)), {
+      'id': att.id,
+      'description': att.summary,
+      'dateModified': att.last_change_time,
+      'creator': BzDeck.controllers.users.get(att.creator).properties,
+    }, {
+      'id': `bug-${att.bug_id}-attachment-${att.id}`,
+      'data-id': att.id
+    });
+  }
+
+  $title.textContent = len === 1 ? `${len} attachment` : `${len} attachments`; // l10n
+
+  $listbox.appendChild($fragment);
+  $listbox.dispatchEvent(new CustomEvent('Rendered'));
+  this.$$attachment_list.update_members();
+
   this.$bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
+
+  // Force updating the scrollbars because sometimes those are not automatically updated
+  FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
 };
 
 BzDeck.views.BugDetails.prototype.render_history = function (history) {

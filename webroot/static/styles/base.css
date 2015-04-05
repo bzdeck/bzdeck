@@ -1413,6 +1413,7 @@ main {
   height: auto;
 }
 
+.bug-attachments [role="option"],
 [id$="vertical-thread"] [role="option"] {
   position: relative;
   border-width: 0 0 .1rem;
@@ -1427,6 +1428,7 @@ main {
   background-color: var(--secondary-region-background-color);
 }
 
+.bug-attachments [role="option"] > *,
 [id$="vertical-thread"] [role="option"] > * {
   position: absolute;
   display: block;
@@ -1434,6 +1436,7 @@ main {
   pointer-events: none;
 }
 
+.bug-attachments [role="option"] [itemprop="creator"],
 [id$="vertical-thread"] [itemprop="contributor"] {
   top: 1rem;
   left: 1rem;
@@ -1446,12 +1449,14 @@ main {
   text-align: center;
 }
 
+.bug-attachments [role="option"] [itemprop="creator"] [itemprop="image"],
 [id$="vertical-thread"] [itemprop="contributor"] [itemprop="image"] {
   display: block;
   max-width: 100%;
   max-height: 100%;
 }
 
+.bug-attachments [role="option"] [itemprop="id"],
 [id$="vertical-thread"] [itemprop="id"] {
   top: 1rem;
   left: 5.2rem;
@@ -1459,6 +1464,7 @@ main {
   font-size: 1.1rem;
 }
 
+.bug-attachments [role="option"] [itemprop="description"],
 [id$="vertical-thread"] [itemprop="name"] {
   right: 1rem;
   bottom: 1rem;
@@ -1480,6 +1486,7 @@ main {
   font-weight: 500;
 }
 
+.bug-attachments [role="option"] [itemprop="dateModified"],
 [id$="vertical-thread"] [itemprop="dateModified"] {
   top: 1rem;
   right: 3.2rem;
@@ -1776,6 +1783,7 @@ article[id$="preview-bug"] > .bug-info {
   width: 100%;
 }
 
+[data-device|="mobile"]:root [itemtype$="Bug"] .bug-attachments > section,
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > .scrollable-area-content > :first-child {
   padding-top: 4rem;
 }
@@ -2537,46 +2545,96 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 .bug-attachments > section {
-  overflow: hidden;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
-.bug-attachments [itemprop="attachment"] {
-  margin: 1.2rem;
+.bug-attachments .list {
+  flex: auto;
+  overflow: hidden;
+  background-color: var(--grid-background-color);
+}
+
+.bug-attachments .list h4 {
   border-width: 0 0 .1rem;
   border-style: solid;
+  border-color: var(--grid-border-color);
+  padding: .8rem;
+  background-color: var(--grid-header-background-color);
+  text-align: center;
+}
+
+.bug-attachments [role="listbox"] {
+  position: absolute;
+  width: 100%;
+}
+
+.bug-attachments [role="option"] [itemprop="dateModified"] {
+  right: 1em;
+}
+
+.bug-attachments .content {
+  border-width: 0 0 0 .1rem;
+  border-style: solid;
   border-color: var(--secondary-region-border-color);
-  background-color: var(--content-background-color);
+  width: 68%;
 }
 
-.bug-attachments [itemprop="attachment"] > * {
-  padding: 1.2rem;
+.bug-attachments .content .scrollable-area-content {
+  height: 100%;
 }
 
-.bug-attachments [itemprop="attachment"] h4 {
-  background-color: var(--secondary-region-background-color);
+.bug-attachments .content [itemprop="attachment"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.bug-attachments [itemprop="attachment"] h4 a span {
-  pointer-events: none;
+.bug-attachments .content h4 {
+  flex: none;
+  margin: 1.2rem;
+  font-size: 1.6rem;
 }
 
-.bug-attachments [itemprop="attachment"] [itemprop="creator"] [itemprop="image"] {
+.bug-attachments .content [itemprop="attachment"] > ul {
+  flex: none;
+  margin: 0 1.2rem 1.2rem;
+  line-height: 1.6;
+}
+
+.bug-attachments .content [itemprop="image"] {
   margin-right: .4rem;
   width: 1.6rem;
   height: 1.6rem;
 }
 
-.bug-attachments section li {
+.bug-attachments .content li {
   margin: .4rem 0;
   line-height: 1.5;
 }
 
-.bug-attachments section li:first-of-type {
+.bug-attachments .content li:first-of-type {
   margin-top: 0;
 }
 
-.bug-attachments section li:last-of-type {
+.bug-attachments .content li:last-of-type {
   margin-bottom: 0;
+}
+
+.bug-attachments .content iframe[sandbox] {
+  flex: auto;
+  display: block;
+  border: 0;
+  width: 100%;
+  height: auto;
+  background: var(--content-background-color);
+}
+
+.bug-attachments .content iframe[sandbox][src="about:blank"] {
+  display: none;
 }
 
 [data-device|="mobile"]:root .bug-history > section {
@@ -3499,12 +3557,8 @@ article[id$="preview-bug"] > .bug-info {
     padding: 0 .8rem .8rem;
   }
 
-  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] {
-    margin: .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-attachments [itemprop="attachment"] > * {
-    padding: .8rem;
+  [data-device|="mobile"]:root .bug-attachments .content {
+    display: none;
   }
 
   [data-device|="mobile"]:root .bug-history tr {
