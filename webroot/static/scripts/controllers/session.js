@@ -159,9 +159,9 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     // Activate the router
     BzDeck.router.locate();
   }).then(() => {
-    // Timer to check for updates, call every 10 minutes
+    // Timer to check for updates, call every 5 minutes
     BzDeck.controllers.global.timers.set('fetch_subscriptions',
-        window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 600000));
+        window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 1000 * 60 * 5));
   }).then(() => {
     // Register the app for an activity on Firefox OS
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
