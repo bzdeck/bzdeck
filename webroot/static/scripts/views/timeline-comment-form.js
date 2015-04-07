@@ -383,7 +383,7 @@ BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
       closed_statuses = fields.status.closed,
       status = this.$$status.selected.dataset.value,
       resolution = this.$$resolution.selected.dataset.value,
-      dupe_of = this.$dupe_input.value.match(/^\d+$/) ? parseInt(this.$dupe_input.value) : null;
+      dupe_of = this.$dupe_input.value.match(/^\d+$/) ? Number.parseInt(this.$dupe_input.value) : null;
 
   if (status === this.bug.status) {
     this.changes.delete('status');

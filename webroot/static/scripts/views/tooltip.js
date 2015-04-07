@@ -32,7 +32,7 @@ BzDeck.views.Tooltip.prototype.set_showing_events = function () {
       this.hide_any();
 
       if (value && value.match(this.regex)) {
-        this.id = isNaN(value) ? value : parseInt(value);
+        this.id = Number.isNaN(value) ? value : Number.parseInt(value);
         this.show();
       }
     });
@@ -104,8 +104,8 @@ BzDeck.views.BugTooltip.prototype.show = function () {
     });
 
     this.$tooltip.id = `bug-${bug.id}-tooltip`;
-    this.$tooltip.style.top = `calc(${parseInt(rect.top)}px - 6rem)`;
-    this.$tooltip.style.left = `${parseInt(rect.left)}px`;
+    this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
+    this.$tooltip.style.left = `${Number.parseInt(rect.left)}px`;
     this.$tooltip.addEventListener('mousedown', event => BzDeck.router.navigate(`/bug/${bug.id}`));
     document.body.appendChild(this.$tooltip);
     this.$owner.setAttribute('aria-describedby', this.$tooltip.id);
