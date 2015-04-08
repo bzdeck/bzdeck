@@ -62,14 +62,12 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
 
   if ($tweet_link) {
     // https://dev.twitter.com/web/tweet-button/web-intent
-    let url = new URL('https://twitter.com/intent/tweet'),
-        params = url.searchParams,
-        summary = this.bug.summary;
+    let summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : ''),
+        href = 'https://twitter.com/intent/tweet?via=BzDeck'
+             + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
+             + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
 
-    params.append('text', `Bug ${this.bug.id} - ${summary.substr(0, 80)}${summary.length > 80 ? '...' : ''}`);
-    params.append('url', `${location.origin}/bug/${this.bug.id}`);
-    params.append('via', 'BzDeck');
-    $tweet_link.href = url.toString();
+    $tweet_link.href = href;
   }
 };
 
