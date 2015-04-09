@@ -204,9 +204,10 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     'name': attachment.file_name,
     'contentSize': attachment.size,
     'contentUrl': url,
-    'encodingFormat': attachment.is_patch ? '' : attachment.content_type
+    'encodingFormat': attachment.is_patch ? 'text/x-patch' : attachment.content_type
   }, {
-    'data-attachment-id': attachment.id
+    'data-attachment-id': attachment.id,
+    'data-type': attachment.is_patch ? 'text/x-patch' : attachment.content_type,
   });
 
   $attachment.title = [

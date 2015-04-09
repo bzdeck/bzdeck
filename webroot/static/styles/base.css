@@ -2156,9 +2156,55 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
   float: left;
-  background-image: -moz-image-rect(var(--base-sprite-image), 128, 256, 192, 192);
-  background-size: cover;
-  content: "";
+  font-size: 2rem;
+  line-height: 2.4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  content: "\F016";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="text/"] h5::before {
+  content: "\F0F6";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-patch"] h5::before {
+  content: "\F1C9";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-github-pull-request"] h5::before {
+  content: "\F09B";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="image/"] h5::before {
+  content: "\F1C5";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="audio/"] h5::before {
+  content: "\F1C7";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="video/"] h5::before {
+  content: "\F1C8";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="application/pdf"] h5::before {
+  content: "\F1C1";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/msword"], [data-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) h5::before {
+  content: "\F1C2";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-excel"], [data-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) h5::before {
+  content: "\F1C3";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-powerpoint"], [data-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) h5::before {
+  content: "\F1C4";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/zip"], [data-type="application/gzip"], [data-type="application/x-gzip"], [data-type="application/x-bzip2"]) h5::before {
+  content: "\F1C6";
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
