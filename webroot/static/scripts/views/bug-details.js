@@ -69,11 +69,7 @@ BzDeck.views.BugDetails.prototype.change_layout = function (mql) {
 };
 
 BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
-  let mql = window.matchMedia('(max-width: 1023px)'),
-      $timeline_content = this.$bug.querySelector('.bug-timeline .scrollable-area-content');
-
-  $timeline_content.insertBefore(this.$bug.querySelector('h2').cloneNode(true),
-                                 $timeline_content.firstElementChild);
+  let mql = window.matchMedia('(max-width: 1023px)');
 
   // Hide tabs when scrolled down on mobile
   for (let $content of this.$bug.querySelectorAll('.scrollable-area-content')) {

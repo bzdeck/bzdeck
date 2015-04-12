@@ -150,18 +150,6 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
   this.$$bug = new BzDeck.views.Bug($bug, bug);
   $info.id = 'home-preview-bug-info';
   $bug.removeAttribute('aria-hidden');
-
-  if (mobile) {
-    let $timeline_content = $bug.querySelector('.bug-timeline .scrollable-area-content'),
-        $_title = $timeline_content.querySelector('h3'),
-        $title = $bug.querySelector('h3');
-
-    if ($_title) {
-      $timeline_content.replaceChild($title.cloneNode(true), $_title);
-    } else {
-      $timeline_content.insertBefore($title.cloneNode(true), $timeline_content.firstElementChild);
-    }
-  }
 };
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {

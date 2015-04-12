@@ -1119,6 +1119,7 @@ main {
 }
 
 #main-tabpanels > [role="tabpanel"] > * > header {
+  display: flex;
   position: relative;
   flex: 0 0 auto;
 }
@@ -1128,25 +1129,28 @@ main {
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header {
-  position: relative;
   height: 4rem;
   color: var(--application-header-foreground-color);
   background-color: var(--application-header-background-color);
 }
 
-[data-device|="mobile"][data-quicksearch]:root #tabpanel-home > * > header > [role="toolbar"] {
-  left: 0;
-  width: auto;
+[data-device|="mobile"][data-quicksearch]:root #tabpanel-home > * > header > :not([role="toolbar"]) {
+  display: none;
 }
 
-[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > :not(h2) {
-  position: absolute;
-  top: 0;
+[data-device|="mobile"][data-quicksearch]:root #tabpanel-home > * > header > [role="toolbar"] {
+  flex: auto;
+}
+
+#main-tabpanels > [role="tabpanel"] > * > header > :not(h2) {
+  flex: none;
+}
+
+[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > * {
   height: 4rem;
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button {
-  left: 0;
   border: 0;
   border-radius: 0;
   padding: 0;
@@ -1180,18 +1184,24 @@ main {
   content: "\F0C9"; /* hamburger menu icon */
 }
 
+#main-tabpanels > [role="tabpanel"] > * > header h2 {
+  flex: auto;
+}
+
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
   overflow: hidden;
   box-sizing: padding-box;
-  padding: 1rem 4rem;
-  height: 4rem;
   font-size: 2rem;
-  line-height: 2rem;
+  line-height: 4rem;
   font-weight: 300;
   font-style: italic;
   text-align: center;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2:last-child {
+  margin-right: 4rem; /* Same width as the nav button */
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] {
@@ -1219,39 +1229,33 @@ main {
 
 [itemtype$="Bug"] > header {
   box-sizing: padding-box;
-  padding: 0 .4rem 0 1.2rem;
-  height: 4rem;
+  height: 3.6rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);
 }
 
-[data-device="desktop"]:root [itemtype$="Bug"] > header {
-  display: flex !important;
-}
-
 [itemtype$="Bug"] > header > :-moz-any(h2, h3) {
   flex: auto;
   overflow: hidden;
-  font-size: 2rem;
-  line-height: 4rem;
+  padding: 0 1.2rem;
+  font-size: 1.6rem;
+  line-height: 3.6rem;
+  font-weight: 300;
+  font-style: italic;
   white-space: nowrap;
   text-overflow: ellipsis;
   pointer-events: auto;
   -moz-user-select: text;
 }
 
-[itemtype$="Bug"] > header > :-moz-any(h2, h3) [itemprop="summary"]::before {
-  content: ' - ';
-}
-
 [itemtype$="Bug"] [role="toolbar"] {
   flex: none;
-  height: 3rem;
+  height: 3.2rem;
 }
 
 [data-device="desktop"]:root [itemtype$="Bug"] header [role="toolbar"] {
-  margin: .4rem 0;
+  margin: .2rem 0;
 }
 
 [itemtype$="Bug"] [role="toolbar"] ul:not([role="menu"]) {
@@ -1627,14 +1631,10 @@ article[id$="preview-bug"] {
 }
 
 article[id$="preview-bug"] > header {
+  display: flex;
   position: absolute;
   left: 0;
-  box-sizing: padding-box;
-  padding: 0 .4rem 0 1.2rem;
   width: 100%;
-  height: 4rem;
-  color: var(--region-header-foreground-color);
-  background-color: var(--region-header-background-color);
 }
 
 article[id$="preview-bug"] > div {
@@ -1643,7 +1643,7 @@ article[id$="preview-bug"] > div {
 }
 
 [data-device="desktop"]:root article[id$="preview-bug"] > div {
-  margin-top: 4rem;
+  margin-top: 3.6rem;
 }
 
 article[id$="preview-bug"] > .bug-info {
@@ -1667,7 +1667,7 @@ article[id$="preview-bug"] > .bug-info {
  * ---------------------------------------------------------------------------------------------- */
 
 [id|="tabpanel-details"][role="tabpanel"] > article > header {
-  left: 0 !important; /* Show the header */
+  display: flex !important; /* Show the header */
 }
 
 [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 {
@@ -1943,29 +1943,19 @@ article[id$="preview-bug"] > .bug-info {
   flex-direction: column-reverse;
 }
 
-.bug-timeline h2 {
-  display: none; /* Visible on mobile */
-}
-
-:-moz-any(.bug-timeline, .bug-attachments, .bug-history) h3 {
+:-moz-any(.bug-attachments, .bug-history) h3 {
   position: absolute;
   left: -9999rem;
 }
 
-[data-device|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) {
-  display: block;
+.bug-timeline h3[itemprop="summary"] {
   position: static;
   padding: 1.2rem 1.2rem 0;
   line-height: 1.4;
-  font-weight: 500;
 }
 
-[data-device|="mobile"]:root .bug-timeline > div > h2 {
+[data-device|="mobile"]:root .bug-timeline:not([id="home-preview-bug-timeline"]) h3[itemprop="summary"] {
   padding-top: 5.2rem !important; /* Bug details */
-}
-
-[data-device|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) [itemprop="id"] {
-  display: none;
 }
 
 .bug-timeline [itemprop="comment"] {
@@ -2394,6 +2384,7 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 [id$="timeline-comment-form"] [role="textbox"][aria-multiline="true"]::-moz-placeholder {
+  font-weight: 300;
   font-style: italic;
 }
 
@@ -3347,13 +3338,36 @@ article[id$="preview-bug"] > .bug-info {
     width: 20rem;
   }
 
+  [data-device="desktop"]:root [itemtype$="Bug"] > div {
+    margin-top: -3.6rem;
+  }
+
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
-    right: 20rem;
-    width: auto;
+    left: calc(50% - 42rem / 2);
+    width: 42rem;
+    background: transparent;
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] {
-    height: 3.6rem;
+    margin: .6rem .2rem;
+    border-width: 0;
+    border-radius: .4rem;
+    padding: 0;
+    height: 2.4rem;
+    line-height: 2.4rem;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] {
+    color: var(--secondary-application-header-foreground-color);
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"]:hover {
+    color: var(--secondary-region-header-foreground-color);
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] {
+    color: var(--secondary-region-header-foreground-color);
+    background-color: var(--secondary-region-header-background-color);
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] {
@@ -3367,12 +3381,12 @@ article[id$="preview-bug"] > .bug-info {
     left: 32%;
   }
 
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ .bug-info {
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ :-moz-any(.bug-info, .bug-participants) {
     top: 3.6rem;
   }
 
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ .bug-participants {
-    top: 0;
+  .bug-timeline h3[itemprop="summary"] {
+    font-size: 2rem;
   }
 
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
@@ -3432,14 +3446,7 @@ article[id$="preview-bug"] > .bug-info {
     width: 8rem;
   }
 
-  [data-device|="mobile"]:root #tabpanel-home > * > header > h2 {
-    width: 40%;
-  }
-
-  [data-device|="mobile"]:root #tabpanel-home > * > header > [role="toolbar"] {
-    right: 60% !important;
-  }
-
+  [data-device|="mobile"]:root #tabpanel-home > * > header,
   [data-device|="mobile"]:root #home-list-pane {
     width: 40% !important;
     min-width: 0 !important;
@@ -3497,10 +3504,6 @@ article[id$="preview-bug"] > .bug-info {
 
   [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper {
     top: 4rem;
-  }
-
-  [data-device|="mobile"]:root .bug-timeline > div > :-moz-any(h2, h3) {
-    font-size: 2rem;
   }
 
   [data-device|="mobile"]:root .bug-participants [itemtype$="Person"] {
@@ -3574,7 +3577,7 @@ article[id$="preview-bug"] > .bug-info {
     width: 20rem;
   }
 
-  [data-device|="mobile"]:root .bug-timeline > div > h2 {
+  .bug-timeline h3[itemprop="summary"] {
     font-size: 1.5rem;
   }
 

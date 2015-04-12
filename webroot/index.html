@@ -252,7 +252,7 @@
     <template id="home-preview-bug-template">
       <article id="home-preview-bug" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
-          <h3><span itemprop="id"></span> <span itemprop="summary"></span></h3>
+          <h3>Bug <span itemprop="id"></span></h3>
           <div role="toolbar">
             <ul role="none">
               <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
@@ -269,6 +269,7 @@
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div id="home-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0">
+            <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div>
@@ -277,7 +278,7 @@
     <template id="search-preview-bug-template">
       <article id="search-TID-preview-bug" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
-          <h3><span itemprop="id"></span> <span itemprop="summary"></span></h3>
+          <h3>Bug <span itemprop="id"></span></h3>
           <div role="toolbar">
             <ul role="none">
               <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
@@ -297,6 +298,7 @@
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div id="search-TID-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0">
+            <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div>
@@ -305,7 +307,7 @@
     <template id="bug-details-template">
       <article id="bug-TID" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
-          <h2><span itemprop="id"></span> <span itemprop="summary"></span></h2>
+          <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
             <ul role="none">
               <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
@@ -336,7 +338,7 @@
               <div class="bug-timeline-wrapper">
                 <div class="bug-timeline" role="region" tabindex="0">
                   <section>
-                    <h3>Comments</h3>
+                    <h3 itemprop="summary"></h3>
                     <div class="comments-wrapper"></div>
                   </section>
                 </div>
@@ -344,13 +346,6 @@
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
               <div id="bug-TID-info" class="bug-info" tabindex="0" role="region">
-                <section>
-                  <h3>General</h3>
-                  <dl>
-                    <dt>Summary</dt><dd itemprop="summary"></dd>
-                    <dt>Alias</dt><dd itemprop="alias"></dd>
-                  </dl>
-                </section>
                 <section>
                   <h3>Status</h3>
                   <dl>
@@ -382,8 +377,9 @@
                 <section>
                   <h3>Notes</h3>
                   <dl>
-                    <dt>Whiteboard</dt><dd itemprop="whiteboard"></dd>
+                    <dt>Alias</dt><dd itemprop="alias"></dd>
                     <dt>Keywords</dt><dd><ul><li itemprop="keyword" role="button"></li></ul></dd>
+                    <dt>Whiteboard</dt><dd itemprop="whiteboard"></dd>
                     <dt>URL</dt><dd><a role="link" itemprop="url"></a></dd>
                     <dt>See Also</dt><dd><ul><li><a role="link" itemprop="see_also"></a></li></ul></dd>
                     <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
