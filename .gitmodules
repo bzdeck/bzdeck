@@ -1,4 +1,4 @@
 [submodule "webroot/vendor/flaretail.js"]
 	path = webroot/vendor/flaretail.js
-	url = git@github.com:kyoshino/flaretail.js.git
+	url = git@github.com:bzdeck/flaretail.js.git
 	ignore = dirty
