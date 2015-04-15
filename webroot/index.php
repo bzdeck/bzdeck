@@ -818,8 +818,8 @@
       <meta itemprop="image" content="https://www.bzdeck.com/static/images/logo/icon-512.png">
       <meta itemprop="screenshot" content="https://pbs.twimg.com/media/BlOQQwjCQAEfB27.png:large">
       <div itemprop="author" itemscope itemtype="http://schema.org/Organization">
-        <meta itemprop="name" content="BriteGrid">
-        <meta itemprop="url" content="http://www.britegrid.com/">
+        <meta itemprop="name" content="Team BzDeck">
+        <meta itemprop="url" content="https://github.com/bzdeck">
       </div>
       <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
         <meta itemprop="price" content="0">

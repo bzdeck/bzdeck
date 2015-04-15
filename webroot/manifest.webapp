@@ -4,8 +4,8 @@
   "version": "2015-04-09-10",
   "launch_path": "/",
   "developer": {
-    "name": "BriteGrid",
-    "url": "http://www.britegrid.com/"
+    "name": "Team BzDeck",
+    "url": "https://github.com/bzdeck"
   },
   "permissions": {
     "desktop-notification": {
