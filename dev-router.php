@@ -11,8 +11,8 @@ if (file_exists(__DIR__ . '/webroot' . $_SERVER['REQUEST_URI'])) {
 
 if ($_SERVER['REQUEST_URI'] === '/static/scripts/combined.js') {
   // Map combined.js to PHP
-  include('components/combine-scripts.php');
+  include('webroot/components/combine-scripts.php');
 } else {
   // Handle everything else
-  include('index.php');
+  include('webroot/index.php');
 }

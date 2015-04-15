@@ -833,6 +833,6 @@
       <meta itemprop="browserRequirements" content="Firefox Developer Edition">
       <meta itemprop="browserRequirements" content="Firefox Nightly">
     </div>
-<?php include_once('./components/output-script-elements.inc.php'); ?>
+<?php include_once($_SERVER['DOCUMENT_ROOT'] . '/components/output-script-elements.inc.php'); ?>
   </body>
 </html>
