@@ -17,6 +17,7 @@ AddType application/font-woff woff
 AddType application/font-woff2 woff2
 
 # Options
+DirectoryIndex index.php
 Options +SymLinksIfOwnerMatch -Indexes
 RewriteEngine on
 
