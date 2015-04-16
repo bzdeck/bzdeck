@@ -28,3 +28,7 @@ If you want to run a local development server without Apache, do the following:
 1. Install PHP >= 5.4.0 (e.g. In Ubuntu 14.04: `sudo apt-get install php5`)
 2. Run `run_dev_server.sh`
 3. Open your browser ([Firefox Developer Edition](https://www.mozilla.org/firefox/developer/) or [Firefox Nightly](http://nightly.mozilla.org/)), go to http://localhost:8000
+
+## Debug mode
+
+Append `?debug=true` to any BzDeck URL to enable the debug mode. All the JavaScript files will be served separately and some debug messages will get dumped.
