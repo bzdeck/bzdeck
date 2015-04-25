@@ -37,7 +37,7 @@ BzDeck.controllers.Users.prototype.add = function (name, profile) {
 };
 
 BzDeck.controllers.Users.prototype.add_from_bug = function (bug) {
-  for (let [name, person] of BzDeck.controllers.bugs.get_participants(bug)) {
+  for (let [name, person] of bug.participants) {
     this.add(name, { 'bugzilla': person });
   }
 };

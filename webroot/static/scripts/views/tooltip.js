@@ -82,13 +82,10 @@ BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
 
 BzDeck.views.BugTooltip.prototype.show = function () {
   new Promise(resolve => BzDeck.models.bugs.get(this.id).then(bug => {
-    if (bug) {
+    if (bug.data) {
       resolve(bug);
     } else {
-      BzDeck.controllers.bugs.fetch_bug(this.id).then(bug => {
-        BzDeck.models.bugs.save(bug);
-        resolve(bug);
-      });
+      bug.fetch().then(bug => resolve(bug));
     }
   })).then(bug => {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator,

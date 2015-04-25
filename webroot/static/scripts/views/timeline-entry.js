@@ -91,7 +91,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       this.bug._starred_comments.add(comment.id);
     }
 
-    BzDeck.models.bugs.save(this.bug);
+    this.bug.save();
     FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { 'bug': this.bug }});
   };
 

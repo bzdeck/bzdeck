@@ -11,7 +11,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   this.id = id;
 
   this.data = new Proxy({
-    'bugs': [],
+    'bugs': new Map(),
     'preview_id': null
   },
   {
@@ -33,7 +33,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
       if (prop === 'preview_id') {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (this.view.preview_is_hidden) {
-          BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
+          BzDeck.router.navigate('/bug/' + newval, { 'ids': [...this.data.bugs.keys()] });
 
           return true; // Do not save the value
         }
@@ -68,7 +68,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   this.on('V:SearchRequested', data => this.exec_search(data.params));
 
   this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [...this.data.bugs.keys()] });
   });
 };
 
@@ -85,8 +85,8 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
   }
 
   BzDeck.models.bugs.get(newval).then(bug => {
-    if (bug) {
-      BzDeck.controllers.bugs.toggle_unread(bug.id, false);
+    if (bug.data) {
+      bug.unread = false;
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
@@ -103,20 +103,24 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
 
   this.trigger(':SearchStarted');
 
-  this.request('bug', params).then(result => {
-    if (result.bugs.length > 0) {
-      this.data.bugs = result.bugs;
+  let save = bug => {
+    let retrieved = this.data.bugs.get(bug.id);
 
-      // Save data
-      BzDeck.models.bugs.get_all().then(bugs => {
-        let saved_ids = [for (bug of bugs) bug.id];
-
-        BzDeck.models.bugs.save([for (bug of result.bugs) if (!saved_ids.includes(bug.id)) bug]);
-      });
+    if (!bug.data || bug.last_change_time < retrieved.last_change_time) {
+      bug.merge(retrieved);
     }
 
-    // Show results
-    this.trigger(':SearchResultsAvailable', { 'bugs': result.bugs });
+    return bug;
+  };
+
+  this.request('bug', params).then(result => {
+    if (result.bugs.length > 0) {
+      this.data.bugs = new Map([for (_bug of result.bugs) [_bug.id, _bug]]);
+
+      BzDeck.models.bugs.get_some(this.data.bugs.keys())
+        .then(bugs => new Map([for (bug of bugs.values()) [bug.id, save(bug)]]))
+        .then(bugs => this.trigger(':SearchResultsAvailable', { bugs }));
+    }
   }).catch(error => {
     this.trigger(':SearchError', { error });
   }).then(() => {

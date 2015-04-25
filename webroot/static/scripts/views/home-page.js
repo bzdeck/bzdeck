@@ -113,7 +113,7 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs, prefs) {
       items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                        : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-  return [for ($item of items) bugs.get(Number($item.dataset.id))];
+  return new Map([for ($item of items) [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]]);
 };
 
 BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
@@ -166,7 +166,7 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
   }
 
   // Render the thread
-  if (BzDeck.controllers.sidebar) {
+  if (BzDeck.controllers.sidebar && BzDeck.controllers.sidebar.data.folder_id) {
     BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
   }
 
@@ -203,8 +203,8 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
     // Star button
     $listbox.addEventListener('mousedown', event => {
       if (event.target.matches('[data-field="_starred"]')) {
-        BzDeck.controllers.bugs.toggle_star(Number(event.target.parentElement.dataset.id),
-                                            event.target.getAttribute('aria-checked') === 'false');
+        BzDeck.models.bugs.get(event.target.parentElement.dataset.id)
+          .then(bug => bug.starred = event.target.matches('[aria-checked="false"]'));
         event.stopPropagation();
       }
     });

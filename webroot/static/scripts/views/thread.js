@@ -26,7 +26,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
 
   if ($target.matches(selector)) {
     // Open Bug in New Tab
-    BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [for (bug of this.consumer.controller.data.bugs) bug.id] });
+    BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [...this.consumer.controller.data.bugs.keys()] });
   }
 };
 
@@ -100,7 +100,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
         $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
     if ($row) {
-      $row.setAttribute('data-unread', !!bug._unread);
+      $row.setAttribute('data-unread', !!bug.unread);
     }
   });
 };
@@ -116,7 +116,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
       'id': `${this.$$grid.view.$container.id}-row-${bug.id}`,
       'data': {},
       'dataset': {
-        'unread': bug._unread === true,
+        'unread': bug.unread === true,
         'severity': bug.severity
       }
     };
@@ -142,7 +142,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
       }
 
       if (field === '_starred') {
-        value = BzDeck.controllers.bugs.is_starred(bug);
+        value = bug.starred;
       }
 
       if (field === '_unread') {
@@ -155,11 +155,11 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
     row.data = new Proxy(row.data, {
       'set': (obj, prop, value) => {
         if (prop === '_starred') {
-          BzDeck.controllers.bugs.toggle_star(obj.id, value);
+          bug.starred = value;
         }
 
         if (prop === '_unread') {
-          BzDeck.controllers.bugs.toggle_unread(obj.id, value);
+          bug.unread = value;
 
           let row = [for (row of this.$$grid.data.rows) if (row.data.id === obj.id) row][0];
 
@@ -179,7 +179,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 };
 
 BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
-  this.$$grid.filter([for (bug of bugs) bug.id]);
+  this.$$grid.filter([...bugs.keys()]);
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -238,20 +238,20 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.controllers.bugs.toggle_unread(Number($item.dataset.id), $item.dataset.unread === 'false');
+        BzDeck.models.bugs.get($item.dataset.id).then(bug => bug.unread = $item.dataset.unread === 'false');
       }
     },
     // Toggle star
     'S': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.controllers.bugs.toggle_star(Number($item.dataset.id),
-            $item.querySelector('[data-field="_starred"]').getAttribute('aria-checked') === 'false');
+        BzDeck.models.bugs.get($item.dataset.id)
+          .then(bug => bug.starred = $item.querySelector('[data-field="_starred"]').matches('[aria-checked="false"]'));
       }
     },
     // Open the bug in a new tab
     'O|Enter': event => {
       BzDeck.router.navigate('/bug/' + this.consumer.controller.data.preview_id,
-                             { 'ids': [for (bug of this.consumer.controller.data.bugs) bug.id] });
+                             { 'ids': [...this.consumer.controller.data.bugs.keys()] });
     },
   });
 
@@ -269,7 +269,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
         $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
     if ($option) {
-      $option.setAttribute('data-unread', !!bug._unread);
+      $option.setAttribute('data-unread', !!bug.unread);
     }
   });
 
@@ -287,11 +287,7 @@ BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   let cond = this.options.sort_conditions;
 
-  if (cond) {
-    FlareTail.util.array.sort(bugs, cond);
-  }
-
-  this.unrendered_bugs = bugs;
+  this.unrendered_bugs = cond ? FlareTail.util.array.sort([...bugs.values()], cond) : [...bugs.values()];
   this.$outer.setAttribute('aria-busy', 'true');
   this.$listbox.innerHTML = '';
 
@@ -318,8 +314,8 @@ BzDeck.views.VerticalThread.prototype.render = function () {
     }, {
       'id': `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
-      'data-unread': !!bug._unread,
-      'aria-checked': BzDeck.controllers.bugs.is_starred(bug)
+      'data-unread': !!bug.unread,
+      'aria-checked': bug.starred,
     }));
   }
 

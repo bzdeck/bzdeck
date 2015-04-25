@@ -78,7 +78,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
 
   let set_button_tooltip = (id, $$button) => {
     BzDeck.models.bugs.get(id).then(bug => {
-      $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
+      $$button.view.$button.title = bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
     });
   };
 

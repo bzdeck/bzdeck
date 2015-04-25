@@ -630,9 +630,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
 
     // Fetch the bug if the Bugzfeed client is not working for some reason
     if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
-      BzDeck.controllers.bugs.fetch_bug(this.bug.id)
-          .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bugs.save(bug));
+      BzDeck.models.bugs.get(this.bug.id).fetch();
     }
   }, errors => {
     // Failed to post at least one attachment

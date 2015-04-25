@@ -49,12 +49,10 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
   });
 
   this.websocket.addEventListener('message', event => {
-    let message = JSON.parse(event.data);
+    let { bug: id, command } = JSON.parse(event.data);
 
-    if (message.command === 'update') {
-      BzDeck.controllers.bugs.fetch_bug(message.bug) // message.bug = ID
-          .then(bug => BzDeck.controllers.bugs.parse_bug(bug))
-          .then(bug => BzDeck.models.bugs.save(bug));
+    if (command === 'update') {
+      BzDeck.models.bugs.get(id).then(bug => bug.fetch());
     }
   });
 };

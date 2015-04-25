@@ -109,9 +109,8 @@ BzDeck.views.Bug.prototype.render = function () {
 
   // Star on the header
   if ($button) {
-    $button.setAttribute('aria-pressed', BzDeck.controllers.bugs.is_starred(this.bug));
-    (new this.widget.Button($button)).bind('Pressed', event =>
-      BzDeck.controllers.bugs.toggle_star(this.bug.id, event.detail.pressed));
+    $button.setAttribute('aria-pressed', this.bug.starred);
+    (new this.widget.Button($button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
   }
 
   if (!$timeline) {
@@ -129,10 +128,9 @@ BzDeck.views.Bug.prototype.render = function () {
   if (this.bug.comments && !this.bug._update_needed) {
     FlareTail.util.event.async(() => this.fill_details(false));
   } else {
-    // Load comments, history, flags and attachments' metadata
-    BzDeck.controllers.bugs.fetch_bug(this.bug.id, false).then(bug_details => { // Exclude metadata
-      this.bug = Object.assign(this.bug, bug_details); // Merge data
-      BzDeck.models.bugs.save(this.bug);
+    // Load comments, history, flags and attachments' metadata; Exclude metadata
+    this.bug.fetch(false).then(bug => {
+      this.bug = bug;
       FlareTail.util.event.async(() => this.fill_details(true));
     });
   }
@@ -157,9 +155,9 @@ BzDeck.views.Bug.prototype.render = function () {
   if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
     FlareTail.util.kbd.assign($timeline, {
       // Toggle read
-      'M': event => BzDeck.controllers.bugs.toggle_unread(this.bug.id, !this.bug._unread),
+      'M': event => this.bug.unread = !this.bug.unread,
       // Toggle star
-      'S': event => BzDeck.controllers.bugs.toggle_star(this.bug.id, !BzDeck.controllers.bugs.is_starred(this.bug)),
+      'S': event => this.bug.starred = !this.bug.starred,
       // Reply
       'R': event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
       // Focus management
@@ -282,9 +280,10 @@ BzDeck.views.Bug.prototype.set_product_tooltips = function () {
 };
 
 BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
-  let related_bug_ids = new Set([for ($element of this.$bug.querySelectorAll('[data-bug-id]'))
-                                Number.parseInt($element.getAttribute('data-bug-id'))]);
-  let set_tooltops = bug => {
+  let related_ids = new Set([for ($element of this.$bug.querySelectorAll('[data-bug-id]'))
+                             Number.parseInt($element.getAttribute('data-bug-id'))]);
+
+  let set_tooltops = bugs => bugs.forEach(bug => {
     if (bug.summary) {
       let title = `${bug.status} ${bug.resolution || ''} – ${bug.summary}`;
 
@@ -294,20 +293,16 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
         $element.dataset.resolution = bug.resolution || '';
       }
     }
-  };
+  });
 
-  if (related_bug_ids.size) {
-    BzDeck.models.bugs.get(related_bug_ids).then(bugs => {
-      let found_bug_ids = [for (bug of bugs) bug.id],
-          lookup_bug_ids = [for (id of related_bug_ids) if (!found_bug_ids.includes(id)) id];
+  if (related_ids.size) {
+    BzDeck.models.bugs.get_some(related_ids).then(bugs => {
+      let lookup_ids = new Set([for (id of related_ids) if (!bugs.has(id)) id]);
 
-      bugs.map(set_tooltops);
+      set_tooltops(bugs);
 
-      if (lookup_bug_ids.length) {
-        BzDeck.controllers.bugs.fetch_bugs(lookup_bug_ids).then(bugs => {
-          BzDeck.models.bugs.save(bugs);
-          bugs.map(set_tooltops);
-        });
+      if (lookup_ids.size) {
+        BzDeck.models.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
       }
     });
   }

@@ -40,11 +40,11 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
   let home = BzDeck.views.pages.home,
       toolbar = BzDeck.views.toolbar,
       folder_label = [for (f of BzDeck.config.folders) if (f.data.id === folder_id) f][0].label,
-      unread = [for (bug of bugs) if (bug._unread) bug].length;
+      unread = [for (bug of bugs.values()) if (bug.unread) bug].length;
 
   home.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
   home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
-  document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', bugs.length ? 'true' : 'false');
+  document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
 
   // Mobile compact layout
   if (FlareTail.util.ua.device.mobile &&

@@ -28,12 +28,11 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
   }
 
   BzDeck.models.bugs.get_all().then(bugs => {
-    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
-        extract = [for (bug of bugs.slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
-        unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs) if (bug._unread) bug].length;
+    let status = bugs.size > 1 ? `You have ${bugs.size} unread bugs` : 'You have 1 unread bug', // l10n
+        extract = [for (bug of [...bugs.values()].slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
+        unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs.values()) if (bug.unread) bug].length;
 
-
-    bugs = [for (bug of bugs) if (bug._unread) bug];
+    bugs = [for (bug of bugs.values()) if (bug.unread) bug];
 
     // Update View
     this.view.toggle_unread(bugs, loaded, unread_num);

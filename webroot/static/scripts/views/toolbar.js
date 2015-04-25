@@ -211,9 +211,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
 };
 
 BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
-  // Support for multiple aliases on Bugzilla 5.0+
-  let get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [],
-      $$dropdown = this.$$search_dropdown;
+  let $$dropdown = this.$$search_dropdown;
 
   let data = [{
     'id': 'quicksearch-dropdown-header',
@@ -222,11 +220,9 @@ BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
   }];
 
   for (let bug of results.reverse().slice(0, 20)) {
-    let aliases = get_aliases(bug);
-
     data.push({
       'id': 'quicksearch-dropdown-' + bug.id,
-      'label': bug.id + ' - ' + (aliases.length ? '(' + aliases.join(', ') + ') ' : '') + bug.summary,
+      'label': bug.id + ' - ' + (bug.aliases.length ? '(' + bug.aliases.join(', ') + ') ' : '') + bug.summary,
       'data': { 'id': bug.id }
     });
   }

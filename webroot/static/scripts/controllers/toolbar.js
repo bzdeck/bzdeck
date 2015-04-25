@@ -52,13 +52,12 @@ BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
 };
 
 BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
-  let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
-      get_aliases = bug => bug.alias ? (Array.isArray(bug.alias) ? bug.alias : [bug.alias]) : [];
+  let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()];
 
   BzDeck.models.bugs.get_all().then(bugs => {
-    let results = bugs.filter(bug => {
+    let results = [...bugs.values()].filter(bug => {
       return words.every(word => bug.summary.toLowerCase().includes(word)) ||
-             words.every(word => get_aliases(bug).join().toLowerCase().includes(word)) ||
+             words.every(word => bug.aliases.join().toLowerCase().includes(word)) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
     });
 

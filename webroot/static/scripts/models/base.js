@@ -25,7 +25,7 @@ BzDeck.models.Base.prototype.get_store = function (db_name, store_name) {
       });
 
   return {
-    'save': obj => send(store.put(obj)),
+    'save': obj => send(store.put(Object.assign({}, obj))), // Deproxify the object before saving
     'get': key => send(store.get(key)),
     'get_all': () => send(store.mozGetAll()),
     'delete': key => send(store.delete(key)),

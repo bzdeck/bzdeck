@@ -101,6 +101,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.models.account.get_database().then(database => {
     BzDeck.models.bugs = new BzDeck.models.Bugs();
+    BzDeck.models.subscriptions = new BzDeck.models.Subscriptions();
     BzDeck.models.prefs = new BzDeck.models.Prefs();
     BzDeck.models.users = new BzDeck.models.Users();
   }, error => {
@@ -111,7 +112,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
-      BzDeck.controllers.bugs.fetch_subscriptions(),
+      BzDeck.models.subscriptions.fetch(),
       new Promise((resolve, reject) => BzDeck.models.server.get_config().then(config => {
         resolve(config);
       }, error => {
@@ -122,7 +123,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
           reject(error);
         });
       })).then(config => {
-        // fetch_subscriptions may be still working
+        // subscriptions.fetch() may be still working
         this.trigger(':StatusUpdate', { 'message': 'Loading your bugs...' }); // l10n
       }, error => {
         this.trigger(':Error', { 'message': error.message });
@@ -161,7 +162,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).then(() => {
     // Timer to check for updates, call every 5 minutes
     BzDeck.controllers.global.timers.set('fetch_subscriptions',
-        window.setInterval(() => BzDeck.controllers.bugs.fetch_subscriptions(), 1000 * 60 * 5));
+        window.setInterval(() => BzDeck.models.subscriptions.fetch(), 1000 * 60 * 5));
   }).then(() => {
     // Register the app for an activity on Firefox OS
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
@@ -182,7 +183,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
-  BzDeck.models.bugs.get_subscription('requests').then(bugs => {
+  BzDeck.models.subscriptions.get('requests').then(bugs => {
     let len = bugs.size;
 
     if (!len) {

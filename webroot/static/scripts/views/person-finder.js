@@ -9,7 +9,7 @@
 
 BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefined, exclude = []) {
   this.bug = bug;
-  this.participants = bug ? BzDeck.controllers.bugs.get_participants(bug) : new Map();
+  this.participants = bug ? bug.participants : new Map();
   this.exclude = new Set(exclude);
   this.results = new Map();
 

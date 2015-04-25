@@ -54,32 +54,18 @@ BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.Detail
 BzDeck.controllers.DetailsPage.prototype.init = function () {
   BzDeck.models.bugs.get(this.bug_id).then(bug => {
     // If no cache found, try to retrieve it from Bugzilla
-    if (!bug) {
-      this.fetch_bug();
-      bug = { 'id': this.bug_id };
+    if (!bug.data) {
+      if (!navigator.onLine) {
+        this.trigger(':Offline');
+      } else {
+        this.trigger(':LoadingStarted');
+        bug.fetch().then(bug => this.trigger(':LoadingComplete', { bug }), error => this.trigger(':LoadingError'));
+      }
     }
 
     this.trigger(':BugDataReady', { bug });
-    BzDeck.controllers.bugs.toggle_unread(this.bug_id, false);
+    bug.unread = false;
   });
 
   BzDeck.controllers.bugzfeed.subscribe([this.bug_id]);
-};
-
-BzDeck.controllers.DetailsPage.prototype.fetch_bug = function () {
-  if (!navigator.onLine) {
-    this.trigger(':Offline');
-
-    return;
-  }
-
-  this.trigger(':LoadingStarted');
-
-  BzDeck.controllers.bugs.fetch_bug(this.bug_id).then(bug => {
-    // Save in DB
-    BzDeck.models.bugs.save(bug);
-    this.trigger(':LoadingComplete', { bug });
-  }).catch(bug => {
-    this.trigger(':LoadingError');
-  });
 };

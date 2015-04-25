@@ -37,11 +37,11 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
     this.$grid.removeAttribute('aria-hidden');
     this.$grid.setAttribute('aria-busy', 'true');
     this.hide_status();
-    this.thread.update([]); // Clear grid body
+    this.thread.update(new Map()); // Clear grid body
   });
 
   this.on('C:SearchResultsAvailable', data => {
-    if (data.bugs.length > 0) {
+    if (data.bugs.size > 0) {
       this.thread.update(data.bugs);
       this.hide_status();
     } else {

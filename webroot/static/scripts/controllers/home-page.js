@@ -21,14 +21,14 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   this.view.connect(folder_id);
 
   this.data = new Proxy({
-    'bugs': [],
+    'bugs': new Map(),
     'preview_id': null
   },
   {
     'get': (obj, prop) => {
       if (prop === 'bugs') {
         // Return a sorted bug list
-        return this.view.get_shown_bugs(new Map([for (bug of obj.bugs) [bug.id, bug]]), prefs);
+        return this.view.get_shown_bugs(obj.bugs, prefs);
       }
 
       return obj[prop];
@@ -39,7 +39,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
       if (prop === 'preview_id') {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (this.view.preview_is_hidden) {
-          BzDeck.router.navigate('/bug/' + newval, { 'ids': [for (bug of this.data.bugs) bug.id] });
+          BzDeck.router.navigate('/bug/' + newval, { 'ids': [...this.data.bugs.keys()] });
 
           return true; // Do not save the value
         }
@@ -57,7 +57,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   });
 
   this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [for (bug of this.data.bugs) bug.id] });
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [...this.data.bugs.keys()] });
   });
 
   return this;
@@ -76,8 +76,8 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
   }
 
   BzDeck.models.bugs.get(newval).then(bug => {
-    if (bug) {
-      BzDeck.controllers.bugs.toggle_unread(bug.id, false);
+    if (bug.data) {
+      bug.unread = false;
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
