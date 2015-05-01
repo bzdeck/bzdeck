@@ -45,10 +45,9 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 
   this.on('V:FolderSelected', data => this.data.folder_id = data.id);
 
-  // Update the sidebar Inbox folder
-  this.on('Bug:UnreadToggled', data => BzDeck.models.subscriptions.get_all().then(bugs => {
-    this.trigger(':UnreadToggled', { 'number': [for (bug of bugs.values()) if (bug.unread) bug].length });
-  }));
+  // Update the sidebar Inbox folder at startup and whenever notified
+  this.toggle_unread();
+  this.on('Bug:UnreadToggled', data => this.toggle_unread());
 };
 
 BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);
@@ -58,5 +57,11 @@ BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
   BzDeck.models.subscriptions.get(folder_id).then(bugs => { // Map
     BzDeck.controllers.homepage.data.bugs = bugs;
     this.trigger(':FolderOpened', { folder_id, bugs });
+  });
+};
+
+BzDeck.controllers.Sidebar.prototype.toggle_unread = function () {
+  BzDeck.models.subscriptions.get_all().then(bugs => {
+    this.trigger(':UnreadToggled', { 'number': [for (bug of bugs.values()) if (bug.unread) bug].length });
   });
 };
