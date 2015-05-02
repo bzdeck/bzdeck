@@ -104,7 +104,7 @@ BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
-  this.$$grid.build_body(bugs.map(bug => {
+  this.$$grid.build_body([...bugs.values()].map(bug => {
     let row = {
       'id': `${this.$$grid.view.$container.id}-row-${bug.id}`,
       'data': {},
