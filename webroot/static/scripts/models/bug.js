@@ -20,7 +20,6 @@ BzDeck.models.Bug = function BugModel (data) {
 
   Object.defineProperties(this, {
     'store': {
-      'enumerable': true,
       'get': () => this.get_store('account', 'bugs'),
     },
     'starred': {
@@ -47,58 +46,13 @@ BzDeck.models.Bug = function BugModel (data) {
       'enumerable': true,
       'get': () => this.get_participants(),
     },
-    'proxy': {
-      'get': () => new Proxy(this, {
-        'get': (obj, prop) => prop in this ? this[prop] : this.data[prop],
-        'set': (obj, prop, value) => {
-          prop in this ? this[prop] = value : this.data[prop] = value;
-
-          return true; // The set trap must return true (Bug 1132522)
-        },
-      }),
-    },
   });
 
-  return this.proxy;
+  return this.proxy();
 };
 
 BzDeck.models.Bug.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Bug.prototype.constructor = BzDeck.models.Bug;
-
-/*
- * Cache bug data as a new Proxy, so the object is automatically saved when a property is modifled.
- *
- * [argument] data (Object) Bugzilla's raw bug data object
- * [return] data (Proxy) proxified bug data object
- */
-BzDeck.models.Bug.prototype.cache = function (data) {
-  // Deproxify the object just in case
-  data = Object.assign({}, data);
-
-  return this.data = new Proxy(data, {
-    'get': (obj, prop) => obj[prop], // Always require the get trap (Bug 895223)
-    'set': (obj, prop, value) => {
-      obj[prop] = value;
-      this.store.save(obj);
-
-      return true; // The set trap must return true (Bug 1132522)
-    },
-  });
-};
-
-/*
- * Save bug data in the IndexedDB storage.
- *
- * [argument] data (Object, optional) Bugzilla's raw bug data object
- * [return] bug (Promise -> Proxy) proxified instance of the BugModel object
- */
-BzDeck.models.Bug.prototype.save = function (data = undefined) {
-  if (data) {
-    this.cache(data);
-  }
-
-  return this.store.save(this.data).then(() => Promise.resolve(this.proxy));
-};
 
 /*
  * Retrieve bug data from Bugzilla.
@@ -111,7 +65,7 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
   return BzDeck.collections.bugs.fetch([this.id], include_metadata, include_details).then(bugs => {
     this.merge(bugs[0]);
 
-    return Promise.resolve(this.proxy);
+    return Promise.resolve(this.proxy());
   }, error => Promise.reject(error));
 };
 
@@ -201,7 +155,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   }
 
   this.data[`_${type}`] = value;
-  this.trigger('Bug:AnnotationUpdated', { 'bug': this.proxy, type, value });
+  this.trigger('Bug:AnnotationUpdated', { 'bug': this.proxy(), type, value });
 
   return true;
 };
