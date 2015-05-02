@@ -125,7 +125,7 @@ BzDeck.models.Subscriptions.prototype.fetch = function () {
   params.append('o9', 'anywords');
   params.append('v9', [for (bug of cached_bugs.values()) if (bug.starred) bug.id].join());
 
-  BzDeck.controllers.global.request('bug', params).then(result => {
+  return BzDeck.controllers.global.request('bug', params).then(result => {
     last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
     if (firstrun) {
