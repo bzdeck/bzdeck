@@ -274,7 +274,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   let related_ids = new Set([for ($element of this.$bug.querySelectorAll('[data-bug-id]'))
                              Number.parseInt($element.getAttribute('data-bug-id'))]);
 
-  let set_tooltops = bugs => bugs.forEach(bug => {
+  let set_tooltops = bug => {
     if (bug && bug.summary) {
       let title = `${bug.status} ${bug.resolution || ''} – ${bug.summary}`;
 
@@ -284,16 +284,21 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
         $element.dataset.resolution = bug.resolution || '';
       }
     }
-  });
+  };
 
   if (related_ids.size) {
     let bugs = BzDeck.collections.bugs.get_some(related_ids),
-        lookup_ids = new Set([for (id of related_ids) if (!bugs.has(id)) id]);
+        lookup_ids = new Set([for (id of related_ids) if (!bugs.get(id)) id]);
 
-    set_tooltops(bugs);
+    bugs.forEach(bug => set_tooltops(bug));
 
     if (lookup_ids.size) {
-      BzDeck.collections.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
+      BzDeck.collections.bugs.fetch(lookup_ids).then(_bugs => {
+        _bugs.forEach(_bug => {
+          _bug._unread = true;
+          set_tooltops(BzDeck.collections.bugs.get(_bug.id, _bug));
+        });
+      });
     }
   }
 };

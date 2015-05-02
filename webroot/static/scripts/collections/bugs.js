@@ -39,7 +39,7 @@ BzDeck.collections.Bugs.prototype.fetch = function (ids, include_metadata = true
     let params = new URLSearchParams(param_str);
 
     ids.forEach(id => params.append('ids', id));
-    BzDeck.controllers.global.request('bug' + (method ? `/${ids[0]}/${method}` : ''), params)
+    BzDeck.controllers.global.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
         .then(result => resolve(result.bugs), event => reject(new Error()));
   });
 
