@@ -77,9 +77,9 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
       assign_key_binding = (key, command) => FlareTail.util.kbd.assign(this.$bug, { key: command });
 
   let set_button_tooltip = (id, $$button) => {
-    let bug = BzDeck.models.bugs.get(id);
+    let bug = BzDeck.collections.bugs.get(id);
 
-    $$button.view.$button.title = bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
+    $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
   };
 
   if (prev) {

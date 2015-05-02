@@ -72,10 +72,11 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
   if (!newval) {
     this.trigger(':BugDataUnavailable');
   } else {
-    let bug = BzDeck.models.bugs.get(newval);
+    let bug = BzDeck.collections.bugs.get(newval);
 
-    if (bug.data) {
+    if (bug) {
       bug.unread = false;
+      bug._last_viewed = Date.now();
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');

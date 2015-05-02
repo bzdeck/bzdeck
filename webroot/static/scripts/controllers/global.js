@@ -31,7 +31,7 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
     return;
   }
 
-  let bugs = new Map([for (bug of BzDeck.models.bugs.get_all().values()) if (bug.unread) [bug.id, bug]]),
+  let bugs = new Map([for (bug of BzDeck.collections.bugs.get_all().values()) if (bug.unread) [bug.id, bug]]),
       status = bugs.size > 1 ? `You have ${bugs.size} unread bugs` : 'You have 1 unread bug', // l10n
       extract = [for (bug of [...bugs.values()].slice(0, 3)) `${bug.id} - ${bug.summary}`].join('\n'),
       unread_num = [for (bug of BzDeck.controllers.homepage.data.bugs.values()) if (bug.unread) bug].length;

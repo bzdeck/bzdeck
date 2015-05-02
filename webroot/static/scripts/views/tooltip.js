@@ -82,7 +82,7 @@ BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
 
 BzDeck.views.BugTooltip.prototype.show = function () {
   new Promise(resolve => {
-    let bug = BzDeck.models.bugs.get(this.id);
+    let bug = BzDeck.collections.bugs.get(this.id, { '_unread': true });
 
     if (bug.data) {
       resolve(bug);

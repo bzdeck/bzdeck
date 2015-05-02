@@ -108,7 +108,7 @@ BzDeck.models.Bug.prototype.save = function (data = undefined) {
  * [return] bug (Promise -> Proxy or Error) proxified instance of the BugModel object
  */
 BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_details = true) {
-  return BzDeck.models.bugs.fetch([this.id], include_metadata, include_details).then(bugs => {
+  return BzDeck.collections.bugs.fetch([this.id], include_metadata, include_details).then(bugs => {
     this.merge(bugs[0]);
 
     return Promise.resolve(this.proxy);

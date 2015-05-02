@@ -100,21 +100,21 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 // Bootstrap Step 3. Load data from Bugzilla once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.models.account.get_database().then(database => {
-    BzDeck.models.bugs = new BzDeck.models.Bugs();
-    BzDeck.models.subscriptions = new BzDeck.models.Subscriptions();
+    BzDeck.collections.bugs = new BzDeck.collections.Bugs();
+    BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
     BzDeck.models.prefs = new BzDeck.models.Prefs();
     BzDeck.models.users = new BzDeck.models.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => Promise.all([
-    BzDeck.models.bugs.load(),
+    BzDeck.collections.bugs.load(),
     BzDeck.models.prefs.load(),
     BzDeck.models.users.init(),
   ])).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
-      BzDeck.models.subscriptions.fetch(),
+      BzDeck.collections.subscriptions.fetch(),
       new Promise((resolve, reject) => BzDeck.models.server.get_config().then(config => {
         resolve(config);
       }, error => {
@@ -160,7 +160,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).then(() => {
     // Timer to check for updates, call every 5 minutes
     BzDeck.controllers.global.timers.set('fetch_subscriptions',
-        window.setInterval(() => BzDeck.models.subscriptions.fetch(), 1000 * 60 * 5));
+        window.setInterval(() => BzDeck.collections.subscriptions.fetch(), 1000 * 60 * 5));
   }).then(() => {
     // Register the app for an activity on Firefox OS
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
@@ -181,7 +181,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
-  let bugs = BzDeck.models.subscriptions.get('requests'),
+  let bugs = BzDeck.collections.subscriptions.get('requests'),
       len = bugs.size;
 
   if (!len) {

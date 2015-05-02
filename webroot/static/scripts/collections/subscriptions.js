@@ -1,5 +1,5 @@
 /**
- * BzDeck Subscriptions Model
+ * BzDeck Subscriptions Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,16 +8,16 @@
  */
 
 /*
- * Initialize the Subscriptions Model.
+ * Initialize the Subscriptions Collection.
  *
  * [argument] none
- * [return] subscriptions (Object) new instance of the SubscriptionsModel object, when an instance is created
+ * [return] subscriptions (Object) new instance of the SubscriptionsCollection object, when an instance is created
  */
-BzDeck.models.Subscriptions = function SubscriptionsModel () {
+BzDeck.collections.Subscriptions = function SubscriptionsCollection () {
 };
 
-BzDeck.models.Subscriptions.prototype = Object.create(BzDeck.models.Base.prototype);
-BzDeck.models.Subscriptions.prototype.constructor = BzDeck.models.Subscriptions;
+BzDeck.collections.Subscriptions.prototype = Object.create(BzDeck.collections.Base.prototype);
+BzDeck.collections.Subscriptions.prototype.constructor = BzDeck.collections.Subscriptions;
 
 /*
  * Get bugs the user is involving, with a specific key.
@@ -25,10 +25,10 @@ BzDeck.models.Subscriptions.prototype.constructor = BzDeck.models.Subscriptions;
  * [argument] id (String) key of the subscription
  * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
-BzDeck.models.Subscriptions.prototype.get = function (id) {
+BzDeck.collections.Subscriptions.prototype.get = function (id) {
   let severities = ['blocker', 'critical', 'major'],
       email = BzDeck.models.account.data.name,
-      bugs = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.models.bugs.get_all();
+      bugs = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
 
   if (id === 'inbox') {
     // Recent bugs changed in 10 days + unread bugs
@@ -78,9 +78,9 @@ BzDeck.models.Subscriptions.prototype.get = function (id) {
  * [argument] none
  * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
-BzDeck.models.Subscriptions.prototype.get_all = function () {
+BzDeck.collections.Subscriptions.prototype.get_all = function () {
   let email = BzDeck.models.account.data.name,
-      bugs = BzDeck.models.bugs.get_all();
+      bugs = BzDeck.collections.bugs.get_all();
 
   return new Map([for (bug of bugs.values())
       if ((bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
@@ -94,12 +94,12 @@ BzDeck.models.Subscriptions.prototype.get_all = function () {
  * [argument] none
  * [return] bugs (Promise -> Array(Object) or Error) new instances of the BugModel object
  */
-BzDeck.models.Subscriptions.prototype.fetch = function () {
+BzDeck.collections.Subscriptions.prototype.fetch = function () {
   let prefs = BzDeck.models.prefs.data,
       last_loaded = prefs['subscriptions.last_loaded'],
       firstrun = !last_loaded,
       params = new URLSearchParams(),
-      cached_bugs = BzDeck.models.bugs.get_all(),
+      cached_bugs = BzDeck.collections.bugs.get_all(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
   params.append('j_top', 'OR');
@@ -133,14 +133,20 @@ BzDeck.models.Subscriptions.prototype.fetch = function () {
         // Mark all bugs read if the session is firstrun
         _bug.unread = false;
 
-        return BzDeck.models.bugs.add(_bug);
+        return BzDeck.collections.bugs.add(_bug);
       }));
     }
 
     if (result.bugs.length) {
-      return BzDeck.models.bugs.fetch([for (_bug of result.bugs) _bug.id])
-          .then(_bugs => Promise.all(_bugs.map(_bug => BzDeck.models.bugs.get(_bug.id).merge(_bug))))
-          .then(bugs => { this.trigger('Bugs:Updated', { bugs }); return bugs; });
+      return BzDeck.collections.bugs.fetch([for (_bug of result.bugs) _bug.id])
+          .then(_bugs => Promise.all(_bugs.map(_bug => {
+            let bug = BzDeck.collections.bugs.get(_bug.id, {});
+
+            bug.merge(_bug);
+            bug.unread = true;
+
+            return bug;
+          }))).then(bugs => { this.trigger('Bugs:Updated', { bugs }); return bugs; });
     }
 
     return Promise.all([]);

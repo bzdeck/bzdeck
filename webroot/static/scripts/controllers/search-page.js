@@ -81,10 +81,11 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
   if (!newval) {
     this.trigger(':BugDataUnavailable');
   } else {
-    let bug = BzDeck.models.bugs.get(newval);
+    let bug = BzDeck.collections.bugs.get(newval);
 
-    if (bug.data) {
+    if (bug) {
       bug.unread = false;
+      bug._last_viewed = Date.now();
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
@@ -109,10 +110,15 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
     let bugs = new Map(),
         _bugs = this.data.bugs = new Map([for (_bug of result.bugs) [_bug.id, _bug]]);
 
-    BzDeck.models.bugs.get_some(_bugs.keys()).forEach((bug, id) => {
-      let retrieved = _bugs.get(id);
+    BzDeck.collections.bugs.get_some(_bugs.keys()).forEach((bug, id) => {
+      let retrieved = _bugs.get(id); // Raw data object
 
-      if (!bug.data || bug.last_change_time < retrieved.last_change_time) {
+      // Mark as unread
+      retrieved._unread = true;
+
+      if (!bug) {
+        bug = BzDeck.collections.bugs.add(retrieved);
+      } else if (bug.last_change_time < retrieved.last_change_time) {
         bug.merge(retrieved);
       }
 
