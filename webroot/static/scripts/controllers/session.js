@@ -106,9 +106,11 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.models.users = new BzDeck.models.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
-  }).then(() => {
-    return BzDeck.models.prefs.load();
-  }).then(() => {
+  }).then(() => Promise.all([
+    BzDeck.models.bugs.load(),
+    BzDeck.models.prefs.load(),
+    BzDeck.models.users.init(),
+  ])).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
@@ -142,18 +144,14 @@ BzDeck.controllers.Session.prototype.init_components = function () {
 
   new Promise((resolve, reject) => {
     this.relogin ? resolve() : reject();
-  }).catch(error => {
+  }).catch(error => Promise.all([
     // Finally load the UI modules
-    return Promise.all([
-      BzDeck.models.users.init(),
-    ]).then(() => Promise.all([
-      BzDeck.controllers.global.init(),
-      BzDeck.controllers.users = new BzDeck.controllers.Users(),
-      BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar(),
-      BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar(),
-      BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar(),
-    ]));
-  }).then(() => {
+    BzDeck.controllers.global.init(),
+    BzDeck.controllers.users = new BzDeck.controllers.Users(),
+    BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar(),
+    BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar(),
+    BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar(),
+  ])).then(() => {
     // Connect to the push notification server
     BzDeck.controllers.bugzfeed.connect();
   }).then(() => {
@@ -183,24 +181,23 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
-  BzDeck.models.subscriptions.get('requests').then(bugs => {
-    let len = bugs.size;
+  let bugs = BzDeck.models.subscriptions.get('requests'),
+      len = bugs.size;
 
-    if (!len) {
-      return;
-    }
+  if (!len) {
+    return;
+  }
 
-    let title = len > 1 ? `You have ${len} requests`
-                        : 'You have 1 request'; // l10n
-    let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
-                       : 'Select the Requests folder to browse the bug.'; // l10n
+  let title = len > 1 ? `You have ${len} requests`
+                      : 'You have 1 request'; // l10n
+  let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
+                     : 'Select the Requests folder to browse the bug.'; // l10n
 
-    // TODO: Improve the notification body to describe more about the requests,
-    // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
+  // TODO: Improve the notification body to describe more about the requests,
+  // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
-    // Select the Requests folder when the notification is clicked
-    BzDeck.views.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
-  });
+  // Select the Requests folder when the notification is clicked
+  BzDeck.views.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
 };
 
 BzDeck.controllers.Session.prototype.login = function () {

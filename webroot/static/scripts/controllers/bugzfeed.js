@@ -52,7 +52,7 @@ BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
     let { bug: id, command } = JSON.parse(event.data);
 
     if (command === 'update') {
-      BzDeck.models.bugs.get(id).then(bug => bug.fetch());
+      BzDeck.models.bugs.get(id).fetch();
     }
   });
 };

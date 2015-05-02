@@ -16,7 +16,6 @@
 BzDeck.models.Bugs = function BugsModel () {
   Object.defineProperties(this, {
     'store': { 'enumerable': true, 'get': () => this.get_store('account', 'bugs') },
-    'transaction': { 'enumerable': true, 'get': () => this.get_transaction('account', 'bugs') },
   });
 };
 
@@ -24,23 +23,54 @@ BzDeck.models.Bugs.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Bugs.prototype.constructor = BzDeck.models.Bugs;
 
 /*
+ * Load the all bug data from local IndexedDB, create a new Bug Model instance for each bug, then cache them in a new
+ * Map for faster access.
+ *
+ * [argument] none
+ * [return] bugs (Promise -> Map(Integer, Proxy)) new instances of the BugModel object, same as get_all
+ */
+BzDeck.models.Bugs.prototype.load = function () {
+  this.store.get_all().then(_bugs => {
+    this.map = new Map([for (_bug of _bugs) [_bug.id, new BzDeck.models.Bug(_bug)]]);
+
+    return Promise.resolve(this.map);
+  });
+};
+
+/*
+ * Add a bug to the database.
+ *
+ * [argument] data (Object) Bugzilla's raw bug data object
+ * [return] bug (Proxy) new instance of the BugModel object
+ */
+BzDeck.models.Bugs.prototype.add = function (data) {
+  let bug = new BzDeck.models.Bug(data);
+
+  bug.save();
+  this.map.set(bug.id, bug);
+
+  return bug;
+};
+
+/*
  * Get a bug with a specific ID.
  *
  * [argument] id (Number or String) bug ID
  * [argument] record_time (Boolean, optional) whether to record the fetched time in the bug
- * [return] bug (Promise -> Object) new instance of the BugModel object
+ * [return] bug (Proxy) new instance of the BugModel object
  */
 BzDeck.models.Bugs.prototype.get = function (id, record_time = true) {
-  return this.store.get(Number.parseInt(id)).then(_bug => {
-    // _bug: Bugzilla's raw bug object
-    if (!_bug) {
-      _bug = { id, '_unread': true };
-    } else if (record_time) {
-      _bug._last_viewed = Date.now();
-    }
+  let bug = this.map.get(id);
 
-    return Promise.resolve(new BzDeck.models.Bug(_bug, record_time || !_bug.summary));
-  });
+  if (!bug) {
+    bug = new BzDeck.models.Bug({ id, '_unread': true });
+    bug.save();
+    this.map.set(id, bug);
+  } else if (record_time) {
+    bug.data._last_viewed = Date.now();
+  } 
+
+  return bug;
 };
 
 /*
@@ -48,22 +78,20 @@ BzDeck.models.Bugs.prototype.get = function (id, record_time = true) {
  *
  * [argument] ids (Array(Number) or Set(Number)) list of bug ID
  * [argument] record_time (Boolean, optional) whether to record the fetched time in the bug
- * [return] bugs (Promise -> Map) new instances of the BugModel object
+ * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
 BzDeck.models.Bugs.prototype.get_some = function (ids, record_time = true) {
-  return Promise.all([for (id of ids) this.get(id, record_time)])
-      .then(bugs => Promise.resolve(new Map([for (bug of bugs) [bug.id, bug]])));
+  return new Map([for (id of ids) [id, this.get(id, record_time)]]);
 };
 
 /*
  * Get all bugs locally-stored in IndexedDB.
  *
  * [argument] none
- * [return] bugs (Promise -> Map) new instances of the BugModel object
+ * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
 BzDeck.models.Bugs.prototype.get_all = function () {
-  return this.store.get_all()
-      .then(_bugs => Promise.resolve(new Map([for (_bug of _bugs) [_bug.id, new BzDeck.models.Bug(_bug)]])));
+  return this.map;
 };
 
 /*

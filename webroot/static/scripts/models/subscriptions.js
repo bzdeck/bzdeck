@@ -23,75 +23,69 @@ BzDeck.models.Subscriptions.prototype.constructor = BzDeck.models.Subscriptions;
  * Get bugs the user is involving, with a specific key.
  *
  * [argument] id (String) key of the subscription
- * [return] bugs (Promise -> Map) new instances of the BugModel object
+ * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
 BzDeck.models.Subscriptions.prototype.get = function (id) {
   let severities = ['blocker', 'critical', 'major'],
-      email = BzDeck.models.account.data.name;
+      email = BzDeck.models.account.data.name,
+      bugs = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.models.bugs.get_all();
 
-  if (['all', 'inbox', 'important'].includes(id)) {
-    return this.get_all().then(bugs => {
-      if (id === 'inbox') {
-        // Recent bugs changed in 10 days + unread bugs
-        bugs = new Map([for (bug of bugs.values()) if (bug.is_new) [bug.id, bug]]);
-      }
-
-      if (id === 'important') {
-        bugs = new Map([for (bug of bugs.values()) if (severities.includes(bug.severity)) [bug.id, bug]]);
-      }
-
-      return Promise.resolve(bugs);
-    });
+  if (id === 'inbox') {
+    // Recent bugs changed in 10 days + unread bugs
+    bugs = new Map([for (bug of bugs.values()) if (bug.is_new) [bug.id, bug]]);
   }
 
-  return BzDeck.models.bugs.get_all().then(bugs => {
-    if (id === 'watching') {
-      bugs = new Map([for (bug of bugs.values()) if (bug.cc && bug.cc.includes(email)) [bug.id, bug]]);
-    }
+  if (id === 'important') {
+    bugs = new Map([for (bug of bugs.values()) if (severities.includes(bug.severity)) [bug.id, bug]]);
+  }
 
-    if (id === 'reported') {
-      bugs = new Map([for (bug of bugs.values()) if (bug.creator === email) [bug.id, bug]]);
-    }
+  if (id === 'watching') {
+    bugs = new Map([for (bug of bugs.values()) if (bug.cc && bug.cc.includes(email)) [bug.id, bug]]);
+  }
 
-    if (id === 'assigned') {
-      bugs = new Map([for (bug of bugs.values()) if (bug.assigned_to === email) [bug.id, bug]]);
-    }
+  if (id === 'reported') {
+    bugs = new Map([for (bug of bugs.values()) if (bug.creator === email) [bug.id, bug]]);
+  }
 
-    if (id === 'mentor') {
-      bugs = new Map([for (bug of bugs.values()) if (bug.mentors && bug.mentors.includes(email)) [bug.id, bug]]);
-    }
+  if (id === 'assigned') {
+    bugs = new Map([for (bug of bugs.values()) if (bug.assigned_to === email) [bug.id, bug]]);
+  }
 
-    if (id === 'qa') {
-      bugs = new Map([for (bug of bugs.values()) if (bug.qa_contact === email) [bug.id, bug]]);
-    }
+  if (id === 'mentor') {
+    bugs = new Map([for (bug of bugs.values()) if (bug.mentors && bug.mentors.includes(email)) [bug.id, bug]]);
+  }
 
-    if (id === 'requests') {
-      bugs = new Map([for (bug of bugs.values())
-                      for (flag of bug.flags || []) if (flag.requestee === email) [bug.id, bug]]);
-    }
+  if (id === 'qa') {
+    bugs = new Map([for (bug of bugs.values()) if (bug.qa_contact === email) [bug.id, bug]]);
+  }
 
-    if (id === 'starred') {
-      // Starred bugs may include non-subscribed bugs, so get all bugs, not only subscriptions
-      bugs = new Map([for (bug of bugs.values()) if (bug.starred) [bug.id, bug]]);
-    }
+  if (id === 'requests') {
+    bugs = new Map([for (bug of bugs.values())
+                    for (flag of bug.flags || []) if (flag.requestee === email) [bug.id, bug]]);
+  }
 
-    return Promise.resolve(bugs);
-  });
+  if (id === 'starred') {
+    // Starred bugs may include non-subscribed bugs, so get all bugs, not only subscriptions
+    bugs = new Map([for (bug of bugs.values()) if (bug.starred) [bug.id, bug]]);
+  }
+
+  return bugs;
 };
 
 /*
  * Get all bugs the user is involving.
  *
  * [argument] none
- * [return] bugs (Promise -> Map) new instances of the BugModel object
+ * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
  */
 BzDeck.models.Subscriptions.prototype.get_all = function () {
-  let email = BzDeck.models.account.data.name;
+  let email = BzDeck.models.account.data.name,
+      bugs = BzDeck.models.bugs.get_all();
 
-  return BzDeck.models.bugs.get_all().then(bugs => Promise.resolve(new Map([for (bug of bugs.values())
+  return new Map([for (bug of bugs.values())
       if ((bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
           (bug.mentors && bug.mentors.includes(email)) || bug.qa_contact === email ||
-          [for (flag of bug.flags || []) if (flag.requestee === email) flag].length) [bug.id, bug]])));
+          [for (flag of bug.flags || []) if (flag.requestee === email) flag].length) [bug.id, bug]]);
 };
 
 /*
@@ -105,6 +99,7 @@ BzDeck.models.Subscriptions.prototype.fetch = function () {
       last_loaded = prefs['subscriptions.last_loaded'],
       firstrun = !last_loaded,
       params = new URLSearchParams(),
+      cached_bugs = BzDeck.models.bugs.get_all(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
   params.append('j_top', 'OR');
@@ -125,31 +120,29 @@ BzDeck.models.Subscriptions.prototype.fetch = function () {
     params.append(`v${i}`, BzDeck.models.account.data.name);
   }
 
-  return BzDeck.models.bugs.get_all().then(cached_bugs => {
-    // Append starred bugs to the query
-    params.append('f9', 'bug_id');
-    params.append('o9', 'anywords');
-    params.append('v9', [for (bug of cached_bugs.values()) if (bug.starred) bug.id].join());
-  }).then(() => {
-    BzDeck.controllers.global.request('bug', params).then(result => {
-      last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
+  // Append starred bugs to the query
+  params.append('f9', 'bug_id');
+  params.append('o9', 'anywords');
+  params.append('v9', [for (bug of cached_bugs.values()) if (bug.starred) bug.id].join());
 
-      if (firstrun) {
-        return Promise.all(result.bugs.map(_bug => {
-          // Mark all bugs read if the session is firstrun
-          _bug.unread = false;
+  BzDeck.controllers.global.request('bug', params).then(result => {
+    last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
 
-          return new BzDeck.models.Bug(_bug);
-        }));
-      }
+    if (firstrun) {
+      return Promise.all(result.bugs.map(_bug => {
+        // Mark all bugs read if the session is firstrun
+        _bug.unread = false;
 
-      if (result.bugs.length) {
-        return BzDeck.models.bugs.fetch([for (_bug of result.bugs) _bug.id])
-            .then(_bugs => Promise.all(_bugs.map(_bug => BzDeck.models.bugs.get(_bug.id).then(bug => bug.merge(_bug)))))
-            .then(bugs => { this.trigger('Bugs:Updated', { bugs }); return bugs; });
-      }
+        return BzDeck.models.bugs.add(_bug);
+      }));
+    }
 
-      return Promise.all([]);
-    }).then(bugs => Promise.resolve(bugs), event => Promise.reject(new Error('Failed to load data.'))); // l10n
-  });
+    if (result.bugs.length) {
+      return BzDeck.models.bugs.fetch([for (_bug of result.bugs) _bug.id])
+          .then(_bugs => Promise.all(_bugs.map(_bug => BzDeck.models.bugs.get(_bug.id).merge(_bug))))
+          .then(bugs => { this.trigger('Bugs:Updated', { bugs }); return bugs; });
+    }
+
+    return Promise.all([]);
+  }).then(bugs => Promise.resolve(bugs), event => Promise.reject(new Error('Failed to load data.'))); // l10n
 };

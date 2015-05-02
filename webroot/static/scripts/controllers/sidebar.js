@@ -54,14 +54,13 @@ BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.pro
 BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
-  BzDeck.models.subscriptions.get(folder_id).then(bugs => { // Map
-    BzDeck.controllers.homepage.data.bugs = bugs;
-    this.trigger(':FolderOpened', { folder_id, bugs });
-  });
+  let bugs = BzDeck.controllers.homepage.data.bugs = BzDeck.models.subscriptions.get(folder_id); // Map
+
+  this.trigger(':FolderOpened', { folder_id, bugs });
 };
 
 BzDeck.controllers.Sidebar.prototype.toggle_unread = function () {
-  BzDeck.models.subscriptions.get_all().then(bugs => {
-    this.trigger(':UnreadToggled', { 'number': [for (bug of bugs.values()) if (bug.unread) bug].length });
-  });
+  let number = [for (bug of BzDeck.models.subscriptions.get_all().values()) if (bug.unread) bug].length;
+
+  this.trigger(':UnreadToggled', { number });
 };

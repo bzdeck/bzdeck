@@ -204,7 +204,7 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
     $listbox.addEventListener('mousedown', event => {
       if (event.target.matches('[data-field="_starred"]')) {
         BzDeck.models.bugs.get(event.target.parentElement.dataset.id)
-          .then(bug => bug.starred = event.target.matches('[aria-checked="false"]'));
+                          .starred = event.target.matches('[aria-checked="false"]');
         event.stopPropagation();
       }
     });
@@ -234,7 +234,7 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
 
   if (!this.classic_thread_initialized) {
     // Fill the thread with all saved bugs, and filter the rows later
-    BzDeck.models.bugs.get_all().then(bugs => this.thread.update(bugs));
+    this.thread.update(BzDeck.models.bugs.get_all());
 
     // Select the first bug on the list automatically when a folder is opened
     // TODO: Remember the last selected bug for each folder

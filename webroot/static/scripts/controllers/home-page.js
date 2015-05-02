@@ -16,10 +16,6 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
     return BzDeck.controllers.homepage;
   }
 
-  BzDeck.controllers.homepage = this;
-  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(prefs, this);
-  this.view.connect(folder_id);
-
   this.data = new Proxy({
     'bugs': new Map(),
     'preview_id': null
@@ -60,6 +56,10 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [...this.data.bugs.keys()] });
   });
 
+  BzDeck.controllers.homepage = this;
+  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(prefs, this);
+  this.view.connect(folder_id);
+
   return this;
 };
 
@@ -71,16 +71,14 @@ BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
 BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
   if (!newval) {
     this.trigger(':BugDataUnavailable');
+  } else {
+    let bug = BzDeck.models.bugs.get(newval);
 
-    return;
-  }
-
-  BzDeck.models.bugs.get(newval).then(bug => {
     if (bug.data) {
       bug.unread = false;
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
     }
-  });
+  }
 };

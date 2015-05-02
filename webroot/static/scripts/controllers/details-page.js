@@ -52,20 +52,20 @@ BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
 
 BzDeck.controllers.DetailsPage.prototype.init = function () {
-  BzDeck.models.bugs.get(this.bug_id).then(bug => {
-    // If no cache found, try to retrieve it from Bugzilla
-    if (!bug.data) {
-      if (!navigator.onLine) {
-        this.trigger(':Offline');
-      } else {
-        this.trigger(':LoadingStarted');
-        bug.fetch().then(bug => this.trigger(':LoadingComplete', { bug }), error => this.trigger(':LoadingError'));
-      }
-    }
+  let bug = BzDeck.models.bugs.get(this.bug_id);
 
-    this.trigger(':BugDataReady', { bug });
-    bug.unread = false;
-  });
+  if (!bug.data) {
+    // If no cache found, try to retrieve it from Bugzilla
+    if (!navigator.onLine) {
+      this.trigger(':Offline');
+    } else {
+      this.trigger(':LoadingStarted');
+      bug.fetch().then(bug => this.trigger(':LoadingComplete', { bug }), error => this.trigger(':LoadingError'));
+    }
+  }
+
+  this.trigger(':BugDataReady', { bug });
+  bug.unread = false;
 
   BzDeck.controllers.bugzfeed.subscribe([this.bug_id]);
 };

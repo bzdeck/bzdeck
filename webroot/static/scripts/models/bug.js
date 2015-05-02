@@ -11,11 +11,10 @@
  * Initialize the Bug Model.
  *
  * [argument] data (Object) Bugzilla's raw bug data object
- * [argument] save (Boolean, optional) whether to save the data immediately
  * [return] bug (Proxy) proxified instance of the BugModel object, so consumers can access bug data seamlessly using
  *                      bug.prop instead of bug.data.prop
  */
-BzDeck.models.Bug = function BugModel (data, save = false) {
+BzDeck.models.Bug = function BugModel (data) {
   this.id = data.id;
   this.cache(data);
 
@@ -23,10 +22,6 @@ BzDeck.models.Bug = function BugModel (data, save = false) {
     'store': {
       'enumerable': true,
       'get': () => this.get_store('account', 'bugs'),
-    },
-    'transaction': {
-      'enumerable': true,
-      'get': () => this.get_transaction('account', 'bugs')
     },
     'starred': {
       'enumerable': true,
@@ -52,13 +47,16 @@ BzDeck.models.Bug = function BugModel (data, save = false) {
       'get': () => this.get_participants(),
     },
     'proxy': {
-      'get': () => new Proxy(this, { 'get': (obj, prop) => this.data[prop] || this[prop] }),
+      'get': () => new Proxy(this, {
+        'get': (obj, prop) => this[prop] || this.data[prop],
+        'set': (obj, prop, value) => {
+          prop in this ? this[prop] = value : this.data[prop] = value;
+
+          return true; // The set trap must return true (Bug 1132522)
+        },
+      }),
     },
   });
-
-  if (save) {
-    this.save();
-  }
 
   return this.proxy;
 };
@@ -256,7 +254,7 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
  * Get a list of people involved in the bug.
  *
  * [argument] none
- * [return] participants (Map) list of all participants
+ * [return] participants (Map(String, Object)) list of all participants
  */
 BzDeck.models.Bug.prototype.get_participants = function () {
   let participants = new Map([[this.data.creator, this.data.creator_detail]]);

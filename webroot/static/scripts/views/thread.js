@@ -238,14 +238,14 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.models.bugs.get($item.dataset.id).then(bug => bug.unread = $item.dataset.unread === 'false');
+        BzDeck.models.bugs.get($item.dataset.id).unread = $item.dataset.unread === 'false';
       }
     },
     // Toggle star
     'S': event => {
       for (let $item of this.$$listbox.view.selected) {
         BzDeck.models.bugs.get($item.dataset.id)
-          .then(bug => bug.starred = $item.querySelector('[data-field="_starred"]').matches('[aria-checked="false"]'));
+                          .starred = $item.querySelector('[data-field="_starred"]').matches('[aria-checked="false"]');
       }
     },
     // Open the bug in a new tab

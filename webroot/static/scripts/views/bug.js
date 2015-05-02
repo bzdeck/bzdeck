@@ -296,15 +296,14 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   });
 
   if (related_ids.size) {
-    BzDeck.models.bugs.get_some(related_ids).then(bugs => {
-      let lookup_ids = new Set([for (id of related_ids) if (!bugs.has(id)) id]);
+    let bugs = BzDeck.models.bugs.get_some(related_ids),
+        lookup_ids = new Set([for (id of related_ids) if (!bugs.has(id)) id]);
 
-      set_tooltops(bugs);
+    set_tooltops(bugs);
 
-      if (lookup_ids.size) {
-        BzDeck.models.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
-      }
-    });
+    if (lookup_ids.size) {
+      BzDeck.models.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
+    }
   }
 };
 

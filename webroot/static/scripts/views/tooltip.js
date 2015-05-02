@@ -81,13 +81,15 @@ BzDeck.views.BugTooltip.prototype = Object.create(BzDeck.views.Tooltip.prototype
 BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
 
 BzDeck.views.BugTooltip.prototype.show = function () {
-  new Promise(resolve => BzDeck.models.bugs.get(this.id).then(bug => {
+  new Promise(resolve => {
+    let bug = BzDeck.models.bugs.get(this.id);
+
     if (bug.data) {
       resolve(bug);
     } else {
       bug.fetch().then(bug => resolve(bug));
     }
-  })).then(bug => {
+  }).then(bug => {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator,
         rect = this.$owner.getBoundingClientRect();
 

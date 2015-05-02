@@ -80,18 +80,16 @@ BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchP
 BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval) {
   if (!newval) {
     this.trigger(':BugDataUnavailable');
+  } else {
+    let bug = BzDeck.models.bugs.get(newval);
 
-    return;
-  }
-
-  BzDeck.models.bugs.get(newval).then(bug => {
     if (bug.data) {
       bug.unread = false;
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
     }
-  });
+  }
 };
 
 BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
@@ -103,24 +101,25 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
 
   this.trigger(':SearchStarted');
 
-  let save = bug => {
-    let retrieved = this.data.bugs.get(bug.id);
-
-    if (!bug.data || bug.last_change_time < retrieved.last_change_time) {
-      bug.merge(retrieved);
-    }
-
-    return bug;
-  };
-
   this.request('bug', params).then(result => {
-    if (result.bugs.length > 0) {
-      this.data.bugs = new Map([for (_bug of result.bugs) [_bug.id, _bug]]);
-
-      BzDeck.models.bugs.get_some(this.data.bugs.keys())
-        .then(bugs => new Map([for (bug of bugs.values()) [bug.id, save(bug)]]))
-        .then(bugs => this.trigger(':SearchResultsAvailable', { bugs }));
+    if (!result.bugs.length) {
+      return;
     }
+
+    let bugs = new Map(),
+        _bugs = this.data.bugs = new Map([for (_bug of result.bugs) [_bug.id, _bug]]);
+
+    BzDeck.models.bugs.get_some(_bugs.keys()).forEach((bug, id) => {
+      let retrieved = _bugs.get(id);
+
+      if (!bug.data || bug.last_change_time < retrieved.last_change_time) {
+        bug.merge(retrieved);
+      }
+
+      bugs.set(id, bug);
+    });
+
+    this.trigger(':SearchResultsAvailable', { bugs });
   }).catch(error => {
     this.trigger(':SearchError', { error });
   }).then(() => {
