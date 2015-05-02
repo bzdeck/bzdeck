@@ -25,13 +25,14 @@ BzDeck.models.Bug = function BugModel (data) {
     },
     'starred': {
       'enumerable': true,
-      'get': () => !!this.data._starred_comments && !!this.data._starred_comments.size,
-      'set': value => this.update_star(value),
+      // For backward compatibility, check for the obsolete Set-typed property as well
+      'get': () => this.data._starred_comments ? !!this.data._starred_comments.size : this.data._starred || false,
+      'set': value => this.update_annotation('starred', value),
     },
     'unread': {
       'enumerable': true,
-      'get': () => this.data._unread,
-      'set': value => this.update_unread(value),
+      'get': () => this.data._unread || false,
+      'set': value => this.update_annotation('unread', value),
     },
     'aliases': {
       'enumerable': true,
@@ -48,7 +49,7 @@ BzDeck.models.Bug = function BugModel (data) {
     },
     'proxy': {
       'get': () => new Proxy(this, {
-        'get': (obj, prop) => this[prop] || this.data[prop],
+        'get': (obj, prop) => prop in this ? this[prop] : this.data[prop],
         'set': (obj, prop, value) => {
           prop in this ? this[prop] = value : this.data[prop] = value;
 
@@ -183,45 +184,24 @@ BzDeck.models.Bug.prototype.merge = function (data) {
 };
 
 /*
- * Update the bug's star annotation and notify the change.
+ * Update the bug's annotation and notify the change.
  *
- * [argument] starred (Boolean) whether to add star
+ * [argument] type (String) annotation type, star or unread
+ * [argument] value (Boolean) whether to add star or mark as unread
  * [return] result (Boolean) whether the annotation is updated
  */
-BzDeck.models.Bug.prototype.update_star = function (starred) {
-  if (!this.data.comments) {
+BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
+  if (this.data[`_${type}`] === value) {
     return false;
   }
 
-  if (!this.data._starred_comments) {
-    this.data._starred_comments = new Set();
+  // Delete the obsolete Set-typed property
+  if (type === 'starred') {
+    delete this.data._starred_comments;
   }
 
-  if (starred) {
-    this.data._starred_comments.add(this.data.comments[0].id);
-  } else {
-    this.data._starred_comments.clear();
-  }
-
-  this.save(); // Force to save the data
-  this.trigger('Bug:StarToggled', { 'bug': this.proxy });
-
-  return true;
-};
-
-/*
- * Update the bug's unread annotation and notify the change.
- *
- * [argument] unread (Boolean) whether to mark as unread
- * [return] result (Boolean) whether the annotation is updated
- */
-BzDeck.models.Bug.prototype.update_unread = function (unread) {
-  if (this.data._unread === unread) {
-    return false;
-  }
-
-  this.data._unread = unread;
-  this.trigger('Bug:UnreadToggled', { 'bug': this.proxy });
+  this.data[`_${type}`] = value;
+  this.trigger('Bug:AnnotationUpdated', { 'bug': this.proxy, type, value });
 
   return true;
 };

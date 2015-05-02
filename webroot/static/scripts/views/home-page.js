@@ -202,7 +202,7 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
 
     // Star button
     $listbox.addEventListener('mousedown', event => {
-      if (event.target.matches('[data-field="_starred"]')) {
+      if (event.target.matches('[data-field="starred"]')) {
         BzDeck.models.bugs.get(event.target.parentElement.dataset.id)
                           .starred = event.target.matches('[aria-checked="false"]');
         event.stopPropagation();

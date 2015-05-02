@@ -80,27 +80,20 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     // Show next bug, an alias of DOWN
     'F': event => FlareTail.util.kbd.dispatch($grid, 'ArrowDown'),
     // Toggle read
-    'M': event => toggle_prop('_unread'),
+    'M': event => toggle_prop('unread'),
     // Toggle star
-    'S': event => toggle_prop('_starred'),
+    'S': event => toggle_prop('starred'),
   });
 
-  this.on('Bug:StarToggled', data => {
-    let bug = data.bug,
-        $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
+  this.on('Bug:AnnotationUpdated', data => {
+    let $row = $grid.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
 
     if ($row) {
-      $row.querySelector('[data-id="_starred"] [role="checkbox"]')
-          .setAttribute('aria-checked', !!bug._starred_comments.size);
-    }
-  });
+      $row.setAttribute(`data-${data.type}`, data.value);
 
-  this.on('Bug:UnreadToggled', data => {
-    let bug = data.bug,
-        $row = $grid.querySelector(`[role="row"][data-id="${bug.id}"]`);
-
-    if ($row) {
-      $row.setAttribute('data-unread', !!bug.unread);
+      if (data.type === 'starred') {
+        $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', data.value);
+      }
     }
   });
 };
@@ -141,11 +134,11 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
         value = BzDeck.controllers.users.get(value.name).name;
       }
 
-      if (field === '_starred') {
+      if (field === 'starred') {
         value = bug.starred;
       }
 
-      if (field === '_unread') {
+      if (field === 'unread') {
         value = value === true;
       }
 
@@ -154,11 +147,11 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
     row.data = new Proxy(row.data, {
       'set': (obj, prop, value) => {
-        if (prop === '_starred') {
+        if (prop === 'starred') {
           bug.starred = value;
         }
 
-        if (prop === '_unread') {
+        if (prop === 'unread') {
           bug.unread = value;
 
           let row = [for (row of this.$$grid.data.rows) if (row.data.id === obj.id) row][0];
@@ -245,7 +238,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     'S': event => {
       for (let $item of this.$$listbox.view.selected) {
         BzDeck.models.bugs.get($item.dataset.id)
-                          .starred = $item.querySelector('[data-field="_starred"]').matches('[aria-checked="false"]');
+                          .starred = $item.querySelector('[data-field="starred"]').matches('[aria-checked="false"]');
       }
     },
     // Open the bug in a new tab
@@ -255,21 +248,15 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
   });
 
-  this.on('Bug:StarToggled', data => {
-    let bug = data.bug,
-        $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
+  this.on('Bug:AnnotationUpdated', data => {
+    let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);
 
     if ($option) {
-      $option.querySelector('[data-field="_starred"]').setAttribute('aria-checked', !!bug._starred_comments.size);
-    }
-  });
+      $option.setAttribute(`data-${data.type}`, data.value);
 
-  this.on('Bug:UnreadToggled', data => {
-    let bug = data.bug,
-        $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
-
-    if ($option) {
-      $option.setAttribute('data-unread', !!bug.unread);
+      if (data.type === 'starred') {
+        $option.querySelector('[data-field="starred"]').setAttribute('aria-checked', data.value);
+      }
     }
   });
 

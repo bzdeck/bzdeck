@@ -8,7 +8,11 @@
  */
 
 BzDeck.controllers.Global = function GlobalController () {
-  this.on('Bug:UnreadToggled', data => this.toggle_unread());
+  this.on('Bug:AnnotationUpdated', data => {
+    if (data.type === 'unread') {
+      this.toggle_unread();
+    }
+  });
 };
 
 BzDeck.controllers.Global.prototype = Object.create(BzDeck.controllers.Base.prototype);

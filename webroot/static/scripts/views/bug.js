@@ -25,18 +25,9 @@ BzDeck.views.Bug.prototype.init = function () {
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
                                   new this.widget.ScrollBar($area)]);
 
-  this.on('Bug:StarToggled', data => {
-    let _bug = data.bug,
-        _starred = _bug._starred_comments;
-
-    if (this.$bug && _bug.id === this.bug.id) {
-      this.$bug.querySelector('header [role="button"][data-command="star"]')
-               .setAttribute('aria-pressed', !!_starred.size);
-
-      for (let $comment of this.$bug.querySelectorAll('[role="article"] [itemprop="comment"][data-id]')) {
-        $comment.querySelector('[role="button"][data-command="star"]')
-                .setAttribute('aria-pressed', _starred.has(Number.parseInt($comment.dataset.id)));
-      }
+  this.on('Bug:AnnotationUpdated', data => {
+    if (this.$bug && data.type === 'starred' && data.bug.id === this.bug.id) {
+      this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
     }
   });
 
@@ -85,7 +76,7 @@ BzDeck.views.Bug.prototype.render = function () {
   let _bug = {};
 
   for (let { 'id': field, type } of BzDeck.config.grid.default_columns) {
-    if (this.bug[field] !== undefined && !field.startsWith('_')) {
+    if (this.bug[field] !== undefined) {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {

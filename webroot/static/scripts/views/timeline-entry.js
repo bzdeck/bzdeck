@@ -43,7 +43,6 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       $author = $entry.querySelector('[itemprop="author"]'),
       $roles = $author.querySelector('.roles'),
       $time = $entry.querySelector('[itemprop="datePublished"]'),
-      $star_button = $entry.querySelector('[role="button"][data-command="star"]'),
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment_body = $entry.querySelector('[itemprop="text"]'),
       $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
@@ -82,19 +81,6 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   };
 
-  let toggle_star = () => {
-    if (!this.bug._starred_comments) {
-      this.bug._starred_comments = new Set([comment.id]);
-    } else if (this.bug._starred_comments.has(comment.id)) {
-      this.bug._starred_comments.delete(comment.id);
-    } else {
-      this.bug._starred_comments.add(comment.id);
-    }
-
-    this.bug.save();
-    FlareTail.util.event.trigger(window, 'Bug:StarToggled', { 'detail': { 'bug': this.bug }});
-  };
-
   // Collapse/expand the comment
   let collapse_comment = () => $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
 
@@ -123,14 +109,11 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   };
 
   // Activate the buttons
-  $star_button.addEventListener(click_event_type, event => { toggle_star(); event.stopPropagation(); });
-  $star_button.setAttribute('aria-pressed', !!this.bug._starred_comments && this.bug._starred_comments.has(comment.id));
   $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
 
   // Assign keyboard shortcuts
   FlareTail.util.kbd.assign($entry, {
     'R': event => reply(),
-    'S': event => toggle_star(),
     // Collapse/expand the comment
     'C': event => collapse_comment(),
     // Focus management

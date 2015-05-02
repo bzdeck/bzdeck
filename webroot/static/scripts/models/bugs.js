@@ -59,8 +59,9 @@ BzDeck.models.Bugs.prototype.add = function (data) {
  * [argument] record_time (Boolean, optional) whether to record the fetched time in the bug
  * [return] bug (Proxy) new instance of the BugModel object
  */
-BzDeck.models.Bugs.prototype.get = function (id, record_time = true) {
-  let bug = this.map.get(id);
+BzDeck.models.Bugs.prototype.get = function (_id, record_time = true) {
+  let id = Number.parseInt(_id),
+      bug = this.map.get(id);
 
   if (!bug) {
     bug = new BzDeck.models.Bug({ id, '_unread': true });

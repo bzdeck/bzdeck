@@ -1505,7 +1505,7 @@ main {
   font-size: 1.1rem;
 }
 
-[id$="vertical-thread"] [data-field="_starred"] {
+[id$="vertical-thread"] [data-field="starred"] {
   top: .4rem;
   right: .4rem;
   width: 2.4rem;
@@ -1513,7 +1513,7 @@ main {
   pointer-events: auto;
 }
 
-[id$="vertical-thread"] [data-field="_starred"]::before {
+[id$="vertical-thread"] [data-field="starred"]::before {
   margin: .4rem;
   width: 1.6rem;
   height: 1.6rem;
@@ -1521,11 +1521,11 @@ main {
   font-family: FontAwesome;
 }
 
-[id$="vertical-thread"] [data-field="_starred"][aria-checked="false"]::before {
+[id$="vertical-thread"] [data-field="starred"][aria-checked="false"]::before {
   content: "\F006";
 }
 
-[id$="vertical-thread"] [data-field="_starred"][aria-checked="true"]::before {
+[id$="vertical-thread"] [data-field="starred"][aria-checked="true"]::before {
   content: "\F005";
 }
 
@@ -1537,7 +1537,7 @@ main {
   width: 50%;
 }
 
-.bug-list col:-moz-any([data-id="_starred"], [data-id="_unread"])[data-hidden="false"] {
+.bug-list col:-moz-any([data-id="starred"], [data-id="unread"])[data-hidden="false"] {
   width: 1.9rem;
 }
 
@@ -1549,7 +1549,7 @@ main {
   background-color: transparent !important;
 }
 
-.bug-list [role="columnheader"]:-moz-any([data-id="_starred"], [data-id="_unread"]) label {
+.bug-list [role="columnheader"]:-moz-any([data-id="starred"], [data-id="unread"]) label {
   padding: 0;
 }
 
@@ -1582,14 +1582,14 @@ main {
   content: "\2022";
 }
 
-.bug-list [role="columnheader"][data-id="_starred"] label::before,
-.bug-list [role="gridcell"][data-id="_starred"] [aria-checked="true"]::before {
+.bug-list [role="columnheader"][data-id="starred"] label::before,
+.bug-list [role="gridcell"][data-id="starred"] [aria-checked="true"]::before {
   font-family: FontAwesome;
   content: "\F005";
 }
 
-.bug-list [role="columnheader"][data-id="_unread"] label::before,
-.bug-list [role="gridcell"][data-id="_unread"] [aria-checked="true"]::before {
+.bug-list [role="columnheader"][data-id="unread"] label::before,
+.bug-list [role="gridcell"][data-id="unread"] [aria-checked="true"]::before {
   font-family: FontAwesome;
   content: "\F0A3";
 }
@@ -2004,7 +2004,6 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header .meta {
   flex: auto;
   overflow: hidden;
-  max-width: calc(100% - 4.8rem);
   min-height: 4rem;
   font-size: 1.1rem;
   line-height: 1.5rem;

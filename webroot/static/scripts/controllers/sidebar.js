@@ -47,7 +47,11 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 
   // Update the sidebar Inbox folder at startup and whenever notified
   this.toggle_unread();
-  this.on('Bug:UnreadToggled', data => this.toggle_unread());
+  this.on('Bug:AnnotationUpdated', data => {
+    if (data.type === 'unread') {
+      this.toggle_unread();
+    }
+  });
 };
 
 BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);

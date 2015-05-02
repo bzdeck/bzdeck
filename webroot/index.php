@@ -255,7 +255,7 @@
           <h3>Bug <span itemprop="id"></span></h3>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
               <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="home-preview-bug-menu" data-command="show-menu">Menu</span></li>
             </ul>
@@ -281,7 +281,7 @@
           <h3>Bug <span itemprop="id"></span></h3>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
               <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu">Menu</span></li>
             </ul>
@@ -310,7 +310,7 @@
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="_starred">Star</span></li>
+              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
             </ul>
             <ul class="nav" role="none">
@@ -496,7 +496,6 @@
           </div>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Star this comment" tabindex="0" role="button" aria-pressed="false" data-command="star">Star</span></li>
               <li role="none"><span class="iconic" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
             </ul>
           </div>
@@ -659,7 +658,7 @@
         <span itemprop="id"></span>
         <span itemprop="name"></span>
         <time data-simple="true" itemprop="dateModified"></time>
-        <span data-field="_starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
+        <span data-field="starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
       </li>
     </template><!-- end #vertical-thread-item -->
     <template id="bug-tooltip">
