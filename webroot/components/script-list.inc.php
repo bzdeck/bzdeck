@@ -20,10 +20,11 @@ $scripts = [
   '/static/scripts/models/global.js',
   '/static/scripts/models/prefs.js',
   '/static/scripts/models/server.js',
-  '/static/scripts/models/users.js',
+  '/static/scripts/models/user.js',
   '/static/scripts/collections/base.js',
   '/static/scripts/collections/bugs.js',
   '/static/scripts/collections/subscriptions.js',
+  '/static/scripts/collections/users.js',
   '/static/scripts/views/base.js',
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
@@ -61,6 +62,4 @@ $scripts = [
   '/static/scripts/controllers/timeline-entry.js',
   '/static/scripts/controllers/timeline.js',
   '/static/scripts/controllers/toolbar.js',
-  '/static/scripts/controllers/user.js',
-  '/static/scripts/controllers/users.js',
 ];

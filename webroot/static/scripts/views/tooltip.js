@@ -97,7 +97,7 @@ BzDeck.views.BugTooltip.prototype.show = function () {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
-      'contributor': BzDeck.controllers.users.get(contributor).properties,
+      'contributor': BzDeck.collections.users.get(contributor, {}).properties,
     }, {
       'data-id': bug.id,
     });

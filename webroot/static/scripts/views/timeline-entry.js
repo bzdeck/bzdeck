@@ -36,7 +36,7 @@ BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
-      author = BzDeck.controllers.users.get(comment.creator),
+      author = BzDeck.collections.users.get(comment.creator, {}),
       time = comment.creation_time,
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
@@ -234,7 +234,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
 BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
-      changer = BzDeck.controllers.users.get(history.who),
+      changer = BzDeck.collections.users.get(history.who, {}),
       time = history.when,
       $fragment = new DocumentFragment();
 
@@ -481,7 +481,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
 
 BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(email => {
-    let person = BzDeck.controllers.users.get(email),
+    let person = BzDeck.collections.users.get(email, {}),
         $person = this.get_fragment('person-with-image').firstElementChild;
 
     this.fill($person, person.properties, {

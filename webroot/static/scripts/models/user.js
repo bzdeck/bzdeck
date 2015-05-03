@@ -1,5 +1,5 @@
 /**
- * BzDeck User Controller
+ * BzDeck User Model
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -7,16 +7,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.controllers.User = function UserController (name, profile = undefined, options = {}) {
-  this.model = BzDeck.models.users;
-  this.profiles = this.model.get(name) || profile || { 'bugzilla': { name }};
-  this.email = name;
-
-  // For Gravatar requests; depending on the JavaScript-MD5 library
-  this.hash = md5(name);
+/*
+ * Initialize User Bug Model.
+ *
+ * [argument] data (Object) profile object including Bugzilla's raw user data
+ * [return] user (Proxy) proxified instance of the UserModel object, so consumers can access user data seamlessly using
+ *                       user.prop instead of user.data.prop
+ */
+BzDeck.models.User = function UserModel (data) {
+  this.email = data.name = (data.name || data.bugzilla.name);
+  this.hash = md5(this.email);
+  this.cache(data);
 
   // These properties should work even when the user's Bugzilla profile is still being loaded
   Object.defineProperties(this, {
+    'store': {
+      'get': () => this.get_store('account', 'users'),
+    },
     // This is not the Bugzilla user name (email address) but pretty name.
     // Replace both 'Kohei Yoshino [:Kohei]' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
     'name': {
@@ -27,7 +34,7 @@ BzDeck.controllers.User = function UserController (name, profile = undefined, op
     // Other name props
     'original_name': {
       'enumerable': true,
-      'get': () => this.profiles.bugzilla ? this.profiles.bugzilla.real_name || '' : ''
+      'get': () => this.data.bugzilla ? this.data.bugzilla.real_name || '' : ''
     },
     'first_name': {
       'enumerable': true,
@@ -44,16 +51,16 @@ BzDeck.controllers.User = function UserController (name, profile = undefined, op
     // Images
     'image': {
       'enumerable': true,
-      'get': () => this.profiles.image_src || ''
+      'get': () => this.data.image_src || ''
     },
     'background_image': {
       'enumerable': true,
-      'get': () => { try { return this.profiles.gravatar.profileBackground.url; } catch (e) { return undefined; }}
+      'get': () => { try { return this.data.gravatar.profileBackground.url; } catch (e) { return undefined; }}
     },
     // Find background color from Gravatar profile or generate one based on the user name and email
     'color': {
       'enumerable': true,
-      'get': () => { try { return this.profiles.gravatar.profileBackground.color; } catch (e) {
+      'get': () => { try { return this.data.gravatar.profileBackground.color; } catch (e) {
         return '#' + String(this.original_name ? this.original_name.length : 0).substr(-1, 1)
                    + String(this.email.length).substr(-1, 1)
                    + String(this.email.length).substr(0, 1);
@@ -67,72 +74,77 @@ BzDeck.controllers.User = function UserController (name, profile = undefined, op
   });
 
   // Generate avatar's object URL for this session
-  if (this.profiles.image_blob) {
-    this.profiles.image_src = URL.createObjectURL(this.profiles.image_blob);
+  if (this.data.image_blob) {
+    this.data.image_src = URL.createObjectURL(this.data.image_blob);
   }
 
-  // Refresh profiles if the data is older than 10 days
-  if (this.profiles.updated && this.profiles.updated < Date.now() - 864000000) {
-    options.refresh = true;
-  }
+  let options = {
+    // Refresh profiles if the data is older than 10 days
+    'refresh': this.data.updated && this.data.updated < Date.now() - 864000000,
+  };
 
-  if (!options.init_only && (options.refresh || !this.profiles.updated)) {
-    this.fetch_data(options).then(profiles => {
+  if (options.refresh || !this.data.updated) {
+    this.fetch(options).then(profiles => {
       // Notify the change to update the UI when necessary
       this.trigger(':UserInfoUpdated', { 'name': this.email });
     });
   }
+
+  return this.proxy();
 };
 
-BzDeck.controllers.User.prototype = Object.create(BzDeck.controllers.Base.prototype);
-BzDeck.controllers.User.prototype.constructor = BzDeck.controllers.User;
+BzDeck.models.User.prototype = Object.create(BzDeck.models.Base.prototype);
+BzDeck.models.User.prototype.constructor = BzDeck.models.User;
 
-BzDeck.controllers.User.prototype.save = function () {
-  this.model.save(this.profiles);
-};
-
-BzDeck.controllers.User.prototype.fetch_data = function (options = {}) {
+/*
+ * Retrieve the user's relevant data from Bugzilla and Gravatar.
+ *
+ * [argument] options (Object, optional) extra options
+ * [return] data (Promise -> Proxy) user profile data
+ */
+BzDeck.models.User.prototype.fetch = function (options = {}) {
   options.in_promise_all = true;
 
-  return new Promise(resolve => {
-    Promise.all([
-      this.get_bugzilla_profile(options),
-      this.get_gravatar_image(options),
-      // Refresh the Gravatar profile if already exists, or fetch later on demand
-      this.profiles.gravatar ? this.get_gravatar_profile(options, true) : Promise.resolve()
-    ]).then(results => {
-      this.profiles = {
-        'name': this.email, // String
-        'id': results[0].id, // Integer
-        'bugzilla': results[0], // Object
-        'image_blob': results[1], // Blob
-        'image_src': results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
-        'gravatar': results[2] || undefined, // Object
-        'updated': Date.now(), // Integer
-      };
-    }).catch(error => {
-      this.profiles = {
-        'name': this.email,
-        'id': 0,
-        'error': error.message,
-        'updated': Date.now(),
-      };
-    }).then(() => {
-      this.save();
-      resolve(this.profiles);
+  return Promise.all([
+    this.get_bugzilla_profile(options),
+    this.get_gravatar_image(options),
+    // Refresh the Gravatar profile if already exists, or fetch later on demand
+    this.data.gravatar ? this.get_gravatar_profile(options, true) : Promise.resolve()
+  ]).then(results => {
+    this.save({
+      'name': this.email, // String
+      'id': results[0].id, // Integer
+      'bugzilla': results[0], // Object
+      'image_blob': results[1], // Blob
+      'image_src': results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
+      'gravatar': results[2] || undefined, // Object
+      'updated': Date.now(), // Integer
     });
-  });
+  }).catch(error => {
+    this.save({
+      'name': this.email,
+      'id': 0,
+      'error': error.message,
+      'updated': Date.now(),
+    });
+  }).then(() => Promise.resolve(this.proxy()));
 };
 
-BzDeck.controllers.User.prototype.get_bugzilla_profile = function (options = {}) {
+/*
+ * Get or retrieve the user's Bugzilla profile.
+ *
+ * [argument] options (Object, optional) extra options
+ * [return] bug (Promise -> Object) Bugzilla profile. http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html
+ */
+BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
   // Bugzilla profile could be provided when the User is created.
   // If the refresh option is not specified, just return it
-  if (!options.refresh && this.profiles.bugzilla.id) {
-    return Promise.resolve(this.profiles.bugzilla);
+  if (!options.refresh && this.data.bugzilla && this.data.bugzilla.id) {
+    return Promise.resolve(this.data.bugzilla);
   }
 
-  if (!options.refresh && this.profiles.error) {
-    return Promise.reject(new Error(this.profiles.error));
+  if (!options.refresh && this.data.error) {
+    return Promise.reject(new Error(this.data.error));
   }
 
   let params = new URLSearchParams(),
@@ -141,28 +153,34 @@ BzDeck.controllers.User.prototype.get_bugzilla_profile = function (options = {})
   params.append('names', this.email);
 
   return new Promise((resolve, reject) => {
-    this.request('user', params, _options).then(result => {
+    BzDeck.controllers.global.request('user', params, _options).then(result => {
       result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
     }).catch(error => reject(error));
   });
 };
 
-BzDeck.controllers.User.prototype.get_gravatar_profile = function (options = {}) {
-  if (!options.refresh && this.profiles.gravatar) {
-    if (this.profiles.gravatar.error) {
+/*
+ * Get or retrieve the user's Gravatar profile.
+ *
+ * [argument] options (Object, optional) extra options
+ * [return] bug (Promise -> Object) Gravatar profile. https://en.gravatar.com/site/implement/profiles/json/
+ */
+BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
+  if (!options.refresh && this.data.gravatar) {
+    if (this.data.gravatar.error) {
       return Promise.reject(new Error('The Gravatar profile cannot be found'));
     }
 
-    return Promise.resolve(this.profiles.gravatar);
+    return Promise.resolve(this.data.gravatar);
   }
 
   return new Promise((resolve, reject) => {
     FlareTail.util.network.jsonp(`https://secure.gravatar.com/${this.hash}.json`)
         .then(data => data.entry[0]).then(profile => {
-      this.profiles.gravatar = profile;
+      this.data.gravatar = profile;
       resolve(profile);
     }).catch(error => {
-      let profile = this.profiles.gravatar = { 'error': 'Not Found' };
+      let profile = this.data.gravatar = { 'error': 'Not Found' };
 
       // Resolve anyway if this is called in Promise.all()
       if (options.in_promise_all) {
@@ -178,9 +196,15 @@ BzDeck.controllers.User.prototype.get_gravatar_profile = function (options = {})
   });
 };
 
-BzDeck.controllers.User.prototype.get_gravatar_image = function (options) {
-  if (!options.refresh && this.profiles.image_blob) {
-    return Promise.resolve(this.profiles.image_blob);
+/*
+ * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image.
+ *
+ * [argument] options (Object, optional) extra options
+ * [return] bug (Promise -> Blob) avatar image in the Blob format; see https://en.gravatar.com/site/implement/images/
+ */
+BzDeck.models.User.prototype.get_gravatar_image = function (options = {}) {
+  if (!options.refresh && this.data.image_blob) {
+    return Promise.resolve(this.data.image_blob);
   }
 
   let $image = new Image(),

@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.Toolbar = function ToolbarController () {
-  this.user = BzDeck.controllers.users.get(BzDeck.models.account.data.name);
+  this.user = BzDeck.collections.users.get(BzDeck.models.account.data.name, {});
 
   BzDeck.views.toolbar = new BzDeck.views.Toolbar(this.user);
 

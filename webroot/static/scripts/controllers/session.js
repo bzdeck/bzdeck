@@ -103,13 +103,13 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
     BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
     BzDeck.models.prefs = new BzDeck.models.Prefs();
-    BzDeck.models.users = new BzDeck.models.Users();
+    BzDeck.collections.users = new BzDeck.collections.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => Promise.all([
     BzDeck.collections.bugs.load(),
     BzDeck.models.prefs.load(),
-    BzDeck.models.users.init(),
+    BzDeck.collections.users.load(),
   ])).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
@@ -147,7 +147,6 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).catch(error => Promise.all([
     // Finally load the UI modules
     BzDeck.controllers.global.init(),
-    BzDeck.controllers.users = new BzDeck.controllers.Users(),
     BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar(),
     BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar(),
     BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar(),

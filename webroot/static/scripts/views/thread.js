@@ -124,14 +124,14 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (email of bug[field]) BzDeck.controllers.users.get(email).name].join(', ');
+          value = [for (email of bug[field]) BzDeck.collections.users.get(email, {}).name].join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.controllers.users.get(value.name).name;
+        value = BzDeck.collections.users.get(value.name, {}).name;
       }
 
       if (field === 'starred') {
@@ -297,7 +297,7 @@ BzDeck.views.VerticalThread.prototype.render = function () {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
-      'contributor': BzDeck.controllers.users.get(contributor).properties,
+      'contributor': BzDeck.collections.users.get(contributor, {}).properties,
     }, {
       'id': `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,

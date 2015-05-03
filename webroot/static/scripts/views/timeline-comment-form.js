@@ -430,7 +430,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
     let type = options.id ? 'clear' : 'request',
         $row = this.get_fragment(`timeline-comment-form-${type}-needinfo-row`).firstElementChild,
         $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
-                            BzDeck.controllers.users.get(requestee).properties),
+                            BzDeck.collections.users.get(requestee, {}).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
         $$checkbox = new this.widget.Checkbox($checkbox),
         $label = $checkbox.querySelector('span');

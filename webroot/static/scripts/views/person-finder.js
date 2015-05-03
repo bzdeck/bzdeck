@@ -56,7 +56,7 @@ BzDeck.views.PersonFinder.prototype.search_bug = function () {
 };
 
 BzDeck.views.PersonFinder.prototype.search_local = function () {
-  FlareTail.util.event.async(() => this.search(BzDeck.models.users.data));
+  FlareTail.util.event.async(() => this.search(BzDeck.collections.users.data));
 };
 
 BzDeck.views.PersonFinder.prototype.search_remote = function () {
@@ -76,8 +76,8 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
       let users = [];
 
       for (let user of result.users) {
-        if (!BzDeck.controllers.users.has(user.name)) {
-          BzDeck.controllers.users.add(user.name, { 'bugzilla': user });
+        if (!BzDeck.collections.users.has(user.name)) {
+          BzDeck.collections.users.add({ 'bugzilla': user });
         }
 
         users.push(user);
@@ -101,7 +101,7 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
       continue;
     }
 
-    let person = BzDeck.controllers.users.get(name);
+    let person = BzDeck.collections.users.get(name, {});
 
     if ((has_colon && [for (nick of person.nick_names) if (find(`:${nick}`)) nick].length) ||
         find(person.name) || find(person.email) || [for (nick of person.nick_names) if (find(nick)) nick].length) {
