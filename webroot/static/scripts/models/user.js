@@ -127,7 +127,7 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
       'error': error.message,
       'updated': Date.now(),
     });
-  }).then(() => Promise.resolve(this.proxy()));
+  }).then(() => Promise.resolve(this.data));
 };
 
 /*
