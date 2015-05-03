@@ -31,6 +31,27 @@ BzDeck.models.Server.prototype.get_config = function () {
   });
 };
 
+BzDeck.models.Server.prototype.fetch_config = function () {
+  // Load the Bugzilla config in background
+  let server = BzDeck.models.server.data;
+
+  return new Promise((resolve, reject) => {
+    if (!navigator.onLine) {
+      // Offline; give up
+      return reject(new Error('You have to go online to load data.')); // l10n
+    }
+
+    // The config is not available from the REST endpoint so use the BzAPI compat layer instead
+    FlareTail.util.network.json(server.url + server.endpoints.bzapi + 'configuration?cached_ok=1').then(data => {
+      if (data && data.version) {
+        resolve(data);
+      } else {
+        reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.')); // l10n
+      }
+    }).catch(error => reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')));
+  });
+};
+
 BzDeck.models.Server.prototype.save_config = function (config) {
   this.data.config = config;
   this.store.save({ 'host': this.data.name, config });

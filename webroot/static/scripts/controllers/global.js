@@ -57,40 +57,7 @@ BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
   return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
 };
 
-/* ------------------------------------------------------------------------------------------------------------------
- * Config
- * ------------------------------------------------------------------------------------------------------------------ */
-
-BzDeck.controllers.config = {};
-
-BzDeck.controllers.config.fetch = function () {
-  // Load the Bugzilla config in background
-  let server = BzDeck.models.server.data;
-
-  return new Promise((resolve, reject) => {
-    if (!navigator.onLine) {
-      // Offline; give up
-      return reject(new Error('You have to go online to load data.')); // l10n
-    }
-
-    // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-    FlareTail.util.network.json(server.url + server.endpoints.bzapi + 'configuration?cached_ok=1').then(data => {
-      if (data && data.version) {
-        resolve(data);
-      } else {
-        reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.')); // l10n
-      }
-    }).catch(error => reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')));
-  });
-};
-
-/* ------------------------------------------------------------------------------------------------------------------
- * App
- * ------------------------------------------------------------------------------------------------------------------ */
-
-BzDeck.controllers.app = {};
-
-BzDeck.controllers.app.register_activity_handler = function () {
+BzDeck.controllers.Global.prototype.register_activity_handler = function () {
   // Match BMO's bug detail pages.
   // TODO: Implement a handler for attachments
   let re = /^https?:\/\/(?:bugzilla\.mozilla\.org\/show_bug\.cgi\?id=|bugzil\.la\/)(\d+)$/;
@@ -119,10 +86,6 @@ BzDeck.controllers.app.register_activity_handler = function () {
     });
   }
 };
-
-/* ------------------------------------------------------------------------------------------------------------------
- * Events
- * ------------------------------------------------------------------------------------------------------------------ */
 
 window.addEventListener('DOMContentLoaded', event => {
   if (FlareTail.util.compatible) {

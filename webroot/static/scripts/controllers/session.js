@@ -118,7 +118,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
       new Promise((resolve, reject) => BzDeck.models.server.get_config().then(config => {
         resolve(config);
       }, error => {
-        BzDeck.controllers.config.fetch().then(config => {
+        BzDeck.models.server.fetch_config().then(config => {
           BzDeck.models.server.save_config(config);
           resolve(config);
         }, error => {
@@ -163,7 +163,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).then(() => {
     // Register the app for an activity on Firefox OS
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
-    // BzDeck.controllers.app.register_activity_handler();
+    // BzDeck.controllers.global.register_activity_handler();
   }).then(() => {
     this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
     this.show_first_notification();
