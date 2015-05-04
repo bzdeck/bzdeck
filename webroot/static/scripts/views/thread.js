@@ -35,9 +35,8 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
-  let prefs = BzDeck.collections.prefs,
-      default_cols = BzDeck.config.grid.default_columns,
-      columns = prefs.get(`${name}.list.columns`) || default_cols,
+  let default_cols = BzDeck.config.grid.default_columns,
+      columns = BzDeck.prefs.get(`${name}.list.columns`) || default_cols,
       field = BzDeck.models.server.data.config.field;
 
   let toggle_prop = prop => {
@@ -64,10 +63,10 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 
   this.$$grid.bind('Selected', event => this.onselect(event));
   this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
-  this.$$grid.bind('Sorted', event => prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
+  this.$$grid.bind('Sorted', event => BzDeck.prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
 
   this.$$grid.bind('ColumnModified', event => {
-    prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
+    BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
       'id': col.id,
       'type': col.type || 'string',
       'hidden': col.hidden || false

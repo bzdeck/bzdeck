@@ -128,7 +128,7 @@ BzDeck.views.Bug.prototype.render = function () {
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.collections.prefs.get('ui.timeline.sort.order') !== 'descending',
+    let ascending = BzDeck.prefs.get('ui.timeline.sort.order') !== 'descending',
         entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;

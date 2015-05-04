@@ -179,8 +179,7 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
-                              : BzDeck.collections.prefs.get('home.list.sort_conditions') ||
-                                { 'key': 'id', 'order': 'ascending' }
+                              : BzDeck.prefs.get('home.list.sort_conditions') || { 'key': 'id', 'order': 'ascending' }
   });
 
   let $$grid = this.thread.$$grid;

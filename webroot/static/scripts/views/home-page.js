@@ -37,7 +37,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
   // A movable splitter between the thread pane and preview pane
   this.setup_splitter();
 
-  let layout_pref = BzDeck.collections.prefs.get('ui.home.layout'),
+  let layout_pref = BzDeck.prefs.get('ui.home.layout'),
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
   this.change_layout(layout_pref);
@@ -91,8 +91,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
 BzDeck.views.HomePage.prototype.setup_splitter = function () {
   let $$splitter = this.$$preview_splitter = new this.widget.Splitter(document.querySelector('#home-preview-splitter')),
       prefix = 'ui.home.preview.splitter.position.',
-      prefs = BzDeck.collections.prefs,
-      pref = prefs.get(prefix + $$splitter.data.orientation);
+      pref = BzDeck.prefs.get(prefix + $$splitter.data.orientation);
 
   if (pref) {
     $$splitter.data.position = pref;
@@ -102,14 +101,14 @@ BzDeck.views.HomePage.prototype.setup_splitter = function () {
     let position = event.detail.position;
 
     if (position) {
-      prefs.set(prefix + $$splitter.data.orientation, position);
+      BzDeck.prefs.set(prefix + $$splitter.data.orientation, position);
     }
   });
 };
 
 BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
   let mobile = FlareTail.util.ua.device.mobile,
-      layout_pref = BzDeck.collections.prefs.get('ui.home.layout'),
+      layout_pref = BzDeck.prefs.get('ui.home.layout'),
       vertical = mobile || !layout_pref || layout_pref === 'vertical',
       items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                        : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
@@ -138,7 +137,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
   FlareTail.util.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the home thread
     'B|F': event => {
-      let pref = BzDeck.collections.prefs.get('ui.home.layout'),
+      let pref = BzDeck.prefs.get('ui.home.layout'),
           vertical = mobile || !pref || pref === 'vertical',
           $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
@@ -173,7 +172,7 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
 
   if ($$splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = BzDeck.collections.prefs.get(`ui.home.preview.splitter.position.${orientation}`);
+        pref = BzDeck.prefs.get(`ui.home.preview.splitter.position.${orientation}`);
 
     $$splitter.data.orientation = orientation;
 
@@ -223,7 +222,7 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
     'date': { 'simple': false },
     'sortable': true,
     'reorderable': true,
-    'sort_conditions': BzDeck.collections.prefs.get('home.list.sort_conditions') ||
+    'sort_conditions': BzDeck.prefs.get('home.list.sort_conditions') ||
                        { 'key': 'id', 'order': 'ascending' }
   });
 

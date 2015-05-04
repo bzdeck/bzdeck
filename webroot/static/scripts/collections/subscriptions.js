@@ -95,8 +95,7 @@ BzDeck.collections.Subscriptions.prototype.get_all = function () {
  * [return] bugs (Promise -> Array(Object) or Error) new instances of the BugModel object
  */
 BzDeck.collections.Subscriptions.prototype.fetch = function () {
-  let prefs = BzDeck.collections.prefs,
-      last_loaded = prefs.get('subscriptions.last_loaded'),
+  let last_loaded = BzDeck.prefs.get('subscriptions.last_loaded'),
       firstrun = !last_loaded,
       params = new URLSearchParams(),
       cached_bugs = BzDeck.collections.bugs.get_all(),
@@ -127,7 +126,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
     last_loaded = Date.now();
-    prefs.set('subscriptions.last_loaded', last_loaded);
+    BzDeck.prefs.set('subscriptions.last_loaded', last_loaded);
 
     if (firstrun) {
       return Promise.all(result.bugs.map(_bug => {

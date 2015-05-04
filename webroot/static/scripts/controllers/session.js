@@ -108,13 +108,13 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
     BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
-    BzDeck.collections.prefs = new BzDeck.collections.Prefs();
+    BzDeck.prefs = new BzDeck.collections.Prefs();
     BzDeck.collections.users = new BzDeck.collections.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => Promise.all([
     BzDeck.collections.bugs.load(),
-    BzDeck.collections.prefs.load(),
+    BzDeck.prefs.load(),
     BzDeck.collections.users.load(),
   ])).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n

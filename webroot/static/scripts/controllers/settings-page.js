@@ -14,7 +14,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
       prefs = new Map();
 
   for (let [name, value] of Iterator(BzDeck.config.prefs)) {
-    value.user = BzDeck.collections.prefs.get(name);
+    value.user = BzDeck.prefs.get(name);
     prefs.set(name, value);
   }
 
@@ -52,7 +52,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   this.on('V:PrefValueChanged', data => {
     let { name, value } = data;
 
-    BzDeck.collections.prefs.set(name, value);
+    BzDeck.prefs.set(name, value);
 
     if (name === 'ui.theme.selected') {
       FlareTail.util.theme.selected = value;

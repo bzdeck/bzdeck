@@ -10,8 +10,7 @@
 BzDeck.views.Global = function GlobalView () {
   let datetime = FlareTail.util.datetime,
       value,
-      prefs = BzDeck.collections.prefs,
-      theme = prefs.get('ui.theme.selected'),
+      theme = BzDeck.prefs.get('ui.theme.selected'),
       FTut = FlareTail.util.theme,
       $root = document.documentElement;
 
@@ -19,27 +18,27 @@ BzDeck.views.Global = function GlobalView () {
   datetime.options.updater_enabled = true;
 
   // Date format
-  value = prefs.get('ui.date.relative');
+  value = BzDeck.prefs.get('ui.date.relative');
   datetime.options.relative = value !== undefined ? value : true;
 
   // Date timezone
-  value = prefs.get('ui.date.timezone');
+  value = BzDeck.prefs.get('ui.date.timezone');
   datetime.options.timezone = value || 'local';
 
   // Timeline: Font
-  value = prefs.get('ui.timeline.font.family');
+  value = BzDeck.prefs.get('ui.timeline.font.family');
   $root.setAttribute('data-ui-timeline-font-family', value || 'proportional');
 
   // Timeline: Sort order
-  value = prefs.get('ui.timeline.sort.order');
+  value = BzDeck.prefs.get('ui.timeline.sort.order');
   $root.setAttribute('data-ui-timeline-sort-order', value || 'ascending');
 
   // Timeline: Changes
-  value = prefs.get('ui.timeline.show_cc_changes');
+  value = BzDeck.prefs.get('ui.timeline.show_cc_changes');
   $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
 
   // Timeline: Attachments
-  value = prefs.get('ui.timeline.display_attachments_inline');
+  value = BzDeck.prefs.get('ui.timeline.display_attachments_inline');
   $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Change the theme

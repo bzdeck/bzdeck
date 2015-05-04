@@ -44,7 +44,7 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
 };
 
 BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
-  if (BzDeck.collections.prefs.get('notifications.show_desktop_notifications') === false) {
+  if (BzDeck.prefs.get('notifications.show_desktop_notifications') === false) {
     return;
   }
 
