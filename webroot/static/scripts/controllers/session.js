@@ -240,3 +240,13 @@ BzDeck.controllers.Session.prototype.clean = function () {
   // Disconnect from the Bugzfeed server
   BzDeck.controllers.bugzfeed.disconnect();
 };
+
+window.addEventListener('DOMContentLoaded', event => {
+  if (FlareTail.util.compatible) {
+    BzDeck.controllers.session = new BzDeck.controllers.Session();
+  }
+});
+
+window.addEventListener('beforeunload', event => {
+  BzDeck.controllers.session.clean();
+});

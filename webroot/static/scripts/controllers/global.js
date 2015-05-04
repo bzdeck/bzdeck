@@ -86,17 +86,3 @@ BzDeck.controllers.Global.prototype.register_activity_handler = function () {
     });
   }
 };
-
-window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.util.compatible) {
-    BzDeck.controllers.session = new BzDeck.controllers.Session();
-  }
-});
-
-window.addEventListener('online', event => {
-  BzDeck.controllers.bugzfeed.connect();
-});
-
-window.addEventListener('beforeunload', event => {
-  BzDeck.controllers.session.clean();
-});

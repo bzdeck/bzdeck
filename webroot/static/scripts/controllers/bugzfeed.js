@@ -84,3 +84,7 @@ BzDeck.controllers.BugzfeedClient.prototype.unsubscribe = function (bugs) {
 
   this.send('unsubscribe', bugs);
 };
+
+window.addEventListener('online', event => {
+  BzDeck.controllers.bugzfeed.connect();
+});
