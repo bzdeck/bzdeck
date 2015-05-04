@@ -14,7 +14,7 @@ BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
 };
 
 BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
-  let endpoint = BzDeck.models.server.data.endpoints.websocket;
+  let endpoint = BzDeck.models.server.endpoints.websocket;
 
   if (!endpoint || !navigator.onLine) {
     return;

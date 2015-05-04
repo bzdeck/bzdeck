@@ -11,7 +11,7 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   this.id = email;
   this.user = BzDeck.collections.users.get(email, { 'name': email });
 
-  let server = BzDeck.models.server.data,
+  let server = BzDeck.models.server,
       self = email === BzDeck.models.account.data.name;
 
   BzDeck.views.toolbar.open_tab({

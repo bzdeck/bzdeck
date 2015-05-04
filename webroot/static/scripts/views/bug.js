@@ -48,7 +48,7 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
   }
 
   if ($bugzilla_link) {
-    $bugzilla_link.href = `${BzDeck.models.server.data.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
+    $bugzilla_link.href = `${BzDeck.models.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
   }
 
   if ($tweet_link) {
@@ -195,7 +195,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   // See Also
   for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    let re = new RegExp(`^${BzDeck.models.server.data.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
+    let re = new RegExp(`^${BzDeck.models.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
         match = $link.href.match(re);
 
     if (match) {

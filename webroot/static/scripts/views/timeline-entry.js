@@ -175,7 +175,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   // TODO: load the attachment data via API
   let attachment = this.data.get('attachment'),
       media_type = attachment.content_type.split('/')[0],
-      url = `${BzDeck.models.server.data.url}/attachment.cgi?id=${attachment.id}`,
+      url = `${BzDeck.models.server.url}/attachment.cgi?id=${attachment.id}`,
       $attachment = this.get_fragment('timeline-attachment').firstElementChild,
       $outer = $attachment.querySelector('div'),
       $media,
@@ -512,7 +512,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_change_element = function (c
     $elm.innerHTML = `<a href="${change[how]}">${change[how]}</a>`;
   } else if (change.field_name === 'see_also') {
     $elm.innerHTML = change[how].split(', ').map(url => {
-      let prefix = BzDeck.models.server.data.url + '/show_bug.cgi?id=',
+      let prefix = BzDeck.models.server.url + '/show_bug.cgi?id=',
           bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
 
       if (bug_id) {

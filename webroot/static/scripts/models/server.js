@@ -17,62 +17,46 @@ BzDeck.models.Server = function ServerModel (data) {
   this.datasource = BzDeck.datasources.global;
   this.store_name = 'bugzilla';
   this.data = data;
+
+  // Extract the local config for easier access
+  for (let [key, value] of Iterator(BzDeck.config.servers[this.data.host])) {
+    this[key] = value;
+  }
 };
 
 BzDeck.models.Server.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
 
 /*
- * Load the Bugzilla configuration from the database.
+ * Retrieve the Bugzilla configuration from cache or the remote Bugzilla instance.
  *
  * [argument] none
  * [return] config (Promise -> Object or Error) Bugzilla configuration data
  */
-BzDeck.models.Server.prototype.load_config = function () {
-  return this.datasource.get_store(this.store_name).get(this.data.name).then(server => {
-    if (server) {
-      this.data.config = server.config;
-
-      return Promise.resolve(server.config);
-    }
-
-    return Promise.reject(new Error('Config cache could not be found.'));
-  });
-};
-
-/*
- * Retrieve the Bugzilla configuration from the remote Bugzilla instance.
- *
- * [argument] none
- * [return] config (Promise -> Object or Error) Bugzilla configuration data
- */
-BzDeck.models.Server.prototype.fetch_config = function () {
+BzDeck.models.Server.prototype.get_config = function () {
   if (!navigator.onLine) {
     // Offline; give up
     return Promise.reject(new Error('You have to go online to load data.')); // l10n
   }
 
-  // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-  let endpoint = `${this.data.url}${this.data.endpoints.bzapi}configuration?cached_ok=1`;
+  if (this.data.config && new Date(this.data.config_retrieved || 0) > Date.now() - 1000 * 60 * 60 * 24) {
+    // The config data is still fresh, retrieved within 24 hours
+    return Promise.resolve(this.data.config);
+  }
 
-  return FlareTail.util.network.json(endpoint).then(data => {
-    if (data && data.version) {
-      return Promise.resolve(data);
+  // The config is not available from the REST endpoint so use the BzAPI compat layer instead
+  return FlareTail.util.network.json(`${this.url}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
+    if (config && config.version) {
+      let config_retrieved = this.data.config_retrieved = Date.now();
+
+      this.data.config = config;
+      this.datasource.get_store(this.store_name).save({ 'host': this.data.host, config, config_retrieved });
+
+      return Promise.resolve(config);
     }
 
     return Promise.reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.'));
   }).catch(error => {
     return Promise.reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.'));
   });
-};
-
-/*
- * Save the Bugzilla configuration to the database.
- *
- * [argument] config (Object) Bugzilla configuration data
- * [return] none
- */
-BzDeck.models.Server.prototype.save_config = function (config) {
-  this.data.config = config;
-  this.datasource.get_store(this.store_name).save({ 'host': this.data.name, config });
 };

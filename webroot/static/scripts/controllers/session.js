@@ -48,7 +48,7 @@ BzDeck.controllers.Session.prototype.find_account = function () {
   }).then(server => {
     BzDeck.models.server = server; // Model
     this.load_data();
-  }).catch(() => {
+  }).catch(error => {
     this.force_login();
   });
 };
@@ -86,7 +86,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
       return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
     }).then(user => {
       let account = BzDeck.models.account = new BzDeck.models.Account({
-        'host': BzDeck.models.server.data.name,
+        'host': BzDeck.models.server.name,
         'name': data.email,
         'api_key': data.api_key || undefined,
         'loaded': Date.now(), // key
@@ -103,7 +103,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
   });
 };
 
-// Bootstrap Step 3. Load data from Bugzilla once the user account is set
+// Bootstrap Step 3. Load data from local database once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
@@ -117,26 +117,10 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.prefs.load(),
     BzDeck.collections.users.load(),
   ])).then(() => {
-    this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
-
-    return Promise.all([
-      BzDeck.collections.subscriptions.fetch(),
-      new Promise((resolve, reject) => BzDeck.models.server.load_config().then(config => {
-        resolve(config);
-      }, error => {
-        BzDeck.models.server.fetch_config().then(config => {
-          BzDeck.models.server.save_config(config);
-          resolve(config);
-        }, error => {
-          reject(error);
-        });
-      })).then(config => {
-        // subscriptions.fetch() may be still working
-        this.trigger(':StatusUpdate', { 'message': 'Loading your bugs...' }); // l10n
-      }, error => {
-        this.trigger(':Error', { 'message': error.message });
-      })
-    ]);
+    this.firstrun = !BzDeck.collections.bugs.get_all().size;
+  }).then(() => {
+    // Fetch data for new users before showing the main app window, or defer fetching for returning users
+    return this.firstrun ? this.fetch_data() : Promise.resolve();
   }).then(() => {
     this.init_components();
   }).catch(error => {
@@ -144,7 +128,17 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   });
 };
 
-// Bootstrap Step 4. Setup everything including UI components
+// Bootstrap Step 4. Retrieve data from remote Bugzilla instance
+BzDeck.controllers.Session.prototype.fetch_data = function () {
+  this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config and your bugs...' });
+
+  return Promise.all([
+    BzDeck.collections.subscriptions.fetch(),
+    BzDeck.models.server.get_config(),
+  ]);
+};
+
+// Bootstrap Step 5. Setup everything including UI components
 BzDeck.controllers.Session.prototype.init_components = function () {
   this.trigger(':StatusUpdate', { 'message': 'Initializing UI...' }); // l10n
 
@@ -175,6 +169,11 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     this.show_first_notification();
     this.login();
     this.bootstrapping = false;
+  }).then(() => {
+    // Fetch data for returning users
+    return this.firstrun ? Promise.resolve() : this.fetch_data();
+  }).catch(error => {
+    this.trigger(':Error', { 'message': error.message });
   });
 };
 

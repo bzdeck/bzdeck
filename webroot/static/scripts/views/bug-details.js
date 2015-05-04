@@ -137,7 +137,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
       let $selected = this.$$attachment_list.view.selected[0];
 
       if ($selected && mobile && mql.matches) {
-        window.open(`${BzDeck.models.server.data.url}/attachment.cgi?id=${$selected.dataset.id}`);
+        window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${$selected.dataset.id}`);
       }
     });
 
@@ -148,7 +148,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
       let att = [for (att of attachments) if (att.id === Number.parseInt(event.detail.items[0].dataset.id)) att][0],
           src = att.content_type.match(/^(image|audio|video)\//) || att.is_patch
-              ? `${BzDeck.models.server.data.url}/attachment.cgi?id=${att.id}` : 'about:blank',
+              ? `${BzDeck.models.server.url}/attachment.cgi?id=${att.id}` : 'about:blank',
           $placeholder = $attachments.querySelector('.content .scrollable-area-content');
 
       $placeholder.innerHTML = '';

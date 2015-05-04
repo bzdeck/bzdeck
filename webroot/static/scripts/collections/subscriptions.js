@@ -104,7 +104,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   params.append('j_top', 'OR');
 
   if (last_loaded) {
-    let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), BzDeck.models.server.data.timezone);
+    let date = FlareTail.util.datetime.get_shifted_date(new Date(last_loaded), BzDeck.models.server.timezone);
 
     params.append('include_fields', 'id');
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));

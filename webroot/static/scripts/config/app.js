@@ -14,9 +14,8 @@ let BzDeck = BzDeck || {};
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.config = {
-  'servers': [
-    {
-      'name': 'mozilla',
+  'servers': {
+    'mozilla': {
       'label': 'Mozilla',
       'timezone': -8,
       'url': 'https://bugzilla.mozilla.org',
@@ -26,7 +25,7 @@ BzDeck.config = {
         // 'websocket': 'wss://bugzfeed.mozilla.org/'
       }
     }
-  ],
+  },
   'app': {
     'root': '/',
     'launch_path': '/home/inbox',

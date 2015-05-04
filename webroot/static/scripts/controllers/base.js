@@ -16,7 +16,7 @@ BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 
 BzDeck.controllers.Base.prototype.request = function (path, params, options = {}) {
   // We can't use the Fetch API here since it lacks progress events for now
-  let server = BzDeck.models.server.data,
+  let server = BzDeck.models.server,
       xhr = new XMLHttpRequest(),
       url = new URL(server.url + server.endpoints.rest);
 

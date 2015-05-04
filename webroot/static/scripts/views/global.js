@@ -154,7 +154,7 @@ window.addEventListener('click', event => {
 
     // Attachment link: open in a new browser tab (TEMP)
     if ($target.hasAttribute('data-attachment-id')) {
-      window.open(BzDeck.models.server.data.url + '/attachment.cgi?id='
+      window.open(BzDeck.models.server.url + '/attachment.cgi?id='
                    + $target.getAttribute('data-attachment-id'), '_blank');
 
       event.preventDefault();

@@ -19,7 +19,7 @@ BzDeck.datasources.Account.prototype.constructor = BzDeck.datasources.Account;
  * [return] database (Promise -> IDBDatabase or Error) the target IndexedDB database
  */
 BzDeck.datasources.Account.prototype.load = function () {
-  return this.open_database(`${BzDeck.models.server.data.name}::${BzDeck.models.account.data.name}`, 1);
+  return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 1);
 };
 
 /*

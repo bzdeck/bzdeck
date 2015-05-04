@@ -10,7 +10,7 @@
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
       account = BzDeck.models.account,
-      api_key_link = BzDeck.models.server.data.url + '/userprefs.cgi?tab=apikey',
+      api_key_link = BzDeck.models.server.url + '/userprefs.cgi?tab=apikey',
       prefs = new Map();
 
   for (let [name, value] of Iterator(BzDeck.config.prefs)) {
