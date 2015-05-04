@@ -430,7 +430,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
     let type = options.id ? 'clear' : 'request',
         $row = this.get_fragment(`timeline-comment-form-${type}-needinfo-row`).firstElementChild,
         $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
-                            BzDeck.collections.users.get(requestee, {}).properties),
+                            BzDeck.collections.users.get(requestee, { 'name': requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
         $$checkbox = new this.widget.Checkbox($checkbox),
         $label = $checkbox.querySelector('span');
@@ -630,7 +630,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
 
     // Fetch the bug if the Bugzfeed client is not working for some reason
     if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
-      BzDeck.collections.bugs.get(this.bug.id, { '_unread': true }).fetch();
+      BzDeck.collections.bugs.get(this.bug.id, { 'id': this.bug.id, '_unread': true }).fetch();
     }
   }, errors => {
     // Failed to post at least one attachment

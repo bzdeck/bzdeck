@@ -7,52 +7,72 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.models.Server = function ServerModel (server) {
-  this.data = server;
-
-  Object.defineProperties(this, {
-    'store': { 'enumerable': true, 'get': () => this.get_store('global', 'bugzilla') },
-  });
+/*
+ * Initialize the Server Model.
+ *
+ * [argument] data (Object) server data
+ * [return] bug (Proxy) instance of the ServerModel object, when called with `new`
+ */
+BzDeck.models.Server = function ServerModel (data) {
+  this.datasource = BzDeck.datasources.global;
+  this.store_name = 'bugzilla';
+  this.data = data;
 };
 
 BzDeck.models.Server.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
 
-BzDeck.models.Server.prototype.get_config = function () {
-  return new Promise((resolve, reject) => {
-    this.store.get(this.data.name).then(server => {
-      if (server) {
-        this.data.config = server.config;
-        resolve(server.config);
-      } else {
-        reject(new Error('Config cache could not be found.'));
-      }
-    });
-  });
-};
+/*
+ * Load the Bugzilla configuration from the database.
+ *
+ * [argument] none
+ * [return] config (Promise -> Object or Error) Bugzilla configuration data
+ */
+BzDeck.models.Server.prototype.load_config = function () {
+  return this.datasource.get_store(this.store_name).get(this.data.name).then(server => {
+    if (server) {
+      this.data.config = server.config;
 
-BzDeck.models.Server.prototype.fetch_config = function () {
-  // Load the Bugzilla config in background
-  let server = BzDeck.models.server.data;
-
-  return new Promise((resolve, reject) => {
-    if (!navigator.onLine) {
-      // Offline; give up
-      return reject(new Error('You have to go online to load data.')); // l10n
+      return Promise.resolve(server.config);
     }
 
-    // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-    FlareTail.util.network.json(server.url + server.endpoints.bzapi + 'configuration?cached_ok=1').then(data => {
-      if (data && data.version) {
-        resolve(data);
-      } else {
-        reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.')); // l10n
-      }
-    }).catch(error => reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.')));
+    return Promise.reject(new Error('Config cache could not be found.'));
   });
 };
 
+/*
+ * Retrieve the Bugzilla configuration from the remote Bugzilla instance.
+ *
+ * [argument] none
+ * [return] config (Promise -> Object or Error) Bugzilla configuration data
+ */
+BzDeck.models.Server.prototype.fetch_config = function () {
+  if (!navigator.onLine) {
+    // Offline; give up
+    return Promise.reject(new Error('You have to go online to load data.')); // l10n
+  }
+
+  // The config is not available from the REST endpoint so use the BzAPI compat layer instead
+  let endpoint = `${this.data.url}${this.data.endpoints.bzapi}configuration?cached_ok=1`;
+
+  return FlareTail.util.network.json(endpoint).then(data => {
+    if (data && data.version) {
+      return Promise.resolve(data);
+    }
+
+    return Promise.reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.'));
+  }).catch(error => {
+    return Promise.reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.'));
+  });
+};
+
+/*
+ * Save the Bugzilla configuration to the database.
+ *
+ * [argument] config (Object) Bugzilla configuration data
+ * [return] none
+ */
 BzDeck.models.Server.prototype.save_config = function (config) {
   this.data.config = config;
-  this.store.save({ 'host': this.data.name, config });
+  this.datasource.get_store(this.store_name).save({ 'host': this.data.name, config });
 };

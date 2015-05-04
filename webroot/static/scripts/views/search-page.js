@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
+BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
   this.id = id;
   this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
   this.$grid = this.$tabpanel.querySelector('[id$="-result-pane"] [role="grid"]');
@@ -15,7 +15,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config, prefs) {
   this.panes = {};
 
   this.setup_basic_search_pane(config);
-  this.setup_result_pane(prefs);
+  this.setup_result_pane();
 
   Object.defineProperties(this, {
     'preview_is_hidden': {
@@ -171,7 +171,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   });
 };
 
-BzDeck.views.SearchPage.prototype.setup_result_pane = function (prefs) {
+BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = FlareTail.util.ua.device.mobile;
 
@@ -179,7 +179,8 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function (prefs) {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
-                              : prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
+                              : BzDeck.collections.prefs.get('home.list.sort_conditions') ||
+                                { 'key': 'id', 'order': 'ascending' }
   });
 
   let $$grid = this.thread.$$grid;

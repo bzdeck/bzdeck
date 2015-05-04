@@ -7,10 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.Global = function GlobalView (prefs) {
+BzDeck.views.Global = function GlobalView () {
   let datetime = FlareTail.util.datetime,
       value,
-      theme = prefs['ui.theme.selected'],
+      prefs = BzDeck.collections.prefs,
+      theme = prefs.get('ui.theme.selected'),
       FTut = FlareTail.util.theme,
       $root = document.documentElement;
 
@@ -18,27 +19,27 @@ BzDeck.views.Global = function GlobalView (prefs) {
   datetime.options.updater_enabled = true;
 
   // Date format
-  value = prefs['ui.date.relative'];
+  value = prefs.get('ui.date.relative');
   datetime.options.relative = value !== undefined ? value : true;
 
   // Date timezone
-  value = prefs['ui.date.timezone'];
+  value = prefs.get('ui.date.timezone');
   datetime.options.timezone = value || 'local';
 
   // Timeline: Font
-  value = prefs['ui.timeline.font.family'];
+  value = prefs.get('ui.timeline.font.family');
   $root.setAttribute('data-ui-timeline-font-family', value || 'proportional');
 
   // Timeline: Sort order
-  value = prefs['ui.timeline.sort.order'];
+  value = prefs.get('ui.timeline.sort.order');
   $root.setAttribute('data-ui-timeline-sort-order', value || 'ascending');
 
   // Timeline: Changes
-  value = prefs['ui.timeline.show_cc_changes'];
+  value = prefs.get('ui.timeline.show_cc_changes');
   $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
 
   // Timeline: Attachments
-  value = prefs['ui.timeline.display_attachments_inline'];
+  value = prefs.get('ui.timeline.display_attachments_inline');
   $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Change the theme
@@ -51,7 +52,7 @@ BzDeck.views.Global = function GlobalView (prefs) {
 
   // Update user name & image asynchronously
   this.on('UserController:UserInfoUpdated', data => {
-    let user = BzDeck.collections.users.get(data.name, {});
+    let user = BzDeck.collections.users.get(data.name, { 'name': data.name });
 
     for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
       let title = `${user.original_name || user.name}\n${user.email}`,

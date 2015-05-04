@@ -36,7 +36,7 @@ BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
-      author = BzDeck.collections.users.get(comment.creator, {}),
+      author = BzDeck.collections.users.get(comment.creator, { 'name': comment.creator }),
       time = comment.creation_time,
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
@@ -93,7 +93,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       return;
     }
 
-    let ascending = BzDeck.models.prefs.data['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.collections.prefs.get('ui.timeline.sort.order') !== 'descending',
         entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -219,7 +219,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     $outer.appendChild($media);
     $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
-    if (BzDeck.models.prefs.data['ui.timeline.display_attachments_inline'] !== false) {
+    if (BzDeck.collections.prefs.get('ui.timeline.display_attachments_inline') !== false) {
       $outer.setAttribute('aria-busy', 'true');
       $media.src = url;
     }
@@ -234,7 +234,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
 BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
-      changer = BzDeck.collections.users.get(history.who, {}),
+      changer = BzDeck.collections.users.get(history.who, { 'name': history.who }),
       time = history.when,
       $fragment = new DocumentFragment();
 
@@ -480,8 +480,8 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
 };
 
 BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
-  let array = [...set].map(email => {
-    let person = BzDeck.collections.users.get(email, {}),
+  let array = [...set].map(name => {
+    let person = BzDeck.collections.users.get(name, { name }),
         $person = this.get_fragment('person-with-image').firstElementChild;
 
     this.fill($person, person.properties, {

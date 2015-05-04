@@ -8,8 +8,6 @@
  */
 
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {
-  let prefs = BzDeck.models.prefs.data;
-
   if (BzDeck.controllers.homepage) {
     BzDeck.views.pages.home.connect(folder_id);
 
@@ -24,7 +22,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
     'get': (obj, prop) => {
       if (prop === 'bugs') {
         // Return a sorted bug list
-        return this.view.get_shown_bugs(obj.bugs, prefs);
+        return this.view.get_shown_bugs(obj.bugs);
       }
 
       return obj[prop];
@@ -57,7 +55,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   });
 
   BzDeck.controllers.homepage = this;
-  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(prefs, this);
+  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(this);
   this.view.connect(folder_id);
 
   return this;

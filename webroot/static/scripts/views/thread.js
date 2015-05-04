@@ -35,9 +35,9 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
-  let prefs = BzDeck.models.prefs.data,
+  let prefs = BzDeck.collections.prefs,
       default_cols = BzDeck.config.grid.default_columns,
-      columns = prefs[`${name}.list.columns`] || default_cols,
+      columns = prefs.get(`${name}.list.columns`) || default_cols,
       field = BzDeck.models.server.data.config.field;
 
   let toggle_prop = prop => {
@@ -64,14 +64,14 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 
   this.$$grid.bind('Selected', event => this.onselect(event));
   this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
-  this.$$grid.bind('Sorted', event => prefs[`${name}.list.sort_conditions`] = event.detail.conditions);
+  this.$$grid.bind('Sorted', event => prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
 
   this.$$grid.bind('ColumnModified', event => {
-    prefs[`${name}.list.columns`] = event.detail.columns.map(col => ({
+    prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
       'id': col.id,
       'type': col.type || 'string',
       'hidden': col.hidden || false
-    }));
+    })));
   });
 
   this.$$grid.assign_key_bindings({
@@ -124,14 +124,14 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (email of bug[field]) BzDeck.collections.users.get(email, {}).name].join(', ');
+          value = [for (name of bug[field]) BzDeck.collections.users.get(name, { name }).name].join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.collections.users.get(value.name, {}).name;
+        value = BzDeck.collections.users.get(value.name, { 'name': value.name }).name;
       }
 
       if (field === 'starred') {
@@ -231,13 +231,13 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.collections.bugs.get($item.dataset.id).unread = $item.dataset.unread === 'false';
+        BzDeck.collections.bugs.get(Number($item.dataset.id)).unread = $item.dataset.unread === 'false';
       }
     },
     // Toggle star
     'S': event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.collections.bugs.get($item.dataset.id)
+        BzDeck.collections.bugs.get(Number($item.dataset.id))
                           .starred = $item.querySelector('[data-field="starred"]').matches('[aria-checked="false"]');
       }
     },
@@ -297,7 +297,7 @@ BzDeck.views.VerticalThread.prototype.render = function () {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
-      'contributor': BzDeck.collections.users.get(contributor, {}).properties,
+      'contributor': BzDeck.collections.users.get(contributor, { 'name': contributor }).properties,
     }, {
       'id': `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,

@@ -11,18 +11,16 @@
  * Initialize the Users Collection.
  *
  * [argument] none
- * [return] users (Object) new instance of the UsersCollection object, when an instance is created
+ * [return] users (Object) new instance of the UsersCollection object, when called with `new`
  */
 BzDeck.collections.Users = function UsersCollection () {
+  this.datasource = BzDeck.datasources.account;
+  this.store_name = 'users';
+  this.model = BzDeck.models.User;
 };
 
 BzDeck.collections.Users.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
-
-BzDeck.collections.Users.prototype.model = BzDeck.models.User;
-BzDeck.collections.Users.prototype.db_name = 'account';
-BzDeck.collections.Users.prototype.store_name = 'users';
-BzDeck.collections.Users.prototype.key_name = 'name';
 
 /*
  * Add users participating in a bug.
@@ -34,7 +32,7 @@ BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
   let users = new Map();
 
   for (let [name, person] of bug.participants) {
-    users.set(name, this.get(name) || this.add({ 'bugzilla': person }));
+    users.set(name, this.get(name) || this.set(name, { name, 'bugzilla': person }));
   }
 
   return users;

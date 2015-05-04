@@ -160,9 +160,9 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
         'dateCreated': att.creation_time,
         'dateModified': att.last_change_time,
-        'creator': BzDeck.collections.users.get(att.creator, {}).properties,
+        'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
         'flag': [for (flag of att.flags) {
-          'creator': BzDeck.collections.users.get(flag.setter, {}).properties,
+          'creator': BzDeck.collections.users.get(flag.setter, { 'name': flag.setter }).properties,
           'name': flag.name,
           'status': flag.status
         }],
@@ -178,7 +178,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
       'id': att.id,
       'description': att.summary,
       'dateModified': att.last_change_time,
-      'creator': BzDeck.collections.users.get(att.creator, {}).properties,
+      'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
     }, {
       'id': `bug-${att.bug_id}-attachment-${att.id}`,
       'data-id': att.id

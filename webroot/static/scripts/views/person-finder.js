@@ -77,7 +77,7 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
 
       for (let user of result.users) {
         if (!BzDeck.collections.users.has(user.name)) {
-          BzDeck.collections.users.add({ 'bugzilla': user });
+          BzDeck.collections.users.set(user.name, { 'bugzilla': user });
         }
 
         users.push(user);
@@ -101,7 +101,7 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
       continue;
     }
 
-    let person = BzDeck.collections.users.get(name, {});
+    let person = BzDeck.collections.users.get(name, { name });
 
     if ((has_colon && [for (nick of person.nick_names) if (find(`:${nick}`)) nick].length) ||
         find(person.name) || find(person.email) || [for (nick of person.nick_names) if (find(nick)) nick].length) {

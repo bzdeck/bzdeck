@@ -9,7 +9,7 @@
 
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   this.id = email;
-  this.user = BzDeck.collections.users.get(email, {});
+  this.user = BzDeck.collections.users.get(email, { 'name': email });
 
   let server = BzDeck.models.server.data,
       self = email === BzDeck.models.account.data.name;

@@ -11,17 +11,16 @@
  * Initialize the Bugs Collection.
  *
  * [argument] none
- * [return] bugs (Object) new instance of the BugsCollection object, when an instance is created
+ * [return] bugs (Object) new instance of the BugsCollection object, when called with `new`
  */
 BzDeck.collections.Bugs = function BugsCollection () {
+  this.datasource = BzDeck.datasources.account;
+  this.store_name = 'bugs';
+  this.model = BzDeck.models.Bug;
 };
 
 BzDeck.collections.Bugs.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Bugs.prototype.constructor = BzDeck.collections.Bugs;
-
-BzDeck.collections.Bugs.prototype.model = BzDeck.models.Bug;
-BzDeck.collections.Bugs.prototype.db_name = 'account';
-BzDeck.collections.Bugs.prototype.store_name = 'bugs';
 
 /*
  * Retrieve bug data from Bugzilla with specific IDs.

@@ -23,7 +23,7 @@ BzDeck.controllers.Global.prototype.timers = new Map();
 
 BzDeck.controllers.Global.prototype.init = function () {
   // This should be called after prefs are retrieved
-  this.view = BzDeck.views.global = new BzDeck.views.Global(BzDeck.models.prefs.data);
+  this.view = BzDeck.views.global = new BzDeck.views.Global();
 };
 
 BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
@@ -44,7 +44,7 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
 };
 
 BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
-  if (BzDeck.models.prefs.data['notifications.show_desktop_notifications'] === false) {
+  if (BzDeck.collections.prefs.get('notifications.show_desktop_notifications') === false) {
     return;
   }
 

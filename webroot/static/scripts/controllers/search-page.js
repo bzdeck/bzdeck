@@ -56,7 +56,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     'page_category': 'search',
     'page_id': this.id,
     'page_constructor': BzDeck.views.SearchPage,
-    'page_constructor_args': [this.id, params, BzDeck.models.server.data.config, BzDeck.models.prefs.data],
+    'page_constructor_args': [this.id, params, BzDeck.models.server.data.config],
     'tab_label': 'Search', // l10n
     'tab_desc': 'Search & Browse Bugs', // l10n
   }, this);
@@ -117,7 +117,7 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
       retrieved._unread = true;
 
       if (!bug) {
-        bug = BzDeck.collections.bugs.add(retrieved);
+        bug = BzDeck.collections.bugs.set(id, retrieved);
       } else if (bug.last_change_time < retrieved.last_change_time) {
         bug.merge(retrieved);
       }

@@ -11,17 +11,16 @@
  * Initialize the Bug Model.
  *
  * [argument] data (Object) Bugzilla's raw bug data object
- * [return] bug (Proxy) proxified instance of the BugModel object, so consumers can access bug data seamlessly using
- *                      bug.prop instead of bug.data.prop
+ * [return] bug (Proxy) proxified instance of the BugModel object, when called with `new`, so consumers can access bug
+ *                      data seamlessly using bug.prop instead of bug.data.prop
  */
 BzDeck.models.Bug = function BugModel (data) {
+  this.datasource = BzDeck.datasources.account;
+  this.store_name = 'bugs';
   this.id = data.id;
   this.cache(data);
 
   Object.defineProperties(this, {
-    'store': {
-      'get': () => this.get_store('account', 'bugs'),
-    },
     'starred': {
       'enumerable': true,
       // For backward compatibility, check for the obsolete Set-typed property as well
@@ -88,7 +87,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
   // Deproxify cache and merge data
   data = Object.assign({}, cache, data);
 
-  let ignore_cc = BzDeck.models.prefs.data['notifications.ignore_cc_changes'] !== false,
+  let ignore_cc = BzDeck.collections.prefs.get('notifications.ignore_cc_changes') !== false,
       cached_time = new Date(cache.last_change_time),
       cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
       new_comments = new Map([for (c of data.comments) if (cmp_time(c)) [new Date(c.creation_time), c]]),
@@ -173,7 +172,7 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
 
   // Ignore CC Changes option
   // At first startup, bug details are not loaded yet, so check if the comments exist
-  if (BzDeck.models.prefs.data['notifications.ignore_cc_changes'] !== false && this.data._last_viewed) {
+  if (BzDeck.collections.prefs.get('notifications.ignore_cc_changes') !== false && this.data._last_viewed) {
     // Check if there is a comment, attachment or non-CC change(s) on the last modified time
     return [for (c of this.data.comments || []) if (new Date(c.creation_time) > this.data._last_viewed) c].length ||
            [for (a of this.data.attachments || []) if (new Date(a.creation_time) > this.data._last_viewed) a].length ||

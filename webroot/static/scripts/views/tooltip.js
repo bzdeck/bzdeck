@@ -82,7 +82,7 @@ BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
 
 BzDeck.views.BugTooltip.prototype.show = function () {
   new Promise(resolve => {
-    let bug = BzDeck.collections.bugs.get(this.id, { '_unread': true });
+    let bug = BzDeck.collections.bugs.get(this.id, { 'id': this.id, '_unread': true });
 
     if (bug.data) {
       resolve(bug);
@@ -97,7 +97,7 @@ BzDeck.views.BugTooltip.prototype.show = function () {
       'id': bug.id,
       'name': bug.summary,
       'dateModified': bug.last_change_time,
-      'contributor': BzDeck.collections.users.get(contributor, {}).properties,
+      'contributor': BzDeck.collections.users.get(contributor, { 'name': contributor }).properties,
     }, {
       'data-id': bug.id,
     });

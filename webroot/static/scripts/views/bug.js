@@ -80,10 +80,10 @@ BzDeck.views.Bug.prototype.render = function () {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
-        _bug.mentor = [for (email of this.bug.mentors) BzDeck.collections.users.get(email, {}).properties];
+        _bug.mentor = [for (name of this.bug.mentors) BzDeck.collections.users.get(name, { name }).properties];
       } else if (type === 'person') {
         if (this.bug[field]) {
-          _bug[field] = BzDeck.collections.users.get(this.bug[field], {}).properties;
+          _bug[field] = BzDeck.collections.users.get(this.bug[field], { 'name': this.bug[field] }).properties;
         }
       } else {
         _bug[field] = this.bug[field] || '';
@@ -128,7 +128,7 @@ BzDeck.views.Bug.prototype.render = function () {
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.models.prefs.data['ui.timeline.sort.order'] !== 'descending',
+    let ascending = BzDeck.collections.prefs.get('ui.timeline.sort.order') !== 'descending',
         entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
@@ -168,12 +168,12 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   }
 
   let _bug = {
-    'cc': [for (email of this.bug.cc) BzDeck.collections.users.get(email, {}).properties],
+    'cc': [for (name of this.bug.cc) BzDeck.collections.users.get(name, { name }).properties],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,
     'see_also': this.bug.see_also,
     'flag': [for (flag of this.bug.flags) {
-      'creator': BzDeck.collections.users.get(flag.setter, {}).properties,
+      'creator': BzDeck.collections.users.get(flag.setter, { 'name': flag.setter }).properties,
       'name': flag.name,
       'status': flag.status
     }]

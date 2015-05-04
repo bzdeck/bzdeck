@@ -7,7 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.views.HomePage = function HomePageView (prefs, controller) {
+BzDeck.views.HomePage = function HomePageView (controller) {
   let mobile = FlareTail.util.ua.device.mobile,
       $preview_pane = document.querySelector('#home-preview-pane'),
       $sidebar = document.querySelector('#sidebar');
@@ -35,9 +35,9 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
   }
 
   // A movable splitter between the thread pane and preview pane
-  this.setup_splitter(prefs);
+  this.setup_splitter();
 
-  let layout_pref = prefs['ui.home.layout'],
+  let layout_pref = BzDeck.collections.prefs.get('ui.home.layout'),
       vertical = mobile || !layout_pref || layout_pref === 'vertical';
 
   this.change_layout(layout_pref);
@@ -48,8 +48,8 @@ BzDeck.views.HomePage = function HomePageView (prefs, controller) {
     }
   });
 
-  this.on('C:BugDataUnavailable', data => this.show_preview(undefined, prefs));
-  this.on('C:BugDataAvailable', data => this.show_preview(data.bug, prefs));
+  this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
+  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
 
   // Refresh the thread when bugs are updated
   // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
@@ -88,10 +88,11 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   this.update_window_title($tab);
 };
 
-BzDeck.views.HomePage.prototype.setup_splitter = function (prefs) {
+BzDeck.views.HomePage.prototype.setup_splitter = function () {
   let $$splitter = this.$$preview_splitter = new this.widget.Splitter(document.querySelector('#home-preview-splitter')),
       prefix = 'ui.home.preview.splitter.position.',
-      pref = prefs[prefix + $$splitter.data.orientation];
+      prefs = BzDeck.collections.prefs,
+      pref = prefs.get(prefix + $$splitter.data.orientation);
 
   if (pref) {
     $$splitter.data.position = pref;
@@ -101,14 +102,14 @@ BzDeck.views.HomePage.prototype.setup_splitter = function (prefs) {
     let position = event.detail.position;
 
     if (position) {
-      prefs[prefix + $$splitter.data.orientation] = position;
+      prefs.set(prefix + $$splitter.data.orientation, position);
     }
   });
 };
 
-BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs, prefs) {
+BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
   let mobile = FlareTail.util.ua.device.mobile,
-      layout_pref = prefs['ui.home.layout'],
+      layout_pref = BzDeck.collections.prefs.get('ui.home.layout'),
       vertical = mobile || !layout_pref || layout_pref === 'vertical',
       items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                        : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
@@ -116,7 +117,7 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs, prefs) {
   return new Map([for ($item of items) [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]]);
 };
 
-BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
+BzDeck.views.HomePage.prototype.show_preview = function (bug) {
   let mobile = FlareTail.util.ua.device.mobile,
       $pane = document.querySelector('#home-preview-pane');
 
@@ -137,7 +138,8 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
   FlareTail.util.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the home thread
     'B|F': event => {
-      let vertical = mobile || !prefs['ui.home.layout'] || prefs['ui.home.layout'] === 'vertical',
+      let pref = BzDeck.collections.prefs.get('ui.home.layout'),
+          vertical = mobile || !pref || pref === 'vertical',
           $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
       FlareTail.util.kbd.dispatch($target, event.key);
@@ -154,7 +156,6 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug, prefs) {
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
-      prefs = BzDeck.models.prefs.data,
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
@@ -172,7 +173,7 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
 
   if ($$splitter) {
     let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = prefs[`ui.home.preview.splitter.position.${orientation}`];
+        pref = BzDeck.collections.prefs.get(`ui.home.preview.splitter.position.${orientation}`);
 
     $$splitter.data.orientation = orientation;
 
@@ -203,7 +204,7 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
     // Star button
     $listbox.addEventListener('mousedown', event => {
       if (event.target.matches('[data-field="starred"]')) {
-        BzDeck.collections.bugs.get(event.target.parentElement.dataset.id)
+        BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id))
                           .starred = event.target.matches('[aria-checked="false"]');
         event.stopPropagation();
       }
@@ -218,13 +219,12 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
 };
 
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
-  let prefs = BzDeck.models.prefs.data;
-
   this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
     'date': { 'simple': false },
     'sortable': true,
     'reorderable': true,
-    'sort_conditions': prefs['home.list.sort_conditions'] || { 'key': 'id', 'order': 'ascending' }
+    'sort_conditions': BzDeck.collections.prefs.get('home.list.sort_conditions') ||
+                       { 'key': 'id', 'order': 'ascending' }
   });
 
   let $$grid = this.thread.$$grid;

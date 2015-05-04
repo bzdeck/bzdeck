@@ -11,7 +11,7 @@
  * Initialize the Subscriptions Collection.
  *
  * [argument] none
- * [return] subscriptions (Object) new instance of the SubscriptionsCollection object, when an instance is created
+ * [return] subscriptions (Object) new instance of the SubscriptionsCollection object, when called with `new`
  */
 BzDeck.collections.Subscriptions = function SubscriptionsCollection () {
 };
@@ -95,8 +95,8 @@ BzDeck.collections.Subscriptions.prototype.get_all = function () {
  * [return] bugs (Promise -> Array(Object) or Error) new instances of the BugModel object
  */
 BzDeck.collections.Subscriptions.prototype.fetch = function () {
-  let prefs = BzDeck.models.prefs.data,
-      last_loaded = prefs['subscriptions.last_loaded'],
+  let prefs = BzDeck.collections.prefs,
+      last_loaded = prefs.get('subscriptions.last_loaded'),
       firstrun = !last_loaded,
       params = new URLSearchParams(),
       cached_bugs = BzDeck.collections.bugs.get_all(),
@@ -126,14 +126,15 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   params.append('v9', [for (bug of cached_bugs.values()) if (bug.starred) bug.id].join());
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
-    last_loaded = prefs['subscriptions.last_loaded'] = Date.now();
+    last_loaded = Date.now();
+    prefs.set('subscriptions.last_loaded', last_loaded);
 
     if (firstrun) {
       return Promise.all(result.bugs.map(_bug => {
         // Mark all bugs read if the session is firstrun
         _bug.unread = false;
 
-        return BzDeck.collections.bugs.add(_bug);
+        return BzDeck.collections.bugs.set(_bug.id, _bug);
       }));
     }
 

@@ -52,7 +52,7 @@ BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
 
 BzDeck.controllers.DetailsPage.prototype.init = function () {
-  let bug = BzDeck.collections.bugs.get(this.bug_id, { '_unread': true });
+  let bug = BzDeck.collections.bugs.get(this.bug_id, { 'id': this.bug_id, '_unread': true });
 
   if (!bug.data) {
     // If no cache found, try to retrieve it from Bugzilla

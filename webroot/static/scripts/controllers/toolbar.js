@@ -8,8 +8,9 @@
  */
 
 BzDeck.controllers.Toolbar = function ToolbarController () {
-  this.user = BzDeck.collections.users.get(BzDeck.models.account.data.name, {});
+  let name = BzDeck.models.account.data.name;
 
+  this.user = BzDeck.collections.users.get(name, { name });
   BzDeck.views.toolbar = new BzDeck.views.Toolbar(this.user);
 
   this.user.get_gravatar_profile().then(profile => {

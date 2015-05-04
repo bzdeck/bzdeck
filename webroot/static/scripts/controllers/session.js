@@ -15,7 +15,8 @@ BzDeck.controllers.Session = function SessionController () {
 
   this.bootstrapping = true;
 
-  BzDeck.models.global = new BzDeck.models.Global();
+  BzDeck.datasources.global = new BzDeck.datasources.Global();
+  BzDeck.datasources.account = new BzDeck.datasources.Account();
   BzDeck.controllers.global = new BzDeck.controllers.Global();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
 
@@ -30,14 +31,20 @@ BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
 
 // Bootstrap Step 1. Find a user account from the local database
 BzDeck.controllers.Session.prototype.find_account = function () {
-  BzDeck.models.global.get_database().then(database => {
-    return BzDeck.models.global.get_active_account();
+  BzDeck.datasources.global.load().then(database => {
+    BzDeck.collections.accounts = new BzDeck.collections.Accounts();
+    BzDeck.collections.servers = new BzDeck.collections.Servers();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
+  }).then(() => Promise.all([
+    BzDeck.collections.accounts.load(),
+    BzDeck.collections.servers.load(),
+  ])).then(() => {
+    return BzDeck.collections.accounts.get_current();
   }).then(account => {
     BzDeck.models.account = account; // Model
 
-    return BzDeck.models.global.get_server(account.data.host);
+    return BzDeck.collections.servers.get(account.data.host);
   }).then(server => {
     BzDeck.models.server = server; // Model
     this.load_data();
@@ -65,17 +72,16 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
     this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
 
-    BzDeck.models.global.get_server(data.host).then(server => {
-      BzDeck.models.server = server; // Model
+    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host),
+        params = new URLSearchParams();
 
-      let params = new URLSearchParams(),
-          options = { 'api_key': data.api_key };
+    params.append('names', data.email);
 
-      params.append('names', data.email);
-
-      return new Promise((resolve, reject) => this.request('user', params, options).then(result => {
-        result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
-      }).catch(error => reject(error)));
+    return this.request('user', params, { 'api_key': data.api_key }).then(result => {
+      return result.users ? Promise.resolve(result.users[0])
+                          : Promise.reject(new Error(result.message || 'User Not Found'));
+    }, error => {
+      return Promise.reject(error);
     }).then(user => {
       return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
     }).then(user => {
@@ -99,23 +105,23 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
 // Bootstrap Step 3. Load data from Bugzilla once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
-  BzDeck.models.account.get_database().then(database => {
+  BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
     BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
-    BzDeck.models.prefs = new BzDeck.models.Prefs();
+    BzDeck.collections.prefs = new BzDeck.collections.Prefs();
     BzDeck.collections.users = new BzDeck.collections.Users();
   }, error => {
     this.trigger(':Error', { 'message': error.message });
   }).then(() => Promise.all([
     BzDeck.collections.bugs.load(),
-    BzDeck.models.prefs.load(),
+    BzDeck.collections.prefs.load(),
     BzDeck.collections.users.load(),
   ])).then(() => {
     this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config...' }); // l10n
 
     return Promise.all([
       BzDeck.collections.subscriptions.fetch(),
-      new Promise((resolve, reject) => BzDeck.models.server.get_config().then(config => {
+      new Promise((resolve, reject) => BzDeck.models.server.load_config().then(config => {
         resolve(config);
       }, error => {
         BzDeck.models.server.fetch_config().then(config => {
@@ -209,7 +215,8 @@ BzDeck.controllers.Session.prototype.logout = function () {
 
   // Delete the account data and refresh the page to ensure the app works properly
   // TODO: Support multiple account by removing only the current account
-  BzDeck.models.account.clear().then(() => location.replace(BzDeck.config.app.root));
+  BzDeck.collections.accounts.delete(BzDeck.models.account.data.loaded)
+    .then(() => location.replace(BzDeck.config.app.root));
 };
 
 BzDeck.controllers.Session.prototype.close = function () {

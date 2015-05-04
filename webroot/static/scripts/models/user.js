@@ -8,22 +8,21 @@
  */
 
 /*
- * Initialize User Bug Model.
+ * Initialize the User Model.
  *
  * [argument] data (Object) profile object including Bugzilla's raw user data
- * [return] user (Proxy) proxified instance of the UserModel object, so consumers can access user data seamlessly using
- *                       user.prop instead of user.data.prop
+ * [return] user (Proxy) proxified instance of the UserModel object, when called with `new`, so consumers can access
+ *                       user data seamlessly using user.prop instead of user.data.prop
  */
 BzDeck.models.User = function UserModel (data) {
+  this.datasource = BzDeck.datasources.account;
+  this.store_name = 'users';
   this.email = data.name = (data.name || data.bugzilla.name);
   this.hash = md5(this.email);
   this.cache(data);
 
   // These properties should work even when the user's Bugzilla profile is still being loaded
   Object.defineProperties(this, {
-    'store': {
-      'get': () => this.get_store('account', 'users'),
-    },
     // This is not the Bugzilla user name (email address) but pretty name.
     // Replace both 'Kohei Yoshino [:Kohei]' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
     'name': {
