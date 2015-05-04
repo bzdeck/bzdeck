@@ -40,13 +40,9 @@ BzDeck.controllers.Session.prototype.find_account = function () {
     BzDeck.collections.accounts.load(),
     BzDeck.collections.servers.load(),
   ])).then(() => {
-    return BzDeck.collections.accounts.get_current();
-  }).then(account => {
-    BzDeck.models.account = account; // Model
-
-    return BzDeck.collections.servers.get(account.data.host);
-  }).then(server => {
-    BzDeck.models.server = server; // Model
+    BzDeck.models.account = BzDeck.collections.accounts.get_current();
+    BzDeck.models.server = BzDeck.collections.servers.get(BzDeck.models.account.data.host);
+  }).then(() => {
     this.load_data();
   }).catch(error => {
     this.force_login();
