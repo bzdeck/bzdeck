@@ -72,7 +72,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
     this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
 
-    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host),
+    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host, { 'host': data.host }),
         params = new URLSearchParams();
 
     params.append('names', data.email);

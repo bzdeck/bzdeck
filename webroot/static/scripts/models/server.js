@@ -17,9 +17,10 @@ BzDeck.models.Server = function ServerModel (data) {
   this.datasource = BzDeck.datasources.global;
   this.store_name = 'bugzilla';
   this.data = data;
+  this.name = data.host;
 
   // Extract the local config for easier access
-  for (let [key, value] of Iterator(BzDeck.config.servers[this.data.host])) {
+  for (let [key, value] of Iterator(BzDeck.config.servers[this.name])) {
     this[key] = value;
   }
 };
@@ -50,7 +51,7 @@ BzDeck.models.Server.prototype.get_config = function () {
       let config_retrieved = this.data.config_retrieved = Date.now();
 
       this.data.config = config;
-      this.datasource.get_store(this.store_name).save({ 'host': this.data.host, config, config_retrieved });
+      this.datasource.get_store(this.store_name).save({ 'host': this.name, config, config_retrieved });
 
       return Promise.resolve(config);
     }
