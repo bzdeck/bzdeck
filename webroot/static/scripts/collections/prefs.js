@@ -16,37 +16,8 @@
 BzDeck.collections.Prefs = function PrefCollection () {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'prefs';
+  this.store_type = 'simple';
 };
 
 BzDeck.collections.Prefs.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Prefs.prototype.constructor = BzDeck.collections.Prefs;
-
-/*
- * Load the all preference data from local IndexedDB, create a new model instance for each item, then cache them in a
- * new Map for faster access. This method overrides FlareTail.app.Collection.prototype.load.
- *
- * [argument] none
- * [return] items (Promise -> Map(String or Number, Proxy)) new instances of the model object
- */
-BzDeck.collections.Prefs.prototype.load = function () {
-  // Get IDBRequest instead of the result array
-  return this.datasource.get_store(this.store_name, true).get_all().then(request => {
-    this.map = new Map([for (item of request.result) [item[request.source.keyPath], item.value]]);
-
-    return Promise.resolve(this.map);
-  });
-};
-
-/*
- * Save the specified preference key/value. This method overrides FlareTail.app.Collection.prototype.set.
- *
- * [argument] key (String) preference name
- * [argument] value (Mixed) preference value
- * [return] value (Mixed) preference value
- */
-BzDeck.collections.Prefs.prototype.set = function (key, value) {
-  this.datasource.get_store(this.store_name).save({ 'name': key, value });
-  this.map.set(key, value);
-
-  return value;
-};
