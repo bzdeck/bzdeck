@@ -8,6 +8,8 @@
  */
 
 BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
+  this.id = email;
+
   let $tab = document.querySelector(`#tab-profile-${CSS.escape(email)}`),
       $tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(email)}`),
       $profile = $tabpanel.querySelector('article'),
@@ -22,14 +24,14 @@ BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
     $profile.classList.add('self');
   }
 
-  this.on('C:GravatarProfileFound:' + email, data => {
+  this.on('C:GravatarProfileFound', data => {
     if ($header) {
       // TODO: Add location and social accounts if provided
       $header.style['background-image'] = data.style['background-image'];
     }
   });
 
-  this.on('C:BugzillaProfileFound:' + email, data => {
+  this.on('C:BugzillaProfileFound', data => {
     if ($tab && $profile && $header) {
       document.title = $tab.title = `User Profile: ${data.profile.name}`;
       this.fill($profile, data.profile);
@@ -40,13 +42,13 @@ BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
     }
   });
 
-  this.on('C:BugzillaProfileFetchingError:' + email, data => {
+  this.on('C:BugzillaProfileFetchingError', data => {
     if ($status) {
       $status.textContent = data.error.message;
     }
   });
 
-  this.on('C:BugzillaProfileFetchingComplete:' + email, data => {
+  this.on('C:BugzillaProfileFetchingComplete', data => {
     if ($tabpanel && $status) {
       $tabpanel.removeAttribute('aria-busy');
       $status.textContent = '';
