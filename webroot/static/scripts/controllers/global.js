@@ -8,7 +8,7 @@
  */
 
 BzDeck.controllers.Global = function GlobalController () {
-  this.on('Bug:AnnotationUpdated', data => {
+  this.on('BugModel:AnnotationUpdated', data => {
     if (data.type === 'unread') {
       this.toggle_unread();
     }

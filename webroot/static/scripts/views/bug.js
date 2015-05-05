@@ -10,6 +10,7 @@
 BzDeck.views.Bug = function BugView ($bug, bug) {
   this.$bug = $bug;
   this.bug = bug;
+  this.id = bug.id;
 
   this.init();
 };
@@ -25,16 +26,14 @@ BzDeck.views.Bug.prototype.init = function () {
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
                                   new this.widget.ScrollBar($area)]);
 
-  this.on('Bug:AnnotationUpdated', data => {
-    if (this.$bug && data.type === 'starred' && data.bug.id === this.bug.id) {
+  this.on('M:AnnotationUpdated', data => {
+    if (this.$bug && data.type === 'starred') {
       this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
     }
   });
 
-  this.on('Bug:Updated', data => {
-    if (data.bug.id === this.bug.id) {
-      this.update(data.bug, data.changes);
-    }
+  this.on('M:Updated', data => {
+    this.update(data.bug, data.changes);
   });
 };
 

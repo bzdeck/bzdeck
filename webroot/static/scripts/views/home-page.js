@@ -53,7 +53,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
 
   // Refresh the thread when bugs are updated
   // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
-  this.on('Bugs:Updated', data => {
+  this.on('SubscriptionsCollection:Updated', data => {
     if (BzDeck.controllers.sidebar) {
       BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
     }

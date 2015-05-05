@@ -128,7 +128,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
       changes.set('history', history);
     }
 
-    FlareTail.util.event.trigger(window, 'Bug:Updated', { 'detail': { 'bug': data, changes }});
+    this.trigger(':Updated', { 'bug': data, changes });
   }
 
   this.save(data);
@@ -154,7 +154,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   }
 
   this.data[`_${type}`] = value;
-  this.trigger('Bug:AnnotationUpdated', { 'bug': this.proxy(), type, value });
+  this.trigger(':AnnotationUpdated', { 'bug': this.proxy(), type, value });
 
   return true;
 };

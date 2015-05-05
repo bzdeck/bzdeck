@@ -84,7 +84,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     'S': event => toggle_prop('starred'),
   });
 
-  this.on('Bug:AnnotationUpdated', data => {
+  this.on('BugModel:AnnotationUpdated', data => {
     let $row = $grid.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
 
     if ($row) {
@@ -247,7 +247,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
   });
 
-  this.on('Bug:AnnotationUpdated', data => {
+  this.on('BugModel:AnnotationUpdated', data => {
     let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);
 
     if ($option) {
