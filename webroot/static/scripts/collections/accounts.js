@@ -1,5 +1,5 @@
 /**
- * BzDeck Accounts Collection
+ * BzDeck Account Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Accounts Collection.
+ * Initialize the Account Collection.
  *
  * [argument] none
- * [return] bugs (Object) new instance of the AccountsCollection object, when called with `new`
+ * [return] bugs (Object) new instance of the AccountCollection object, when called with `new`
  */
-BzDeck.collections.Accounts = function AccountsCollection () {
+BzDeck.collections.Accounts = function AccountCollection () {
   this.datasource = BzDeck.datasources.global;
   this.store_name = 'accounts';
   this.model = BzDeck.models.Account;

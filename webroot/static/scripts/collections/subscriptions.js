@@ -1,5 +1,5 @@
 /**
- * BzDeck Subscriptions Collection
+ * BzDeck Subscription Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Subscriptions Collection.
+ * Initialize the Subscription Collection.
  *
  * [argument] none
- * [return] subscriptions (Object) new instance of the SubscriptionsCollection object, when called with `new`
+ * [return] subscriptions (Object) new instance of the SubscriptionCollection object, when called with `new`
  */
-BzDeck.collections.Subscriptions = function SubscriptionsCollection () {
+BzDeck.collections.Subscriptions = function SubscriptionCollection () {
 };
 
 BzDeck.collections.Subscriptions.prototype = Object.create(BzDeck.collections.Base.prototype);

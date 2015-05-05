@@ -1,5 +1,5 @@
 /**
- * BzDeck Users Collection
+ * BzDeck User Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Users Collection.
+ * Initialize the User Collection.
  *
  * [argument] none
- * [return] users (Object) new instance of the UsersCollection object, when called with `new`
+ * [return] users (Object) new instance of the UserCollection object, when called with `new`
  */
-BzDeck.collections.Users = function UsersCollection () {
+BzDeck.collections.Users = function UserCollection () {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'users';
   this.model = BzDeck.models.User;
@@ -26,7 +26,7 @@ BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
  * Add users participating in a bug.
  *
  * [argument] bug (Proxy) a BugCollection object
- * [return] users (Map(String, Proxy)) new instances of the UserCollection object
+ * [return] users (Map(String, Proxy)) new instances of the UserModel object
  */
 BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
   let users = new Map();

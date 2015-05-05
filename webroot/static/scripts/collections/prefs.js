@@ -1,5 +1,5 @@
 /**
- * BzDeck Prefs Collection
+ * BzDeck Pref Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Prefs Collection.
+ * Initialize the Pref Collection.
  *
  * [argument] none
- * [return] bugs (Object) new instance of the PrefsCollection object, when called with `new`
+ * [return] bugs (Object) new instance of the PrefCollection object, when called with `new`
  */
-BzDeck.collections.Prefs = function PrefsCollection () {
+BzDeck.collections.Prefs = function PrefCollection () {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'prefs';
 };

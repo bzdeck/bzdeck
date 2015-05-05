@@ -1,5 +1,5 @@
 /**
- * BzDeck Bugs Collection
+ * BzDeck Bug Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Bugs Collection.
+ * Initialize the Bug Collection.
  *
  * [argument] none
- * [return] bugs (Object) new instance of the BugsCollection object, when called with `new`
+ * [return] bugs (Object) new instance of the BugCollection object, when called with `new`
  */
-BzDeck.collections.Bugs = function BugsCollection () {
+BzDeck.collections.Bugs = function BugCollection () {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'bugs';
   this.model = BzDeck.models.Bug;

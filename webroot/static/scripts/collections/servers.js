@@ -1,5 +1,5 @@
 /**
- * BzDeck Servers Collection
+ * BzDeck Server Collection
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -8,12 +8,12 @@
  */
 
 /*
- * Initialize the Servers Collection.
+ * Initialize the Server Collection.
  *
  * [argument] none
- * [return] bugs (Object) new instance of the ServersCollection object, when called with `new`
+ * [return] bugs (Object) new instance of the ServerCollection object, when called with `new`
  */
-BzDeck.collections.Servers = function ServersCollection () {
+BzDeck.collections.Servers = function ServerCollection () {
   this.datasource = BzDeck.datasources.global;
   this.store_name = 'bugzilla';
   this.model = BzDeck.models.Server;
