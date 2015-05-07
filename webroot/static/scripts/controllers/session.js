@@ -197,7 +197,7 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
   // Select the Requests folder when the notification is clicked
-  BzDeck.views.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+  BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
 };
 
 BzDeck.controllers.Session.prototype.login = function () {
