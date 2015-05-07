@@ -122,7 +122,6 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
   }).catch(error => {
     this.save({
       'name': this.email,
-      'id': 0,
       'error': error.message,
       'updated': Date.now(),
     });
