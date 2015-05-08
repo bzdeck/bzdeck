@@ -16,7 +16,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
   this.$tabpanel = document.querySelector(`#tabpanel-details-${this.id}`);
   this.$tabpanel.setAttribute('aria-busy', 'true');
 
-  this.on('C:BugDataReady', data => {
+  this.on('C:BugDataAvailable', data => {
     // Prepare the newly opened tabpanel
     if (!this.$bug) {
       this.$bug = this.$tabpanel.appendChild(this.get_fragment('bug-details-template', data.bug.id).firstElementChild);
