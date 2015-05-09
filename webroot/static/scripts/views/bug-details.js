@@ -116,14 +116,10 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
     return;
   }
 
-  // TODO: Allow hiding obsolete patches
-  // TODO: Fetch the attachments using the API
-  // TODO: Prettyprint patches
-  // TODO: Add comment form, flag selector, etc.
-  // TODO: Cache files
-
   let mobile = FlareTail.util.ua.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
+      $show_obsolete_checkbox = $attachments.querySelector('.list [role="checkbox"]'),
+      $$show_obsolete_checkbox = new this.widget.Checkbox($show_obsolete_checkbox),
       $listbox = $attachments.querySelector('[role="listbox"]'),
       $fragment = new DocumentFragment(),
       $title = $attachments.querySelector('h4'),
@@ -147,17 +143,17 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
       }
 
       let att = [for (att of attachments) if (att.id === Number.parseInt(event.detail.items[0].dataset.id)) att][0],
-          src = att.content_type.match(/^(image|audio|video)\//) || att.is_patch
-              ? `${BzDeck.models.server.url}/attachment.cgi?id=${att.id}` : 'about:blank',
-          $placeholder = $attachments.querySelector('.content .scrollable-area-content');
+          $placeholder = $attachments.querySelector('.content');
 
       $placeholder.innerHTML = '';
-      this.fill($placeholder.appendChild($content.cloneNode(true)), {
+
+      let $attachment = this.fill($placeholder.appendChild($content.cloneNode(true)), {
         'url': `/attachment/${att.id}`,
         'description': att.summary,
         'name': att.file_name,
         'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
-        'encodingFormat': att.is_patch ? 'Patch' : att.content_type, // l10n
+        'encodingFormat': att.is_patch ? 'text/x-patch' : att.content_type,
+        'is_obsolete': att.is_obsolete ? 'true' : 'false',
         'dateCreated': att.creation_time,
         'dateModified': att.last_change_time,
         'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
@@ -168,8 +164,63 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         }],
       }, {
         'data-attachment-id': att.id,
-        'src': src,
       });
+
+      let media_type = att.content_type.split('/')[0],
+          $body = $attachment.querySelector('.body'),
+          $scrollable,
+          $media,
+          $error = document.createElement('p');
+
+      this.scrollbars.add(new this.widget.ScrollBar($body));
+      $scrollable = $body.querySelector('.scrollable-area-content');
+
+      if (media_type === 'image') {
+        $media = new Image();
+        $media.alt = '';
+      }
+
+      if (media_type === 'audio' || media_type === 'video') {
+        $media = document.createElement(media_type);
+        $media.controls = true;
+    
+        if ($media.canPlayType(attachment.content_type) === '') {
+          $media = null; // Cannot play the media
+        }
+      }
+
+      if ($media) {
+        $body.setAttribute('aria-busy', 'true');
+
+        this.bug.get_attachment_data(att.id).then(result => {
+          $media.src = URL.createObjectURL(result.blob);
+          $media.itemProp.add('url');
+          $scrollable.appendChild($media);
+          $body.classList.add('media');
+        }, error => {
+          $error.classList.add('error');
+          $error.textContent = error.message;
+          $error = $scrollable.appendChild($error);
+        }).then(() => {
+          $body.removeAttribute('aria-busy');
+        });
+      }
+
+      if (att.is_patch) {
+        $body.setAttribute('aria-busy', 'true');
+
+        this.bug.get_attachment_data(att.id, 'text').then(result => {
+          FlareTail.util.event.async(() => $scrollable.appendChild(new BzDeck.helpers.DiffFormatter(result.text)));
+          $body.classList.add('patch');
+        }, error => {
+          $error.classList.add('error');
+          $error.textContent = error.message;
+          $error = $scrollable.appendChild($error);
+        }).then(() => {
+          $body.removeAttribute('aria-busy');
+          FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+        });
+      }
     });
   }
 
@@ -179,13 +230,29 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
       'description': att.summary,
       'dateModified': att.last_change_time,
       'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
+      'encodingFormat': att.is_patch ? 'text/x-patch' : att.content_type, // l10n
+      'is_obsolete': att.is_obsolete ? 'true' : 'false',
     }, {
       'id': `bug-${att.bug_id}-attachment-${att.id}`,
-      'data-id': att.id
+      'aria-disabled': !!att.is_obsolete,
+      'data-id': att.id,
+      'data-obsolete': att.is_obsolete ? 'true' : 'false',
     });
   }
 
   $title.textContent = len === 1 ? `${len} attachment` : `${len} attachments`; // l10n
+
+  $show_obsolete_checkbox.setAttribute('aria-hidden', ![for (att of attachments) if (att.is_obsolete) att].length);
+  $$show_obsolete_checkbox.bind('Toggled', event => {
+    let checked = event.detail.checked;
+
+    for (let $att of $listbox.querySelectorAll('[role="option"]')) {
+      $att.setAttribute('aria-disabled', checked ? 'false' : $att.properties.is_obsolete[0].itemValue);
+    }
+
+    this.$$attachment_list.update_members();
+    FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+  });
 
   $listbox.appendChild($fragment);
   $listbox.dispatchEvent(new CustomEvent('Rendered'));

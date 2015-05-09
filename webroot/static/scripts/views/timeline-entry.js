@@ -178,8 +178,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
       url = `${BzDeck.models.server.url}/attachment.cgi?id=${attachment.id}`,
       $attachment = this.get_fragment('timeline-attachment').firstElementChild,
       $outer = $attachment.querySelector('div'),
-      $media,
-      load_event = 'load';
+      $media;
 
   this.fill($attachment, {
     'url': `/attachment/${attachment.id}`,
@@ -208,7 +207,6 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   if (media_type === 'audio' || media_type === 'video') {
     $media = document.createElement(media_type);
     $media.controls = true;
-    load_event = 'loadedmetadata';
 
     if ($media.canPlayType(attachment.content_type) === '') {
       $media = null; // Cannot play the media
@@ -217,11 +215,16 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
 
   if ($media) {
     $outer.appendChild($media);
-    $media.addEventListener(load_event, event => $outer.removeAttribute('aria-busy'));
 
     if (BzDeck.prefs.get('ui.timeline.display_attachments_inline') !== false) {
       $outer.setAttribute('aria-busy', 'true');
-      $media.src = url;
+
+      this.bug.get_attachment_data(attachment.id).then(result => {
+        $media.src = URL.createObjectURL(result.blob);
+        attachment.data = result.attachment.data;
+      }).then(() => {
+        $outer.removeAttribute('aria-busy');
+      });
     }
   } else {
     // TODO: support other attachment types

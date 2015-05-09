@@ -49,6 +49,7 @@ $scripts = [
   '/static/scripts/views/timeline.js',
   '/static/scripts/views/toolbar.js',
   '/static/scripts/helpers/base.js',
+  '/static/scripts/helpers/diff-formatter.js',
   '/static/scripts/helpers/tooltip.js',
   '/static/scripts/controllers/base.js',
   '/static/scripts/controllers/bug.js',

@@ -437,11 +437,16 @@
               <div class="bug-attachments" tabindex="0">
                 <section data-field="attachments">
                   <h3>Attachments</h3>
-                  <div class="list" role="region">
-                    <h4></h4>
-                    <ul tabindex="0" role="listbox"></ul>
+                  <div class="list">
+                    <header>
+                      <h4>0 Attachments</h4>
+                      <span tabindex="0" role="checkbox" aria-checked="false">Show Obsolete</span>
+                    </header>
+                    <div role="region">
+                      <ul tabindex="0" role="listbox"></ul>
+                    </div>
                   </div>
-                  <div class="content" role="region">
+                  <div class="content">
                   </div>
                 </section>
               </div>
@@ -610,7 +615,7 @@
       </aside>
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
-      <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
+      <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-disabled data-id" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
         <span itemprop="creator" itemscope itemtype="http://schema.org/Person">
           <img alt="" itemprop="image">
           <meta itemprop="email">
@@ -618,26 +623,30 @@
         <span itemprop="id"></span>
         <span itemprop="description"></span>
         <time data-simple="true" itemprop="dateModified"></time>
+        <meta itemprop="encodingFormat">
+        <meta itemprop="is_obsolete">
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject" data-attrs="data-attachment-id">
-        <h4 itemprop="description"></h4>
-        <ul>
-          <li><a itemprop="url" data-attrs="data-attachment-id"><span itemprop="name"></span></a> &nbsp; <span itemprop="contentSize"></span> &nbsp; <span itemprop="encodingFormat"></span></li>
-          <li>Created: <time itemprop="dateCreated" data-relative="false"></time> &nbsp; Modified: <time itemprop="dateModified" data-relative="false"></time></li>
-          <li role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
-          <li>
-            <ul>
-              <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
-                <span itemprop="name"></span>
-                <span itemprop="status"></span>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <iframe src="about:blank" sandbox data-attrs="src"></iframe>
+      <section itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id">
+        <header>
+          <h4 itemprop="description"></h4>
+          <ul>
+            <li><a itemprop="url" data-attrs="data-attachment-id"><span itemprop="name"></span></a> &nbsp; <span itemprop="contentSize"></span> &nbsp; <meta itemprop="encodingFormat"> &nbsp; <meta itemprop="is_obsolete"></li>
+            <li>Created: <time itemprop="dateCreated" data-relative="false"></time> &nbsp; Modified: <time itemprop="dateModified" data-relative="false"></time></li>
+            <li role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+            <li>
+              <ul>
+                <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
+                  <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
+                  <span itemprop="name"></span>
+                  <span itemprop="status"></span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </header>
+        <div class="body" role="region"></div>
       </section>
     </template><!-- end #details-attachment-content -->
     <template id="details-change">

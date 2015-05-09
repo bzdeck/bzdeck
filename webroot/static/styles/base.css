@@ -2152,46 +2152,62 @@ article[id$="preview-bug"] > .bug-info {
   content: "\F016";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"]::before {
+  font-family: FontAwesome;
+  content: "\F016"; /* Default file icon */
+}
+
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="text/"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="text/"] h5::before {
   content: "\F0F6";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-patch"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-patch"] h5::before {
   content: "\F1C9";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-github-pull-request"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-github-pull-request"] h5::before {
   content: "\F09B";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="image/"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="image/"] h5::before {
   content: "\F1C5";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="audio/"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="audio/"] h5::before {
   content: "\F1C7";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="video/"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="video/"] h5::before {
   content: "\F1C8";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content="application/pdf"]::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="application/pdf"] h5::before {
   content: "\F1C1";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/msword"], [content="application/vnd.openxmlformats-officedocument.wordprocessingml.document"])::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/msword"], [data-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) h5::before {
   content: "\F1C2";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-excel"], [content="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-excel"], [data-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) h5::before {
   content: "\F1C3";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-powerpoint"], [content="application/vnd.openxmlformats-officedocument.presentationml.presentation"])::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-powerpoint"], [data-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) h5::before {
   content: "\F1C4";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/zip"], [content="application/gzip"], [content="application/x-gzip"], [content="application/x-bzip2"])::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/zip"], [data-type="application/gzip"], [data-type="application/x-gzip"], [data-type="application/x-bzip2"]) h5::before {
   content: "\F1C6";
 }
@@ -2610,57 +2626,145 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-attachments .list {
   flex: auto;
+  flex-direction: column;
+  display: flex;
   overflow: hidden;
   background-color: var(--grid-background-color);
 }
 
-.bug-attachments .list h4 {
+.bug-attachments .list header {
+  flex: none;
+  display: flex;
   border-width: 0 0 .1rem;
   border-style: solid;
   border-color: var(--grid-border-color);
-  padding: .8rem;
+  padding: .8rem 1rem;
   background-color: var(--grid-header-background-color);
-  text-align: center;
 }
 
-.bug-attachments [role="listbox"] {
-  position: absolute;
-  width: 100%;
+.bug-attachments .list header h4 {
+  flex: auto;
+}
+
+.bug-attachments .list header [role="checkbox"]::before {
+  font-family: FontAwesome;
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="false"]::before {
+  content: "\F096";
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="true"]::before {
+  color: var(--base-accent-color-1);
+  content: '\F14A';
+}
+
+.bug-attachments .list header ~ * {
+  flex: auto;
+  overflow: hidden;
+}
+
+.bug-attachments [role="option"][aria-disabled="true"] {
+  display: none;
+}
+
+.bug-attachments [role="option"] [itemprop="description"] {
+  right: 4.8rem;
 }
 
 .bug-attachments [role="option"] [itemprop="dateModified"] {
   right: 1em;
 }
 
+.bug-attachments [role="option"] [itemprop="encodingFormat"],
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  width: 1.6rem;
+  height: 1.6rem;
+  bottom: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"] {
+  right: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  right: 2.8rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"]::before,
+.bug-attachments [role="option"] [itemprop="is_obsolete"]::before {
+  display: block;
+  top: 0;
+  left: 0;
+  font-family: FontAwesome;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  text-align: center;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"]::before {
+  content: '\F014';
+}
+
 .bug-attachments .content {
+  position: relative;
   border-width: 0 0 0 .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
   width: 68%;
 }
 
-.bug-attachments .content .scrollable-area-content {
-  height: 100%;
-}
-
 .bug-attachments .content [itemprop="attachment"] {
+  display: flex;
   position: absolute;
   width: 100%;
   height: 100%;
-  display: flex;
   flex-direction: column;
 }
 
-.bug-attachments .content h4 {
+.bug-attachments .content [itemprop="attachment"] > header {
   flex: none;
+}
+
+.bug-attachments .content [itemprop="attachment"] > header ~ * {
+  flex: auto;
+}
+
+.bug-attachments .content h4 {
   margin: 1.2rem;
   font-size: 1.6rem;
 }
 
-.bug-attachments .content [itemprop="attachment"] > ul {
-  flex: none;
+.bug-attachments .content [itemprop="attachment"] > header > ul {
   margin: 0 1.2rem 1.2rem;
   line-height: 1.6;
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"],
+.bug-attachments .content [itemprop="attachment"] [itemprop="is_obsolete"] {
+  display: inline;
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"]::before {
+  margin-right: .4rem;
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"]::after {
+  content: attr(content);
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"][content="text/x-patch"]::after {
+  content: 'Patch';
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"][content="text/x-github-pull-request"]::after {
+  content: 'GitHub Pull Request';
+}
+
+.bug-attachments .content [itemprop="attachment"] [itemprop="is_obsolete"][content="true"]::after {
+  content: '(Obsolete)';
 }
 
 .bug-attachments .content [itemprop="image"] {
@@ -2682,17 +2786,82 @@ article[id$="preview-bug"] > .bug-info {
   margin-bottom: 0;
 }
 
-.bug-attachments .content iframe[sandbox] {
+.bug-attachments .content .body {
   flex: auto;
-  display: block;
-  border: 0;
-  width: 100%;
-  height: auto;
+  overflow: hidden;
+}
+
+.bug-attachments .content .body.media .scrollable-area-content {
+  display: flex;
+  box-sizing: padding-box;
+  padding: .8rem;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
   background: var(--content-background-color);
 }
 
-.bug-attachments .content iframe[sandbox][src="about:blank"] {
-  display: none;
+.bug-attachments .content .body.media [itemprop="url"] {
+  object-fit: contain;
+}
+
+.bug-attachments .content .body.patch table {
+  border-collapse: collapse;
+}
+
+.bug-attachments .content .body.patch summary {
+  display: block;
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  border-width: .1rem 0;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  padding: .8rem 1.2rem;
+  text-align: left;
+  color: var(--grid-header-foreground-color);
+  background-color: var(--grid-header-background-color);
+}
+
+.bug-attachments .content .body.patch tbody {
+  font-family: FiraMono, monospace;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.bug-attachments .content .body.patch tr.head {
+  background-color: #F8FAFD;
+}
+
+.bug-attachments .content .body.patch tr.removed {
+  background-color: #FFECEC;
+}
+
+.bug-attachments .content .body.patch tr.added {
+  background-color: #E9FFE9;
+}
+
+.bug-attachments .content .body.patch td {
+  padding: 0 .8rem;
+  vertical-align: top;
+}
+
+.bug-attachments .content .body.patch td.ln {
+  border-width: 0 .1rem 0 0;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  min-width: 3ex;
+  color: var(--disabled-control-foreground-color);
+  font-size: 1.2rem;
+  text-align: right;
+}
+
+.bug-attachments .content .body.patch td.sign {
+  color: var(--disabled-control-foreground-color);
+}
+
+.bug-attachments .content .body.patch td.code {
+  width: 100%;
 }
 
 [data-device|="mobile"]:root .bug-history > section {
