@@ -63,9 +63,5 @@ $scripts = [
   '/static/scripts/controllers/settings-page.js',
   '/static/scripts/controllers/sidebar.js',
   '/static/scripts/controllers/statusbar.js',
-  '/static/scripts/controllers/thread.js',
-  '/static/scripts/controllers/timeline-comment-form.js',
-  '/static/scripts/controllers/timeline-entry.js',
-  '/static/scripts/controllers/timeline.js',
   '/static/scripts/controllers/toolbar.js',
 ];
