@@ -1,5 +1,5 @@
 /**
- * BzDeck Diff Formatter
+ * BzDeck Diff Formatter Helper
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -10,7 +10,7 @@
 // TODO: support non-unified formats
 // TODO: implement syntax highlight
 
-BzDeck.helpers.DiffFormatter = function (str) {
+BzDeck.helpers.DiffFormatter = function DiffFormatterHelper (str) {
   let $fragment = new DocumentFragment;
 
   for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {

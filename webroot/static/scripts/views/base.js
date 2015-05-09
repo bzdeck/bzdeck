@@ -1,5 +1,5 @@
 /**
- * BzDeck Main Views
+ * BzDeck Base View
  * Copyright © 2015 Kohei Yoshino. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
