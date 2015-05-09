@@ -373,7 +373,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   $dupe_input.value = this.bug.dupe_of || '';
   $dupe_input.addEventListener('keydown', event => event.stopPropagation());
   $dupe_input.addEventListener('input', event => this.update_changes());
-  new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
+  new BzDeck.helpers.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
 
   $tab.setAttribute('aria-disabled', 'false');
 };
