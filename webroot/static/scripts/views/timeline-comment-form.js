@@ -420,8 +420,8 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
       $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
       $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
       $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
-      $$finder = new BzDeck.views.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
-                                               [this.bug.creator, this.bug.assigned_to]),
+      $$finder = new BzDeck.helpers.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
+                                                 [this.bug.creator, this.bug.assigned_to]),
       $finder = $$finder.$combobox;
 
   this.needinfo_changes = new Map();
