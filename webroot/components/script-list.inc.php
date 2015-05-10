@@ -8,20 +8,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+// For each section, base.js should go first
+
 $scripts = [
+  // Vendor
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
   '/vendor/flaretail.js/scripts/util.js',
   '/vendor/flaretail.js/scripts/widget.js',
   '/vendor/flaretail.js/scripts/app.js',
+  // Config
   '/static/scripts/config/app.js',
+  // Datasources
   '/static/scripts/datasources/base.js',
   '/static/scripts/datasources/account.js',
   '/static/scripts/datasources/global.js',
+  // Models
   '/static/scripts/models/base.js',
   '/static/scripts/models/account.js',
   '/static/scripts/models/bug.js',
   '/static/scripts/models/server.js',
   '/static/scripts/models/user.js',
+  // Collections
   '/static/scripts/collections/base.js',
   '/static/scripts/collections/accounts.js',
   '/static/scripts/collections/bugs.js',
@@ -29,6 +36,7 @@ $scripts = [
   '/static/scripts/collections/servers.js',
   '/static/scripts/collections/subscriptions.js',
   '/static/scripts/collections/users.js',
+  // Views
   '/static/scripts/views/base.js',
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
@@ -46,11 +54,13 @@ $scripts = [
   '/static/scripts/views/timeline-entry.js',
   '/static/scripts/views/timeline.js',
   '/static/scripts/views/toolbar.js',
+  // Helpers
   '/static/scripts/helpers/base.js',
   '/static/scripts/helpers/diff-formatter.js',
   '/static/scripts/helpers/person-finder.js',
   '/static/scripts/helpers/thread.js',
   '/static/scripts/helpers/tooltip.js',
+  // Controllers
   '/static/scripts/controllers/base.js',
   '/static/scripts/controllers/bug.js',
   '/static/scripts/controllers/bugzfeed.js',
