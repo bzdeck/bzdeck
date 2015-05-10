@@ -238,7 +238,7 @@ BzDeck.controllers.Session.prototype.clean = function () {
 };
 
 window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.util.compatible) {
+  if (FlareTail.compatible) {
     BzDeck.controllers.session = new BzDeck.controllers.Session();
   }
 });
