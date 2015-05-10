@@ -120,7 +120,7 @@ BzDeck.helpers.PersonFinder.prototype.search = function (users) {
 
   for (let [name, user] of results) {
     let data = { 'name': user.name, 'nick': user.nick_names[0] || '', 'email': user.email, 'image': user.image },
-        attrs = { 'id': `${this.combobox_id}-${user.profiles.bugzilla.id}`, 'data-value': user.email };
+        attrs = { 'id': `${this.combobox_id}--${user.email}`, 'data-value': user.email };
 
     $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
   }
