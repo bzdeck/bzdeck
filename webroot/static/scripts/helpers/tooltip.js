@@ -30,10 +30,13 @@ BzDeck.helpers.Tooltip.prototype.set_showing_events = function () {
       let value = event.target.value || event.target.dataset.id;
 
       this.hide_any();
+      window.clearTimeout(this.timer);
 
       if (value && value.match(this.regex)) {
-        this.id = Number.isNaN(value) ? value : Number.parseInt(value);
-        this.show();
+        this.timer = window.setTimeout(() => {
+          this.id = isNaN(value) ? value : Number(value);
+          this.show();
+        }, 1000);
       }
     });
   }
@@ -84,7 +87,7 @@ BzDeck.helpers.BugTooltip.prototype.show = function () {
   new Promise(resolve => {
     let bug = BzDeck.collections.bugs.get(this.id, { 'id': this.id, '_unread': true });
 
-    if (bug.data) {
+    if (bug.summary) {
       resolve(bug);
     } else {
       bug.fetch().then(bug => resolve(bug));
