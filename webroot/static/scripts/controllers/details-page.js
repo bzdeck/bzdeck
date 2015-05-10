@@ -7,9 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-BzDeck.controllers.DetailsPage = function DetailsPageController () {
-  let bug_id = Number.parseInt(arguments[0]),
-      $$tablist = BzDeck.views.toolbar.$$tablist;
+BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
+  let $$tablist = BzDeck.views.toolbar.$$tablist;
 
   // Find an existing tab
   for (let [page_id, page_view] of BzDeck.views.pages.details_list || []) {
