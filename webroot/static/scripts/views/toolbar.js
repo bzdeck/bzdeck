@@ -102,7 +102,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
   {
     let $menuitem = document.querySelector('#main-menu--app--install');
 
-    this.on('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'))
+    this.on('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'), true)
     FTu.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
   }
 

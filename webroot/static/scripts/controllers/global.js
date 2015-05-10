@@ -12,7 +12,7 @@ BzDeck.controllers.Global = function GlobalController () {
     if (data.type === 'unread') {
       this.toggle_unread();
     }
-  });
+  }, true);
 };
 
 BzDeck.controllers.Global.prototype = Object.create(BzDeck.controllers.Base.prototype);

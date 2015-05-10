@@ -111,7 +111,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
         }
       }
     }
-  });
+  }, true);
 
   let check_fragment = () => {
     let match = location.hash.match(/^#c(\d+)$/),

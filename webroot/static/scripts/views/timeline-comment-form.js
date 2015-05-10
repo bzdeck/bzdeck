@@ -124,7 +124,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
       this.$status.textContent = '';
       this.$submit.setAttribute('aria-disabled', !this.can_submit);
       this.prep_editor_tabpanels();
-    });
+    }, true);
   }
 
   this.prep_editor_tabpanels();

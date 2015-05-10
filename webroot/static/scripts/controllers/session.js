@@ -96,7 +96,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
     }).catch(error => {
       this.trigger(':Error', { 'message': error.message || 'Failed to find your account.' }); // l10n
     });
-  });
+  }, true);
 };
 
 // Bootstrap Step 3. Load data from local database once the user account is set

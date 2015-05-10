@@ -34,16 +34,16 @@ BzDeck.views.LoginForm = function LoginFormView () {
       this.hide();
       this.hide_intro();
     }
-  });
+  }, true);
 
   this.on('SessionController:Error', data => {
     this.show_status(data.message);
     this.$email.disabled = this.$apikey.disabled = this.$button.disabled = false;
-  });
+  }, true);
 
   this.on('SessionController:Logout', data => {
     this.show();
-  });
+  }, true);
 };
 
 BzDeck.views.LoginForm.prototype = Object.create(BzDeck.views.Base.prototype);

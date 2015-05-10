@@ -46,7 +46,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
     if (data.name === 'ui.home.layout') {
       this.change_layout(data.value, true);
     }
-  });
+  }, true);
 
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
   this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
@@ -57,7 +57,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
     if (BzDeck.controllers.sidebar) {
       BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
     }
-  });
+  }, true);
 };
 
 BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.Base.prototype);

@@ -94,7 +94,7 @@ BzDeck.helpers.ClassicThread = function ClassicThreadHelper (consumer, name, $gr
         $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', data.value);
       }
     }
-  });
+  }, true);
 };
 
 BzDeck.helpers.ClassicThread.prototype = Object.create(BzDeck.helpers.Thread.prototype);
@@ -257,7 +257,7 @@ BzDeck.helpers.VerticalThread = function VerticalThreadHelper (consumer, name, $
         $option.querySelector('[data-field="starred"]').setAttribute('aria-checked', data.value);
       }
     }
-  });
+  }, true);
 
   // Lazy loading while scrolling
   this.$scrollable_area.addEventListener('scroll', event => {

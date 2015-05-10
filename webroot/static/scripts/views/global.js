@@ -71,7 +71,7 @@ BzDeck.views.Global = function GlobalView () {
         $image.itemValue = user.image; // Blob URL
       }
     }
-  });
+  }, true);
 };
 
 BzDeck.views.Global.prototype = Object.create(BzDeck.views.Base.prototype);

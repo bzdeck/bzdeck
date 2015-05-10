@@ -51,7 +51,7 @@ BzDeck.controllers.Sidebar = function SidebarController () {
     if (data.type === 'unread') {
       this.toggle_unread();
     }
-  });
+  }, true);
 };
 
 BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);
