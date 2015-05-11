@@ -210,7 +210,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         $body.setAttribute('aria-busy', 'true');
 
         this.bug.get_attachment_data(att.id, 'text').then(result => {
-          FlareTail.util.event.async(() => $scrollable.appendChild(new BzDeck.helpers.DiffFormatter(result.text)));
+          FlareTail.util.event.async(() => $scrollable.appendChild(new BzDeck.helpers.PatchViewer(result.text)));
           $body.classList.add('patch');
         }, error => {
           $error.classList.add('error');

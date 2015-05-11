@@ -56,7 +56,7 @@ $scripts = [
   '/static/scripts/views/toolbar.js',
   // Helpers
   '/static/scripts/helpers/base.js',
-  '/static/scripts/helpers/diff-formatter.js',
+  '/static/scripts/helpers/patch-viewer.js',
   '/static/scripts/helpers/person-finder.js',
   '/static/scripts/helpers/thread.js',
   '/static/scripts/helpers/tooltip.js',
