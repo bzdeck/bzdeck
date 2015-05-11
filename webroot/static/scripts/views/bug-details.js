@@ -164,6 +164,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         }],
       }, {
         'data-attachment-id': att.id,
+        'data-content-type': att.is_patch ? 'text/x-patch' : att.content_type,
       });
 
       let media_type = att.content_type.split('/')[0],
@@ -184,11 +185,12 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         $media = document.createElement(media_type);
         $media.controls = true;
     
-        if ($media.canPlayType(attachment.content_type) === '') {
+        if ($media.canPlayType(att.content_type) === '') {
           $media = null; // Cannot play the media
         }
       }
 
+      // Render the image, video or audio
       if ($media) {
         $body.setAttribute('aria-busy', 'true');
 
@@ -204,8 +206,11 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         }).then(() => {
           $body.removeAttribute('aria-busy');
         });
+
+        return;
       }
 
+      // Render the patch with the Patch Viewer
       if (att.is_patch) {
         $body.setAttribute('aria-busy', 'true');
 
@@ -220,6 +225,34 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
           $body.removeAttribute('aria-busy');
           FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
         });
+
+        return;
+      }
+
+      // Show a link to the file
+      {
+        let $link = document.createElement('a');
+
+        $link.href = `/attachment/${att.id}`;
+        $link.text = {
+          'text/x-github-pull-request': 'See the GitHub Pull Request',
+          'text/x-review-board-request': 'See the Review Board Request',
+          'application/pdf': 'Open the PDF file',
+          'application/msword': 'Open the Word file',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Open the Word file',
+          'application/vnd.ms-excel': 'Open the Excel file',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Open the Excel file',
+          'application/vnd.ms-powerpoint': 'Open the PowerPoint file',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'Open the PowerPoint file',
+          'application/zip': 'Open the zip archive',
+          'application/gzip': 'Open the gzip archive',
+          'application/x-gzip': 'Open the gzip archive',
+          'application/x-bzip2': 'Open the bzip2 archive',
+        }[att.content_type] || 'Open the file';
+        $link.setAttribute('data-attachment-id', att.id);
+
+        $scrollable.appendChild($link);
+        $body.classList.add('link');
       }
     });
   }
@@ -257,6 +290,13 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   $listbox.appendChild($fragment);
   $listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$attachment_list.update_members();
+
+  let $first_attachment = $listbox.querySelector('[role="option"][aria-disabled="false"]');
+
+  // Select the first non-obsolete attachment
+  if ($first_attachment && !mobile && !mql.matches) {
+    this.$$attachment_list.view.selected = $first_attachment;
+  }
 
   this.$bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
 

@@ -603,7 +603,7 @@
       </tr>
     </template>
     <template id="timeline-attachment">
-      <aside itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject" data-attrs="data-type">
+      <aside itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject" data-attrs="data-content-type">
         <a itemprop="url" data-attrs="data-attachment-id">
           <h5 itemprop="description"></h5>
         </a>
@@ -628,7 +628,7 @@
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id">
+      <section itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
         <header>
           <h4 itemprop="description"></h4>
           <ul>

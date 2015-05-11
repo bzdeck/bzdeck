@@ -2152,62 +2152,76 @@ article[id$="preview-bug"] > .bug-info {
   content: "\F016";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]::before {
+[itemtype$="Attachment"] [itemprop="encodingFormat"]::before,
+[itemtype$="Attachment"] .body.link a::before {
   font-family: FontAwesome;
   content: "\F016"; /* Default file icon */
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content^="text/"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="text/"] h5::before {
+[itemtype$="Attachment"][data-content-type^="text/"] .body.link a::before,
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="text/"] h5::before {
   content: "\F0F6";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-patch"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-patch"] h5::before {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-patch"] h5::before {
   content: "\F1C9";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-github-pull-request"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="text/x-github-pull-request"] h5::before {
+[itemtype$="Attachment"][data-content-type="text/x-github-pull-request"] .body.link a::before,
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-github-pull-request"] h5::before {
   content: "\F09B";
 }
 
+[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-review-board-request"]::before,
+[itemtype$="Attachment"][data-content-type="text/x-review-board-request"] .body.link a::before,
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-review-board-request"] h5::before {
+  content: "\F0EA"; /* clipboard icon */
+}
+
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content^="image/"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="image/"] h5::before {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="image/"] h5::before {
   content: "\F1C5";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content^="audio/"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="audio/"] h5::before {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="audio/"] h5::before {
   content: "\F1C7";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content^="video/"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type^="video/"] h5::before {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="video/"] h5::before {
   content: "\F1C8";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content="application/pdf"]::before,
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-type="application/pdf"] h5::before {
+[itemtype$="Attachment"][data-content-type"application/pdf"] .body.link a::before,
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="application/pdf"] h5::before {
   content: "\F1C1";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/msword"], [content="application/vnd.openxmlformats-officedocument.wordprocessingml.document"])::before,
+[itemtype$="Attachment"]:-moz-any([data-content-type="application/msword"], [data-content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) .body.link a::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/msword"], [data-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) h5::before {
   content: "\F1C2";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-excel"], [content="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])::before,
+[itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-excel"], [data-content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) .body.link a::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-excel"], [data-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) h5::before {
   content: "\F1C3";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-powerpoint"], [content="application/vnd.openxmlformats-officedocument.presentationml.presentation"])::before,
+[itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-powerpoint"], [data-content-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) .body.link a::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-powerpoint"], [data-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) h5::before {
   content: "\F1C4";
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/zip"], [content="application/gzip"], [content="application/x-gzip"], [content="application/x-bzip2"])::before,
+[itemtype$="Attachment"]:-moz-any([data-content-type="application/zip"], [data-content-type="application/gzip"], [data-content-type="application/x-gzip"], [data-content-type="application/x-bzip2"]) .body.link a::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/zip"], [data-type="application/gzip"], [data-type="application/x-gzip"], [data-type="application/x-bzip2"]) h5::before {
   content: "\F1C6";
 }
@@ -2748,7 +2762,7 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 .bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"]::before {
-  margin-right: .4rem;
+  content: '' !important; /* Hide the icon */
 }
 
 .bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"]::after {
@@ -2757,10 +2771,6 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"][content="text/x-patch"]::after {
   content: 'Patch';
-}
-
-.bug-attachments .content [itemprop="attachment"] [itemprop="encodingFormat"][content="text/x-github-pull-request"]::after {
-  content: 'GitHub Pull Request';
 }
 
 .bug-attachments .content [itemprop="attachment"] [itemprop="is_obsolete"][content="true"]::after {
@@ -2862,6 +2872,26 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-attachments .content .body.patch td.code {
   width: 100%;
+}
+
+.bug-attachments .content .body.link .scrollable-area-content {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.bug-attachments .content .body.link a {
+  display: block;
+  padding: .8rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.bug-attachments .content .body.link a::before {
+  display: block;
+  padding-bottom: .8rem;
+  font-size: 8rem;
 }
 
 [data-device|="mobile"]:root .bug-history > section {
