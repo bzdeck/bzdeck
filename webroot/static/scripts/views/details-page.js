@@ -129,5 +129,5 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
   window.history.replaceState({ 'ids': this.bug_ids, 'previous': old_path }, '', new_path);
 
   // Notify the Controller
-  this.trigger(':NavigationRequested', { 'id': new_id, 'reinit': !$existing_bug });
+  this.trigger(':NavigationRequested', { new_id, 'reinit': !$existing_bug });
 };
