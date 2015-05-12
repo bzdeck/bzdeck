@@ -127,19 +127,15 @@ window.addEventListener('click', event => {
 
   if ($target.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
-    event.stopPropagation();
-    event.preventDefault();
 
-    return false;
+    return FlareTail.util.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
   if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
-    event.stopPropagation();
-    event.preventDefault();
 
-    return false;
+    return FlareTail.util.event.ignore(event);
   }
 
   if ($target.matches(':link')) {
@@ -147,19 +143,22 @@ window.addEventListener('click', event => {
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));
 
-      event.preventDefault();
-
-      return false;
+      return FlareTail.util.event.ignore(event);
     }
 
-    // Attachment link: open in a new browser tab (TEMP)
+    // Attachment link: open in a new app tab
     if ($target.hasAttribute('data-attachment-id')) {
-      window.open(BzDeck.models.server.url + '/attachment.cgi?id='
-                   + $target.getAttribute('data-attachment-id'), '_blank');
+      let attachment_id = Number($target.getAttribute('data-attachment-id')),
+          bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
+                    for (att of bug.attachments || []) if (att.id === attachment_id) bug.id][0];
 
-      event.preventDefault();
+      if (!bug_id || (FlareTail.util.ua.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+        BzDeck.router.navigate(`/attachment/${attachment_id}`);
+      } else {
+        BzDeck.router.navigate(`/bug/${bug_id}`, { attachment_id });
+      }
 
-      return false;
+      return FlareTail.util.event.ignore(event);
     }
 
     // Normal link: open in a new browser tab

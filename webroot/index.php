@@ -93,6 +93,16 @@
       <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
       </div><!-- end #tabpanel-details-TID -->
     </template><!-- end #tabpanel-details -->
+    <template id="tabpanel-attachment-template">
+      <div id="tabpanel-attachment-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-attachment-TID">
+        <article id="attachment-TID" role="article">
+          <header>
+            <h2>Attachment <span itemprop="id"></span></h2>
+          </header>
+          <div></div>
+        </article>
+      </div><!-- end #tabpanel-attachment-TID -->
+    </template><!-- end #tabpanel-attachment -->
     <template id="tabpanel-settings-template">
       <div id="tabpanel-settings" tabindex="0" role="tabpanel" aria-labelledby="tab-settings">
         <section>
@@ -610,7 +620,6 @@
         <div></div>
         <meta itemprop="name">
         <meta itemprop="contentSize">
-        <meta itemprop="contentUrl">
         <meta itemprop="encodingFormat">
       </aside>
     </template><!-- end #timeline-attachment -->
@@ -628,11 +637,11 @@
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
+      <section itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
         <header>
           <h4 itemprop="description"></h4>
           <ul>
-            <li><a itemprop="url" data-attrs="data-attachment-id"><span itemprop="name"></span></a> &nbsp; <span itemprop="contentSize"></span> &nbsp; <meta itemprop="encodingFormat"> &nbsp; <meta itemprop="is_obsolete"></li>
+            <li><span itemprop="name"></span> &nbsp; <span itemprop="contentSize"></span> &nbsp; <meta itemprop="encodingFormat"> &nbsp; <meta itemprop="is_obsolete"></li>
             <li>Created: <time itemprop="dateCreated" data-relative="false"></time> &nbsp; Modified: <time itemprop="dateModified" data-relative="false"></time></li>
             <li role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
             <li>

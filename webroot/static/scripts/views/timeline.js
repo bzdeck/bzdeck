@@ -106,8 +106,17 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
         let $media = $attachment.querySelector('img, audio, video');
 
         if ($media && !$media.src) {
+          let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-attachment-id')),
+              attachment = new BzDeck.models.Attachment(bug.attachments.find(att => att.id === att_id));
+
           $media.parentElement.setAttribute('aria-busy', 'true');
-          $media.src = $attachment.querySelector('[itemprop="contentUrl"]').itemValue;
+
+          attachment.get_data().then(result => {
+            $media.src = URL.createObjectURL(result.blob);
+            attachment.data = result.attachment.data;
+          }).then(() => {
+            $media.parentElement.removeAttribute('aria-busy');
+          });
         }
       }
     }

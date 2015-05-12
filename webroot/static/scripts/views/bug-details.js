@@ -15,6 +15,9 @@ BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
   this.$tablist = this.$bug.querySelector('[role="tablist"]');
   this.$$tablist = new this.widget.TabList(this.$tablist);
 
+  this.$tablist.querySelector('[id$="attachments"]').setAttribute('aria-disabled', !(this.bug.attachments || []).length);
+  this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
+
   this.$$tablist.bind('Selected', event => {
     let $selected = event.detail.items[0],
         $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
@@ -118,23 +121,31 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
   let mobile = FlareTail.util.ua.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
+      $attachment_tab = this.$tablist.querySelector('[id$="-tab-attachments"]'),
       $show_obsolete_checkbox = $attachments.querySelector('.list [role="checkbox"]'),
       $$show_obsolete_checkbox = new this.widget.Checkbox($show_obsolete_checkbox),
       $listbox = $attachments.querySelector('[role="listbox"]'),
       $fragment = new DocumentFragment(),
       $title = $attachments.querySelector('h4'),
-      $listitem = FlareTail.util.content.get_fragment('details-attachment-listitem').firstElementChild,
-      $content = FlareTail.util.content.get_fragment('details-attachment-content').firstElementChild;
+      $listitem = FlareTail.util.content.get_fragment('details-attachment-listitem').firstElementChild;
 
   if (!this.$$attachment_list) {
     this.$$attachment_list = new this.widget.ListBox($listbox, []);
 
     this.$$attachment_list.bind('click', event => {
-      let $selected = this.$$attachment_list.view.selected[0];
+      let $selected = this.$$attachment_list.view.selected[0],
+          attachment_id = $selected ? Number($selected.dataset.id) : undefined;
 
-      if ($selected && mobile && mql.matches) {
-        window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${$selected.dataset.id}`);
+      if (attachment_id && mobile && mql.matches) {
+        BzDeck.router.navigate(`/attachment/${attachment_id}`);
       }
+    });
+
+    this.$$attachment_list.bind('dblclick', event => {
+      let $selected = this.$$attachment_list.view.selected[0],
+          attachment_id = $selected ? Number($selected.dataset.id) : undefined;
+
+      BzDeck.router.navigate(`/attachment/${attachment_id}`);
     });
 
     this.$$attachment_list.bind('Selected', event => {
@@ -142,118 +153,9 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
         return;
       }
 
-      let att = [for (att of attachments) if (att.id === Number.parseInt(event.detail.items[0].dataset.id)) att][0],
-          $placeholder = $attachments.querySelector('.content');
+      let attachment = attachments.find(att => att.id === Number(event.detail.items[0].dataset.id));
 
-      $placeholder.innerHTML = '';
-
-      let $attachment = this.fill($placeholder.appendChild($content.cloneNode(true)), {
-        'url': `/attachment/${att.id}`,
-        'description': att.summary,
-        'name': att.file_name,
-        'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
-        'encodingFormat': att.is_patch ? 'text/x-patch' : att.content_type,
-        'is_obsolete': att.is_obsolete ? 'true' : 'false',
-        'dateCreated': att.creation_time,
-        'dateModified': att.last_change_time,
-        'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
-        'flag': [for (flag of att.flags) {
-          'creator': BzDeck.collections.users.get(flag.setter, { 'name': flag.setter }).properties,
-          'name': flag.name,
-          'status': flag.status
-        }],
-      }, {
-        'data-attachment-id': att.id,
-        'data-content-type': att.is_patch ? 'text/x-patch' : att.content_type,
-      });
-
-      let media_type = att.content_type.split('/')[0],
-          $body = $attachment.querySelector('.body'),
-          $scrollable,
-          $media,
-          $error = document.createElement('p');
-
-      this.scrollbars.add(new this.widget.ScrollBar($body));
-      $scrollable = $body.querySelector('.scrollable-area-content');
-
-      if (media_type === 'image') {
-        $media = new Image();
-        $media.alt = '';
-      }
-
-      if (media_type === 'audio' || media_type === 'video') {
-        $media = document.createElement(media_type);
-        $media.controls = true;
-    
-        if ($media.canPlayType(att.content_type) === '') {
-          $media = null; // Cannot play the media
-        }
-      }
-
-      // Render the image, video or audio
-      if ($media) {
-        $body.setAttribute('aria-busy', 'true');
-
-        this.bug.get_attachment_data(att.id).then(result => {
-          $media.src = URL.createObjectURL(result.blob);
-          $media.itemProp.add('url');
-          $scrollable.appendChild($media);
-          $body.classList.add('media');
-        }, error => {
-          $error.classList.add('error');
-          $error.textContent = error.message;
-          $error = $scrollable.appendChild($error);
-        }).then(() => {
-          $body.removeAttribute('aria-busy');
-        });
-
-        return;
-      }
-
-      // Render the patch with the Patch Viewer
-      if (att.is_patch) {
-        $body.setAttribute('aria-busy', 'true');
-
-        this.bug.get_attachment_data(att.id, 'text').then(result => {
-          FlareTail.util.event.async(() => $scrollable.appendChild(new BzDeck.helpers.PatchViewer(result.text)));
-          $body.classList.add('patch');
-        }, error => {
-          $error.classList.add('error');
-          $error.textContent = error.message;
-          $error = $scrollable.appendChild($error);
-        }).then(() => {
-          $body.removeAttribute('aria-busy');
-          FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
-        });
-
-        return;
-      }
-
-      // Show a link to the file
-      {
-        let $link = document.createElement('a');
-
-        $link.href = `/attachment/${att.id}`;
-        $link.text = {
-          'text/x-github-pull-request': 'See the GitHub Pull Request',
-          'text/x-review-board-request': 'See the Review Board Request',
-          'application/pdf': 'Open the PDF file',
-          'application/msword': 'Open the Word file',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Open the Word file',
-          'application/vnd.ms-excel': 'Open the Excel file',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Open the Excel file',
-          'application/vnd.ms-powerpoint': 'Open the PowerPoint file',
-          'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'Open the PowerPoint file',
-          'application/zip': 'Open the zip archive',
-          'application/gzip': 'Open the gzip archive',
-          'application/x-gzip': 'Open the gzip archive',
-          'application/x-bzip2': 'Open the bzip2 archive',
-        }[att.content_type] || 'Open the file';
-        $link.setAttribute('data-attachment-id', att.id);
-
-        $scrollable.appendChild($link);
-        $body.classList.add('link');
-      }
+      new BzDeck.views.Attachment(attachment, $attachments.querySelector('.content'));
     });
   }
 
@@ -291,14 +193,34 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   $listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$attachment_list.update_members();
 
-  let $first_attachment = $listbox.querySelector('[role="option"][aria-disabled="false"]');
+  $attachment_tab.setAttribute('aria-disabled', 'false');
 
   // Select the first non-obsolete attachment
-  if ($first_attachment && !mobile && !mql.matches) {
-    this.$$attachment_list.view.selected = $first_attachment;
+  {
+    let $first = $listbox.querySelector('[role="option"][aria-disabled="false"]');
+
+    if ($first && !mobile && !mql.matches) {
+      this.$$attachment_list.view.selected = $first;
+    }
   }
 
-  this.$bug.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
+  let check_state = () => {
+    let target_id = history.state ? history.state.attachment_id : undefined,
+        $target = target_id ? $listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
+
+    if ($target && !mobile && !mql.matches && location.pathname === `/bug/${this.bug.id}`) {
+      // If an attachment ID is specified in the history state, show the attachment
+      if ($target.matches('[data-obsolete="true"]')) {
+        $show_obsolete_checkbox.click();
+      }
+
+      this.$$tablist.view.selected = this.$$tablist.view.$focused = $attachment_tab;
+      this.$$attachment_list.view.selected = this.$$attachment_list.view.focused = $target;
+    }
+  };
+
+  check_state();
+  window.addEventListener('popstate', event => check_state());
 
   // Force updating the scrollbars because sometimes those are not automatically updated
   FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
@@ -366,5 +288,5 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
     }
   }
 
-  this.$bug.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
+  this.$tablist.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
 };

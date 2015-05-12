@@ -25,6 +25,7 @@ $scripts = [
   // Models
   '/static/scripts/models/base.js',
   '/static/scripts/models/account.js',
+  '/static/scripts/models/attachment.js',
   '/static/scripts/models/bug.js',
   '/static/scripts/models/server.js',
   '/static/scripts/models/user.js',
@@ -38,6 +39,8 @@ $scripts = [
   '/static/scripts/collections/users.js',
   // Views
   '/static/scripts/views/base.js',
+  '/static/scripts/views/attachment.js',
+  '/static/scripts/views/attachment-page.js',
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
   '/static/scripts/views/details-page.js',
@@ -62,6 +65,7 @@ $scripts = [
   '/static/scripts/helpers/tooltip.js',
   // Controllers
   '/static/scripts/controllers/base.js',
+  '/static/scripts/controllers/attachment-page.js',
   '/static/scripts/controllers/bug.js',
   '/static/scripts/controllers/bugzfeed.js',
   '/static/scripts/controllers/details-page.js',

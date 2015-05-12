@@ -251,7 +251,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
       $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
 
   // Do not transition the current tabpanel if the new tab is a profile or settings
-  if (['profile', 'settings'].includes(page_category)) {
+  if (['attachment', 'profile', 'settings'].includes(page_category)) {
     document.getElementById($$tablist.view.selected[0].getAttribute('aria-controls')).classList.add('fixed');
   } else {
     for (let $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {

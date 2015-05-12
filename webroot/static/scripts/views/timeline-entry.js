@@ -60,7 +60,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
   // Append the comment number to the URL when clicked
   $entry.addEventListener(click_event_type, event => {
-    if (location.pathname.startsWith('/bug/')) {
+    if (location.pathname.startsWith('/bug/') && !event.target.matches(':link')) {
       window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
     }
   });
@@ -173,9 +173,8 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
 BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   // TODO: load the attachment data via API
-  let attachment = this.data.get('attachment'),
+  let attachment = new BzDeck.models.Attachment(this.data.get('attachment')),
       media_type = attachment.content_type.split('/')[0],
-      url = `${BzDeck.models.server.url}/attachment.cgi?id=${attachment.id}`,
       $attachment = this.get_fragment('timeline-attachment').firstElementChild,
       $outer = $attachment.querySelector('div'),
       $media;
@@ -185,7 +184,6 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     'description': attachment.summary,
     'name': attachment.file_name,
     'contentSize': attachment.size,
-    'contentUrl': url,
     'encodingFormat': attachment.is_patch ? 'text/x-patch' : attachment.content_type
   }, {
     'data-attachment-id': attachment.id,
@@ -219,7 +217,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
     if (BzDeck.prefs.get('ui.timeline.display_attachments_inline') !== false) {
       $outer.setAttribute('aria-busy', 'true');
 
-      this.bug.get_attachment_data(attachment.id).then(result => {
+      attachment.get_data().then(result => {
         $media.src = URL.createObjectURL(result.blob);
         attachment.data = result.attachment.data;
       }).then(() => {
