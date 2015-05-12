@@ -15,28 +15,14 @@ BzDeck.helpers.PatchViewer = function PatchViewerHelper (str) {
 
   for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
     let lines = file.split(/\n/),
-        [filename_a, filename_b] = lines.splice(0, 2),
+        [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, '')),
         removed_ln = 0,
         added_ln = 0,
         $details = $fragment.appendChild(document.createElement('details')),
         $summary = $details.appendChild(document.createElement('summary')),
         $table = $details.appendChild(document.createElement('table'));
 
-    {
-      let match = filename_a.match(/^\-\-\-\ (?:a\/)?(.*)$/);
-
-      if (match[1] !== '/dev/null') {
-        $summary.textContent = match[1];
-      }
-    }
-
-    {
-      let match = filename_b.match(/^\+\+\+\ (?:b\/)?(.*)$/);
-
-      if (match[1] !== '/dev/null' && !$summary.textContent) {
-        $summary.textContent = match[1];
-      }
-    }
+    $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
 
     for (let line of lines) {
       let $row = $table.insertRow(),
