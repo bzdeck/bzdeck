@@ -11,7 +11,7 @@
 // TODO: implement syntax highlight
 
 BzDeck.helpers.PatchViewer = function PatchViewerHelper (str) {
-  let $fragment = new DocumentFragment;
+  let $fragment = new DocumentFragment();
 
   for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
     let lines = file.split(/\n/),
