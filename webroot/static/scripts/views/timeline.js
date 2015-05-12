@@ -33,6 +33,8 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
     entries.set(get_time(history.when), new Map([['history', history]]));
   }
 
+  entries.get(get_time(bug.creation_time)).set('user_story', bug.cf_user_story);
+
   // Sort by time
   entries = new Map([for (entry of entries) [entry[0], entry[1]]].sort((a, b) => a[0] > b[0]));
 
