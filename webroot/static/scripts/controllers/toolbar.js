@@ -57,7 +57,7 @@ BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
       bugs = BzDeck.collections.bugs.get_all();
 
   let results = [...bugs.values()].filter(bug => {
-    return words.every(word => bug.summary.toLowerCase().includes(word)) ||
+    return words.every(word => bug.summary && bug.summary.toLowerCase().includes(word)) ||
            words.every(word => bug.aliases.join().toLowerCase().includes(word)) ||
            words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
   });
