@@ -2913,7 +2913,7 @@ article[id$="preview-bug"] > .bug-info {
   border-width: .1rem 0;
   border-style: solid;
   border-color: var(--secondary-grid-border-color);
-  padding: .8rem 1.2rem;
+  padding: 1.2rem;
   text-align: left;
   color: var(--grid-header-foreground-color);
   background-color: var(--grid-header-background-color);
@@ -2948,11 +2948,12 @@ article[id$="preview-bug"] > .bug-info {
   border-color: var(--secondary-grid-border-color);
   min-width: 3ex;
   color: var(--disabled-control-foreground-color);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   text-align: right;
 }
 
 [itemtype$="Attachment"][data-content-type] .body.patch td.sign {
+  padding-right: 0;
   color: var(--disabled-control-foreground-color);
 }
 
