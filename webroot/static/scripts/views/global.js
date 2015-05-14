@@ -138,7 +138,7 @@ window.addEventListener('click', event => {
     return FlareTail.util.event.ignore(event);
   }
 
-  if ($target.matches(':link')) {
+  if ($target.matches(':-moz-any-link')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));

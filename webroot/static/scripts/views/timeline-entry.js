@@ -60,7 +60,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
   // Append the comment number to the URL when clicked
   $entry.addEventListener(click_event_type, event => {
-    if (location.pathname.startsWith('/bug/') && !event.target.matches(':link')) {
+    if (location.pathname.startsWith('/bug/') && !event.target.matches(':-moz-any-link')) {
       window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
     }
   });
