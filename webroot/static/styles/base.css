@@ -2199,7 +2199,7 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"][content="application/pdf"]::before,
-[itemtype$="Attachment"][data-content-type"application/pdf"] .body.link a::before,
+[itemtype$="Attachment"][data-content-type="application/pdf"] .body.link a::before,
 .bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="application/pdf"] h5::before {
   content: "\F1C1";
 }
