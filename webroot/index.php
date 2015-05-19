@@ -349,6 +349,10 @@
                 <div class="bug-timeline" role="region" tabindex="0">
                   <section>
                     <h3 itemprop="summary"></h3>
+                    <section class="user-story" data-if="cf_user_story">
+                      <h4>User Story</h4>
+                      <div itemprop="cf_user_story"></div>
+                    </section>
                     <div class="comments-wrapper"></div>
                   </section>
                 </div>

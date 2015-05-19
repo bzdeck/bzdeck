@@ -182,6 +182,9 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     _bug.resolution = `DUPLICATE of ${this.bug.dupe_of}`;
   }
 
+  // Add User Story as well
+  _bug.cf_user_story = this.bug.cf_user_story.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
+
   this.fill(this.$bug, _bug);
 
   // Depends on & Blocks

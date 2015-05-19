@@ -1960,6 +1960,24 @@ article[id$="preview-bug"] > .bug-info {
   padding-top: 5.2rem !important; /* Bug details */
 }
 
+.bug-timeline [itemprop="cf_user_story"] {
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  overflow: hidden;
+  padding: 1.2rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.bug-timeline [itemprop="cf_user_story"]:focus {
+  border-color: var(--base-accent-color-1);
+}
+
+.bug-timeline section.user-story > h4 {
+  margin: 1.2rem;
+}
+
 .bug-timeline [itemprop="comment"] {
   border-width: .1rem;
   border-style: solid;
@@ -1977,7 +1995,7 @@ article[id$="preview-bug"] > .bug-info {
   text-align: center;
 }
 
-.bug-timeline :-moz-any([itemprop="comment"], .read-comments-expander) {
+.bug-timeline :-moz-any([itemprop="cf_user_story"], [itemprop="comment"], .read-comments-expander) {
   position: relative;
   margin: 1.2rem 1.2rem 0;
   border-radius: .2rem;
