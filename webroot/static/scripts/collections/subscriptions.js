@@ -142,7 +142,15 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
           .then(_bugs => Promise.all(_bugs.map(_bug => {
             _bug._unread = true;
 
-            return BzDeck.collections.bugs.get(_bug.id, _bug);
+            let bug = BzDeck.collections.bugs.get(_bug.id);
+
+            if (bug) {
+              bug.merge(_bug);
+            } else {
+              bug = BzDeck.collections.bugs.get(_bug.id, _bug);
+            }
+
+            return bug;
           }))).then(bugs => { this.trigger(':Updated', { bugs }); return bugs; });
     }
 
