@@ -62,9 +62,9 @@ Header always append Content-Security-Policy "\
   default-src 'self';\
   style-src 'self' 'unsafe-inline';\
   script-src 'self' https://secure.gravatar.com;\
-  img-src 'self' 'unsafe-eval' blob: https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org https://secure.gravatar.com;\
-  media-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org;\
-  frame-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org;\
-  connect-src https://bugzilla.mozilla.org wss://bugzfeed.mozilla.org"
+  img-src 'self' 'unsafe-eval' blob: https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org https://bugzilla-dev.allizom.org/ https://*.bugzilla-dev.allizom.org/ https://secure.gravatar.com;\
+  media-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org https://bugzilla-dev.allizom.org/ https://*.bugzilla-dev.allizom.org/;\
+  frame-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org https://bugzilla-dev.allizom.org/ https://*.bugzilla-dev.allizom.org/;\
+  connect-src https://bugzilla.mozilla.org wss://bugzfeed.mozilla.org https://bugzilla-dev.allizom.org/"
 Header always append Strict-Transport-Security max-age=31536000
 Header always append X-Frame-Options DENY

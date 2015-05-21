@@ -13,6 +13,10 @@ BzDeck.controllers.Session = function SessionController () {
 
   BzDeck.config.debug = params.get('debug') === 'true';
 
+  if (params.get('server') === 'dev') {
+    BzDeck.config.servers.mozilla.url = 'https://bugzilla-dev.allizom.org';
+  }
+
   this.bootstrapping = true;
 
   BzDeck.datasources.global = new BzDeck.datasources.Global();
@@ -153,9 +157,9 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     // Activate the router
     BzDeck.router.locate();
   }).then(() => {
-    // Timer to check for updates, call every 5 minutes
+    // Timer to check for updates, call every 5 minutes or per minute if debugging is enabled
     BzDeck.controllers.global.timers.set('fetch_subscriptions',
-        window.setInterval(() => BzDeck.collections.subscriptions.fetch(), 1000 * 60 * 5));
+        window.setInterval(() => BzDeck.collections.subscriptions.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
   }).then(() => {
     // Register the app for an activity on Firefox OS
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
