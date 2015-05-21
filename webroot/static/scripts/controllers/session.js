@@ -13,10 +13,6 @@ BzDeck.controllers.Session = function SessionController () {
 
   BzDeck.config.debug = params.get('debug') === 'true';
 
-  if (params.get('server') === 'dev') {
-    BzDeck.config.servers.mozilla.url = 'https://bugzilla-dev.allizom.org';
-  }
-
   this.bootstrapping = true;
 
   BzDeck.datasources.global = new BzDeck.datasources.Global();

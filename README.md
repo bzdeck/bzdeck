@@ -42,4 +42,4 @@ If you want to run a local development server without Apache, do the following:
 
 Append `?debug=true` to any BzDeck URL to enable the debug mode. All the JavaScript files will be served separately and some debug messages will get dumped.
 
-If some API tests are required, a Bugzilla instance for testing is available at [bugzilla-dev.allizom.org](https://bugzilla-dev.allizom.org/). Ask your password on [IRC](ircs://irc.mozilla.org:6697/bmo) or sign in with your GitHub account. Once a new API key is generated on the Preferences page, open BzDeck by appending `?debug=true&server=dev` to the URL.
+If some API tests are required, a Bugzilla instance for testing is available at [bugzilla-dev.allizom.org](https://bugzilla-dev.allizom.org/). Ask your password on [IRC](ircs://irc.mozilla.org:6697/bmo) or sign in with your GitHub account. Once a new API key is generated on the Preferences page, sign out from BzDeck and load the app again by appending `?debug=true&server=dev` to the URL.

@@ -24,6 +24,16 @@ BzDeck.config = {
         'rest': '/rest/',
         // 'websocket': 'wss://bugzfeed.mozilla.org/'
       }
+    },
+    'mozilla-dev': {
+      'label': 'Mozilla Dev',
+      'timezone': -8,
+      'url': 'https://bugzilla-dev.allizom.org',
+      'endpoints': {
+        'bzapi': '/bzapi/',
+        'rest': '/rest/',
+        // 'websocket': 'wss://bugzfeed-dev.allizom.org'
+      }
     }
   },
   'app': {

@@ -8,6 +8,10 @@
  */
 
 BzDeck.views.LoginForm = function LoginFormView () {
+  // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
+  let params = new URLSearchParams(location.search.substr(1)),
+      host = params.get('server') === 'dev' ? 'mozilla-dev' : 'mozilla';
+
   this.$form = document.querySelector('#app-login form');
   this.$email = this.$form.querySelector('[name="email"]');
   this.$apikey = this.$form.querySelector('[name="apikey"]');
@@ -15,8 +19,7 @@ BzDeck.views.LoginForm = function LoginFormView () {
   this.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.$form.addEventListener('submit', event => {
-    // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
-    this.trigger(':Submit', { 'host': 'mozilla', 'email': this.$email.value, 'api_key': this.$apikey.value });
+    this.trigger(':Submit', { host, 'email': this.$email.value, 'api_key': this.$apikey.value });
     this.$email.disabled = this.$apikey.disabled = this.$button.disabled = true;
     event.preventDefault();
 
