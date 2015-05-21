@@ -30,8 +30,10 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
         this.setup_navigation();
       }
 
-      this.$bug.removeAttribute('aria-hidden');
-      this.$tabpanel.removeAttribute('aria-busy');
+      if (data.bug.summary) {
+        this.$bug.removeAttribute('aria-hidden');
+        this.$tabpanel.removeAttribute('aria-busy');
+      }
     }
   });
 
@@ -45,12 +47,15 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
 
   this.on('C:LoadingComplete', data => {
     // Check if the tabpanel still exists
-    if (this.$tabpanel) {
+    if (this.$tabpanel && data.bug.summary) {
       BzDeck.views.statusbar.show('');
       // Update UI
       this.$$bug.bug = data.bug;
       this.$$bug.render();
       this.$tab.title = this.get_tab_title(data.bug);
+
+      this.$bug.removeAttribute('aria-hidden');
+      this.$tabpanel.removeAttribute('aria-busy');
     }
   });
 

@@ -19,7 +19,6 @@ BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
 
 BzDeck.views.Bug.prototype.init = function () {
-  this.setup_toolbar();
   this.render();
 
   // Custom scrollbars
@@ -64,13 +63,15 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
 BzDeck.views.Bug.prototype.render = function () {
   this.$bug.dataset.id = this.bug.id;
 
-  // TEMP: Add users when a bug is loaded; this should be in the controller
-  BzDeck.collections.users.add_from_bug(this.bug);
-
   if (!this.bug.summary && !this.bug._update_needed) {
     // The bug is being loaded
     return;
   }
+
+  this.setup_toolbar();
+
+  // TEMP: Add users when a bug is loaded; this should be in the controller
+  BzDeck.collections.users.add_from_bug(this.bug);
 
   let _bug = {};
 
