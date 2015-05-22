@@ -125,6 +125,9 @@ BzDeck.views.Bug.prototype.render = function () {
     }
   }
 
+  // Add contributor list
+  _bug.contributor = [for (name of this.bug.contributors) BzDeck.collections.users.get(name, { name }).properties];
+
   this.fill(this.$bug, _bug);
 
   this.set_product_tooltips();

@@ -45,6 +45,10 @@ BzDeck.models.Bug = function BugModel (data) {
       'enumerable': true,
       'get': () => this.get_participants(),
     },
+    'contributors': {
+      'enumerable': true,
+      'get': () => this.get_contributors(),
+    },
   });
 
   return this.proxy();
@@ -221,4 +225,36 @@ BzDeck.models.Bug.prototype.get_participants = function () {
   }
 
   return participants;
+};
+
+/*
+ * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors.
+ *
+ * [argument] none
+ * [return] contributors (Set(String)) list of all contributor names
+ */
+BzDeck.models.Bug.prototype.get_contributors = function () {
+  let contributors = new Map(), // key: name, value: number of contributions
+      exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
+                            ...(this.data.mentors || [])]);
+
+  let add = name => {
+    if (!exclusions.has(name)) {
+      contributors.set(name, contributors.has(name) ? contributors.get(name) + 1 : 1);
+    }
+  };
+
+  for (let c of this.data.comments || []) {
+    add(c.creator);
+  }
+
+  for (let a of this.data.attachments || []) {
+    add(a.creator);
+
+    for (let f of a.flags || []) if (f.setter !== a.creator) {
+      add(f.setter);
+    }
+  }
+
+  return new Set([...contributors.keys()].sort((a, b) => contributors.get(b) - contributors.get(a)));
 };

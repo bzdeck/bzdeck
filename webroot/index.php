@@ -452,6 +452,8 @@
                     <dd><span tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                     <dt>QA</dt>
                     <dd><span tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
+                    <dt>Contributors</dt>
+                    <dd><span tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                     <dt>Cc</dt>
                     <dd><span tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
                   </dl>
