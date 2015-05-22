@@ -21,6 +21,24 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
 
     $root.setAttribute('data-current-tab', path.match(/^\/(\w+)/)[1]);
 
+    // Do not apply transition to the previous tabpanel. This is a tricky part!
+    {
+      let prev_tabpanel_id;
+
+      if (!path.startsWith('/home/') && history.state && event.detail.oldval.length &&
+          history.state.previous === this.tab_path_map.get(event.detail.oldval[0].id)) {
+        prev_tabpanel_id = event.detail.oldval[0].id.replace(/^tab-/, 'tabpanel-');
+      }
+
+      for (let $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {
+        if ($tabpanel.id === prev_tabpanel_id) {
+          $tabpanel.classList.add('fixed');
+        } else {
+          $tabpanel.classList.remove('fixed');
+        }
+      }
+    }
+
     if (location.pathname + location.search !== path) {
       BzDeck.router.navigate(path);
     }
@@ -249,15 +267,6 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
       tab_position = options.tab_position || 'last',
       $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`),
       $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
-
-  // Do not transition the current tabpanel if the new tab is a profile or settings
-  if (['attachment', 'profile', 'settings'].includes(page_category)) {
-    document.getElementById($$tablist.view.selected[0].getAttribute('aria-controls')).classList.add('fixed');
-  } else {
-    for (let $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {
-      $tabpanel.classList.remove('fixed');
-    }
-  }
 
   if (!pages) {
     pages = BzDeck.views.pages[`${page_category}_list`] = new Map();
