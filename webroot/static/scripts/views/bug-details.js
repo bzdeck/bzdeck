@@ -155,7 +155,8 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
       let attachment = attachments.find(att => att.id === Number(event.detail.items[0].dataset.id));
 
-      new BzDeck.views.Attachment(attachment, $attachments.querySelector('.content'));
+      new this.widget.ScrollBar($attachments.querySelector('.content'));
+      new BzDeck.views.Attachment(attachment, $attachments.querySelector('.content .scrollable-area-content'));
     });
   }
 

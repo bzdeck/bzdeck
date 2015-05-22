@@ -19,7 +19,9 @@ BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, attachment_i
     let attachment = this.attachment = data.attachment,
         { id, summary } = attachment;
 
-    new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('article > div'));
+    new this.widget.ScrollBar(this.$tabpanel.querySelector('article > div'));
+    new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
+
     this.$tab.title = `Attachment ${id}\n${summary}`; // l10n;
     this.update_window_title(this.$tab);
   });

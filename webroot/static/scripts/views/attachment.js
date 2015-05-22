@@ -45,13 +45,8 @@ BzDeck.views.Attachment.prototype.show = function () {
 
   let media_type = att.content_type.split('/')[0],
       $outer = $attachment.querySelector('.body'),
-      $content,
       $media,
       $error = document.createElement('p');
-
-  // Init scrollbar
-  new this.widget.ScrollBar($outer);
-  $content = $outer.querySelector('.scrollable-area-content');
 
   if (media_type === 'image') {
     $media = new Image();
@@ -74,12 +69,12 @@ BzDeck.views.Attachment.prototype.show = function () {
     att.get_data().then(result => {
       $media.src = URL.createObjectURL(result.blob);
       $media.itemProp.add('url');
-      $content.appendChild($media);
-      $outer.classList.add('media');
+      $outer.appendChild($media);
+      $attachment.classList.add('media');
     }, error => {
       $error.classList.add('error');
       $error.textContent = error.message;
-      $error = $content.appendChild($error);
+      $error = $outer.appendChild($error);
     }).then(() => {
       $outer.removeAttribute('aria-busy');
     });
@@ -92,12 +87,12 @@ BzDeck.views.Attachment.prototype.show = function () {
     $outer.setAttribute('aria-busy', 'true');
 
     att.get_data('text').then(result => {
-      FlareTail.util.event.async(() => $content.appendChild(new BzDeck.helpers.PatchViewer(result.text)));
-      $outer.classList.add('patch');
+      FlareTail.util.event.async(() => $outer.appendChild(new BzDeck.helpers.PatchViewer(result.text)));
+      $attachment.classList.add('patch');
     }, error => {
       $error.classList.add('error');
       $error.textContent = error.message;
-      $error = $content.appendChild($error);
+      $error = $outer.appendChild($error);
     }).then(() => {
       $outer.removeAttribute('aria-busy');
     });
@@ -125,7 +120,7 @@ BzDeck.views.Attachment.prototype.show = function () {
       'application/x-gzip': 'Open the gzip archive',
       'application/x-bzip2': 'Open the bzip2 archive',
     }[att.content_type] || 'Open the file';
-    $content.appendChild($link);
-    $outer.classList.add('link');
+    $outer.appendChild($link);
+    $attachment.classList.add('link');
   }
 };

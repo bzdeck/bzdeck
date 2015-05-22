@@ -99,7 +99,7 @@
           <header>
             <h2>Attachment <span itemprop="id"></span></h2>
           </header>
-          <div></div>
+          <div role="region"></div>
         </article>
       </div><!-- end #tabpanel-attachment-TID -->
     </template><!-- end #tabpanel-attachment -->
@@ -456,7 +456,7 @@
                       <ul tabindex="0" role="listbox"></ul>
                     </div>
                   </div>
-                  <div class="content">
+                  <div class="content" role="region">
                   </div>
                 </section>
               </div>
@@ -655,7 +655,7 @@
             </li>
           </ul>
         </header>
-        <div class="body" role="region"></div>
+        <div class="body"></div>
       </section>
     </template><!-- end #details-attachment-content -->
     <template id="details-change">
