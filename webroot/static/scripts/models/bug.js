@@ -196,32 +196,46 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
 BzDeck.models.Bug.prototype.get_participants = function () {
   let participants = new Map([[this.data.creator, this.data.creator_detail]]);
 
-  if (this.data.assigned_to && !participants.has(this.data.assigned_to)) {
-    participants.set(this.data.assigned_to, this.data.assigned_to_detail);
+  let add = person => {
+    if (!participants.has(person.name)) {
+      participants.set(person.name, person);
+    }
+  };
+
+  if (this.data.assigned_to) {
+    add(this.data.assigned_to_detail);
   }
 
-  if (this.data.qa_contact && !participants.has(this.data.qa_contact)) {
-    participants.set(this.data.qa_contact, this.data.qa_contact_detail);
+  if (this.data.qa_contact) {
+    add(this.data.qa_contact_detail);
   }
 
-  for (let cc of this.data.cc_detail || []) if (!participants.has(cc.name)) {
-    participants.set(cc.name, cc);
+  for (let cc_detail of this.data.cc_detail || []) {
+    add(cc_detail);
   }
 
-  for (let mentor of this.data.mentors_detail || []) if (!participants.has(mentor.name)) {
-    participants.set(mentor.name, mentor);
+  for (let mentors_detail of this.data.mentors_detail || []) {
+    add(mentors_detail);
   }
 
-  for (let c of this.data.comments || []) if (!participants.has(c.creator)) {
-    participants.set(c.creator, { 'name': c.creator });
+  for (let { 'setter': name } of this.data.flags || []) {
+    add({ name });
   }
 
-  for (let a of this.data.attachments || []) if (!participants.has(a.creator)) {
-    participants.set(a.creator, { 'name': a.creator });
+  for (let { 'creator': name } of this.data.comments || []) {
+    add({ name });
   }
 
-  for (let h of this.data.history || []) if (!participants.has(h.who)) {
-    participants.set(h.who, { 'name': h.who });
+  for (let { 'creator': name, flags } of this.data.attachments || []) {
+    add({ name });
+
+    for (let { 'setter': name } of flags || []) {
+      add({ name });
+    }
+  }
+
+  for (let { 'who': name } of this.data.history || []) {
+    add({ name });
   }
 
   return participants;
