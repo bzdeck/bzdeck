@@ -271,6 +271,11 @@
             </ul>
             <ul id="home-preview-bug-menu" role="menu" aria-expanded="false">
               <li role="none">
+                <a id="home-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
+                <a id="home-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
+              </li>
+              <li role="separator"></li>
+              <li role="none">
                 <a id="home-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="home-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
@@ -300,6 +305,11 @@
             </ul>
             <ul id="search-TID-preview-bug-menu" role="menu" aria-expanded="false">
               <li role="none">
+                <a id="search-TID-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
+                <a id="search-TID-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
+              </li>
+              <li role="separator"></li>
+              <li role="none">
                 <a id="search-TID-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="search-TID-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
@@ -328,6 +338,11 @@
               <li role="none"><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
             </ul>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
+              <li role="none">
+                <a id="bug-TID-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
+                <a id="bug-TID-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
+              </li>
+              <li role="separator"></li>
               <li role="none">
                 <a id="bug-TID-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="bug-TID-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>

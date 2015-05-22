@@ -15,7 +15,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
       click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
       last_comment_time,
-      $timeline = $bug.querySelector('.bug-timeline'),
+      $timeline = this.$timeline = $bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${$bug.id}-timeline`,
       comment_form = new BzDeck.views.TimelineCommentForm(bug, timeline_id),
       $expander,
@@ -65,7 +65,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
     // The last comment is rendered, so decrease the number
     read_comments_num--;
 
-    $expander = document.createElement('div');
+    $expander = this.$expander = document.createElement('div');
     $expander.textContent = read_comments_num === 1 ? '1 older comment'
                                                     : `${read_comments_num} older comments`; // l10n
     $expander.className = 'read-comments-expander';
@@ -82,6 +82,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
 
       $timeline.focus();
       $comments_wrapper.replaceChild($fragment, $expander);
+      delete this.$expander;
 
       return FlareTail.util.event.ignore(event);
     });
@@ -131,9 +132,9 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
       let $comment = $timeline.querySelector(`[data-comment-number="${comment_number}"]`);
 
       if ($comment) {
-        if ($expander) {
+        if (this.$expander) {
           // Expand all comments
-          $expander.dispatchEvent(new CustomEvent(click_event_type));
+          this.$expander.dispatchEvent(new CustomEvent(click_event_type));
         }
 
         $comment.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
@@ -150,3 +151,19 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
 
 BzDeck.views.Timeline.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;
+
+BzDeck.views.Timeline.prototype.expand_comments = function () {
+  if (this.$expander) {
+    this.$expander.dispatchEvent(new CustomEvent('mousedown'));
+  }
+
+  for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
+    $comment.setAttribute('aria-expanded', 'true')
+  }
+};
+
+BzDeck.views.Timeline.prototype.collapse_comments = function () {
+  for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
+    $comment.setAttribute('aria-expanded', 'false')
+  }
+};

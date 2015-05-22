@@ -1265,7 +1265,7 @@ main {
   height: 2.2rem;
 }
 
-[itemtype$="Bug"] [role="toolbar"] li {
+[itemtype$="Bug"] [role="toolbar"] ul[role="none"] li {
   display: inline-block;
   vertical-align: top;
 }

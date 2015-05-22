@@ -37,13 +37,47 @@ BzDeck.views.Bug.prototype.init = function () {
 };
 
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
-  let $menu_button = this.$bug.querySelector('[data-command="show-menu"]'),
-      $bugzilla_link = this.$bug.querySelector('[data-command="open-bugzilla"]'),
-      $tweet_link = this.$bug.querySelector('[data-command="tweet"]');
+  let $button = this.$bug.querySelector('[data-command="show-menu"]');
 
-  if ($menu_button) {
-    new this.widget.Button($menu_button);
+  if (!$button) {
+    return;
   }
+
+  new this.widget.Button($button);
+
+  let $timeline = this.$bug.querySelector('.bug-timeline'),
+      $menu = document.getElementById($button.getAttribute('aria-owns')),
+      $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]'),
+      $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]'),
+      $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]'),
+      $tweet_link = $menu.querySelector('[data-command="tweet"]');
+
+  let toggle_cc = value => {
+    BzDeck.prefs.set('ui.timeline.show_cc_changes', value);
+    document.documentElement.setAttribute('data-ui-timeline-show-cc-changes', String(value));
+  };
+
+  let handlers = {
+    'show-cc': () => toggle_cc(true),
+    'hide-cc': () => toggle_cc(false),
+    'expand-comments': () => this.timeline.expand_comments(),
+    'collapse-comments': () => this.timeline.collapse_comments(),
+  };
+
+  $menu.addEventListener('MenuOpened', event => {
+    let collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \
+                                                  [itemprop="comment"][aria-expanded="false"]').length,
+        cc_shown = !!BzDeck.prefs.get('ui.timeline.show_cc_changes');
+
+    $toggle_comments.setAttribute('aria-disabled', !this.timeline);
+    $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
+    $toggle_comments.firstElementChild.textContent = collapsed ? 'Expand All Comments' : 'Collapse All Comments';
+    $toggle_cc.setAttribute('aria-disabled', !this.timeline);
+    $toggle_cc.setAttribute('data-command', cc_shown ? 'hide-cc': 'show-cc');
+    $toggle_cc.firstElementChild.textContent = cc_shown ? 'Hide CC Changes' : 'Show CC Changes';
+  });
+
+  $menu.addEventListener('MenuItemSelected', event => (handlers[event.detail.command] || (() => {}))());
 
   if ($bugzilla_link) {
     $bugzilla_link.href = `${BzDeck.models.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
