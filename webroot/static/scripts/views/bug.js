@@ -310,7 +310,8 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
 
   if ($timeline) {
     $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes))
+             .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes));
+    $timeline.querySelector('.comments-wrapper > article:last-of-type')
              .scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   }
 
