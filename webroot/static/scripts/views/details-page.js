@@ -18,7 +18,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
 
   this.on('C:BugDataAvailable', data => {
     // Prepare the newly opened tabpanel
-    if (!this.$bug) {
+    if (!this.$bug && this.$tabpanel && data.bug.summary) {
       this.$bug = this.$tabpanel.appendChild(this.get_fragment('bug-details-template', data.bug.id).firstElementChild);
       this.$$bug = new BzDeck.views.BugDetails(this.$bug, data.bug);
       this.$tab.querySelector('label').textContent = this.bug_id;
@@ -37,26 +37,16 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
     }
   });
 
+  this.on('C:BugDataUnavailable', data => {
+    BzDeck.views.statusbar.show('ERROR: bug data is not available.'); // l10n
+  });
+
   this.on('C:Offline', data => {
     BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
   });
 
   this.on('C:LoadingStarted', data => {
     BzDeck.views.statusbar.show('Loading...'); // l10n
-  });
-
-  this.on('C:LoadingComplete', data => {
-    // Check if the tabpanel still exists
-    if (this.$tabpanel && data.bug.summary) {
-      BzDeck.views.statusbar.show('');
-      // Update UI
-      this.$$bug.bug = data.bug;
-      this.$$bug.render();
-      this.$tab.title = this.get_tab_title(data.bug);
-
-      this.$bug.removeAttribute('aria-hidden');
-      this.$tabpanel.removeAttribute('aria-busy');
-    }
   });
 
   this.on('C:LoadingError', data => {

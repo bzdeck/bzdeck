@@ -51,21 +51,29 @@ BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
 
 BzDeck.controllers.DetailsPage.prototype.init = function () {
-  let bug = BzDeck.collections.bugs.get(this.bug_id, { 'id': this.bug_id, '_unread': true });
+  let bug = BzDeck.collections.bugs.get(this.bug_id);
 
-  if (!bug.data || !bug.data.summary) {
-    // If no cache found, try to retrieve it from Bugzilla
-    if (!navigator.onLine) {
+  new Promise(resolve => {
+    if (bug) {
+      resolve(bug);
+    } else if (!navigator.onLine) {
       this.trigger(':Offline');
     } else {
       this.trigger(':LoadingStarted');
-      bug.fetch().then(bug => this.trigger(':LoadingComplete', { bug }), error => this.trigger(':LoadingError'));
+      bug = BzDeck.collections.bugs.get(this.bug_id, { 'id': this.bug_id, '_unread': true });
+      bug.fetch().then(bug => resolve(bug), error => this.trigger(':LoadingError'));
     }
-  }
-
-  this.trigger(':BugDataAvailable', { bug });
-  bug.unread = false;
-  bug._last_viewed = Date.now();
+  }).then(bug => new Promise(resolve => {
+    if (bug.data && bug.data.summary) {
+      resolve(bug);
+    } else {
+      this.trigger(':BugDataUnavailable');
+    }
+  })).then(bug => {
+    bug.unread = false;
+    bug._last_viewed = Date.now();
+    this.trigger(':BugDataAvailable', { bug });
+  });
 
   BzDeck.controllers.bugzfeed.subscribe([this.bug_id]);
 };
