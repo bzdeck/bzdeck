@@ -218,20 +218,12 @@ BzDeck.models.Bug.prototype.get_participants = function () {
     add(mentors_detail);
   }
 
-  for (let { 'setter': name } of this.data.flags || []) {
-    add({ name });
-  }
-
   for (let { 'creator': name } of this.data.comments || []) {
     add({ name });
   }
 
-  for (let { 'creator': name, flags } of this.data.attachments || []) {
+  for (let { 'creator': name } of this.data.attachments || []) {
     add({ name });
-
-    for (let { 'setter': name } of flags || []) {
-      add({ name });
-    }
   }
 
   for (let { 'who': name } of this.data.history || []) {
