@@ -30,27 +30,26 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
         this.setup_navigation();
       }
 
-      if (data.bug.summary) {
-        this.$bug.removeAttribute('aria-hidden');
-        this.$tabpanel.removeAttribute('aria-busy');
-      }
+      this.$tabpanel.removeAttribute('aria-busy');
     }
-  });
-
-  this.on('C:BugDataUnavailable', data => {
-    BzDeck.views.statusbar.show('ERROR: bug data is not available.'); // l10n
-  });
-
-  this.on('C:Offline', data => {
-    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
   });
 
   this.on('C:LoadingStarted', data => {
     BzDeck.views.statusbar.show('Loading...'); // l10n
   });
 
-  this.on('C:LoadingError', data => {
-    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
+  this.on('C:BugDataUnavailable', data => {
+    if (!this.$bug && this.$tabpanel) {
+      this.$bug = this.fill(this.get_fragment('bug-details-error-template', this.bug_id).firstElementChild, {
+        'id': this.bug_id,
+        'status': data.message,
+      }, {
+        'data-error-code': data.code,
+      });
+
+      this.$tabpanel.appendChild(this.$bug);
+      this.$tabpanel.removeAttribute('aria-busy');
+    }
   });
 };
 

@@ -325,7 +325,7 @@
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
-      <article id="bug-TID" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
+      <article id="bug-TID" role="article" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
@@ -501,6 +501,16 @@
         </div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-template -->
+    <template id="bug-details-error-template">
+      <article id="bug-TID" role="article" itemscope itemtype="http://bzdeck.com/Bug" data-attrs="data-error-code">
+        <header>
+          <h2>Bug <span itemprop="id"></span></h2>
+        </header>
+        <div>
+          <p role="status" itemprop="status"></p>
+        </div>
+      </article><!-- end #bug-TID -->
+    </template><!-- end #bug-details-error-template -->
     <template id="preview-bug-info">
       <div class="bug-info" tabindex="0" role="region">
         <dl>

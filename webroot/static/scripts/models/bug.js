@@ -65,11 +65,36 @@ BzDeck.models.Bug.prototype.constructor = BzDeck.models.Bug;
  * [return] bug (Promise -> Proxy or Error) proxified instance of the BugModel object
  */
 BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_details = true) {
-  return BzDeck.collections.bugs.fetch([this.id], include_metadata, include_details).then(bugs => {
-    this.merge(bugs[0]);
+  let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
+    BzDeck.controllers.global.request(`bug/${this.id}` + (method ? `/${method}` : ''), new URLSearchParams(param_str))
+        .then(result => resolve(result), event => reject(new Error()));
+  });
+
+  let fetchers = [include_metadata ? fetch() : Promise.resolve()];
+
+  if (include_details) {
+    fetchers.push(fetch('comment'), fetch('history'), fetch('attachment', 'exclude_fields=data'));
+  }
+
+  return Promise.all(fetchers).then(values => {
+    let _bug;
+
+    if (values[0].error) {
+      _bug = { 'id': this.id, 'error': { 'code': values[0].code, 'message': values[0].message }};
+    } else {
+      _bug = include_metadata ? values[0].bugs[0] : { 'id': this.id };
+
+      if (include_details) {
+        _bug.comments = values[1].bugs[this.id].comments;
+        _bug.history = values[2].bugs[0].history || [];
+        _bug.attachments = values[3].bugs[this.id] || [];
+      }
+    }
+
+    this.merge(_bug);
 
     return Promise.resolve(this.proxy());
-  }, error => Promise.reject(error));
+  }, error => Promise.reject(new Error('Failed to fetch bugs from Bugzilla.')));
 };
 
 /*
@@ -94,7 +119,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
   let ignore_cc = BzDeck.prefs.get('notifications.ignore_cc_changes') !== false,
       cached_time = new Date(cache.last_change_time),
       cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
-      new_comments = new Map([for (c of data.comments) if (cmp_time(c)) [new Date(c.creation_time), c]]),
+      new_comments = new Map([for (c of data.comments || []) if (cmp_time(c)) [new Date(c.creation_time), c]]),
       new_attachments = new Map([for (a of data.attachments || []) if (cmp_time(a)) [new Date(a.creation_time), a]]),
       new_history = new Map([for (h of data.history || []) if (cmp_time(h)) [new Date(h.when), h]]),
       timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());

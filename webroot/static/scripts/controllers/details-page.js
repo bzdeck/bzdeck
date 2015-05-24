@@ -54,20 +54,27 @@ BzDeck.controllers.DetailsPage.prototype.init = function () {
   let bug = BzDeck.collections.bugs.get(this.bug_id);
 
   new Promise(resolve => {
-    if (bug) {
+    if (bug && !bug.error) {
       resolve(bug);
     } else if (!navigator.onLine) {
-      this.trigger(':Offline');
+      this.trigger(':BugDataUnavailable', { 'code': 0, 'message': 'You have to go online to load the bug.' });
     } else {
       this.trigger(':LoadingStarted');
       bug = BzDeck.collections.bugs.get(this.bug_id, { 'id': this.bug_id, '_unread': true });
-      bug.fetch().then(bug => resolve(bug), error => this.trigger(':LoadingError'));
+      bug.fetch().then(bug => resolve(bug))
+          .catch(error => this.trigger(':BugDataUnavailable', { 'code': 0, 'message': 'Failed to load data.' }));
     }
   }).then(bug => new Promise(resolve => {
     if (bug.data && bug.data.summary) {
       resolve(bug);
     } else {
-      this.trigger(':BugDataUnavailable');
+      let code = bug.error ? bug.error.code : 0;
+      let message = {
+        102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
+              unpublished security issues or marketing-related topics. '
+      }[code] || 'This bug data is not available.';
+
+      this.trigger(':BugDataUnavailable', { code, message });
     }
   })).then(bug => {
     bug.unread = false;

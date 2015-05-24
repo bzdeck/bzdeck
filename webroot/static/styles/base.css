@@ -1645,7 +1645,7 @@ article[id$="preview-bug"] > div {
 }
 
 [data-device="desktop"]:root article[id$="preview-bug"] > div {
-  margin-top: 3.6rem;
+  margin-top: 3.6rem !important;
 }
 
 article[id$="preview-bug"] > .bug-info {
@@ -1679,6 +1679,31 @@ article[id$="preview-bug"] > .bug-info {
 
 [data-device|="mobile"]:root [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 [itemprop="summary"] {
   display: none;
+}
+
+[itemtype$="Bug"][data-error-code] > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+[itemtype$="Bug"][data-error-code] > div > [role="status"] {
+  margin: 1.6rem;
+  max-width: 80rem;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+[itemtype$="Bug"][data-error-code] > div > [role="status"]::before {
+  display: block;
+  height: 8.8rem;
+  font-family: FontAwesome;
+  font-size: 8rem;
+  line-height: 8rem;
+  color: var(--disabled-button-foreground-color);
+  content: '\F071';
 }
 
 [itemtype$="Bug"] > div > [role="tablist"] {
@@ -3590,7 +3615,7 @@ article[id$="preview-bug"] > .bug-info {
     width: 20rem;
   }
 
-  [data-device="desktop"]:root [itemtype$="Bug"] > div {
+  [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div {
     margin-top: -3.6rem;
   }
 
