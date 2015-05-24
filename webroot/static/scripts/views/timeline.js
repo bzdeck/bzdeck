@@ -154,7 +154,7 @@ BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;
 
 BzDeck.views.Timeline.prototype.expand_comments = function () {
   if (this.$expander) {
-    this.$expander.dispatchEvent(new CustomEvent('mousedown'));
+    this.$expander.dispatchEvent(new CustomEvent(FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown'));
   }
 
   for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
