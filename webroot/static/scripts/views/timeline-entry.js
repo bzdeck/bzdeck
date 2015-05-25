@@ -72,11 +72,12 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
         $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-comment`),
         $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
-    $textbox.focus();
     $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
+    // Move focus on the textbox. Use async to make sure the event always works
+    FlareTail.util.event.async(() => $textbox.focus());
     // Trigger an event to do something. Disable async to make sure the following lines work
     FlareTail.util.event.trigger($textbox, 'input', {}, false);
-    // Scroll unti the caret is visible
+    // Scroll to make sure the comment is visible
     $tabpanel.scrollTop = $tabpanel.scrollHeight;
     $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
   };
