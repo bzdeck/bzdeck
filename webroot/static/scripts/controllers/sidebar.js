@@ -64,7 +64,8 @@ BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
 };
 
 BzDeck.controllers.Sidebar.prototype.toggle_unread = function () {
-  let number = [for (bug of BzDeck.collections.subscriptions.get_all().values()) if (bug.unread) bug].length;
+  let all_bugs = BzDeck.collections.subscriptions.get_all().values(),
+      number = [for (bug of all_bugs) if (bug.unread && bug.is_new) bug].length;
 
   this.trigger(':UnreadToggled', { number });
 };
