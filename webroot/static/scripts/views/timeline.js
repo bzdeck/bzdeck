@@ -80,6 +80,11 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
         data.set('rendered', true);
       }
 
+      // Collapse comments by default
+      for (let $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
+        $comment.setAttribute('aria-expanded', 'false');
+      }
+
       $timeline.focus();
       $comments_wrapper.replaceChild($fragment, $expander);
       delete this.$expander;

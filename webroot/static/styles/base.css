@@ -1991,6 +1991,14 @@ article[id$="preview-bug"] > .bug-info {
   border-color: var(--secondary-region-border-color);
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] {
+  display: block;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] + [itemprop="comment"][aria-expanded="false"] {
+  margin-top: -.1rem;
+}
+
 .bug-timeline .read-comments-expander {
   display: block;
   border-width: .1rem;
@@ -2011,6 +2019,8 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 .bug-timeline [itemprop="comment"]:focus {
+  position: relative;
+  z-index: 10; /* Show all borders */
   border-color: var(--base-accent-color-1);
 }
 
@@ -2025,10 +2035,18 @@ article[id$="preview-bug"] > .bug-info {
   z-index: 10;
   overflow: hidden;
   border-radius: .2rem; /* Same as the comment box */
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header {
   background-color: var(--content-background-color-alpha); /* Because of position: sticky, the comment text go under the header */
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] :not(header) {
+  pointer-events: none !important; /* Only the <header> should be clickable */
+}
+
 .bug-timeline [itemprop="comment"] header .meta {
+  display: flex;
   flex: auto;
   overflow: hidden;
   min-height: 4rem;
@@ -2037,12 +2055,25 @@ article[id$="preview-bug"] > .bug-info {
   pointer-events: none;
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header .meta {
+  flex-direction: column;
+}
+
 .bug-timeline [itemprop="comment"] header [itemprop="author"] {
   display: inline-block;
   position: relative;
   z-index: 10;
   padding-left: 4.8rem;
   line-height: 1;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="author"] {
+  flex: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] {
+  flex: auto;
+  padding-right: .8rem;
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
@@ -2091,19 +2122,24 @@ article[id$="preview-bug"] > .bug-info {
 
 .bug-timeline [itemprop="comment"] header [itemprop="datePublished"] {
   display: block;
-  margin: 0 0 0 4.8rem;
+  flex: none;
   pointer-events: auto; /* Show the tooltip */
 }
 
-.bug-timeline [itemprop="comment"] header [role="toolbar"] {
-  float: right;
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="datePublished"] {
+  margin: 0 0 0 4.8rem;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] {
-  display: block;
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="datePublished"] {
+  margin: .4rem 0;
+  line-height: 1;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] header ~ * {
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [role="toolbar"] {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header ~ :not([itemprop="text"]) {
   display: none;
 }
 
@@ -2115,6 +2151,31 @@ article[id$="preview-bug"] > .bug-info {
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="text"]:empty {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+  position: relative;
+  z-index: 10;
+  margin-left: 4.8rem;
+  height: 1.6rem;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] > :first-child {
+  overflow: hidden;
+  height: 1.6rem;
+  color: var(--disabled-button-foreground-color);
+  line-height: 1.6rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] > :first-child a {
+  color: var(--disabled-button-foreground-color);
+  text-decoration: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] > :not(:first-child) {
   display: none;
 }
 
@@ -3666,6 +3727,10 @@ article[id$="preview-bug"] > .bug-info {
     font-size: 2rem;
   }
 
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+    margin-top: -2.8rem;
+  }
+  
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
     margin: 0 1.2rem 1.2rem;
   }
@@ -3874,6 +3939,14 @@ article[id$="preview-bug"] > .bug-info {
   [data-device|="mobile"]:root [id$="timeline-comment-form"] {
     margin: .8rem;
     width: calc(100% - 1.6rem)
+  }
+
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+    margin-top: -2.4rem;
+  }
+  
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] .roles {
+    display: none;
   }
 
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
