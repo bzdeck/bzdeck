@@ -2139,7 +2139,7 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
   overflow: hidden;
   padding-top: 0 !important;
   font-size: 1.25rem;
@@ -2167,22 +2167,22 @@ article[id$="preview-bug"] > .bug-info {
   white-space: nowrap;
 }
 
-[data-ui-timeline-font-family="monospace"]:root .bug-timeline [itemprop="comment"] [itemprop="text"] {
+[data-ui-timeline-font-family="monospace"]:root .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
   font-family: FiraMono, monospace;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] p {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p {
   margin: 1.2rem 0;
   white-space: pre-wrap;
   -moz-user-select: text;
   cursor: text;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] p:first-of-type {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:first-of-type {
   margin-top: 0;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] p:last-of-type {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:last-of-type {
   margin-bottom: 0;
 }
 
@@ -2195,19 +2195,20 @@ article[id$="preview-bug"] > .bug-info {
   content: ' ';
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] blockquote {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] blockquote {
   margin: 0;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="true"] [itemprop="text"] blockquote {
-  border-width: 0 0 0 .2rem;
-  border-style: solid;
-  border-color: var(--region-border-color);
+  border-left: .2rem solid var(--region-border-color);
   padding-left: 1rem;
   color: var(--secondary-content-foreground-color);
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"] a {
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] blockquote {
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] a {
   -moz-user-select: text;
 }
 
