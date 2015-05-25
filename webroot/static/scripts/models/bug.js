@@ -195,18 +195,44 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
  * [return] new (Boolean) whether the bug is new
  */
 BzDeck.models.Bug.prototype.detect_if_new = function () {
-  if (this.unread || new Date(this.data.last_change_time) > Date.now() - 1000 * 60 * 60 * 24 * 11) {
+  let viewed = this.data._last_viewed,
+      changed = new Date(this.data.last_change_time).getTime(),
+      is_new = changed > Date.now() - 1000 * 60 * 60 * 24 * 11;
+
+  // Check for new comments
+  if (viewed && [for (c of this.data.comments || []) if (new Date(c.creation_time) > viewed) c].length) {
+    return true;
+  }
+
+  // Check for new attachments
+  if (viewed && [for (a of this.data.attachments || []) if (new Date(a.creation_time) > viewed) a].length) {
     return true;
   }
 
   // Ignore CC Changes option
-  // At first startup, bug details are not loaded yet, so check if the comments exist
-  if (BzDeck.prefs.get('notifications.ignore_cc_changes') !== false && this.data._last_viewed) {
-    // Check if there is a comment, attachment or non-CC change(s) on the last modified time
-    return [for (c of this.data.comments || []) if (new Date(c.creation_time) > this.data._last_viewed) c].length ||
-           [for (a of this.data.attachments || []) if (new Date(a.creation_time) > this.data._last_viewed) a].length ||
-           [for (h of this.data.history || []) if (new Date(h.when) > this.data._last_viewed &&
-               [for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length;
+  if (viewed && BzDeck.prefs.get('notifications.ignore_cc_changes') !== false) {
+    for (let h of this.data.history || []) {
+      let time = new Date(h.when).getTime(), // Should be an integer for the following === comparison
+          non_cc_changes = !![for (c of h.changes) if (c.field_name !== 'cc') c].length;
+
+      if (time > viewed && non_cc_changes) {
+        return true;
+      }
+
+      if (time === changed && !non_cc_changes) {
+        return false;
+      }
+    }
+  }
+
+  // Check the unread status
+  if (is_new && this.unread) {
+    return true;
+  }
+
+  // Check the date
+  if (is_new) {
+    return true;
   }
 
   return false;
