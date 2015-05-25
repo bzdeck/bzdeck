@@ -79,7 +79,7 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
   return Promise.all(fetchers).then(values => {
     let _bug;
 
-    if (values[0].error) {
+    if (values[1].error) { // values[0] is an empty resolve when include_metadata is false
       _bug = { 'id': this.id, 'error': { 'code': values[0].code, 'message': values[0].message }};
     } else {
       _bug = include_metadata ? values[0].bugs[0] : { 'id': this.id };
