@@ -1186,6 +1186,7 @@ main {
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
   overflow: hidden;
   box-sizing: padding-box;
+  padding: 0;
   font-size: 2rem;
   line-height: 4rem;
   font-weight: 300;
@@ -2775,8 +2776,12 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
-.bug-attachments [role="option"] [itemprop="description"] {
-  right: 4.8rem;
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"] ~ [itemprop="description"] {
+  right: 4.8rem; /* Add some space for the obsolete and file type icons */
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="false"] ~ [itemprop="description"] {
+  right: 3.2rem; /* Add some space for the file type icon only */
 }
 
 .bug-attachments [role="option"] [itemprop="dateModified"] {
@@ -2943,6 +2948,7 @@ article[id$="preview-bug"] > .bug-info {
 [itemtype$="Attachment"][data-content-type] h4 {
   margin: 1.2rem;
   font-size: 1.6rem;
+  line-height: 1.25;
 }
 
 [itemtype$="Attachment"][data-content-type] > header > ul {

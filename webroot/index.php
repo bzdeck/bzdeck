@@ -652,6 +652,8 @@
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-disabled data-id" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
+        <meta itemprop="encodingFormat">
+        <meta itemprop="is_obsolete">
         <span itemprop="creator" itemscope itemtype="http://schema.org/Person">
           <img alt="" itemprop="image">
           <meta itemprop="email">
@@ -659,8 +661,6 @@
         <span itemprop="id"></span>
         <span itemprop="description"></span>
         <time data-simple="true" itemprop="dateModified"></time>
-        <meta itemprop="encodingFormat">
-        <meta itemprop="is_obsolete">
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
