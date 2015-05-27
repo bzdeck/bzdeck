@@ -324,13 +324,10 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
 
     bugs.forEach(bug => set_tooltops(bug));
 
-    if (lookup_ids.size) {
-      BzDeck.collections.bugs.fetch(lookup_ids).then(_bugs => {
-        _bugs.forEach(_bug => {
-          _bug._unread = true;
-          set_tooltops(BzDeck.collections.bugs.get(_bug.id, _bug));
-        });
-      });
+    // BzDeck.collections.bugs.fetch() fails when one or more bugs in the result are private, so retrieve each bug
+    // individually (Bug 1169040)
+    for (let id of lookup_ids) {
+      BzDeck.collections.bugs.get(id, { id, '_unread': true }).fetch(true, false).then(bug => set_tooltops(bug));
     }
   }
 };
