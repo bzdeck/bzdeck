@@ -6,5 +6,6 @@
 
 # Require PHP 5.x
 
-port=8000
-php -S localhost:$port -t webroot dev-router.php
+PORT=8000
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+php -S localhost:$PORT -t $SCRIPT_DIR/../webroot $SCRIPT_DIR/dev-router.php

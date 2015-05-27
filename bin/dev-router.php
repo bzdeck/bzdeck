@@ -14,7 +14,7 @@ if (strpos($_SERVER['REQUEST_URI'], '.woff2') !== false) {
   return false;
 }
 
-if (file_exists(__DIR__ . '/webroot' . $_SERVER['REQUEST_URI'])) {
+if (file_exists(__DIR__ . '/../webroot' . $_SERVER['REQUEST_URI'])) {
   // Serve the requested resource as-is.
   return false;
 }
