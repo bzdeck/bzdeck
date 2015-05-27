@@ -191,14 +191,19 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
   $attachment_tab.setAttribute('aria-disabled', 'false');
 
-  // Select the first non-obsolete attachment
-  {
+  // Select the first non-obsolete attachment when the Attachment tab is selected for the first time
+  this.$$tablist.bind('Selected', event => {
+    if (mobile || mql.matches || event.detail.items[0] !== $attachment_tab ||
+        $listbox.querySelector('[role="option"][aria-selected="true"]')) { // Already selected
+      return;
+    }
+  
     let $first = $listbox.querySelector('[role="option"][aria-disabled="false"]');
 
-    if ($first && !mobile && !mql.matches) {
+    if ($first) {
       this.$$attachment_list.view.selected = $first;
     }
-  }
+  });
 
   let check_state = () => {
     let target_id = history.state ? history.state.attachment_id : undefined,
