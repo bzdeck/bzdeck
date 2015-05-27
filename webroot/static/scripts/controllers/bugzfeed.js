@@ -1,13 +1,8 @@
-/**
- * Bugzilla Push Notifications support
- * Copyright © 2015 Kohei Yoshino. All rights reserved.
- *
- * See https://wiki.mozilla.org/BMO/ChangeNotificationSystem for the details of the API.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+// See https://wiki.mozilla.org/BMO/ChangeNotificationSystem for the details of the API.
 
 BzDeck.controllers.BugzfeedClient = function BugzfeedClient () {
   this.subscription = new Set();
