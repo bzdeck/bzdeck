@@ -307,14 +307,26 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
                              Number.parseInt($element.getAttribute('data-bug-id'))]);
 
   let set_tooltops = bug => {
-    if (bug && bug.summary) {
-      let title = `${bug.status} ${bug.resolution || ''} – ${bug.summary}`;
+    let title;
 
-      for (let $element of this.$bug.querySelectorAll(`[data-bug-id="${bug.id}"]`)) {
-        $element.title = title;
-        $element.dataset.status = bug.status;
-        $element.dataset.resolution = bug.resolution || '';
-      }
+    if (!bug) {
+      return;
+    }
+
+    if (bug.summary) {
+      title = bug.status + (bug.resolution ? ` ${bug.resolution}` : '') + ` – ${bug.summary}`;
+    }
+
+    if (bug.error) {
+      title = {
+        102: 'You are not authorized to access this bug.',
+      }[bug.error.code] || 'This bug data is not available.';
+    }
+
+    for (let $element of this.$bug.querySelectorAll(`[data-bug-id="${bug.id}"]`)) {
+      $element.title = title;
+      $element.dataset.status = bug.status;
+      $element.dataset.resolution = bug.resolution || '';
     }
   };
 
