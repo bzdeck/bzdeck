@@ -8,6 +8,8 @@
 BzDeck.helpers.PatchViewer = function PatchViewerHelper (str) {
   let $fragment = new DocumentFragment();
 
+  str = str.replace(/\r\n?/g, '\n');
+
   for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
     let lines = file.split(/\n/),
         [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, '')),
