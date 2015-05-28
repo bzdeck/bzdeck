@@ -73,7 +73,6 @@ BzDeck.controllers.DetailsPage.prototype.init = function () {
     }
   })).then(bug => {
     bug.unread = false;
-    bug._last_viewed = Date.now();
     this.trigger(':BugDataAvailable', { bug });
   });
 

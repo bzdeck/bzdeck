@@ -80,7 +80,6 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
 
     if (bug) {
       bug.unread = false;
-      bug._last_viewed = Date.now();
       this.trigger(':BugDataAvailable', { bug });
     } else {
       this.trigger(':BugDataUnavailable');
