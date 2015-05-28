@@ -42,8 +42,9 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       $comment_body = $entry.querySelector('[itemprop="text"]'),
       $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
 
-  // TEMP: the message for a duplicated bug is currently only in the comment.text field
-  let text = comment.text.includes('has been marked as a duplicate of this bug')
+  // Duplicated bug changes are only in the text field, while the raw_text field could be empty for an attachment
+  // without a comment, so simply check the text first. It may not work with non-English Bugzilla instances though.
+  let text = comment.text.includes('has been marked as a duplicate of')
            ? comment.text : comment.raw_text;
 
   comment.number = this.data.get('comment_number');
