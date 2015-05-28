@@ -549,7 +549,7 @@
       <article tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change" role="article">
         <header>
           <div class="meta">
-            <span role="link" itemprop="author" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+            <span role="link" itemprop="author" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
             <span itemprop="how"></span>
             <time itemprop="datePublished"></time>
           </div>
@@ -730,7 +730,7 @@
       </li>
     </template><!-- end #person-finder-item -->
     <template id="person-with-image">
-      <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+      <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
   </head>
   <body role="application">

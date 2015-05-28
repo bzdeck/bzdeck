@@ -2373,7 +2373,7 @@ article[id$="preview-bug"] > .bug-info {
   margin-left: -2.2rem;
 }
 
-.bug-timeline [itemprop="change"] [itemprop="name"] {
+.bug-timeline [itemprop="change"] [itemprop="givenName"] {
   font-weight: 500;
   white-space: nowrap;
 }

@@ -276,15 +276,11 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
     field += ' flag'; // l10n
   }
 
-  this.fill($changer, {
-    'name': changer.first_name,
-    'email': changer.email
-  }, {
+  this.fill($changer, changer.properties, {
     'title': `${changer.original_name || changer.name}\n${changer.email}`
   });
 
   $change.setAttribute('data-change-field', change.field_name);
-  $changer.querySelector('[itemprop="image"]').itemValue = changer.image;
   FlareTail.util.datetime.fill_element($time, time);
 
   let _reviews = { 'added': new Set(), 'removed': new Set() },

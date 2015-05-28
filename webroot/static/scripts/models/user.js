@@ -63,7 +63,7 @@ BzDeck.models.User = function UserModel (data) {
     // Return basic info
     'properties': {
       'enumerable': true,
-      'get': () => ({ 'name': this.name, 'email': this.email, 'image': this.image })
+      'get': () => ({ 'name': this.name, 'givenName': this.first_name, 'email': this.email, 'image': this.image })
     },
   });
 
