@@ -22,8 +22,18 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
+  if (!navigator.onLine) {
+    return Promise.reject(new Error('You have to go online to load data.')); // l10n
+  }
+
   if (options.api_key || options.auth) {
-    xhr.setRequestHeader('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
+    let key = options.api_key || BzDeck.models.account.data.api_key;
+
+    if (!key) {
+      return Promise.reject(new Error('Your API key is required to authenticate against Bugzilla but not found.'));
+    }
+
+    xhr.setRequestHeader('X-Bugzilla-API-Key', key);
   }
 
   for (let [type, listener] of Iterator(options.listeners || {})) {
@@ -43,12 +53,7 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
 
     xhr.addEventListener('error', event => reject(new Error('Connection error.')));
     xhr.addEventListener('abort', event => reject(new Error('Connection aborted.')));
-
-    if (navigator.onLine) {
-      xhr.send(options.data ? JSON.stringify(options.data) : null);
-    } else {
-      reject(new Error('You have to go online to load data.')); // l10n
-    }
+    xhr.send(options.data ? JSON.stringify(options.data) : null);
   });
 };
 

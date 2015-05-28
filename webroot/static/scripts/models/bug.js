@@ -170,13 +170,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
 BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   // Update the last-visited timestamp on Bugzilla
   if (type === 'unread' && value === false) {
-    new Promise((resolve, reject) => {
-      if (navigator.onLine && BzDeck.models.account.data.api_key) {
-        resolve();
-      } else {
-        reject(new Error('The API key is not found'));
-      }
-    }).then(() => BzDeck.controllers.global.request('bug_user_last_visit/' + this.id, null, {
+    BzDeck.controllers.global.request('bug_user_last_visit/' + this.id, null, {
       'method': 'POST',
       'auth': true,
     }).then(result => {
@@ -185,7 +179,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
       } else {
         return Promise.reject(new Error('The last-visited timestamp could not be retrieved'));
       }
-    })).then(timestamp => {
+    }).then(timestamp => {
       return new Date(timestamp).getTime();
     }).catch(error => {
       // Fallback

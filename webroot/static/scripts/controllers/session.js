@@ -49,12 +49,6 @@ BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { 'status': 'ForcingLogin', 'message': '' });
 
   this.on('LoginFormView:Submit', data => {
-    if (!navigator.onLine) {
-      this.trigger(':Error', { 'message': 'You have to go online to sign in.' }); // l10n
-
-      return;
-    }
-
     if (!this.bootstrapping) {
       // User is trying to re-login
       this.relogin = true;
