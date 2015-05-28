@@ -63,7 +63,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
       index = this.bug_ids.indexOf(this.bug_id),
       prev = this.bug_ids[index - 1],
       next = this.bug_ids[index + 1],
-      assign_key_binding = (key, command) => FlareTail.util.kbd.assign(this.$bug, { key: command });
+      assign_key_binding = (key, command) => FlareTail.util.kbd.assign(this.$bug, { [key]: command });
 
   let set_button_tooltip = (id, $$button) => {
     let bug = BzDeck.collections.bugs.get(id);
