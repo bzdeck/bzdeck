@@ -640,14 +640,12 @@
       </tr>
     </template>
     <template id="timeline-attachment">
-      <aside itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject" data-attrs="data-content-type">
-        <a itemprop="url" data-attrs="data-attachment-id">
-          <h5 itemprop="description"></h5>
-        </a>
-        <div></div>
+      <aside role="link" itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
+        <h5 itemprop="description"></h5>
         <meta itemprop="name">
         <meta itemprop="contentSize">
         <meta itemprop="encodingFormat">
+        <div></div>
       </aside>
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">

@@ -2222,15 +2222,10 @@ article[id$="preview-bug"] > .bug-info {
   border-style: solid;
   border-color: var(--secondary-region-border-color);
   padding: 0 !important;
+  width: auto;
+  color: var(--hyperlink-text-foreground-color); /* Looks like a link */
   background-color: var(--secondary-region-background-color);
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"] a {
-  display: block;
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"] a * {
-  pointer-events: none;
+  cursor: pointer; /* Looks like a link */
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
@@ -2244,6 +2239,10 @@ article[id$="preview-bug"] > .bug-info {
   font-family: FontAwesome;
   text-align: center;
   content: "\F016";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="encodingFormat"] {
+  display: none;
 }
 
 [itemtype$="Attachment"] [itemprop="encodingFormat"]::before,

@@ -177,7 +177,6 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
       $media;
 
   this.fill($attachment, {
-    'url': `/attachment/${attachment.id}`,
     'description': attachment.summary,
     'name': attachment.file_name,
     'contentSize': attachment.size,
