@@ -1241,10 +1241,6 @@ main {
   line-height: 3.6rem;
   font-weight: 300;
   font-style: italic;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  pointer-events: auto;
-  -moz-user-select: text;
 }
 
 [itemtype$="Bug"] [role="toolbar"] {
@@ -1670,15 +1666,6 @@ article[id$="preview-bug"] > .bug-info {
   display: flex !important; /* Show the header */
 }
 
-[id|="tabpanel-details"][role="tabpanel"] > article > header > h2 {
-  pointer-events: auto;
-  -moz-user-select: text;
-}
-
-[data-device|="mobile"]:root [id|="tabpanel-details"][role="tabpanel"] > article > header > h2 [itemprop="summary"] {
-  display: none;
-}
-
 [itemtype$="Bug"][data-error-code] > div {
   display: flex;
   flex-direction: column;
@@ -1984,6 +1971,7 @@ article[id$="preview-bug"] > .bug-info {
   position: static;
   padding: 1.2rem 1.2rem 0;
   line-height: 1.4;
+  -moz-user-select: text;
 }
 
 [data-device|="mobile"]:root .bug-timeline:not([id="home-preview-bug-timeline"]) h3[itemprop="summary"] {
