@@ -407,6 +407,7 @@
                     <dt>Whiteboard</dt><dd itemprop="whiteboard"></dd>
                     <dt>URL</dt><dd><a role="link" itemprop="url"></a></dd>
                     <dt>See Also</dt><dd><ul><li><a role="link" itemprop="see_also"></a></li></ul></dd>
+                    <dt>Duplicates</dt><dd><ul><li role="button" itemprop="duplicate"></li></ul></dd>
                     <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
                   </dl>
                 </section>
