@@ -242,7 +242,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
   let cell_content = (field, content) =>
         ['blocks', 'depends_on'].includes(field)
                 ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
-                : content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+                : FlareTail.util.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
 
   if (!history) {
     history = this.bug.history;
