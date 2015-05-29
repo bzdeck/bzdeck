@@ -10,6 +10,10 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
   this.bug = bug;
   this.data = data;
 
+  if (data.get('user_story')) {
+    $comment = $fragment.appendChild(this.create_user_story_entry(timeline_id));
+  }
+
   if (data.get('comment')) {
     $comment = $fragment.appendChild(this.create_comment_entry(timeline_id));
   }
@@ -27,6 +31,142 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
 
 BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
+
+BzDeck.views.TimelineEntry.prototype.create_user_story_entry = function (timeline_id) {
+  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+      comment = this.data.get('comment'),
+      author = BzDeck.collections.users.get(comment.creator, { 'name': comment.creator }),
+      time = comment.creation_time,
+      $entry = this.get_fragment('timeline-comment').firstElementChild,
+      $header = $entry.querySelector('header'),
+      $author = $entry.querySelector('[itemprop="author"]'),
+      $roles = $author.querySelector('.roles'),
+      $time = $entry.querySelector('[itemprop="datePublished"]'),
+      $reply_button = $entry.querySelector('[data-command="reply"]'),
+      $comment_body = $entry.querySelector('[itemprop="text"]'),
+      $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
+
+  let text = "User Story\n\n" + this.data.get('user_story')
+
+  comment.number = this.data.get('comment_number');
+  $entry.id = `${timeline_id}-comment-${comment.id}`;
+  $entry.dataset.id = comment.id;
+  $entry.dataset.time = (new Date(time)).getTime();
+  $entry.setAttribute('data-comment-number', comment.number);
+  $comment_body.innerHTML = text ? BzDeck.controllers.global.parse_comment(text) : '';
+
+  // Append the comment number to the URL when clicked
+  $entry.addEventListener(click_event_type, event => {
+    if (location.pathname.startsWith('/bug/') && !event.target.matches(':link')) {
+      window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
+    }
+  });
+
+  let reply = () => {
+    let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
+        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
+        quote = `${quote_header}\n${quote_lines.join('\n')}`,
+        $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-comment`),
+        $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
+
+    $textbox.focus();
+    $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
+    // Trigger an event to do something. Disable async to make sure the following lines work
+    FlareTail.util.event.trigger($textbox, 'input', {}, false);
+    // Scroll unti the caret is visible
+    $tabpanel.scrollTop = $tabpanel.scrollHeight;
+    $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
+  };
+
+  // Collapse/expand the comment
+  let collapse_comment = () => $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
+
+  // Focus management
+  let move_focus = shift => {
+    if (!$entry.matches(':focus')) {
+      $entry.focus();
+      $entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
+
+      return;
+    }
+
+    let ascending = BzDeck.prefs.get('ui.timeline.sort.order') !== 'descending',
+        entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
+
+    entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+    entries = entries.slice(entries.indexOf($entry) + 1);
+
+    // Focus the next (or previous) visible entry
+    for (let $_entry of entries) if ($_entry.clientHeight) {
+      $_entry.focus();
+      $_entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
+
+      break;
+    }
+  };
+
+  // Activate the buttons
+  $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
+
+  // Assign keyboard shortcuts
+  FlareTail.util.kbd.assign($entry, {
+    'R': event => reply(),
+    // Collapse/expand the comment
+    'C': event => collapse_comment(),
+    // Focus management
+    'ArrowUp|PageUp|Shift+Space': event => move_focus(true),
+    'ArrowDown|PageDown|Space': event => move_focus(false),
+  });
+
+  // The author's role(s)
+  {
+    let roles = new Set();
+
+    if (author.email === this.bug.creator) {
+      roles.add('Reporter'); // l10n
+    }
+
+    if (author.email === this.bug.assigned_to) {
+      roles.add('Assignee'); // l10n
+    }
+
+    if (this.bug.mentors.includes(author.email)) {
+      roles.add('Mentor'); // l10n
+    }
+
+    if (author.email === this.bug.qa_contact) {
+      roles.add('QA'); // l10n
+    }
+
+    for (let role of roles) {
+      let $role = document.createElement('span');
+
+      $role.itemProp.add('role'); // Not in Schema.org
+      $role.itemValue = role;
+      $roles.appendChild($role);
+    }
+  }
+
+  $author.title = `${author.original_name || author.name}\n${author.email}`;
+  $author.querySelector('[itemprop="name"]').itemValue = author.name;
+  $author.querySelector('[itemprop="email"]').itemValue = author.email;
+  $author.querySelector('[itemprop="image"]').itemValue = author.image;
+  FlareTail.util.datetime.fill_element($time, time);
+
+  // Mark unread
+  $entry.setAttribute('data-unread', 'true');
+
+  // Click the header to collapse/expand the comment
+  // TODO: Save the state in DB
+  $entry.setAttribute('aria-expanded', 'true');
+  $header.addEventListener(click_event_type, event => {
+    if (event.target === $header) {
+      collapse_comment();
+    }
+  });
+
+  return $entry;
+};
 
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
   let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
