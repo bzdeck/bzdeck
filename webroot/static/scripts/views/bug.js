@@ -199,24 +199,14 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     return;
   }
 
-  let duplicates = [],
-      get_person = name => BzDeck.collections.users.get(name, { name }).properties;
-
-  // Duplicates are currently not part of the API, so parse the comments to generate the list
-  for (let comment of this.bug.comments || []) {
-    let match = comment.text.match(/Bug (\d+) has been marked as a duplicate of this bug/);
-
-    if (match) {
-      duplicates.push(Number(match[1]));
-    }
-  }
+  let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
   let _bug = {
     'cc': [for (name of this.bug.cc) get_person(name)],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,
     'see_also': this.bug.see_also,
-    'duplicate': duplicates,
+    'duplicate': this.bug.duplicates,
     'flag': [for (flag of this.bug.flags) {
       'creator': get_person(flag.setter),
       'name': flag.name,

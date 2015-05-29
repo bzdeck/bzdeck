@@ -32,6 +32,10 @@ BzDeck.models.Bug = function BugModel (data) {
       // Support for multiple aliases on Bugzilla 5.0+
       'get': () => this.data.alias ? (Array.isArray(this.data.alias) ? this.data.alias : [this.data.alias]) : [],
     },
+    'duplicates': {
+      'enumerable': true,
+      'get': () => this.get_duplicates(),
+    },
     'is_new': {
       'enumerable': true,
       'get': () => this.detect_if_new(),
@@ -204,6 +208,27 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   this.trigger(':AnnotationUpdated', { 'bug': this.proxy(), type, value });
 
   return true;
+};
+
+/*
+ * Get the duplicated bug list for this bug. The duplicates are currently not part of the API, so parse the comments to
+ * generate the list. This list could be empty if the comments are not fetched yet.
+ *
+ * [argument] none
+ * [return] duplicates (Array(Number)) duplicate bug list
+ */
+BzDeck.models.Bug.prototype.get_duplicates = function () {
+  let duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
+
+  for (let comment of this.data.comments || []) {
+    let match = comment.text.match(/Bug (\d+) has been marked as a duplicate of this bug/);
+
+    if (match) {
+      duplicates.add(Number(match[1]));
+    }
+  }
+
+  return [...duplicates].sort();
 };
 
 /*
