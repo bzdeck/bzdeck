@@ -143,12 +143,13 @@ window.addEventListener('click', event => {
 
     // Attachment link: open in a new app tab
     if ($target.hasAttribute('data-attachment-id')) {
-      let attachment_id = Number($target.getAttribute('data-attachment-id')),
-          attachment_type = $target.properties['encodingFormat'][0].itemValue,
+      let props = $target.properties,
+          attachment_id = Number($target.getAttribute('data-attachment-id')),
+          attachment_type = props.encodingFormat ? props.encodingFormat[0].itemValue : undefined,
           bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
                     for (att of bug.attachments || []) if (att.id === attachment_id) bug.id][0];
 
-      if (['text/x-github-pull-request', 'text/x-review-board-request'].includes(attachment_type)) {
+      if (attachment_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(attachment_type)) {
         // Open the link directly in a new browser tab
         window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${attachment_id}`);
       } else if (!bug_id || (FlareTail.util.ua.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
