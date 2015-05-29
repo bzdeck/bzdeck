@@ -199,15 +199,18 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     return;
   }
 
+  let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
+
   let _bug = {
-    'cc': [for (name of this.bug.cc) BzDeck.collections.users.get(name, { name }).properties],
+    'cc': [for (name of this.bug.cc) get_person(name)],
     'depends_on': this.bug.depends_on,
     'blocks': this.bug.blocks,
     'see_also': this.bug.see_also,
     'flag': [for (flag of this.bug.flags) {
-      'creator': BzDeck.collections.users.get(flag.setter, { 'name': flag.setter }).properties,
+      'creator': get_person(flag.setter),
       'name': flag.name,
-      'status': flag.status
+      'status': flag.status,
+      'requestee': flag.requestee ? get_person(flag.requestee) : {},
     }]
   };
 

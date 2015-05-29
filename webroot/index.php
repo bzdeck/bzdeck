@@ -421,9 +421,10 @@
                   <h3>Flags</h3>
                   <ul>
                     <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                      <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><span itemprop="name"></span><meta itemprop="email"></span>:
+                      <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
                       <span itemprop="name"></span>
                       <span itemprop="status"></span>
+                      <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
                     </li>
                   </ul>
                 </section>
@@ -675,6 +676,7 @@
                   <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
                   <span itemprop="name"></span>
                   <span itemprop="status"></span>
+                  <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
                 </li>
               </ul>
             </li>

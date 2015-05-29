@@ -14,6 +14,7 @@ BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 
 BzDeck.views.Attachment.prototype.show = function () {
   let att = this.attachment,
+      get_person = name => BzDeck.collections.users.get(name, { name }).properties,
       $_content = this.get_fragment('details-attachment-content').firstElementChild.cloneNode(true);
 
   $_content.itemProp.add('attachment');
@@ -27,11 +28,12 @@ BzDeck.views.Attachment.prototype.show = function () {
     'is_obsolete': att.is_obsolete ? 'true' : 'false',
     'dateCreated': att.creation_time,
     'dateModified': att.last_change_time,
-    'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
+    'creator': get_person(att.creator),
     'flag': [for (flag of att.flags) {
-      'creator': BzDeck.collections.users.get(flag.setter, { 'name': flag.setter }).properties,
+      'creator': get_person(flag.setter),
       'name': flag.name,
-      'status': flag.status
+      'status': flag.status,
+      'requestee': flag.requestee ? get_person(flag.requestee) : {},
     }],
   }, {
     'data-attachment-id': att.id,

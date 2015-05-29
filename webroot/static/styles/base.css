@@ -1903,6 +1903,13 @@ article[id$="preview-bug"] > .bug-info {
   text-overflow: ellipsis;
 }
 
+.bug-info [itemprop="flag"] [itemprop="image"] {
+  display: inline-block;
+  margin-right: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
 .bug-participants {
   border-width: 0 0 0 .1rem;
 }
