@@ -49,12 +49,13 @@ BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
 
 BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
   let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
+      match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.regexp.escape(word)}`, 'i')),
       bugs = BzDeck.collections.bugs.get_all();
 
   let results = [...bugs.values()].filter(bug => {
-    return words.every(word => bug.summary && bug.summary.toLowerCase().includes(word)) ||
-           words.every(word => bug.aliases.join().toLowerCase().includes(word)) ||
-           words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).includes(words[0]);
+    return words.every(word => bug.summary && match(bug.summary, word)) ||
+           words.every(word => match(bug.aliases.join(), word)) ||
+           words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
   });
 
   this.trigger(':QuickSearchResultsAvailable', { results });
