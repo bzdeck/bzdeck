@@ -924,7 +924,7 @@ col[data-hidden="false"] {
   color: var(--control-foreground-color);
   background-color: var(--control-background-color);
   font-size: 1.1rem;
-  line-height: 1.1rem;
+  line-height: 1;
   text-align: center;
 }
 
@@ -1516,7 +1516,9 @@ main {
   width: 1.6rem;
   height: 1.6rem;
   font-size: 1.6rem;
+  line-height: 1;
   font-family: FontAwesome;
+  text-align: center;
 }
 
 [id$="vertical-thread"] [data-field="starred"][aria-checked="false"]::before {
@@ -1528,7 +1530,7 @@ main {
 }
 
 .bug-list col[data-id="id"][data-hidden="false"] {
-  width: 5rem;
+  width: 6.4rem;
 }
 
 .bug-list col[data-id="summary"][data-hidden="false"] {
@@ -2097,7 +2099,7 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
   display: inline-block;
   overflow: hidden;
-  margin-top: .4rem;
+  margin-top: .2rem;
   font-size: 1.3rem;
   font-weight: 500;
   white-space: nowrap;
