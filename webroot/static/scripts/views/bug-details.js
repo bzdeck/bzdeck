@@ -242,7 +242,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
   let cell_content = (field, content) =>
         ['blocks', 'depends_on'].includes(field)
                 ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
-                : content.replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+                : content.replace('@', '\u200B@'); // ZERO WIDTH SPACE
 
   if (!history) {
     history = this.bug.history;
@@ -259,7 +259,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
           $cell = field => $row.querySelector(`[data-field="${field}"]`);
 
       if (i === 0) {
-        $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
+        $cell('who').textContent = hist.who.replace('@', '\u200B@');
         $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
         datetime.fill_element($cell('when').appendChild(document.createElement('time')),
                               hist.when, { 'relative': false });
@@ -284,8 +284,8 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
                    change;
 
       $cell('what').textContent = _field.description || _field.field_name;
-      $cell('removed').innerHTML = cell_content(change.field_name, change.removed);
-      $cell('added').innerHTML = cell_content(change.field_name, change.added);
+      $cell('removed').textContent = cell_content(change.field_name, change.removed);
+      $cell('added').textContent = cell_content(change.field_name, change.added);
     }
   }
 
