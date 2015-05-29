@@ -449,14 +449,15 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
       }
     } else if (_needinfos.removed.size) {
       $how.innerHTML = `requested information from ${added_needinfos} instead of ${removed_needinfos}`; // l10n
-    } else if (change.field_name === 'assigned_to' && change.removed.startsWith('nobody@')) {
-      // TODO: nobody@mozilla.org is the default assignee on BMO. It might be different on other Bugzilla instances
+    } else if (change.field_name === 'assigned_to' && change.removed.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
+      // TODO: nobody@mozilla.org and *@bugzilla.bugs are the default assignees on BMO. It might be different on other
+      // Bugzilla instances. The API should provide the info...
       if (change.added === changer.email) {
         $how.innerHTML = `self-assigned to the bug`; // l10n
       } else {
         $how.innerHTML = `assigned ${additions} to the bug`; // l10n
       }
-    } else if (change.field_name === 'assigned_to' && change.added.startsWith('nobody@')) {
+    } else if (change.field_name === 'assigned_to' && change.added.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
       $how.innerHTML = `removed ${removals} from the assignee`; // l10n
     } else if (change.field_name === 'keywords') {
       $how.innerHTML = `changed the keywords: removed ${removals}, added ${additions}`; // l10n
