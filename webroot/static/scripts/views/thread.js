@@ -2,12 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.helpers.Thread = function ThreadHelper () {};
+BzDeck.views.Thread = function ThreadView () {};
 
-BzDeck.helpers.Thread.prototype = Object.create(BzDeck.helpers.Base.prototype);
-BzDeck.helpers.Thread.prototype.constructor = BzDeck.helpers.Thread;
+BzDeck.views.Thread.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.Thread.prototype.constructor = BzDeck.views.Thread;
 
-BzDeck.helpers.Thread.prototype.onselect = function (event) {
+BzDeck.views.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
 
   if (ids.length) {
@@ -16,7 +16,7 @@ BzDeck.helpers.Thread.prototype.onselect = function (event) {
   }
 };
 
-BzDeck.helpers.Thread.prototype.ondblclick = function (event, selector) {
+BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
   let $target = event.originalTarget;
 
   if ($target.matches(selector)) {
@@ -29,7 +29,7 @@ BzDeck.helpers.Thread.prototype.ondblclick = function (event, selector) {
  * Classic Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.helpers.ClassicThread = function ClassicThreadHelper (consumer, name, $grid, options) {
+BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
   let default_cols = BzDeck.config.grid.default_columns,
       columns = BzDeck.prefs.get(`${name}.list.columns`) || default_cols,
       field = BzDeck.models.server.data.config.field;
@@ -92,10 +92,10 @@ BzDeck.helpers.ClassicThread = function ClassicThreadHelper (consumer, name, $gr
   }, true);
 };
 
-BzDeck.helpers.ClassicThread.prototype = Object.create(BzDeck.helpers.Thread.prototype);
-BzDeck.helpers.ClassicThread.prototype.constructor = BzDeck.helpers.ClassicThread;
+BzDeck.views.ClassicThread.prototype = Object.create(BzDeck.views.Thread.prototype);
+BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 
-BzDeck.helpers.ClassicThread.prototype.update = function (bugs) {
+BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
   this.$$grid.build_body([...bugs.values()].map(bug => {
@@ -165,7 +165,7 @@ BzDeck.helpers.ClassicThread.prototype.update = function (bugs) {
   }));
 };
 
-BzDeck.helpers.ClassicThread.prototype.filter = function (bugs) {
+BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
   this.$$grid.filter([...bugs.keys()]);
 };
 
@@ -173,7 +173,7 @@ BzDeck.helpers.ClassicThread.prototype.filter = function (bugs) {
  * Vertical Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.helpers.VerticalThread = function VerticalThreadHelper (consumer, name, $outer, options) {
+BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $outer, options) {
   let mobile = FlareTail.util.ua.device.mobile;
 
   this.consumer = consumer;
@@ -262,10 +262,10 @@ BzDeck.helpers.VerticalThread = function VerticalThreadHelper (consumer, name, $
   });
 };
 
-BzDeck.helpers.VerticalThread.prototype = Object.create(BzDeck.helpers.Thread.prototype);
-BzDeck.helpers.VerticalThread.prototype.constructor = BzDeck.helpers.VerticalThread;
+BzDeck.views.VerticalThread.prototype = Object.create(BzDeck.views.Thread.prototype);
+BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 
-BzDeck.helpers.VerticalThread.prototype.update = function (bugs) {
+BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   let cond = this.options.sort_conditions;
 
   this.unrendered_bugs = cond ? FlareTail.util.array.sort([...bugs.values()], cond) : [...bugs.values()];
@@ -280,7 +280,7 @@ BzDeck.helpers.VerticalThread.prototype.update = function (bugs) {
   });
 };
 
-BzDeck.helpers.VerticalThread.prototype.render = function () {
+BzDeck.views.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 
   for (let bug of this.unrendered_bugs.splice(0, 50)) {

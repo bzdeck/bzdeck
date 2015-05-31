@@ -207,13 +207,13 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
     this.vertical_thread_initialized = true;
   }
 
-  this.thread = new BzDeck.helpers.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
+  this.thread = new BzDeck.views.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
     'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
   });
 };
 
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
-  this.thread = new BzDeck.helpers.ClassicThread(this, 'home', document.querySelector('#home-list'), {
+  this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
     'date': { 'simple': false },
     'sortable': true,
     'reorderable': true,

@@ -2,12 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.helpers.Tooltip = function TooltipHelper () {};
+BzDeck.views.Tooltip = function TooltipView () {};
 
-BzDeck.helpers.Tooltip.prototype = Object.create(BzDeck.helpers.Base.prototype);
-BzDeck.helpers.Tooltip.prototype.constructor = BzDeck.helpers.Tooltip;
+BzDeck.views.Tooltip.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.Tooltip.prototype.constructor = BzDeck.views.Tooltip;
 
-BzDeck.helpers.Tooltip.prototype.init = function ($owner, showing_events, hiding_events, type) {
+BzDeck.views.Tooltip.prototype.init = function ($owner, showing_events, hiding_events, type) {
   this.$owner = $owner;
   this.showing_events = showing_events || ['mouseenter', 'focus'];
   this.hiding_events = hiding_events || ['mouseleave', 'blur'];
@@ -19,7 +19,7 @@ BzDeck.helpers.Tooltip.prototype.init = function ($owner, showing_events, hiding
   this.set_hiding_events();
 };
 
-BzDeck.helpers.Tooltip.prototype.set_showing_events = function () {
+BzDeck.views.Tooltip.prototype.set_showing_events = function () {
   for (let type of this.showing_events) {
     this.$owner.addEventListener(type, event => {
       let value = event.target.value || event.target.dataset.id;
@@ -37,13 +37,13 @@ BzDeck.helpers.Tooltip.prototype.set_showing_events = function () {
   }
 };
 
-BzDeck.helpers.Tooltip.prototype.set_hiding_events = function () {
+BzDeck.views.Tooltip.prototype.set_hiding_events = function () {
   for (let type of this.hiding_events) {
     this.$owner.addEventListener(type, event => this.hide());
   }
 };
 
-BzDeck.helpers.Tooltip.prototype.hide_any = function () {
+BzDeck.views.Tooltip.prototype.hide_any = function () {
   let $tooltip = document.querySelector('body > [role="tooltip"]'),
       $owner;
 
@@ -59,7 +59,7 @@ BzDeck.helpers.Tooltip.prototype.hide_any = function () {
   }
 };
 
-BzDeck.helpers.Tooltip.prototype.hide = function () {
+BzDeck.views.Tooltip.prototype.hide = function () {
   if (this.$tooltip) {
     this.$owner.removeAttribute('aria-describedby');
     this.$tooltip.remove();
@@ -71,14 +71,14 @@ BzDeck.helpers.Tooltip.prototype.hide = function () {
  * Bug Tooltip
  * ------------------------------------------------------------------------------------------------------------------ */
 
-BzDeck.helpers.BugTooltip = function BugTooltipHelper (...args) {
+BzDeck.views.BugTooltip = function BugTooltipView (...args) {
   this.init(...args);
 };
 
-BzDeck.helpers.BugTooltip.prototype = Object.create(BzDeck.helpers.Tooltip.prototype);
-BzDeck.helpers.BugTooltip.prototype.constructor = BzDeck.helpers.BugTooltip;
+BzDeck.views.BugTooltip.prototype = Object.create(BzDeck.views.Tooltip.prototype);
+BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
 
-BzDeck.helpers.BugTooltip.prototype.show = function () {
+BzDeck.views.BugTooltip.prototype.show = function () {
   new Promise(resolve => {
     let bug = BzDeck.collections.bugs.get(this.id, { 'id': this.id, '_unread': true });
 

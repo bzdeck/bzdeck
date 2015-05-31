@@ -368,7 +368,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   $dupe_input.value = this.bug.dupe_of || '';
   $dupe_input.addEventListener('keydown', event => event.stopPropagation());
   $dupe_input.addEventListener('input', event => this.update_changes());
-  new BzDeck.helpers.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
+  new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
 
   $tab.setAttribute('aria-disabled', 'false');
 };
@@ -415,7 +415,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
       $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
       $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
       $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
-      $$finder = new BzDeck.helpers.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
+      $$finder = new BzDeck.views.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
                                                  [this.bug.creator, this.bug.assigned_to]),
       $finder = $$finder.$combobox;
 

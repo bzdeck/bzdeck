@@ -5,7 +5,7 @@
 // TODO: support non-unified formats
 // TODO: implement syntax highlight
 
-BzDeck.helpers.PatchViewer = function PatchViewerHelper (str) {
+BzDeck.views.PatchViewer = function PatchViewerView (str) {
   let $fragment = new DocumentFragment();
 
   str = str.replace(/\r\n?/g, '\n');
@@ -67,5 +67,5 @@ BzDeck.helpers.PatchViewer = function PatchViewerHelper (str) {
   return $fragment;
 };
 
-BzDeck.helpers.PatchViewer.prototype = Object.create(BzDeck.helpers.Base.prototype);
-BzDeck.helpers.PatchViewer.prototype.constructor = BzDeck.helpers.PatchViewer;
+BzDeck.views.PatchViewer.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.PatchViewer.prototype.constructor = BzDeck.views.PatchViewer;

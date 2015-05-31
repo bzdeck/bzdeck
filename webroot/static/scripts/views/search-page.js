@@ -170,7 +170,7 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = FlareTail.util.ua.device.mobile;
 
-  this.thread = new BzDeck.helpers.ClassicThread(this, 'search', this.$grid, {
+  this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
     'sortable': true,
     'reorderable': true,
     'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }

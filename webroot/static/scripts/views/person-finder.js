@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.helpers.PersonFinder = function PersonFinderHelper (combobox_id, bug = undefined, exclude = []) {
+BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefined, exclude = []) {
   this.bug = bug;
   this.participants = bug ? bug.participants : new Map();
   this.exclude = new Set(exclude);
@@ -17,10 +17,10 @@ BzDeck.helpers.PersonFinder = function PersonFinderHelper (combobox_id, bug = un
   this.$$combobox.on('Input', event => this.oninput(event));
 };
 
-BzDeck.helpers.PersonFinder.prototype = Object.create(BzDeck.helpers.Base.prototype);
-BzDeck.helpers.PersonFinder.prototype.constructor = BzDeck.helpers.PersonFinder;
+BzDeck.views.PersonFinder.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.PersonFinder.prototype.constructor = BzDeck.views.PersonFinder;
 
-BzDeck.helpers.PersonFinder.prototype.oninput = function (event) {
+BzDeck.views.PersonFinder.prototype.oninput = function (event) {
   this.value = event.detail.value.toLowerCase();
   this.results.clear();
   window.clearTimeout(this.timer);
@@ -46,15 +46,15 @@ BzDeck.helpers.PersonFinder.prototype.oninput = function (event) {
   }
 };
 
-BzDeck.helpers.PersonFinder.prototype.search_bug = function () {
+BzDeck.views.PersonFinder.prototype.search_bug = function () {
   FlareTail.util.event.async(() => this.search(this.participants));
 };
 
-BzDeck.helpers.PersonFinder.prototype.search_local = function () {
+BzDeck.views.PersonFinder.prototype.search_local = function () {
   FlareTail.util.event.async(() => this.search(BzDeck.collections.users.data));
 };
 
-BzDeck.helpers.PersonFinder.prototype.search_remote = function () {
+BzDeck.views.PersonFinder.prototype.search_remote = function () {
   let value = this.value, // Keep this as local a variable for later use
       params = new URLSearchParams();
 
@@ -84,7 +84,7 @@ BzDeck.helpers.PersonFinder.prototype.search_remote = function () {
   }, 1000);
 };
 
-BzDeck.helpers.PersonFinder.prototype.search = function (users) {
+BzDeck.views.PersonFinder.prototype.search = function (users) {
   let has_colon = this.value.startsWith(':'),
       re = new RegExp((has_colon ? '' : '\\b') + FlareTail.util.regexp.escape(this.value), 'i'),
       find = str => re.test(str),
@@ -124,6 +124,6 @@ BzDeck.helpers.PersonFinder.prototype.search = function (users) {
   this.$$combobox.show_dropdown();
 };
 
-BzDeck.helpers.PersonFinder.prototype.clear = function () {
+BzDeck.views.PersonFinder.prototype.clear = function () {
   this.$$combobox.clear_input();
 };
