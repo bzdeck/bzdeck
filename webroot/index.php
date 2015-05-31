@@ -110,7 +110,7 @@
             <h2>Settings</h2>
           </header>
           <div>
-            <ul id="settings-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
+            <ul id="settings-tablist" tabindex="0" role="tablist" aria-level="2" aria-orientation="vertical" data-removable="false" data-reorderable="false">
               <li id="settings-tab-account" role="tab" aria-controls="settings-tabpanel-account" aria-selected="true"><label>Account</label></li>
               <li id="settings-tab-design" role="tab" aria-controls="settings-tabpanel-design" aria-selected="false"><label>Design</label></li>
               <li id="settings-tab-datetime" role="tab" aria-controls="settings-tabpanel-datetime" aria-selected="false"><label>Date &amp; Time</label></li>
@@ -351,7 +351,7 @@
           </div>
         </header>
         <div>
-          <ul id="bug-TID-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
+          <ul id="bug-TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
             <li id="bug-TID-tab-timeline" role="tab" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></li>
             <li id="bug-TID-tab-info" role="tab" aria-controls="bug-TID-tabpanel-info" aria-selected="false"><label>Info</label></li>
             <li id="bug-TID-tab-participants" role="tab" aria-controls="bug-TID-tabpanel-participants" aria-selected="false"><label>Participants</label></li>
@@ -564,7 +564,7 @@
           <h4>Reply</h4>
         </header>
         <div>
-          <ul id="TID-comment-form-tablist" tabindex="0" role="tablist" data-removable="false" data-reorderable="false">
+          <ul id="TID-comment-form-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
             <li id="TID-comment-form-tab-comment" role="tab" aria-controls="TID-comment-form-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
             <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
             <li id="TID-comment-form-tab-attachments" role="tab" aria-controls="TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
@@ -819,7 +819,7 @@
         </div>
       </aside><!-- end #sidebar -->
       <main role="main">
-        <ul id="main-tablist" tabindex="0" role="tablist" data-removable="true" data-reorderable="false">
+        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" data-removable="true" data-reorderable="false">
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
         </ul>
         <div id="main-tabpanels">

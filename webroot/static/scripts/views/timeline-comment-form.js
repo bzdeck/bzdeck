@@ -9,7 +9,8 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
-  this.$$tabs = new this.widgets.TabList(this.$form.querySelector('[role="tablist"]'));
+  this.$tablist = this.$form.querySelector('[role="tablist"]');
+  this.$$tablist = new this.widgets.TabList(this.$tablist);
   this.$comment_tab = this.$form.querySelector('[id$="tab-comment"]');
   this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
   this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
@@ -41,8 +42,9 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   });
 
   this.$form.addEventListener('wheel', event => event.stopPropagation());
+  this.$tablist.setAttribute('aria-level', this.timeline_id.endsWith('preview-bug-timeline') ? 2 : 3);
 
-  this.$$tabs.bind('Selected', event => {
+  this.$$tablist.bind('Selected', event => {
     let tab_id = event.detail.items[0].id;
 
     if (tab_id.endsWith('write')) {
@@ -256,7 +258,7 @@ BzDeck.views.TimelineCommentForm.prototype.add_attachment = function (attachment
   $tbody.appendChild($row);
 
   this.$attachments_tab.setAttribute('aria-disabled', 'false');
-  this.$$tabs.view.selected = this.$attachments_tab;
+  this.$$tablist.view.selected = this.$attachments_tab;
   this.$submit.setAttribute('aria-disabled', !this.can_submit);
   this.update_parallel_ui();
 };
@@ -272,7 +274,7 @@ BzDeck.views.TimelineCommentForm.prototype.remove_attachment = function (attachm
   this.update_parallel_ui();
 
   if (!this.has_attachments) {
-    this.$$tabs.view.selected = this.$comment_tab;
+    this.$$tablist.view.selected = this.$comment_tab;
   }
 };
 
