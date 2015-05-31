@@ -66,6 +66,16 @@ BzDeck.views.Global = function GlobalView () {
       }
     }
   }, true);
+
+  // General events
+  window.addEventListener('contextmenu', event => event.preventDefault());
+  window.addEventListener('dragenter', event => event.preventDefault());
+  window.addEventListener('dragover', event => event.preventDefault());
+  window.addEventListener('drop', event => event.preventDefault());
+  window.addEventListener('wheel', event => event.preventDefault());
+  window.addEventListener('popstate', event => this.onpopstate(event));
+  window.addEventListener('click', event => this.onclick(event));
+  window.addEventListener('keydown', event => this.onkeydown(event));
 };
 
 BzDeck.views.Global.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -101,25 +111,15 @@ BzDeck.views.Global.prototype.update_window_title = function ($tab) {
   }
 };
 
-/* ------------------------------------------------------------------------------------------------------------------
- * Events
- * ------------------------------------------------------------------------------------------------------------------ */
-
-window.addEventListener('contextmenu', event => event.preventDefault());
-window.addEventListener('dragenter', event => event.preventDefault());
-window.addEventListener('dragover', event => event.preventDefault());
-window.addEventListener('drop', event => event.preventDefault());
-window.addEventListener('wheel', event => event.preventDefault());
-
-window.addEventListener('popstate', event => {
+BzDeck.views.Global.prototype.onpopstate = function (event) {
   // Hide sidebar
-  if (FlareTail.helpers.env.device.mobile) {
+  if (this.helpers.env.device.mobile) {
     document.documentElement.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
-});
+};
 
-window.addEventListener('click', event => {
+BzDeck.views.Global.prototype.onclick = function (event) {
   let $target = event.target;
 
   // Discard clicks on the fullscreen dialog
@@ -130,14 +130,14 @@ window.addEventListener('click', event => {
   if ($target.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
 
-    return FlareTail.helpers.event.ignore(event);
+    return this.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
   if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
 
-    return FlareTail.helpers.event.ignore(event);
+    return this.helpers.event.ignore(event);
   }
 
   if ($target.matches(':-moz-any-link, [role="link"]')) {
@@ -145,7 +145,7 @@ window.addEventListener('click', event => {
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));
 
-      return FlareTail.helpers.event.ignore(event);
+      return this.helpers.event.ignore(event);
     }
 
     // Attachment link: open in a new app tab
@@ -159,13 +159,13 @@ window.addEventListener('click', event => {
       if (attachment_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(attachment_type)) {
         // Open the link directly in a new browser tab
         window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${attachment_id}`);
-      } else if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+      } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
         BzDeck.router.navigate(`/attachment/${attachment_id}`);
       } else {
         BzDeck.router.navigate(`/bug/${bug_id}`, { attachment_id });
       }
 
-      return FlareTail.helpers.event.ignore(event);
+      return this.helpers.event.ignore(event);
     }
 
     // Normal link: open in a new browser tab
@@ -175,9 +175,9 @@ window.addEventListener('click', event => {
   }
 
   return true;
-});
+};
 
-window.addEventListener('keydown', event => {
+BzDeck.views.Global.prototype.onkeydown = function (event) {
   let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
       tab = event.key === 'Tab';
 
@@ -185,4 +185,4 @@ window.addEventListener('keydown', event => {
   if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
     event.preventDefault();
   }
-});
+};
