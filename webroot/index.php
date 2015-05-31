@@ -276,6 +276,7 @@
               </li>
               <li role="separator"></li>
               <li role="none">
+                <a id="home-preview-bug-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
                 <a id="home-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="home-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
@@ -310,6 +311,7 @@
               </li>
               <li role="separator"></li>
               <li role="none">
+                <a id="search-TID-preview-bug-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
                 <a id="search-TID-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="search-TID-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
@@ -344,6 +346,7 @@
               </li>
               <li role="separator"></li>
               <li role="none">
+                <a id="bug-TID-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
                 <a id="bug-TID-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="bug-TID-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>

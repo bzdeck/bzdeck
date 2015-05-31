@@ -44,6 +44,7 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
       $menu = document.getElementById($button.getAttribute('aria-owns')),
       $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]'),
       $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]'),
+      $copy_link = $menu.querySelector('[data-command="copy-link"]'),
       $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]'),
       $tweet_link = $menu.querySelector('[data-command="tweet"]');
 
@@ -73,6 +74,28 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
   });
 
   $menu.addEventListener('MenuItemSelected', event => (handlers[event.detail.command] || (() => {}))());
+
+  if ($copy_link) {
+    $copy_link.addEventListener('mousedown', event => event.stopPropagation());
+    $copy_link.addEventListener('click', event => document.execCommand('copy'));
+    $copy_link.addEventListener('copy', event => {
+      let url = `${location.origin}/bug/${this.bug.id}`;
+
+      // Modify the clipboard
+      event.clipboardData.setData('text/uri-list', url);
+      event.clipboardData.setData('text/plain', url);
+      event.preventDefault();
+      // Close the menu
+      $button.click();
+    });
+
+    // Disable the link on Firefox 40 and below where click-to-copy is not supported and queryCommandEnabled throws
+    try {
+      document.queryCommandEnabled('copy');
+    } catch (ex) {
+      $copy_link.setAttribute('aria-disabled', 'true');
+    }
+  }
 
   if ($bugzilla_link) {
     $bugzilla_link.href = `${BzDeck.models.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
@@ -124,6 +147,12 @@ BzDeck.views.Bug.prototype.render = function () {
   _bug.contributor = [for (name of this.bug.contributors) BzDeck.collections.users.get(name, { name }).properties];
 
   this.fill(this.$bug, _bug);
+
+  // Append the bug ID to the summary when copied
+  this.$bug.querySelector('[itemprop="summary"]').addEventListener('copy', event => {
+    event.clipboardData.setData('text/plain', `Bug ${this.bug.id} - ${this.bug.summary}`);
+    event.preventDefault();
+  });
 
   this.set_product_tooltips();
 

@@ -1290,6 +1290,11 @@ main {
   color: var(--alternate-disabled-button-foreground-color);
 }
 
+[itemtype$="Bug"] > header > [role="toolbar"] [data-command="copy-link"],
+[itemtype$="Bug"] > header > [role="toolbar"] [data-command="copy-link"] label {
+  -moz-user-select: text; /* Enable click-to-copy */
+}
+
 [itemtype$="Bug"] [role="toolbar"] .iconic::before {
   display: inline-block;
   position: absolute;
