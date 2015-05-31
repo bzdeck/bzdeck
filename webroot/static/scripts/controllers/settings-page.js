@@ -50,20 +50,20 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     BzDeck.prefs.set(name, value);
 
     if (name === 'ui.theme.selected') {
-      FlareTail.util.theme.selected = value;
+      this.helpers.theme.selected = value;
     }
 
     if (name === 'ui.date.timezone') {
-      FlareTail.util.datetime.options.timezone = value;
+      this.helpers.datetime.options.timezone = value;
     }
 
     if (name === 'ui.date.relative') {
-      FlareTail.util.datetime.options.relative = value
+      this.helpers.datetime.options.relative = value
     }
 
     if (name === 'notifications.show_desktop_notifications') {
       if (value === true && Notification.permission === 'default') {
-        FlareTail.util.app.auth_notification();
+        this.helpers.app.auth_notification();
       }
     }
   });

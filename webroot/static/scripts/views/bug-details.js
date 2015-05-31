@@ -8,7 +8,7 @@ BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
   this.bug = bug;
   this.$bug = $bug;
   this.$tablist = this.$bug.querySelector('[role="tablist"]');
-  this.$$tablist = new this.widget.TabList(this.$tablist);
+  this.$$tablist = new this.widgets.TabList(this.$tablist);
 
   this.$tablist.querySelector('[id$="attachments"]').setAttribute('aria-disabled', !(this.bug.attachments || []).length);
   this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
@@ -22,7 +22,7 @@ BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
     $tabpanel.querySelector('.scrollable-area-content').scrollTop = 0; // Desktop
 
     // Desktop: Show the info pane only when the timeline tab is selected
-    if (!mql.matches && FlareTail.util.ua.device.desktop) {
+    if (!mql.matches && this.helpers.env.device.desktop) {
       this.$bug.querySelector('.bug-info').setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
     }
   });
@@ -33,7 +33,7 @@ BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
   mql.addListener(mql => this.change_layout(mql));
   this.change_layout(mql);
 
-  if (FlareTail.util.ua.device.mobile) {
+  if (this.helpers.env.device.mobile) {
     this.add_mobile_tweaks();
   }
 };
@@ -48,7 +48,7 @@ BzDeck.views.BugDetails.prototype.change_layout = function (mql) {
       $bug_info = this.$bug.querySelector('.bug-info'),
       $bug_participants = this.$bug.querySelector('.bug-participants');
 
-  if (mql.matches || FlareTail.util.ua.device.mobile) {  // Mobile layout
+  if (mql.matches || this.helpers.env.device.mobile) {  // Mobile layout
     $info_tab.setAttribute('aria-hidden', 'false');
     $participants_tab.setAttribute('aria-hidden', 'false');
     this.$bug.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
@@ -114,18 +114,18 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
     return;
   }
 
-  let mobile = FlareTail.util.ua.device.mobile,
+  let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
       $attachment_tab = this.$tablist.querySelector('[id$="-tab-attachments"]'),
       $show_obsolete_checkbox = $attachments.querySelector('.list [role="checkbox"]'),
-      $$show_obsolete_checkbox = new this.widget.Checkbox($show_obsolete_checkbox),
+      $$show_obsolete_checkbox = new this.widgets.Checkbox($show_obsolete_checkbox),
       $listbox = $attachments.querySelector('[role="listbox"]'),
       $fragment = new DocumentFragment(),
       $title = $attachments.querySelector('h4'),
-      $listitem = FlareTail.util.content.get_fragment('details-attachment-listitem').firstElementChild;
+      $listitem = this.get_fragment('details-attachment-listitem').firstElementChild;
 
   if (!this.$$attachment_list) {
-    this.$$attachment_list = new this.widget.ListBox($listbox, []);
+    this.$$attachment_list = new this.widgets.ListBox($listbox, []);
 
     this.$$attachment_list.bind('click', event => {
       let $selected = this.$$attachment_list.view.selected[0],
@@ -150,7 +150,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
       let attachment = attachments.find(att => att.id === Number(event.detail.items[0].dataset.id));
 
-      new this.widget.ScrollBar($attachments.querySelector('.content'));
+      new this.widgets.ScrollBar($attachments.querySelector('.content'));
       new BzDeck.views.Attachment(attachment, $attachments.querySelector('.content .scrollable-area-content'));
     });
   }
@@ -182,7 +182,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
     }
 
     this.$$attachment_list.update_members();
-    FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+    this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
   });
 
   $listbox.appendChild($fragment);
@@ -224,7 +224,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   window.addEventListener('popstate', event => check_state());
 
   // Force updating the scrollbars because sometimes those are not automatically updated
-  FlareTail.util.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+  this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
 };
 
 BzDeck.views.BugDetails.prototype.render_history = function (history) {
@@ -234,7 +234,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
     return;
   }
 
-  let datetime = FlareTail.util.datetime,
+  let datetime = this.helpers.datetime,
       conf_field = BzDeck.models.server.data.config.field,
       $tbody = $placeholder.querySelector('tbody'),
       $template = document.querySelector('#details-change');
@@ -242,7 +242,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
   let cell_content = (field, content) =>
         ['blocks', 'depends_on'].includes(field)
                 ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
-                : FlareTail.util.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+                : this.helpers.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
 
   if (!history) {
     history = this.bug.history;

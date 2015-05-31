@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.Sidebar = function SidebarView () {
-  let mobile = FlareTail.util.ua.device.mobile,
+  let mobile = this.helpers.env.device.mobile,
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -19,9 +19,9 @@ BzDeck.views.Sidebar = function SidebarView () {
     }
   });
 
-  new this.widget.ScrollBar($sidebar.querySelector('div'));
+  new this.widgets.ScrollBar($sidebar.querySelector('div'));
 
-  this.$$folders = new this.widget.ListBox(document.querySelector('#sidebar-folder-list'), BzDeck.config.folders);
+  this.$$folders = new this.widgets.ListBox(document.querySelector('#sidebar-folder-list'), BzDeck.config.folders);
   this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { 'id': event.detail.ids[0] }));
 
   this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
@@ -42,7 +42,7 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
   document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
 
   // Mobile compact layout
-  if (FlareTail.util.ua.device.mobile &&
+  if (this.helpers.env.device.mobile &&
       toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
     // Select the home tab
     toolbar.$$tablist.view.selected = toolbar.$$tablist.view.members[0];

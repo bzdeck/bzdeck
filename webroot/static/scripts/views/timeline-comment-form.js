@@ -3,13 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeline_id) {
-  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = this.get_fragment('timeline-comment-form', timeline_id);
 
   this.$form = $fragment.firstElementChild;
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
-  this.$$tabs = new this.widget.TabList(this.$form.querySelector('[role="tablist"]'));
+  this.$$tabs = new this.widgets.TabList(this.$form.querySelector('[role="tablist"]'));
   this.$comment_tab = this.$form.querySelector('[id$="tab-comment"]');
   this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
   this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
@@ -55,14 +55,14 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   });
 
   for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
-    new this.widget.ScrollBar($tabpanel);
+    new this.widgets.ScrollBar($tabpanel);
   }
 
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
   this.$textbox.value = '';
 
   // Assign keyboard shortcuts
-  FlareTail.util.kbd.assign(this.$textbox, {
+  this.helpers.kbd.assign(this.$textbox, {
     'Accel+Enter': event => {
       if (this.can_submit) {
         this.submit();
@@ -103,7 +103,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
     event.preventDefault();
   });
 
-  (new this.widget.Checkbox(this.$parallel_checkbox)).bind('Toggled', event => {
+  (new this.widgets.Checkbox(this.$parallel_checkbox)).bind('Toggled', event => {
     this.parallel_upload = event.detail.checked;
     this.update_parallel_ui();
   });
@@ -215,7 +215,7 @@ BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
     message += '<br><br>';
     message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
 
-    (new this.widget.Dialog({
+    (new this.widgets.Dialog({
       'type': 'alert',
       'title': 'Error on attaching files',
       message
@@ -224,7 +224,7 @@ BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
 };
 
 BzDeck.views.TimelineCommentForm.prototype.add_attachment = function (attachment) {
-  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $tbody = this.$attachments_tbody,
       $row = this.$attachments_row_tmpl.content.cloneNode(true).firstElementChild,
       $desc = $row.querySelector('[data-field="description"]');
@@ -321,8 +321,8 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
       $dupe_label = $tabpanel.querySelector('[id$="status-dupe"]'),
       $dupe_input = this.$dupe_input = $dupe_label.querySelector('input');
 
-  this.$$status = new this.widget.ComboBox($status);
-  this.$$resolution = new this.widget.ComboBox($resolution);
+  this.$$status = new this.widgets.ComboBox($status);
+  this.$$resolution = new this.widgets.ComboBox($resolution);
 
   for (let value of fields.status.transitions[this.bug.status]) {
     this.$$status.add(value, value === this.bug.status);
@@ -427,7 +427,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
         $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
                             BzDeck.collections.users.get(requestee, { 'name': requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
-        $$checkbox = new this.widget.Checkbox($checkbox),
+        $$checkbox = new this.widgets.Checkbox($checkbox),
         $label = $checkbox.querySelector('span');
 
     $checkbox.replaceChild($person, $checkbox.querySelector('strong'));

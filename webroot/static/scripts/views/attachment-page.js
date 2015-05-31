@@ -14,7 +14,7 @@ BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, attachment_i
     let attachment = this.attachment = data.attachment,
         { id, summary } = attachment;
 
-    new this.widget.ScrollBar(this.$tabpanel.querySelector('article > div'));
+    new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
     new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
 
     this.$tab.title = `Attachment ${id}\n${summary}`; // l10n;

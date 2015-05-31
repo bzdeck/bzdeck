@@ -3,9 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.Toolbar = function ToolbarView (user) {
-  let FTu = FlareTail.util,
-      mobile = FlareTail.util.ua.device.mobile,
-      $$tablist = this.$$tablist = new this.widget.TabList(document.querySelector('#main-tablist')),
+  let mobile = this.helpers.env.device.mobile,
+      $$tablist = this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
       $sidebar = document.querySelector('#sidebar');
 
@@ -43,7 +42,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
   document.querySelector('[role="banner"] h1')
           .addEventListener('mousedown', event => BzDeck.router.navigate('/home/inbox'));
 
-  new this.widget.MenuBar(document.querySelector('#main-menu'));
+  new this.widgets.MenuBar(document.querySelector('#main-menu'));
 
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
@@ -71,7 +70,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
 
   $app_menu.setAttribute('aria-expanded', mobile);
 
-  if (FTu.app.fullscreen_enabled) {
+  if (this.helpers.app.fullscreen_enabled) {
     {
       let $menuitem = document.querySelector('#main-menu--app--fullscreen');
 
@@ -83,7 +82,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
 
       // A workaround for Bug 779324
       $menuitem.addEventListener('mousedown', event => toggle_fullScreen());
-      FlareTail.util.kbd.assign($menuitem, { 'Enter': event => toggle_fullScreen() });
+      this.helpers.kbd.assign($menuitem, { 'Enter': event => toggle_fullScreen() });
 
       window.addEventListener('mozfullscreenchange', event => {
         $menuitem.querySelector('label').textContent = document.mozFullScreenElement ? 'Exit Full Screen'
@@ -116,7 +115,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
     let $menuitem = document.querySelector('#main-menu--app--install');
 
     this.on('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'), true)
-    FTu.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
+    this.helpers.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
   }
 
   this.setup_searchbar();
@@ -131,7 +130,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
       $search_button = document.querySelector('#quicksearch [role="button"]'),
       $search_dropdown = document.querySelector('#quicksearch-dropdown');
 
-  this.$$search_dropdown = new this.widget.Menu($search_dropdown);
+  this.$$search_dropdown = new this.widgets.Menu($search_dropdown);
 
   let cleanup = () => {
     if ($root.hasAttribute('data-quicksearch')) {
@@ -150,7 +149,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
     cleanup();
   };
 
-  FlareTail.util.kbd.assign(window, {
+  this.helpers.kbd.assign(window, {
     'Accel+K': event => {
       $search_box.focus();
       event.preventDefault();
@@ -168,7 +167,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
     }
   });
 
-  FlareTail.util.kbd.assign($search_box, {
+  this.helpers.kbd.assign($search_box, {
     'ArrowUp|ArrowDown': event => {
       if (event.target.value.trim() && this.$$search_dropdown.closed) {
         exec_quick_search();
@@ -182,18 +181,18 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
 
   $search_box.addEventListener('mousedown', event => event.stopPropagation());
 
-  FlareTail.util.kbd.assign($search_button, {
+  this.helpers.kbd.assign($search_button, {
     'Enter|Space': event => exec_advanced_search(),
   });
 
   $search_button.addEventListener('mousedown', event => {
     event.stopPropagation();
 
-    if (FlareTail.util.ua.device.mobile) {
+    if (this.helpers.env.device.mobile) {
       if (!$root.hasAttribute('data-quicksearch')) {
         $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here
-        FlareTail.util.event.async(() => $search_box.focus());
+        this.helpers.event.async(() => $search_box.focus());
       } else if ($search_box.value) {
         exec_advanced_search();
       }
@@ -218,7 +217,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   });
 
   // Suppress context menu
-  $search_box.addEventListener('contextmenu', event => FTu.event.ignore(event), true); // use capture
+  $search_box.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true); // use capture
 
   this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
 };
@@ -294,7 +293,7 @@ BzDeck.views.Toolbar.prototype.add_back_button = function ($parent) {
   let $header = $parent.querySelector('header'),
       $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
-  if (FlareTail.util.ua.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
+  if (this.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
     $button.setAttribute('aria-label', 'Back'); // l10n
     $button.addEventListener('touchstart', event => {
       if (history.state && history.state.previous) {
@@ -303,7 +302,7 @@ BzDeck.views.Toolbar.prototype.add_back_button = function ($parent) {
         BzDeck.router.navigate('/home/inbox');
       }
 
-      return FlareTail.util.event.ignore(event);
+      return this.helpers.event.ignore(event);
     });
 
     $header.insertBefore($button, $header.firstElementChild);

@@ -12,7 +12,7 @@ BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefi
   this.$input = this.$combobox.querySelector('[role="searchbox"]');
   this.$option = this.get_fragment('person-finder-item').firstElementChild;
 
-  this.$$combobox = new this.widget.ComboBox(this.$combobox);
+  this.$$combobox = new this.widgets.ComboBox(this.$combobox);
   this.$$combobox.$container.id = this.combobox_id = combobox_id;
   this.$$combobox.on('Input', event => this.oninput(event));
 };
@@ -47,11 +47,11 @@ BzDeck.views.PersonFinder.prototype.oninput = function (event) {
 };
 
 BzDeck.views.PersonFinder.prototype.search_bug = function () {
-  FlareTail.util.event.async(() => this.search(this.participants));
+  this.helpers.event.async(() => this.search(this.participants));
 };
 
 BzDeck.views.PersonFinder.prototype.search_local = function () {
-  FlareTail.util.event.async(() => this.search(BzDeck.collections.users.data));
+  this.helpers.event.async(() => this.search(BzDeck.collections.users.data));
 };
 
 BzDeck.views.PersonFinder.prototype.search_remote = function () {
@@ -79,14 +79,14 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
       }
 
       users.sort((a, b) => new Date(a.last_activity) > new Date(b.last_activity));
-      FlareTail.util.event.async(() => this.search(new Map([for (user of users) [user.name, user]])));
+      this.helpers.event.async(() => this.search(new Map([for (user of users) [user.name, user]])));
     });
   }, 1000);
 };
 
 BzDeck.views.PersonFinder.prototype.search = function (users) {
   let has_colon = this.value.startsWith(':'),
-      re = new RegExp((has_colon ? '' : '\\b') + FlareTail.util.regexp.escape(this.value), 'i'),
+      re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i'),
       find = str => re.test(str),
       results = new Map(),
       $fragment = new DocumentFragment();

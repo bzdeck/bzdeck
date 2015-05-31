@@ -18,7 +18,7 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
     let func = {
       'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
       'show-settings': () => BzDeck.router.navigate('/settings'),
-      'install-app': () => FlareTail.util.app.install(),
+      'install-app': () => this.helpers.app.install(),
       'logout': () => BzDeck.controllers.session.logout(),
       'quit': () => BzDeck.controllers.session.close(),
     }[data.command];
@@ -49,7 +49,7 @@ BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
 
 BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
   let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
-      match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.regexp.escape(word)}`, 'i')),
+      match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i')),
       bugs = BzDeck.collections.bugs.get_all();
 
   let results = [...bugs.values()].filter(bug => {

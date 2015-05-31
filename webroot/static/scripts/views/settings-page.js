@@ -4,7 +4,7 @@
 
 BzDeck.views.SettingsPage = function SettingsPageView (tab_id, api_key, api_key_link, prefs) {
   // Activate tabs
-  this.$$tablist = new this.widget.TabList(document.querySelector('#settings-tablist'));
+  this.$$tablist = new this.widgets.TabList(document.querySelector('#settings-tablist'));
 
   if (tab_id) {
     this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
@@ -70,7 +70,7 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value
     $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
   }
 
-  (new this.widget.RadioGroup($rgroup)).bind('Selected', event => {
+  (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
     value = event.detail.items[0].dataset.value;
     value = _value.type === 'boolean' ? value === 'true' : value;
     this.trigger(':PrefValueChanged', { name, value });

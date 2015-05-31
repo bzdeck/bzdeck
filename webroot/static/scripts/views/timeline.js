@@ -7,7 +7,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
       entries = new Map([for (c of bug.comments.entries())
                              [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
       show_cc_changes = BzDeck.prefs.get('ui.timeline.show_cc_changes') === true,
-      click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+      click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
       last_comment_time,
       $timeline = this.$timeline = $bug.querySelector('.bug-timeline'),
@@ -84,7 +84,7 @@ BzDeck.views.Timeline = function TimelineView (bug, $bug, delayed) {
       $comments_wrapper.replaceChild($fragment, $expander);
       delete this.$expander;
 
-      return FlareTail.util.event.ignore(event);
+      return this.helpers.event.ignore(event);
     });
     $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('article'));
   }
@@ -154,7 +154,7 @@ BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;
 
 BzDeck.views.Timeline.prototype.expand_comments = function () {
   if (this.$expander) {
-    this.$expander.dispatchEvent(new CustomEvent(FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown'));
+    this.$expander.dispatchEvent(new CustomEvent(this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
   }
 
   for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {

@@ -15,7 +15,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
   Object.defineProperties(this, {
     'preview_is_hidden': {
       'enumerable': true,
-      'get': () => FlareTail.util.ua.device.mobile
+      'get': () => this.helpers.env.device.mobile
     },
   });
 
@@ -64,7 +64,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
 
   // Custom scrollbar
   for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-    new this.widget.ScrollBar($outer, true);
+    new this.widgets.ScrollBar($outer, true);
   }
 
   let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -105,7 +105,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
     'selected': !value // Select '---' to search open bugs
   }));
 
-  let ListBox = this.widget.ListBox,
+  let ListBox = this.widgets.ListBox,
       $$classification_list = new ListBox($classification_list, classifications),
       $$product_list = new ListBox($product_list, products),
       $$component_list = new ListBox($component_list, components),
@@ -139,7 +139,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   });
 
   let $textbox = $pane.querySelector('.text-box [role="searchbox"]'),
-      $$button = new this.widget.Button($pane.querySelector('.text-box [role="button"]'));
+      $$button = new this.widgets.Button($pane.querySelector('.text-box [role="button"]'));
 
   $$button.bind('Pressed', event => {
     let params = new URLSearchParams(),
@@ -168,7 +168,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
 
 BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
-      mobile = FlareTail.util.ua.device.mobile;
+      mobile = this.helpers.env.device.mobile;
 
   this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
     'sortable': true,
@@ -215,15 +215,15 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
       $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
 
   // Activate the toolbar buttons
-  new this.widget.Button($bug.querySelector('[data-command="show-details"]'))
+  new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
       .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
-  new this.widget.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
+  new this.widgets.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
       .bind('Pressed', event => this.show_basic_search_pane());
 
   // Assign keyboard shortcuts
-  FlareTail.util.kbd.assign($bug, {
+  this.helpers.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the search thread
-    'B|F': event => FlareTail.util.kbd.dispatch(this.$grid, event.key),
+    'B|F': event => this.helpers.kbd.dispatch(this.$grid, event.key),
     // Open the bug in a new tab
     'O': event => this.trigger(':OpeningTabRequested'),
   });

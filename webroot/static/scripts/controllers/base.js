@@ -96,7 +96,7 @@ BzDeck.controllers.Base.prototype.parse_comment = function (str) {
     return p;
   };
 
-  str = FlareTail.util.string.sanitize(str);
+  str = this.helpers.string.sanitize(str);
 
   // Quotes
   for (let p of str.split(/\n{2,}/)) {

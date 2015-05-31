@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data) {
-  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = new DocumentFragment(),
       $comment;
 
@@ -29,7 +29,7 @@ BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype
 BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
-  let click_event_type = FlareTail.util.ua.touch.enabled ? 'touchstart' : 'mousedown',
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
       author = BzDeck.collections.users.get(comment.creator, { 'name': comment.creator }),
       time = comment.creation_time,
@@ -70,9 +70,9 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
     $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
     // Move focus on the textbox. Use async to make sure the event always works
-    FlareTail.util.event.async(() => $textbox.focus());
+    this.helpers.event.async(() => $textbox.focus());
     // Trigger an event to do something. Disable async to make sure the following lines work
-    FlareTail.util.event.trigger($textbox, 'input', {}, false);
+    this.helpers.event.trigger($textbox, 'input', {}, false);
     // Scroll to make sure the comment is visible
     $tabpanel.scrollTop = $tabpanel.scrollHeight;
     $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
@@ -109,7 +109,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
 
   // Assign keyboard shortcuts
-  FlareTail.util.kbd.assign($entry, {
+  this.helpers.kbd.assign($entry, {
     'R': event => reply(),
     // Collapse/expand the comment
     'C': event => collapse_comment(),
@@ -151,7 +151,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   $author.querySelector('[itemprop="name"]').itemValue = author.name;
   $author.querySelector('[itemprop="email"]').itemValue = author.email;
   $author.querySelector('[itemprop="image"]').itemValue = author.image;
-  FlareTail.util.datetime.fill_element($time, time);
+  this.helpers.datetime.fill_element($time, time);
 
   // Mark unread
   $entry.setAttribute('data-unread', 'true');
@@ -281,7 +281,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   });
 
   $change.setAttribute('data-change-field', change.field_name);
-  FlareTail.util.datetime.fill_element($time, time);
+  this.helpers.datetime.fill_element($time, time);
 
   let _reviews = { 'added': new Set(), 'removed': new Set() },
       _feedbacks = { 'added': new Set(), 'removed': new Set() },
@@ -516,7 +516,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_change_element = function (c
       return `<a href="${url}">${url}</a>`;
     }).join(', ');
   } else {
-    $elm.innerHTML = FlareTail.util.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span');
+    $elm.innerHTML = this.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span');
   }
 
   $elm.setAttribute('data-how', how);

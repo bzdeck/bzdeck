@@ -8,8 +8,8 @@
 $scripts = [
   // Vendor
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
-  '/vendor/flaretail.js/scripts/util.js',
-  '/vendor/flaretail.js/scripts/widget.js',
+  '/vendor/flaretail.js/scripts/helpers.js',
+  '/vendor/flaretail.js/scripts/widgets.js',
   '/vendor/flaretail.js/scripts/app.js',
   // Config
   '/static/scripts/config/app.js',

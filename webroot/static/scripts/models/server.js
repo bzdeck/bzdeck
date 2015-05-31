@@ -41,7 +41,7 @@ BzDeck.models.Server.prototype.get_config = function () {
   }
 
   // The config is not available from the REST endpoint so use the BzAPI compat layer instead
-  return FlareTail.util.network.json(`${this.url}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
+  return this.helpers.network.json(`${this.url}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
     if (config && config.version) {
       let config_retrieved = this.data.config_retrieved = Date.now();
 

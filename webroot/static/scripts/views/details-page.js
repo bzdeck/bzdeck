@@ -56,14 +56,14 @@ BzDeck.views.DetailsPage.prototype.get_tab_title = function (bug) {
 };
 
 BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
-  let Button = this.widget.Button,
+  let Button = this.widgets.Button,
       $toolbar = this.$bug.querySelector('header [role="toolbar"]'),
       $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
       $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
       index = this.bug_ids.indexOf(this.bug_id),
       prev = this.bug_ids[index - 1],
       next = this.bug_ids[index + 1],
-      assign_key_binding = (key, command) => FlareTail.util.kbd.assign(this.$bug, { [key]: command });
+      assign_key_binding = (key, command) => this.helpers.kbd.assign(this.$bug, { [key]: command });
 
   let set_button_tooltip = (id, $$button) => {
     let bug = BzDeck.collections.bugs.get(id);

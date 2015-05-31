@@ -3,10 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.Global = function GlobalView () {
-  let datetime = FlareTail.util.datetime,
+  let datetime = this.helpers.datetime,
       value,
       theme = BzDeck.prefs.get('ui.theme.selected'),
-      FTut = FlareTail.util.theme,
       $root = document.documentElement;
 
   // Automatically update relative dates on the app
@@ -37,12 +36,12 @@ BzDeck.views.Global = function GlobalView () {
   $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
 
   // Change the theme
-  if (theme && FTut.list.contains(theme)) {
-    FTut.selected = theme;
+  if (theme && this.helpers.theme.list.contains(theme)) {
+    this.helpers.theme.selected = theme;
   }
 
   // Preload images from CSS
-  FTut.preload_images();
+  this.helpers.theme.preload_images();
 
   // Update user name & image asynchronously
   this.on('UserModel:UserInfoUpdated', data => {
@@ -114,7 +113,7 @@ window.addEventListener('wheel', event => event.preventDefault());
 
 window.addEventListener('popstate', event => {
   // Hide sidebar
-  if (FlareTail.util.ua.device.mobile) {
+  if (FlareTail.helpers.env.device.mobile) {
     document.documentElement.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
@@ -131,14 +130,14 @@ window.addEventListener('click', event => {
   if ($target.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
 
-    return FlareTail.util.event.ignore(event);
+    return FlareTail.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
   if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
 
-    return FlareTail.util.event.ignore(event);
+    return FlareTail.helpers.event.ignore(event);
   }
 
   if ($target.matches(':-moz-any-link, [role="link"]')) {
@@ -146,7 +145,7 @@ window.addEventListener('click', event => {
     if ($target.hasAttribute('data-bug-id')) {
       BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));
 
-      return FlareTail.util.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     }
 
     // Attachment link: open in a new app tab
@@ -160,13 +159,13 @@ window.addEventListener('click', event => {
       if (attachment_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(attachment_type)) {
         // Open the link directly in a new browser tab
         window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${attachment_id}`);
-      } else if (!bug_id || (FlareTail.util.ua.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+      } else if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
         BzDeck.router.navigate(`/attachment/${attachment_id}`);
       } else {
         BzDeck.router.navigate(`/bug/${bug_id}`, { attachment_id });
       }
 
-      return FlareTail.util.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     }
 
     // Normal link: open in a new browser tab

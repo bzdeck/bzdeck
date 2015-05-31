@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.controllers.Sidebar = function SidebarController () {
-  let mobile = FlareTail.util.ua.device.mobile;
+  let mobile = this.helpers.env.device.mobile;
 
   this.data = new Proxy({
     'folder_id': null

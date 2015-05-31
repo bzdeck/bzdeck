@@ -45,7 +45,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
   this.consumer = consumer;
   this.bugs = [];
 
-  this.$$grid = new this.widget.Grid($grid, {
+  this.$$grid = new this.widgets.Grid($grid, {
     'rows': [],
     'columns': columns.map(col => {
       // Add labels
@@ -70,9 +70,9 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 
   this.$$grid.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.kbd.dispatch($grid, 'ArrowUp'),
+    'B': event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.kbd.dispatch($grid, 'ArrowDown'),
+    'F': event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
     // Toggle read
     'M': event => toggle_prop('unread'),
     // Toggle star
@@ -174,7 +174,7 @@ BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $outer, options) {
-  let mobile = FlareTail.util.ua.device.mobile;
+  let mobile = this.helpers.env.device.mobile;
 
   this.consumer = consumer;
   this.name = name;
@@ -182,9 +182,9 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
   this.$outer = $outer;
   this.$listbox = $outer.querySelector('[role="listbox"]');
-  this.$$listbox = new this.widget.ListBox(this.$listbox, []);
+  this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
   this.$option = this.get_fragment('vertical-thread-item').firstElementChild;
-  this.$$scrollbar = new this.widget.ScrollBar($outer);
+  this.$$scrollbar = new this.widgets.ScrollBar($outer);
   this.$scrollable_area = mobile ? $outer.querySelector('.scrollable-area-content') : $outer;
 
   this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
@@ -219,9 +219,9 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
   this.$$listbox.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => FlareTail.util.kbd.dispatch(this.$listbox, 'ArrowUp'),
+    'B': event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => FlareTail.util.kbd.dispatch(this.$listbox, 'ArrowDown'),
+    'F': event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
     // Toggle read
     'M': event => {
       for (let $item of this.$$listbox.view.selected) {
@@ -257,7 +257,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
   // Lazy loading while scrolling
   this.$scrollable_area.addEventListener('scroll', event => {
     if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
-      FlareTail.util.event.async(() => this.render());
+      this.helpers.event.async(() => this.render());
     }
   });
 };
@@ -268,11 +268,11 @@ BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   let cond = this.options.sort_conditions;
 
-  this.unrendered_bugs = cond ? FlareTail.util.array.sort([...bugs.values()], cond) : [...bugs.values()];
+  this.unrendered_bugs = cond ? this.helpers.array.sort([...bugs.values()], cond) : [...bugs.values()];
   this.$outer.setAttribute('aria-busy', 'true');
   this.$listbox.innerHTML = '';
 
-  FlareTail.util.event.async(() => {
+  this.helpers.event.async(() => {
     this.render();
     this.$listbox.dispatchEvent(new CustomEvent('Updated'));
     this.$outer.removeAttribute('aria-busy');

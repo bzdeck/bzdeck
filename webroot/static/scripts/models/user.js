@@ -168,7 +168,7 @@ BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
   }
 
   return new Promise((resolve, reject) => {
-    FlareTail.util.network.jsonp(`https://secure.gravatar.com/${this.hash}.json`)
+    this.helpers.network.jsonp(`https://secure.gravatar.com/${this.hash}.json`)
         .then(data => data.entry[0]).then(profile => {
       this.data.gravatar = profile;
       resolve(profile);

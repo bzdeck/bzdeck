@@ -18,7 +18,7 @@ BzDeck.views.Bug.prototype.init = function () {
 
   // Custom scrollbars
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
-                                  new this.widget.ScrollBar($area)]);
+                                  new this.widgets.ScrollBar($area)]);
 
   this.on('M:AnnotationUpdated', data => {
     if (this.$bug && data.type === 'starred') {
@@ -38,7 +38,7 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
     return;
   }
 
-  new this.widget.Button($button);
+  new this.widgets.Button($button);
 
   let $timeline = this.$bug.querySelector('.bug-timeline'),
       $menu = document.getElementById($button.getAttribute('aria-owns')),
@@ -133,7 +133,7 @@ BzDeck.views.Bug.prototype.render = function () {
   // Star on the header
   if ($button) {
     $button.setAttribute('aria-pressed', this.bug.starred);
-    (new this.widget.Button($button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
+    (new this.widgets.Button($button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
   }
 
   if (!$timeline) {
@@ -149,12 +149,12 @@ BzDeck.views.Bug.prototype.render = function () {
   }
 
   if (this.bug.comments && !this.bug._update_needed) {
-    FlareTail.util.event.async(() => this.fill_details(false));
+    this.helpers.event.async(() => this.fill_details(false));
   } else {
     // Load comments, history, flags and attachments' metadata; Exclude metadata
     this.bug.fetch(false).then(bug => {
       this.bug = bug;
-      FlareTail.util.event.async(() => this.fill_details(true));
+      this.helpers.event.async(() => this.fill_details(true));
     });
   }
 
@@ -176,7 +176,7 @@ BzDeck.views.Bug.prototype.render = function () {
 
   // Assign keyboard shortcuts
   if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
-    FlareTail.util.kbd.assign($timeline, {
+    this.helpers.kbd.assign($timeline, {
       // Toggle read
       'M': event => this.bug.unread = !this.bug.unread,
       // Toggle star
@@ -225,7 +225,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], [itemprop="duplicate"]')) {
     $li.setAttribute('data-bug-id', $li.itemValue);
 
-    (new this.widget.Button($li)).bind('Pressed', event =>
+    (new this.widgets.Button($li)).bind('Pressed', event =>
       BzDeck.router.navigate('/bug/' + event.target.textContent));
   }
 
@@ -252,7 +252,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   // TODO: Show Project Flags and Tracking Flags
 
-  FlareTail.util.event.async(() => {
+  this.helpers.event.async(() => {
     // Timeline: comments, attachments & history
     this.timeline = new BzDeck.views.Timeline(this.bug, this.$bug, delayed);
 
@@ -278,7 +278,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
   let config = BzDeck.models.server.data.config,
-      strip_tags = str => FlareTail.util.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
+      strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[this.bug.classification],
       product = config.product[this.bug.product],
       component,

@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.HomePage = function HomePageView (controller) {
-  let mobile = FlareTail.util.ua.device.mobile,
+  let mobile = this.helpers.env.device.mobile,
       $preview_pane = document.querySelector('#home-preview-pane'),
       $sidebar = document.querySelector('#sidebar');
 
@@ -25,7 +25,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
       document.documentElement.setAttribute('data-sidebar-hidden', hidden);
       $sidebar.setAttribute('aria-hidden', hidden);
 
-      return FlareTail.util.event.ignore(event);
+      return this.helpers.event.ignore(event);
     });
   }
 
@@ -84,7 +84,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
 };
 
 BzDeck.views.HomePage.prototype.setup_splitter = function () {
-  let $$splitter = this.$$preview_splitter = new this.widget.Splitter(document.querySelector('#home-preview-splitter')),
+  let $$splitter = this.$$preview_splitter = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
       prefix = 'ui.home.preview.splitter.position.',
       pref = BzDeck.prefs.get(prefix + $$splitter.data.orientation);
 
@@ -102,7 +102,7 @@ BzDeck.views.HomePage.prototype.setup_splitter = function () {
 };
 
 BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
-  let mobile = FlareTail.util.ua.device.mobile,
+  let mobile = this.helpers.env.device.mobile,
       layout_pref = BzDeck.prefs.get('ui.home.layout'),
       vertical = mobile || !layout_pref || layout_pref === 'vertical',
       items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
@@ -112,7 +112,7 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
 };
 
 BzDeck.views.HomePage.prototype.show_preview = function (bug) {
-  let mobile = FlareTail.util.ua.device.mobile,
+  let mobile = this.helpers.env.device.mobile,
       $pane = document.querySelector('#home-preview-pane');
 
   $pane.innerHTML = '';
@@ -125,18 +125,18 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
       $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
 
   // Activate the toolbar buttons
-  new this.widget.Button($bug.querySelector('[data-command="show-details"]'))
+  new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
       .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
 
   // Assign keyboard shortcuts
-  FlareTail.util.kbd.assign($bug, {
+  this.helpers.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the home thread
     'B|F': event => {
       let pref = BzDeck.prefs.get('ui.home.layout'),
           vertical = mobile || !pref || pref === 'vertical',
           $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
-      FlareTail.util.kbd.dispatch($target, event.key);
+      this.helpers.kbd.dispatch($target, event.key);
     },
     // Open the bug in a new tab
     'O': event => this.trigger(':OpeningTabRequested'),
@@ -149,7 +149,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
 };
 
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
-  let vertical = FlareTail.util.ua.device.mobile || !pref || pref === 'vertical',
+  let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical',
       $$splitter = this.$$preview_splitter;
 
   document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
@@ -243,7 +243,7 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
 
   // Change the date format on the thread pane
   for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-    $time.textContent = FlareTail.util.datetime.format($time.dateTime, { 'simple': vertical });
+    $time.textContent = this.helpers.datetime.format($time.dateTime, { 'simple': vertical });
     $time.dataset.simple = vertical;
   }
 };

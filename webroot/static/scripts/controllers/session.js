@@ -164,7 +164,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
 
 BzDeck.controllers.Session.prototype.show_first_notification = function () {
   // Authorize a notification
-  FlareTail.util.app.auth_notification();
+  this.helpers.app.auth_notification();
 
   // Update UI & Show a notification
   BzDeck.controllers.global.toggle_unread(true);

@@ -84,7 +84,7 @@ BzDeck.views.Attachment.prototype.show = function () {
     $outer.setAttribute('aria-busy', 'true');
 
     att.get_data('text').then(result => {
-      FlareTail.util.event.async(() => $outer.appendChild(new BzDeck.views.PatchViewer(result.text)));
+      this.helpers.event.async(() => $outer.appendChild(new BzDeck.views.PatchViewer(result.text)));
       $attachment.classList.add('patch');
     }, error => {
       $error.classList.add('error');
