@@ -283,7 +283,7 @@
           </div>
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div id="home-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0">
+          <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
@@ -317,7 +317,7 @@
           </div>
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div id="search-TID-preview-bug-timeline" class="bug-timeline" role="region" tabindex="0">
+          <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
@@ -361,7 +361,7 @@
           <div id="bug-TID-tabpanels">
             <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
-                <div class="bug-timeline" role="region" tabindex="0">
+                <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
                     <h3 itemprop="summary"></h3>
                     <div class="comments-wrapper"></div>
@@ -472,7 +472,7 @@
                       <span tabindex="0" role="checkbox" aria-checked="false">Show Obsolete</span>
                     </header>
                     <div role="region">
-                      <ul tabindex="0" role="listbox"></ul>
+                      <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions"></ul>
                     </div>
                   </div>
                   <div class="content" role="region">
@@ -819,7 +819,7 @@
         </div>
       </aside><!-- end #sidebar -->
       <main role="main">
-        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" data-removable="true" data-reorderable="false">
+        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
         </ul>
         <div id="main-tabpanels">
@@ -832,10 +832,10 @@
               </header>
               <div>
                 <div id="home-list-pane" tabindex="0" role="region">
-                  <section id="home-list" class="bug-list" role="grid" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
+                  <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
                   </section>
                   <section id="home-vertical-thread" tabindex="0" role="region">
-                    <ul tabindex="0" role="listbox" aria-multiselectable="true"></ul>
+                    <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
                   </section>
                   <footer aria-hidden="true">
                     <div role="status"><span>No bugs found in this folder.</span></div>
