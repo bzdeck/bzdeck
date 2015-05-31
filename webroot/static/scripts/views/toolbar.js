@@ -285,7 +285,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
   $$tablist.view.selected = $$tablist.view.$focused = $tab
   $tabpanel.focus();
 
-  this.update_window_title($tab);
+  BzDeck.views.global.update_window_title($tab);
   BzDeck.views.pages[page_category] = page;
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };

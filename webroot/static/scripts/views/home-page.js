@@ -80,7 +80,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   }
 
   BzDeck.views.toolbar.tab_path_map.set('tab-home', location.pathname);
-  this.update_window_title($tab);
+  BzDeck.views.global.update_window_title($tab);
 };
 
 BzDeck.views.HomePage.prototype.setup_splitter = function () {

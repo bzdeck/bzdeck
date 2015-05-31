@@ -18,7 +18,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
       this.$$bug = new BzDeck.views.BugDetails(this.$bug, data.bug);
       this.$tab.querySelector('label').textContent = this.bug_id;
       this.$tab.title = this.get_tab_title(data.bug);
-      this.update_window_title(this.$tab);
+      BzDeck.views.global.update_window_title(this.$tab);
 
       // Set Back & Forward navigation
       if (this.bug_ids.length) {

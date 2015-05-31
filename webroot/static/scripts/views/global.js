@@ -94,6 +94,14 @@ BzDeck.views.Global.prototype.toggle_unread = function (bugs, loaded, unread_num
   BzDeck.views.statusbar.show(status);
 };
 
+BzDeck.views.Global.prototype.update_window_title = function ($tab) {
+  if ($tab.id === 'tab-home') {
+    BzDeck.views.pages.home.update_title($tab.title);
+  } else {
+    document.title = $tab.title.replace('\n', ' – ');
+  }
+};
+
 /* ------------------------------------------------------------------------------------------------------------------
  * Events
  * ------------------------------------------------------------------------------------------------------------------ */

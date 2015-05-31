@@ -18,7 +18,7 @@ BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, attachment_i
     new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
 
     this.$tab.title = `Attachment ${id}\n${summary}`; // l10n;
-    this.update_window_title(this.$tab);
+    BzDeck.views.global.update_window_title(this.$tab);
   });
 
   this.on('C:AttachmentUnavailable', data => {
