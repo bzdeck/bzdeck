@@ -10,9 +10,9 @@ BzDeck.views.HomePage = function HomePageView (controller) {
   this.controller = controller;
 
   Object.defineProperties(this, {
-    'preview_is_hidden': {
-      'enumerable': true,
-      'get': () => !$preview_pane.clientHeight
+    preview_is_hidden: {
+      enumerable: true,
+      get: () => !$preview_pane.clientHeight
     },
   });
 
@@ -139,7 +139,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
       this.helpers.kbd.dispatch($target, event.key);
     },
     // Open the bug in a new tab
-    'O': event => this.trigger(':OpeningTabRequested'),
+    O: event => this.trigger(':OpeningTabRequested'),
   });
 
   // Fill the content
@@ -208,17 +208,17 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
   }
 
   this.thread = new BzDeck.views.VerticalThread(this, 'home', document.querySelector('#home-vertical-thread'), {
-    'sort_conditions': { 'key': 'last_change_time', 'type': 'time', 'order': 'descending' }
+    sort_conditions: { key: 'last_change_time', type: 'time', order: 'descending' }
   });
 };
 
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
   this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
-    'date': { 'simple': false },
-    'sortable': true,
-    'reorderable': true,
-    'sort_conditions': BzDeck.prefs.get('home.list.sort_conditions') ||
-                       { 'key': 'id', 'order': 'ascending' }
+    date: { simple: false },
+    sortable: true,
+    reorderable: true,
+    sort_conditions: BzDeck.prefs.get('home.list.sort_conditions') ||
+                       { key: 'id', order: 'ascending' }
   });
 
   let $$grid = this.thread.$$grid;
@@ -243,7 +243,7 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
 
   // Change the date format on the thread pane
   for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-    $time.textContent = this.helpers.datetime.format($time.dateTime, { 'simple': vertical });
+    $time.textContent = this.helpers.datetime.format($time.dateTime, { simple: vertical });
     $time.dataset.simple = vertical;
   }
 };

@@ -47,7 +47,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
   let $app_menu = document.querySelector('#main-menu--app-menu');
 
   $app_menu.addEventListener('MenuItemSelected', event => {
-    this.trigger(':AppMenuItemSelected', { 'command': event.detail.command });
+    this.trigger(':AppMenuItemSelected', { command: event.detail.command });
   });
 
   // Switch to the mobile layout
@@ -82,7 +82,7 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
 
       // A workaround for Bug 779324
       $menuitem.addEventListener('mousedown', event => toggle_fullScreen());
-      this.helpers.kbd.assign($menuitem, { 'Enter': event => toggle_fullScreen() });
+      this.helpers.kbd.assign($menuitem, { Enter: event => toggle_fullScreen() });
 
       window.addEventListener('mozfullscreenchange', event => {
         $menuitem.querySelector('label').textContent = document.mozFullScreenElement ? 'Exit Full Screen'
@@ -141,11 +141,11 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   };
 
   let exec_quick_search = () => {
-    this.trigger(':QuickSearchRequested', { 'terms': $search_box.value });
+    this.trigger(':QuickSearchRequested', { terms: $search_box.value });
   };
 
   let exec_advanced_search = () => {
-    this.trigger(':AdvancedSearchRequested', { 'terms': $search_box.value });
+    this.trigger(':AdvancedSearchRequested', { terms: $search_box.value });
     cleanup();
   };
 
@@ -173,7 +173,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
         exec_quick_search();
       }
     },
-    'Enter': event => {
+    Enter: event => {
       this.$$search_dropdown.close();
       exec_advanced_search();
     },
@@ -226,21 +226,21 @@ BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
   let $$dropdown = this.$$search_dropdown;
 
   let data = [{
-    'id': 'quicksearch-dropdown-header',
-    'label': results.length ? 'Local Search' : 'Local Search: No Results', // l10n
-    'disabled': true
+    id: 'quicksearch-dropdown-header',
+    label: results.length ? 'Local Search' : 'Local Search: No Results', // l10n
+    disabled: true
   }];
 
   for (let bug of results.reverse().slice(0, 20)) {
     data.push({
-      'id': 'quicksearch-dropdown-' + bug.id,
-      'label': bug.id + ' - ' + (bug.aliases.length ? '(' + bug.aliases.join(', ') + ') ' : '') + bug.summary,
-      'data': { 'id': bug.id }
+      id: 'quicksearch-dropdown-' + bug.id,
+      label: bug.id + ' - ' + (bug.aliases.length ? '(' + bug.aliases.join(', ') + ') ' : '') + bug.summary,
+      data: { id: bug.id }
     });
   }
 
-  data.push({ 'type': 'separator' });
-  data.push({ 'id': 'quicksearch-dropdown-more', 'label': 'Search All Bugs...' }); // l10n
+  data.push({ type: 'separator' });
+  data.push({ id: 'quicksearch-dropdown-more', label: 'Search All Bugs...' }); // l10n
 
   $$dropdown.build(data);
   $$dropdown.view.$container.scrollTop = 0;

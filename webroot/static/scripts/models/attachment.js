@@ -30,9 +30,9 @@ BzDeck.models.Attachment.prototype.get_data = function () {
     let binary = window.atob(this.data.data),
         text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined,
         blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))],
-                        { 'type': this.content_type });
+                        { type: this.content_type });
 
-    return { blob, text, 'attachment': this };
+    return { blob, text, attachment: this };
   };
 
   if (this.data.data) {

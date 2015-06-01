@@ -16,37 +16,37 @@ BzDeck.models.Bug = function BugModel (data) {
   this.cache(data);
 
   Object.defineProperties(this, {
-    'starred': {
-      'enumerable': true,
+    starred: {
+      enumerable: true,
       // For backward compatibility, check for the obsolete Set-typed property as well
-      'get': () => this.data._starred_comments ? !!this.data._starred_comments.size : this.data._starred || false,
-      'set': value => this.update_annotation('starred', value),
+      get: () => this.data._starred_comments ? !!this.data._starred_comments.size : this.data._starred || false,
+      set: value => this.update_annotation('starred', value),
     },
-    'unread': {
-      'enumerable': true,
-      'get': () => this.data._unread || false,
-      'set': value => this.update_annotation('unread', value),
+    unread: {
+      enumerable: true,
+      get: () => this.data._unread || false,
+      set: value => this.update_annotation('unread', value),
     },
-    'aliases': {
-      'enumerable': true,
+    aliases: {
+      enumerable: true,
       // Support for multiple aliases on Bugzilla 5.0+
-      'get': () => this.data.alias ? (Array.isArray(this.data.alias) ? this.data.alias : [this.data.alias]) : [],
+      get: () => this.data.alias ? (Array.isArray(this.data.alias) ? this.data.alias : [this.data.alias]) : [],
     },
-    'duplicates': {
-      'enumerable': true,
-      'get': () => this.get_duplicates(),
+    duplicates: {
+      enumerable: true,
+      get: () => this.get_duplicates(),
     },
-    'is_new': {
-      'enumerable': true,
-      'get': () => this.detect_if_new(),
+    is_new: {
+      enumerable: true,
+      get: () => this.detect_if_new(),
     },
-    'participants': {
-      'enumerable': true,
-      'get': () => this.get_participants(),
+    participants: {
+      enumerable: true,
+      get: () => this.get_participants(),
     },
-    'contributors': {
-      'enumerable': true,
-      'get': () => this.get_contributors(),
+    contributors: {
+      enumerable: true,
+      get: () => this.get_contributors(),
     },
   });
 
@@ -79,9 +79,9 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
     let _bug;
 
     if (values[include_metadata ? 0 : 1].error) { // values[0] is an empty resolve when include_metadata is false
-      _bug = { 'id': this.id, 'error': { 'code': values[0].code, 'message': values[0].message }};
+      _bug = { id: this.id, error: { code: values[0].code, message: values[0].message }};
     } else {
-      _bug = include_metadata ? values[0].bugs[0] : { 'id': this.id };
+      _bug = include_metadata ? values[0].bugs[0] : { id: this.id };
 
       if (include_details) {
         _bug.comments = values[1].bugs[this.id].comments;
@@ -156,7 +156,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
       changes.set('history', history);
     }
 
-    this.trigger(':Updated', { 'bug': data, changes });
+    this.trigger(':Updated', { bug: data, changes });
   }
 
   this.save(data);
@@ -175,8 +175,8 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   // Update the last-visited timestamp on Bugzilla
   if (type === 'unread' && value === false) {
     BzDeck.controllers.global.request('bug_user_last_visit/' + this.id, null, {
-      'method': 'POST',
-      'auth': true,
+      method: 'POST',
+      auth: true,
     }).then(result => {
       if (result[0] && result[0].id === this.id && result[0].last_visit_ts) {
         return Promise.resolve(result[0].last_visit_ts);
@@ -191,7 +191,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
       return Date.now();
     }).then(timestamp => {
       this.data._last_viewed = timestamp;
-      this.trigger(':AnnotationUpdated', { 'bug': this.proxy(), 'type': 'last_viewed', 'value': timestamp });
+      this.trigger(':AnnotationUpdated', { bug: this.proxy(), type: 'last_viewed', value: timestamp });
     });
   }
 
@@ -205,7 +205,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   }
 
   this.data[`_${type}`] = value;
-  this.trigger(':AnnotationUpdated', { 'bug': this.proxy(), type, value });
+  this.trigger(':AnnotationUpdated', { bug: this.proxy(), type, value });
 
   return true;
 };
@@ -312,15 +312,15 @@ BzDeck.models.Bug.prototype.get_participants = function () {
     add(mentors_detail);
   }
 
-  for (let { 'creator': name } of this.data.comments || []) {
+  for (let { creator: name } of this.data.comments || []) {
     add({ name });
   }
 
-  for (let { 'creator': name } of this.data.attachments || []) {
+  for (let { creator: name } of this.data.attachments || []) {
     add({ name });
   }
 
-  for (let { 'who': name } of this.data.history || []) {
+  for (let { who: name } of this.data.history || []) {
     add({ name });
   }
 

@@ -32,12 +32,12 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.changes = new Map();
 
   Object.defineProperties(this, {
-    'has_api_key': { 'enumerable': true, 'get': () => !!BzDeck.models.account.data.api_key },
-    'has_comment': { 'enumerable': true, 'get': () => !!this.$textbox.value.match(/\S/) },
-    'has_attachments': { 'enumerable': true, 'get': () => !!this.attachments.length },
-    'has_changes': { 'enumerable': true, 'get': () => !!this.changes.size },
-    'has_errors': { 'enumerable': true, 'get': () => !!this.find_errors().size },
-    'can_submit': { 'enumerable': true, 'get': () => this.has_api_key && !this.has_errors &&
+    has_api_key: { enumerable: true, get: () => !!BzDeck.models.account.data.api_key },
+    has_comment: { enumerable: true, get: () => !!this.$textbox.value.match(/\S/) },
+    has_attachments: { enumerable: true, get: () => !!this.attachments.length },
+    has_changes: { enumerable: true, get: () => !!this.changes.size },
+    has_errors: { enumerable: true, get: () => !!this.find_errors().size },
+    can_submit: { enumerable: true, get: () => this.has_api_key && !this.has_errors &&
                                                       (this.has_comment || this.has_attachments || this.has_changes) },
   });
 
@@ -115,7 +115,7 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   if (!this.has_api_key) {
     this.$status.innerHTML = '<strong>Provide your API Key</strong> to post.';
     this.$status.querySelector('strong').addEventListener(click_event_type, event =>
-      BzDeck.router.navigate('/settings', { 'tab_id': 'account' }));
+      BzDeck.router.navigate('/settings', { tab_id: 'account' }));
 
     this.on('SettingsPageController:APIKeyVerified', data => {
       this.$status.textContent = '';
@@ -155,13 +155,13 @@ BzDeck.views.TimelineCommentForm.prototype.attach_text = function (str) {
   // Use FileReader instead of btoa() to avoid overflow
   reader.addEventListener('load', event => {
     this.add_attachment({
-      'data': reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
-      'summary': is_ghpr ? `GitHub Pull Request, ${is_ghpr[1]}#${is_ghpr[2]}`
+      data: reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
+      summary: is_ghpr ? `GitHub Pull Request, ${is_ghpr[1]}#${is_ghpr[2]}`
                          : is_patch ? 'Patch' : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
-      'file_name': URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
+      file_name: URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
       is_patch,
-      'size': blob.size, // Not required for the API but used in find_attachment()
-      'content_type': is_ghpr ? 'text/x-github-pull-request' : 'text/plain'
+      size: blob.size, // Not required for the API but used in find_attachment()
+      content_type: is_ghpr ? 'text/x-github-pull-request' : 'text/plain'
     });
   });
 
@@ -194,12 +194,12 @@ BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
 
     reader.addEventListener('load', event => {
       this.add_attachment({
-        'data': reader.result.replace(/^.*?,/, ''), // Drop data:<type>;base64,
-        'summary': is_patch ? 'Patch' : file.name,
-        'file_name': file.name,
+        data: reader.result.replace(/^.*?,/, ''), // Drop data:<type>;base64,
+        summary: is_patch ? 'Patch' : file.name,
+        file_name: file.name,
         is_patch,
-        'size': file.size, // Not required for the API but used in find_attachment()
-        'content_type': is_patch ? 'text/plain' : file.type || 'application/x-download'
+        size: file.size, // Not required for the API but used in find_attachment()
+        content_type: is_patch ? 'text/plain' : file.type || 'application/x-download'
       });
     });
 
@@ -218,8 +218,8 @@ BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
     message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
 
     (new this.widgets.Dialog({
-      'type': 'alert',
-      'title': 'Error on attaching files',
+      type: 'alert',
+      title: 'Error on attaching files',
       message
     })).show();
   }
@@ -427,7 +427,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
     let type = options.id ? 'clear' : 'request',
         $row = this.get_fragment(`timeline-comment-form-${type}-needinfo-row`).firstElementChild,
         $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
-                            BzDeck.collections.users.get(requestee, { 'name': requestee }).properties),
+                            BzDeck.collections.users.get(requestee, { name: requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
         $$checkbox = new this.widgets.Checkbox($checkbox),
         $label = $checkbox.querySelector('span');
@@ -449,16 +449,16 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
   }
 
   for (let flag of flags) {
-    add_row(flag.requestee, flag.requestee === BzDeck.models.account.data.name, { 'id': flag.id });
+    add_row(flag.requestee, flag.requestee === BzDeck.models.account.data.name, { id: flag.id });
   }
 
   if (!names.includes(this.bug.creator)) {
-    add_row(this.bug.creator, false, { 'label': self_assigned ? '(reporter/assignee)' : '(reporter)' });
+    add_row(this.bug.creator, false, { label: self_assigned ? '(reporter/assignee)' : '(reporter)' });
   }
 
   if (!names.includes(this.bug.assigned_to) && !self_assigned &&
       !this.bug.assigned_to.startsWith('nobody@')) { // Is this BMO-specific?
-    add_row(this.bug.assigned_to, false, { 'label': '(assignee)' });
+    add_row(this.bug.assigned_to, false, { label: '(assignee)' });
   }
 
   $finder_outer.appendChild($finder);
@@ -479,9 +479,9 @@ BzDeck.views.TimelineCommentForm.prototype.update_needinfos = function (addition
   if (!addition) {
     changes.delete(requestee);
   } else if (id) { // Clear an existing needinfo flag
-    changes.set(requestee, { id, 'status': 'X' });
+    changes.set(requestee, { id, status: 'X' });
   } else { // Add a new needinfo flag
-    changes.set(requestee, { 'new': true, 'name': 'needinfo', 'status': '?', requestee });
+    changes.set(requestee, { new: true, name: 'needinfo', status: '?', requestee });
   }
 
   if (changes.size) {
@@ -543,11 +543,11 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     }
 
     BzDeck.controllers.global.request(`bug/${this.bug.id}${method ? '/' + method : ''}`, null, {
-      'method': method === 'attachment' ? 'POST' : 'PUT',
-      'data': data,
-      'auth': true,
-      'upload_listeners': {
-        'progress': event => {
+      method: method === 'attachment' ? 'POST' : 'PUT',
+      data: data,
+      auth: true,
+      upload_listeners: {
+        progress: event => {
           if (method === 'attachment') {
             if (!size) {
               length_computable = event.lengthComputable;
@@ -592,7 +592,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
     // If there's no attachment, just send the comment. If there are 2 or more attachments,
     // send the comment first then send the attachments in parallel or series
     if (comment) {
-      data.comment = { 'body': comment };
+      data.comment = { body: comment };
     }
 
     // Append the changed fields if any
@@ -627,7 +627,7 @@ BzDeck.views.TimelineCommentForm.prototype.submit = function () {
 
     // Fetch the bug if the Bugzfeed client is not working for some reason
     if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
-      BzDeck.collections.bugs.get(this.bug.id, { 'id': this.bug.id, '_unread': true }).fetch();
+      BzDeck.collections.bugs.get(this.bug.id, { id: this.bug.id, _unread: true }).fetch();
     }
   }, errors => {
     // Failed to post at least one attachment

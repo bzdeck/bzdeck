@@ -14,15 +14,15 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   }
 
   BzDeck.views.toolbar.open_tab({
-    'page_category': 'settings',
-    'page_constructor': BzDeck.views.SettingsPage,
-    'page_constructor_args': [tab_id, account.data.api_key, api_key_link, prefs],
-    'tab_label': 'Settings',
+    page_category: 'settings',
+    page_constructor: BzDeck.views.SettingsPage,
+    page_constructor_args: [tab_id, account.data.api_key, api_key_link, prefs],
+    tab_label: 'Settings',
   }, this);
 
   this.on('V:APIKeyProvided', data => {
     let params = new URLSearchParams(),
-        options = { 'api_key': data.api_key };
+        options = { api_key: data.api_key };
 
     params.append('names', account.data.name);
 

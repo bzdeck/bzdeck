@@ -21,19 +21,19 @@ BzDeck.views.Attachment.prototype.show = function () {
   this.$placeholder.innerHTML = '';
 
   let $attachment = this.fill(this.$placeholder.appendChild($_content), {
-    'description': att.summary,
-    'name': att.file_name,
-    'contentSize': `${(att.size / 1024).toFixed(2)} KB`, // l10n
-    'encodingFormat': att.is_patch ? 'text/x-patch' : att.content_type,
-    'is_obsolete': att.is_obsolete ? 'true' : 'false',
-    'dateCreated': att.creation_time,
-    'dateModified': att.last_change_time,
-    'creator': get_person(att.creator),
-    'flag': [for (flag of att.flags) {
-      'creator': get_person(flag.setter),
-      'name': flag.name,
-      'status': flag.status,
-      'requestee': flag.requestee ? get_person(flag.requestee) : {},
+    description: att.summary,
+    name: att.file_name,
+    contentSize: `${(att.size / 1024).toFixed(2)} KB`, // l10n
+    encodingFormat: att.is_patch ? 'text/x-patch' : att.content_type,
+    is_obsolete: att.is_obsolete ? 'true' : 'false',
+    dateCreated: att.creation_time,
+    dateModified: att.last_change_time,
+    creator: get_person(att.creator),
+    flag: [for (flag of att.flags) {
+      creator: get_person(flag.setter),
+      name: flag.name,
+      status: flag.status,
+      requestee: flag.requestee ? get_person(flag.requestee) : {},
     }],
   }, {
     'data-attachment-id': att.id,

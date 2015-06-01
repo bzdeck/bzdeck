@@ -62,7 +62,7 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
   params.append('limit', 10);
 
   this.timer = window.setTimeout(() => {
-    BzDeck.controllers.global.request('user', params, { 'auth': true }).then(result => {
+    BzDeck.controllers.global.request('user', params, { auth: true }).then(result => {
       // Check if the search term is not updated
       if (this.value !== value || !result.users || !result.users.length) {
         return;
@@ -72,7 +72,7 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
 
       for (let user of result.users) {
         if (!BzDeck.collections.users.has(user.name)) {
-          BzDeck.collections.users.set(user.name, { 'bugzilla': user });
+          BzDeck.collections.users.set(user.name, { bugzilla: user });
         }
 
         users.push(user);
@@ -114,8 +114,8 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
   }
 
   for (let [name, user] of results) {
-    let data = { 'name': user.name, 'nick': user.nick_names[0] || '', 'email': user.email, 'image': user.image },
-        attrs = { 'id': `${this.combobox_id}--${user.email}`, 'data-value': user.email };
+    let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image },
+        attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
 
     $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
   }

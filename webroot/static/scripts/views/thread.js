@@ -21,7 +21,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
 
   if ($target.matches(selector)) {
     // Open Bug in New Tab
-    BzDeck.router.navigate('/bug/' + $target.dataset.id, { 'ids': [...this.consumer.controller.data.bugs.keys()] });
+    BzDeck.router.navigate('/bug/' + $target.dataset.id, { ids: [...this.consumer.controller.data.bugs.keys()] });
   }
 };
 
@@ -46,8 +46,8 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
   this.bugs = [];
 
   this.$$grid = new this.widgets.Grid($grid, {
-    'rows': [],
-    'columns': columns.map(col => {
+    rows: [],
+    columns: columns.map(col => {
       // Add labels
       col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
                   field[col.id].description;
@@ -62,21 +62,21 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 
   this.$$grid.bind('ColumnModified', event => {
     BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
-      'id': col.id,
-      'type': col.type || 'string',
-      'hidden': col.hidden || false
+      id: col.id,
+      type: col.type || 'string',
+      hidden: col.hidden || false
     })));
   });
 
   this.$$grid.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
+    B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
+    F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
     // Toggle read
-    'M': event => toggle_prop('unread'),
+    M: event => toggle_prop('unread'),
     // Toggle star
-    'S': event => toggle_prop('starred'),
+    S: event => toggle_prop('starred'),
   });
 
   this.on('BugModel:AnnotationUpdated', data => {
@@ -100,11 +100,11 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
   this.$$grid.build_body([...bugs.values()].map(bug => {
     let row = {
-      'id': `${this.$$grid.view.$container.id}-row-${bug.id}`,
-      'data': {},
-      'dataset': {
-        'unread': bug.unread === true,
-        'severity': bug.severity
+      id: `${this.$$grid.view.$container.id}-row-${bug.id}`,
+      data: {},
+      dataset: {
+        unread: bug.unread === true,
+        severity: bug.severity
       }
     };
 
@@ -125,7 +125,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.collections.users.get(value.name, { 'name': value.name }).name;
+        value = BzDeck.collections.users.get(value.name, { name: value.name }).name;
       }
 
       if (field === 'starred') {
@@ -140,7 +140,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
     }
 
     row.data = new Proxy(row.data, {
-      'set': (obj, prop, value) => {
+      set: (obj, prop, value) => {
         if (prop === 'starred') {
           bug.starred = value;
         }
@@ -219,17 +219,17 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
   this.$$listbox.assign_key_bindings({
     // Show previous bug, an alias of UP
-    'B': event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
+    B: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
     // Show next bug, an alias of DOWN
-    'F': event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
+    F: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
     // Toggle read
-    'M': event => {
+    M: event => {
       for (let $item of this.$$listbox.view.selected) {
         BzDeck.collections.bugs.get(Number($item.dataset.id)).unread = $item.dataset.unread === 'false';
       }
     },
     // Toggle star
-    'S': event => {
+    S: event => {
       for (let $item of this.$$listbox.view.selected) {
         BzDeck.collections.bugs.get(Number($item.dataset.id))
                           .starred = $item.querySelector('[data-field="starred"]').matches('[aria-checked="false"]');
@@ -238,7 +238,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     // Open the bug in a new tab
     'O|Enter': event => {
       BzDeck.router.navigate('/bug/' + this.consumer.controller.data.preview_id,
-                             { 'ids': [...this.consumer.controller.data.bugs.keys()] });
+                             { ids: [...this.consumer.controller.data.bugs.keys()] });
     },
   });
 
@@ -288,12 +288,12 @@ BzDeck.views.VerticalThread.prototype.render = function () {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
 
     let $option = $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
-      'id': bug.id,
-      'name': bug.summary,
-      'dateModified': bug.last_change_time,
-      'contributor': BzDeck.collections.users.get(contributor, { 'name': contributor }).properties,
+      id: bug.id,
+      name: bug.summary,
+      dateModified: bug.last_change_time,
+      contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
     }, {
-      'id': `${this.name}-vertical-thread-bug-${bug.id}`,
+      id: `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
       'data-unread': !!bug.unread,
       'aria-checked': bug.starred,

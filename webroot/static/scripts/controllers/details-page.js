@@ -22,12 +22,12 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
   this.bug_ids = history.state ? history.state.ids : [];
 
   BzDeck.views.toolbar.open_tab({
-    'page_category': 'details',
-    'page_id': this.id,
-    'page_constructor': BzDeck.views.DetailsPage,
-    'page_constructor_args': [this.id, this.bug_id, this.bug_ids],
-    'tab_label': this.bug_id,
-    'tab_position': 'next',
+    page_category: 'details',
+    page_id: this.id,
+    page_constructor: BzDeck.views.DetailsPage,
+    page_constructor_args: [this.id, this.bug_id, this.bug_ids],
+    tab_label: this.bug_id,
+    tab_position: 'next',
   }, this);
 
   this.init();
@@ -55,12 +55,12 @@ BzDeck.controllers.DetailsPage.prototype.init = function () {
     if (bug && !bug.error) {
       resolve(bug);
     } else if (!navigator.onLine) {
-      this.trigger(':BugDataUnavailable', { 'code': 0, 'message': 'You have to go online to load the bug.' });
+      this.trigger(':BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
     } else {
       this.trigger(':LoadingStarted');
-      bug = BzDeck.collections.bugs.get(this.bug_id, { 'id': this.bug_id, '_unread': true });
+      bug = BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id, _unread: true });
       bug.fetch().then(bug => resolve(bug))
-          .catch(error => this.trigger(':BugDataUnavailable', { 'code': 0, 'message': 'Failed to load data.' }));
+          .catch(error => this.trigger(':BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
     }
   }).then(bug => new Promise(resolve => {
     if (bug.data && bug.data.summary) {

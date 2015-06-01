@@ -20,50 +20,50 @@ BzDeck.models.User = function UserModel (data) {
   Object.defineProperties(this, {
     // This is not the Bugzilla user name (email address) but pretty name.
     // Replace both 'Kohei Yoshino [:Kohei]' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
-    'name': {
-      'enumerable': true,
-      'get': () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/g, '').trim()
+    name: {
+      enumerable: true,
+      get: () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/g, '').trim()
                       || this.email.split('@')[0]
     },
     // Other name props
-    'original_name': {
-      'enumerable': true,
-      'get': () => this.data.bugzilla ? this.data.bugzilla.real_name || '' : ''
+    original_name: {
+      enumerable: true,
+      get: () => this.data.bugzilla ? this.data.bugzilla.real_name || '' : ''
     },
-    'first_name': {
-      'enumerable': true,
-      'get': () => this.name.split(/\s/)[0]
+    first_name: {
+      enumerable: true,
+      get: () => this.name.split(/\s/)[0]
     },
-    'initial': {
-      'enumerable': true,
-      'get': () => this.first_name.charAt(0).toUpperCase()
+    initial: {
+      enumerable: true,
+      get: () => this.first_name.charAt(0).toUpperCase()
     },
-    'nick_names': {
-      'enumerable': true,
-      'get': () => [for (name of this.original_name.match(/\:[\w\-]+/g) || []) name.substr(1)] // Consider multiple nick
+    nick_names: {
+      enumerable: true,
+      get: () => [for (name of this.original_name.match(/\:[\w\-]+/g) || []) name.substr(1)] // Consider multiple nick
     },
     // Images
-    'image': {
-      'enumerable': true,
-      'get': () => this.data.image_src || ''
+    image: {
+      enumerable: true,
+      get: () => this.data.image_src || ''
     },
-    'background_image': {
-      'enumerable': true,
-      'get': () => { try { return this.data.gravatar.profileBackground.url; } catch (e) { return undefined; }}
+    background_image: {
+      enumerable: true,
+      get: () => { try { return this.data.gravatar.profileBackground.url; } catch (e) { return undefined; }}
     },
     // Find background color from Gravatar profile or generate one based on the user name and email
-    'color': {
-      'enumerable': true,
-      'get': () => { try { return this.data.gravatar.profileBackground.color; } catch (e) {
+    color: {
+      enumerable: true,
+      get: () => { try { return this.data.gravatar.profileBackground.color; } catch (e) {
         return '#' + String(this.original_name ? this.original_name.length : 0).substr(-1, 1)
                    + String(this.email.length).substr(-1, 1)
                    + String(this.email.length).substr(0, 1);
       }}
     },
     // Return basic info
-    'properties': {
-      'enumerable': true,
-      'get': () => ({ 'name': this.name, 'givenName': this.first_name, 'email': this.email, 'image': this.image })
+    properties: {
+      enumerable: true,
+      get: () => ({ name: this.name, givenName: this.first_name, email: this.email, image: this.image })
     },
   });
 
@@ -74,13 +74,13 @@ BzDeck.models.User = function UserModel (data) {
 
   let options = {
     // Refresh profiles if the data is older than 10 days
-    'refresh': this.data.updated && this.data.updated < Date.now() - 864000000,
+    refresh: this.data.updated && this.data.updated < Date.now() - 864000000,
   };
 
   if (options.refresh || !this.data.updated) {
     this.fetch(options).then(profiles => {
       // Notify the change to update the UI when necessary
-      this.trigger(':UserInfoUpdated', { 'name': this.email });
+      this.trigger(':UserInfoUpdated', { name: this.email });
     });
   }
 
@@ -106,19 +106,19 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
     this.data.gravatar ? this.get_gravatar_profile(options, true) : Promise.resolve()
   ]).then(results => {
     this.save({
-      'name': this.email, // String
-      'id': results[0].id, // Integer
-      'bugzilla': results[0], // Object
-      'image_blob': results[1], // Blob
-      'image_src': results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
-      'gravatar': results[2] || undefined, // Object
-      'updated': Date.now(), // Integer
+      name: this.email, // String
+      id: results[0].id, // Integer
+      bugzilla: results[0], // Object
+      image_blob: results[1], // Blob
+      image_src: results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
+      gravatar: results[2] || undefined, // Object
+      updated: Date.now(), // Integer
     });
   }).catch(error => {
     this.save({
-      'name': this.email,
-      'error': error.message,
-      'updated': Date.now(),
+      name: this.email,
+      error: error.message,
+      updated: Date.now(),
     });
   }).then(() => Promise.resolve(this.data));
 };
@@ -141,7 +141,7 @@ BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
   }
 
   let params = new URLSearchParams(),
-      _options = { 'api_key': options.api_key || undefined };
+      _options = { api_key: options.api_key || undefined };
 
   params.append('names', this.email);
 
@@ -173,7 +173,7 @@ BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
       this.data.gravatar = profile;
       resolve(profile);
     }).catch(error => {
-      let profile = this.data.gravatar = { 'error': 'Not Found' };
+      let profile = this.data.gravatar = { error: 'Not Found' };
 
       // Resolve anyway if this is called in Promise.all()
       if (options.in_promise_all) {

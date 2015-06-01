@@ -13,9 +13,9 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
   this.setup_result_pane();
 
   Object.defineProperties(this, {
-    'preview_is_hidden': {
-      'enumerable': true,
-      'get': () => this.helpers.env.device.mobile
+    preview_is_hidden: {
+      enumerable: true,
+      get: () => this.helpers.env.device.mobile
     },
   });
 
@@ -74,35 +74,35 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
       $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
   let classifications = Object.keys(config.classification).sort().map((value, index) => ({
-    'id': `${$classification_list.id}item-${index}`,
-    'label': value
+    id: `${$classification_list.id}item-${index}`,
+    label: value
   }));
 
   let products = Object.keys(config.product).sort().map((value, index) => ({
-    'id': `${$product_list.id}item-${index}`,
-    'label': value
+    id: `${$product_list.id}item-${index}`,
+    label: value
   }));
 
   let components = [];
 
-  for (let [key, { 'component': cs }] of Iterator(config.product)) {
+  for (let [key, { component: cs }] of Iterator(config.product)) {
     components.push(...[for (c of Object.keys(cs)) if (!components.includes(c)) c]);
   }
 
   components = components.sort().map((value, index) => ({
-    'id': `${$component_list.id}item-${index}`,
-    'label': value
+    id: `${$component_list.id}item-${index}`,
+    label: value
   }));
 
   let statuses = config.field.status.values.map((value, index) => ({
-    'id': `${$status_list.id}item-${index}`,
-    'label': value
+    id: `${$status_list.id}item-${index}`,
+    label: value
   }));
 
   let resolutions = config.field.resolution.values.map((value, index) => ({
-    'id': `${$resolution_list.id}item-${index}`,
-    'label': value || '---',
-    'selected': !value // Select '---' to search open bugs
+    id: `${$resolution_list.id}item-${index}`,
+    label: value || '---',
+    selected: !value // Select '---' to search open bugs
   }));
 
   let ListBox = this.widgets.ListBox,
@@ -144,11 +144,11 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   $$button.bind('Pressed', event => {
     let params = new URLSearchParams(),
         map = {
-          'classification': $classification_list,
-          'product': $product_list,
-          'component': $component_list,
-          'status': $status_list,
-          'resolution': $resolution_list
+          classification: $classification_list,
+          product: $product_list,
+          component: $component_list,
+          status: $status_list,
+          resolution: $resolution_list
         };
 
     for (let [name, list] of Iterator(map)) {
@@ -171,10 +171,10 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
       mobile = this.helpers.env.device.mobile;
 
   this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
-    'sortable': true,
-    'reorderable': true,
-    'sort_conditions': mobile ? { 'key': 'last_change_time', 'order': 'descending' }
-                              : BzDeck.prefs.get('home.list.sort_conditions') || { 'key': 'id', 'order': 'ascending' }
+    sortable: true,
+    reorderable: true,
+    sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
+                              : BzDeck.prefs.get('home.list.sort_conditions') || { key: 'id', order: 'ascending' }
   });
 
   let $$grid = this.thread.$$grid;
@@ -225,7 +225,7 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
     // [B] previous bug or [F] next bug: handle on the search thread
     'B|F': event => this.helpers.kbd.dispatch(this.$grid, event.key),
     // Open the bug in a new tab
-    'O': event => this.trigger(':OpeningTabRequested'),
+    O: event => this.trigger(':OpeningTabRequested'),
   });
 
   // Fill the content

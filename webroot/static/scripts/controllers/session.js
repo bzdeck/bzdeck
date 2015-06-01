@@ -30,7 +30,7 @@ BzDeck.controllers.Session.prototype.find_account = function () {
     BzDeck.collections.accounts = new BzDeck.collections.Accounts();
     BzDeck.collections.servers = new BzDeck.collections.Servers();
   }, error => {
-    this.trigger(':Error', { 'message': error.message });
+    this.trigger(':Error', { message: error.message });
   }).then(() => Promise.all([
     BzDeck.collections.accounts.load(),
     BzDeck.collections.servers.load(),
@@ -46,7 +46,7 @@ BzDeck.controllers.Session.prototype.find_account = function () {
 
 // Bootstrap Step 2. Let the user sign in if an active account is not found
 BzDeck.controllers.Session.prototype.force_login = function () {
-  this.trigger(':StatusUpdate', { 'status': 'ForcingLogin', 'message': '' });
+  this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
   this.on('LoginFormView:Submit', data => {
     if (!this.bootstrapping) {
@@ -55,14 +55,14 @@ BzDeck.controllers.Session.prototype.force_login = function () {
       this.bootstrapping = true;
     }
 
-    this.trigger(':StatusUpdate', { 'message': 'Verifying your account...' }); // l10n
+    this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
 
-    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host, { 'host': data.host }),
+    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host, { host: data.host }),
         params = new URLSearchParams();
 
     params.append('names', data.email);
 
-    return this.request('user', params, { 'api_key': data.api_key }).then(result => {
+    return this.request('user', params, { api_key: data.api_key }).then(result => {
       return result.users ? Promise.resolve(result.users[0])
                           : Promise.reject(new Error(result.message || 'User Not Found'));
     }, error => {
@@ -71,19 +71,19 @@ BzDeck.controllers.Session.prototype.force_login = function () {
       return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
     }).then(user => {
       let account = BzDeck.models.account = new BzDeck.models.Account({
-        'host': BzDeck.models.server.name,
-        'name': data.email,
-        'api_key': data.api_key || undefined,
-        'loaded': Date.now(), // key
-        'active': true,
-        'bugzilla': user,
+        host: BzDeck.models.server.name,
+        name: data.email,
+        api_key: data.api_key || undefined,
+        loaded: Date.now(), // key
+        active: true,
+        bugzilla: user,
       });
 
       account.save();
       this.trigger(':UserFound');
       this.load_data();
     }).catch(error => {
-      this.trigger(':Error', { 'message': error.message || 'Failed to find your account.' }); // l10n
+      this.trigger(':Error', { message: error.message || 'Failed to find your account.' }); // l10n
     });
   }, true);
 };
@@ -96,7 +96,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.prefs = new BzDeck.collections.Prefs();
     BzDeck.collections.users = new BzDeck.collections.Users();
   }, error => {
-    this.trigger(':Error', { 'message': error.message });
+    this.trigger(':Error', { message: error.message });
   }).then(() => Promise.all([
     BzDeck.collections.bugs.load(),
     BzDeck.prefs.load(),
@@ -109,13 +109,13 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   }).then(() => {
     this.init_components();
   }).catch(error => {
-    this.trigger(':Error', { 'message': error.message });
+    this.trigger(':Error', { message: error.message });
   });
 };
 
 // Bootstrap Step 4. Retrieve data from remote Bugzilla instance
 BzDeck.controllers.Session.prototype.fetch_data = function () {
-  this.trigger(':StatusUpdate', { 'status': 'LoadingData', 'message': 'Loading Bugzilla config and your bugs...' });
+  this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading Bugzilla config and your bugs...' });
 
   return Promise.all([
     BzDeck.collections.subscriptions.fetch(),
@@ -125,7 +125,7 @@ BzDeck.controllers.Session.prototype.fetch_data = function () {
 
 // Bootstrap Step 5. Setup everything including UI components
 BzDeck.controllers.Session.prototype.init_components = function () {
-  this.trigger(':StatusUpdate', { 'message': 'Initializing UI...' }); // l10n
+  this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
 
   new Promise((resolve, reject) => {
     this.relogin ? resolve() : reject();
@@ -150,7 +150,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
     // BzDeck.controllers.global.register_activity_handler();
   }).then(() => {
-    this.trigger(':StatusUpdate', { 'message': 'Loading complete.' }); // l10n
+    this.trigger(':StatusUpdate', { message: 'Loading complete.' }); // l10n
     this.show_first_notification();
     this.login();
     this.bootstrapping = false;
@@ -158,7 +158,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     // Fetch data for returning users
     return this.firstrun ? Promise.resolve() : this.fetch_data();
   }).catch(error => {
-    this.trigger(':Error', { 'message': error.message });
+    this.trigger(':Error', { message: error.message });
   });
 };
 

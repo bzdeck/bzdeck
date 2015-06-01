@@ -28,13 +28,13 @@ BzDeck.datasources.Account.prototype.onupgradeneeded = function (event) {
 
   // Create the initial stores
   if (event.oldVersion < 1) {
-    database.createObjectStore('bugs', { 'keyPath': 'id' })
-            .createIndex('alias', 'alias', { 'unique': true });
+    database.createObjectStore('bugs', { keyPath: 'id' })
+            .createIndex('alias', 'alias', { unique: true });
 
-    database.createObjectStore('users', { 'keyPath': 'name' })
-            .createIndex('id', 'id', { 'unique': true });
+    database.createObjectStore('users', { keyPath: 'name' })
+            .createIndex('id', 'id', { unique: true });
 
-    database.createObjectStore('prefs', { 'keyPath': 'name' });
+    database.createObjectStore('prefs', { keyPath: 'name' });
   }
 
   return database;

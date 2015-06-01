@@ -31,7 +31,7 @@ BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
-      author = BzDeck.collections.users.get(comment.creator, { 'name': comment.creator }),
+      author = BzDeck.collections.users.get(comment.creator, { name: comment.creator }),
       time = comment.creation_time,
       $entry = this.get_fragment('timeline-comment').firstElementChild,
       $header = $entry.querySelector('header'),
@@ -75,7 +75,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     this.helpers.event.trigger($textbox, 'input', {}, false);
     // Scroll to make sure the comment is visible
     $tabpanel.scrollTop = $tabpanel.scrollHeight;
-    $entry.scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
+    $entry.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
   // Collapse/expand the comment
@@ -85,7 +85,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
   let move_focus = shift => {
     if (!$entry.matches(':focus')) {
       $entry.focus();
-      $entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
+      $entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
       return;
     }
@@ -99,7 +99,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     // Focus the next (or previous) visible entry
     for (let $_entry of entries) if ($_entry.clientHeight) {
       $_entry.focus();
-      $_entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
+      $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
       break;
     }
@@ -110,9 +110,9 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
 
   // Assign keyboard shortcuts
   this.helpers.kbd.assign($entry, {
-    'R': event => reply(),
+    R: event => reply(),
     // Collapse/expand the comment
-    'C': event => collapse_comment(),
+    C: event => collapse_comment(),
     // Focus management
     'ArrowUp|PageUp|Shift+Space': event => move_focus(true),
     'ArrowDown|PageDown|Space': event => move_focus(false),
@@ -177,10 +177,10 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
       $media;
 
   this.fill($attachment, {
-    'description': attachment.summary,
-    'name': attachment.file_name,
-    'contentSize': attachment.size,
-    'encodingFormat': attachment.is_patch ? 'text/x-patch' : attachment.content_type
+    description: attachment.summary,
+    name: attachment.file_name,
+    contentSize: attachment.size,
+    encodingFormat: attachment.is_patch ? 'text/x-patch' : attachment.content_type
   }, {
     'data-attachment-id': attachment.id,
     'data-content-type': attachment.is_patch ? 'text/x-patch' : attachment.content_type,
@@ -231,7 +231,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
 BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
-      changer = BzDeck.collections.users.get(history.who, { 'name': history.who }),
+      changer = BzDeck.collections.users.get(history.who, { name: history.who }),
       time = history.when,
       $fragment = new DocumentFragment();
 
@@ -267,8 +267,8 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
                // If the Bugzilla config is outdated, the field name can be null
                change,
       _field_label = {
-        'blocks': 'blockers', // l10n
-        'depends_on': 'dependencies', // l10n
+        blocks: 'blockers', // l10n
+        depends_on: 'dependencies', // l10n
       }[change.field_name] || _field.description || _field.field_name,
       field = `<span data-what="${change.field_name}">` + _field_label + '</span>';
 
@@ -277,15 +277,15 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   }
 
   this.fill($changer, changer.properties, {
-    'title': `${changer.original_name || changer.name}\n${changer.email}`
+    title: `${changer.original_name || changer.name}\n${changer.email}`
   });
 
   $change.setAttribute('data-change-field', change.field_name);
   this.helpers.datetime.fill_element($time, time);
 
-  let _reviews = { 'added': new Set(), 'removed': new Set() },
-      _feedbacks = { 'added': new Set(), 'removed': new Set() },
-      _needinfos = { 'added': new Set(), 'removed': new Set() };
+  let _reviews = { added: new Set(), removed: new Set() },
+      _feedbacks = { added: new Set(), removed: new Set() },
+      _needinfos = { added: new Set(), removed: new Set() };
 
   let find_people = how => {
     for (let item of change[how].split(', ')) {
@@ -479,7 +479,7 @@ BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
         $person = this.get_fragment('person-with-image').firstElementChild;
 
     this.fill($person, person.properties, {
-      'title': `${person.original_name || person.name}\n${person.email}`
+      title: `${person.original_name || person.name}\n${person.email}`
     });
 
     return $person.outerHTML;

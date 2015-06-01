@@ -46,7 +46,7 @@ BzDeck.models.Server.prototype.get_config = function () {
       let config_retrieved = this.data.config_retrieved = Date.now();
 
       this.data.config = config;
-      this.datasource.get_store(this.store_name).save({ 'host': this.name, config, config_retrieved });
+      this.datasource.get_store(this.store_name).save({ host: this.name, config, config_retrieved });
 
       return Promise.resolve(config);
     }

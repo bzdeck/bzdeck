@@ -10,7 +10,7 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
 
   this.user.get_gravatar_profile().then(profile => {
     this.trigger(':GravatarProfileFound', {
-      'style': { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
+      style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
     });
   });
 
@@ -19,8 +19,8 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
       'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
       'show-settings': () => BzDeck.router.navigate('/settings'),
       'install-app': () => this.helpers.app.install(),
-      'logout': () => BzDeck.controllers.session.logout(),
-      'quit': () => BzDeck.controllers.session.close(),
+      logout: () => BzDeck.controllers.session.logout(),
+      quit: () => BzDeck.controllers.session.close(),
     }[data.command];
 
     if (func) {

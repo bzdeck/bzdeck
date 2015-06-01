@@ -18,12 +18,12 @@ BzDeck.controllers.AttachmentPage = function AttachmentPageController (attachmen
   this.attachment_id = attachment_id;
 
   BzDeck.views.toolbar.open_tab({
-    'page_category': 'attachment',
-    'page_id': this.id,
-    'page_constructor': BzDeck.views.AttachmentPage,
-    'page_constructor_args': [this.id, this.attachment_id],
-    'tab_label': `Attachment ${this.attachment_id}`,
-    'tab_position': 'next',
+    page_category: 'attachment',
+    page_id: this.id,
+    page_constructor: BzDeck.views.AttachmentPage,
+    page_constructor_args: [this.id, this.attachment_id],
+    tab_label: `Attachment ${this.attachment_id}`,
+    tab_position: 'next',
   }, this);
 
   this.init();

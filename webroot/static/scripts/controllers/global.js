@@ -60,12 +60,12 @@ BzDeck.controllers.Global.prototype.register_activity_handler = function () {
   // Not implemented yet on Firefox OS nor Firefox for Android
   if (typeof navigator.mozRegisterActivityHandler === 'function') {
     navigator.mozRegisterActivityHandler({
-      'name': 'view',
-      'filters': {
-        'type': 'url',
-        'url': {
-          'required': true,
-          'regexp': re
+      name: 'view',
+      filters: {
+        type: 'url',
+        url: {
+          required: true,
+          regexp: re
         }
       }
     });

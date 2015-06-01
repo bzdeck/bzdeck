@@ -37,7 +37,7 @@ BzDeck.views.SettingsPage.prototype.activate_api_key_input = function (api_key, 
 
   $input.addEventListener('input', event => {
     if ($input.value.length === $input.maxLength) {
-      this.trigger(':APIKeyProvided', { 'api_key': $input.value })
+      this.trigger(':APIKeyProvided', { api_key: $input.value })
       $output.value = 'Verifying...'; // l10n
     } else {
       $output.value = '';

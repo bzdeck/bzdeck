@@ -45,7 +45,7 @@ BzDeck.views.Global = function GlobalView () {
 
   // Update user name & image asynchronously
   this.on('UserModel:UserInfoUpdated', data => {
-    let user = BzDeck.collections.users.get(data.name, { 'name': data.name });
+    let user = BzDeck.collections.users.get(data.name, { name: data.name });
 
     for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
       let title = `${user.original_name || user.name}\n${user.email}`,

@@ -6,11 +6,11 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   this.id = id;
 
   this.data = new Proxy({
-    'bugs': new Map(),
-    'preview_id': null
+    bugs: new Map(),
+    preview_id: null
   },
   {
-    'get': (obj, prop) => {
+    get: (obj, prop) => {
       if (prop === 'bugs') {
         // Return a sorted bug list
         return this.view.get_shown_bugs(new Map([for (bug of obj.bugs) [bug.id, bug]]));
@@ -18,7 +18,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
       return obj[prop];
     },
-    'set': (obj, prop, newval) => {
+    set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
       if (oldval === newval && !this.view.preview_is_hidden) {
@@ -28,7 +28,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
       if (prop === 'preview_id') {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (this.view.preview_is_hidden) {
-          BzDeck.router.navigate('/bug/' + newval, { 'ids': [...this.data.bugs.keys()] });
+          BzDeck.router.navigate('/bug/' + newval, { ids: [...this.data.bugs.keys()] });
 
           return true; // Do not save the value
         }
@@ -48,12 +48,12 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
   BzDeck.views.toolbar.open_tab({
-    'page_category': 'search',
-    'page_id': this.id,
-    'page_constructor': BzDeck.views.SearchPage,
-    'page_constructor_args': [this.id, params, BzDeck.models.server.data.config],
-    'tab_label': 'Search', // l10n
-    'tab_desc': 'Search & Browse Bugs', // l10n
+    page_category: 'search',
+    page_id: this.id,
+    page_constructor: BzDeck.views.SearchPage,
+    page_constructor_args: [this.id, params, BzDeck.models.server.data.config],
+    tab_label: 'Search', // l10n
+    tab_desc: 'Search & Browse Bugs', // l10n
   }, this);
 
   if (params.toString()) {
@@ -63,7 +63,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   this.on('V:SearchRequested', data => this.exec_search(data.params));
 
   this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { 'ids': [...this.data.bugs.keys()] });
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.bugs.keys()] });
   });
 };
 

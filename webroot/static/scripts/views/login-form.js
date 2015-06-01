@@ -14,7 +14,7 @@ BzDeck.views.LoginForm = function LoginFormView () {
   this.$statusbar = document.querySelector('#app-login [role="status"]');
 
   this.$form.addEventListener('submit', event => {
-    this.trigger(':Submit', { host, 'email': this.$email.value, 'api_key': this.$apikey.value });
+    this.trigger(':Submit', { host, email: this.$email.value, api_key: this.$apikey.value });
     this.$email.disabled = this.$apikey.disabled = this.$button.disabled = true;
     event.preventDefault();
 

@@ -36,8 +36,8 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
   this.on('C:BugDataUnavailable', data => {
     if (!this.$bug && this.$tabpanel) {
       this.$bug = this.fill(this.get_fragment('bug-details-error-template', this.bug_id).firstElementChild, {
-        'id': this.bug_id,
-        'status': data.message,
+        id: this.bug_id,
+        status: data.message,
       }, {
         'data-error-code': data.code,
       });
@@ -115,8 +115,8 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
   // Update relevant data
   this.bug_id = new_id;
   BzDeck.views.toolbar.tab_path_map.set(`tab-details-${this.id}`, new_path);
-  window.history.replaceState({ 'ids': this.bug_ids, 'previous': old_path }, '', new_path);
+  window.history.replaceState({ ids: this.bug_ids, previous: old_path }, '', new_path);
 
   // Notify the Controller
-  this.trigger(':NavigationRequested', { new_id, 'reinit': !$existing_bug });
+  this.trigger(':NavigationRequested', { new_id, reinit: !$existing_bug });
 };

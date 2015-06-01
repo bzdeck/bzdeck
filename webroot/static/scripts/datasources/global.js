@@ -31,14 +31,14 @@ BzDeck.datasources.Global.prototype.onupgradeneeded = function (event) {
     // Delete the old database if exists
     indexedDB.deleteDatabase('BzDeck');
 
-    database.createObjectStore('bugzilla', { 'keyPath': 'host' });
+    database.createObjectStore('bugzilla', { keyPath: 'host' });
 
     {
-      let store = database.createObjectStore('accounts', { 'keyPath': 'loaded' });
+      let store = database.createObjectStore('accounts', { keyPath: 'loaded' });
 
-      store.createIndex('host', 'host', { 'unique': false });
-      store.createIndex('id', 'id', { 'unique': false });
-      store.createIndex('name', 'name', { 'unique': false });
+      store.createIndex('host', 'host', { unique: false });
+      store.createIndex('id', 'id', { unique: false });
+      store.createIndex('name', 'name', { unique: false });
     }
   }
 

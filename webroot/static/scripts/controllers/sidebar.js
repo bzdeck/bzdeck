@@ -6,9 +6,9 @@ BzDeck.controllers.Sidebar = function SidebarController () {
   let mobile = this.helpers.env.device.mobile;
 
   this.data = new Proxy({
-    'folder_id': null
+    folder_id: null
   }, {
-    'set': (obj, prop, newval) => {
+    set: (obj, prop, newval) => {
       let oldval = obj[prop];
 
       // On mobile, the same folder can be selected

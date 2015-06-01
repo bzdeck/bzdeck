@@ -127,7 +127,7 @@ BzDeck.views.Bug.prototype.render = function () {
 
   let _bug = {};
 
-  for (let { 'id': field, type } of BzDeck.config.grid.default_columns) {
+  for (let { id: field, type } of BzDeck.config.grid.default_columns) {
     if (this.bug[field] !== undefined) {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
@@ -135,7 +135,7 @@ BzDeck.views.Bug.prototype.render = function () {
         _bug.mentor = [for (name of this.bug.mentors) BzDeck.collections.users.get(name, { name }).properties];
       } else if (type === 'person') {
         if (this.bug[field]) {
-          _bug[field] = BzDeck.collections.users.get(this.bug[field], { 'name': this.bug[field] }).properties;
+          _bug[field] = BzDeck.collections.users.get(this.bug[field], { name: this.bug[field] }).properties;
         }
       } else {
         _bug[field] = this.bug[field] || '';
@@ -197,7 +197,7 @@ BzDeck.views.Bug.prototype.render = function () {
     // Focus the first (or last) visible entry
     for (let $_entry of entries) if ($_entry.clientHeight) {
       $_entry.focus();
-      $_entry.scrollIntoView({ 'block': ascending ? 'start' : 'end', 'behavior': 'smooth' });
+      $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
       break;
     }
@@ -207,11 +207,11 @@ BzDeck.views.Bug.prototype.render = function () {
   if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
     this.helpers.kbd.assign($timeline, {
       // Toggle read
-      'M': event => this.bug.unread = !this.bug.unread,
+      M: event => this.bug.unread = !this.bug.unread,
       // Toggle star
-      'S': event => this.bug.starred = !this.bug.starred,
+      S: event => this.bug.starred = !this.bug.starred,
       // Reply
-      'R': event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
+      R: event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
       // Focus management
       'PageUp|Shift+Space': event => set_focus(true),
       'PageDown|Space': event => set_focus(false),
@@ -231,16 +231,16 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
   let _bug = {
-    'cc': [for (name of this.bug.cc) get_person(name)],
-    'depends_on': this.bug.depends_on,
-    'blocks': this.bug.blocks,
-    'see_also': this.bug.see_also,
-    'duplicate': this.bug.duplicates,
-    'flag': [for (flag of this.bug.flags) {
-      'creator': get_person(flag.setter),
-      'name': flag.name,
-      'status': flag.status,
-      'requestee': flag.requestee ? get_person(flag.requestee) : {},
+    cc: [for (name of this.bug.cc) get_person(name)],
+    depends_on: this.bug.depends_on,
+    blocks: this.bug.blocks,
+    see_also: this.bug.see_also,
+    duplicate: this.bug.duplicates,
+    flag: [for (flag of this.bug.flags) {
+      creator: get_person(flag.setter),
+      name: flag.name,
+      status: flag.status,
+      requestee: flag.requestee ? get_person(flag.requestee) : {},
     }]
   };
 
@@ -372,7 +372,7 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
     // BzDeck.collections.bugs.fetch() fails when one or more bugs in the result are private, so retrieve each bug
     // individually (Bug 1169040)
     for (let id of lookup_ids) {
-      BzDeck.collections.bugs.get(id, { id, '_unread': true }).fetch(true, false).then(bug => set_tooltops(bug));
+      BzDeck.collections.bugs.get(id, { id, _unread: true }).fetch(true, false).then(bug => set_tooltops(bug));
     }
   }
 };
@@ -386,7 +386,7 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
     $timeline.querySelector('.comments-wrapper')
              .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes));
     $timeline.querySelector('.comments-wrapper > article:last-of-type')
-             .scrollIntoView({ 'block': 'start', 'behavior': 'smooth' });
+             .scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
   if (changes.has('attachment') && this.render_attachments) {
@@ -394,7 +394,7 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
   }
 
   if (changes.has('history') && this.render_history) {
-    let _bug = { 'id': this.bug.id, '_update_needed': true };
+    let _bug = { id: this.bug.id, _update_needed: true };
 
     // Prep partial data
     for (let change in changes.get('history').changes) {

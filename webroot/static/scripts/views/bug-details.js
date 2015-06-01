@@ -157,14 +157,14 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
 
   for (let att of attachments) {
     this.fill($fragment.appendChild($listitem.cloneNode(true)), {
-      'id': att.id,
-      'description': att.summary,
-      'dateModified': att.last_change_time,
-      'creator': BzDeck.collections.users.get(att.creator, { 'name': att.creator }).properties,
-      'encodingFormat': att.is_patch ? 'text/x-patch' : att.content_type, // l10n
-      'is_obsolete': att.is_obsolete ? 'true' : 'false',
+      id: att.id,
+      description: att.summary,
+      dateModified: att.last_change_time,
+      creator: BzDeck.collections.users.get(att.creator, { name: att.creator }).properties,
+      encodingFormat: att.is_patch ? 'text/x-patch' : att.content_type, // l10n
+      is_obsolete: att.is_obsolete ? 'true' : 'false',
     }, {
-      'id': `bug-${att.bug_id}-attachment-${att.id}`,
+      id: `bug-${att.bug_id}-attachment-${att.id}`,
       'aria-disabled': !!att.is_obsolete,
       'data-id': att.id,
       'data-obsolete': att.is_obsolete ? 'true' : 'false',
@@ -262,7 +262,7 @@ BzDeck.views.BugDetails.prototype.render_history = function (history) {
         $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
         $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
         datetime.fill_element($cell('when').appendChild(document.createElement('time')),
-                              hist.when, { 'relative': false });
+                              hist.when, { relative: false });
       } else {
         $cell('when').remove();
         $cell('who').remove();

@@ -27,7 +27,7 @@ BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
   let users = new Map();
 
   for (let [name, person] of bug.participants) {
-    users.set(name, this.get(name) || this.set(name, { name, 'bugzilla': person }));
+    users.set(name, this.get(name) || this.set(name, { name, bugzilla: person }));
   }
 
   return users;
