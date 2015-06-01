@@ -183,7 +183,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
   this.$outer = $outer;
   this.$listbox = $outer.querySelector('[role="listbox"]');
   this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
-  this.$option = this.get_fragment('vertical-thread-item').firstElementChild;
+  this.$option = this.get_template('vertical-thread-item');
   this.$$scrollbar = new this.widgets.ScrollBar($outer);
   this.$scrollable_area = mobile ? $outer.querySelector('.scrollable-area-content') : $outer;
 

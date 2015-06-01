@@ -271,7 +271,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
     page = pages.get(page_id || 'default');
     $tab = $tab || $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
   } else {
-    $tabpanel = this.get_fragment(`tabpanel-${page_category}-template`, page_id).firstElementChild;
+    $tabpanel = this.get_template(`tabpanel-${page_category}-template`, page_id);
     $tab = $$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
     page = controller.view = new page_constructor(...page_constructor_args);
     page.controller = controller;

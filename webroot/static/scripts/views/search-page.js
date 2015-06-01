@@ -211,8 +211,8 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
     return;
   }
 
-  let $bug = $pane.appendChild(this.get_fragment('search-preview-bug-template', this.id).firstElementChild),
-      $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
+  let $bug = $pane.appendChild(this.get_template('search-preview-bug-template', this.id)),
+      $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
   // Activate the toolbar buttons
   new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))

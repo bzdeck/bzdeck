@@ -14,7 +14,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
   this.on('C:BugDataAvailable', data => {
     // Prepare the newly opened tabpanel
     if (!this.$bug && this.$tabpanel && data.bug.summary) {
-      this.$bug = this.$tabpanel.appendChild(this.get_fragment('bug-details-template', data.bug.id).firstElementChild);
+      this.$bug = this.$tabpanel.appendChild(this.get_template('bug-details-template', data.bug.id));
       this.$$bug = new BzDeck.views.BugDetails(this.$bug, data.bug);
       this.$tab.querySelector('label').textContent = this.bug_id;
       this.$tab.title = this.get_tab_title(data.bug);
@@ -35,7 +35,7 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
 
   this.on('C:BugDataUnavailable', data => {
     if (!this.$bug && this.$tabpanel) {
-      this.$bug = this.fill(this.get_fragment('bug-details-error-template', this.bug_id).firstElementChild, {
+      this.$bug = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
         id: this.bug_id,
         status: data.message,
       }, {

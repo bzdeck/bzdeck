@@ -121,8 +121,8 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
     return;
   }
 
-  let $bug = $pane.appendChild(this.get_fragment('home-preview-bug-template').firstElementChild),
-      $info = $bug.appendChild(this.get_fragment('preview-bug-info').firstElementChild);
+  let $bug = $pane.appendChild(this.get_template('home-preview-bug-template')),
+      $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
   // Activate the toolbar buttons
   new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))

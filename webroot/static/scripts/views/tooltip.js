@@ -91,7 +91,7 @@ BzDeck.views.BugTooltip.prototype.show = function () {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator,
         rect = this.$owner.getBoundingClientRect();
 
-    this.$tooltip = this.fill(this.get_fragment('bug-tooltip').firstElementChild, {
+    this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
       id: bug.id,
       name: bug.summary,
       dateModified: bug.last_change_time,

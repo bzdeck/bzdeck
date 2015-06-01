@@ -3,10 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeline_id) {
-  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-      $fragment = this.get_fragment('timeline-comment-form', timeline_id);
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
 
-  this.$form = $fragment.firstElementChild;
+  this.$form = this.get_template('timeline-comment-form', timeline_id);
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
   this.$tablist = this.$form.querySelector('[role="tablist"]');
@@ -425,8 +424,8 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
 
   let add_row = (requestee, checked, options = {}) => {
     let type = options.id ? 'clear' : 'request',
-        $row = this.get_fragment(`timeline-comment-form-${type}-needinfo-row`).firstElementChild,
-        $person = this.fill(this.get_fragment('person-with-image').firstElementChild,
+        $row = this.get_template(`timeline-comment-form-${type}-needinfo-row`),
+        $person = this.fill(this.get_template('person-with-image'),
                             BzDeck.collections.users.get(requestee, { name: requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
         $$checkbox = new this.widgets.Checkbox($checkbox),

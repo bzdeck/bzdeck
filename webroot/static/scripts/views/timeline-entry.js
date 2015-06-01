@@ -33,7 +33,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       comment = this.data.get('comment'),
       author = BzDeck.collections.users.get(comment.creator, { name: comment.creator }),
       time = comment.creation_time,
-      $entry = this.get_fragment('timeline-comment').firstElementChild,
+      $entry = this.get_template('timeline-comment'),
       $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
       $roles = $author.querySelector('.roles'),
@@ -172,7 +172,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   // TODO: load the attachment data via API
   let attachment = new BzDeck.models.Attachment(this.data.get('attachment')),
       media_type = attachment.content_type.split('/')[0],
-      $attachment = this.get_fragment('timeline-attachment').firstElementChild,
+      $attachment = this.get_template('timeline-attachment'),
       $outer = $attachment.querySelector('div'),
       $media;
 
@@ -247,7 +247,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
 };
 
 BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, time, change, comment) {
-  let $change = this.get_fragment('timeline-change').firstElementChild,
+  let $change = this.get_template('timeline-change'),
       $changer = $change.querySelector('[itemprop="author"]'),
       $time = $change.querySelector('[itemprop="datePublished"]'),
       $how = $change.querySelector('[itemprop="how"]'),
@@ -476,7 +476,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
 BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(name => {
     let person = BzDeck.collections.users.get(name, { name }),
-        $person = this.get_fragment('person-with-image').firstElementChild;
+        $person = this.get_template('person-with-image');
 
     this.fill($person, person.properties, {
       title: `${person.original_name || person.name}\n${person.email}`

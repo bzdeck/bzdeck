@@ -15,7 +15,7 @@ BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 BzDeck.views.Attachment.prototype.show = function () {
   let att = this.attachment,
       get_person = name => BzDeck.collections.users.get(name, { name }).properties,
-      $_content = this.get_fragment('details-attachment-content').firstElementChild.cloneNode(true);
+      $_content = this.get_template('details-attachment-content');
 
   $_content.itemProp.add('attachment');
   this.$placeholder.innerHTML = '';

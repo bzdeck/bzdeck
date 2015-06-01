@@ -8,9 +8,9 @@ BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefi
   this.exclude = new Set(exclude);
   this.results = new Map();
 
-  this.$combobox = this.get_fragment('person-finder').firstElementChild;
+  this.$combobox = this.get_template('person-finder');
   this.$input = this.$combobox.querySelector('[role="searchbox"]');
-  this.$option = this.get_fragment('person-finder-item').firstElementChild;
+  this.$option = this.get_template('person-finder-item');
 
   this.$$combobox = new this.widgets.ComboBox(this.$combobox);
   this.$$combobox.$container.id = this.combobox_id = combobox_id;

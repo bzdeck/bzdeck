@@ -122,7 +122,7 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
       $listbox = $attachments.querySelector('[role="listbox"]'),
       $fragment = new DocumentFragment(),
       $title = $attachments.querySelector('h4'),
-      $listitem = this.get_fragment('details-attachment-listitem').firstElementChild;
+      $listitem = this.get_template('details-attachment-listitem');
 
   if (!this.$$attachment_list) {
     this.$$attachment_list = new this.widgets.ListBox($listbox, []);
