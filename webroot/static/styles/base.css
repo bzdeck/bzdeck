@@ -1185,7 +1185,7 @@ main {
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
   overflow: hidden;
-  box-sizing: padding-box;
+  box-sizing: border-box;
   padding: 0;
   font-size: 2rem;
   line-height: 4rem;
@@ -1225,7 +1225,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > header,
 [itemtype$="Bug"] > header {
-  box-sizing: padding-box;
+  box-sizing: border-box;
   height: 3.6rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
@@ -1951,7 +1951,7 @@ article[id$="preview-bug"] > .bug-info {
 .bug-timeline {
   flex: auto;
   overflow: hidden;
-  box-sizing: padding-box;
+  box-sizing: border-box;
   width: 100%;
 }
 
@@ -3010,7 +3010,7 @@ article[id$="preview-bug"] > .bug-info {
 
 [itemtype$="Attachment"][data-content-type].media .body {
   display: flex;
-  box-sizing: padding-box;
+  box-sizing: border-box;
   padding: .8rem;
   height: 100%;
   justify-content: center;
@@ -4162,7 +4162,7 @@ article[id$="preview-bug"] > .bug-info {
 
   #app-login > div {
     top: 12rem;
-    box-sizing: padding-box;
+    box-sizing: border-box;
     padding: 0 2.4rem;
     width: 100%;
   }
