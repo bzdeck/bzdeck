@@ -69,7 +69,7 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
 
     if (bug) {
       bug.unread = false;
-      this.trigger(':BugDataAvailable', { bug });
+      this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('home', bug) });
     } else {
       this.trigger(':BugDataUnavailable');
     }

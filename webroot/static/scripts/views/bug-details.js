@@ -2,9 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.BugDetails = function BugDetailsView ($bug, bug) {
+BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
   let mql = window.matchMedia('(max-width: 1023px)');
 
+  this.id = view_id;
   this.bug = bug;
   this.$bug = $bug;
   this.$tablist = this.$bug.querySelector('[role="tablist"]');

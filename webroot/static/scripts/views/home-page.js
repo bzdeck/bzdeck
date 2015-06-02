@@ -44,7 +44,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
   }, true);
 
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
-  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
+  this.on('C:BugDataAvailable', data => this.show_preview(data));
 
   // Refresh the thread when bugs are updated
   // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
@@ -111,15 +111,11 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
   return new Map([for ($item of items) [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]]);
 };
 
-BzDeck.views.HomePage.prototype.show_preview = function (bug) {
+BzDeck.views.HomePage.prototype.show_preview = function (data) {
   let mobile = this.helpers.env.device.mobile,
       $pane = document.querySelector('#home-preview-pane');
 
   $pane.innerHTML = '';
-
-  if (!bug) {
-    return;
-  }
 
   let $bug = $pane.appendChild(this.get_template('home-preview-bug-template')),
       $info = $bug.appendChild(this.get_template('preview-bug-info'));
@@ -143,7 +139,7 @@ BzDeck.views.HomePage.prototype.show_preview = function (bug) {
   });
 
   // Fill the content
-  this.$$bug = new BzDeck.views.Bug($bug, bug);
+  this.$$bug = new BzDeck.views.Bug(data.controller.id, data.bug, $bug);
   $info.id = 'home-preview-bug-info';
   $bug.removeAttribute('aria-hidden');
 };

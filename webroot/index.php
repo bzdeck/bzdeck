@@ -284,7 +284,7 @@
           </div>
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div id="home-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
+          <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
@@ -319,7 +319,7 @@
           </div>
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div id="search-TID-preview-bug-timeline" class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
+          <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
@@ -562,27 +562,27 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="timeline-comment-form">
-      <section id="TID-comment-form" role="form">
+      <section id="TID" role="form">
         <header>
           <h4>Reply</h4>
         </header>
         <div>
-          <ul id="TID-comment-form-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
-            <li id="TID-comment-form-tab-comment" role="tab" aria-controls="TID-comment-form-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
-            <li id="TID-comment-form-tab-preview" role="tab" aria-controls="TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
-            <li id="TID-comment-form-tab-attachments" role="tab" aria-controls="TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
-            <li id="TID-comment-form-tab-status" role="tab" aria-controls="TID-comment-form-tabpanel-status" aria-selected="false" aria-disabled="true"><label>Status</label></li>
-            <li id="TID-comment-form-tab-needinfo" role="tab" aria-controls="TID-comment-form-tabpanel-needinfo" aria-selected="false" aria-disabled="true"><label>Need Info</label></li>
+          <ul id="TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
+            <li id="TID-tab-comment" role="tab" aria-controls="TID-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
+            <li id="TID-tab-preview" role="tab" aria-controls="TID-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
+            <li id="TID-tab-attachments" role="tab" aria-controls="TID-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
+            <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-disabled="true"><label>Status</label></li>
+            <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-disabled="true"><label>Need Info</label></li>
           </ul>
-          <div id="TID-comment-form-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-comment-form-tab-comment">
+          <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
             <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
           </div>
-          <div id="TID-comment-form-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-preview">
+          <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
               <div role="text" itemprop="text"></div>
             </article>
           </div>
-          <div id="TID-comment-form-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-attachments">
+          <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
             <div>
               <input type="file" hidden multiple>
               <span tabindex="0" role="checkbox" aria-checked="true" aria-hidden="true">Upload files in parallel</span>
@@ -592,14 +592,14 @@
               </table>
             </div>
           </div>
-          <div id="TID-comment-form-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-status">
+          <div id="TID-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-status">
             <div>
               <span class="status" role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true"></span>
               <span class="resolution" role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true" aria-hidden="true"></span>
-              <label id="TID-comment-form-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="searchbox"></label>
+              <label id="TID-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="searchbox"></label>
             </div>
           </div>
-          <div id="TID-comment-form-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-comment-form-tab-needinfo">
+          <div id="TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-needinfo">
             <div>
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>

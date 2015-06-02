@@ -2,16 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data) {
+BzDeck.views.TimelineEntry = function TimelineEntryView (view_id, bug, data) {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = new DocumentFragment(),
       $comment;
 
+  this.id = view_id;
   this.bug = bug;
   this.data = data;
 
   if (data.get('comment')) {
-    $comment = $fragment.appendChild(this.create_comment_entry(timeline_id));
+    $comment = $fragment.appendChild(this.create_comment_entry());
   }
 
   if (data.get('attachment')) {
@@ -28,7 +29,7 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (timeline_id, bug, data)
 BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
 
-BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_id) {
+BzDeck.views.TimelineEntry.prototype.create_comment_entry = function () {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
       author = BzDeck.collections.users.get(comment.creator, { name: comment.creator }),
@@ -40,7 +41,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
       $time = $entry.querySelector('[itemprop="datePublished"]'),
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment_body = $entry.querySelector('[itemprop="text"]'),
-      $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
+      $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
   // Duplicated bug changes are only in the text field, while the raw_text field could be empty for an attachment
   // without a comment, so simply check the text first. It may not work with non-English Bugzilla instances though.
@@ -48,7 +49,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
            ? comment.text : comment.raw_text;
 
   comment.number = this.data.get('comment_number');
-  $entry.id = `${timeline_id}-comment-${comment.id}`;
+  $entry.id = `${this.id}-comment-${comment.id}`;
   $entry.dataset.id = comment.id;
   $entry.dataset.time = (new Date(time)).getTime();
   $entry.setAttribute('data-comment-number', comment.number);
@@ -65,8 +66,8 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
         quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
         quote = `${quote_header}\n${quote_lines.join('\n')}`,
-        $tabpanel = document.querySelector(`#${timeline_id}-comment-form-tabpanel-comment`),
-        $textbox = document.querySelector(`#${timeline_id}-comment-form [role="textbox"]`);
+        $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`),
+        $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
     $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
     // Move focus on the textbox. Use async to make sure the event always works
@@ -91,7 +92,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function (timeline_i
     }
 
     let ascending = BzDeck.prefs.get('ui.timeline.sort.order') !== 'descending',
-        entries = [...document.querySelectorAll(`#${timeline_id} [itemprop="comment"]`)];
+        entries = [...document.querySelectorAll(`#${this.id}-timeline [itemprop="comment"]`)];
 
     entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
     entries = entries.slice(entries.indexOf($entry) + 1);

@@ -1979,7 +1979,7 @@ article[id$="preview-bug"] > .bug-info {
   -moz-user-select: text;
 }
 
-[data-device|="mobile"]:root .bug-timeline:not([id="home-preview-bug-timeline"]) h3[itemprop="summary"] {
+[data-device|="mobile"]:root :not(#home-preview-bug-timeline-wrapper) > .bug-timeline h3[itemprop="summary"] {
   padding-top: 5.2rem !important; /* Bug details */
 }
 

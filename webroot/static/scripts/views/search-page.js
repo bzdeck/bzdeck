@@ -53,7 +53,7 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
   });
 
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
-  this.on('C:BugDataAvailable', data => this.show_preview(data.bug));
+  this.on('C:BugDataAvailable', data => this.show_preview(data));
 };
 
 BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -202,14 +202,10 @@ BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
   return [for ($row of rows) bugs.get(Number($row.dataset.id))];
 };
 
-BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
+BzDeck.views.SearchPage.prototype.show_preview = function (data) {
   let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
 
   $pane.innerHTML = '';
-
-  if (!bug) {
-    return;
-  }
 
   let $bug = $pane.appendChild(this.get_template('search-preview-bug-template', this.id)),
       $info = $bug.appendChild(this.get_template('preview-bug-info'));
@@ -229,7 +225,7 @@ BzDeck.views.SearchPage.prototype.show_preview = function (bug) {
   });
 
   // Fill the content
-  this.$$bug = new BzDeck.views.Bug($bug, bug);
+  this.$$bug = new BzDeck.views.Bug(data.controller.id, data.bug, $bug);
   $info.id = `search-${this.id}-preview-bug-info`;
   $bug.removeAttribute('aria-hidden');
 

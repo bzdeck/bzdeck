@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.Bug = function BugView ($bug, bug) {
-  this.$bug = $bug;
+BzDeck.views.Bug = function BugView (view_id, bug, $bug) {
+  this.id = view_id;
   this.bug = bug;
-  this.id = bug.id;
+  this.$bug = $bug;
 
   this.init();
 };
@@ -27,8 +27,10 @@ BzDeck.views.Bug.prototype.init = function () {
   });
 
   this.on('M:Updated', data => {
-    this.update(data.bug, data.changes);
-  });
+    if (data.bug.id === this.bug.id) {
+      this.update(data.bug, data.changes);
+    }
+  }, true); // Enable the global option
 };
 
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
@@ -122,9 +124,6 @@ BzDeck.views.Bug.prototype.render = function () {
 
   this.setup_toolbar();
 
-  // TEMP: Add users when a bug is loaded; this should be in the controller
-  BzDeck.collections.users.add_from_bug(this.bug);
-
   let _bug = {};
 
   for (let { id: field, type } of BzDeck.config.grid.default_columns) {
@@ -211,7 +210,7 @@ BzDeck.views.Bug.prototype.render = function () {
       // Toggle star
       S: event => this.bug.starred = !this.bug.starred,
       // Reply
-      R: event => document.querySelector(`#${$timeline.id}-comment-form [role="textbox"]`).focus(),
+      R: event => document.querySelector(`#${this.id}-comment-form [role="textbox"]`).focus(),
       // Focus management
       'PageUp|Shift+Space': event => set_focus(true),
       'PageDown|Space': event => set_focus(false),
@@ -283,7 +282,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   this.helpers.event.async(() => {
     // Timeline: comments, attachments & history
-    this.timeline = new BzDeck.views.Timeline(this.bug, this.$bug, delayed);
+    this.timeline = new BzDeck.views.Timeline(this.id, this.bug, this.$bug, delayed);
 
     // Attachments, only on the details tabs
     if (this.render_attachments) {
@@ -384,7 +383,7 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
 
   if ($timeline) {
     $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.views.TimelineEntry($timeline.id, this.bug, changes));
+             .appendChild(new BzDeck.views.TimelineEntry(this.id, this.bug, changes));
     $timeline.querySelector('.comments-wrapper > article:last-of-type')
              .scrollIntoView({ block: 'start', behavior: 'smooth' });
   }

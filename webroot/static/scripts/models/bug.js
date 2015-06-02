@@ -118,9 +118,10 @@ BzDeck.models.Bug.prototype.merge = function (data) {
   let ignore_cc = BzDeck.prefs.get('notifications.ignore_cc_changes') !== false,
       cached_time = new Date(cache.last_change_time),
       cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
-      new_comments = new Map([for (c of data.comments || []) if (cmp_time(c)) [new Date(c.creation_time), c]]),
-      new_attachments = new Map([for (a of data.attachments || []) if (cmp_time(a)) [new Date(a.creation_time), a]]),
-      new_history = new Map([for (h of data.history || []) if (cmp_time(h)) [new Date(h.when), h]]),
+      get_time = str => new Date(str).getTime(), // integer
+      new_comments = new Map([for (c of data.comments || []) if (cmp_time(c)) [get_time(c.creation_time), c]]),
+      new_attachments = new Map([for (a of data.attachments || []) if (cmp_time(a)) [get_time(a.creation_time), a]]),
+      new_history = new Map([for (h of data.history || []) if (cmp_time(h)) [get_time(h.when), h]]),
       timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
   // Mark the bug unread if the user subscribes CC changes or the bug is already unread

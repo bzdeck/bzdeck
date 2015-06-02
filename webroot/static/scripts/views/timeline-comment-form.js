@@ -2,10 +2,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeline_id) {
-  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+/*
+ * Initialize the Timeline Comment Form View. This view has a comment form and quick edit UI.
+ *
+ * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
+ *                            notification events won't work
+ * [argument] bug (Object) BugModel instance
+ * [return] view (Object) TimelineCommentFormView instance, when called with `new`
+ */
+BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (view_id, bug) {
+  this.id = view_id;
+  this.bug = bug;
 
-  this.$form = this.get_template('timeline-comment-form', timeline_id);
+  this.$form = this.get_template('timeline-comment-form', `${this.id}-timeline-comment-form`);
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
   this.$tablist = this.$form.querySelector('[role="tablist"]');
@@ -18,301 +27,144 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (bug, timeli
   this.$attach_button = this.$form.querySelector('[data-command="attach"]');
   this.$file_picker = this.$form.querySelector('input[type="file"]');
   this.$attachments_tbody = this.$form.querySelector('[id$="tabpanel-attachments"] tbody');
-  this.$attachments_row_tmpl = document.querySelector('#timeline-comment-form-attachments-row');
   this.$parallel_checkbox = this.$form.querySelector('[role="checkbox"]');
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-  this.timeline_id = timeline_id;
-  this.bug = bug;
-  this.parallel_upload = true;
+  // If the user's API key is not provided and the app is working in the read-only mode, just hide the form
+  if (!BzDeck.models.account.data.api_key) {
+    this.$form.setAttribute('aria-hidden', 'true');
 
-  this.attachments = [];
-  this.changes = new Map();
+    return;
+  }
 
-  Object.defineProperties(this, {
-    has_api_key: { enumerable: true, get: () => !!BzDeck.models.account.data.api_key },
-    has_comment: { enumerable: true, get: () => !!this.$textbox.value.match(/\S/) },
-    has_attachments: { enumerable: true, get: () => !!this.attachments.length },
-    has_changes: { enumerable: true, get: () => !!this.changes.size },
-    has_errors: { enumerable: true, get: () => !!this.find_errors().size },
-    can_submit: { enumerable: true, get: () => this.has_api_key && !this.has_errors &&
-                                                      (this.has_comment || this.has_attachments || this.has_changes) },
-  });
-
-  this.$form.addEventListener('wheel', event => event.stopPropagation());
-  this.$tablist.setAttribute('aria-level', this.timeline_id.endsWith('preview-bug-timeline') ? 2 : 3);
-
-  this.$$tablist.bind('Selected', event => {
-    let tab_id = event.detail.items[0].id;
-
-    if (tab_id.endsWith('write')) {
-      this.$textbox.focus();
-    }
-
-    if (tab_id.endsWith('preview')) {
-      this.$preview.innerHTML = BzDeck.controllers.global.parse_comment(this.$textbox.value);
-    }
-  });
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
+      user = BzDeck.models.account.data.bugzilla;
 
   for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
     new this.widgets.ScrollBar($tabpanel);
   }
 
+  this.$form.addEventListener('wheel', event => event.stopPropagation());
+  this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
+  this.$tablist.setAttribute('aria-level', this.id.startsWith('details-bug-') ? 3 : 2);
+  this.$submit.addEventListener(click_event_type, event => this.trigger('BugView:Submit'));
+
+  this.init_comment_tabpanel();
+  this.init_attachment_tabpanel();
+
+  // Prepare the content on the Status and NeedInfo tabpanels, which should be available only to the users who have the
+  // "editbugs" permission on Bugzilla
+  if (!this.editor_tabpanels_enabled && user && [for (group of user.groups || []) group.name].includes('editbugs')) {
+    this.init_status_tabpanel();
+    this.init_needinfo_tabpanel();
+    this.editor_tabpanels_enabled = true;
+  }
+
+  // Attachments
+  this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
+  this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.index));
+  this.on('BugController:AttachmentsEdited', data => this.on_attachments_edited(data.uploads));
+  this.on('BugController:AttachmentError', data => this.on_attachment_error(data.message));
+  this.on('BugController:UploadOptionChanged', data => this.update_parallel_ui(data.uploads));
+
+  // Other changes
+  this.on('BugController:BugEdited', data => this.on_bug_edited(data.can_submit));
+  this.on('BugController:CommentAdded', data => this.on_comment_edited(data.has_comment));
+  this.on('BugController:CommentRemoved', data => this.on_comment_edited(data.has_comment));
+
+  // Form submission
+  this.on('BugController:Submit', () => this.on_submit());
+  this.on('BugController:SubmitProgress', data => this.on_submit_progress(data));
+  this.on('BugController:SubmitSuccess', () => this.on_submit_success());
+  this.on('BugController:SubmitError', data => this.on_submit_error(data));
+  this.on('BugController:SubmitComplete', () => this.on_submit_complete());
+};
+
+BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCommentForm;
+
+/*
+ * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
+ * the newly selected tab.
+ *
+ * [argument] $tab (Element) selected tab node
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_tab_selected = function ($tab) {
+  if ($tab.id.endsWith('write')) {
+    this.$textbox.focus();
+  }
+
+  if ($tab.id.endsWith('preview')) {
+    // Render the new comment for preview
+    this.$preview.innerHTML = BzDeck.controllers.global.parse_comment(this.$textbox.value);
+  }
+};
+
+/*
+ * Prepare the content on the Comment tabpanel.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.init_comment_tabpanel = function () {
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
   this.$textbox.value = '';
-
-  // Assign keyboard shortcuts
-  this.helpers.kbd.assign(this.$textbox, {
-    'Accel+Enter': event => {
-      if (this.can_submit) {
-        this.submit();
-      }
-    },
-  });
-
-  this.$textbox.addEventListener('input', event => this.oninput());
 
   // Prevent the keyboard shortcuts on the timeline from being fired
   this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
 
+  this.$textbox.addEventListener('input', event => this.oninput());
+  this.helpers.kbd.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView:Submit') });
+};
+
+/*
+ * Prepare the content on the Attachment tabpanel.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.init_attachment_tabpanel = function () {
   // Attach files using a file picker
   // The event here should be click; others including touchstart and mousedown don't work
   this.$attach_button.addEventListener('click', event => this.$file_picker.click());
-  this.$file_picker.addEventListener('change', event => this.onselect_files(event.target.files));
+  this.$file_picker.addEventListener('change', event => {
+    this.trigger('BugView:AttachFiles', { files: event.target.files });
+  });
 
   // Attach files by drag & drop
   this.$form.addEventListener('dragover', event => {
-    event.dataTransfer.dropEffect = 'copy';
-    event.dataTransfer.effectAllowed = 'copy';
-    event.preventDefault();
-
     this.$drop_target.setAttribute('aria-dropeffect', 'copy');
+    event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
+    event.preventDefault();
   });
 
   this.$form.addEventListener('drop', event => {
     let dt = event.dataTransfer;
 
     if (dt.types.contains('Files')) {
-      this.onselect_files(dt.files);
+      this.trigger('BugView:AttachFiles', { files: dt.files });
     } else if (dt.types.contains('text/plain')) {
-      this.attach_text(dt.getData('text/plain'));
+      this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
     }
 
     this.$drop_target.setAttribute('aria-dropeffect', 'none');
-
     event.preventDefault();
   });
 
-  (new this.widgets.Checkbox(this.$parallel_checkbox)).bind('Toggled', event => {
-    this.parallel_upload = event.detail.checked;
-    this.update_parallel_ui();
+  new this.widgets.Checkbox(this.$parallel_checkbox).bind('Toggled', event => {
+    this.trigger('BugView:ChangeUploadOption', { parallel: event.detail.checked });
   });
-
-  this.$submit.addEventListener(click_event_type, event => this.submit());
-
-  if (!this.has_api_key) {
-    this.$status.innerHTML = '<strong>Provide your API Key</strong> to post.';
-    this.$status.querySelector('strong').addEventListener(click_event_type, event =>
-      BzDeck.router.navigate('/settings', { tab_id: 'account' }));
-
-    this.on('SettingsPageController:APIKeyVerified', data => {
-      this.$status.textContent = '';
-      this.$submit.setAttribute('aria-disabled', !this.can_submit);
-      this.prep_editor_tabpanels();
-    }, true);
-  }
-
-  this.prep_editor_tabpanels();
 };
 
-BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCommentForm;
-
-BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
-  this.$textbox.style.removeProperty('height');
-  this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
-  this.$submit.setAttribute('aria-disabled', !this.can_submit);
-  this.$preview_tab.setAttribute('aria-disabled', !this.has_comment);
-
-  if (this.has_api_key && this.$status.textContent) {
-    this.$status.textContent = '';
-  }
-};
-
-BzDeck.views.TimelineCommentForm.prototype.clear_comment = function () {
-  this.$textbox.value = '';
-  this.oninput();
-};
-
-BzDeck.views.TimelineCommentForm.prototype.attach_text = function (str) {
-  let reader = new FileReader(),
-      blob = new Blob([str], { type: 'text/plain' }),
-      is_ghpr = str.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/),
-      is_patch = str.match(/^diff\s/m);
-
-  // Use FileReader instead of btoa() to avoid overflow
-  reader.addEventListener('load', event => {
-    this.add_attachment({
-      data: reader.result.replace(/^.*?,/, ''), // Drop data:text/plain;base64,
-      summary: is_ghpr ? `GitHub Pull Request, ${is_ghpr[1]}#${is_ghpr[2]}`
-                         : is_patch ? 'Patch' : str.substr(0, 25) + (str.length > 25 ? '...' : ''),
-      file_name: URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
-      is_patch,
-      size: blob.size, // Not required for the API but used in find_attachment()
-      content_type: is_ghpr ? 'text/x-github-pull-request' : 'text/plain'
-    });
-  });
-
-  reader.readAsDataURL(blob);
-};
-
-BzDeck.views.TimelineCommentForm.prototype.onselect_files = function (files) {
-  let excess_files = new Set(),
-      num_format = num => num.toLocaleString('en-US'),
-      max_size = BzDeck.models.server.data.config.max_attachment_size,
-      max = num_format(max_size),
-      message;
-
-  for (let _file of files) {
-    let reader = new FileReader(),
-        file = _file, // Redeclare the variable so it can be used in the following event
-        is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
-
-    // Check if the file has already been attached
-    if (this.find_attachment(file) > -1) {
-      continue;
-    }
-
-    // Check if the file is not exceeding the limit
-    if (file.size > max_size) {
-      excess_files.add(file);
-
-      continue;
-    }
-
-    reader.addEventListener('load', event => {
-      this.add_attachment({
-        data: reader.result.replace(/^.*?,/, ''), // Drop data:<type>;base64,
-        summary: is_patch ? 'Patch' : file.name,
-        file_name: file.name,
-        is_patch,
-        size: file.size, // Not required for the API but used in find_attachment()
-        content_type: is_patch ? 'text/plain' : file.type || 'application/x-download'
-      });
-    });
-
-    reader.readAsDataURL(file);
-  }
-
-  if (excess_files.size) {
-    message = excess_files.size === 1
-            ? `This file cannot be attached because it may exceed the maximum attachment size \
-               (${max} bytes) specified by the current Bugzilla instance. You can upload the file \
-               to an online storage and post the link instead.`
-            : `These files cannot be attached because they may exceed the maximum attachment size \
-               (${max} bytes) specified by the current Bugzilla instance. You can upload the files \
-               to an online storage and post the links instead.`; // l10n
-    message += '<br><br>';
-    message += [for (file of excess_files) `&middot; ${file.name} (${num_format(file.size)} bytes)`].join('<br>');
-
-    (new this.widgets.Dialog({
-      type: 'alert',
-      title: 'Error on attaching files',
-      message
-    })).show();
-  }
-};
-
-BzDeck.views.TimelineCommentForm.prototype.add_attachment = function (attachment) {
-  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-      $tbody = this.$attachments_tbody,
-      $row = this.$attachments_row_tmpl.content.cloneNode(true).firstElementChild,
-      $desc = $row.querySelector('[data-field="description"]');
-
-  this.attachments.push(attachment);
-
-  $desc.value = $desc.placeholder = attachment.summary;
-  $desc.addEventListener('keydown', event => event.stopPropagation());
-  $desc.addEventListener('input', event => attachment.summary = $desc.value);
-
-  $row.querySelector('[data-command="remove"]').addEventListener(click_event_type, event => {
-    this.remove_attachment(attachment);
-  });
-
-  $row.querySelector('[data-command="move-up"]').addEventListener(click_event_type, event => {
-    let index = this.find_attachment(attachment);
-
-    this.attachments.splice(index - 1, 2, attachment, this.attachments[index - 1]);
-    $tbody.insertBefore($row.previousElementSibling, $row.nextElementSibling);
-  });
-
-  $row.querySelector('[data-command="move-down"]').addEventListener(click_event_type, event => {
-    let index = this.find_attachment(attachment);
-
-    this.attachments.splice(index, 2, this.attachments[index + 1], attachment);
-    $tbody.insertBefore($row.nextElementSibling, $row);
-  });
-
-  $tbody.appendChild($row);
-
-  this.$attachments_tab.setAttribute('aria-disabled', 'false');
-  this.$$tablist.view.selected = this.$attachments_tab;
-  this.$submit.setAttribute('aria-disabled', !this.can_submit);
-  this.update_parallel_ui();
-};
-
-BzDeck.views.TimelineCommentForm.prototype.remove_attachment = function (attachment) {
-  let index = this.find_attachment(attachment);
-
-  this.attachments.splice(index, 1);
-
-  this.$attachments_tbody.rows[index].remove();
-  this.$attachments_tab.setAttribute('aria-disabled', !this.has_attachments);
-  this.$submit.setAttribute('aria-disabled', !this.can_submit);
-  this.update_parallel_ui();
-
-  if (!this.has_attachments) {
-    this.$$tablist.view.selected = this.$comment_tab;
-  }
-};
-
-BzDeck.views.TimelineCommentForm.prototype.find_attachment = function (attachment) {
-  // A file with the same name and size might be the same file
-  let index = [for (entry of this.attachments.entries())
-               if (entry[1].file_name === (attachment.file_name || attachment.name) &&
-                   entry[1].size === attachment.size) entry[0]][0];
-
-  return index === undefined ? -1 : index;
-};
-
-BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function () {
-  let disabled = this.attachments.length < 2 || this.parallel_upload;
-
-  for (let $button of this.$attachments_tbody.querySelectorAll('[data-command|="move"]')) {
-    $button.setAttribute('aria-disabled', disabled);
-  }
-
-  this.$parallel_checkbox.setAttribute('aria-hidden', this.attachments.length < 2);
-};
-
-BzDeck.views.TimelineCommentForm.prototype.prep_editor_tabpanels = function () {
-  let user = BzDeck.models.account.data.bugzilla;
-
-  // Enable the status tabpanel only for those who have the editbugs permission
-  if (this.editor_tabpanels_enabled || !user || ![for (group of user.groups || []) group.name].includes('editbugs')) {
-    return;
-  }
-
-  this.init_status_tabpanel();
-  this.init_needinfo_tabpanel();
-  this.editor_tabpanels_enabled = true;
-};
-
+/*
+ * Prepare the content on the Status tabpanel.
+ *
+ * [argument] none
+ * [return] none
+ */
 BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
-  // TODO: use custom widget for <select> and <option>
-  // TODO: complete MVC migration
-
   let fields = BzDeck.models.server.data.config.field,
       closed_statuses = fields.status.closed,
       $tab = this.$form.querySelector('[id$="tab-status"]'),
@@ -330,11 +182,12 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   }
 
   this.$$status.on('Change', event => {
-    let closed = closed_statuses.includes(event.detail.value);
+    let value = event.detail.value,
+        closed = closed_statuses.includes(value);
 
     $resolution.setAttribute('aria-hidden', !closed);
-    this.$$resolution.options[0].setAttribute('aria-disabled', closed); // '' (an empty string)
-    this.$$resolution.selectedIndex = closed ? 1 : 0; // FIXED or ''
+    this.$$resolution.options[0].setAttribute('aria-disabled', closed); // empty string
+    this.$$resolution.selectedIndex = closed ? 1 : 0; // FIXED or empty string
 
     if (closed) {
       this.$$resolution.$input.focus();
@@ -343,7 +196,8 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
     $dupe_label.setAttribute('aria-hidden', 'true');
     $dupe_input.value = '';
 
-    this.update_changes();
+    this.trigger('BugView:EditField', { name: 'status', value });
+    this.trigger('BugView:EditField', { name: 'resolution', value: this.$$resolution.$input.textContent });
   });
 
   for (let value of fields.resolution.values) {
@@ -353,62 +207,37 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
   $resolution.setAttribute('aria-hidden', !closed_statuses.includes(this.bug.status));
   this.$$resolution.options[0].setAttribute('aria-disabled', closed_statuses.includes(this.bug.status));
   this.$$resolution.on('Change', event => {
-    let marking_dupe = event.detail.value === 'DUPLICATE';
+    let value = event.detail.value,
+        dupe = value === 'DUPLICATE';
 
-    $dupe_label.setAttribute('aria-hidden', !marking_dupe);
-    $dupe_input.value = marking_dupe && this.bug.dupe_of ? this.bug.dupe_of : '';
+    $dupe_label.setAttribute('aria-hidden', !dupe);
+    $dupe_input.value = dupe && this.bug.dupe_of ? this.bug.dupe_of : '';
 
-    if (marking_dupe) {
+    if (dupe) {
       $dupe_input.focus();
     }
 
-    this.update_changes();
+    this.trigger('BugView:EditField', { name: 'resolution', value });
   });
 
   $dupe_label.setAttribute('aria-hidden', this.bug.resolution !== 'DUPLICATE');
   $dupe_input.value = this.bug.dupe_of || '';
   $dupe_input.addEventListener('keydown', event => event.stopPropagation());
-  $dupe_input.addEventListener('input', event => this.update_changes());
+  $dupe_input.addEventListener('input', event => {
+    this.trigger('BugView:EditField', { name: 'dupe_of', value: event.target.value });
+  });
+
   new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
 
   $tab.setAttribute('aria-disabled', 'false');
 };
 
-BzDeck.views.TimelineCommentForm.prototype.update_changes = function () {
-  let fields = BzDeck.models.server.data.config.field,
-      closed_statuses = fields.status.closed,
-      status = this.$$status.selected.dataset.value,
-      resolution = this.$$resolution.selected.dataset.value,
-      dupe_of = this.$dupe_input.value.match(/^\d+$/) ? Number.parseInt(this.$dupe_input.value) : null;
-
-  if (status === this.bug.status) {
-    this.changes.delete('status');
-  } else {
-    this.changes.set('status', status);
-  }
-
-  if (resolution === this.bug.resolution) {
-    this.changes.delete('resolution');
-  } else if (closed_statuses.includes(status)) {
-    this.changes.set('resolution', resolution);
-  } else {
-    this.changes.set('resolution', '');
-    this.changes.delete('dupe_of');
-  }
-
-  if (dupe_of === this.bug.dupe_of || dupe_of === this.bug.id) {
-    this.changes.delete('dupe_of');
-  } else {
-    this.changes.set('dupe_of', dupe_of);
-    // These fields will automatically be set by Bugzilla
-    // http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug
-    this.changes.delete('status');
-    this.changes.delete('resolution');
-  }
-
-  this.$submit.setAttribute('aria-disabled', !this.can_submit);
-};
-
+/*
+ * Prepare the content on the NeedInfo tabpanel.
+ *
+ * [argument] none
+ * [return] none
+ */
 BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () {
   let flags = [for (flag of this.bug.flags || []) if (flag.name === 'needinfo') flag],
       names = [for (flag of flags) flag.requestee],
@@ -416,14 +245,14 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
       $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
       $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
       $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
-      $$finder = new BzDeck.views.PersonFinder(`${this.timeline_id}-person-finder`, this.bug,
-                                                 [this.bug.creator, this.bug.assigned_to]),
+      $$finder = new BzDeck.views.PersonFinder(`${this.id}-person-finder`, this.bug,
+                                               [this.bug.creator, this.bug.assigned_to]),
       $finder = $$finder.$combobox;
 
-  this.needinfo_changes = new Map();
-
   let add_row = (requestee, checked, options = {}) => {
-    let type = options.id ? 'clear' : 'request',
+    let { id, label } = options,
+        type = id ? 'clear' : 'request',
+        flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee },
         $row = this.get_template(`timeline-comment-form-${type}-needinfo-row`),
         $person = this.fill(this.get_template('person-with-image'),
                             BzDeck.collections.users.get(requestee, { name: requestee }).properties),
@@ -432,23 +261,23 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
         $label = $checkbox.querySelector('span');
 
     $checkbox.replaceChild($person, $checkbox.querySelector('strong'));
-    $$checkbox.bind('Toggled', event => this.update_needinfos(event.detail.checked, requestee, options.id));
+    $$checkbox.bind('Toggled', event => this.trigger('BugView:EditFlag', { flag, added: event.detail.checked }));
     $$checkbox.checked = checked;
 
-    if ($label && options.label) {
-      $label.textContent = options.label;
+    if ($label && label) {
+      $label.textContent = label;
     }
 
     $finder_outer.parentElement.insertBefore($row, $finder_outer);
   };
 
-  // Remove the rows first if exist
+  // Remove the rows first if any
   for (let $element of $tabpanel.querySelectorAll('[class$="row"]')) {
     $element.remove();
   }
 
-  for (let flag of flags) {
-    add_row(flag.requestee, flag.requestee === BzDeck.models.account.data.name, { id: flag.id });
+  for (let { id, requestee } of flags) {
+    add_row(requestee, requestee === BzDeck.models.account.data.name, { id });
   }
 
   if (!names.includes(this.bug.creator)) {
@@ -472,169 +301,184 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
   $tab.setAttribute('aria-disabled', 'false');
 };
 
-BzDeck.views.TimelineCommentForm.prototype.update_needinfos = function (addition, requestee, id = undefined) {
-  let changes = this.needinfo_changes; // Map; key: requestee, value: partial flag
+/*
+ * Called by the textbox element whenever the new comment is edited by the user.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
+  this.$textbox.style.removeProperty('height');
+  this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
 
-  if (!addition) {
-    changes.delete(requestee);
-  } else if (id) { // Clear an existing needinfo flag
-    changes.set(requestee, { id, status: 'X' });
-  } else { // Add a new needinfo flag
-    changes.set(requestee, { new: true, name: 'needinfo', status: '?', requestee });
+  if (this.$status.textContent) {
+    this.$status.textContent = '';
   }
 
-  if (changes.size) {
-    this.changes.set('flags', [...changes.values()]);
-  } else {
-    this.changes.delete('flags');
-  }
-
-  this.needinfo_changes = changes;
-  this.$submit.setAttribute('aria-disabled', !this.can_submit);
+  this.trigger('BugView:EditComment', { text: this.$textbox.value });
 };
 
-BzDeck.views.TimelineCommentForm.prototype.find_errors = function () {
-  let errors = new Set();
+/*
+ * Called by BugController whenever a new attachment is added by the user.
+ *
+ * [argument] attachment (Object) added attachment data
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_attachment_added = function (attachment) {
+  let hash = attachment.hash,
+      click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
+      $tbody = this.$attachments_tbody,
+      $row = this.get_template('timeline-comment-form-attachments-row'),
+      $desc = $row.querySelector('[data-field="description"]');
 
-  if (this.changes.get('resolution') === 'DUPLICATE' && !this.changes.get('dupe_of')) {
-    errors.add('Please specify a valid duplicate bug ID.'); // l10n
-  }
+  $desc.value = $desc.placeholder = attachment.summary;
+  $desc.addEventListener('keydown', event => event.stopPropagation());
+  $desc.addEventListener('input', event => attachment.summary = $desc.value);
 
-  // Any other errors go here
-
-  return errors;
-};
-
-BzDeck.views.TimelineCommentForm.prototype.submit = function () {
-  let errors = this.find_errors();
-
-  if (errors.size) {
-    this.$status.textContent = [...errors][0];
-
-    return;
-  }
-
-  let data = {},
-      hash = att => md5(att.file_name + String(att.size)),
-      map_sum = map => [...map.values()].reduce((p, c) => p + c),
-      comment = this.$textbox.value,
-      att_num = this.attachments.length,
-      att_total = 0,
-      att_uploaded = new Map([for (att of this.attachments) [hash(att), 0]]),
-      percentage;
-
-  let update_status = (att, uploaded) => {
-    att_uploaded.set(hash(att), uploaded);
-    percentage = Math.round(map_sum(att_uploaded) / att_total * 100);
-    this.$status.textContent = `${percentage}% uploaded`;
-  };
-
-  let post = data => new Promise((resolve, reject) => {
-    let method = data.file_name ? 'attachment' : '',
-        length_computable,
-        size = 0;
-
-    // If there is no comment nor changes, go ahead with attachments
-    if (!Object.keys(data).length) {
-      resolve();
-
-      return;
-    }
-
-    BzDeck.controllers.global.request(`bug/${this.bug.id}${method ? '/' + method : ''}`, null, {
-      method: method === 'attachment' ? 'POST' : 'PUT',
-      data: data,
-      auth: true,
-      upload_listeners: {
-        progress: event => {
-          if (method === 'attachment') {
-            if (!size) {
-              length_computable = event.lengthComputable;
-              size = event.total;
-              att_total += size;
-            }
-
-            if (length_computable) {
-              update_status(data, event.loaded);
-            }
-          }
-        }
-      }
-    }).then(result => {
-      if (result.ids) {
-        if (method === 'attachment') {
-          this.remove_attachment(data);
-
-          if (!length_computable) {
-            update_status(data, size);
-          }
-        }
-
-        resolve();
-      } else {
-        reject(new Error(result));
-      }
-    }).catch(event => {
-      reject(new Error());
-    });
+  $row.querySelector('[data-command="remove"]').addEventListener(click_event_type, event => {
+    this.trigger('BugView:RemoveAttachment', { hash });
   });
 
+  $row.querySelector('[data-command="move-up"]').addEventListener(click_event_type, event => {
+    $tbody.insertBefore($row.previousElementSibling, $row.nextElementSibling);
+    this.trigger('BugView:MoveUpAttachment', { hash });
+  });
+
+  $row.querySelector('[data-command="move-down"]').addEventListener(click_event_type, event => {
+    $tbody.insertBefore($row.nextElementSibling, $row);
+    this.trigger('BugView:MoveDownAttachment', { hash });
+  });
+
+  $tbody.appendChild($row);
+};
+
+/*
+ * Called by BugController whenever a new attachment is removed by the user.
+ *
+ * [argument] index (Integer) removed attachment's index in the cached list
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_attachment_removed = function (index) {
+  this.$attachments_tbody.rows[index].remove();
+};
+
+/*
+ * Called by BugController whenever a new attachment is added or removed by the user.
+ *
+ * [argument] uploads (Array+) list of the new attachments
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_attachments_edited = function (uploads) {
+  this.$attachments_tab.setAttribute('aria-disabled', !uploads.length);
+  this.$$tablist.view.selected = uploads.length ? this.$attachments_tab : this.$comment_tab;
+  this.update_parallel_ui(uploads);
+};
+
+/*
+ * Called by BugController whenever a new attachment added by the user has an error, such as an oversized file. Show an
+ * alert dialog to notify the user of the error.
+ *
+ * [argument] message (String) explanation of the detected error
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_attachment_error = function (message) {
+  new this.widgets.Dialog({
+    type: 'alert',
+    title: 'Error on attaching files', // l10n
+    message: data.message.replace('\n', '<br>'),
+  }).show();
+};
+
+/*
+ * Called by BugController whenever a new attachment is added or removed by the user, or the upload option is changed.
+ * Update the parallel upload UI based on the current option and the number of the new attachments.
+ *
+ * [argument] uploads (Array+) list of the new attachments
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function (uploads) {
+  let disabled = uploads.length < 2 || uploads.parallel;
+
+  for (let $button of this.$attachments_tbody.querySelectorAll('[data-command|="move"]')) {
+    $button.setAttribute('aria-disabled', disabled);
+  }
+
+  this.$parallel_checkbox.setAttribute('aria-hidden', uploads.length < 2);
+};
+
+/*
+ * Called by BugController whenever the new commend is added or removed by the user.
+ *
+ * [argument] has_comment (Boolean) whether the comment is empty
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_comment_edited = function (has_comment) {
+  this.$preview_tab.setAttribute('aria-disabled', !has_comment);
+};
+
+/*
+ * Called by BugController whenever any of the fields, comments or attachments are edited by the user.
+ *
+ * [argument] can_submit (Boolean) whether the changes can be submitted immediately
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_bug_edited = function (can_submit) {
+  this.$submit.setAttribute('aria-disabled', !can_submit);
+};
+
+/*
+ * Called by BugController whenever the changes are about to be submitted to Bugzilla.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_submit = function () {
   this.$textbox.setAttribute('aria-readonly', 'true');
   this.$submit.setAttribute('aria-disabled', 'true');
   this.$status.textContent = 'Submitting...';
+};
 
-  if (att_num === 1 && !this.changes.size) {
-    // If there's a single attachment and no changed fields, send it with the comment
-    data = this.attachments[0];
-    data.comment = comment;
-  } else {
-    // If there's no attachment, just send the comment. If there are 2 or more attachments,
-    // send the comment first then send the attachments in parallel or series
-    if (comment) {
-      data.comment = { body: comment };
-    }
+/*
+ * Called by BugController whenever the upload of a new attachment is in progress.
+ *
+ * [argument] data (object) includes the uploaded size, total size and percentage
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_submit_progress = function (data) {
+  // TODO: Use a progressbar (#159)
+  this.$status.textContent = `${data.percentage}% uploaded`;
+};
 
-    // Append the changed fields if any
-    for (let [key, value] of this.changes) {
-      data[key] = value;
-    }
-  }
+/*
+ * Called by BugController whenever all the changes are submitted successfully. Reset the form content.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_submit_success = function () {
+  this.$textbox.value = '';
+  this.oninput();
+};
 
-  post(data).then(value => {
-    if (!att_num || (att_num === 1 && !this.changes.size)) {
-      return true;
-    }
+/*
+ * Called by BugController whenever any error is detected while submitting the changes.
+ *
+ * [argument] data (object) includes the errors and whether the submit button should be disabled
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_submit_error = function (data) {
+  this.$submit.setAttribute('aria-disabled', data.button_disabled);
+  this.$status.textContent = data.error || 'There was an error while submitting your changes. Please try again.';
+};
 
-    // Upload files in parallel
-    if (this.parallel_upload) {
-      return Promise.all([for (att of this.attachments) post(att)]);
-    }
-
-    // Upload files in series
-    return this.attachments.reduce((sequence, att) => sequence.then(() => post(att)), Promise.resolve());
-  }, error => {
-    // Failed to post
-    this.$submit.setAttribute('aria-disabled', 'false');
-    this.$status.textContent = error && error.message ? `ERROR: ${error.message}`
-                             : 'Failed to post your comment or attachment. Try again later.';
-  }).then(() => {
-    // All done, the timeline will soon be updated via Bugzfeed
-    this.changes.clear();
-    this.clear_comment();
-    this.attachments = [];
-    this.init_needinfo_tabpanel();
-
-    // Fetch the bug if the Bugzfeed client is not working for some reason
-    if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
-      BzDeck.collections.bugs.get(this.bug.id, { id: this.bug.id, _unread: true }).fetch();
-    }
-  }, errors => {
-    // Failed to post at least one attachment
-    this.$submit.setAttribute('aria-disabled', 'false');
-    this.$status.textContent = 'Failed to post your attachments. Try again later.';
-  }).then(() => {
-    // The textbox should be focused anyway
-    this.$textbox.setAttribute('aria-readonly', 'false');
-    this.$textbox.focus();
-  });
+/*
+ * Called by BugController once a submission is complete, regardless of errors.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.TimelineCommentForm.prototype.on_submit_complete = function () {
+  // The textbox should be focused anyway
+  this.$textbox.setAttribute('aria-readonly', 'false');
+  this.$textbox.focus();
 };

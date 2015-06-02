@@ -76,7 +76,7 @@ BzDeck.controllers.DetailsPage.prototype.init = function () {
     }
   })).then(bug => {
     bug.unread = false;
-    this.trigger(':BugDataAvailable', { bug });
+    this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('details', bug) });
   });
 
   BzDeck.controllers.bugzfeed.subscribe([this.bug_id]);
