@@ -2,3 +2,9 @@
 	path = webroot/vendor/flaretail.js
 	url = git@github.com:bzdeck/flaretail.js.git
 	ignore = dirty
+[submodule "webroot/vendor/qrcode-encoder"]
+	path = webroot/vendor/qrcode-encoder
+	url = git@github.com:davidshimjs/qrcodejs.git
+[submodule "webroot/vendor/qrcode-decoder"]
+	path = webroot/vendor/qrcode-decoder
+	url = git@github.com:LazarSoft/jsqrcode.git

@@ -13,6 +13,9 @@
     },
     "storage": {
       "description": "Required to store bug data locally"
+    },
+    "video-capture": {
+      "description": "Required to capture video using getUserMedia()"
     }
   },
   "activities": {

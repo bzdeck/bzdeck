@@ -48,47 +48,73 @@ BzDeck.controllers.Session.prototype.find_account = function () {
 BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
-  this.on('LoginFormView:Submit', data => {
-    if (!this.bootstrapping) {
-      // User is trying to re-login
-      this.relogin = true;
-      this.bootstrapping = true;
-    }
+  let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
 
-    this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
+  this.on('LoginFormView:LoginRequested', data => {
+    bc.addEventListener('message', event => {
+      let { email, key } = event.data;
 
-    let server = BzDeck.models.server = BzDeck.collections.servers.get(data.host, { host: data.host }),
-        params = new URLSearchParams();
-
-    params.append('names', data.email);
-
-    return this.request('user', params, { api_key: data.api_key }).then(result => {
-      return result.users ? Promise.resolve(result.users[0])
-                          : Promise.reject(new Error(result.message || 'User Not Found'));
-    }, error => {
-      return Promise.reject(error);
-    }).then(user => {
-      return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
-    }).then(user => {
-      let account = BzDeck.models.account = new BzDeck.models.Account({
-        host: BzDeck.models.server.name,
-        name: data.email,
-        api_key: data.api_key || undefined,
-        loaded: Date.now(), // key
-        active: true,
-        bugzilla: user,
-      });
-
-      account.save();
-      this.trigger(':UserFound');
-      this.load_data();
-    }).catch(error => {
-      this.trigger(':Error', { message: error.message || 'Failed to find your account.' }); // l10n
+      if (email && key) {
+        this.verify_account(data.host, email, key);
+      } else {
+        this.trigger(':Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
+      }
     });
+  }, true);
+
+  this.on('LoginFormView:QRCodeDecoded', data => {
+    if (data.result && data.result.match(/^.+@.+\..+\|[A-Za-z0-9]{40}$/)) {
+      this.verify_account(data.host, ...data.result.split('|'));
+    } else {
+      this.trigger(':Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
+    }
+  }, true);
+
+  this.on('LoginFormView:QRCodeError', data => {
+    this.trigger(':Error', { message: 'Failed to access a camera on your device. Try again.' });
   }, true);
 };
 
-// Bootstrap Step 3. Load data from local database once the user account is set
+// Bootstrap Step 3. Once the user's auth info is provided, check the email and API key are valid
+BzDeck.controllers.Session.prototype.verify_account = function (host, email, api_key) {
+  let server = BzDeck.models.server = BzDeck.collections.servers.get(host, { host }),
+      params = new URLSearchParams(`names=${email}`);
+
+  this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
+
+  if (!this.bootstrapping) {
+    // User is trying to re-login
+    this.relogin = true;
+    this.bootstrapping = true;
+  }
+
+  return this.request('user', params, { api_key }).then(result => {
+    return result.users ? Promise.resolve(result.users[0])
+                        : Promise.reject(new Error(result.message || 'User Not Found'));
+  }, error => {
+    return Promise.reject(error);
+  }).then(user => {
+    return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
+  }).then(user => {
+    let account = BzDeck.models.account = new BzDeck.models.Account({
+      host: BzDeck.models.server.name,
+      name: email,
+      api_key,
+      loaded: Date.now(), // key
+      active: true,
+      bugzilla: user,
+    });
+
+    account.save();
+    this.trigger(':UserFound');
+    this.auth_callback_bc.close();
+    this.load_data();
+  }).catch(error => {
+    this.trigger(':Error', { message: error.message || 'Failed to find your account.' }); // l10n
+  });
+};
+
+// Bootstrap Step 4. Load data from local database once the user account is set
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
@@ -113,7 +139,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   });
 };
 
-// Bootstrap Step 4. Retrieve data from remote Bugzilla instance
+// Bootstrap Step 5. Retrieve data from remote Bugzilla instance
 BzDeck.controllers.Session.prototype.fetch_data = function () {
   this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading Bugzilla config and your bugs...' });
 
@@ -123,7 +149,7 @@ BzDeck.controllers.Session.prototype.fetch_data = function () {
   ]);
 };
 
-// Bootstrap Step 5. Setup everything including UI components
+// Bootstrap Step 6. Setup everything including UI components
 BzDeck.controllers.Session.prototype.init_components = function () {
   this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
 

@@ -5,7 +5,6 @@
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
       account = BzDeck.models.account,
-      api_key_link = BzDeck.models.server.url + '/userprefs.cgi?tab=apikey',
       prefs = new Map();
 
   for (let [name, value] of Iterator(BzDeck.config.prefs)) {
@@ -16,33 +15,9 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   BzDeck.views.toolbar.open_tab({
     page_category: 'settings',
     page_constructor: BzDeck.views.SettingsPage,
-    page_constructor_args: [tab_id, account.data.api_key, api_key_link, prefs],
+    page_constructor_args: [tab_id, prefs],
     tab_label: 'Settings',
   }, this);
-
-  this.on('V:APIKeyProvided', data => {
-    let params = new URLSearchParams(),
-        options = { api_key: data.api_key };
-
-    params.append('names', account.data.name);
-
-    this.request('user', params, options).then(result => {
-      if (result.users) {
-        // Delete the previously-used auth token
-        delete account.data.token;
-        // Save the new API Key
-        account.data.api_key = data.api_key;
-        account.data.bugzilla = result.users[0];
-        account.save();
-        // Update the view
-        this.trigger(':APIKeyVerified');
-      } else {
-        this.trigger(':APIKeyInvalid');
-      }
-    }).catch(error => {
-      this.trigger(':APIKeyVerificationError', { error });
-    });
-  });
 
   this.on('V:PrefValueChanged', data => {
     let { name, value } = data;

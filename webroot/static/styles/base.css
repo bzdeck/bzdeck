@@ -189,6 +189,33 @@ del a {
   cursor: default;
 }
 
+.cta[role="button"] {
+  display: block;
+  margin: .8rem auto 0;
+  padding: .8rem .4rem;
+  border-color: var(--highlighted-button-border-color);
+  border-radius: .8rem;
+  width: 20rem;
+  height: auto;
+  color: var(--highlighted-button-foreground-color);
+  background-color: var(--highlighted-button-background-color);
+  background-repeat: repeat;
+  font-size: 1.4rem;
+  line-height: 1.25;
+  font-weight: 300;
+  font-style: italic;
+  transition: all .2s;
+}
+
+.cta[role="button"]:active {
+  background-color: var(--highlighted-button-background-color);
+  filter: brightness(1.1);
+}
+
+.cta[role="button"][aria-disabled="true"] {
+  filter: brightness(1.5) grayscale(100%);
+}
+
 [role="textbox"], [role="searchbox"] {
   border-color: var(--textbox-border-color);
   color: var(--textbox-foreground-color);
@@ -502,24 +529,82 @@ col[data-hidden="false"] {
   white-space: nowrap;
 }
 
-#app-login [role="textbox"],
-#app-login [role="button"] {
-  display: block;
-  margin: .8rem auto 0;
-  width: calc(100% - 1rem);
-  max-width: 32rem;
-  background-repeat: repeat;
-  font-size: 1.25rem;
+[data-device="desktop"]:root #app-login [role="button"][data-id="qrcode-auth"] {
+  display: none;
 }
 
-#app-login [role="button"] {
-  border-color: var(--highlighted-button-border-color);
-  color: var(--highlighted-button-foreground-color);
-  background-color: var(--highlighted-button-background-color);
+#app-login [role="form"] {
+  margin-top: 2rem;
+  transition: opacity 1s;
+}
+
+#app-login [role="form"][aria-hidden="true"] {
+  display: block;
+  opacity: 0;
+}
+
+#app-intro[aria-hidden="true"] ~ [role="form"][aria-hidden="true"] {
+  display: none !important;
+}
+
+#app-login [role="form"][aria-hidden="false"] {
+  opacity: 1;
 }
 
 #app-login [role="status"] {
   margin-bottom: 0;
+}
+
+/* ----------------------------------------------------------------------------------------------
+ * QR code authentication overlay for mobile
+ * ---------------------------------------------------------------------------------------------- */
+
+#qrcode-auth-overlay {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  z-index: 300;
+  width: 100%;
+  height: 100%;
+  background-color: var(--application-background-color);
+  transition: left .4s;
+  transform: translateZ(0); /* Get hardware acceleration? */
+}
+
+#qrcode-auth-overlay[aria-hidden="true"] {
+  display: flex;
+  left: 100%;
+}
+
+#qrcode-auth-overlay div {
+  display: flex;
+  margin-bottom: 4rem; /* Same as the <header>'s height, so the <video> will be centered almost vertically */
+  flex: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#qrcode-auth-overlay p {
+  margin: 1.6rem;
+  max-width: 40rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+#qrcode-auth-overlay video {
+  display: block;
+  box-sizing: border-box;
+  outline: 0;
+  border-radius: .8rem;
+  width: 16rem;
+  height: 16rem;
+  object-fit: cover;
+}
+
+#qrcode-auth-overlay video:not([src]) {
+  border: .4rem dashed var(--application-foreground-color);
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -1113,6 +1198,7 @@ main {
   flex-direction: column;
 }
 
+#qrcode-auth-overlay header,
 #main-tabpanels > [role="tabpanel"] > * > header {
   display: flex;
   position: relative;
@@ -1123,6 +1209,7 @@ main {
   display: none; /* Usually hide the header */
 }
 
+#qrcode-auth-overlay header,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header {
   height: 4rem;
   color: var(--application-header-foreground-color);
@@ -1137,14 +1224,17 @@ main {
   flex: auto;
 }
 
+#qrcode-auth-overlay header > :not(h2),
 #main-tabpanels > [role="tabpanel"] > * > header > :not(h2) {
   flex: none;
 }
 
+#qrcode-auth-overlay header > *,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > * {
   height: 4rem;
 }
 
+#qrcode-auth-overlay header .banner-nav-button,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button {
   border: 0;
   border-radius: 0;
@@ -1154,10 +1244,12 @@ main {
   background-color: transparent;
 }
 
+#qrcode-auth-overlay header .banner-nav-button:active,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button:active {
   opacity: .8;
 }
 
+#qrcode-auth-overlay header .banner-nav-button::before,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button::before {
   display: block;
   position: absolute;
@@ -1171,6 +1263,7 @@ main {
   text-align: center;
 }
 
+#qrcode-auth-overlay header .banner-nav-button::before,
 [data-device|="mobile"]:root [role="tabpanel"]:not(#tabpanel-home) > * > header .banner-nav-button::before {
   content: "\F053"; /* back icon */
 }
@@ -1179,10 +1272,12 @@ main {
   content: "\F0C9"; /* hamburger menu icon */
 }
 
+#qrcode-auth-overlay header h2,
 #main-tabpanels > [role="tabpanel"] > * > header h2 {
   flex: auto;
 }
 
+#qrcode-auth-overlay header h2,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2 {
   overflow: hidden;
   box-sizing: border-box;
@@ -1196,6 +1291,7 @@ main {
   text-overflow: ellipsis;
 }
 
+#qrcode-auth-overlay header h2,
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header h2:last-child {
   margin-right: 4rem; /* Same width as the nav button */
 }
@@ -3422,16 +3518,23 @@ article[id$="preview-bug"] > .bug-info {
   background-repeat: no-repeat;
 }
 
-#settings-tabpanel-account input {
-  width: 12rem;
-  text-align: center;
+[data-device|="mobile"]:root #settings-tab-account,
+[data-device|="mobile"]:root #settings-tabpanel-account {
+  display: none; /* The Account tabpanel only has the QR code for now, so it should be hidden on mobile */
 }
 
-#settings-tabpanel-account output {
+#settings-qrcode-outer p {
+  margin-top: 0;
+}
+
+#settings-qrcode-outer div {
   display: inline-block;
-  padding: .4rem .8rem;
-  height: 1.6rem;
-  line-height: 1.6rem;
+  float: right;
+  margin-left: 2rem;
+  padding: 2rem;
+  width: 192px; /* same as the inner <canvas> */
+  height: 192px; /* same as the inner <canvas> */
+  background-color: #FFF; /* for a better recognition */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -4209,10 +4312,6 @@ article[id$="preview-bug"] > .bug-info {
 
   #app-login > div {
     top: 8rem;
-  }
-
-  #app-intro {
-    display: none;
   }
 
 }

@@ -17,7 +17,7 @@ AddType application/font-woff woff
 AddType application/font-woff2 woff2
 
 # Options
-DirectoryIndex index.php
+DirectoryIndex index.php index.html
 Options +SymLinksIfOwnerMatch -Indexes
 RewriteEngine on
 
@@ -62,15 +62,18 @@ Header always append Content-Security-Policy "\
   default-src 'self';\
   style-src 'self' 'unsafe-inline';\
   script-src 'self' https://secure.gravatar.com;\
-  img-src 'self' 'unsafe-eval' blob:\
+  img-src 'self' 'unsafe-eval' blob: data:\
     https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
     https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org\
     https://secure.gravatar.com;\
-  media-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
+  media-src mediastream:\
+    https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
     https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org;\
-  frame-src https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
+  frame-src 'self'\
+    https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
     https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org;\
-  connect-src https://bugzilla.mozilla.org wss://bugzfeed.mozilla.org\
+  connect-src\
+    https://bugzilla.mozilla.org wss://bugzfeed.mozilla.org\
     https://bugzilla-dev.allizom.org wss://bugzfeed-dev.allizom.org"
 Header always append Strict-Transport-Security max-age=31536000
-Header always append X-Frame-Options DENY
+Header always append X-Frame-Options SAMEORIGIN

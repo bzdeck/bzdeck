@@ -31,13 +31,6 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (view_id, bu
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-  // If the user's API key is not provided and the app is working in the read-only mode, just hide the form
-  if (!BzDeck.models.account.data.api_key) {
-    this.$form.setAttribute('aria-hidden', 'true');
-
-    return;
-  }
-
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       user = BzDeck.models.account.data.bugzilla;
 

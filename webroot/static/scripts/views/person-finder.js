@@ -36,13 +36,8 @@ BzDeck.views.PersonFinder.prototype.oninput = function (event) {
   }
 
   if (this.value.length >= 3) {
-    // Search the local database
     this.search_local();
-
-    // Search Bugzilla if the user can be authenticated, otherwise we cannot get the result
-    if (BzDeck.models.account.data.api_key) {
-      this.search_remote();
-    }
+    this.search_remote();
   }
 };
 
