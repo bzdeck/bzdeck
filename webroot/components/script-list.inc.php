@@ -37,6 +37,7 @@ $scripts = [
   '/static/scripts/views/attachment.js',
   '/static/scripts/views/attachment-page.js',
   '/static/scripts/views/bug.js',
+  '/static/scripts/views/bug-comment-form.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
   '/static/scripts/views/details-page.js',
   '/static/scripts/views/global.js',
@@ -51,7 +52,6 @@ $scripts = [
   '/static/scripts/views/sidebar.js',
   '/static/scripts/views/statusbar.js',
   '/static/scripts/views/thread.js',
-  '/static/scripts/views/timeline-comment-form.js',
   '/static/scripts/views/timeline-entry.js',
   '/static/scripts/views/timeline.js',
   '/static/scripts/views/toolbar.js',

@@ -3,18 +3,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /*
- * Initialize the Timeline Comment Form View. This view has a comment form and quick edit UI.
+ * Initialize the Bug Comment Form View. This view has a comment form and quick edit UI.
  *
  * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
  *                            notification events won't work
  * [argument] bug (Object) BugModel instance
- * [return] view (Object) TimelineCommentFormView instance, when called with `new`
+ * [return] view (Object) BugCommentFormView instance, when called with `new`
  */
-BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (view_id, bug) {
+BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug) {
   this.id = view_id;
   this.bug = bug;
 
-  this.$form = this.get_template('timeline-comment-form', `${this.id}-timeline-comment-form`);
+  this.$form = this.get_template('bug-comment-form', `${this.id}-bug-comment-form`);
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
   this.$tablist = this.$form.querySelector('[role="tablist"]');
@@ -74,8 +74,8 @@ BzDeck.views.TimelineCommentForm = function TimelineCommentFormView (view_id, bu
   this.on('BugController:SubmitComplete', () => this.on_submit_complete());
 };
 
-BzDeck.views.TimelineCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCommentForm;
+BzDeck.views.BugCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.BugCommentForm.prototype.constructor = BzDeck.views.BugCommentForm;
 
 /*
  * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
@@ -84,7 +84,7 @@ BzDeck.views.TimelineCommentForm.prototype.constructor = BzDeck.views.TimelineCo
  * [argument] $tab (Element) selected tab node
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_tab_selected = function ($tab) {
+BzDeck.views.BugCommentForm.prototype.on_tab_selected = function ($tab) {
   if ($tab.id.endsWith('write')) {
     this.$textbox.focus();
   }
@@ -101,7 +101,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_tab_selected = function ($tab) {
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.init_comment_tabpanel = function () {
+BzDeck.views.BugCommentForm.prototype.init_comment_tabpanel = function () {
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
   this.$textbox.value = '';
 
@@ -118,7 +118,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_comment_tabpanel = function () {
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.init_attachment_tabpanel = function () {
+BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
   // Attach files using a file picker
   // The event here should be click; others including touchstart and mousedown don't work
   this.$attach_button.addEventListener('click', event => this.$file_picker.click());
@@ -157,7 +157,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_attachment_tabpanel = function (
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
+BzDeck.views.BugCommentForm.prototype.init_status_tabpanel = function () {
   let fields = BzDeck.models.server.data.config.field,
       closed_statuses = fields.status.closed,
       $tab = this.$form.querySelector('[id$="tab-status"]'),
@@ -231,7 +231,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_status_tabpanel = function () {
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () {
+BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
   let flags = [for (flag of this.bug.flags || []) if (flag.name === 'needinfo') flag],
       names = [for (flag of flags) flag.requestee],
       self_assigned = this.bug.creator === this.bug.assigned_to,
@@ -246,7 +246,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
     let { id, label } = options,
         type = id ? 'clear' : 'request',
         flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee },
-        $row = this.get_template(`timeline-comment-form-${type}-needinfo-row`),
+        $row = this.get_template(`bug-comment-form-${type}-needinfo-row`),
         $person = this.fill(this.get_template('person-with-image'),
                             BzDeck.collections.users.get(requestee, { name: requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
@@ -300,7 +300,7 @@ BzDeck.views.TimelineCommentForm.prototype.init_needinfo_tabpanel = function () 
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
+BzDeck.views.BugCommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
   this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
 
@@ -317,11 +317,11 @@ BzDeck.views.TimelineCommentForm.prototype.oninput = function () {
  * [argument] attachment (Object) added attachment data
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_attachment_added = function (attachment) {
+BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment) {
   let hash = attachment.hash,
       click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $tbody = this.$attachments_tbody,
-      $row = this.get_template('timeline-comment-form-attachments-row'),
+      $row = this.get_template('bug-comment-form-attachments-row'),
       $desc = $row.querySelector('[data-field="description"]');
 
   $desc.value = $desc.placeholder = attachment.summary;
@@ -351,7 +351,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_attachment_added = function (attac
  * [argument] index (Integer) removed attachment's index in the cached list
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_attachment_removed = function (index) {
+BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
   this.$attachments_tbody.rows[index].remove();
 };
 
@@ -361,7 +361,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_attachment_removed = function (ind
  * [argument] uploads (Array+) list of the new attachments
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_attachments_edited = function (uploads) {
+BzDeck.views.BugCommentForm.prototype.on_attachments_edited = function (uploads) {
   this.$attachments_tab.setAttribute('aria-disabled', !uploads.length);
   this.$$tablist.view.selected = uploads.length ? this.$attachments_tab : this.$comment_tab;
   this.update_parallel_ui(uploads);
@@ -374,7 +374,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_attachments_edited = function (upl
  * [argument] message (String) explanation of the detected error
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_attachment_error = function (message) {
+BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
   new this.widgets.Dialog({
     type: 'alert',
     title: 'Error on attaching files', // l10n
@@ -389,7 +389,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_attachment_error = function (messa
  * [argument] uploads (Array+) list of the new attachments
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function (uploads) {
+BzDeck.views.BugCommentForm.prototype.update_parallel_ui = function (uploads) {
   let disabled = uploads.length < 2 || uploads.parallel;
 
   for (let $button of this.$attachments_tbody.querySelectorAll('[data-command|="move"]')) {
@@ -405,7 +405,7 @@ BzDeck.views.TimelineCommentForm.prototype.update_parallel_ui = function (upload
  * [argument] has_comment (Boolean) whether the comment is empty
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_comment_edited = function (has_comment) {
+BzDeck.views.BugCommentForm.prototype.on_comment_edited = function (has_comment) {
   this.$preview_tab.setAttribute('aria-disabled', !has_comment);
 };
 
@@ -415,7 +415,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_comment_edited = function (has_com
  * [argument] can_submit (Boolean) whether the changes can be submitted immediately
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_bug_edited = function (can_submit) {
+BzDeck.views.BugCommentForm.prototype.on_bug_edited = function (can_submit) {
   this.$submit.setAttribute('aria-disabled', !can_submit);
 };
 
@@ -425,7 +425,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_bug_edited = function (can_submit)
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_submit = function () {
+BzDeck.views.BugCommentForm.prototype.on_submit = function () {
   this.$textbox.setAttribute('aria-readonly', 'true');
   this.$submit.setAttribute('aria-disabled', 'true');
   this.$status.textContent = 'Submitting...';
@@ -437,7 +437,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_submit = function () {
  * [argument] data (object) includes the uploaded size, total size and percentage
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_submit_progress = function (data) {
+BzDeck.views.BugCommentForm.prototype.on_submit_progress = function (data) {
   // TODO: Use a progressbar (#159)
   this.$status.textContent = `${data.percentage}% uploaded`;
 };
@@ -448,7 +448,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_submit_progress = function (data) 
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_submit_success = function () {
+BzDeck.views.BugCommentForm.prototype.on_submit_success = function () {
   this.$textbox.value = '';
   this.oninput();
 };
@@ -459,7 +459,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_submit_success = function () {
  * [argument] data (object) includes the errors and whether the submit button should be disabled
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_submit_error = function (data) {
+BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
   this.$submit.setAttribute('aria-disabled', data.button_disabled);
   this.$status.textContent = data.error || 'There was an error while submitting your changes. Please try again.';
 };
@@ -470,7 +470,7 @@ BzDeck.views.TimelineCommentForm.prototype.on_submit_error = function (data) {
  * [argument] none
  * [return] none
  */
-BzDeck.views.TimelineCommentForm.prototype.on_submit_complete = function () {
+BzDeck.views.BugCommentForm.prototype.on_submit_complete = function () {
   // The textbox should be focused anyway
   this.$textbox.setAttribute('aria-readonly', 'false');
   this.$textbox.focus();

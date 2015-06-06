@@ -16,7 +16,7 @@ BzDeck.views.Timeline = function TimelineView (view_id, bug, $bug, delayed) {
       last_comment_time,
       $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${this.id}-timeline`,
-      comment_form = new BzDeck.views.TimelineCommentForm(this.id, this.bug),
+      comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug),
       $expander,
       $fragment = new DocumentFragment(),
       $comments_wrapper = $timeline.querySelector('.comments-wrapper'),

@@ -561,7 +561,7 @@
         </header>
       </article>
     </template><!-- end #timeline-change -->
-    <template id="timeline-comment-form">
+    <template id="bug-comment-form">
       <section id="TID" role="form">
         <header>
           <h4>Reply</h4>
@@ -622,18 +622,18 @@
         </footer>
         <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
       </section>
-    </template><!-- end #timeline-comment-form -->
-    <template id="timeline-comment-form-request-needinfo-row">
+    </template><!-- end #bug-comment-form -->
+    <template id="bug-comment-form-request-needinfo-row">
       <div class="request-needinfo-row">
         <span tabindex="0" role="checkbox">Ask <strong></strong> <span></span></span>
       </div>
-    </template><!-- end #timeline-comment-form-request-needinfo-row -->
-    <template id="timeline-comment-form-clear-needinfo-row">
+    </template><!-- end #bug-comment-form-request-needinfo-row -->
+    <template id="bug-comment-form-clear-needinfo-row">
       <div class="clear-needinfo-row">
         <span tabindex="0" role="checkbox">Provide information as <strong></strong></span>
       </div>
-    </template><!-- end #timeline-comment-form-clear-needinfo-row -->
-    <template id="timeline-comment-form-attachments-row">
+    </template><!-- end #bug-comment-form-clear-needinfo-row -->
+    <template id="bug-comment-form-attachments-row">
       <tr>
         <td><input spellcheck="false" role="textbox" data-field="description"></td>
         <td>
