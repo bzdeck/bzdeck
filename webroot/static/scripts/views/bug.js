@@ -142,8 +142,9 @@ BzDeck.views.Bug.prototype.render = function () {
     }
   }
 
-  // Add contributor list
-  _bug.contributor = [for (name of this.bug.contributors) BzDeck.collections.users.get(name, { name }).properties];
+  // Merge Contributors and Cc; remove duplicates using a Set
+  _bug.contributor = [for (name of [...new Set([...this.bug.contributors, ...this.bug.cc])])
+                        BzDeck.collections.users.get(name, { name }).properties];
 
   this.fill(this.$bug, _bug);
 
