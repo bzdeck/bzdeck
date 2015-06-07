@@ -15,7 +15,7 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.bug = bug;
   this.$bug = $bug;
 
-  this.$form = this.get_template('bug-comment-form', `${this.id}-bug-comment-form`);
+  this.$form = this.get_template('bug-comment-form', `${this.id}-comment-form`);
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
   this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
   this.$tablist = this.$form.querySelector('[role="tablist"]');

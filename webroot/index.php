@@ -630,7 +630,7 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="bug-comment-form">
-      <section id="TID">
+      <section id="TID" class="bug-comment-form">
         <header>
           <h4>Reply</h4>
         </header>
