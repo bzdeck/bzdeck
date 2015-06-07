@@ -285,7 +285,7 @@
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
-            <h3 itemprop="summary"></h3>
+            <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div>
@@ -320,14 +320,14 @@
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
-            <h3 itemprop="summary"></h3>
+            <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div>
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
-      <article id="bug-TID" role="article" itemscope itemtype="http://bzdeck.com/Bug">
+      <article id="bug-TID" role="article form" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
@@ -366,7 +366,7 @@
               <div class="bug-timeline-wrapper">
                 <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
-                    <h3 itemprop="summary"></h3>
+                    <h3 class="bug-summary" data-field="summary"><span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
                     <div class="comments-wrapper"></div>
                   </section>
                 </div>
@@ -376,72 +376,140 @@
               <div id="bug-TID-info" class="bug-info" tabindex="0" role="region">
                 <section>
                   <h3>Status</h3>
-                  <dl>
-                    <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
-                    <dt>Last Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
-                    <dt>Status</dt><dd itemprop="status"></dd>
-                    <dt>Resolution</dt><dd itemprop="resolution"></dd>
-                    <dt>Target Milestone</dt><dd itemprop="target_milestone"></dd>
-                  </dl>
+                  <section data-field="creation_time">
+                    <h4>Filed</h4>
+                    <time itemprop="creation_time" data-relative="false"></time>
+                  </section>
+                  <section data-field="last_change_time">
+                    <h4>Last Modified</h4>
+                    <time itemprop="last_change_time" data-relative="false"></time>
+                  </section>
+                  <section data-field="status">
+                    <h4>Status</h4>
+                    <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                    </span>
+                  </section>
+                  <section hidden data-field="resolution">
+                    <h4>Resolution</h4>
+                    <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
+                    </span>
+                  </section>
+                  <section hidden data-field="dupe_of">
+                    <h4>Duplicate of</h4>
+                    <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                  </section>
+                  <section data-field="target_milestone">
+                    <h4>Target Milestone</h4>
+                    <span role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
+                    </span>
+                  </section>
                 </section>
                 <section>
                   <h3>Affected</h3>
-                  <dl>
-                    <dt>Product</dt><dd itemprop="product"></dd>
-                    <dt>Component</dt><dd itemprop="component"></dd>
-                    <dt>Version</dt><dd itemprop="version"></dd>
-                    <dt>Hardware</dt><dd itemprop="platform"></dd>
-                    <dt>OS</dt><dd itemprop="op_sys"></dd>
-                  </dl>
+                  <section data-field="product">
+                    <h4>Product</h4>
+                    <span role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
+                    </span>
+                  </section>
+                  <section data-field="component">
+                    <h4>Component</h4>
+                    <span role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
+                    </span>
+                  </section>
+                  <section data-field="version">
+                    <h4>Version</h4>
+                    <span role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
+                    </span>
+                  </section>
+                  <section data-field="platform">
+                    <h4>Hardware</h4>
+                    <span role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
+                    </span>
+                  </section>
+                  <section data-field="op_sys">
+                    <h4>OS</h4>
+                    <span role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
+                    </span>
+                  </section>
                 </section>
                 <section>
                   <h3>Importance</h3>
-                  <dl>
-                    <dt>Severity</dt><dd itemprop="severity"></dd>
-                    <dt>Priority</dt><dd itemprop="priority"></dd>
-                    <!-- Not available via API: <dt>Votes</dt><dd></dd> -->
-                  </dl>
+                  <section data-field="severity">
+                    <h4>Severity</h4>
+                    <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
+                    </span>
+                  </section>
+                  <section data-field="priority">
+                    <h4>Priority</h4>
+                    <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
+                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
+                    </span>
+                  </section>
+                  <!-- Not available via API: Votes -->
                 </section>
                 <section>
                   <h3>Notes</h3>
-                  <dl>
-                    <dt>Alias</dt><dd itemprop="alias"></dd>
-                    <dt>Keywords</dt><dd><ul><li itemprop="keyword" role="button"></li></ul></dd>
-                    <dt>Whiteboard</dt><dd itemprop="whiteboard"></dd>
-                    <dt>URL</dt><dd><a role="link" itemprop="url"></a></dd>
-                    <dt>See Also</dt><dd><ul><li><a role="link" itemprop="see_also"></a></li></ul></dd>
-                    <dt>Duplicates</dt><dd><ul><li role="button" itemprop="duplicate"></li></ul></dd>
-                    <!-- Not available via API: <dt>Crash Signature</dt><dd></dd> -->
-                  </dl>
+                  <section data-field="alias">
+                    <h4>Alias</h4>
+                    <ul><li itemprop="alias" role="button"></li></ul>
+                  </section>
+                  <section data-field="keyword">
+                    <h4>Keywords</h4>
+                    <ul><li itemprop="keyword" role="button"></li></ul>
+                  </section>
+                  <section data-field="whiteboard">
+                    <h4>Whiteboard</h4>
+                    <span contenteditable="true" role="textbox" itemprop="whiteboard"></span>
+                  </section>
+                  <section data-field="url">
+                    <h4>URL</h4>
+                    <a role="link" itemprop="url"></a>
+                  </section>
+                  <section data-field="see_also">
+                    <h4>See Also</h4>
+                    <ul><li><a role="link" itemprop="see_also"></a></li></ul>
+                  </section>
+                  <section data-field="duplicate">
+                    <h4>Duplicates</h4>
+                    <ul><li role="button" itemprop="duplicate"></li></ul>
+                  </section>
+                  <!-- Not available via API: Crash Signature -->
                 </section>
                 <section>
                   <h3>Dependencies</h3>
-                  <dl>
-                    <dt>Depends on</dt><dd><ul><li role="button" itemprop="depends_on"></li></ul></dd>
-                    <dt>Blocks</dt><dd><ul><li role="button" itemprop="blocks"></li></ul></dd>
-                  </dl>
+                  <section data-field="depends_on">
+                    <h4>Depends on</h4>
+                    <ul><li role="button" itemprop="depends_on"></li></ul>
+                  </section>
+                  <section data-field="blocks">
+                    <h4>Blocks</h4>
+                    <ul><li role="button" itemprop="blocks"></li></ul>
+                  </section>
                 </section>
-                <section data-field="flags">
+                <section>
                   <h3>Flags</h3>
-                  <ul>
-                    <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                      <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
-                      <span itemprop="name"></span>
-                      <span itemprop="status"></span>
-                      <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
-                    </li>
-                  </ul>
+                  <section data-field="flags">
+                    <h4>General flags</h4>
+                    <ul>
+                      <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
+                        <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
+                        <span itemprop="name"></span>
+                        <span itemprop="status"></span>
+                        <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+                      </li>
+                    </ul>
+                  </section>
+                  <!-- Project Flags, Tracking Flags -->
                 </section>
-                <!--
-                <section>
-                  <h3>Project Flags</h3>
-                  <dl></dl>
-                </section>
-                <section>
-                  <h3>Tracking Flags</h3>
-                  <dl></dl>
-                </section>
-                -->
               </div><!-- end .bug-info -->
             </div><!-- end #bug-TID-tabpanel-info -->
             <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
@@ -562,7 +630,7 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="bug-comment-form">
-      <section id="TID" role="form">
+      <section id="TID">
         <header>
           <h4>Reply</h4>
         </header>
@@ -571,8 +639,8 @@
             <li id="TID-tab-comment" role="tab" aria-controls="TID-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
             <li id="TID-tab-preview" role="tab" aria-controls="TID-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
             <li id="TID-tab-attachments" role="tab" aria-controls="TID-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
-            <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-disabled="true"><label>Status</label></li>
-            <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-disabled="true"><label>Need Info</label></li>
+            <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-hidden="true"><label>Status</label></li>
+            <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul>
           <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
             <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
@@ -594,9 +662,20 @@
           </div>
           <div id="TID-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-status">
             <div>
-              <span class="status" role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true"></span>
-              <span class="resolution" role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true" aria-hidden="true"></span>
-              <label id="TID-tabpanel-status-dupe" aria-hidden="true">of Bug <input size="8" pattern="^\d+$" role="searchbox"></label>
+              <span data-field="status">
+                <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                  <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                </span>
+              </span>
+              <span hidden data-field="resolution">
+                <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
+                  <span role="textbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
+                </span>
+              </span>
+              <span hidden data-field="dupe_of">
+                <span>of Bug</span>
+                <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+              </span>
             </div>
           </div>
           <div id="TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-needinfo">
@@ -723,7 +802,7 @@
     </template><!-- end #bug-tooltip -->
     <template id="person-finder">
       <span class="person-finder" role="combobox" aria-autocomplete="none" aria-label="Need Info requestee finder" data-autoexpand="true" data-nobutton="true">
-        <span spellcheck="false" role="searchbox"></span>
+        <span contenteditable="true" spellcheck="false" role="textbox"></span>
         <ul role="listbox"></ul>
       </span>
     </template><!-- end #person-finder -->

@@ -12,6 +12,13 @@ BzDeck.models.Account = function AccountModel (data) {
   this.datasource = BzDeck.datasources.global;
   this.store_name = 'accounts';
   this.data = data;
+
+  Object.defineProperties(this, {
+    permissions: {
+      enumerable: true,
+      value: data.bugzilla ? [for (group of data.bugzilla.groups || []) group.name] : [],
+    },
+  });
 };
 
 BzDeck.models.Account.prototype = Object.create(BzDeck.models.Base.prototype);

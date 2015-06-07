@@ -10,9 +10,10 @@
  * [argument] bug (Object) BugModel instance
  * [return] view (Object) BugCommentFormView instance, when called with `new`
  */
-BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug) {
+BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.id = view_id;
   this.bug = bug;
+  this.$bug = $bug;
 
   this.$form = this.get_template('bug-comment-form', `${this.id}-bug-comment-form`);
   this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
@@ -31,8 +32,7 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug) {
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-      user = BzDeck.models.account.data.bugzilla;
+  let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
 
   for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
     new this.widgets.ScrollBar($tabpanel);
@@ -46,13 +46,15 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug) {
   this.init_comment_tabpanel();
   this.init_attachment_tabpanel();
 
-  // Prepare the content on the Status and NeedInfo tabpanels, which should be available only to the users who have the
-  // "editbugs" permission on Bugzilla
-  if (!this.editor_tabpanels_enabled && user && [for (group of user.groups || []) group.name].includes('editbugs')) {
-    this.init_status_tabpanel();
+  // Prepare the content available only to the users who have the "editbugs" permission on Bugzilla
+  if (!this.editor_tabpanels_enabled && BzDeck.models.account.permissions.includes('editbugs')) {
+    this.init_status_tab();
     this.init_needinfo_tabpanel();
     this.editor_tabpanels_enabled = true;
   }
+
+  // Render
+  this.$bug.querySelector('.bug-timeline-wrapper').appendChild(this.$form);
 
   // Attachments
   this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
@@ -152,77 +154,21 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
 };
 
 /*
- * Prepare the content on the Status tabpanel.
+ * Show the Status tab when needed.
  *
  * [argument] none
  * [return] none
  */
-BzDeck.views.BugCommentForm.prototype.init_status_tabpanel = function () {
-  let fields = BzDeck.models.server.data.config.field,
-      closed_statuses = fields.status.closed,
-      $tab = this.$form.querySelector('[id$="tab-status"]'),
-      $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]'),
-      $status = $tabpanel.querySelector('.status'),
-      $resolution = $tabpanel.querySelector('.resolution'),
-      $dupe_label = $tabpanel.querySelector('[id$="status-dupe"]'),
-      $dupe_input = this.$dupe_input = $dupe_label.querySelector('input');
+BzDeck.views.BugCommentForm.prototype.init_status_tab = function () {
+  let $tab = this.$form.querySelector('[id$="tab-status"]'),
+      $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]');
 
-  this.$$status = new this.widgets.ComboBox($status);
-  this.$$resolution = new this.widgets.ComboBox($resolution);
-
-  for (let value of fields.status.transitions[this.bug.status]) {
-    this.$$status.add(value, value === this.bug.status);
+  // Show the tab only on the previews; the details page has the info pane
+  if (this.id.startsWith('details')) {
+    $tabpanel.remove();
+  } else {
+    $tab.setAttribute('aria-hidden', 'false');
   }
-
-  this.$$status.on('Change', event => {
-    let value = event.detail.value,
-        closed = closed_statuses.includes(value);
-
-    $resolution.setAttribute('aria-hidden', !closed);
-    this.$$resolution.options[0].setAttribute('aria-disabled', closed); // empty string
-    this.$$resolution.selectedIndex = closed ? 1 : 0; // FIXED or empty string
-
-    if (closed) {
-      this.$$resolution.$input.focus();
-    }
-
-    $dupe_label.setAttribute('aria-hidden', 'true');
-    $dupe_input.value = '';
-
-    this.trigger('BugView:EditField', { name: 'status', value });
-    this.trigger('BugView:EditField', { name: 'resolution', value: this.$$resolution.$input.textContent });
-  });
-
-  for (let value of fields.resolution.values) {
-    this.$$resolution.add(value, value === this.bug.resolution);
-  }
-
-  $resolution.setAttribute('aria-hidden', !closed_statuses.includes(this.bug.status));
-  this.$$resolution.options[0].setAttribute('aria-disabled', closed_statuses.includes(this.bug.status));
-  this.$$resolution.on('Change', event => {
-    let value = event.detail.value,
-        dupe = value === 'DUPLICATE';
-
-    $dupe_label.setAttribute('aria-hidden', !dupe);
-    $dupe_input.value = dupe && this.bug.dupe_of ? this.bug.dupe_of : '';
-
-    if (dupe) {
-      $dupe_input.focus();
-    }
-
-    this.trigger('BugView:EditField', { name: 'resolution', value });
-  });
-
-  $dupe_label.setAttribute('aria-hidden', this.bug.resolution !== 'DUPLICATE');
-  $dupe_input.value = this.bug.dupe_of || '';
-  $dupe_input.addEventListener('keydown', event => event.stopPropagation());
-  $dupe_input.addEventListener('input', event => {
-    this.trigger('BugView:EditField', { name: 'dupe_of', value: event.target.value });
-  });
-
-  new BzDeck.views.BugTooltip($dupe_input, ['input', 'focus'], ['blur'], 'number');
-
-  $tab.setAttribute('aria-disabled', 'false');
 };
 
 /*
@@ -291,7 +237,7 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
     $$finder.clear();
   });
 
-  $tab.setAttribute('aria-disabled', 'false');
+  $tab.setAttribute('aria-hidden', 'false');
 };
 
 /*

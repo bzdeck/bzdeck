@@ -13,7 +13,7 @@
 BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.id = `${id_prefix}-bug-${bug.id}`;
   this.bug = bug;
-  this.changes = {};
+  this.reset_changes();
 
   this.uploads = Object.create(Array.prototype, {
     parallel: { writable: true, value: true },
@@ -53,6 +53,35 @@ BzDeck.controllers.Bug.prototype = Object.create(BzDeck.controllers.Base.prototy
 BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
 
 /*
+ * Create a Proxy for the changes object that fires the FieldEdited event when any field value is modified.
+ *
+ * [argument] none
+ * [return] changes (Proxy) changes object
+ */
+BzDeck.controllers.Bug.prototype.reset_changes = function (comment) {
+  this.changes = new Proxy({}, {
+    set: (obj, name, value) => {
+      if (obj[name] !== value) {
+        obj[name] = value;
+        this.trigger(':FieldEdited', { name, value });
+      }
+
+      return true;
+    },
+    deleteProperty: (obj, name) => {
+      if (name in obj) {
+        delete obj[name];
+        this.trigger(':FieldEdited', { name, value: this.bug[name] || '' });
+      }
+
+      return true;
+    }
+  });
+
+  return this.changes;
+};
+
+/*
  * Called by BugView whenever the new comment is edited by the user. Cache the comment and notify changes accordingly.
  *
  * [argument] comment (String) comment text
@@ -89,28 +118,58 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
  * [return] none
  */
 BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
-  let fields = BzDeck.models.server.data.config.field;
+  let { field, product } = BzDeck.models.server.data.config,
+      is_closed = value => field.status.closed.includes(value);
 
-  if (typeof value === 'string' && value.match(/^\d+$/)) {
+  if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
+      typeof value === 'string' && value.match(/^\d+$/)) {
     value = Number.parseInt(value);
   }
 
   if (value === this.bug[name]) {
     delete this.changes[name];
+
+    if (name === 'product') {
+      delete this.changes.version;
+      delete this.changes.component;
+      delete this.changes.target_milestone;
+    }
+
+    if (name === 'status') {
+      delete this.changes.resolution;
+      delete this.changes.dupe_of;
+    }
   } else if (value !== this.changes[name]) {
     this.changes[name] = value;
 
-    if (name === 'resolution' && this.changes.status && !fields.status.closed.includes(this.changes.status)) {
-      this.changes.resolution = '';
-      delete this.changes.dupe_of;
+    // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
+    if (name === 'product') {
+      let { version: versions, component, target_milestone_detail } = product[value],
+          components = Object.keys(component),
+          milestones = [for (milestone of target_milestone_detail) if (milestone.is_active) milestone.name];
+
+      this.changes.version = versions.find(v => ['unspecified'].includes(v)) || versions[0];
+      this.changes.component = components.find(c => ['General'].includes(c)) || components[0];
+      this.changes.target_milestone = milestones.find(m => ['---'].includes(m)) || milestones[0];
     }
 
-    if (name === 'dupe_of') {
-      delete this.changes.status;
-      delete this.changes.resolution;
-    }
+    if (name === 'status') {
+      if (is_closed(value)) {
+        if (this.bug.resolution !== 'FIXED') {
+          this.changes.resolution = 'FIXED';
+        } else {
+          delete this.changes.resolution;
+        }
 
-    this.trigger(':FieldEdited', { name, value });
+        delete this.changes.dupe_of;
+      } else {
+        this.changes.resolution = '';
+      }
+    }
+  }
+
+  if (name === 'resolution' && value !== 'DUPLICATE') {
+    delete this.changes.dupe_of;
   }
 
   this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
@@ -380,6 +439,10 @@ BzDeck.controllers.Bug.prototype.find_errors = function () {
     errors.push('Please specify a valid duplicate bug ID.'); // l10n
   }
 
+  if (this.changes.summary === '') {
+    errors.push('The summary should not be empty.'); // l10n
+  }
+
   return errors;
 };
 
@@ -437,7 +500,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
     return this.uploads.reduce((sequence, att) => sequence.then(() => this.post_attachment(att)), Promise.resolve());
   }).then(() => {
     // All done! Clear the cached changes and uploads data
-    this.changes = {};
+    this.reset_changes();
     this.uploads.length = 0;
     this.uploads.total = 0;
 

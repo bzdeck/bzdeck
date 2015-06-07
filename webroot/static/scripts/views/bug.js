@@ -26,7 +26,7 @@ BzDeck.views.Bug.prototype.init = function () {
     }
   });
 
-  this.on('M:Updated', data => {
+  this.on('BugModel:Updated', data => { // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
     if (data.bug.id === this.bug.id) {
       this.update(data.bug, data.changes);
     }
@@ -146,12 +146,6 @@ BzDeck.views.Bug.prototype.render = function () {
   _bug.contributor = [for (name of this.bug.contributors) BzDeck.collections.users.get(name, { name }).properties];
 
   this.fill(this.$bug, _bug);
-
-  // Append the bug ID to the summary when copied
-  this.$bug.querySelector('[itemprop="summary"]').addEventListener('copy', event => {
-    event.clipboardData.setData('text/plain', `Bug ${this.bug.id} - ${this.bug.summary}`);
-    event.preventDefault();
-  });
 
   this.set_product_tooltips();
 
@@ -280,10 +274,12 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   // TODO: Show Project Flags and Tracking Flags
 
-  this.helpers.event.async(() => {
-    // Timeline: comments, attachments & history
-    this.timeline = new BzDeck.views.Timeline(this.id, this.bug, this.$bug, delayed);
+  // Prepare the timeline and comment form
+  this.timeline = new BzDeck.views.Timeline(this.id, this.bug, this.$bug, delayed);
+  this.comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug, this.$bug),
+  this.activate_widgets();
 
+  this.helpers.event.async(() => {
     // Attachments, only on the details tabs
     if (this.render_attachments) {
       this.render_attachments();
@@ -302,6 +298,123 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   });
 
   BzDeck.views.statusbar.show('');
+};
+
+BzDeck.views.Bug.prototype.activate_widgets = function () {
+  this.comboboxes = new WeakMap();
+  this.on('BugController:FieldEdited', data => this.on_field_edited(data.name, data.value));
+
+  let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
+      is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
+
+  for (let $field of this.$bug.querySelectorAll('[data-field]')) {
+    let name = $field.getAttribute('data-field'),
+        $combobox = $field.querySelector('[role="combobox"][aria-readonly="true"]'),
+        $textbox = $field.querySelector(':not([role="combobox"]) [role="textbox"][contenteditable]'),
+        $next_field = $field.nextElementSibling;
+
+    // Activate comboboxes
+    if ($combobox) {
+      let $$combobox = new this.widgets.ComboBox($combobox);
+
+      this.comboboxes.set($combobox, $$combobox);
+      $combobox.setAttribute('aria-disabled', !can_editbugs);
+      $$combobox.build([for (value of this.get_field_values(name)) { value, selected: value === this.bug[name] }]);
+      $$combobox.bind('Change', event => {
+        let value = event.detail.value;
+
+        this.trigger('BugView:EditField', { name, value });
+
+        if (name === 'status' && is_closed(value) && $next_field.matches('[data-field="resolution"]') ||
+            name === 'resolution' && value === 'DUPLICATE' && $next_field.matches('[data-field="dupe_of"]')) {
+          window.setTimeout(() => $next_field.querySelector('[role="textbox"]').focus(), 100);
+        }
+      });
+    }
+
+    // Activate textboxes
+    if ($textbox) {
+      let $$textbox = new this.widgets.TextBox($textbox);
+
+      $textbox.tabIndex = 0;
+      $textbox.spellcheck = false;
+      $textbox.contentEditable = can_editbugs;
+      $textbox.setAttribute('aria-readonly', !can_editbugs);
+      $$textbox.bind('focus', event => $textbox.spellcheck = true);
+      $$textbox.bind('blur', event => $textbox.spellcheck = false);
+      $$textbox.bind('input', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
+      $$textbox.bind('cut', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
+      $$textbox.bind('paste', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
+    }
+
+    if (name === 'dupe_of') {
+      // Activate bug finder
+    }
+
+    // Multiple value fields, including alias, keywords, see_also, depends_on, blocks
+  }
+
+  this.update_resolution_ui(this.bug.resolution);
+};
+
+BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name = this.bug.product) {
+  let { field, product } = BzDeck.models.server.data.config,
+      { component, version_detail, target_milestone_detail } = product[product_name];
+
+  let values = {
+    product: [for (name of Object.keys(product).sort()) if (product[name].is_active) name],
+    component: [for (name of Object.keys(component).sort()) if (component[name].is_active) name],
+    version: [for (version of version_detail) if (version.is_active) version.name],
+    target_milestone: [for (milestone of target_milestone_detail) if (milestone.is_active) milestone.name],
+    status: field.status.transitions[this.bug.status], // The order matters
+  };
+
+  return values[field_name] || field[field_name].values;
+};
+
+BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
+  let is_open = resolution === '',
+      is_dupe = resolution === 'DUPLICATE',
+      can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
+      $resolution = this.$bug.querySelector('[data-field="resolution"]'),
+      $combobox = $resolution.querySelector('[role="combobox"]'),
+      $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]');
+
+  $resolution.hidden = is_open;
+  $resolution.querySelector('[role="option"][data-value=""]').setAttribute('aria-hidden', !is_open);
+  $combobox.setAttribute('aria-disabled', !can_editbugs && is_open);
+  this.comboboxes.get($combobox).selected = resolution;
+
+  $dupe_of.hidden = !is_dupe;
+  $dupe_of.querySelector('[itemprop="dupe_of"]').setAttribute('aria-disabled', !is_dupe);
+};
+
+BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
+  if (name === 'product') {
+    let product_name = value;
+
+    // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
+    for (let field_name of ['version', 'component', 'target_milestone']) {
+      this.comboboxes.get(this.$bug.querySelector(`[data-field="${field_name}"] [role="combobox"]`))
+          .build([for (value of this.get_field_values(field_name, product_name)) { value, selected: false }]);
+    }
+  }
+
+  let $field = this.$bug.querySelector(`[data-field="${name}"]`),
+      $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined,
+      $textbox = $field ? $field.querySelector(':not([role="combobox"]) [role="textbox"][contenteditable]') : undefined;
+
+  if ($combobox) {
+    this.comboboxes.get($combobox).selected = value;
+  }
+
+  if ($textbox && $textbox.itemValue !== String(value)) {
+    $textbox.itemValue = value;
+  }
+
+  if (name === 'resolution') {
+    this.update_resolution_ui(value);
+  }
 };
 
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
@@ -396,11 +509,20 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
     let _bug = { id: this.bug.id, _update_needed: true };
 
     // Prep partial data
-    for (let change in changes.get('history').changes) {
-      _bug[change.field_name] = this.bug[change.field_name];
+    for (let { field_name: prop } in changes.get('history').changes) {
+      let value = _bug[prop] = this.bug[prop];
+
+      // TEMP: the current fill method doesn't update combobox items, so update manually
+      {
+        let $combobox = this.$bug.querySelector(`[data-field="${prop}"] [role="combobox"][aria-readonly="true"]`);
+
+        if ($combobox) {
+          this.comboboxes.get($combobox).selected = value;
+        }
+      }
     }
 
-    this.fill(_bug, true);
+    this.fill(this.$bug, _bug);
     this.render_history([changes.get('history')]);
   }
 };
