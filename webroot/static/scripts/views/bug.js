@@ -133,7 +133,7 @@ BzDeck.views.Bug.prototype.render = function () {
       } else if (field === 'mentors') {
         _bug.mentor = [for (name of this.bug.mentors) BzDeck.collections.users.get(name, { name }).properties];
       } else if (type === 'person') {
-        if (this.bug[field]) {
+        if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
           _bug[field] = BzDeck.collections.users.get(this.bug[field], { name: this.bug[field] }).properties;
         }
       } else {
