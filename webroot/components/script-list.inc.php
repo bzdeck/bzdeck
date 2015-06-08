@@ -38,6 +38,7 @@ $scripts = [
   '/static/scripts/views/attachment-page.js',
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-comment-form.js',
+  '/static/scripts/views/bug-participant-list.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
   '/static/scripts/views/details-page.js',
   '/static/scripts/views/global.js',

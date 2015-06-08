@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefined, exclude = []) {
+BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefined, exclude = new Set()) {
   this.bug = bug;
   this.participants = bug ? bug.participants : new Map();
-  this.exclude = new Set(exclude);
+  this.exclude = exclude;
   this.results = new Map();
 
   this.$combobox = this.get_template('person-finder');

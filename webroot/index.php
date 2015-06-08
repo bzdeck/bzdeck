@@ -516,18 +516,54 @@
               <div id="bug-TID-participants" class="bug-participants" tabindex="0" role="region">
                 <section>
                   <h3>Participants</h3>
-                  <dl>
-                    <dt>Reporter</dt>
-                    <dd><span tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                    <dt>Assignee</dt>
-                    <dd><span tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                    <dt>Mentors</dt>
-                    <dd><span tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                    <dt>QA</dt>
-                    <dd><span tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                    <dt>Contributors/Cc</dt>
-                    <dd><span tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></dd>
-                  </dl>
+                  <section data-field="creator">
+                    <header>
+                      <h4>Reporter</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
+                  <section data-field="assigned_to">
+                    <header>
+                      <h4>Assignee</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
+                  <section data-field="qa_contact">
+                    <header>
+                      <h4>QA</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
+                  <section data-field="mentor">
+                    <header>
+                      <h4>Mentors</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
+                  <section data-field="cc">
+                    <header>
+                      <h4>Cc</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
+                  <section data-field="contributor">
+                    <header>
+                      <h4>Other Contributors</h4>
+                    </header>
+                    <ul class="list">
+                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                    </ul>
+                  </section>
                 </section>
               </div><!-- end .bug-participants -->
             </div><!-- end #bug-TID-tabpanel-participants -->
@@ -815,6 +851,9 @@
     <template id="person-with-image">
       <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
+    <template id="bug-participant">
+      <li tabindex="0" role="link" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+    </template><!-- end #bug-participant -->
     <template id="qrcode-auth-overlay-template">
       <section id="qrcode-auth-overlay" role="region" aria-hidden="true">
         <header>

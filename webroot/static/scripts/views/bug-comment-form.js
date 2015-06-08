@@ -185,7 +185,7 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
       $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
       $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
       $$finder = new BzDeck.views.PersonFinder(`${this.id}-person-finder`, this.bug,
-                                               [this.bug.creator, this.bug.assigned_to]),
+                                               new Set([this.bug.creator, this.bug.assigned_to])),
       $finder = $$finder.$combobox;
 
   let add_row = (requestee, checked, options = {}) => {

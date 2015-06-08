@@ -13,6 +13,7 @@ BzDeck.config = {
     mozilla: {
       label: 'Mozilla',
       timezone: -8,
+      default_assignee: 'nobody@mozilla.org',
       url: 'https://bugzilla.mozilla.org',
       endpoints: {
         bzapi: '/bzapi/',
@@ -23,6 +24,7 @@ BzDeck.config = {
     'mozilla-dev': {
       label: 'Mozilla Dev',
       timezone: -8,
+      default_assignee: 'nobody@mozilla.org',
       url: 'https://bugzilla-dev.allizom.org',
       endpoints: {
         bzapi: '/bzapi/',

@@ -41,6 +41,8 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:EditComment', data => this.edit_comment(data.text));
   this.on('V:EditField', data => this.edit_field(data.name, data.value));
   this.on('V:EditFlag', data => this.edit_flag(data.flag, data.added));
+  this.on('V:AddParticipant', data => this.add_participant(data.field, data.email));
+  this.on('V:RemoveParticipant', data => this.remove_participant(data.field, data.email));
 
   // Form submission
   this.on('V:Submit', () => this.submit());
@@ -202,6 +204,115 @@ BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
 
   this.trigger(':FlagEdited', { flags: this.changes.flags, flag, added });
   this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+};
+
+/*
+ * Called by BugView whenever a participant is added by the user. Cache the value and notify changes accordingly.
+ *
+ * [argument] field (String) assigned_to, qa_contact, mentor or cc
+ * [argument] email (String) participant to be added
+ * [return] result (Boolean) whether the participant is added to the cache successfully
+ */
+BzDeck.controllers.Bug.prototype.add_participant = function (field, email) {
+  if (['mentor', 'cc'].includes(field)) {
+    let change = this.changes[field] || {};
+
+    if ((change.remove || []).includes(email)) {
+      change.remove.splice(change.remove.indexOf(email), 1);
+    } else {
+      change.add = change.add || [];
+
+      if ((this.bug[field] || []).includes(email) || change.add.includes(email)) {
+        return false;
+      }
+
+      change.add.push(email);
+    }
+
+    this.changes[field] = change;
+  } else {
+    if (this.changes[field] === email) {
+      return false;
+    }
+
+    if (this.bug[field] === email) {
+      delete this.changes[field];
+    } else {
+      this.changes[field] = email;
+    }
+  }
+
+  this.trigger(':ParticipantAdded', { field, email });
+  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.cleanup_multiple_item_change(field);
+
+  return true;
+};
+
+/*
+ * Called by BugView whenever a participant is removed by the user. Cache the value and notify changes accordingly.
+ *
+ * [argument] field (String) assigned_to, qa_contact, mentor or cc
+ * [argument] email (String) participant to be removed
+ * [return] result (Boolean) whether the participant is removed from the cache successfully
+ */
+BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
+  if (['mentor', 'cc'].includes(field)) {
+    let change = this.changes[field] || {};
+
+    if ((change.add || []).includes(email)) {
+      change.add.splice(change.add.indexOf(email), 1);
+    } else {
+      change.remove = change.remove || [];
+
+      if (!(this.bug[field] || []).includes(email) || change.remove.includes(email)) {
+        return false;
+      }
+
+      change.remove.push(email);
+    }
+
+    this.changes[field] = change;
+  } else {
+    this.changes[field] = field === 'assigned_to' ? BzDeck.models.server.default_assignee : '';
+  }
+
+  this.trigger(':ParticipantRemoved', { field, email });
+  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.cleanup_multiple_item_change(field);
+
+  return true;
+};
+
+/*
+ * Clean up a change with both additions and removals, such as mentor or cc. If there are no changes, removed the
+ * object from the cache.
+ *
+ * [argument] field (String) mentor or cc
+ * [return] result (Boolean) whether the change object is updated
+ */
+BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field) {
+  let change = this.changes[field];
+
+  if (!change) {
+    return false;
+  }
+
+  if (change.remove && !change.remove.length) {
+    delete change.remove;
+  }
+
+  if (change.add && !change.add.length) {
+    delete change.add;
+  }
+
+  if (Object.keys(change).length) {
+    this.changes[field] = change;
+  } else {
+    delete this.changes[field];
+  }
+
+  return true;
 };
 
 /*

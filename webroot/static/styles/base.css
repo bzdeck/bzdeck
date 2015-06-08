@@ -2075,7 +2075,8 @@ article[id$="preview-bug"] > .bug-info {
   white-space: pre; /* = <br> */
 }
 
-.bug-info :not([role="combobox"]) [role="button"], .bug-participants [itemtype$="Person"] {
+.bug-info :not([role="combobox"]) [role="button"],
+.bug-participants [itemprop][itemtype$="Person"] {
   overflow: hidden;
   border-width: 0;
   padding: .2rem .4rem;
@@ -2104,39 +2105,101 @@ article[id$="preview-bug"] > .bug-info {
   left: -99999px;
 }
 
-.bug-participants dl {
-  padding: 1.2rem;
+.bug-participants section section {
+  margin: 1.2rem;
 }
 
-.bug-participants dt {
+.bug-participants section section header {
+  display: flex;
+  min-height: 1.6rem;
+}
+
+.bug-participants section section header h4 {
+  flex: auto;
   margin-bottom: .8rem;
   min-height: 1.6rem;
   line-height: 1.6rem;
   font-weight: 500;
 }
 
-.bug-participants dt:not(:first-of-type) {
-  margin-top: 1.6rem;
+.bug-participants [role="button"] {
+  flex: none;
+  margin-left: .4rem;
+  border: 0;
+  padding: 0;
+  height: 1.6rem;
+  opacity: .5;
+  line-height: 1.6rem;
+  pointer-events: auto;
 }
 
-.bug-participants dd {
-  overflow: hidden;
+.bug-participants [role="button"][aria-disabled="true"] {
+  display: none;
 }
 
-.bug-participants [itemtype$="Person"] {
+.bug-participants [role="button"]::after {
   display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-family: FontAwesome;
+  line-height: 1.6rem;
+  text-indent: 0;
+  text-align: center;
+}
+
+.bug-participants [role="button"]:not([data-command="take"]) {
+  position: relative;
+  width: 1.6rem;
+  text-indent: -99999px;
+}
+
+.bug-participants [role="button"][data-command="edit"]::after {
+  content: '\F040'; /* pencil */
+}
+
+.bug-participants [role="button"][data-command="remove"]::after {
+  content: '\F00D'; /* close */
+}
+
+.bug-participants [role="button"][data-command="add"]::after {
+  content: '\F067'; /* plus */
+}
+
+.bug-participants [role="combobox"][aria-hidden="false"] {
+  display: block;
+  margin-bottom: .8rem;
+  width: 100%;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] {
+  display: flex;
   padding: 0;
   height: 2.4rem;
-  line-height: 2.4rem;
+  align-items: center;
 }
 
-.bug-participants [itemtype$="Person"]:not(:last-of-type) {
+.bug-participants [itemprop][itemtype$="Person"][tabindex="-1"] {
+  pointer-events: none;
+}
+
+.bug-participants [itemprop][itemtype$="Person"]:not(:last-of-type) {
   margin-bottom: .8rem;
 }
 
-.bug-participants [itemtype$="Person"] [itemprop="image"] {
+.bug-participants [itemprop][itemtype$="Person"] [itemprop="image"] {
+  flex: none;
   margin-right: .8rem;
   height: 100%;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] [itemprop="name"] {
+  flex: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .bug-timeline {
@@ -4068,7 +4131,7 @@ article[id$="preview-bug"] > .bug-info {
     top: 4rem;
   }
 
-  [data-device|="mobile"]:root .bug-participants [itemtype$="Person"] {
+  [data-device|="mobile"]:root .bug-participants [itemprop][itemtype$="Person"] {
     float: left;
     margin-right: .8rem;
     width: 20rem;
@@ -4133,7 +4196,7 @@ article[id$="preview-bug"] > .bug-info {
     transition-duration: .8s;
   }
 
-  .bug-participants [itemtype$="Person"] {
+  .bug-participants [itemprop][itemtype$="Person"] {
     float: left;
     margin-right: .8rem;
     width: 20rem;

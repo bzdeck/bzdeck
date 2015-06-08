@@ -142,8 +142,8 @@ BzDeck.views.Bug.prototype.render = function () {
     }
   }
 
-  // Merge Contributors and Cc; remove duplicates using a Set
-  _bug.contributor = [for (name of [...new Set([...this.bug.contributors, ...this.bug.cc])])
+  // Other Contributors, excluding Cc
+  _bug.contributor = [for (name of this.bug.contributors) if (!this.bug.cc.includes(name))
                         BzDeck.collections.users.get(name, { name }).properties];
 
   this.fill(this.$bug, _bug);
@@ -308,11 +308,11 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
       is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
 
-  for (let $field of this.$bug.querySelectorAll('[data-field]')) {
-    let name = $field.getAttribute('data-field'),
-        $combobox = $field.querySelector('[role="combobox"][aria-readonly="true"]'),
-        $textbox = $field.querySelector(':not([role="combobox"]) [role="textbox"][contenteditable]'),
-        $next_field = $field.nextElementSibling;
+  for (let $section of this.$bug.querySelectorAll('[data-field]')) {
+    let name = $section.dataset.field,
+        $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]'),
+        $textbox = $section.querySelector(':not([role="combobox"]) > [contenteditable]'),
+        $next_field = $section.nextElementSibling;
 
     // Activate comboboxes
     if ($combobox) {
@@ -353,6 +353,11 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
     }
 
     // Multiple value fields, including alias, keywords, see_also, depends_on, blocks
+
+    // Activate Participants UI
+    if (['assigned_to', 'qa_contact', 'mentor', 'cc'].includes(name)) {
+      new BzDeck.views.BugParticipantList(this.id, this.bug, $section);
+    }
   }
 
   this.update_resolution_ui(this.bug.resolution);
@@ -403,7 +408,7 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
 
   let $field = this.$bug.querySelector(`[data-field="${name}"]`),
       $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined,
-      $textbox = $field ? $field.querySelector(':not([role="combobox"]) [role="textbox"][contenteditable]') : undefined;
+      $textbox = $field ? $field.querySelector(':not([role="combobox"]) > [contenteditable]') : undefined;
 
   if ($combobox) {
     this.comboboxes.get($combobox).selected = value;
