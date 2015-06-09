@@ -67,8 +67,6 @@ BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabl
   for (let $person of this.$list.querySelectorAll('[itemscope]')) {
     if (this.editing) {
       this.add_remove_button_to_person($person);
-      $person.tabIndex = -1;
-      $person.setAttribute('role', 'none');
     } else {
       $person.querySelector('[role="button"]').remove();
       $person.tabIndex = 0;
@@ -188,8 +186,8 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
  * Create a new button widget.
  *
  * [argument] command (String) description of the button's action
- * [argument] text (String) label on the button
- * [argument] label (String) text used for the tooltip and aria-label
+ * [argument] text (String) text used for the label and tooltip on the button
+ * [argument] label (String) text used for the aria-label attribute
  * [return] $button (Element) button
  */
 BzDeck.views.BugParticipantList.prototype.create_button = function (command, text, label) {
@@ -197,7 +195,7 @@ BzDeck.views.BugParticipantList.prototype.create_button = function (command, tex
 
   $button.tabIndex = 0;
   $button.textContent = text;
-  $button.title = label;
+  $button.title = text;
   $button.dataset.command = command;
   $button.setAttribute('role', 'button');
   $button.setAttribute('aria-label', label);
@@ -233,6 +231,8 @@ BzDeck.views.BugParticipantList.prototype.add_remove_button_to_person = function
   });
 
   $person.appendChild($button);
+  $person.tabIndex = -1;
+  $person.setAttribute('role', 'none');
 
   return $button;
 };

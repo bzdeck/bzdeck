@@ -1928,12 +1928,10 @@ article[id$="preview-bug"] > .bug-info {
 .bug-participants {
   overflow: hidden;
   box-sizing: border-box;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
 }
 
-.bug-info {
-  border-width: 0 .1rem 0 0;
+[data-device="desktop"]:root .bug-info {
+  border-right: .1rem solid var(--secondary-region-border-color);
 }
 
 .bug-info .scrollable-area-content > section:not(:first-of-type) {
@@ -2096,13 +2094,16 @@ article[id$="preview-bug"] > .bug-info {
   height: 1.6rem;
 }
 
-.bug-participants {
-  border-width: 0 0 0 .1rem;
+[data-device="desktop"]:root .bug-participants {
+  border-left: .1rem solid var(--secondary-region-border-color);
 }
 
 .bug-participants section:not([data-field]) > header {
   display: flex;
-  padding: .4rem .4rem .4rem 1.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: .4rem 1.2rem; /* Need some right padding for the scrollbar  */
   height: 1.6rem;
   color: var(--secondary-region-header-foreground-color);
   background-color: var(--secondary-region-header-background-color);
@@ -2204,10 +2205,6 @@ article[id$="preview-bug"] > .bug-info {
   padding: 0;
   height: 2.4rem;
   align-items: center;
-}
-
-.bug-participants [itemprop][itemtype$="Person"][tabindex="-1"] {
-  pointer-events: none;
 }
 
 .bug-participants [itemprop][itemtype$="Person"]:not(:last-of-type) {
@@ -3859,11 +3856,12 @@ article[id$="preview-bug"] > .bug-info {
   left: 0;
   width: 2rem;
   height: 2rem;
+  opacity: .8;
   font-family: FontAwesome;
   line-height: 2rem;
   text-align: center;
   text-indent: 0;
-  content: "\F002";
+  content: "\F002"; /* search */
 }
 
 .person-finder [role="textbox"] {
@@ -4204,7 +4202,8 @@ article[id$="preview-bug"] > .bug-info {
 
 @media (max-width: 1023px) {
 
-  .bug-info[id|="bug"] {
+  [data-device="desktop"]:root .bug-info[id|="bug"],
+  [data-device="desktop"]:root .bug-participants {
     border-width: 0;
   }
 

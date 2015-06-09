@@ -127,14 +127,14 @@ BzDeck.views.Global.prototype.onclick = function (event) {
     return true;
   }
 
-  if ($target.matches('[itemtype$="Person"]')) {
+  if ($target.matches('[itemtype$="Person"][role="link"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
 
     return this.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
-  if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"]')) {
+  if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"][role="link"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
 
     return this.helpers.event.ignore(event);

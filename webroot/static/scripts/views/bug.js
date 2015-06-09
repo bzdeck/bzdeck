@@ -361,14 +361,26 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   }
 
   {
-    let $participants = this.$bug.querySelector('.bug-participants'),
-        $edit_button = $participants ? $participants.querySelector('[role="button"][data-command="edit"]') : undefined;
+    let $participants = this.$bug.querySelector('.bug-participants');
 
-    if ($edit_button) {
-      $edit_button.setAttribute('aria-disabled', !can_editbugs);
+    if ($participants) {
+      // Add a tooltop for each person; should be replaced by a rich tooltip (#80)
+      $participants.addEventListener('mouseover', event => {
+        let $target = event.target;
 
-      new this.widgets.Button($edit_button).bind('Pressed', event =>
-          this.trigger('BugView:ParticipantListEditing', { enabled: event.detail.pressed }));
+        if ($target.matches('[itemprop][itemtype$="Person"]') && !$target.title) {
+          $target.title = $target.properties.description[0].itemValue + '\n' + $target.properties.email[0].itemValue;
+        }
+      });
+
+      let $edit_button = $participants.querySelector('[role="button"][data-command="edit"]');
+
+      if ($edit_button) {
+        $edit_button.setAttribute('aria-disabled', !can_editbugs);
+
+        new this.widgets.Button($edit_button).bind('Pressed', event =>
+            this.trigger('BugView:ParticipantListEditing', { enabled: event.detail.pressed }));
+      }
     }
   }
 

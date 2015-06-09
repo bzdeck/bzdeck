@@ -524,7 +524,12 @@
                       <h4>Reporter</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                   <section data-field="assigned_to">
@@ -532,7 +537,12 @@
                       <h4>Assignee</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                   <section data-field="qa_contact">
@@ -540,7 +550,12 @@
                       <h4>QA</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                   <section data-field="mentor">
@@ -548,7 +563,12 @@
                       <h4>Mentors</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                   <section data-field="cc">
@@ -556,7 +576,12 @@
                       <h4>Cc</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                   <section data-field="contributor">
@@ -564,7 +589,12 @@
                       <h4>Other Contributors</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+                        <meta itemprop="email">
+                        <meta itemprop="description">
+                        <img alt="" itemprop="image">
+                        <span itemprop="name"></span>
+                      </li>
                     </ul>
                   </section>
                 </section>
@@ -855,7 +885,12 @@
       <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
     <template id="bug-participant">
-      <li tabindex="0" role="link" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+      <li tabindex="0" role="link" itemscope itemtype="http://schema.org/Person">
+        <meta itemprop="email">
+        <meta itemprop="description">
+        <img alt="" itemprop="image">
+        <span itemprop="name"></span>
+      </li>
     </template><!-- end #bug-participant -->
     <template id="qrcode-auth-overlay-template">
       <section id="qrcode-auth-overlay" role="region" aria-hidden="true">
