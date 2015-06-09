@@ -30,6 +30,7 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
   this.add_header_buttons();
   this.add_person_finder();
 
+  this.on('BugView:ParticipantListEditing', data => this.on_edit_mode_toggled(data.enabled));
   this.on('BugController:ParticipantAdded', data => this.on_participant_added(data.field, data.email));
   this.on('BugController:ParticipantRemoved', data => this.on_participant_removed(data.field, data.email));
 };
@@ -52,7 +53,32 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 };
 
 /*
- * Add the Edit and Take buttons to the <header> in the <section>.
+ * Called by BugView whenever the participant list's edit mode is changed.
+ *
+ * [argument] enabled (Boolean) whether the edit mode is enabled
+ * [return] none
+ */
+BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabled) {
+  this.editing = enabled;
+
+  this.$take_button.setAttribute('aria-hidden', !this.editing);
+  this.$finder.setAttribute('aria-hidden', !this.editing);
+
+  for (let $person of this.$list.querySelectorAll('[itemscope]')) {
+    if (this.editing) {
+      this.add_remove_button_to_person($person);
+      $person.tabIndex = -1;
+      $person.setAttribute('role', 'none');
+    } else {
+      $person.querySelector('[role="button"]').remove();
+      $person.tabIndex = 0;
+      $person.setAttribute('role', 'link');
+    }
+  }
+};
+
+/*
+ * Add the Take button to the <header> in the <section>.
  *
  * [argument] none
  * [return] none
@@ -72,37 +98,7 @@ BzDeck.views.BugParticipantList.prototype.add_header_buttons = function () {
     this.trigger('BugView:AddParticipant', { field: this.field, email: this.my_email });
   });
 
-  this.$edit_button = this.create_button('edit', 'Edit', {
-    assigned_to: 'Edit the Assignee',
-    qa_contact: 'Edit the QA Contact',
-    mentor: 'Edit the Mentor list',
-    cc: 'Edit the Cc list',
-  }[this.field]);
-
-  this.$edit_button.setAttribute('aria-pressed', 'false');
-
-  this.$edit_button.addEventListener('click', event => {
-    this.editing = !this.editing;
-
-    this.$edit_button.setAttribute('aria-pressed', this.editing);
-    this.$take_button.setAttribute('aria-hidden', !this.editing);
-    this.$finder.setAttribute('aria-hidden', !this.editing);
-
-    for (let $person of this.$list.querySelectorAll('[itemscope]')) {
-      if (this.editing) {
-        this.add_remove_button_to_person($person);
-        $person.tabIndex = -1;
-        $person.setAttribute('role', 'none');
-      } else {
-        $person.querySelector('[role="button"]').remove();
-        $person.tabIndex = 0;
-        $person.setAttribute('role', 'link');
-      }
-    }
-  });
-
   this.$header.appendChild(this.$take_button);
-  this.$header.appendChild(this.$edit_button);
 };
 
 /*
@@ -157,7 +153,7 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
   this.$list.insertBefore($person, this.$list.firstElementChild);
   this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
-  if (this.$edit_button.matches('[aria-pressed="true"]')) {
+  if (this.editing) {
     this.add_remove_button_to_person($person);
   }
 };

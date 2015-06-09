@@ -2100,9 +2100,29 @@ article[id$="preview-bug"] > .bug-info {
   border-width: 0 0 0 .1rem;
 }
 
-.bug-participants h3 {
-  position: absolute;
-  left: -99999px;
+.bug-participants section:not([data-field]) > header {
+  display: flex;
+  padding: .4rem .4rem .4rem 1.2rem;
+  height: 1.6rem;
+  color: var(--secondary-region-header-foreground-color);
+  background-color: var(--secondary-region-header-background-color);
+}
+
+.bug-participants section:not([data-field]) > header h3 {
+  flex: auto;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+}
+
+.bug-participants section:not([data-field]) > header [role="button"][aria-pressed="false"] {
+  color: inherit;
+  background-color: transparent;
+}
+
+.bug-participants section:not([data-field]) > header [role="button"][aria-pressed="true"] {
+  color: var(--alternate-button-foreground-color);
+  background-color: transparent;
+  opacity: 1;
 }
 
 .bug-participants section section {
@@ -2127,10 +2147,15 @@ article[id$="preview-bug"] > .bug-info {
   margin-left: .4rem;
   border: 0;
   padding: 0;
+  min-width: 1.6rem;
   height: 1.6rem;
-  opacity: .5;
+  opacity: .6;
   line-height: 1.6rem;
-  pointer-events: auto;
+  transition: opacity .2s;
+}
+
+.bug-participants [role="button"]:hover {
+  opacity: .8;
 }
 
 .bug-participants [role="button"][aria-disabled="true"] {
@@ -3824,7 +3849,25 @@ article[id$="preview-bug"] > .bug-info {
  * ---------------------------------------------------------------------------------------------- */
 
 .person-finder {
+  position: relative;
   width: 16rem;
+}
+
+.person-finder::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2rem;
+  height: 2rem;
+  font-family: FontAwesome;
+  line-height: 2rem;
+  text-align: center;
+  text-indent: 0;
+  content: "\F002";
+}
+
+.person-finder [role="textbox"] {
+  padding: 0 0 0 2rem;
 }
 
 .person-finder [role="listbox"] {

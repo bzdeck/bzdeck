@@ -515,7 +515,10 @@
             <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
               <div id="bug-TID-participants" class="bug-participants" tabindex="0" role="region">
                 <section>
-                  <h3>Participants</h3>
+                  <header>
+                    <h3>Participants</h3>
+                    <span tabindex="0" title="Edit" role="button" aria-pressed="false" aria-label="Edit participants of the bug" data-command="edit"></span>
+                  </header>
                   <section data-field="creator">
                     <header>
                       <h4>Reporter</h4>

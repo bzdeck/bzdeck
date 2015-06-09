@@ -360,6 +360,18 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
     }
   }
 
+  {
+    let $participants = this.$bug.querySelector('.bug-participants'),
+        $edit_button = $participants ? $participants.querySelector('[role="button"][data-command="edit"]') : undefined;
+
+    if ($edit_button) {
+      $edit_button.setAttribute('aria-disabled', !can_editbugs);
+
+      new this.widgets.Button($edit_button).bind('Pressed', event =>
+          this.trigger('BugView:ParticipantListEditing', { enabled: event.detail.pressed }));
+    }
+  }
+
   this.update_resolution_ui(this.bug.resolution);
 };
 
