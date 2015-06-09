@@ -2205,6 +2205,12 @@ article[id$="preview-bug"] > .bug-info {
   padding: 0;
   height: 2.4rem;
   align-items: center;
+  opacity: 1;
+  transition: opacity .5s;
+}
+
+.bug-participants [itemprop][itemtype$="Person"].removing {
+  opacity: 0;
 }
 
 .bug-participants [itemprop][itemtype$="Person"]:not(:last-of-type) {

@@ -61,7 +61,7 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabled) {
   this.editing = enabled;
 
-  this.$take_button.setAttribute('aria-hidden', !this.editing);
+  this.$take_button.setAttribute('aria-hidden', this.can_take && !this.editing);
   this.$finder.setAttribute('aria-hidden', !this.editing);
 
   for (let $person of this.$list.querySelectorAll('[itemscope]')) {
@@ -89,7 +89,7 @@ BzDeck.views.BugParticipantList.prototype.add_header_buttons = function () {
     cc: 'Add myself to the Cc list of this bug',
   }[this.field]);
 
-  this.$take_button.setAttribute('aria-hidden', 'true');
+  this.$take_button.setAttribute('aria-hidden', this.can_take);
   this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
   this.$take_button.addEventListener('click', event => {
@@ -178,8 +178,12 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
   this.values.delete(email);
   this.$$finder.exclude.delete(email);
 
-  $person.remove();
-  this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
+  // Add a simple animation effect on removing participants
+  $person.classList.add('removing');
+  $person.addEventListener('transitionend', event => {
+    $person.remove();
+    this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
+  });
 };
 
 /*
