@@ -391,13 +391,13 @@
                   <section role="group" aria-label="Status" data-field="status">
                     <h4>Status</h4>
                     <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
                     </span>
                   </section>
                   <section hidden role="group" aria-label="Resolution" data-field="resolution">
                     <h4>Resolution</h4>
                     <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
                     </span>
                   </section>
                   <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
@@ -407,7 +407,7 @@
                   <section role="group" aria-label="Target Milestone" data-field="target_milestone">
                     <h4>Target Milestone</h4>
                     <span role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
                     </span>
                   </section>
                 </section>
@@ -418,31 +418,31 @@
                   <section role="group" aria-label="Product" data-field="product">
                     <h4>Product</h4>
                     <span role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Component" data-field="component">
                     <h4>Component</h4>
                     <span role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Version" data-field="version">
                     <h4>Version</h4>
                     <span role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Hardware" data-field="platform">
                     <h4>Hardware</h4>
                     <span role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="OS" data-field="op_sys">
                     <h4>OS</h4>
                     <span role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
                     </span>
                   </section>
                 </section>
@@ -453,13 +453,13 @@
                   <section role="group" aria-label="Severity" data-field="severity">
                     <h4>Severity</h4>
                     <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Priority" data-field="priority">
                     <h4>Priority</h4>
                     <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
-                      <span role="textbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
                     </span>
                   </section>
                   <!-- Not available via API: Votes -->
@@ -757,12 +757,12 @@
             <div role="group">
               <span data-field="status">
                 <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
-                  <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
                 </span>
               </span>
               <span hidden data-field="resolution">
                 <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
-                  <span role="textbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
+                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
                 </span>
               </span>
               <span hidden data-field="dupe_of">
@@ -895,7 +895,7 @@
     </template><!-- end #bug-tooltip -->
     <template id="person-finder">
       <span class="person-finder" role="combobox" aria-autocomplete="none" aria-label="Need Info requestee finder" data-autoexpand="true" data-nobutton="true">
-        <span contenteditable="true" spellcheck="false" role="textbox"></span>
+        <span role="searchbox" contenteditable="true" spellcheck="false"></span>
         <ul role="listbox"></ul>
       </span>
     </template><!-- end #person-finder -->

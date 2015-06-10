@@ -340,7 +340,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
 
         if (name === 'status' && is_closed(value) && $next_field.matches('[data-field="resolution"]') ||
             name === 'resolution' && value === 'DUPLICATE' && $next_field.matches('[data-field="dupe_of"]')) {
-          window.setTimeout(() => $next_field.querySelector('[role="textbox"]').focus(), 100);
+          window.setTimeout(() => $next_field.querySelector('[role="textbox"], [role="searchbox"]').focus(), 100);
         }
       });
     }

@@ -239,7 +239,7 @@ del a {
   background-color: var(--active-textbox-background-color);
 }
 
-[role="combobox"] [role="textbox"] {
+[role="combobox"] [role="searchbox"] {
   box-shadow: none;
 }
 
@@ -248,7 +248,7 @@ del a {
   content: '\F0DC';
 }
 
-[role="combobox"] [role="textbox"]:focus ~ [role="button"]::after {
+[role="combobox"] [role="searchbox"]:focus ~ [role="button"]::after {
   color: var(--highlighted-button-background-color);
 }
 
@@ -2125,7 +2125,7 @@ article[id$="preview-bug"] > .bug-info {
   width: 100%;
 }
 
-.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="textbox"] {
+.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="searchbox"] {
   opacity: 1;
 }
 
@@ -2133,11 +2133,11 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
-[data-device="desktop"]:root .bug-info [role="combobox"][aria-readonly="true"] [role="textbox"] {
+[data-device="desktop"]:root .bug-info [role="combobox"][aria-readonly="true"] [role="searchbox"] {
   transition: all .4s;
 }
 
-[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"][aria-readonly="true"] [role="textbox"]:not(:focus) {
+[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"][aria-readonly="true"] [role="searchbox"]:not(:focus) {
   border-color: transparent;
   background-color: transparent;
 }
@@ -3850,18 +3850,18 @@ article[id$="preview-bug"] > .bug-info {
 .person-finder::before {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 2rem;
-  height: 2rem;
+  left: .2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   opacity: .8;
   font-family: FontAwesome;
-  line-height: 2rem;
+  line-height: 1.8rem;
   text-align: center;
   text-indent: 0;
   content: "\F002"; /* search */
 }
 
-.person-finder [role="textbox"] {
+.person-finder [role="searchbox"] {
   padding: 0 0 0 2rem;
 }
 
