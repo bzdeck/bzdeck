@@ -30,7 +30,12 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
   this.add_header_buttons();
   this.add_person_finder();
 
-  this.on('BugView:ParticipantListEditing', data => this.on_edit_mode_toggled(data.enabled));
+  this.on('BugView:EditModeChanged', data => {
+    if (data.category === 'participants') {
+      this.on_edit_mode_toggled(data.enabled);
+    }
+  });
+
   this.on('BugController:ParticipantAdded', data => this.on_participant_added(data.field, data.email));
   this.on('BugController:ParticipantRemoved', data => this.on_participant_removed(data.field, data.email));
 };
@@ -228,6 +233,8 @@ BzDeck.views.BugParticipantList.prototype.add_remove_button_to_person = function
     mentor: `Take ${name} (${email}) off from the Mentor of this bug`,
     cc: `Remove ${name} (${email}) from the Cc list of this bug`,
   }[this.field]);
+
+  $button.classList.add('iconic');
 
   $button.addEventListener('click', event => {
     event.stopPropagation();

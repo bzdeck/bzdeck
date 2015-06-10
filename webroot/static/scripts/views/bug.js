@@ -308,6 +308,18 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
       is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
 
+  for (let $fieldset of this.$bug.querySelectorAll('.bug-fieldset')) {
+    let category = $fieldset.dataset.category,
+        $edit_button = $fieldset.querySelector('h3 + [role="button"][data-command="edit"]');
+
+    if ($edit_button) {
+      $edit_button.setAttribute('aria-disabled', !can_editbugs);
+
+      new this.widgets.Button($edit_button).bind('Pressed', event =>
+          this.trigger('BugView:EditModeChanged', { category, enabled: event.detail.pressed }));
+    }
+  }
+
   for (let $section of this.$bug.querySelectorAll('[data-field]')) {
     let name = $section.dataset.field,
         $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]'),
@@ -372,15 +384,6 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
           $target.title = $target.properties.description[0].itemValue + '\n' + $target.properties.email[0].itemValue;
         }
       });
-
-      let $edit_button = $participants.querySelector('[role="button"][data-command="edit"]');
-
-      if ($edit_button) {
-        $edit_button.setAttribute('aria-disabled', !can_editbugs);
-
-        new this.widgets.Button($edit_button).bind('Pressed', event =>
-            this.trigger('BugView:ParticipantListEditing', { enabled: event.detail.pressed }));
-      }
     }
   }
 

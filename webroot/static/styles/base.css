@@ -1934,16 +1934,16 @@ article[id$="preview-bug"] > .bug-info {
   border-right: .1rem solid var(--secondary-region-border-color);
 }
 
-.bug-info .scrollable-area-content > section:not(:first-of-type) {
-  margin: 1.6rem 0;
+.bug-fieldset:not(:first-of-type) {
+  margin: 1.2rem 0;
 }
 
-.bug-info h3 {
+.bug-fieldset > header {
+  display: flex;
   position: sticky;
   top: 0;
   z-index: 10;
-  margin-bottom: 1.6rem;
-  padding: .4rem 1.6rem;
+  padding: .4rem 1.2rem; /* Need some right padding for the scrollbar  */
   height: 1.6rem;
   color: var(--secondary-region-header-foreground-color);
   background-color: var(--secondary-region-header-background-color);
@@ -1951,53 +1951,138 @@ article[id$="preview-bug"] > .bug-info {
   line-height: 1.6rem;
 }
 
-.bug-info dl {
+.bug-info .bug-fieldset > header {
+  margin-bottom: 1.2rem;
+}
+
+.bug-fieldset > header h3 {
+  flex: auto;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+}
+
+.bug-fieldset > header [role="button"][aria-pressed="false"] {
+  color: inherit;
+  background-color: transparent;
+}
+
+.bug-fieldset > header [role="button"][aria-pressed="true"] {
+  color: var(--alternate-button-foreground-color);
+  background-color: transparent;
+  opacity: 1;
+}
+
+.bug-fieldset dl {
   padding: .8rem 1.6rem;
 }
 
-.bug-info section > ul {
+.bug-fieldset [data-field] > ul {
   padding: 0 .4rem;
 }
 
-.bug-info section[data-field] {
-  margin: .8rem 1.6rem;
-  padding-left: 12rem;
+.bug-fieldset [data-field] {
   min-height: 2rem;
 }
 
-.bug-info section[data-field] h4 {
+.bug-info .bug-fieldset [data-field] {
+  margin: .8rem 1.6rem;
+  padding-left: 12rem;
+}
+
+.bug-participants .bug-fieldset [data-field] {
+  margin: 1.2rem;
+}
+
+.bug-participants .bug-fieldset [data-field] header {
+  display: flex;
+  min-height: 1.6rem;
+}
+
+.bug-fieldset [data-field] h4 {
+  font-weight: 500;
+}
+
+.bug-info .bug-fieldset [data-field] h4 {
   float: left;
   margin-left: -12rem;
-  font-weight: 500;
   line-height: 2rem;
 }
 
-.bug-info section[data-field] > :-moz-any(time, a) {
+.bug-participants .bug-fieldset [data-field] h4 {
+  flex: auto;
+  margin-bottom: .8rem;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.bug-fieldset [data-field] > :-moz-any(time, a) {
   display: inline-block;
   margin: 0 .8rem;
   line-height: 2rem;
 }
 
-.bug-info dt,
-.bug-info dd,
-.bug-info section > ul > li {
+.bug-fieldset dt,
+.bug-fieldset dd,
+.bug-fieldset [data-field] > ul > li {
   padding: .4rem 0;
   min-height: 1.6rem;
   line-height: 1.6rem;
 }
 
-.bug-info dt {
+.bug-fieldset dt {
   width: 10rem;
   height: 1.6rem;
   font-weight: 500;
 }
 
-.bug-info dd {
+.bug-fieldset dd {
   margin: -2.4rem 0 0 11rem;
   width: calc(100% - 11rem);
 }
 
-:-moz-any(.bug-info, .bug-summary) [role="textbox"][contenteditable] {
+.bug-fieldset [role="button"] {
+  flex: none;
+}
+
+.bug-fieldset .iconic[role="button"] {
+  position: relative;
+  margin-left: .4rem;
+  border: 0;
+  padding: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  text-indent: -99999px;
+  opacity: 1;
+  transition: opacity .2s;
+}
+
+.bug-fieldset .iconic[role="button"]:hover {
+  opacity: .8;
+}
+
+.bug-fieldset .iconic[role="button"]::after {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-family: FontAwesome;
+  line-height: 1.6rem;
+  text-indent: 0;
+  text-align: center;
+}
+
+.bug-fieldset .iconic[role="button"][data-command="edit"]::after {
+  content: '\F040'; /* pencil */
+}
+
+.bug-fieldset .iconic[role="button"][data-command="remove"]::after {
+  content: '\F00D'; /* close */
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable] {
   display: block;
   outline: 0 !important;
   box-sizing: border-box;
@@ -2012,7 +2097,7 @@ article[id$="preview-bug"] > .bug-info {
   transition: all .2s;
 }
 
-:-moz-any(.bug-info, .bug-summary) [role="textbox"][contenteditable]:not([aria-readonly="true"])::after {
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:not([aria-readonly="true"])::after {
   font-family: FontAwesome;
   font-size: 75%;
   opacity: .5;
@@ -2020,60 +2105,53 @@ article[id$="preview-bug"] > .bug-info {
   transition: all .2s;
 }
 
-:-moz-any(.bug-info, .bug-summary) [role="textbox"][contenteditable]:hover {
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:hover {
   border-color: rgba(0, 0, 0, .1);
   background-color: rgba(255,255,255,.4);
 }
 
-:-moz-any(.bug-info, .bug-summary) [role="textbox"][contenteditable]:-moz-any(:focus, :active) {
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:-moz-any(:focus, :active) {
   border-color: rgba(0, 0, 0, .2);
   color: var(--content-foreground-color);
   background-color: rgba(255,255,255,.8);
 }
 
-:-moz-any(.bug-info, .bug-summary) [role="textbox"][contenteditable]:-moz-any(:focus, :active)::after {
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:-moz-any(:focus, :active)::after {
   opacity: 0;
 }
 
-.bug-info [role="combobox"] {
+.bug-fieldset [role="combobox"]:not([aria-hidden="true"]) {
   display: block !important;
   width: 100%;
 }
 
-.bug-info [role="combobox"][aria-disabled="true"] [role="textbox"] {
+.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="textbox"] {
   opacity: 1;
 }
 
-.bug-info [role="combobox"][aria-disabled="true"] [role="button"] {
+.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="button"] {
   display: none;
 }
 
-.bug-info [role="combobox"] [role="textbox"] {
-  border-color: transparent;
-  background-color: transparent;
+[data-device="desktop"]:root .bug-info [role="combobox"][aria-readonly="true"] [role="textbox"] {
   transition: all .4s;
 }
 
-.bug-info [role="combobox"]:hover [role="textbox"] {
-  border-color: rgba(0, 0, 0, .1);
-  background-color: rgba(255,255,255,.4);
+[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"][aria-readonly="true"] [role="textbox"]:not(:focus) {
+  border-color: transparent;
+  background-color: transparent;
 }
 
-.bug-info [role="combobox"] [role="textbox"]:focus {
-  border-color: rgba(0, 0, 0, .2);
-  background-color: rgba(255,255,255,.8);
-}
-
-.bug-info [role="combobox"] .listbox-outer {
+.bug-fieldset [role="combobox"][aria-readonly="true"] .listbox-outer {
   width: 100%;
 }
 
-.bug-info [role="link"][itemprop="see_also"]:after {
+.bug-fieldset [role="link"][itemprop="see_also"]:after {
   content: "\000A"; /* whitespace */
   white-space: pre; /* = <br> */
 }
 
-.bug-info :not([role="combobox"]) [role="button"],
+.bug-fieldset :not([role="combobox"]) [role="button"]:not(.iconic),
 .bug-participants [itemprop][itemtype$="Person"] {
   overflow: hidden;
   border-width: 0;
@@ -2087,7 +2165,7 @@ article[id$="preview-bug"] > .bug-info {
   text-overflow: ellipsis;
 }
 
-.bug-info [itemprop="flag"] [itemprop="image"] {
+.bug-fieldset [itemprop="flag"] [itemprop="image"] {
   display: inline-block;
   margin-right: .4rem;
   width: 1.6rem;
@@ -2098,100 +2176,13 @@ article[id$="preview-bug"] > .bug-info {
   border-left: .1rem solid var(--secondary-region-border-color);
 }
 
-.bug-participants section:not([data-field]) > header {
-  display: flex;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: .4rem 1.2rem; /* Need some right padding for the scrollbar  */
-  height: 1.6rem;
-  color: var(--secondary-region-header-foreground-color);
-  background-color: var(--secondary-region-header-background-color);
-}
-
-.bug-participants section:not([data-field]) > header h3 {
-  flex: auto;
-  font-size: 1.2rem;
-  line-height: 1.6rem;
-}
-
-.bug-participants section:not([data-field]) > header [role="button"][aria-pressed="false"] {
-  color: inherit;
-  background-color: transparent;
-}
-
-.bug-participants section:not([data-field]) > header [role="button"][aria-pressed="true"] {
-  color: var(--alternate-button-foreground-color);
-  background-color: transparent;
-  opacity: 1;
-}
-
-.bug-participants section section {
-  margin: 1.2rem;
-}
-
-.bug-participants section section header {
-  display: flex;
-  min-height: 1.6rem;
-}
-
-.bug-participants section section header h4 {
-  flex: auto;
-  margin-bottom: .8rem;
-  min-height: 1.6rem;
-  line-height: 1.6rem;
-  font-weight: 500;
-}
-
-.bug-participants [role="button"] {
-  flex: none;
-  margin-left: .4rem;
-  border: 0;
-  padding: 0;
-  min-width: 1.6rem;
-  height: 1.6rem;
-  opacity: .6;
-  line-height: 1.6rem;
-  transition: opacity .2s;
-}
-
-.bug-participants [role="button"]:hover {
-  opacity: .8;
-}
-
 .bug-participants [role="button"][aria-disabled="true"] {
   display: none;
 }
 
-.bug-participants [role="button"]::after {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1.6rem;
-  height: 1.6rem;
-  font-family: FontAwesome;
-  line-height: 1.6rem;
-  text-indent: 0;
-  text-align: center;
-}
-
-.bug-participants [role="button"]:not([data-command="take"]) {
-  position: relative;
-  width: 1.6rem;
-  text-indent: -99999px;
-}
-
-.bug-participants [role="button"][data-command="edit"]::after {
-  content: '\F040'; /* pencil */
-}
-
-.bug-participants [role="button"][data-command="remove"]::after {
-  content: '\F00D'; /* close */
-}
-
-.bug-participants [role="button"][data-command="add"]::after {
-  content: '\F067'; /* plus */
+.bug-participants [role="button"][data-command="take"] {
+  width: auto;
+  opacity: .6;
 }
 
 .bug-participants [role="combobox"][aria-hidden="false"] {
@@ -2206,7 +2197,7 @@ article[id$="preview-bug"] > .bug-info {
   height: 2.4rem;
   align-items: center;
   opacity: 1;
-  transition: opacity .5s;
+  transition: opacity .4s;
 }
 
 .bug-participants [itemprop][itemtype$="Person"].removing {

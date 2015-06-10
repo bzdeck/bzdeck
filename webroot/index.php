@@ -366,7 +366,9 @@
               <div class="bug-timeline-wrapper">
                 <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
-                    <h3 class="bug-summary" data-field="summary"><span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
+                    <header class="bug-summary" data-field="summary">
+                      <h3><span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
+                    </header>
                     <div class="comments-wrapper"></div>
                   </section>
                 </div>
@@ -374,81 +376,87 @@
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
               <div id="bug-TID-info" class="bug-info" tabindex="0" role="region">
-                <section>
-                  <h3>Status</h3>
-                  <section data-field="creation_time">
+                <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
+                  <header>
+                    <h3>Status</h3>
+                  </header>
+                  <section role="group" aria-label="Filed" data-field="creation_time">
                     <h4>Filed</h4>
                     <time itemprop="creation_time" data-relative="false"></time>
                   </section>
-                  <section data-field="last_change_time">
+                  <section role="group" aria-label="Last Modified" data-field="last_change_time">
                     <h4>Last Modified</h4>
                     <time itemprop="last_change_time" data-relative="false"></time>
                   </section>
-                  <section data-field="status">
+                  <section role="group" aria-label="Status" data-field="status">
                     <h4>Status</h4>
                     <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
                     </span>
                   </section>
-                  <section hidden data-field="resolution">
+                  <section hidden role="group" aria-label="Resolution" data-field="resolution">
                     <h4>Resolution</h4>
                     <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
                     </span>
                   </section>
-                  <section hidden data-field="dupe_of">
+                  <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
                     <h4>Duplicate of</h4>
                     <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
                   </section>
-                  <section data-field="target_milestone">
+                  <section role="group" aria-label="Target Milestone" data-field="target_milestone">
                     <h4>Target Milestone</h4>
                     <span role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
                     </span>
                   </section>
                 </section>
-                <section>
-                  <h3>Affected</h3>
-                  <section data-field="product">
+                <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
+                  <header>
+                    <h3>Affected</h3>
+                  </header>
+                  <section role="group" aria-label="Product" data-field="product">
                     <h4>Product</h4>
                     <span role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
                     </span>
                   </section>
-                  <section data-field="component">
+                  <section role="group" aria-label="Component" data-field="component">
                     <h4>Component</h4>
                     <span role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
                     </span>
                   </section>
-                  <section data-field="version">
+                  <section role="group" aria-label="Version" data-field="version">
                     <h4>Version</h4>
                     <span role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
                     </span>
                   </section>
-                  <section data-field="platform">
+                  <section role="group" aria-label="Hardware" data-field="platform">
                     <h4>Hardware</h4>
                     <span role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
                     </span>
                   </section>
-                  <section data-field="op_sys">
+                  <section role="group" aria-label="OS" data-field="op_sys">
                     <h4>OS</h4>
                     <span role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
                     </span>
                   </section>
                 </section>
-                <section>
-                  <h3>Importance</h3>
-                  <section data-field="severity">
+                <section role="group" class="bug-fieldset" aria-label="Importance Fieldset" data-category="importance">
+                  <header>
+                    <h3>Importance</h3>
+                  </header>
+                  <section role="group" aria-label="Severity" data-field="severity">
                     <h4>Severity</h4>
                     <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
                     </span>
                   </section>
-                  <section data-field="priority">
+                  <section role="group" aria-label="Priority" data-field="priority">
                     <h4>Priority</h4>
                     <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
                       <span role="textbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
@@ -456,49 +464,67 @@
                   </section>
                   <!-- Not available via API: Votes -->
                 </section>
-                <section>
-                  <h3>Notes</h3>
-                  <section data-field="alias">
+                <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
+                  <header>
+                    <h3>Notes</h3>
+                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the note of the bug" data-command="edit"></span>
+                  </header>
+                  <section role="group" aria-label="Alias" data-field="alias">
                     <h4>Alias</h4>
-                    <ul><li itemprop="alias" role="button"></li></ul>
+                    <!-- TODO: Support multiple aliases on Bugzilla 5.0 (Bug 1012506) -->
+                    <span contenteditable="true" role="textbox" itemprop="alias"></span>
                   </section>
-                  <section data-field="keyword">
+                  <section role="group" aria-label="Keywords" data-field="keyword">
                     <h4>Keywords</h4>
                     <ul><li itemprop="keyword" role="button"></li></ul>
                   </section>
-                  <section data-field="whiteboard">
+                  <section role="group" aria-label="Whiteboard" data-field="whiteboard">
                     <h4>Whiteboard</h4>
                     <span contenteditable="true" role="textbox" itemprop="whiteboard"></span>
                   </section>
-                  <section data-field="url">
+                  <section role="group" aria-label="URL" data-field="url">
                     <h4>URL</h4>
                     <a role="link" itemprop="url"></a>
                   </section>
-                  <section data-field="see_also">
+                  <section role="group" aria-label="See Also" data-field="see_also">
                     <h4>See Also</h4>
                     <ul><li><a role="link" itemprop="see_also"></a></li></ul>
                   </section>
-                  <section data-field="duplicate">
+                  <section role="group" aria-label="Duplicates" data-field="duplicate">
                     <h4>Duplicates</h4>
                     <ul><li role="button" itemprop="duplicate"></li></ul>
                   </section>
                   <!-- Not available via API: Crash Signature -->
                 </section>
-                <section>
-                  <h3>Dependencies</h3>
-                  <section data-field="depends_on">
-                    <h4>Depends on</h4>
-                    <ul><li role="button" itemprop="depends_on"></li></ul>
+                <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
+                  <header>
+                    <h3>Dependencies</h3>
+                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the dependencies of the bug" data-command="edit"></span>
+                  </header>
+                  <section role="group" aria-label="Depends on" data-field="depends_on">
+                    <header>
+                      <h4>Depends on</h4>
+                    </header>
+                    <ul class="list">
+                      <li role="button" itemprop="depends_on"></li>
+                    </ul>
                   </section>
-                  <section data-field="blocks">
-                    <h4>Blocks</h4>
-                    <ul><li role="button" itemprop="blocks"></li></ul>
+                  <section role="group" aria-label="Blocks" data-field="blocks">
+                    <header>
+                      <h4>Blocks</h4>
+                    </header>
+                    <ul class="list">
+                      <li role="button" itemprop="blocks"></li>
+                    </ul>
                   </section>
                 </section>
-                <section>
-                  <h3>Flags</h3>
-                  <section data-field="flags">
-                    <h4>General flags</h4>
+                <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
+                  <header>
+                    <h3>Flags</h3>
+                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the flags of the bug" data-command="edit"></span>
+                  </header>
+                  <section role="group" aria-label="General Flags" data-field="flags">
+                    <h4>General Flags</h4>
                     <ul>
                       <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
                         <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
@@ -514,12 +540,12 @@
             </div><!-- end #bug-TID-tabpanel-info -->
             <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
               <div id="bug-TID-participants" class="bug-participants" tabindex="0" role="region">
-                <section>
+                <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                   <header>
                     <h3>Participants</h3>
-                    <span tabindex="0" title="Edit" role="button" aria-pressed="false" aria-label="Edit participants of the bug" data-command="edit"></span>
+                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the participants of the bug" data-command="edit"></span>
                   </header>
-                  <section data-field="creator">
+                  <section role="group" aria-label="Reporter" data-field="creator">
                     <header>
                       <h4>Reporter</h4>
                     </header>
@@ -532,7 +558,7 @@
                       </li>
                     </ul>
                   </section>
-                  <section data-field="assigned_to">
+                  <section role="group" aria-label="Assignee" data-field="assigned_to">
                     <header>
                       <h4>Assignee</h4>
                     </header>
@@ -545,7 +571,7 @@
                       </li>
                     </ul>
                   </section>
-                  <section data-field="qa_contact">
+                  <section role="group" aria-label="QA" data-field="qa_contact">
                     <header>
                       <h4>QA</h4>
                     </header>
@@ -558,7 +584,7 @@
                       </li>
                     </ul>
                   </section>
-                  <section data-field="mentor">
+                  <section role="group" aria-label="Mentors" data-field="mentor">
                     <header>
                       <h4>Mentors</h4>
                     </header>
@@ -571,7 +597,7 @@
                       </li>
                     </ul>
                   </section>
-                  <section data-field="cc">
+                  <section role="group" aria-label="Cc" data-field="cc">
                     <header>
                       <h4>Cc</h4>
                     </header>
@@ -584,7 +610,7 @@
                       </li>
                     </ul>
                   </section>
-                  <section data-field="contributor">
+                  <section role="group" aria-label="Other Contributors" data-field="contributor">
                     <header>
                       <h4>Other Contributors</h4>
                     </header>
@@ -602,7 +628,7 @@
             </div><!-- end #bug-TID-tabpanel-participants -->
             <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
               <div class="bug-attachments" tabindex="0">
-                <section data-field="attachments">
+                <section role="group" aria-label="Attachments" data-field="attachments">
                   <h3>Attachments</h3>
                   <div class="list">
                     <header>
@@ -620,7 +646,7 @@
             </div><!-- end #bug-TID-tabpanel-attachments -->
             <div id="bug-TID-tabpanel-history" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
               <div class="bug-history" tabindex="0" role="region">
-                <section data-field="history">
+                <section role="group" aria-label="History" data-field="history">
                   <h3>History</h3>
                   <table>
                     <thead>
@@ -697,7 +723,7 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="bug-comment-form">
-      <section id="TID" class="bug-comment-form">
+      <section role="group" id="TID" class="bug-comment-form" aria-label="Comment Form">
         <header>
           <h4>Reply</h4>
         </header>
@@ -718,7 +744,7 @@
             </article>
           </div>
           <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
-            <div>
+            <div role="group">
               <input type="file" hidden multiple>
               <span tabindex="0" role="checkbox" aria-checked="true" aria-hidden="true">Upload files in parallel</span>
               <table>
@@ -728,7 +754,7 @@
             </div>
           </div>
           <div id="TID-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-status">
-            <div>
+            <div role="group">
               <span data-field="status">
                 <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
                   <span role="textbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
@@ -746,7 +772,7 @@
             </div>
           </div>
           <div id="TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-needinfo">
-            <div>
+            <div role="group">
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>
               </div>
