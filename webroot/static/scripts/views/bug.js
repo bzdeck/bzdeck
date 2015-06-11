@@ -229,6 +229,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     depends_on: this.bug.depends_on,
     blocks: this.bug.blocks,
     see_also: this.bug.see_also,
+    dupe_of: this.bug.dupe_of || [],
     duplicate: this.bug.duplicates,
     flag: [for (flag of this.bug.flags) {
       creator: get_person(flag.setter),
@@ -238,14 +239,11 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     }]
   };
 
-  if (this.bug.dupe_of) {
-    _bug.resolution = `DUPLICATE of ${this.bug.dupe_of}`;
-  }
-
   this.fill(this.$bug, _bug);
 
   // Depends on, Blocks and Duplicates
-  for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], [itemprop="duplicate"]')) {
+  for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
+                                              [itemprop="duplicate"], [itemprop="dupe_of"]')) {
     $li.setAttribute('data-bug-id', $li.itemValue);
 
     (new this.widgets.Button($li)).bind('Pressed', event =>
@@ -340,7 +338,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
 
         if (name === 'status' && is_closed(value) && $next_field.matches('[data-field="resolution"]') ||
             name === 'resolution' && value === 'DUPLICATE' && $next_field.matches('[data-field="dupe_of"]')) {
-          window.setTimeout(() => $next_field.querySelector('[role="textbox"], [role="searchbox"]').focus(), 100);
+          window.setTimeout(() => $next_field.querySelector('[role="searchbox"]').focus(), 100);
         }
       });
     }
@@ -360,8 +358,13 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
       $$textbox.bind('paste', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
     }
 
+    // Activate the Bug Finder on the dupe_of field
     if (name === 'dupe_of') {
-      // Activate bug finder
+      let $$finder = new BzDeck.views.BugFinder(this.id, this.bug, new Set([this.bug.id])),
+          { $combobox, $input } = $$finder;
+
+      $combobox.addEventListener('Change', event => {});
+      $section.appendChild($combobox);
     }
 
     // Multiple value fields, including alias, keywords, see_also, depends_on, blocks
@@ -419,7 +422,6 @@ BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
   this.comboboxes.get($combobox).selected = resolution;
 
   $dupe_of.hidden = !is_dupe;
-  $dupe_of.querySelector('[itemprop="dupe_of"]').setAttribute('aria-disabled', !is_dupe);
 };
 
 BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {

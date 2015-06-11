@@ -2133,11 +2133,11 @@ article[id$="preview-bug"] > .bug-info {
   display: none;
 }
 
-[data-device="desktop"]:root .bug-info [role="combobox"][aria-readonly="true"] [role="searchbox"] {
+[data-device="desktop"]:root .bug-info [role="combobox"] [role="searchbox"] {
   transition: all .4s;
 }
 
-[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"][aria-readonly="true"] [role="searchbox"]:not(:focus) {
+[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"] [role="searchbox"]:not(:focus) {
   border-color: transparent;
   background-color: transparent;
 }

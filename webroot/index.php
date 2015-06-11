@@ -402,7 +402,7 @@
                   </section>
                   <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
                     <h4>Duplicate of</h4>
-                    <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                    <ul><li role="button" itemprop="dupe_of"></li></ul>
                   </section>
                   <section role="group" aria-label="Target Milestone" data-field="target_milestone">
                     <h4>Target Milestone</h4>
@@ -767,7 +767,7 @@
               </span>
               <span hidden data-field="dupe_of">
                 <span>of Bug</span>
-                <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                <meta itemprop="dupe_of">
               </span>
             </div>
           </div>
@@ -893,6 +893,23 @@
         <time data-simple="true" itemprop="dateModified"></time>
       </aside>
     </template><!-- end #bug-tooltip -->
+    <template id="bug-finder">
+      <span class="bug-finder" role="combobox" aria-autocomplete="none" aria-label="Bug finder" data-autoexpand="true" data-nobutton="true">
+        <span role="searchbox" contenteditable="true" spellcheck="false"></span>
+        <ul role="listbox"></ul>
+      </span>
+    </template><!-- end #bug-finder -->
+    <template id="bug-finder-item">
+      <li tabindex="-1" role="option" aria-selected="false" data-attrs="id data-value" itemscope itemtype="http://bzdeck.com/Bug">
+        <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+          <img alt="" itemprop="image">
+          <meta itemprop="email">
+        </span>
+        <span itemprop="id"></span>
+        <span itemprop="name"></span>
+        <time data-simple="true" itemprop="dateModified"></time>
+      </li>
+    </template><!-- end #bug-finder-item -->
     <template id="person-finder">
       <span class="person-finder" role="combobox" aria-autocomplete="none" aria-label="Need Info requestee finder" data-autoexpand="true" data-nobutton="true">
         <span role="searchbox" contenteditable="true" spellcheck="false"></span>
