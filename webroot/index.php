@@ -467,7 +467,6 @@
                 <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
                   <header>
                     <h3>Notes</h3>
-                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the note of the bug" data-command="edit"></span>
                   </header>
                   <section role="group" aria-label="Alias" data-field="alias">
                     <h4>Alias</h4>
@@ -499,7 +498,6 @@
                 <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
                   <header>
                     <h3>Dependencies</h3>
-                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the dependencies of the bug" data-command="edit"></span>
                   </header>
                   <section role="group" aria-label="Depends on" data-field="depends_on">
                     <header>
@@ -521,7 +519,6 @@
                 <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
                   <header>
                     <h3>Flags</h3>
-                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the flags of the bug" data-command="edit"></span>
                   </header>
                   <section role="group" aria-label="General Flags" data-field="flags">
                     <h4>General Flags</h4>
