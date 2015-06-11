@@ -408,7 +408,8 @@ BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
       can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
       $resolution = this.$bug.querySelector('[data-field="resolution"]'),
       $combobox = $resolution.querySelector('[role="combobox"]'),
-      $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]');
+      $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]'),
+      $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
 
   $resolution.hidden = is_open;
   $resolution.querySelector('[role="option"][data-value=""]').setAttribute('aria-hidden', !is_open);
@@ -416,7 +417,10 @@ BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
   this.comboboxes.get($combobox).selected = resolution;
 
   $dupe_of.hidden = !is_dupe;
-  $dupe_of.querySelector('[itemprop="dupe_of"]').setAttribute('aria-disabled', !is_dupe);
+
+  if ($dupe_of_prop) {
+    $dupe_of_prop.setAttribute('aria-disabled', !is_dupe);
+  }
 };
 
 BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
