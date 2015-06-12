@@ -10,10 +10,10 @@ $styles = [
   // Vendor
   '/vendor/flaretail.js/styles/widgets.css',
   // General
-  '/static/styles/fonts.css',
-  '/static/styles/base.css',
-  '/static/styles/widgets.css',
-  '/static/styles/animations.css',
+  '/static/styles/base/fonts.css',
+  '/static/styles/base/base.css',
+  '/static/styles/base/widgets.css',
+  '/static/styles/base/animations.css',
   // Views
   '/static/styles/views/app-body.css',
   '/static/styles/views/attachment-page.css',
