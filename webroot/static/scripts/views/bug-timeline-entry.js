@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.TimelineEntry = function TimelineEntryView (view_id, bug, data) {
+BzDeck.views.BugTimelineEntry = function BugTimelineEntryView (view_id, bug, data) {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       $fragment = new DocumentFragment(),
       $comment;
@@ -26,10 +26,10 @@ BzDeck.views.TimelineEntry = function TimelineEntryView (view_id, bug, data) {
   return $fragment;
 };
 
-BzDeck.views.TimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.TimelineEntry.prototype.constructor = BzDeck.views.TimelineEntry;
+BzDeck.views.BugTimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.BugTimelineEntry.prototype.constructor = BzDeck.views.BugTimelineEntry;
 
-BzDeck.views.TimelineEntry.prototype.create_comment_entry = function () {
+BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
       author = BzDeck.collections.users.get(comment.creator, { name: comment.creator }),
@@ -169,7 +169,7 @@ BzDeck.views.TimelineEntry.prototype.create_comment_entry = function () {
   return $entry;
 };
 
-BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
+BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
   // TODO: load the attachment data via API
   let attachment = new BzDeck.models.Attachment(this.data.get('attachment')),
       media_type = attachment.content_type.split('/')[0],
@@ -229,7 +229,7 @@ BzDeck.views.TimelineEntry.prototype.create_attachment_box = function () {
   return $attachment;
 };
 
-BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
+BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
       changer = BzDeck.collections.users.get(history.who, { name: history.who }),
@@ -247,7 +247,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entries = function () {
   return $fragment;
 };
 
-BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, time, change, comment) {
+BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer, time, change, comment) {
   let $change = this.get_template('timeline-change'),
       $changer = $change.querySelector('[itemprop="author"]'),
       $time = $change.querySelector('[itemprop="datePublished"]'),
@@ -474,7 +474,7 @@ BzDeck.views.TimelineEntry.prototype.create_history_entry = function (changer, t
   return $change;
 };
 
-BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
+BzDeck.views.BugTimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(name => {
     let person = BzDeck.collections.users.get(name, { name }),
         $person = this.get_template('person-with-image');
@@ -491,7 +491,7 @@ BzDeck.views.TimelineEntry.prototype.create_people_array = function (set) {
   return array.length ? array.join(', ') + ' and ' + last : last; // l10n
 };
 
-BzDeck.views.TimelineEntry.prototype.create_history_change_element = function (change, how) {
+BzDeck.views.BugTimelineEntry.prototype.create_history_change_element = function (change, how) {
   let $elm = document.createElement('span'),
       ids;
 

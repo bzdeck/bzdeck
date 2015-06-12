@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.Timeline = function TimelineView (view_id, bug, $bug, delayed) {
+BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed) {
   this.id = view_id;
   this.bug = bug;
   this.$bug = $bug;
@@ -50,7 +50,7 @@ BzDeck.views.Timeline = function TimelineView (view_id, bug, $bug, delayed) {
 
   // Generate entries
   for (let [time, data] of entries) if (data.has('rendering') || time >= last_comment_time) {
-    $fragment.appendChild(new BzDeck.views.TimelineEntry(this.id, this.bug, data));
+    $fragment.appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, data));
     data.delete('rendering');
     data.set('rendered', true);
   }
@@ -74,7 +74,7 @@ BzDeck.views.Timeline = function TimelineView (view_id, bug, $bug, delayed) {
       $fragment = new DocumentFragment();
 
       for (let [time, data] of entries) if (!data.get('rendered')) {
-        $fragment.appendChild(new BzDeck.views.TimelineEntry(this.id, this.bug, data));
+        $fragment.appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, data));
         data.set('rendered', true);
       }
 
@@ -144,10 +144,10 @@ BzDeck.views.Timeline = function TimelineView (view_id, bug, $bug, delayed) {
   window.addEventListener('hashchange', event => check_fragment());
 };
 
-BzDeck.views.Timeline.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.Timeline.prototype.constructor = BzDeck.views.Timeline;
+BzDeck.views.BugTimeline.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.BugTimeline.prototype.constructor = BzDeck.views.BugTimeline;
 
-BzDeck.views.Timeline.prototype.expand_comments = function () {
+BzDeck.views.BugTimeline.prototype.expand_comments = function () {
   if (this.$expander) {
     this.$expander.dispatchEvent(new CustomEvent(this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
   }
@@ -157,7 +157,7 @@ BzDeck.views.Timeline.prototype.expand_comments = function () {
   }
 };
 
-BzDeck.views.Timeline.prototype.collapse_comments = function () {
+BzDeck.views.BugTimeline.prototype.collapse_comments = function () {
   for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
     $comment.setAttribute('aria-expanded', 'false')
   }

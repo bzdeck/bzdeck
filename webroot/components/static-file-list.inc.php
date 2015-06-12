@@ -22,6 +22,8 @@ $styles = [
   '/static/styles/views/bug-details.css',
   '/static/styles/views/bug-participant-list.css',
   '/static/styles/views/bug-preview.css',
+  '/static/styles/views/bug-timeline.css',
+  '/static/styles/views/bug-timeline-entry.css',
   '/static/styles/views/bug.css',
   '/static/styles/views/header.css',
   '/static/styles/views/home.css',
@@ -34,8 +36,6 @@ $styles = [
   '/static/styles/views/settings-page.css',
   '/static/styles/views/sidebar.css',
   '/static/styles/views/thread.css',
-  '/static/styles/views/timeline.css',
-  '/static/styles/views/timeline-entry.css',
   '/static/styles/views/tooltip.css',
   // Themes cannot go here, because those require the title attribute on <link>
 ];
@@ -77,8 +77,10 @@ $scripts = [
   '/static/scripts/views/attachment-page.js',
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-comment-form.js',
-  '/static/scripts/views/bug-participant-list.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
+  '/static/scripts/views/bug-participant-list.js',
+  '/static/scripts/views/bug-timeline.js',
+  '/static/scripts/views/bug-timeline-entry.js',
   '/static/scripts/views/details-page.js',
   '/static/scripts/views/global.js',
   '/static/scripts/views/home-page.js',
@@ -92,8 +94,6 @@ $scripts = [
   '/static/scripts/views/sidebar.js',
   '/static/scripts/views/statusbar.js',
   '/static/scripts/views/thread.js',
-  '/static/scripts/views/timeline-entry.js',
-  '/static/scripts/views/timeline.js',
   '/static/scripts/views/toolbar.js',
   '/static/scripts/views/tooltip.js',
   // Helpers

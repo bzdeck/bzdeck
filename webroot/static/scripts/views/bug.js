@@ -273,7 +273,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   // TODO: Show Project Flags and Tracking Flags
 
   // Prepare the timeline and comment form
-  this.timeline = new BzDeck.views.Timeline(this.id, this.bug, this.$bug, delayed);
+  this.timeline = new BzDeck.views.BugTimeline(this.id, this.bug, this.$bug, delayed);
   this.comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug, this.$bug),
   this.activate_widgets();
 
@@ -530,7 +530,7 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
 
   if ($timeline) {
     $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.views.TimelineEntry(this.id, this.bug, changes));
+             .appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, changes));
     $timeline.querySelector('.comments-wrapper > article:last-of-type')
              .scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
