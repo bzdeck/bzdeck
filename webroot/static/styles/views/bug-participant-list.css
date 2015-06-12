@@ -1,0 +1,113 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-participants .bug-fieldset [data-field] {
+  margin: 1.2rem;
+}
+
+.bug-participants .bug-fieldset [data-field] header {
+  display: flex;
+  min-height: 1.6rem;
+}
+
+.bug-participants .bug-fieldset [data-field] h4 {
+  flex: auto;
+  margin-bottom: .8rem;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] {
+  overflow: hidden;
+  border-width: 0;
+  padding: .2rem .4rem;
+  max-width: 100%;
+  height: 1.4rem;
+  color: inherit !important; /* TEMP */
+  background: transparent none !important; /* TEMP */
+  line-height: 1.4rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bug-participants [role="button"][aria-disabled="true"] {
+  display: none;
+}
+
+.bug-participants [role="button"][data-command="take"] {
+  width: auto;
+  opacity: .6;
+}
+
+.bug-participants [role="combobox"][aria-hidden="false"] {
+  display: block;
+  margin-bottom: .8rem;
+  width: 100%;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] {
+  display: flex;
+  padding: 0;
+  height: 2.4rem;
+  align-items: center;
+  opacity: 1;
+  transition: opacity .4s;
+}
+
+.bug-participants [itemprop][itemtype$="Person"].removing {
+  opacity: 0;
+}
+
+.bug-participants [itemprop][itemtype$="Person"]:not(:last-of-type) {
+  margin-bottom: .8rem;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] [itemprop="image"] {
+  flex: none;
+  margin-right: .8rem;
+  height: 100%;
+}
+
+.bug-participants [itemprop][itemtype$="Person"] [itemprop="name"] {
+  flex: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 1024px) {
+  [data-device="desktop"]:root .bug-participants[id|="bug"],
+  [data-device="desktop"]:root .bug-participants[id^="search"] {
+    right: 0;
+    width: 20rem;
+  }
+
+  [data-device|="mobile"]:root .bug-participants .list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  [data-device|="mobile"]:root .bug-participants [itemprop][itemtype$="Person"] {
+    flex: 0 0 20rem;
+    margin-right: .8rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .bug-participants .list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .bug-participants [itemprop][itemtype$="Person"] {
+    flex: 0 0 20rem;
+    margin-right: .8rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .bug-participants .list {
+    display: block;
+  }
+}

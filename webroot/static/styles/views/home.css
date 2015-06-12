@@ -1,0 +1,163 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#tabpanel-home > section > div {
+  display: flex;
+}
+
+[data-home-layout="vertical"]:root #tabpanel-home > section > div {
+  flex-direction: row;
+}
+
+[data-home-layout="classic"]:root #tabpanel-home > section > div {
+  flex-direction: column;
+}
+
+[data-device="desktop"]:root #tabpanel-home > section > div {
+  left: 16rem; /* A space for the sidebar */
+  width: calc(100% - 16rem);
+}
+
+[data-device|="mobile"]:root #tabpanel-home > section > div {
+  left: 0;
+}
+
+#home-list-pane {
+  flex: none;
+}
+
+[data-home-layout="vertical"]:root #home-list-pane {
+  width: 40%;
+  min-width: 24rem;
+}
+
+[data-home-layout="classic"]:root #home-list-pane {
+  width: 100% !important;
+  height: 21.6rem;
+  min-height: 8rem;
+}
+
+#home-preview-pane {
+  flex: auto;
+  border-width: .1rem 0 0 0;
+  border-style: solid;
+  border-color: var(--region-border-color);
+}
+
+[data-home-layout="vertical"]:root #home-preview-pane {
+  min-width: 36rem;
+  background-color: transparent !important;
+  border-width: 0 0 0 .1rem;
+}
+
+[data-home-layout="classic"]:root #home-preview-pane {
+  min-height: 8rem;
+}
+
+[id$="list-pane"] > footer {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--region-background-color);
+}
+
+[id$="list-pane"] > footer [role="status"] {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+[id$="list-pane"] > footer [role="status"] span {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;  
+}
+
+[data-home-layout="vertical"]:root #home-list,
+[data-home-layout="classic"]:root #home-vertical-thread {
+  display: none;
+}
+
+[data-home-layout="vertical"]:root #home-preview-bug-info {
+  display: none;
+}
+
+#home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
+  background-color: var(--grid-even-row-background-color);
+}
+
+@media (min-width: 1024px) {
+  [data-device|="mobile"]:root #tabpanel-home > * > header,
+  [data-device|="mobile"]:root #home-list-pane {
+    width: 40% !important;
+    min-width: 0 !important;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    border-width: 0;
+    padding: 0;
+    width: 60%;
+    height: 4rem;
+    color: var(--application-header-foreground-color);
+    background-color: var(--application-header-background-color);
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header > h3 {
+    overflow: hidden;
+    padding: 1rem 4rem;
+    height: 2rem;
+    font-size: 2rem;
+    line-height: 2rem;
+    font-weight: 300;
+    font-style: italic;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header > h3 [itemprop="summary"] {
+    display: none;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header > [role="toolbar"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 4rem;
+    height: 4rem;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header > [role="toolbar"] > ul:not([role="menu"]) {
+    margin: 0;
+    padding: 0;
+    min-width: 4rem;
+    height: 4rem;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug > header > [role="toolbar"] .iconic {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper {
+    top: 4rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-home-layout="vertical"]:root #home-list-pane {
+    width: 100% !important;
+  }
+
+  [data-home-layout="vertical"]:root #home-preview-splitter,
+  [data-home-layout="vertical"]:root #home-preview-pane {
+    display: none;
+  }
+}

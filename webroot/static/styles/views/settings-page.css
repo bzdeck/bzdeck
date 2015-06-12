@@ -1,0 +1,214 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#settings-tablist {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  border-width: 0 .1rem 0 0;
+  border-style: solid;
+  border-color: var(--application-header-border-color);
+  padding: .8rem 0;
+  width: 16rem;
+  height: 100%;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+#settings-tablist [role="tab"] {
+  display: block;
+  float: none;
+  box-sizing: content-box; /* initial value */
+  border-width: 0 0 0 .4rem;
+  border-style: solid;
+  border-color: transparent;
+  padding: .4rem 1.2rem;
+  width: auto;
+  height: 2rem;
+  font-size: 1.25rem;
+  line-height: 2rem;
+  background-clip: border-box; /* initial value */
+  transition: all .2s;
+}
+
+#settings-tablist [role="tab"][aria-selected="true"] {
+  border-left-width: .4rem;
+  border-color: var(--highlighted-button-border-color);
+  color: var(--region-header-foreground-color);
+}
+
+#settings-tablist [role="tab"][aria-selected="false"] {
+  color: var(--secondary-application-header-foreground-color);
+}
+
+#settings-tablist [role="tab"][aria-selected="false"]:hover,
+#settings-tablist [role="tab"][aria-selected="true"] {
+  background-color: var(--region-header-background-color);
+}
+
+#settings-tablist [role="tab"] label {
+  position: static;
+}
+
+[data-device="desktop"]:root #tabpanel-settings > section > div {
+  overflow: hidden;
+  padding: 0 4rem;
+}
+
+[data-device|="mobile"]:root #tabpanel-settings > section > div {
+  overflow: auto;
+  padding: 0;
+  pointer-events: auto;
+}
+
+[id^="settings-tabpanel"] {
+  top: 4rem;
+  right: 4rem;
+  bottom: 4rem;
+  left: calc(16rem + 4rem);
+  width: auto;
+  height: auto; 
+}
+
+[id^="settings-tabpanel"] > section > * {
+  position: relative;
+  height: auto;
+}
+
+[id^="settings-tabpanel"] > section > h3 {
+  margin-bottom: .8rem;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--region-border-color);
+  padding-bottom: 1.6rem;
+  font-size: 2.8rem;
+}
+
+[id^="settings-tabpanel"] > section > section {
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  padding: 1.6rem 1.2rem;
+}
+
+[id^="settings-tabpanel"] > section > section:last-of-type {
+  border-width: 0;
+}
+
+[data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section[data-platform="desktop"] {
+  display: none !important;
+}
+
+[data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section > h4 {
+  font-size: 1.25rem;
+}
+
+[id^="settings-tabpanel"] > section > section > ul li {
+  margin: .4rem 0;
+}
+
+[data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section > ul li {
+  font-size: 1.4rem;
+}
+
+[id^="settings-tabpanel"] > section > section > h4 ~ :-moz-any(p, ol) {
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+[id^="settings-tabpanel"] > section > section > ol {
+  padding-left: 3rem;
+}
+
+[id^="settings-tabpanel"] > section > section > ol li {
+  list-style-type: decimal;
+}
+
+[id^="settings-tabpanel"] > section > section li [role="radio"] {
+  line-height: 1.8rem;
+}
+
+[id^="settings-tabpanel"] > section > section li [role="radio"]::before {
+  width: 1.8rem;
+  height: 1.8rem;
+  background-position: center;
+  background-size: 80%;
+  background-repeat: no-repeat;
+}
+
+[data-device|="mobile"]:root #settings-tab-account,
+[data-device|="mobile"]:root #settings-tabpanel-account {
+  display: none; /* The Account tabpanel only has the QR code for now, so it should be hidden on mobile */
+}
+
+#settings-qrcode-outer p {
+  margin-top: 0;
+}
+
+#settings-qrcode-outer div {
+  display: inline-block;
+  float: right;
+  margin-left: 2rem;
+  padding: 2rem;
+  width: 192px; /* same as the inner <canvas> */
+  height: 192px; /* same as the inner <canvas> */
+  background-color: #FFF; /* for a better recognition */
+}
+
+@media (min-width: 1024px) {
+  [id^="settings-tabpanel"] > section > section > h4 {
+    float: left;
+    width: calc(50% - 1rem);
+  }
+
+  [id^="settings-tabpanel"] > section > section > h4 ~ * {
+    margin-left: 50%;
+  }
+
+  [data-device|="mobile"]:root #settings-tablist [role="tab"] label {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-device|="mobile"]:root #settings-tablist {
+    display: none;
+  }
+
+  [data-device|="mobile"]:root [id^="settings-tabpanel"],
+  [data-device|="mobile"]:root [id^="settings-tabpanel"] > * {
+    position: static;
+    height: auto; 
+  }
+
+  [data-device|="mobile"]:root [id^="settings-tabpanel"][aria-hidden="true"] {
+    display: block;
+  }
+
+  [data-device|="mobile"]:root [id^="settings-tabpanel"] > section > h3 {
+    margin: 0;
+    border: 0;
+    padding: .8rem 1.2rem;
+    height: 1.4rem;
+    color: var(--secondary-region-header-foreground-color);
+    background-color: var(--secondary-region-header-background-color);
+    font-size: 1.25rem;
+    line-height: 1.4rem;
+  }
+
+  [id^="settings-tabpanel"] > section > section > h4 {
+    margin-bottom: 1.2rem;
+  }
+}
+
+@media (max-width: 359px) {
+  [data-device|="mobile"]:root #tabpanel-settings > section > div > section > section > h4 {
+    float: none;
+  }
+
+  [data-device|="mobile"]:root #tabpanel-settings > section > div > section > section > ul {
+    margin: .8rem 0 0;
+  }
+}

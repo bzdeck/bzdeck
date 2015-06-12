@@ -1,0 +1,112 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[id|="tabpanel-profile"] article > header {
+  background-color: transparent;
+  background-position: center center;
+  background-size: cover;
+}
+
+[id|="tabpanel-profile"] article > header div {
+  position: relative;
+  color: rgba(255, 255, 255, .9);
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+}
+
+[id|="tabpanel-profile"] article > header [itemprop="image"] {
+  position: absolute;
+  bottom: -2rem;
+  border: .4rem solid #FFF;
+  border-radius: .2rem;
+  background-color: #FFF;
+  box-shadow: 0 0 .1rem rgba(0, 0, 0, .5);
+}
+
+[id|="tabpanel-profile"] article > header h3 {
+  position: absolute;
+  text-shadow: 0 0 .2rem rgba(0, 0, 0, .8);
+}
+
+[id|="tabpanel-profile"] article > header ~ * {
+  overflow: hidden;
+  margin-bottom: .8rem;
+  line-height: 1.5;
+}
+
+[id|="tabpanel-profile"] article dt {
+  float: left;
+  width: 6rem;
+}
+
+[id|="tabpanel-profile"] article dt::after {
+  content: ":";
+}
+
+[id|="tabpanel-profile"] article:not(.self) [data-id|="gravatar"] {
+  display: none;
+}
+
+[id|="tabpanel-profile"] footer [role="status"] {
+  position: absolute;
+  top: calc(50% + 4rem);
+  left: calc(50% - 8rem);
+  width: 16rem;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  [id|="tabpanel-profile"] > section > div {
+    padding: 4rem;
+  }
+
+  [id|="tabpanel-profile"] article > header {
+    margin: -4rem -4rem 4rem;
+  }
+
+  [id|="tabpanel-profile"] article > header div {
+    height: 24rem;
+  }
+
+  [id|="tabpanel-profile"] article > header [itemprop="image"] {
+    left: 4rem;
+    width: 16rem;
+    height: 16rem;
+  }
+
+  [id|="tabpanel-profile"] article > header h3 {
+    bottom: 1.6rem;
+    left: 22.4rem;
+    width: calc(100% - 22.4rem - 4rem);
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [id|="tabpanel-profile"] > section > div {
+    overflow: auto;
+    padding: 2rem;
+    pointer-events: auto;
+  }
+
+  [id|="tabpanel-profile"] article > header {
+    margin: -2rem -2rem 4rem;
+  }
+
+  [id|="tabpanel-profile"] article > header div {
+    height: 14rem;
+  }
+
+  [id|="tabpanel-profile"] article > header [itemprop="image"] {
+    left: 2rem;
+    width: 8rem;
+    height: 8rem;
+  }
+
+  [id|="tabpanel-profile"] article > header h3 {
+    bottom: 1rem;
+    left: 11.6rem;
+    width: calc(100% - 11.6rem - 1.2rem);
+    font-size: 1.6rem;
+  }
+}

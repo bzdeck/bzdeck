@@ -1,0 +1,43 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+@font-face {
+  font-family: FiraSans;
+  font-weight: 300;
+  font-style: italic;
+  src: url(/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.100) format('woff2'),
+       url(/vendor/Fira/fonts/FiraSans-LightItalic.woff?v=4.100) format('woff');
+}
+
+@font-face {
+  font-family: FiraSans;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/vendor/Fira/fonts/FiraSans-Regular.woff2?v=4.100) format('woff2'),
+       url(/vendor/Fira/fonts/FiraSans-Regular.woff?v=4.100) format('woff');
+}
+
+@font-face {
+  font-family: FiraSans;
+  font-weight: 500;
+  font-style: normal;
+  src: url(/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.100) format('woff2'),
+       url(/vendor/Fira/fonts/FiraSans-Medium.woff?v=4.100) format('woff');
+}
+
+@font-face {
+  font-family: FiraMono;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.200) format('woff2'),
+       url(/vendor/Fira/fonts/FiraMono-Regular.woff?v=3.200) format('woff');
+}
+
+@font-face {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  src: url(/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.3.0) format('woff2'),
+       url(/vendor/Font-Awesome/fonts/fontawesome-webfont.woff?v=4.3.0) format('woff');
+}

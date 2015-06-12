@@ -1,0 +1,192 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[id$="vertical-thread"] {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+[id$="vertical-thread"][aria-busy="true"] > * {
+  display: none;
+}
+
+[id$="vertical-thread"] [role="listbox"] {
+  position: absolute;
+  width: 100%;
+  height: auto;
+}
+
+[id$="vertical-thread"] [role="option"] {
+  position: relative;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  padding: 1rem;
+  height: 3.2rem;
+}
+
+[id$="vertical-thread"] [role="option"][data-unread="false"]:not([aria-selected="true"]) {
+  color: inherit;
+  background-color: var(--secondary-region-background-color);
+}
+
+[id$="vertical-thread"] [role="option"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+[id$="vertical-thread"] [itemprop="contributor"] {
+  top: 1rem;
+  left: 1rem;
+  overflow: hidden;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+[id$="vertical-thread"] [itemprop="contributor"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+[id$="vertical-thread"] [itemprop="id"] {
+  top: 1rem;
+  left: 5.2rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+[id$="vertical-thread"] [itemprop="name"] {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+[id$="vertical-thread"] [role="listbox"]:not([aria-activedescendant]) [itemprop="name"],
+[id$="vertical-thread"] [role="option"][aria-selected="false"] [itemprop="name"] {
+  animation-name: none !important;
+}
+
+[id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="name"] {
+  font-weight: 500;
+}
+
+[id$="vertical-thread"] [itemprop="dateModified"] {
+  top: 1rem;
+  right: 3.2rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+[id$="vertical-thread"] [data-field="starred"] {
+  top: .4rem;
+  right: .4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  pointer-events: auto;
+}
+
+[id$="vertical-thread"] [data-field="starred"]::before {
+  margin: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  font-family: FontAwesome;
+  text-align: center;
+}
+
+[id$="vertical-thread"] [data-field="starred"][aria-checked="false"]::before {
+  content: "\F006";
+}
+
+[id$="vertical-thread"] [data-field="starred"][aria-checked="true"]::before {
+  content: "\F005";
+}
+
+.bug-list col[data-id="id"][data-hidden="false"] {
+  width: 6.4rem;
+}
+
+.bug-list col[data-id="summary"][data-hidden="false"] {
+  width: 50%;
+}
+
+.bug-list col:-moz-any([data-id="starred"], [data-id="unread"])[data-hidden="false"] {
+  width: 1.9rem;
+}
+
+.bug-list [role="row"][data-unread="true"] {
+  font-weight: 500;
+}
+
+[data-device|="mobile"]:root .bug-list [role="row"][data-unread="true"] {
+  background-color: transparent !important;
+}
+
+.bug-list [role="columnheader"]:-moz-any([data-id="starred"], [data-id="unread"]) label {
+  padding: 0;
+}
+
+.bug-list [role="columnheader"] label,
+.bug-list [role="checkbox"] {
+  background-position: center;
+  background-size: 72%;
+  background-repeat: no-repeat;
+}
+
+.bug-list [role="columnheader"][data-type="boolean"] label::before,
+.bug-list [role="gridcell"][data-type="boolean"] [role="checkbox"]::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  text-indent: 0;
+}
+
+.bug-list [role="columnheader"][data-type="boolean"] label::before {
+  line-height: 1.8rem;
+}
+
+.bug-list [role="gridcell"][data-type="boolean"] [role="checkbox"]::before {
+  line-height: 2.6rem;
+}
+
+.bug-list [role="gridcell"][data-type="boolean"] [aria-checked="false"]::before {
+  font-family: FiraSans;
+  content: "\2022";
+}
+
+.bug-list [role="columnheader"][data-id="starred"] label::before,
+.bug-list [role="gridcell"][data-id="starred"] [aria-checked="true"]::before {
+  font-family: FontAwesome;
+  content: "\F005";
+}
+
+.bug-list [role="columnheader"][data-id="unread"] label::before,
+.bug-list [role="gridcell"][data-id="unread"] [aria-checked="true"]::before {
+  font-family: FontAwesome;
+  content: "\F0A3";
+}
+
+@media (max-width: 1023px) {
+  [data-device|="mobile"]:root [id$="vertical-thread"] [role="option"][data-unread="false"] {
+    color: inherit;
+    background-color: var(--secondary-region-background-color);
+  }
+}

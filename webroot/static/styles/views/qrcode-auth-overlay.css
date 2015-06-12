@@ -1,0 +1,110 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#qrcode-auth-overlay {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  z-index: 300;
+  width: 100%;
+  height: 100%;
+  background-color: var(--application-background-color);
+  transition: left .4s;
+  transform: translateZ(0); /* Get hardware acceleration? */
+}
+
+#qrcode-auth-overlay[aria-hidden="true"] {
+  display: flex;
+  left: 100%;
+}
+
+#qrcode-auth-overlay header {
+  display: flex;
+  position: relative;
+  flex: 0 0 auto;
+  height: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+#qrcode-auth-overlay header > :not(h2) {
+  flex: none;
+}
+
+#qrcode-auth-overlay header > * {
+  height: 4rem;
+}
+
+#qrcode-auth-overlay header .banner-nav-button {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  width: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: transparent;
+}
+
+#qrcode-auth-overlay header .banner-nav-button:active {
+  opacity: .8;
+}
+
+#qrcode-auth-overlay header .banner-nav-button::before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  line-height: 4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  content: "\F053"; /* back icon */
+}
+
+#qrcode-auth-overlay header h2 {
+  flex: auto;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-right: 4rem; /* Same width as the nav button */
+  padding: 0;
+  font-size: 2rem;
+  line-height: 4rem;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#qrcode-auth-overlay div {
+  display: flex;
+  margin-bottom: 4rem; /* Same as the <header>'s height, so the <video> will be centered almost vertically */
+  flex: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#qrcode-auth-overlay p {
+  margin: 1.6rem;
+  max-width: 40rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+#qrcode-auth-overlay video {
+  display: block;
+  box-sizing: border-box;
+  outline: 0;
+  border-radius: .8rem;
+  width: 16rem;
+  height: 16rem;
+  object-fit: cover;
+}
+
+#qrcode-auth-overlay video:not([src]) {
+  border: .4rem dashed var(--application-foreground-color);
+}

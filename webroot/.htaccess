@@ -41,7 +41,8 @@ RewriteRule ^(?:profile)/.+$ / [L]
 
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
-RewriteRule ^static/scripts/combined\.js$ /components/combine-scripts.php [L]
+RewriteRule ^static/scripts/combined\.js$ /components/combine-static-files.php?type=js [L]
+RewriteRule ^static/styles/combined\.css$ /components/combine-static-files.php?type=css [L]
 
 # Performance: remove ETag
 FileETag None

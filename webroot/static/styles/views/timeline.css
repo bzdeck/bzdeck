@@ -1,0 +1,76 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-timeline-wrapper {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+.bug-timeline {
+  flex: auto;
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.bug-timeline .bug-summary {
+  position: static;
+  margin: 1.2rem 1.2rem 0;
+  line-height: 1.4;
+  -moz-user-select: text;
+}
+
+[data-device|="mobile"]:root :not(#home-preview-bug-timeline-wrapper) > .bug-timeline .bug-summary {
+  margin-top: 5.2rem !important; /* Bug details */
+}
+
+.bug-timeline .comments-wrapper {
+  display: flex;
+}
+
+[data-ui-timeline-sort-order="ascending"]:root .bug-timeline .comments-wrapper {
+  flex-direction: column;
+}
+
+[data-ui-timeline-sort-order="descending"]:root .bug-timeline .comments-wrapper {
+  flex-direction: column-reverse;
+}
+
+.bug-timeline .read-comments-expander {
+  display: block;
+  position: relative;
+  margin: 1.2rem 1.2rem 0;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  border-radius: .2rem;
+  padding: 1.2rem;
+  height: auto;
+  color: var(--content-foreground-color);
+  background-color: var(--content-background-color);
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  [data-device="desktop"]:root .bug-timeline-wrapper[id^="search"] {
+    left: 32%;
+  }
+
+  .bug-timeline .bug-summary {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .bug-timeline .bug-summary {
+    font-size: 1.5rem;
+  }
+
+  [data-device|="mobile"]:root .bug-timeline .read-comments-expander {
+    margin: .8rem .8rem 0;
+  }
+}

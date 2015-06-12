@@ -1,0 +1,759 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[id|="tabpanel-details"][role="tabpanel"] > article > header {
+  display: flex !important; /* Show the header */
+}
+
+[itemtype$="Bug"][data-error-code] > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+[itemtype$="Bug"][data-error-code] > div > [role="status"] {
+  margin: 1.6rem;
+  max-width: 80rem;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+[itemtype$="Bug"][data-error-code] > div > [role="status"]::before {
+  display: block;
+  height: 8.8rem;
+  font-family: FontAwesome;
+  font-size: 8rem;
+  line-height: 8rem;
+  color: var(--disabled-button-foreground-color);
+  content: '\F071';
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  border-width: 0 0 .1rem 0;
+  width: 100%;
+  background-color: var(--region-background-color);
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
+  height: 3.6rem;
+}
+
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] {
+  height: 4rem;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"] {
+  float: none;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  margin: 0;
+  border-style: solid;
+  border-radius: 0;
+  padding: .8rem;
+  font-size: 1.25rem;
+  line-height: 2rem;
+  text-align: center;
+  transition: color .2s;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] {
+  border-width: 0 0 .4rem;
+  border-color: var(--base-accent-color-1);
+  color: var(--base-accent-color-1);
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] {
+  border-width: 0 0 .1rem;
+  border-color: var(--tab-border-color);
+  color: var(--tab-foreground-color);
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"]:hover {
+  color: var(--hovered-tab-foreground-color);
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-hidden="true"] {
+  display: none;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
+  display: inline-block;
+  position: static;
+  width: auto;
+  height: auto;
+  vertical-align: middle;
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
+  line-height: 2rem;
+}
+
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
+  line-height: 2.4rem;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
+  display: inline-block;
+  margin-right: .4rem;
+  font-family: FontAwesome;
+  vertical-align: top;
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.8rem;
+  line-height: 2rem;
+}
+
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 2.2rem;
+  line-height: 2.4rem;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-timeline"] label::before {
+  content: "\F086";
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-info"] label::before {
+  content: "\F05A";
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-participants"] label::before {
+  content: "\F0C0";
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-attachments"] label::before {
+  content: "\F0C5";
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-history"] label::before {
+  content: "\F017";
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] ~ div {
+  position: absolute;
+  bottom: 0;
+}
+
+[itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
+  width: 100%;
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
+  top: 3.6rem; /* A space for the tabs */
+}
+
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
+  top: 0;
+}
+
+[data-device|="mobile"]:root [itemtype$="Bug"] .bug-attachments > section,
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > .scrollable-area-content > :first-child {
+  padding-top: 4rem;
+}
+
+.bug-info,
+.bug-participants {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-device="desktop"]:root .bug-info {
+  border-right: .1rem solid var(--secondary-region-border-color);
+}
+
+[data-device="desktop"]:root .bug-participants {
+  border-left: .1rem solid var(--secondary-region-border-color);
+}
+
+.bug-fieldset:not(:first-of-type) {
+  margin: 1.2rem 0;
+}
+
+.bug-fieldset > header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: .4rem 1.2rem; /* Need some right padding for the scrollbar  */
+  height: 1.6rem;
+  color: var(--secondary-region-header-foreground-color);
+  background-color: var(--secondary-region-header-background-color);
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+}
+
+.bug-info .bug-fieldset > header {
+  margin-bottom: 1.2rem;
+}
+
+.bug-fieldset > header h3 {
+  flex: auto;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+}
+
+.bug-fieldset > header [role="button"][aria-pressed="false"] {
+  color: inherit;
+  background-color: transparent;
+}
+
+.bug-fieldset > header [role="button"][aria-pressed="true"] {
+  color: var(--alternate-button-foreground-color);
+  background-color: transparent;
+  opacity: 1;
+}
+
+.bug-fieldset dl {
+  padding: .8rem 1.6rem;
+}
+
+.bug-fieldset [data-field] > ul {
+  padding: 0 .4rem;
+}
+
+.bug-fieldset [data-field] {
+  min-height: 2rem;
+}
+
+.bug-info .bug-fieldset [data-field] {
+  margin: .8rem 1.6rem;
+  padding-left: 12rem;
+}
+
+.bug-fieldset [data-field] h4 {
+  font-weight: 500;
+}
+
+.bug-info .bug-fieldset [data-field] h4 {
+  float: left;
+  margin-left: -12rem;
+  line-height: 2rem;
+}
+
+.bug-fieldset [data-field] > :-moz-any(time, a) {
+  display: inline-block;
+  margin: 0 .8rem;
+  line-height: 2rem;
+}
+
+.bug-fieldset dt,
+.bug-fieldset dd,
+.bug-fieldset [data-field] > ul > li {
+  padding: .4rem 0;
+  min-height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.bug-fieldset dt {
+  width: 10rem;
+  height: 1.6rem;
+  font-weight: 500;
+}
+
+.bug-fieldset dd {
+  margin: -2.4rem 0 0 11rem;
+  width: calc(100% - 11rem);
+}
+
+.bug-fieldset [role="button"] {
+  flex: none;
+}
+
+.bug-fieldset .iconic[role="button"] {
+  position: relative;
+  margin-left: .4rem;
+  border: 0;
+  padding: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  text-indent: -99999px;
+  opacity: 1;
+  transition: opacity .2s;
+}
+
+.bug-fieldset .iconic[role="button"]:hover {
+  opacity: .8;
+}
+
+.bug-fieldset .iconic[role="button"]::after {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-family: FontAwesome;
+  line-height: 1.6rem;
+  text-indent: 0;
+  text-align: center;
+}
+
+.bug-fieldset .iconic[role="button"][data-command="edit"]::after {
+  content: '\F040'; /* pencil */
+}
+
+.bug-fieldset .iconic[role="button"][data-command="remove"]::after {
+  content: '\F00D'; /* close */
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable] {
+  display: block;
+  outline: 0 !important;
+  box-sizing: border-box;
+  border-color: transparent;
+  padding: .2rem .8rem;
+  width: 100%;
+  height: auto;
+  min-height: 1.25em; /* relative em unit */
+  background-color: transparent;
+  box-shadow: none !important;
+  line-height: 1.25em;
+  transition: all .2s;
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:not([aria-readonly="true"])::after {
+  font-family: FontAwesome;
+  font-size: 75%;
+  opacity: .5;
+  content: '\00A0\00A0\f040'; /* nbsp + nbsp + pencil */
+  transition: all .2s;
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:hover {
+  border-color: rgba(0, 0, 0, .1);
+  background-color: rgba(255,255,255,.4);
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:-moz-any(:focus, :active) {
+  border-color: rgba(0, 0, 0, .2);
+  color: var(--content-foreground-color);
+  background-color: rgba(255,255,255,.8);
+}
+
+:-moz-any(.bug-fieldset, .bug-summary) :not([role="combobox"]) > [contenteditable]:-moz-any(:focus, :active)::after {
+  opacity: 0;
+}
+
+.bug-fieldset [role="combobox"]:not([aria-hidden="true"]) {
+  display: block !important;
+  width: 100%;
+}
+
+.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="searchbox"] {
+  opacity: 1;
+}
+
+.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="button"] {
+  display: none;
+}
+
+[data-device="desktop"]:root .bug-info [role="combobox"][aria-readonly="true"] [role="searchbox"] {
+  transition: all .4s;
+}
+
+[data-device="desktop"]:root .bug-info:not(:hover) [role="combobox"][aria-readonly="true"] [role="searchbox"]:not(:focus) {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.bug-fieldset [role="combobox"][aria-readonly="true"] .listbox-outer {
+  width: 100%;
+}
+
+.bug-fieldset [role="link"][itemprop="see_also"]:after {
+  content: "\000A"; /* whitespace */
+  white-space: pre; /* = <br> */
+}
+
+.bug-fieldset :not([role="combobox"]) [role="button"]:not(.iconic) {
+  overflow: hidden;
+  border-width: 0;
+  padding: .2rem .4rem;
+  max-width: 100%;
+  height: 1.4rem;
+  color: inherit !important; /* TEMP */
+  background: transparent none !important; /* TEMP */
+  line-height: 1.4rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bug-fieldset [itemprop="flag"] [itemprop="image"] {
+  display: inline-block;
+  margin-right: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+:-moz-any(.bug-attachments, .bug-history) h3 {
+  position: absolute;
+  left: -9999rem;
+}
+
+.bug-attachments > section {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.bug-attachments .list {
+  flex: auto;
+  flex-direction: column;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--grid-background-color);
+}
+
+.bug-attachments .list header {
+  flex: none;
+  display: flex;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--grid-border-color);
+  padding: .8rem 1rem;
+  background-color: var(--grid-header-background-color);
+}
+
+.bug-attachments .list header h4 {
+  flex: auto;
+}
+
+.bug-attachments .list header [role="checkbox"]::before {
+  font-family: FontAwesome;
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="false"]::before {
+  content: "\F096";
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="true"]::before {
+  color: var(--base-accent-color-1);
+  content: '\F14A';
+}
+
+.bug-attachments .list header ~ * {
+  flex: auto;
+  overflow: hidden;
+}
+
+.bug-attachments [role="option"] {
+  position: relative;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  padding: 1rem;
+  height: 3.2rem;
+}
+
+.bug-attachments [role="option"][aria-disabled="true"] {
+  display: none;
+}
+
+.bug-attachments [role="option"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+.bug-attachments [role="option"] [itemprop="creator"] {
+  top: 1rem;
+  left: 1rem;
+  overflow: hidden;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+.bug-attachments [role="option"] [itemprop="creator"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.bug-attachments [role="option"] [itemprop="id"] {
+  top: 1rem;
+  left: 5.2rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="description"] {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"] ~ [itemprop="description"] {
+  right: 4.8rem; /* Add some space for the obsolete and file type icons */
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="false"] ~ [itemprop="description"] {
+  right: 3.2rem; /* Add some space for the file type icon only */
+}
+
+.bug-attachments [role="option"] [itemprop="dateModified"] {
+  top: 1rem;
+  right: 1em;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"],
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  width: 1.6rem;
+  height: 1.6rem;
+  bottom: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"] {
+  right: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  right: 2.8rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"]::before,
+.bug-attachments [role="option"] [itemprop="is_obsolete"]::before {
+  display: block;
+  top: 0;
+  left: 0;
+  font-family: FontAwesome;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  text-align: center;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"]::before {
+  content: '\F014';
+}
+
+.bug-attachments .content {
+  position: relative;
+  overflow: hidden;
+  border-width: 0 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  width: 68%;
+}
+
+.bug-attachments .content > .scrollable-area-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+[data-device|="mobile"]:root .bug-history > section {
+  padding: 0;
+}
+
+[data-device|="mobile"]:root .bug-history :-moz-any(table, tbody, tr, th, td) {
+  display: block;
+}
+
+.bug-history table {
+  border-collapse: collapse;
+  background-color: transparent;
+  table-layout: fixed;
+}
+
+[data-device="desktop"]:root .bug-history table {
+  margin: 1.2rem;
+  width: calc(100% - 2.4rem);
+}
+
+[data-device|="mobile"]:root .bug-history table {
+  margin: 0;
+  width: 100%;
+}
+
+[data-device|="mobile"]:root .bug-history thead {
+  display: none;
+}
+
+.bug-history thead th {
+  width: 20%;
+}
+
+.bug-history tr {
+  background-color: var(--grid-background-color);
+}
+
+.bug-history :-moz-any(th, td) {
+  border-width: .1rem;
+  border-style: solid;
+  padding: .2rem .4rem;
+  line-height: 1.5;
+  text-align: left;
+  vertical-align: top;
+}
+
+[data-device|="mobile"]:root .bug-history th {
+  border-width: 0;
+}
+
+[data-device|="mobile"]:root .bug-history td {
+  border-width: 0 0 .1rem;
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="who"]::before {
+  content: "Who: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="what"]::before {
+  content: "What: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="removed"]::before {
+  content: "Removed: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="added"]::before {
+  content: "Added: ";
+}
+
+[data-bug-id]:-moz-any([data-status="RESOLVED"], [data-status="VERIFIED"], [data-status="CLOSED"]) {
+  text-decoration: line-through;
+}
+
+@media (min-width: 1024px) {
+  [data-device="desktop"]:root .bug-info[id|="bug"],
+  [data-device="desktop"]:root .bug-info[id^="search"] {
+    left: 0;
+    width: 32%;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div {
+    margin-top: -3.6rem;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
+    left: calc(50% - 36rem / 2);
+    width: 36rem;
+    background: transparent;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] {
+    margin: .6rem .2rem;
+    border-width: 0;
+    border-radius: .4rem;
+    padding: 0;
+    height: 2.4rem;
+    line-height: 2.4rem;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] {
+    color: var(--secondary-application-header-foreground-color);
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"]:hover {
+    color: var(--secondary-region-header-foreground-color);
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] {
+    color: var(--secondary-region-header-foreground-color);
+    background-color: var(--secondary-region-header-background-color);
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
+    display: none;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] {
+    left: 0;
+    right: 20rem;
+    width: auto;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [id$="tabpanel-timeline"] {
+    left: 32%;
+  }
+
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ :-moz-any(.bug-info, .bug-participants) {
+    top: 3.6rem;
+  }
+
+  [data-device|="mobile"]:root [role="banner"] [role="toolbar"] {
+    right: auto;
+    width: 8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history tr {
+    margin: 1.2rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
+    padding: .4rem 1.2rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-device="desktop"]:root .bug-info[id|="bug"],
+  [data-device="desktop"]:root .bug-participants {
+    border-width: 0;
+  }
+
+  [data-device|="mobile"]:root [itemtype$="Bug"] > header > [role="toolbar"] ul.nav {
+    display: none;
+  }
+
+  [itemtype$="Bug"] > div > [role="tablist"] {
+    transition: top .4s;
+  }
+
+  [itemtype$="Bug"] > div > [role="tablist"][aria-hidden="true"] {
+    top: -4rem;
+    transition-duration: .8s;
+  }
+
+  [data-device|="mobile"]:root .bug-attachments .content {
+    display: none;
+  }
+
+  [data-device|="mobile"]:root .bug-history tr {
+    margin: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
+    padding: .4rem .8rem;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
+    overflow: hidden;
+    width: 2.4rem; /* Show icons only */
+  }
+}
+
+@media (max-width: 639px) {
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
+    overflow: hidden;
+    width: 2.4rem; /* Show icons only */
+  }
+}

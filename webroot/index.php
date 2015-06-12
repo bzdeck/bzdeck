@@ -2,6 +2,7 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<?php include_once($_SERVER['DOCUMENT_ROOT'] . '/components/output-link-elements.inc.php'); ?>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -23,10 +24,9 @@
     <meta name="twitter:url" content="https://www.bzdeck.com/">
     <link rel="canonical" href="https://www.bzdeck.com/">
     <link rel="publisher" href="https://plus.google.com/+BzDeck">
-    <link rel="stylesheet" type="text/css" media="screen,tv" href="/vendor/flaretail.js/styles/widgets.css">
-    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/base.css">
-    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/themes/light.css" title="Light">
-    <link rel="stylesheet" type="text/css" media="screen,tv" href="/static/styles/themes/dark.css" title="Dark">
+<?php output_link_elements('css') ?>
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/styles/themes/light.css" title="Light">
+    <link rel="alternate stylesheet" type="text/css" media="screen" href="/static/styles/themes/dark.css" title="Dark">
     <title>BzDeck</title>
     <template id="tabpanel-search-template">
       <div id="tabpanel-search-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-search-TID">
@@ -1072,6 +1072,6 @@
       <meta itemprop="browserRequirements" content="Firefox Developer Edition">
       <meta itemprop="browserRequirements" content="Firefox Nightly">
     </div>
-<?php include_once($_SERVER['DOCUMENT_ROOT'] . '/components/output-script-elements.inc.php'); ?>
+<?php output_link_elements('js') ?>
   </body>
 </html>

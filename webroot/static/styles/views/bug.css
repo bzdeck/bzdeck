@@ -1,0 +1,127 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[itemtype$="Bug"] [role="toolbar"] {
+  flex: none;
+  height: 3.2rem;
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] header [role="toolbar"] {
+  margin: .2rem 0;
+}
+
+[itemtype$="Bug"] [role="toolbar"] ul:not([role="menu"]) {
+  display: inline-flex;
+  height: 2.2rem;
+}
+
+[itemtype$="Bug"] [role="toolbar"] ul[role="none"] li {
+  display: inline-block;
+  vertical-align: top;
+}
+
+[itemtype$="Bug"] [role="toolbar"] .iconic {
+  position: relative;
+  overflow: hidden;
+  box-sizing: content-box;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  background: transparent;
+  line-height: 1;
+  text-indent: -99999px;
+  vertical-align: top;
+}
+
+[itemtype$="Bug"] > header {
+  box-sizing: border-box;
+  height: 3.6rem;
+  border-color: var(--region-header-border-color);
+  color: var(--region-header-foreground-color);
+  background-color: var(--region-header-background-color);
+}
+
+[itemtype$="Bug"] > header > :-moz-any(h2, h3) {
+  flex: auto;
+  overflow: hidden;
+  padding: 0 1.2rem;
+  font-size: 1.6rem;
+  line-height: 3.6rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
+[itemtype$="Bug"] > header > [role="toolbar"] .iconic {
+  border-color: var(--alternate-button-border-color);
+  color: var(--alternate-button-foreground-color);
+}
+
+[itemtype$="Bug"] > header > [role="toolbar"] .iconic:active {
+  color: var(--alternate-pressed-button-foreground-color);
+}
+
+[itemtype$="Bug"] > header > [role="toolbar"] .iconic[aria-disabled="true"] {
+  color: var(--alternate-disabled-button-foreground-color);
+}
+
+[itemtype$="Bug"] > header > [role="toolbar"] [data-command="copy-link"],
+[itemtype$="Bug"] > header > [role="toolbar"] [data-command="copy-link"] label {
+  -moz-user-select: text; /* Enable click-to-copy */
+}
+
+[itemtype$="Bug"] [role="toolbar"] .iconic::before {
+  display: inline-block;
+  position: absolute;
+  top: calc(50% - 1.6rem);
+  left: calc(50% - 1.6rem);
+  margin: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-size: 2rem;
+  line-height: 3.2rem;
+  font-family: FontAwesome;
+  text-align: center;
+  text-indent: 0;
+  vertical-align: top;
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="false"]::before {
+  content: '\F006';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="true"]::before {
+  content: '\F005';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="reply"]::before {
+  content: '\F112';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="show-details"]::before {
+  content: '\F08E';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="show-menu"]::before {
+  content: '\F142';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="nav-back"]::before {
+  content: '\F053';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="nav-forward"]::before {
+  content: '\F054';
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="show-basic-search-pane"]::before {
+  content: '\F002';
+}
+
+[itemtype$="Bug"] [role="toolbar"] > [role="menu"] {
+  position: absolute;
+  top: calc(100% - .4rem);
+  right: .4rem;
+}

@@ -1,0 +1,259 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[role="banner"] {
+  position: fixed;
+  width: 100%;
+  height: 4rem;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-device|="mobile"]:root [role="banner"] {
+  height: 0;
+}
+
+[role="banner"] h1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  width: 4rem;
+  height: 4rem;
+  background-color: transparent;
+  background-image: url(/static/images/logo/icon-256-white.png);
+  background-size: 2.8rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-indent: -99999px;
+}
+
+[role="banner"] h1:active {
+  background-color: transparent !important;
+}
+
+[role="banner"] [role="toolbar"] {
+  position: absolute;
+  height: 4rem;
+}
+
+[data-device="desktop"]:root [role="banner"] [role="toolbar"] {
+  right: 0;
+  left: 4rem;
+}
+
+#toolbar-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 4rem;
+}
+
+[data-device|="mobile"]:root #toolbar-buttons {
+  width: 4rem;
+}
+
+[data-device|="mobile"][data-quicksearch]:root #toolbar-buttons {
+  left: 0;
+  width: auto;
+}
+
+#toolbar-buttons > li {
+  float: right;
+}
+
+#toolbar-buttons > li:first-of-type {
+  width: 4rem;
+  height: 4rem;
+}
+
+[data-device|="mobile"]:root #toolbar-buttons > li:first-of-type {
+  display: none;
+}
+
+#main-menu--app {
+  overflow: hidden;
+  padding: 0;
+  width: 4rem;
+  height: 4rem;
+}
+
+#main-menu--app label {
+  width: 100%;
+  height: 100%;
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 64, 128, 0);
+  background-position: center;
+  background-size: 2.4rem;
+  background-repeat: no-repeat;
+  text-indent: -9999rem;
+}
+
+#main-menu--app label[style] {
+  background-size: 2.8rem;
+}
+
+#main-menu--app[aria-selected="true"] {
+  background-color: transparent;
+}
+
+#main-menu--app[aria-selected="true"] label:not([style]) {
+  background-image: -moz-image-rect(var(--base-sprite-image), 128, 64, 192, 0);
+}
+
+#main-menu--app-menu {
+  z-index: 100;
+  right: 0;
+  margin: .4rem;
+}
+
+#main-menu--app-menu::before {
+  display: block;
+  position: absolute;
+  top: -1.6rem;
+  right: .8rem;
+  margin-left: -.4rem;
+  border-width: .8rem;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom-color: var(--control-background-color);
+  width: 0;
+  height: 0;
+  content: "";
+}
+
+#main-menu--app--account {
+  height: auto;
+  opacity: 1;
+}
+
+[data-device|="mobile"]:root #main-menu--app--account {
+  padding: .4rem .8rem;
+}
+
+#main-menu--app--account label {
+  color: var(--control-foreground-color);
+  font-size: 1.1rem;
+  line-height: 1.6rem;
+}
+
+[data-device="desktop"]:root #main-menu--app--account label {
+  background-image: none !important;
+}
+
+#main-menu--app--account label strong {
+  font-size: 1.2rem;
+}
+
+#quicksearch {
+  position: relative;
+}
+
+[data-device="desktop"]:root #quicksearch {
+  margin: .6rem 0;
+  width: 40rem;
+  height: 2.8rem; /* same as the logo */
+}
+
+[data-device|="mobile"]:root #quicksearch {
+  margin: .6rem;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+[data-device|="mobile"][data-quicksearch]:root #quicksearch {
+  width: calc(100% - 1.2rem);
+}
+
+#quicksearch [role="searchbox"] {
+  position: absolute;
+  box-sizing: border-box;
+  border-width: .1rem;
+  border-color: var(--application-header-background-color);
+  padding: .4rem 3.2rem .4rem .8rem;
+  width: 100%;
+  height: 100%;
+  font-size: 1.25rem;
+}
+
+[data-device|="mobile"]:root #quicksearch [role="searchbox"] {
+  display: none;
+  line-height: 2rem;
+}
+
+[data-device|="mobile"][data-quicksearch]:root #quicksearch [role="searchbox"] {
+  display: block;
+}
+
+#quicksearch [role="button"] {
+  position: absolute;
+  overflow: hidden;
+  right: .4rem;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent !important;
+  text-indent: -9999rem;
+}
+
+#quicksearch [role="button"]::after {
+  display: block;
+  width: 100%;
+  height: 100%;
+  float: right;
+  font-family: FontAwesome;
+  text-align: center;
+  text-indent: 0;
+  content: "\F002";
+}
+
+[data-device="desktop"]:root #quicksearch [role="button"] {
+  top: .2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+[data-device="desktop"]:root #quicksearch [role="button"]::after {
+  font-size: 1.6rem;
+  line-height: 2.2rem;
+}
+
+[data-device|="mobile"]:root #quicksearch [role="button"] {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+[data-device|="mobile"]:root #quicksearch [role="button"]::after {
+  font-size: 2rem;
+  line-height: 2.6rem;
+}
+
+[data-device|="mobile"]:root:not([data-quicksearch]) #quicksearch [role="button"]::after {
+  color: var(--application-header-foreground-color);
+}
+
+#quicksearch-dropdown {
+  right: 0;
+}
+
+[data-device="desktop"]:root #quicksearch-dropdown {
+  top: 2.8rem;
+  width: 40rem;
+}
+
+[data-device|="mobile"]:root #quicksearch-dropdown {
+  top: 2.8rem;
+  width: 100%;
+}
+
+[data-device="desktop"]:root #quicksearch-dropdown [role="menuitem"] {
+  padding: 0 1.2rem;
+}
+
+[data-device|="mobile"]:root #quicksearch-dropdown [role="menuitem"] {
+  padding: .4rem 1.2rem;
+  font-size: 1.25rem;
+}
+

@@ -1,0 +1,190 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#sidebar {
+  position: absolute;
+  z-index: 200;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-device="desktop"]:root #sidebar {
+  top: 4rem;
+  bottom: 0;
+  width: 16rem;
+  border-width: 0 .1rem 0 0;
+  border-style: solid;
+  border-color: var(--application-header-border-color);
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-device|="mobile"]:root #sidebar {
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .3) !important;
+  transition: background-color .2s ease .4s; /* Set a delay for the transitioning sidebar */
+  pointer-events: auto;
+}
+
+[data-device|="mobile"]:root #sidebar[aria-hidden="true"] {
+  display: block;
+  background-color: rgba(0, 0, 0, 0) !important;
+  pointer-events: none;
+}
+
+:root:not([data-current-tab="home"]) #sidebar {
+  display: none !important;
+}
+
+#sidebar > div {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+}
+
+[data-device="desktop"]:root #sidebar > div {
+  right: 0;
+  left: 0;
+}
+
+[data-device|="mobile"]:root #sidebar > div {
+  right: auto;
+  left: 0;
+  width: calc(320px - 4rem);
+  background-color: var(--region-background-color);
+  transition: left .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+}
+
+[data-device|="mobile"]:root #sidebar[aria-hidden="true"] > div {
+  left: -100%;
+}
+
+#sidebar h2 {
+  position: absolute;
+  left: -9999rem;
+}
+
+#sidebar-folder-list {
+  background: transparent;
+}
+
+[data-device="desktop"]:root #sidebar-folders {
+  margin: .8rem 0;
+}
+
+[data-device="desktop"]:root #sidebar [role="option"] {
+  border-width: 0 0 0 .4rem;
+  border-style: solid;
+  border-color: transparent;
+  padding: .4rem 1.2rem;
+  background-color: transparent;
+  font-size: 1.25rem;
+  transition: all .2s;
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"] {
+  color: var(--secondary-application-header-foreground-color);
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
+  border-color: var(--highlighted-button-border-color);
+  color: var(--region-header-foreground-color);
+}
+
+[data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"]:hover,
+[data-current-tab="home"][data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
+  background-color: var(--region-header-background-color);
+}
+
+[data-device|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {
+  margin: .4rem 0;
+}
+
+[data-device|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
+  padding: .4rem 1.2rem;
+  height: 2.4rem;
+  font-size: 1.4rem;
+  line-height: 2.4rem;
+}
+
+#sidebar-folder-list [role="option"] label span {
+  display: inline-block;
+  position: relative;
+  float: right;
+  border-radius: 1rem;
+  padding: .4rem;
+  min-width: 1rem;
+  height: 1rem;
+  color: var(--control-foreground-color);
+  background-color: var(--control-background-color);
+  font-size: 1.1rem;
+  line-height: 1;
+  text-align: center;
+}
+
+[data-device="desktop"]:root #sidebar-folder-list [role="option"] label span {
+  top: -1.8rem;
+}
+
+[data-device|="mobile"]:root #sidebar-folder-list [role="option"] label span {
+  top: -2rem;
+}
+
+[data-device|="mobile"]:root #sidebar [role="menuitem"][aria-selected="true"] {
+  color: inherit;
+  background-color: transparent;
+}
+
+[data-device|="mobile"]:root #sidebar [role="option"]:last-of-type,
+[data-device|="mobile"]:root #sidebar [role="none"]:last-of-type [role="menuitem"],
+[data-device|="mobile"]:root #sidebar-account #main-menu--app--account {
+  border-bottom-width: 0;
+}
+
+[data-device|="mobile"]:root #sidebar-account {
+  background-position: center center;
+  background-size: cover;
+}
+
+[data-device|="mobile"]:root #sidebar-account h2 {
+  position: absolute;
+  left: -9999rem;
+}
+
+[data-device|="mobile"]:root #sidebar-account #main-menu--app--account {
+  padding: 1.2rem;
+  height: auto;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+}
+
+[data-device|="mobile"]:root #sidebar-account #main-menu--app--account label {
+  padding-left: 4rem;
+  color: rgba(255, 255, 255, .9);
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
+  background-repeat: no-repeat;
+  background-size: contain;
+  text-shadow: 0 0 .1rem rgba(0, 0, 0, .6);
+}
+
+[data-device|="mobile"]:root #sidebar-menu {
+  border-width: .1rem 0 0;
+  border-style: solid;
+  border-color: var(--region-border-color);
+}
+
+[data-device|="mobile"]:root #sidebar-menu #main-menu--app-menu {
+  position: relative;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+[data-device|="mobile"]:root #sidebar-menu #main-menu--app-menu::before,
+[data-device|="mobile"]:root #sidebar-menu [role="separator"] {
+  display: none;
+}
+

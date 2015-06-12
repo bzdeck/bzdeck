@@ -3,8 +3,47 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// For each section, base.js should go first
+/*
+ * Stylesheets
+ */
+$styles = [
+  // Vendor
+  '/vendor/flaretail.js/styles/widgets.css',
+  // General
+  '/static/styles/fonts.css',
+  '/static/styles/base.css',
+  '/static/styles/widgets.css',
+  '/static/styles/animations.css',
+  // Views
+  '/static/styles/views/app-body.css',
+  '/static/styles/views/attachment-page.css',
+  '/static/styles/views/attachment.css',
+  '/static/styles/views/bug-comment-form.css',
+  '/static/styles/views/bug-details.css',
+  '/static/styles/views/bug-participant-list.css',
+  '/static/styles/views/bug-preview.css',
+  '/static/styles/views/bug.css',
+  '/static/styles/views/header.css',
+  '/static/styles/views/home.css',
+  '/static/styles/views/login-form.css',
+  '/static/styles/views/main.css',
+  '/static/styles/views/person-finder.css',
+  '/static/styles/views/profile-page.css',
+  '/static/styles/views/qrcode-auth-overlay.css',
+  '/static/styles/views/search-page.css',
+  '/static/styles/views/settings-page.css',
+  '/static/styles/views/sidebar.css',
+  '/static/styles/views/thread.css',
+  '/static/styles/views/timeline.css',
+  '/static/styles/views/timeline-entry.css',
+  '/static/styles/views/tooltip.css',
+  // Themes cannot go here, because those require the title attribute on <link>
+];
 
+/*
+ * Scripts
+ * For each section, base.js should go first
+ */
 $scripts = [
   // Vendor
   '/vendor/JavaScript-MD5/scripts/md5.min.js',

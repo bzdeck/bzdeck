@@ -1,0 +1,433 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-timeline [itemprop="comment"] {
+  position: relative;
+  margin: 1.2rem 1.2rem 0;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  border-radius: .2rem;
+  color: var(--content-foreground-color);
+  background-color: var(--content-background-color);
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] {
+  display: block;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] + [itemprop="comment"][aria-expanded="false"] {
+  margin-top: -.1rem;
+}
+
+.bug-timeline [itemprop="comment"]:focus {
+  position: relative;
+  z-index: 10; /* Show all borders */
+  border-color: var(--base-accent-color-1);
+}
+
+.bug-timeline [itemprop="comment"] > * {
+  padding: 1.2rem;
+}
+
+.bug-timeline [itemprop="comment"] header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: .2rem; /* Same as the comment box */
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header {
+  background-color: var(--content-background-color-alpha); /* Because of position: sticky, the comment text go under the header */
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] :not(header) {
+  pointer-events: none !important; /* Only the <header> should be clickable */
+}
+
+.bug-timeline [itemprop="comment"] header .meta {
+  flex: auto;
+  overflow: hidden;
+  min-height: 4rem;
+  font-size: 1.1rem;
+  line-height: 1.5rem;
+  pointer-events: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header .meta {
+  display: flex;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] {
+  position: relative;
+  z-index: 10;
+  line-height: 1.25;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"],
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="datePublished"] {
+  display: inline-block;
+  float: left;
+  clear: both;
+  padding-left: 4.8rem;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] {
+  flex: auto;
+  padding-right: .8rem;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
+  color: #FCFCFC;
+  font-size: 2.4rem;
+  line-height: 4rem;
+  text-align: center;
+  pointer-events: auto; /* Enable clicks to show the profile page */
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="name"] {
+  display: inline-block;
+  overflow: hidden;
+  margin-top: .2rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] .roles {
+  display: inline-block;
+  margin: 0 0 .4rem .4rem;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="role"] {
+  display: inline-block;
+  margin-left: .4rem;
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--button-border-color);
+  border-radius: .4rem;
+  padding: .1rem .4rem;
+  font-size: 1.1rem;
+  line-height: 1.5rem;
+  color: var(--disabled-button-foreground-color);
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="datePublished"] {
+  pointer-events: auto; /* Show the tooltip */
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="datePublished"] {
+  flex: none;
+  margin: .4rem 0;
+  line-height: 1.25;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [role="toolbar"] {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header ~ :not([itemprop="text"]) {
+  display: none;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
+  overflow: hidden;
+  padding-top: 0 !important;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="text"]:empty {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+  position: relative;
+  z-index: 10;
+  margin-left: 4.8rem;
+  height: 1.6rem;
+  color: var(--disabled-button-foreground-color);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.6rem;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] * {
+  display: inline;
+  color: inherit;
+  white-space: nowrap;
+}
+
+[data-ui-timeline-font-family="monospace"]:root .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
+  font-family: FiraMono, monospace;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p {
+  margin: 1.2rem 0;
+  white-space: pre-wrap;
+  -moz-user-select: text;
+  cursor: text;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:first-of-type {
+  margin-top: 0;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:last-of-type {
+  margin-bottom: 0;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] p {
+  margin: 0 !important;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] p::after {
+  display: inline !important;
+  content: ' ';
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] blockquote {
+  margin: 0;
+  border-left: .2rem solid var(--region-border-color);
+  padding-left: 1rem;
+  color: var(--secondary-content-foreground-color);
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] blockquote {
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] a {
+  -moz-user-select: text;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] a {
+  color: var(--disabled-button-foreground-color);
+  text-decoration: none;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] br {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] {
+  border-width: .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  padding: 0 !important;
+  width: auto;
+  color: var(--hyperlink-text-foreground-color); /* Looks like a link */
+  background-color: var(--secondary-region-background-color);
+  cursor: pointer; /* Looks like a link */
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
+  line-height: 1.8rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
+  float: left;
+  font-size: 2rem;
+  line-height: 2.4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  content: "\F016";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="text/"] h5::before {
+  content: "\F0F6";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-patch"] h5::before {
+  content: "\F1C9";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-github-pull-request"] h5::before {
+  content: "\F09B";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-review-board-request"] h5::before {
+  content: "\F0EA"; /* clipboard icon */
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="image/"] h5::before {
+  content: "\F1C5";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="audio/"] h5::before {
+  content: "\F1C7";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="video/"] h5::before {
+  content: "\F1C8";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="application/pdf"] h5::before {
+  content: "\F1C1";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/msword"],
+    [data-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) h5::before {
+  content: "\F1C2";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-excel"],
+    [data-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) h5::before {
+  content: "\F1C3";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-powerpoint"],
+    [data-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) h5::before {
+  content: "\F1C4";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/zip"],
+    [data-type="application/gzip"], [data-type="application/x-gzip"], [data-type="application/x-bzip2"]) h5::before {
+  content: "\F1C6";
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="encodingFormat"] {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
+  position: relative;
+  text-align: center;
+}
+
+[data-ui-timeline-display-attachments-inline="false"]:root .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
+  display: none;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] {
+  height: 10rem;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div * {
+  max-width: 100%;
+  max-height: 80rem;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] * {
+  opacity: 0;
+}
+
+.bug-timeline [itemprop="change"] {
+  margin: 1.2rem 2.5rem 0;
+}
+
+[data-ui-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
+  display: none;
+}
+
+.bug-timeline [itemprop="change"] .meta {
+  padding-left: 2.2rem;
+  line-height: 1.6rem;
+}
+
+.bug-timeline [itemprop="change"] [itemprop="image"] {
+  display: inline-block;
+  margin-right: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: #FCFCFC;
+  font-size: 1rem;
+  line-height: 1.6rem;
+  text-align: center;
+  vertical-align: top;
+}
+
+.bug-timeline [itemprop="change"] [itemprop="author"] [itemprop="image"] {
+  float: left;
+  margin-left: -2.2rem;
+}
+
+.bug-timeline [itemprop="change"] [itemprop="givenName"] {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bug-timeline [itemprop="change"] time {
+  text-transform: lowercase;
+}
+
+@media (min-width: 1024px) {
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+    margin-top: -2.8rem;
+  }
+  
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
+    margin: 0 1.2rem 1.2rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
+    padding: 1.2rem 1.2rem 1.2rem 4.2rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
+    margin: -.3rem 0 0 -3.3rem;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
+    padding: 0 1.2rem 1.2rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] {
+    margin: .8rem .8rem 0;
+  }
+
+  [data-device|="mobile"][data-ui-timeline-sort-order="ascending"]:root .comments-wrapper > :last-child,
+  [data-device|="mobile"][data-ui-timeline-sort-order="descending"]:root .comments-wrapper > :first-child {
+    margin-bottom: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] > * {
+    padding: .8rem;
+  }
+
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+    margin-top: -2.4rem;
+  }
+  
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] .roles {
+    display: none;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
+    margin: 0 .8rem .8rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
+    padding: .8rem .8rem .8rem 3.4rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
+    margin: -.1rem 0 0 -2.7rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
+    padding: 0 .8rem .8rem;
+  }
+}

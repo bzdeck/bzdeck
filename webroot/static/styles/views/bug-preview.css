@@ -1,0 +1,40 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+article[id$="preview-bug"] {
+  display: flex;
+  height: 100%;
+  flex-direction: row-reverse;
+}
+
+article[id$="preview-bug"] > header {
+  display: flex;
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+article[id$="preview-bug"] > div {
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+[data-device="desktop"]:root article[id$="preview-bug"] > div {
+  margin-top: 3.6rem !important;
+}
+
+article[id$="preview-bug"] > .bug-info {
+  flex: none;
+  width: 36%;
+}
+
+@media (max-width: 1023px) {
+  article[id$="preview-bug"] > .bug-info {
+    display: none;
+  }
+
+  [data-device|="mobile"]:root article[id$="preview-bug"] > div {
+    margin-top: 4rem;
+  }
+}
