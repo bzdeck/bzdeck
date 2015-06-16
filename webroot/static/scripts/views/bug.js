@@ -536,7 +536,8 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
   }
 
   if (changes.has('attachment') && this.render_attachments) {
-    this.render_attachments([changes.get('attachment')]);
+    this.$$attachments.render([changes.get('attachment')]);
+    this.$tablist.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
   }
 
   if (changes.has('history') && this.render_history) {
@@ -557,6 +558,7 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
     }
 
     this.fill(this.$bug, _bug);
-    this.render_history([changes.get('history')]);
+    this.$$history.render([changes.get('history')]);
+    this.$tablist.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
   }
 };

@@ -95,200 +95,46 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
 };
 
 BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
-  let $attachments = this.$bug.querySelector('[data-field="attachments"]');
-
-  if (!$attachments) {
-    return;
-  }
-
-  if (!attachments) {
-    attachments = this.bug.attachments;
-
-    for (let $attachment of $attachments.querySelectorAll('[itemprop="attachment"]')) {
-      $attachment.remove();
-    }
-  }
-
-  let len = attachments.length;
-
-  if (!len) {
-    return;
-  }
-
   let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
-      $attachment_tab = this.$tablist.querySelector('[id$="-tab-attachments"]'),
-      $show_obsolete_checkbox = $attachments.querySelector('.list [role="checkbox"]'),
-      $$show_obsolete_checkbox = new this.widgets.Checkbox($show_obsolete_checkbox),
-      $listbox = $attachments.querySelector('[role="listbox"]'),
-      $fragment = new DocumentFragment(),
-      $title = $attachments.querySelector('h4'),
-      $listitem = this.get_template('details-attachment-listitem');
+      $tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
 
-  if (!this.$$attachment_list) {
-    this.$$attachment_list = new this.widgets.ListBox($listbox, []);
+  this.$$attachments = new BzDeck.views.BugAttachments(this.id, this.$bug.querySelector('[data-field="attachments"]'));
 
-    this.$$attachment_list.bind('click', event => {
-      let $selected = this.$$attachment_list.view.selected[0],
-          attachment_id = $selected ? Number($selected.dataset.id) : undefined;
-
-      if (attachment_id && mobile && mql.matches) {
-        BzDeck.router.navigate(`/attachment/${attachment_id}`);
-      }
-    });
-
-    this.$$attachment_list.bind('dblclick', event => {
-      let $selected = this.$$attachment_list.view.selected[0],
-          attachment_id = $selected ? Number($selected.dataset.id) : undefined;
-
-      BzDeck.router.navigate(`/attachment/${attachment_id}`);
-    });
-
-    this.$$attachment_list.bind('Selected', event => {
-      if (!event.detail.items[0] || (mobile && mql.matches)) {
-        return;
-      }
-
-      let attachment = attachments.find(att => att.id === Number(event.detail.items[0].dataset.id));
-
-      new this.widgets.ScrollBar($attachments.querySelector('.content'));
-      new BzDeck.views.Attachment(attachment, $attachments.querySelector('.content .scrollable-area-content'));
-    });
+  if ((this.bug.attachments || []).length) {
+    this.$$attachments.render(this.bug.attachments);
+    $tab.setAttribute('aria-disabled', 'false');
   }
-
-  for (let att of attachments) {
-    this.fill($fragment.appendChild($listitem.cloneNode(true)), {
-      id: att.id,
-      description: att.summary,
-      dateModified: att.last_change_time,
-      creator: BzDeck.collections.users.get(att.creator, { name: att.creator }).properties,
-      encodingFormat: att.is_patch ? 'text/x-patch' : att.content_type, // l10n
-      is_obsolete: att.is_obsolete ? 'true' : 'false',
-    }, {
-      id: `bug-${att.bug_id}-attachment-${att.id}`,
-      'aria-disabled': !!att.is_obsolete,
-      'data-id': att.id,
-      'data-obsolete': att.is_obsolete ? 'true' : 'false',
-    });
-  }
-
-  $title.textContent = len === 1 ? `${len} attachment` : `${len} attachments`; // l10n
-
-  $show_obsolete_checkbox.setAttribute('aria-hidden', ![for (att of attachments) if (att.is_obsolete) att].length);
-  $$show_obsolete_checkbox.bind('Toggled', event => {
-    let checked = event.detail.checked;
-
-    for (let $att of $listbox.querySelectorAll('[role="option"]')) {
-      $att.setAttribute('aria-disabled', checked ? 'false' : $att.properties.is_obsolete[0].itemValue);
-    }
-
-    this.$$attachment_list.update_members();
-    this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
-  });
-
-  $listbox.appendChild($fragment);
-  $listbox.dispatchEvent(new CustomEvent('Rendered'));
-  this.$$attachment_list.update_members();
-
-  $attachment_tab.setAttribute('aria-disabled', 'false');
 
   // Select the first non-obsolete attachment when the Attachment tab is selected for the first time
   this.$$tablist.bind('Selected', event => {
-    if (mobile || mql.matches || event.detail.items[0] !== $attachment_tab ||
-        $listbox.querySelector('[role="option"][aria-selected="true"]')) { // Already selected
+    if (mobile || mql.matches || event.detail.items[0] !== $tab ||
+        this.$$attachments.$listbox.querySelector('[role="option"][aria-selected="true"]')) { // Already selected
       return;
     }
-  
-    let $first = $listbox.querySelector('[role="option"][aria-disabled="false"]');
+
+    let $first = this.$$attachments.$listbox.querySelector('[role="option"][aria-disabled="false"]');
 
     if ($first) {
-      this.$$attachment_list.view.selected = $first;
+      this.$$attachments.$$listbox.view.selected = $first;
     }
   });
 
-  let check_state = () => {
-    let target_id = history.state ? history.state.attachment_id : undefined,
-        $target = target_id ? $listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
+  this.on('BugView:AttachmentSelected', data => {
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab;
 
-    if ($target && !mobile && !mql.matches && location.pathname === `/bug/${this.bug.id}`) {
-      // If an attachment ID is specified in the history state, show the attachment
-      if ($target.matches('[data-obsolete="true"]')) {
-        $show_obsolete_checkbox.click();
-      }
-
-      this.$$tablist.view.selected = this.$$tablist.view.$focused = $attachment_tab;
-      this.$$attachment_list.view.selected = this.$$attachment_list.view.focused = $target;
-    }
-  };
-
-  check_state();
-  window.addEventListener('popstate', event => check_state());
-
-  // Force updating the scrollbars because sometimes those are not automatically updated
-  this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+    // Force updating the scrollbars because sometimes those are not automatically updated
+    this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
+  });
 };
 
 BzDeck.views.BugDetails.prototype.render_history = function (history) {
-  let $placeholder = this.$bug.querySelector('[data-field="history"]');
+  let $tab = this.$tablist.querySelector('[id$="-tab-history"]');
 
-  if (!$placeholder) {
-    return;
+  this.$$history = new BzDeck.views.BugHistory(this.id, this.$bug.querySelector('[data-field="history"]'));
+
+  if ((this.bug.history || []).length) {
+    this.$$history.render(this.bug.history);
+    $tab.setAttribute('aria-disabled', 'false');
   }
-
-  let datetime = this.helpers.datetime,
-      conf_field = BzDeck.models.server.data.config.field,
-      $tbody = $placeholder.querySelector('tbody'),
-      $template = document.querySelector('#details-change');
-
-  let cell_content = (field, content) =>
-        ['blocks', 'depends_on'].includes(field)
-                ? content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')
-                : this.helpers.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
-
-  if (!history) {
-    history = this.bug.history;
-    $tbody.innerHTML = ''; // Remove the table rows
-  }
-
-  if (!history.length) {
-    return;
-  }
-
-  for (let hist of history) {
-    for (let [i, change] of hist.changes.entries()) {
-      let $row = $tbody.appendChild($template.content.cloneNode(true).firstElementChild),
-          $cell = field => $row.querySelector(`[data-field="${field}"]`);
-
-      if (i === 0) {
-        $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
-        $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
-        datetime.fill_element($cell('when').appendChild(document.createElement('time')),
-                              hist.when, { relative: false });
-      } else {
-        $cell('when').remove();
-        $cell('who').remove();
-      }
-
-      let _field = conf_field[change.field_name] ||
-                   // Bug 909055 - Field name mismatch in history: group vs groups
-                   conf_field[change.field_name.replace(/s$/, '')] ||
-                   // Bug 1078009 - Changes/history now include some wrong field names
-                   conf_field[{
-                     'flagtypes.name': 'flag',
-                     'attachments.description': 'attachment.description',
-                     'attachments.ispatch': 'attachment.is_patch',
-                     'attachments.isobsolete': 'attachment.is_obsolete',
-                     'attachments.isprivate': 'attachment.is_private',
-                     'attachments.mimetype': 'attachment.content_type',
-                   }[change.field_name]] ||
-                   // If the Bugzilla config is outdated, the field name can be null
-                   change;
-
-      $cell('what').textContent = _field.description || _field.field_name;
-      $cell('removed').innerHTML = cell_content(change.field_name, change.removed);
-      $cell('added').innerHTML = cell_content(change.field_name, change.added);
-    }
-  }
-
-  this.$tablist.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
 };
