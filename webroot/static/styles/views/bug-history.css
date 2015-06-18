@@ -1,0 +1,97 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-history h3 {
+  position: absolute;
+  left: -9999rem;
+}
+
+[data-device|="mobile"]:root .bug-history > section {
+  padding: 0;
+}
+
+[data-device|="mobile"]:root .bug-history :-moz-any(table, tbody, tr, th, td) {
+  display: block;
+}
+
+.bug-history table {
+  border-collapse: collapse;
+  background-color: transparent;
+  table-layout: fixed;
+}
+
+[data-device="desktop"]:root .bug-history table {
+  margin: 1.2rem;
+  width: calc(100% - 2.4rem);
+}
+
+[data-device|="mobile"]:root .bug-history table {
+  margin: 0;
+  width: 100%;
+}
+
+[data-device|="mobile"]:root .bug-history thead {
+  display: none;
+}
+
+.bug-history thead th {
+  width: 20%;
+}
+
+.bug-history tr {
+  background-color: var(--grid-background-color);
+}
+
+.bug-history :-moz-any(th, td) {
+  border-width: .1rem;
+  border-style: solid;
+  padding: .2rem .4rem;
+  line-height: 1.5;
+  text-align: left;
+  vertical-align: top;
+}
+
+[data-device|="mobile"]:root .bug-history th {
+  border-width: 0;
+}
+
+[data-device|="mobile"]:root .bug-history td {
+  border-width: 0 0 .1rem;
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="who"]::before {
+  content: "Who: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="what"]::before {
+  content: "What: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="removed"]::before {
+  content: "Removed: ";
+}
+
+[data-device|="mobile"]:root .bug-history td[data-field="added"]::before {
+  content: "Added: ";
+}
+
+@media (min-width: 1024px) {
+  [data-device|="mobile"]:root .bug-history tr {
+    margin: 1.2rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
+    padding: .4rem 1.2rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-device|="mobile"]:root .bug-history tr {
+    margin: .8rem;
+  }
+
+  [data-device|="mobile"]:root .bug-history :-moz-any(th, td) {
+    padding: .4rem .8rem;
+  }
+}

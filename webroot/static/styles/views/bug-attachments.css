@@ -1,0 +1,183 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-attachments h3 {
+  position: absolute;
+  left: -9999rem;
+}
+
+.bug-attachments > section {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+[data-device|="mobile"]:root .bug-attachments > section {
+  padding-top: 4rem;
+}
+
+.bug-attachments .list {
+  flex: auto;
+  flex-direction: column;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--grid-background-color);
+}
+
+.bug-attachments .list header {
+  flex: none;
+  display: flex;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--grid-border-color);
+  padding: .8rem 1rem;
+  background-color: var(--grid-header-background-color);
+}
+
+.bug-attachments .list header h4 {
+  flex: auto;
+}
+
+.bug-attachments .list header [role="checkbox"]::before {
+  font-family: FontAwesome;
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="false"]::before {
+  content: "\F096";
+}
+
+.bug-attachments .list header [role="checkbox"][aria-checked="true"]::before {
+  color: var(--base-accent-color-1);
+  content: '\F14A';
+}
+
+.bug-attachments .list header ~ * {
+  flex: auto;
+  overflow: hidden;
+}
+
+.bug-attachments [role="option"] {
+  position: relative;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  padding: 1rem;
+  height: 3.2rem;
+}
+
+.bug-attachments [role="option"][aria-disabled="true"] {
+  display: none;
+}
+
+.bug-attachments [role="option"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+.bug-attachments [role="option"] [itemprop="creator"] {
+  top: 1rem;
+  left: 1rem;
+  overflow: hidden;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+.bug-attachments [role="option"] [itemprop="creator"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.bug-attachments [role="option"] [itemprop="id"] {
+  top: 1rem;
+  left: 5.2rem;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="description"] {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"] ~ [itemprop="description"] {
+  right: 4.8rem; /* Add some space for the obsolete and file type icons */
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="false"] ~ [itemprop="description"] {
+  right: 3.2rem; /* Add some space for the file type icon only */
+}
+
+.bug-attachments [role="option"] [itemprop="dateModified"] {
+  top: 1rem;
+  right: 1em;
+  opacity: .8;
+  font-size: 1.1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"],
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  width: 1.6rem;
+  height: 1.6rem;
+  bottom: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"] {
+  right: 1rem;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+  right: 2.8rem;
+}
+
+.bug-attachments [role="option"] [itemprop="encodingFormat"]::before,
+.bug-attachments [role="option"] [itemprop="is_obsolete"]::before {
+  display: block;
+  top: 0;
+  left: 0;
+  font-family: FontAwesome;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  text-align: center;
+}
+
+.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"]::before {
+  content: '\F014';
+}
+
+.bug-attachments .content {
+  position: relative;
+  overflow: hidden;
+  border-width: 0 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
+  width: 68%;
+}
+
+.bug-attachments .content > .scrollable-area-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+@media (max-width: 1023px) {
+  [data-device|="mobile"]:root .bug-attachments .content {
+    display: none;
+  }
+}
