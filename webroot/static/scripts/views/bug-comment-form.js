@@ -27,7 +27,8 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.$status = this.$form.querySelector('[role="status"]');
   this.$attach_button = this.$form.querySelector('[data-command="attach"]');
   this.$file_picker = this.$form.querySelector('input[type="file"]');
-  this.$attachments_tbody = this.$form.querySelector('[id$="tabpanel-attachments"] tbody');
+  this.$attachments_table = this.$form.querySelector('[id$="tabpanel-attachments"] table');
+  this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
   this.$parallel_checkbox = this.$form.querySelector('[role="checkbox"]');
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
@@ -59,8 +60,8 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   // Attachments
   this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
   this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.index));
-  this.on('BugController:AttachmentsEdited', data => this.on_attachments_edited(data.uploads));
   this.on('BugController:AttachmentError', data => this.on_attachment_error(data.message));
+  this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
   this.on('BugController:UploadOptionChanged', data => this.update_parallel_ui(data.uploads));
 
   // Other changes
@@ -260,19 +261,27 @@ BzDeck.views.BugCommentForm.prototype.oninput = function () {
 /*
  * Called by BugController whenever a new attachment is added by the user.
  *
- * [argument] attachment (Object) added attachment data
+ * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
  * [return] none
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment) {
   let hash = attachment.hash,
       click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
+      mobile = this.helpers.env.device.mobile,
+      mql = window.matchMedia('(max-width: 1023px)'),
       $tbody = this.$attachments_tbody,
-      $row = this.get_template('bug-comment-form-attachments-row'),
-      $desc = $row.querySelector('[data-field="description"]');
+      $row = this.get_template('bug-comment-form-attachments-row');
 
-  $desc.value = $desc.placeholder = attachment.summary;
-  $desc.addEventListener('keydown', event => event.stopPropagation());
-  $desc.addEventListener('input', event => attachment.summary = $desc.value);
+  $row.querySelector('th[data-id="description"]').textContent = attachment.summary;
+
+  $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
+    if (!this.id.startsWith('details-bug-') || mobile && mql.matches) {
+      BzDeck.router.navigate(`/attachment/${hash}`);
+    } else {
+      BzDeck.router.navigate(`/bug/${this.bug.id}`, { att_id: hash.substr(0, 7) });
+      this.trigger('BugView:EditingAttachmentRequested');
+    }
+  });
 
   $row.querySelector('[data-command="remove"]').addEventListener(click_event_type, event => {
     this.trigger('BugView:RemoveAttachment', { hash });
@@ -304,10 +313,10 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
 /*
  * Called by BugController whenever a new attachment is added or removed by the user.
  *
- * [argument] uploads (Array+) list of the new attachments
+ * [argument] uploads (extended Array(Proxy)) list of the new attachments
  * [return] none
  */
-BzDeck.views.BugCommentForm.prototype.on_attachments_edited = function (uploads) {
+BzDeck.views.BugCommentForm.prototype.on_upload_list_updated = function (uploads) {
   this.$attachments_tab.setAttribute('aria-disabled', !uploads.length);
   this.$$tablist.view.selected = uploads.length ? this.$attachments_tab : this.$comment_tab;
   this.update_parallel_ui(uploads);
@@ -332,7 +341,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
  * Called by BugController whenever a new attachment is added or removed by the user, or the upload option is changed.
  * Update the parallel upload UI based on the current option and the number of the new attachments.
  *
- * [argument] uploads (Array+) list of the new attachments
+ * [argument] uploads (extended Array(Proxy)) list of the new attachments
  * [return] none
  */
 BzDeck.views.BugCommentForm.prototype.update_parallel_ui = function (uploads) {
@@ -342,6 +351,7 @@ BzDeck.views.BugCommentForm.prototype.update_parallel_ui = function (uploads) {
     $button.setAttribute('aria-disabled', disabled);
   }
 
+  this.$attachments_table.setAttribute('data-parallel', disabled);
   this.$parallel_checkbox.setAttribute('aria-hidden', uploads.length < 2);
 };
 

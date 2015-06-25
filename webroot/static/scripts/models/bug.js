@@ -87,6 +87,10 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
         _bug.comments = values[1].bugs[this.id].comments;
         _bug.history = values[2].bugs[0].history || [];
         _bug.attachments = values[3].bugs[this.id] || [];
+
+        for (let att of _bug.attachments) {
+          BzDeck.collections.attachments.set(att.id, att);
+        }
       }
     }
 

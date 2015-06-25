@@ -109,7 +109,6 @@
 }
 
 [itemtype$="Attachment"][data-content-type].patch .body table {
-  border-collapse: collapse;
   background-color: var(--grid-background-color); /* Hide the default <details> style on click */
 }
 
@@ -158,7 +157,7 @@
   cursor: text;
 }
 
-[itemtype$="Attachment"][data-content-type].link .body {
+[itemtype$="Attachment"][data-content-type]:-moz-any(.link, .error) .body {
   display: flex;
   height: 100%;
   justify-content: center;

@@ -46,6 +46,7 @@ select {
 }
 
 table {
+  border-collapse: collapse;
   width: 100%;
   color: var(--grid-foreground-color);
   background-color: var(--grid-background-color);

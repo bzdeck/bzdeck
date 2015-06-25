@@ -9,9 +9,9 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
   this.bug = bug;
   this.$bug = $bug;
   this.$tablist = this.$bug.querySelector('[role="tablist"]');
+  this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
   this.$$tablist = new this.widgets.TabList(this.$tablist);
 
-  this.$tablist.querySelector('[id$="attachments"]').setAttribute('aria-disabled', !(this.bug.attachments || []).length);
   this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
 
   this.$$tablist.bind('Selected', event => {
@@ -26,6 +26,11 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
     if (!mql.matches && this.helpers.env.device.desktop) {
       this.$bug.querySelector('.bug-info').setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
     }
+  });
+
+  this.on('BugView:EditingAttachmentRequested', data => {
+    // Switch the tabs when an attachment is selected on the comment form
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
   });
 
   // Call BzDeck.views.Bug.prototype.init
@@ -97,18 +102,17 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
 BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
-      $tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
+      $field = this.$bug.querySelector('[data-field="attachments"]');
 
-  this.$$attachments = new BzDeck.views.BugAttachments(this.id, this.$bug.querySelector('[data-field="attachments"]'));
+  this.$$attachments = new BzDeck.views.BugAttachments(this.id, this.bug.id, $field);
 
   if ((this.bug.attachments || []).length) {
-    this.$$attachments.render(this.bug.attachments);
-    $tab.setAttribute('aria-disabled', 'false');
+    this.$$attachments.render([for (att of this.bug.attachments) BzDeck.collections.attachments.get(att.id)]);
   }
 
   // Select the first non-obsolete attachment when the Attachment tab is selected for the first time
   this.$$tablist.bind('Selected', event => {
-    if (mobile || mql.matches || event.detail.items[0] !== $tab ||
+    if (mobile || mql.matches || event.detail.items[0] !== this.$att_tab ||
         this.$$attachments.$listbox.querySelector('[role="option"][aria-selected="true"]')) { // Already selected
       return;
     }
@@ -118,13 +122,6 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
     if ($first) {
       this.$$attachments.$$listbox.view.selected = $first;
     }
-  });
-
-  this.on('BugView:AttachmentSelected', data => {
-    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab;
-
-    // Force updating the scrollbars because sometimes those are not automatically updated
-    this.helpers.event.async(() => this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height()));
   });
 };
 

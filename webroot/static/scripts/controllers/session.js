@@ -118,6 +118,7 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
+    BzDeck.collections.attachments = new BzDeck.collections.Attachments();
     BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
     BzDeck.prefs = new BzDeck.collections.Prefs();
     BzDeck.collections.users = new BzDeck.collections.Users();
@@ -127,6 +128,8 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.collections.bugs.load(),
     BzDeck.prefs.load(),
     BzDeck.collections.users.load(),
+  ])).then(() => Promise.all([
+    BzDeck.collections.attachments.load(), // Depends on BzDeck.collections.bugs
   ])).then(() => {
     this.firstrun = !BzDeck.collections.bugs.get_all().size;
   }).then(() => {

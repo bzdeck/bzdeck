@@ -127,7 +127,7 @@ BzDeck.controllers.Base.prototype.parse_comment = function (str) {
   // Attachments
   str = str.replace(
     /Attachment\s*#?(\d+)/igm,
-    '<a href="/attachment/$1" data-attachment-id="$1">Attachment $1</a>' // l10n
+    '<a href="/attachment/$1" data-att-id="$1">Attachment $1</a>' // l10n
   );
 
   return str;

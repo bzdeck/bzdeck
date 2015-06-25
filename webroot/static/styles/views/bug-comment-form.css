@@ -164,15 +164,34 @@
 
 .bug-comment-form [id$="tabpanel-attachments"] table {
   table-layout: fixed;
+  width: calc(100% - 1.2rem); /* Space for the scrollbar */
 }
 
-.bug-comment-form [id$="tabpanel-attachments"] col.actions {
-  width: 8.8rem; /* Includes a space for the scrollbar */
+.bug-comment-form [id$="tabpanel-attachments"] col[data-id="description"] {
+  width: auto;
 }
 
-.bug-comment-form [id$="tabpanel-attachments"] [role="textbox"] {
-  width: calc(100% - 1.2rem);
-  font-size: 1.2rem;
+.bug-comment-form [id$="tabpanel-attachments"] col:not([data-id="description"]) {
+  width: 2.4rem;
+}
+
+.bug-comment-form [id$="tabpanel-attachments"] table:not([data-parallel="false"]) col[data-id|="move"] {
+  visibility: collapse;
+  width: 0;
+}
+
+.bug-comment-form [id$="tabpanel-attachments"] tbody tr > * {
+  border-top: .1rem solid var(--grid-header-background-color);
+}
+
+.bug-comment-form [id$="tabpanel-attachments"] th {
+  padding: .4rem .8rem;
+  background-color: transparent;
+  text-align: left;
+}
+
+.bug-comment-form [id$="tabpanel-attachments"] td {
+  padding: .4rem;
 }
 
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"] {

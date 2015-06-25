@@ -16,7 +16,6 @@
 }
 
 .bug-history table {
-  border-collapse: collapse;
   background-color: transparent;
   table-layout: fixed;
 }

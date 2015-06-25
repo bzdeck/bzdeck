@@ -170,8 +170,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
 };
 
 BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
-  // TODO: load the attachment data via API
-  let attachment = new BzDeck.models.Attachment(this.data.get('attachment')),
+  let attachment = BzDeck.collections.attachments.get(this.data.get('attachment').id),
       media_type = attachment.content_type.split('/')[0],
       $attachment = this.get_template('timeline-attachment'),
       $outer = $attachment.querySelector('div'),
@@ -183,7 +182,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
     contentSize: attachment.size,
     encodingFormat: attachment.is_patch ? 'text/x-patch' : attachment.content_type
   }, {
-    'data-attachment-id': attachment.id,
+    'data-att-id': attachment.id,
     'data-content-type': attachment.is_patch ? 'text/x-patch' : attachment.content_type,
   });
 
@@ -322,8 +321,8 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
       removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined,
       removals = change.removed ? this.create_history_change_element(change, 'removed').outerHTML : undefined,
       additions = change.added ? this.create_history_change_element(change, 'added').outerHTML : undefined,
-      att_id = change.attachment_id,
-      attachment = att_id ? `<a href="/attachment/${att_id}" data-attachment-id="${att_id}">Attachment ${att_id}</a>`
+      att_id = change.att_id,
+      attachment = att_id ? `<a href="/attachment/${att_id}" data-att-id="${att_id}">Attachment ${att_id}</a>`
                           : undefined; // l10n
 
   // Addition only

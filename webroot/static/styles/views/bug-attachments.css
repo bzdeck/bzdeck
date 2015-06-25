@@ -66,10 +66,6 @@
   height: 3.2rem;
 }
 
-.bug-attachments [role="option"][aria-disabled="true"] {
-  display: none;
-}
-
 .bug-attachments [role="option"] > * {
   position: absolute;
   display: block;
@@ -129,8 +125,7 @@
   font-size: 1.1rem;
 }
 
-.bug-attachments [role="option"] [itemprop="encodingFormat"],
-.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+.bug-attachments [role="option"] meta {
   width: 1.6rem;
   height: 1.6rem;
   bottom: 1rem;
@@ -140,12 +135,11 @@
   right: 1rem;
 }
 
-.bug-attachments [role="option"] [itemprop="is_obsolete"] {
+.bug-attachments [role="option"] [itemprop^="is_"] {
   right: 2.8rem;
 }
 
-.bug-attachments [role="option"] [itemprop="encodingFormat"]::before,
-.bug-attachments [role="option"] [itemprop="is_obsolete"]::before {
+.bug-attachments [role="option"] meta::before {
   display: block;
   top: 0;
   left: 0;
@@ -159,6 +153,10 @@
 
 .bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"]::before {
   content: '\F014';
+}
+
+.bug-attachments [role="option"] [itemprop="is_unuploaded"][content="true"]::before {
+  content: '\F10C';
 }
 
 .bug-attachments .content {

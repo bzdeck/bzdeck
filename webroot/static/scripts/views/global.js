@@ -149,20 +149,20 @@ BzDeck.views.Global.prototype.onclick = function (event) {
     }
 
     // Attachment link: open in a new app tab
-    if ($target.hasAttribute('data-attachment-id')) {
+    if ($target.hasAttribute('data-att-id')) {
       let props = $target.properties,
-          attachment_id = Number($target.getAttribute('data-attachment-id')),
-          attachment_type = props.encodingFormat ? props.encodingFormat[0].itemValue : undefined,
+          att_id = Number($target.getAttribute('data-att-id')),
+          att_type = props.encodingFormat ? props.encodingFormat[0].itemValue : undefined,
           bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
-                    for (att of bug.attachments || []) if (att.id === attachment_id) bug.id][0];
+                    for (att of bug.attachments || []) if (att.id === att_id) bug.id][0];
 
-      if (attachment_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(attachment_type)) {
+      if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
         // Open the link directly in a new browser tab
-        window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${attachment_id}`);
+        window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${att_id}`);
       } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-        BzDeck.router.navigate(`/attachment/${attachment_id}`);
+        BzDeck.router.navigate(`/attachment/${att_id}`);
       } else {
-        BzDeck.router.navigate(`/bug/${bug_id}`, { attachment_id });
+        BzDeck.router.navigate(`/bug/${bug_id}`, { att_id });
       }
 
       return this.helpers.event.ignore(event);

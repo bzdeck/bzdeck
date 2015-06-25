@@ -36,7 +36,8 @@ RewriteRule ^screenshots/?$ https://www.facebook.com/BzDeck/photos_stream [R,L]
 # Rewrite: static URLs
 RewriteRule ^home/\w+$ / [L]
 RewriteRule ^settings$ / [L]
-RewriteRule ^(?:attachment|bug|search)/\d+$ / [L]
+RewriteRule ^(?:bug|search)/\d+$ / [L]
+RewriteRule ^(?:attachment)/(?:\d+|[a-z0-9]{32})$ / [L]
 RewriteRule ^(?:profile)/.+$ / [L]
 
 # Rewrite: misc

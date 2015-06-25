@@ -358,7 +358,7 @@
             <li id="bug-TID-tab-timeline" role="tab" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></li>
             <li id="bug-TID-tab-info" role="tab" aria-controls="bug-TID-tabpanel-info" aria-selected="false"><label>Info</label></li>
             <li id="bug-TID-tab-participants" role="tab" aria-controls="bug-TID-tabpanel-participants" aria-selected="false"><label>Participants</label></li>
-            <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-disabled="true" aria-selected="false"><label>Attachments</label></li>
+            <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-selected="false"><label>Attachments</label></li>
             <li id="bug-TID-tab-history" role="tab" aria-controls="bug-TID-tabpanel-history" aria-disabled="true" aria-selected="false"><label>History</label></li>
           </ul>
           <div id="bug-TID-tabpanels">
@@ -630,10 +630,10 @@
                   <div class="list">
                     <header>
                       <h4>0 Attachments</h4>
-                      <span tabindex="0" role="checkbox" aria-checked="false">Show Obsolete</span>
+                      <span tabindex="0" role="checkbox" aria-checked="false" aria-hidden="true">Show Obsolete</span>
                     </header>
                     <div role="region">
-                      <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions"></ul>
+                      <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals"></ul>
                     </div>
                   </div>
                   <div class="content" role="region">
@@ -745,7 +745,13 @@
               <input type="file" hidden multiple>
               <span tabindex="0" role="checkbox" aria-checked="true" aria-hidden="true">Upload files in parallel</span>
               <table>
-                <colgroup><col class="description"><col class="actions"></colgroup>
+                <colgroup>
+                  <col data-id="description">
+                  <col data-id="edit">
+                  <col data-id="remove">
+                  <col data-id="move-up">
+                  <col data-id="move-down">
+                </colgroup>
                 <tbody></tbody>
               </table>
             </div>
@@ -804,17 +810,15 @@
     </template><!-- end #bug-comment-form-clear-needinfo-row -->
     <template id="bug-comment-form-attachments-row">
       <tr>
-        <td><input spellcheck="false" role="textbox" data-field="description"></td>
-        <td>
-          <span title="Edit" role="button" data-command="edit" aria-disabled="true">Edit</span>
-          <span title="Remove" tabindex="0" role="button" data-command="remove">Remove</span>
-          <span title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span>
-          <span title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span>
-        </td>
+        <th data-id="description"></th>
+        <td><span title="Edit" tabindex="0" role="button" data-command="edit">Edit</span></td>
+        <td><span title="Remove" tabindex="0" role="button" data-command="remove">Remove</span></td>
+        <td><span title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span></td>
+        <td><span title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span></td>
       </tr>
     </template>
     <template id="timeline-attachment">
-      <aside role="link" itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
+      <aside role="link" itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
         <h5 itemprop="description"></h5>
         <meta itemprop="name">
         <meta itemprop="contentSize">
@@ -823,9 +827,10 @@
       </aside>
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
-      <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-disabled data-id" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
+      <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-hidden data-id data-hash" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
         <meta itemprop="encodingFormat">
         <meta itemprop="is_obsolete">
+        <meta itemprop="is_unuploaded">
         <span itemprop="creator" itemscope itemtype="http://schema.org/Person">
           <img alt="" itemprop="image">
           <meta itemprop="email">
@@ -836,7 +841,7 @@
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-attachment-id data-content-type">
+      <section itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
         <header>
           <h4 itemprop="description"></h4>
           <ul>

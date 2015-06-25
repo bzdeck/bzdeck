@@ -31,7 +31,6 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   // Attachments
   this.on('V:AttachFiles', data => this.attach_files(data.files));
   this.on('V:AttachText', data => this.attach_text(data.text));
-  this.on('V:AddAttachment', data => this.add_attachment(data.attachment));
   this.on('V:RemoveAttachment', data => this.remove_attachment(data.hash));
   this.on('V:MoveUpAttachment', data => this.move_up_attachment(data.hash));
   this.on('V:MoveDownAttachment', data => this.move_down_attachment(data.hash));
@@ -339,19 +338,13 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
     }
 
     reader.addEventListener('load', event => {
-      let attachment = {
-        data: reader.result.split(',')[1], // Drop data:<type>;base64,
+      this.add_attachment({
+        data: reader.result.split(',')[1], // Drop 'data:<type>;base64,'
         summary: is_patch ? 'Patch' : file.name,
         file_name: file.name,
+        content_type: is_patch ? 'text/plain' : file.type || 'application/x-download',
         is_patch,
-        content_type: is_patch ? 'text/x-patch' : file.type || 'application/x-download'
-      };
-
-      // Add a custom property to make it easier to find the cached attachment. It's enumerable:false so later dropped
-      // by Object.assign() before the data is sent through the API
-      Object.defineProperty(attachment, 'hash', { value: md5([file.name, file.type, String(file.size)].join()) });
-
-      this.add_attachment(attachment);
+      }, file.size);
     });
 
     reader.readAsDataURL(file);
@@ -402,7 +395,6 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
   if (is_patch) {
     // TODO: Append a revision to the summary, based on the currently-attached patches if any
     summary = 'Patch';
-    content_type = 'text/x-patch';
   }
 
   if (is_ghpr) {
@@ -417,13 +409,9 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
 
   // Use FileReader instead of btoa() to avoid overflow
   reader.addEventListener('load', event => {
-    let data = reader.result.split(',')[1], // Drop data:text/plain;base64,
-        attachment = { data, summary, file_name, content_type, is_patch };
+    let data = reader.result.split(',')[1]; // Drop 'data:text/plain;base64,'
 
-    // Add a custom property to make it easier to find the cached attachment
-    Object.defineProperty(attachment, 'hash', { value: md5([file_name, content_type, String(blob.size)].join()) });
-
-    this.add_attachment(attachment);
+    this.add_attachment({ data, summary, file_name, content_type, is_patch }, blob.size);
   });
 
   reader.readAsDataURL(blob);
@@ -442,22 +430,23 @@ BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
 /*
  * Add an attachment to the cached new attachment list.
  *
- * [argument] attachment (Object) attachment object to add
+ * [argument] att (Object) raw attachment upload object for Bugzilla
+ * [argument] size (Integer) actual file size
  * [return] result (Boolean) whether the attachment is cached
  */
-BzDeck.controllers.Bug.prototype.add_attachment = function (attachment) {
+BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
+  // Cache as an AttachmentModel instance
+  let attachment = BzDeck.collections.attachments.cache(att, size);
+
   // Check if the file has already been attached
   if (this.find_attachment(attachment.hash) > -1) {
     return false;
   }
 
-  // Add a custom property to make it easier to track the upload status
-  Object.defineProperty(attachment, 'uploaded', { writable: true, value: 0 });
-
   this.uploads.push(attachment);
 
   this.trigger(':AttachmentAdded', { attachment });
-  this.trigger(':AttachmentsEdited', { uploads: this.uploads });
+  this.trigger(':UploadListUpdated', { uploads: this.uploads });
   this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
 
   return true;
@@ -479,7 +468,7 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
   this.uploads.splice(index, 1);
 
   this.trigger(':AttachmentRemoved', { index, hash });
-  this.trigger(':AttachmentsEdited', { uploads: this.uploads });
+  this.trigger(':UploadListUpdated', { uploads: this.uploads });
   this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
 
   return true;
@@ -487,7 +476,7 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
 
 /*
  * Move up an attachment within the cached new attachment list, when the parallel upload option is disabled and the
- * order of the to-be-uploaded attachments matters.
+ * order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
  * [return] result (Boolean) whether the attachment is found and reordered
@@ -499,14 +488,14 @@ BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
     return false;
   }
 
-  this.uploads.splice(index - 1, 2, attachment, this.uploads[index - 1]);
+  this.uploads.splice(index - 1, 2, this.uploads[index], this.uploads[index - 1]);
 
   return true;
 };
 
 /*
  * Move down an attachment within the cached new attachment list, when the parallel upload option is disabled and the
- * order of the to-be-uploaded attachments matters.
+ * order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
  * [return] result (Boolean) whether the attachment is found and reordered
@@ -518,7 +507,7 @@ BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
     return false;
   }
 
-  this.uploads.splice(index, 2, this.uploads[index + 1], attachment);
+  this.uploads.splice(index, 2, this.uploads[index + 1], this.uploads[index]);
 
   return true;
 };
@@ -645,7 +634,7 @@ BzDeck.controllers.Bug.prototype.post_changes = function (data) {
 /*
  * Post the new attachments added to the bug to Bugzilla.
  *
- * [argument] none
+ * [argument] attachment (Proxy) AttachmentModel instance
  * [return] request (Promise) can be a rejected Promise if any error is found
  */
 BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {

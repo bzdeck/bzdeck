@@ -102,8 +102,8 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
         let $media = $attachment.querySelector('img, audio, video');
 
         if ($media && !$media.src) {
-          let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-attachment-id')),
-              attachment = new BzDeck.models.Attachment(this.bug.attachments.find(att => att.id === att_id));
+          let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id')),
+              attachment = BzDeck.collections.attachments.get(att_id);
 
           $media.parentElement.setAttribute('aria-busy', 'true');
 

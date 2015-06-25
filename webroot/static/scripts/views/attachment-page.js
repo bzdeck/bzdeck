@@ -2,27 +2,32 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, attachment_id) {
+BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, att_id) {
   this.id = page_id;
-  this.attachment_id = attachment_id;
+  this.att_id = att_id;
 
   this.$tab = document.querySelector(`#tab-attachment-${this.id}`);
   this.$tabpanel = document.querySelector(`#tabpanel-attachment-${this.id}`);
-  this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.attachment_id;
+  this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.att_id;
 
   this.on('C:AttachmentAvailable', data => {
     let attachment = this.attachment = data.attachment,
-        { id, summary } = attachment;
+        { id, hash, summary } = attachment;
 
     new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
     new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
 
-    this.$tab.title = `Attachment ${id}\n${summary}`; // l10n;
+    if (hash) {
+      this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n
+    } else {
+      this.$tab.title = `Attachment ${id}\n${summary}`; // l10n
+    }
+
     BzDeck.views.global.update_window_title(this.$tab);
   });
 
   this.on('C:AttachmentUnavailable', data => {
-    let id = this.attachment_id,
+    let id = this.att_id,
         error = data.attachment && data.attachment.error ? data.attachment.error : '';
 
     BzDeck.views.statusbar.show(`The attachment ${id} cannot be retrieved. ${error}`); // l10n

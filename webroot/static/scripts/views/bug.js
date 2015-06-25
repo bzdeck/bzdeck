@@ -537,7 +537,6 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
 
   if (changes.has('attachment') && this.render_attachments) {
     this.$$attachments.render([changes.get('attachment')]);
-    this.$tablist.querySelector('[id$="-tab-attachments"]').setAttribute('aria-disabled', 'false');
   }
 
   if (changes.has('history') && this.render_history) {
