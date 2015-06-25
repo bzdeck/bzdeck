@@ -18,7 +18,7 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   params = params || new URLSearchParams();
 
   url.pathname += path;
-  url.searchParams = params;
+  url.search = '?' + params.toString();
   xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
 
