@@ -9,6 +9,7 @@
 
 .bug-attachments > section {
   display: flex;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
 }
@@ -52,7 +53,7 @@
   content: '\F14A';
 }
 
-.bug-attachments .list header ~ * {
+.bug-attachments .list [role="region"] {
   flex: auto;
   overflow: hidden;
 }
@@ -157,6 +158,39 @@
 
 .bug-attachments [role="option"] [itemprop="is_unuploaded"][content="true"]::before {
   content: '\F10C';
+}
+
+.bug-attachments .list [role="toolbar"] {
+  flex: none;
+  border-top: .1rem solid var(--grid-border-color);
+  height: 2.4rem;
+}
+
+.bug-attachments .list [role="toolbar"] > ul > li {
+  border-right: .1rem solid var(--grid-border-color);
+  height: 2.4rem;
+}
+
+.bug-attachments .list [role="toolbar"] [role="button"] {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.bug-attachments .list [role="toolbar"] [role="button"]::before {
+  top: 0;
+  left: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.2rem;
+  line-height: 2.4rem;
+}
+
+.bug-attachments .list [role="toolbar"] [data-command="add-attachment"]::before {
+  content: '\F067';
+}
+
+.bug-attachments .list [role="toolbar"] [data-command="remove-attachment"]::before {
+  content: '\F068';
 }
 
 .bug-attachments .content {

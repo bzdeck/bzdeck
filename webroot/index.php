@@ -632,8 +632,15 @@
                       <h4>0 Attachments</h4>
                       <span tabindex="0" role="checkbox" aria-checked="false" aria-hidden="true">Show Obsolete</span>
                     </header>
-                    <div role="region">
+                    <div role="region" aria-dropeffect="none">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals"></ul>
+                    </div>
+                    <div role="toolbar">
+                      <ul role="none">
+                        <li role="none"><span class="iconic" title="Add an attachment" tabindex="0" role="button" data-command="add-attachment"></span></li>
+                        <li role="none"><span class="iconic" title="Remove an attachment" tabindex="0" role="button" aria-disabled="true" data-command="remove-attachment"></span></li>
+                      </ul>
+                      <input type="file" hidden multiple>
                     </div>
                   </div>
                   <div class="content" role="region">

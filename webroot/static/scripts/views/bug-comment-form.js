@@ -136,6 +136,11 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
     event.preventDefault();
   });
 
+  this.$form.addEventListener('dragleave', event => {
+    this.$drop_target.setAttribute('aria-dropeffect', 'none');
+    event.preventDefault();
+  });
+
   this.$form.addEventListener('drop', event => {
     let dt = event.dataTransfer;
 

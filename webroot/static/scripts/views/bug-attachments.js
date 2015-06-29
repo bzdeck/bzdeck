@@ -75,6 +75,8 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
     this.$$listbox.update_members();
   });
 
+  this.init_uploader();
+
   this.check_state();
   window.addEventListener('popstate', event => this.check_state());
 
@@ -122,6 +124,73 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
   this.$listbox.insertBefore($fragment, this.$listbox.firstElementChild);
   this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$listbox.update_members();
+};
+
+/*
+ * Initialize the attachment uploading interface.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.BugAttachments.prototype.init_uploader = function () {
+  this.$drop_target = this.$container.querySelector('[aria-dropeffect]');
+  this.$add_button = this.$container.querySelector('[data-command="add-attachment"]');
+  this.$remove_button = this.$container.querySelector('[data-command="remove-attachment"]');
+  this.$file_picker = this.$container.querySelector('input[type="file"]');
+
+  this.$drop_target.addEventListener('dragover', event => {
+    this.$drop_target.setAttribute('aria-dropeffect', 'copy');
+    event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
+    event.preventDefault();
+  });
+
+  this.$drop_target.addEventListener('dragleave', event => {
+    this.$drop_target.setAttribute('aria-dropeffect', 'none');
+    event.preventDefault();
+  });
+
+  this.$drop_target.addEventListener('drop', event => {
+    let dt = event.dataTransfer;
+
+    if (dt.types.contains('Files')) {
+      this.trigger('BugView:AttachFiles', { files: dt.files });
+    } else if (dt.types.contains('text/plain')) {
+      this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
+    }
+
+    this.$drop_target.setAttribute('aria-dropeffect', 'none');
+    event.preventDefault();
+  });
+
+  this.$$listbox.bind('Selected', event => {
+    let $selected = this.$$listbox.view.selected[0],
+        hash = $selected ? $selected.dataset.hash : undefined;
+
+    this.$remove_button.setAttribute('aria-disabled', !hash);
+  });
+
+  this.$$listbox.assign_key_bindings({
+    'Backspace': event => {
+      let $selected = this.$$listbox.view.selected[0],
+          hash = $selected ? $selected.dataset.hash : undefined;
+
+      if (hash) {
+        this.trigger('BugView:RemoveAttachment', { hash });
+        this.$remove_button.setAttribute('aria-disabled', 'true');
+      }
+    },
+  });
+
+  this.$add_button.addEventListener('click', event => this.$file_picker.click());
+
+  this.$remove_button.addEventListener('mousedown', event => {
+    this.trigger('BugView:RemoveAttachment', { hash: this.$$listbox.view.selected[0].dataset.hash });
+    this.$remove_button.setAttribute('aria-disabled', 'true');
+  });
+
+  this.$file_picker.addEventListener('change', event => {
+    this.trigger('BugView:AttachFiles', { files: event.target.files });
+  });
 };
 
 /*
