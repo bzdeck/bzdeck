@@ -64,6 +64,7 @@ BzDeck.models.Attachment.prototype.get_data = function () {
     }
 
     this.data.data = data;
+    BzDeck.collections.attachments.set(this.id, this.data);
 
     // Cache the data on the relevant bug
     if (bug && bug.attachments && bug.attachments.length) {

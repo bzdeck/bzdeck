@@ -279,7 +279,6 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
       BzDeck.router.navigate(`/attachment/${hash}`);
     } else {
       BzDeck.router.navigate(`/bug/${this.bug.id}`, { att_id: hash.substr(0, 7) });
-      this.trigger('BugView:EditingAttachmentRequested');
     }
   });
 

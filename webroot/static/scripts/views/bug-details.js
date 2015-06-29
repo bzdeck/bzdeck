@@ -28,9 +28,11 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
     }
   });
 
-  this.on('BugView:EditingAttachmentRequested', data => {
-    // Switch the tabs when an attachment is selected on the comment form
-    this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
+  // Switch the tabs when an attachment is selected on the timeline or comment form
+  window.addEventListener('popstate', event => {
+    if (location.pathname === `/bug/${this.bug.id}` && history.state && history.state.att_id) {
+      this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
+    }
   });
 
   // Call BzDeck.views.Bug.prototype.init
