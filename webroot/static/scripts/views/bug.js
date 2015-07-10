@@ -20,11 +20,11 @@ BzDeck.views.Bug.prototype.init = function () {
   this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
                                   new this.widgets.ScrollBar($area)]);
 
-  this.on('M:AnnotationUpdated', data => {
-    if (this.$bug && data.type === 'starred') {
+  this.on('BugModel:AnnotationUpdated', data => {
+    if (this.$bug && data.bug.id === this.bug.id && data.type === 'starred') {
       this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
     }
-  });
+  }, true);
 
   this.on('BugModel:Updated', data => { // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
     if (data.bug.id === this.bug.id) {
