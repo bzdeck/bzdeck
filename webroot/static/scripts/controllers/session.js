@@ -48,7 +48,21 @@ BzDeck.controllers.Session.prototype.find_account = function () {
 BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
-  let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
+  let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback'),
+      params = new URLSearchParams(location.search.substr(1)),
+      host = params.get('server') === 'dev' ? 'mozilla-dev' : 'mozilla', // TEMP
+      email = params.get('client_api_login'),
+      key = params.get('client_api_key');
+
+  if (email && key) {
+    // As the Bugzilla Auth Delegation's callback, the user is redirected back from Bugzilla's auth.cgi and the URL
+    // params have an email and API key. Verify the user account immediately in such cases. This is a workaround for the
+    // Android WebAppRT where window.open() doesn't work. On other environments, a separate window and the following
+    // BroadcastChannel code will be used instead. (#293)
+    this.verify_account(host, email, key);
+
+    return;
+  }
 
   this.on('LoginFormView:LoginRequested', data => {
     bc.addEventListener('message', event => {

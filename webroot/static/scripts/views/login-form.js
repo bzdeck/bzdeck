@@ -76,7 +76,13 @@ BzDeck.views.LoginForm.prototype.activate_bugzilla_auth = function () {
 
     // Take the user to the Bugzilla auth page
     // http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html
-    window.open(auth_url, 'bugzilla-auth');
+    if (FlareTail.helpers.env.platform.android) {
+      // Since window.open() is not working on the Android WebAppRT, open the page in the current window (#293)
+      location.href = `${BzDeck.config.servers[this.host].url}/auth.cgi`
+                    + `?callback=${encodeURIComponent(location.origin)}&description=BzDeck`;
+    } else {
+      window.open(auth_url, 'bugzilla-auth');
+    }
   });
 };
 
