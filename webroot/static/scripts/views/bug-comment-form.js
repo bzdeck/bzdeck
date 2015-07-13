@@ -154,7 +154,7 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
     event.preventDefault();
   });
 
-  new this.widgets.Checkbox(this.$parallel_checkbox).bind('Toggled', event => {
+  new this.widgets.CheckBox(this.$parallel_checkbox).bind('Toggled', event => {
     this.trigger('BugView:ChangeUploadOption', { parallel: event.detail.checked });
   });
 };
@@ -202,10 +202,10 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
         $person = this.fill(this.get_template('person-with-image'),
                             BzDeck.collections.users.get(requestee, { name: requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
-        $$checkbox = new this.widgets.Checkbox($checkbox),
+        $$checkbox = new this.widgets.CheckBox($checkbox),
         $label = $checkbox.querySelector('span');
 
-    $checkbox.replaceChild($person, $checkbox.querySelector('strong'));
+    $row.replaceChild($person, $row.querySelector('strong'));
     $$checkbox.bind('Toggled', event => this.trigger('BugView:EditFlag', { flag, added: event.detail.checked }));
     $$checkbox.checked = checked;
 

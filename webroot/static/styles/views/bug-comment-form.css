@@ -284,25 +284,6 @@
   vertical-align: text-bottom;
 }
 
-.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"]::before {
-  display: inline-block;
-  width: 1.6rem;
-  height: 1.6rem;
-  font-size: 1.4rem;
-  line-height: 1.6rem;
-  font-family: FontAwesome;
-  vertical-align: middle;
-}
-
-.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"][aria-checked="true"]::before {
-  color: var(--base-accent-color-1);
-  content: '\F14A';
-}
-
-.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [role="checkbox"][aria-checked="false"]::before {
-  content: '\F096';
-}
-
 .bug-comment-form [id$="tabpanel-needinfo"] .requestee-finder-outer {
   margin-top: .8rem;
 }

@@ -2,6 +2,30 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+meta[role="checkbox"]::before {
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
+  font-family: FontAwesome;
+  text-align: center;
+  vertical-align: middle;
+}
+
+meta[role="checkbox"][aria-checked="true"]::before {
+  color: var(--base-accent-color-1);
+  content: '\F14A';
+}
+
+meta[role="checkbox"][aria-checked="false"]::before {
+  content: '\F096';
+}
+
+meta[role="checkbox"]::after {
+  content: attr(aria-label);
+} 
+
 [role="button"] {
   border-color: var(--button-border-color);
   color: var(--button-foreground-color);

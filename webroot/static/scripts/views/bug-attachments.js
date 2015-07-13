@@ -63,7 +63,7 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
     this.trigger('BugView:AttachmentSelected', { attachment });
   });
 
-  this.$$obsolete_checkbox = new this.widgets.Checkbox(this.$obsolete_checkbox);
+  this.$$obsolete_checkbox = new this.widgets.CheckBox(this.$obsolete_checkbox);
 
   this.$$obsolete_checkbox.bind('Toggled', event => {
     let checked = event.detail.checked;

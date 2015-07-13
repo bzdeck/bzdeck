@@ -40,19 +40,6 @@
   flex: auto;
 }
 
-.bug-attachments .list header [role="checkbox"]::before {
-  font-family: FontAwesome;
-}
-
-.bug-attachments .list header [role="checkbox"][aria-checked="false"]::before {
-  content: "\F096";
-}
-
-.bug-attachments .list header [role="checkbox"][aria-checked="true"]::before {
-  color: var(--base-accent-color-1);
-  content: '\F14A';
-}
-
 .bug-attachments .list [role="region"] {
   flex: auto;
   overflow: hidden;

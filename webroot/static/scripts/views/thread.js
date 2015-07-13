@@ -232,7 +232,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     S: event => {
       for (let $item of this.$$listbox.view.selected) {
         BzDeck.collections.bugs.get(Number($item.dataset.id))
-                          .starred = $item.querySelector('[data-field="starred"]').matches('[aria-checked="false"]');
+                          .starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
       }
     },
     // Open the bug in a new tab
@@ -249,7 +249,10 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
       $option.setAttribute(`data-${data.type}`, data.value);
 
       if (data.type === 'starred') {
-        $option.querySelector('[data-field="starred"]').setAttribute('aria-checked', data.value);
+        let $checkbox = $option.querySelector('[itemprop="starred"]');
+
+        $checkbox.setAttribute('aria-checked', data.value);
+        $checkbox.setAttribute('content', data.value);
       }
     }
   }, true);
@@ -292,11 +295,11 @@ BzDeck.views.VerticalThread.prototype.render = function () {
       name: bug.summary,
       dateModified: bug.last_change_time,
       contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
+      starred: bug.starred,
     }, {
       id: `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
       'data-unread': !!bug.unread,
-      'aria-checked': bug.starred,
     }));
   }
 

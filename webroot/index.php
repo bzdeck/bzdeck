@@ -630,7 +630,7 @@
                   <div class="list">
                     <header>
                       <h4>0 Attachments</h4>
-                      <span tabindex="0" role="checkbox" aria-checked="false" aria-hidden="true">Show Obsolete</span>
+                      <meta tabindex="0" role="checkbox" aria-label="Show Obsolete" aria-checked="false" aria-hidden="true">
                     </header>
                     <div role="region" aria-dropeffect="none">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals"></ul>
@@ -750,7 +750,7 @@
           <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
             <div role="group">
               <input type="file" hidden multiple>
-              <span tabindex="0" role="checkbox" aria-checked="true" aria-hidden="true">Upload files in parallel</span>
+              <meta tabindex="0" role="checkbox" aria-label="Upload files in parallel" aria-checked="true" aria-hidden="true">
               <table>
                 <colgroup>
                   <col data-id="description">
@@ -807,12 +807,12 @@
     </template><!-- end #bug-comment-form -->
     <template id="bug-comment-form-request-needinfo-row">
       <div class="request-needinfo-row">
-        <span tabindex="0" role="checkbox">Ask <strong></strong> <span></span></span>
+        <meta tabindex="0" role="checkbox" aria-label="Ask"> <strong></strong> <span></span>
       </div>
     </template><!-- end #bug-comment-form-request-needinfo-row -->
     <template id="bug-comment-form-clear-needinfo-row">
       <div class="clear-needinfo-row">
-        <span tabindex="0" role="checkbox">Provide information as <strong></strong></span>
+        <meta tabindex="0" role="checkbox" aria-label="Provide information as"> <strong></strong>
       </div>
     </template><!-- end #bug-comment-form-clear-needinfo-row -->
     <template id="bug-comment-form-attachments-row">
@@ -888,7 +888,7 @@
         <span itemprop="id"></span>
         <span itemprop="name"></span>
         <time data-simple="true" itemprop="dateModified"></time>
-        <span data-field="starred" tabindex="0" role="checkbox" data-attrs="aria-checked"></span>
+        <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
       </li>
     </template><!-- end #vertical-thread-item -->
     <template id="bug-tooltip">
