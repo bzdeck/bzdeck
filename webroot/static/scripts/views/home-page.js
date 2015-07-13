@@ -209,6 +209,8 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
 };
 
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
+  let layout_pref = BzDeck.prefs.get('ui.home.layout'),
+      vertical = this.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
   this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
     date: { simple: false },
     sortable: true,
