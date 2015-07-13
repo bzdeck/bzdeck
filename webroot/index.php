@@ -367,7 +367,7 @@
                 <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
                     <header class="bug-summary" data-field="summary">
-                      <h3><span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
+                      <h3><span class="blurred" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
                     </header>
                     <div class="comments-wrapper"></div>
                   </section>
@@ -402,7 +402,7 @@
                   </section>
                   <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
                     <h4>Duplicate of</h4>
-                    <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                    <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
                   </section>
                   <section role="group" aria-label="Target Milestone" data-field="target_milestone">
                     <h4>Target Milestone</h4>
@@ -471,7 +471,7 @@
                   <section role="group" aria-label="Alias" data-field="alias">
                     <h4>Alias</h4>
                     <!-- TODO: Support multiple aliases on Bugzilla 5.0 (Bug 1012506) -->
-                    <span contenteditable="true" role="textbox" itemprop="alias"></span>
+                    <span class="blurred" contenteditable="true" role="textbox" itemprop="alias"></span>
                   </section>
                   <section role="group" aria-label="Keywords" data-field="keyword">
                     <h4>Keywords</h4>
@@ -479,7 +479,7 @@
                   </section>
                   <section role="group" aria-label="Whiteboard" data-field="whiteboard">
                     <h4>Whiteboard</h4>
-                    <span contenteditable="true" role="textbox" itemprop="whiteboard"></span>
+                    <span class="blurred" contenteditable="true" role="textbox" itemprop="whiteboard"></span>
                   </section>
                   <section role="group" aria-label="URL" data-field="url">
                     <h4>URL</h4>
@@ -777,7 +777,7 @@
               </span>
               <span hidden data-field="dupe_of">
                 <span>of Bug</span>
-                <span contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
               </span>
             </div>
           </div>

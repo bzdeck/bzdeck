@@ -107,6 +107,44 @@ meta[role="checkbox"]::after {
   background-color: var(--active-textbox-background-color);
 }
 
+.blurred[role="textbox"] {
+  display: block;
+  outline: 0 !important;
+  box-sizing: border-box;
+  border-color: transparent;
+  padding: .2rem .8rem;
+  width: 100%;
+  height: auto;
+  min-height: 1.25em; /* relative em unit */
+  background-color: transparent;
+  box-shadow: none !important;
+  line-height: 1.25em;
+  transition: all .2s;
+}
+
+.blurred[role="textbox"]:not([aria-readonly="true"])::after {
+  font-family: FontAwesome;
+  font-size: 75%;
+  opacity: .5;
+  content: '\00A0\00A0\f040'; /* nbsp + nbsp + pencil */
+  transition: all .2s;
+}
+
+.blurred[role="textbox"]:hover {
+  border-color: rgba(0, 0, 0, .1);
+  background-color: rgba(255,255,255,.4);
+}
+
+.blurred[role="textbox"]:-moz-any(:focus, :active) {
+  border-color: rgba(0, 0, 0, .2);
+  color: var(--content-foreground-color);
+  background-color: rgba(255,255,255,.8);
+}
+
+.blurred[role="textbox"]:-moz-any(:focus, :active)::after {
+  opacity: 0;
+}
+
 [role="combobox"] [role="searchbox"] {
   box-shadow: none;
 }

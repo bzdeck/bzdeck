@@ -320,7 +320,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   for (let $section of this.$bug.querySelectorAll('[data-field]')) {
     let name = $section.dataset.field,
         $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]'),
-        $textbox = $section.querySelector(':not([role="combobox"]) > [contenteditable]'),
+        $textbox = $section.querySelector('.blurred[role="textbox"]'),
         $next_field = $section.nextElementSibling;
 
     // Activate comboboxes
@@ -436,7 +436,7 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
 
   let $field = this.$bug.querySelector(`[data-field="${name}"]`),
       $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined,
-      $textbox = $field ? $field.querySelector(':not([role="combobox"]) > [contenteditable]') : undefined;
+      $textbox = $field ? $field.querySelector('.blurred[role="textbox"]') : undefined;
 
   if ($combobox) {
     this.comboboxes.get($combobox).selected = value;
