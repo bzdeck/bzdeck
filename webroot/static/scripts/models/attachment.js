@@ -56,8 +56,7 @@ BzDeck.models.Attachment.prototype.get_data = function () {
   return BzDeck.controllers.global.request(`bug/attachment/${this.id}`,
                                            new URLSearchParams('include_fields=data')).then(result => {
     let attachment = result.attachments[this.id],
-        data = attachment && attachment.data ? attachment.data : undefined,
-        bug = BzDeck.collections.bugs.get(this.data.bug_id);
+        data = attachment && attachment.data ? attachment.data : undefined;
 
     if (!data) {
       return Promise.reject();
@@ -65,17 +64,29 @@ BzDeck.models.Attachment.prototype.get_data = function () {
 
     this.data.data = data;
     BzDeck.collections.attachments.set(this.id, this.data);
-
-    // Cache the data on the relevant bug
-    if (bug && bug.attachments && bug.attachments.length) {
-      for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
-        bug.attachments[index].data = data;
-        bug.merge(bug.attachments); // Save
-      }
-    }
+    this.save();
 
     return Promise.resolve(convert());
   }).catch(error => {
     return Promise.reject(new Error(`The attachment ${this.id} cannot be retrieved from Bugzilla.`));
   });
+};
+
+/*
+ * Save the attachment data as part of the relevant bug.
+ *
+ * [argument] none
+ * [return] item (Promise -> Proxy) proxified instance of the Attachment model object
+ */
+BzDeck.models.Attachment.prototype.save = function () {
+  let bug = BzDeck.collections.bugs.get(this.data.bug_id);
+
+  if (bug && bug.attachments && bug.attachments.length) {
+    for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
+      bug.attachments[index].data = this.data.data;
+      bug.merge(bug.attachments);
+    }
+  }
+
+  return Promise.resolve(this.proxy());
 };
