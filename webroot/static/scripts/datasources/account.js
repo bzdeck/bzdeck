@@ -14,7 +14,7 @@ BzDeck.datasources.Account.prototype.constructor = BzDeck.datasources.Account;
  * [return] database (Promise -> IDBDatabase or Error) the target IndexedDB database
  */
 BzDeck.datasources.Account.prototype.load = function () {
-  return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 1);
+  return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 2);
 };
 
 /*
@@ -35,6 +35,11 @@ BzDeck.datasources.Account.prototype.onupgradeneeded = function (event) {
             .createIndex('id', 'id', { unique: true });
 
     database.createObjectStore('prefs', { keyPath: 'name' });
+  }
+
+  if (event.oldVersion < 2) {
+    // On Bugzilla 5.0 and later, the alias field is array and it's no longer unique
+    event.target.transaction.objectStore('bugs').deleteIndex('alias');
   }
 
   return database;

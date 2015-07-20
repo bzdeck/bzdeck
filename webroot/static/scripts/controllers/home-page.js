@@ -15,7 +15,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   },
   {
     get: (obj, prop) => {
-      if (prop === 'bugs') {
+      if (prop === 'sorted_bugs') {
         // Return a sorted bug list
         return this.view.get_shown_bugs(obj.bugs);
       }
@@ -28,7 +28,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
       if (prop === 'preview_id') {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (this.view.preview_is_hidden) {
-          BzDeck.router.navigate('/bug/' + newval, { ids: [...this.data.bugs.keys()] });
+          BzDeck.router.navigate('/bug/' + newval, { ids: [...this.data.sorted_bugs.keys()] });
 
           return true; // Do not save the value
         }
@@ -46,7 +46,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   });
 
   this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.bugs.keys()] });
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.sorted_bugs.keys()] });
   });
 
   BzDeck.controllers.homepage = this;
