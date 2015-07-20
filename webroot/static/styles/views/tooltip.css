@@ -48,7 +48,7 @@
   font-size: 1.1rem;
 }
 
-[role="tooltip"][itemtype$="Bug"] [itemprop="name"] {
+[role="tooltip"][itemtype$="Bug"] [itemprop="summary"] {
   right: 1rem;
   bottom: 1rem;
   left: 5.2rem;
@@ -58,7 +58,7 @@
   text-overflow: ellipsis;
 }
 
-[role="tooltip"][itemtype$="Bug"] [itemprop="dateModified"] {
+[role="tooltip"][itemtype$="Bug"] [itemprop="last_change_time"] {
   top: 1rem;
   right: 1rem;
   opacity: .8;

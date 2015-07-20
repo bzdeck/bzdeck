@@ -93,8 +93,8 @@ BzDeck.views.BugTooltip.prototype.show = function () {
 
     this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
       id: bug.id,
-      name: bug.summary,
-      dateModified: bug.last_change_time,
+      summary: bug.summary,
+      last_change_time: bug.last_change_time,
       contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
     }, {
       'data-id': bug.id,

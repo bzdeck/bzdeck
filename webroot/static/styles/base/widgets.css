@@ -368,11 +368,11 @@ col[data-hidden="false"] {
   animation: throbber 1s linear 0s infinite;
 }
 
-[itemtype$="Person"] [itemprop="image"] {
+[itemtype$="User"] [itemprop="image"] {
   border-radius: 10%;
 }
 
-[itemtype$="Person"] [itemprop="image"][src=""] {
+[itemtype$="User"] [itemprop="image"][src=""] {
   display: inline-block;
   width: 100%;
   height: 100%;

@@ -197,7 +197,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
     // Create a marquee effect when the bug title is overflowing
     for (let $option of event.detail.items) {
-      let $name = $option.querySelector('[itemprop="name"]'),
+      let $name = $option.querySelector('[itemprop="summary"]'),
           width = $name.scrollWidth;
 
       if (width > $name.clientWidth) {
@@ -292,8 +292,8 @@ BzDeck.views.VerticalThread.prototype.render = function () {
 
     let $option = $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
       id: bug.id,
-      name: bug.summary,
-      dateModified: bug.last_change_time,
+      summary: bug.summary,
+      last_change_time: bug.last_change_time,
       contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
       starred: bug.starred,
     }, {

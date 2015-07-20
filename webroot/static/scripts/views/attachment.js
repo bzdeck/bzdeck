@@ -16,13 +16,13 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
   this.$placeholder = $placeholder;
 
   this.$attachment = this.fill(this.get_template('details-attachment-content'), {
-    description: att.summary,
-    name: att.file_name,
-    contentSize: `${(att.size / 1024).toFixed(2)} KB`, // l10n
-    encodingFormat: att.is_patch ? 'text/x-patch' : att.content_type,
+    summary: att.summary,
+    file_name: att.file_name,
+    size: `${(att.size / 1024).toFixed(2)} KB`, // l10n
+    content_type: att.is_patch ? 'text/x-patch' : att.content_type,
     is_obsolete: !!att.is_obsolete,
-    dateCreated: att.creation_time,
-    dateModified: att.last_change_time,
+    creation_time: att.creation_time,
+    last_change_time: att.last_change_time,
     creator: get_person(att.creator),
     flag: [for (flag of att.flags || []) {
       creator: get_person(flag.setter),

@@ -277,7 +277,7 @@
   padding: .4rem;
 }
 
-.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="Person"] [itemprop="image"] {
+.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="User"] [itemprop="image"] {
   margin-right: .4rem;
   width: 1.6rem;
   height: 1.6rem;

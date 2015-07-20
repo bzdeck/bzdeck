@@ -377,7 +377,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
       $participants.addEventListener('mouseover', event => {
         let $target = event.target;
 
-        if ($target.matches('[itemprop][itemtype$="Person"]') && !$target.title) {
+        if ($target.matches('[itemprop][itemtype$="User"]') && !$target.title) {
           $target.title = $target.properties.description[0].itemValue + '\n' + $target.properties.email[0].itemValue;
         }
       });

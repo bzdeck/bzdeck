@@ -59,19 +59,19 @@
   border-width: 0 0 .1rem;
 }
 
-[data-device|="mobile"]:root .bug-history td[data-field="who"]::before {
+[data-device|="mobile"]:root .bug-history td[itemprop="who"]::before {
   content: "Who: ";
 }
 
-[data-device|="mobile"]:root .bug-history td[data-field="what"]::before {
+[data-device|="mobile"]:root .bug-history td[itemprop="what"]::before {
   content: "What: ";
 }
 
-[data-device|="mobile"]:root .bug-history td[data-field="removed"]::before {
+[data-device|="mobile"]:root .bug-history td[itemprop="removed"]::before {
   content: "Removed: ";
 }
 
-[data-device|="mobile"]:root .bug-history td[data-field="added"]::before {
+[data-device|="mobile"]:root .bug-history td[itemprop="added"]::before {
   content: "Added: ";
 }
 

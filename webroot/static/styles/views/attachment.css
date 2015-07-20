@@ -32,20 +32,20 @@
   line-height: 1.6;
 }
 
-[itemtype$="Attachment"][data-content-type] [itemprop="encodingFormat"],
+[itemtype$="Attachment"][data-content-type] [itemprop="content_type"],
 [itemtype$="Attachment"][data-content-type] [itemprop="is_obsolete"] {
   display: inline;
 }
 
-[itemtype$="Attachment"][data-content-type] [itemprop="encodingFormat"]::before {
+[itemtype$="Attachment"][data-content-type] [itemprop="content_type"]::before {
   content: '' !important; /* Hide the icon */
 }
 
-[itemtype$="Attachment"][data-content-type] [itemprop="encodingFormat"]::after {
+[itemtype$="Attachment"][data-content-type] [itemprop="content_type"]::after {
   content: attr(content);
 }
 
-[itemtype$="Attachment"][data-content-type] [itemprop="encodingFormat"][content="text/x-patch"]::after {
+[itemtype$="Attachment"][data-content-type] [itemprop="content_type"][content="text/x-patch"]::after {
   content: 'Patch';
 }
 
@@ -177,70 +177,70 @@
   font-size: 8rem;
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]::before,
+[itemtype$="Attachment"] [itemprop="content_type"]::before,
 [itemtype$="Attachment"] .body > a::before {
   font-family: FontAwesome;
   content: "\F016"; /* Default file icon */
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="text/"]::before,
+[itemtype$="Attachment"] [itemprop="content_type"][content^="text/"]::before,
 [itemtype$="Attachment"][data-content-type^="text/"] .body > a::before {
   content: "\F0F6";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-patch"]::before {
+[itemtype$="Attachment"] [itemprop="content_type"][content="text/x-patch"]::before {
   content: "\F1C9";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-github-pull-request"]::before,
+[itemtype$="Attachment"] [itemprop="content_type"][content="text/x-github-pull-request"]::before,
 [itemtype$="Attachment"][data-content-type="text/x-github-pull-request"] .body > a::before {
   content: "\F09B";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content="text/x-review-board-request"]::before,
+[itemtype$="Attachment"] [itemprop="content_type"][content="text/x-review-board-request"]::before,
 [itemtype$="Attachment"][data-content-type="text/x-review-board-request"] .body > a::before {
   content: "\F0EA"; /* clipboard icon */
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="image/"]::before {
+[itemtype$="Attachment"] [itemprop="content_type"][content^="image/"]::before {
   content: "\F1C5";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="audio/"]::before {
+[itemtype$="Attachment"] [itemprop="content_type"][content^="audio/"]::before {
   content: "\F1C7";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content^="video/"]::before {
+[itemtype$="Attachment"] [itemprop="content_type"][content^="video/"]::before {
   content: "\F1C8";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"][content="application/pdf"]::before,
+[itemtype$="Attachment"] [itemprop="content_type"][content="application/pdf"]::before,
 [itemtype$="Attachment"][data-content-type="application/pdf"] .body > a::before {
   content: "\F1C1";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/msword"],
+[itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/msword"],
     [content="application/vnd.openxmlformats-officedocument.wordprocessingml.document"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/msword"],
     [data-content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) .body > a::before {
   content: "\F1C2";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-excel"],
+[itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/vnd.ms-excel"],
     [content="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-excel"],
     [data-content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) .body > a::before {
   content: "\F1C3";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/vnd.ms-powerpoint"],
+[itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/vnd.ms-powerpoint"],
     [content="application/vnd.openxmlformats-officedocument.presentationml.presentation"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-powerpoint"],
     [data-content-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) .body > a::before {
   content: "\F1C4";
 }
 
-[itemtype$="Attachment"] [itemprop="encodingFormat"]:-moz-any([content="application/zip"],
+[itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/zip"],
     [content="application/gzip"], [content="application/x-gzip"], [content="application/x-bzip2"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/zip"], [data-content-type="application/gzip"],
     [data-content-type="application/x-gzip"], [data-content-type="application/x-bzip2"]) .body > a::before {

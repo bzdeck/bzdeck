@@ -26,7 +26,7 @@ BzDeck.views.BugHistory.prototype.render = function (history) {
     for (let [i, change] of hist.changes.entries()) {
       let { field_name, added, removed } = change,
           $_row = $row.cloneNode(true),
-          $cell = field => $_row.querySelector(`[data-field="${field}"]`);
+          $cell = field => $_row.querySelector(`[itemprop="${field}"]`);
 
       if (i === 0) {
         $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');

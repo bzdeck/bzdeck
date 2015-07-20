@@ -277,7 +277,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
       $tbody = this.$attachments_tbody,
       $row = this.get_template('bug-comment-form-attachments-row');
 
-  $row.querySelector('th[data-id="description"]').textContent = attachment.summary;
+  $row.querySelector('[itemprop="summary"]').textContent = attachment.summary;
 
   $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
     if (!this.id.startsWith('details-bug-') || mobile && mql.matches) {

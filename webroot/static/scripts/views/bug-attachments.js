@@ -103,10 +103,10 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
 
     this.fill($fragment.appendChild($listitem.cloneNode(true)), {
       id: att.hash ? att.hash.substr(0, 7) : att.id,
-      description: att.summary,
-      dateModified: att.last_change_time,
+      summary: att.summary,
+      last_change_time: att.last_change_time,
       creator: BzDeck.collections.users.get(att.creator, { name: att.creator }).properties,
-      encodingFormat: att.is_patch ? 'text/x-patch' : att.content_type, // l10n
+      content_type: att.is_patch ? 'text/x-patch' : att.content_type, // l10n
       is_obsolete: !!att.is_obsolete,
       is_unuploaded: !!att.is_unuploaded,
     }, {

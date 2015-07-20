@@ -65,7 +65,7 @@
   font-size: 1.1rem;
 }
 
-[id$="vertical-thread"] [itemprop="name"] {
+[id$="vertical-thread"] [itemprop="summary"] {
   right: 1rem;
   bottom: 1rem;
   left: 5.2rem;
@@ -77,16 +77,16 @@
   animation-iteration-count: infinite;
 }
 
-[id$="vertical-thread"] [role="listbox"]:not([aria-activedescendant]) [itemprop="name"],
-[id$="vertical-thread"] [role="option"][aria-selected="false"] [itemprop="name"] {
+[id$="vertical-thread"] [role="listbox"]:not([aria-activedescendant]) [itemprop="summary"],
+[id$="vertical-thread"] [role="option"][aria-selected="false"] [itemprop="summary"] {
   animation-name: none !important;
 }
 
-[id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="name"] {
+[id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="summary"] {
   font-weight: 500;
 }
 
-[id$="vertical-thread"] [itemprop="dateModified"] {
+[id$="vertical-thread"] [itemprop="last_change_time"] {
   top: 1rem;
   right: 3.2rem;
   opacity: .8;

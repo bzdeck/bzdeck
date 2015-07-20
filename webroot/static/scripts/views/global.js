@@ -49,7 +49,7 @@ BzDeck.views.Global = function GlobalView () {
 
     for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
       let title = `${user.original_name || user.name}\n${user.email}`,
-          $person = $email.closest('[itemtype$="Person"]'),
+          $person = $email.closest('[itemtype$="User"]'),
           $name = $person.querySelector('[itemprop="name"]'),
           $image = $person.querySelector('[itemprop="image"]');
 
@@ -127,14 +127,14 @@ BzDeck.views.Global.prototype.onclick = function (event) {
     return true;
   }
 
-  if ($target.matches('[itemtype$="Person"][role="link"]')) {
+  if ($target.matches('[itemtype$="User"][role="link"]')) {
     BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
 
     return this.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
-  if ($target.parentElement && $target.parentElement.matches('[itemtype$="Person"][role="link"]')) {
+  if ($target.parentElement && $target.parentElement.matches('[itemtype$="User"][role="link"]')) {
     BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
 
     return this.helpers.event.ignore(event);
@@ -152,7 +152,7 @@ BzDeck.views.Global.prototype.onclick = function (event) {
     if ($target.hasAttribute('data-att-id')) {
       let props = $target.properties,
           att_id = Number($target.getAttribute('data-att-id')),
-          att_type = props.encodingFormat ? props.encodingFormat[0].itemValue : undefined,
+          att_type = props.content_type ? props.content_type[0].itemValue : undefined,
           bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
                     for (att of bug.attachments || []) if (att.id === att_id) bug.id][0];
 

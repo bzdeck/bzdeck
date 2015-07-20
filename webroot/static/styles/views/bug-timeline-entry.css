@@ -68,7 +68,7 @@
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"],
-.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="datePublished"] {
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="creation_time"] {
   display: inline-block;
   float: left;
   clear: both;
@@ -124,11 +124,11 @@
   color: var(--disabled-button-foreground-color);
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="datePublished"] {
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="creation_time"] {
   pointer-events: auto; /* Show the tooltip */
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="datePublished"] {
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="creation_time"] {
   flex: none;
   margin: .4rem 0;
   line-height: 1.25;
@@ -300,7 +300,7 @@
   content: "\F1C6";
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="encodingFormat"] {
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="content_type"] {
   display: none;
 }
 

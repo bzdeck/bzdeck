@@ -38,7 +38,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
       $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
       $roles = $author.querySelector('.roles'),
-      $time = $entry.querySelector('[itemprop="datePublished"]'),
+      $time = $entry.querySelector('[itemprop="creation_time"]'),
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment_body = $entry.querySelector('[itemprop="text"]'),
       $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
@@ -177,10 +177,10 @@ BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
       $media;
 
   this.fill($attachment, {
-    description: attachment.summary,
-    name: attachment.file_name,
-    contentSize: attachment.size,
-    encodingFormat: attachment.is_patch ? 'text/x-patch' : attachment.content_type
+    summary: attachment.summary,
+    file_name: attachment.file_name,
+    size: attachment.size,
+    content_type: attachment.is_patch ? 'text/x-patch' : attachment.content_type
   }, {
     'data-att-id': attachment.id,
     'data-content-type': attachment.is_patch ? 'text/x-patch' : attachment.content_type,
@@ -249,7 +249,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
 BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer, time, change, comment) {
   let $change = this.get_template('timeline-change'),
       $changer = $change.querySelector('[itemprop="author"]'),
-      $time = $change.querySelector('[itemprop="datePublished"]'),
+      $time = $change.querySelector('[itemprop="creation_time"]'),
       $how = $change.querySelector('[itemprop="how"]'),
       conf_field = BzDeck.models.server.data.config.field,
       _field = conf_field[change.field_name] ||

@@ -231,7 +231,7 @@
             <h2>Profile</h2>
           </header>
           <div>
-            <article id="profile-TID" role="article" itemscope itemtype="http://schema.org/Person http://bzdeck.com/Person">
+            <article id="profile-TID" role="article" itemscope itemtype="http://bzdeck.com/User">
               <header>
                 <div>
                   <img alt="" itemprop="image">
@@ -524,10 +524,10 @@
                     <h4>General Flags</h4>
                     <ul>
                       <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                        <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
+                        <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
                         <span itemprop="name"></span>
                         <span itemprop="status"></span>
-                        <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+                        <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
                       </li>
                     </ul>
                   </section>
@@ -547,7 +547,7 @@
                       <h4>Reporter</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -560,7 +560,7 @@
                       <h4>Assignee</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -573,7 +573,7 @@
                       <h4>QA</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -586,7 +586,7 @@
                       <h4>Mentors</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -599,7 +599,7 @@
                       <h4>Cc</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -612,7 +612,7 @@
                       <h4>Other Contributors</h4>
                     </header>
                     <ul class="list">
-                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
                         <meta itemprop="email">
                         <meta itemprop="description">
                         <img alt="" itemprop="image">
@@ -650,7 +650,7 @@
             </div><!-- end #bug-TID-tabpanel-attachments -->
             <div id="bug-TID-tabpanel-history" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
               <div class="bug-history" tabindex="0" role="region">
-                <section role="group" aria-label="History" data-field="history">
+                <section role="group" itemscope itemtype="http://bzdeck.com/History" aria-label="History" data-field="history">
                   <h3>History</h3>
                   <table>
                     <thead>
@@ -700,11 +700,11 @@
       </div><!-- end .bug-info -->
     </template><!-- end #preview-bug-info -->
     <template id="timeline-comment">
-      <article tabindex="0" itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
+      <article tabindex="0" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
         <header>
           <div class="meta">
-            <span role="link" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><span class="roles"></span><meta itemprop="email"></span>
-            <time itemprop="datePublished"></time>
+            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><span class="roles"></span><meta itemprop="email"></span>
+            <time itemprop="creation_time"></time>
           </div>
           <div role="toolbar">
             <ul role="none">
@@ -719,9 +719,9 @@
       <article tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change" role="article">
         <header>
           <div class="meta">
-            <span role="link" itemprop="author" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
             <span itemprop="how"></span>
-            <time itemprop="datePublished"></time>
+            <time itemprop="creation_time"></time>
           </div>
         </header>
       </article>
@@ -743,7 +743,7 @@
             <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
           </div>
           <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
-            <article itemprop="comment" itemscope itemtype="http://schema.org/Comment" role="article">
+            <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
               <div role="text" itemprop="text"></div>
             </article>
           </div>
@@ -816,8 +816,8 @@
       </div>
     </template><!-- end #bug-comment-form-clear-needinfo-row -->
     <template id="bug-comment-form-attachments-row">
-      <tr>
-        <th data-id="description"></th>
+      <tr itemscope itemtype="http://bzdeck.com/Attachment">
+        <th itemprop="summary"></th>
         <td><span title="Edit" tabindex="0" role="button" data-command="edit">Edit</span></td>
         <td><span title="Remove" tabindex="0" role="button" data-command="remove">Remove</span></td>
         <td><span title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span></td>
@@ -825,43 +825,43 @@
       </tr>
     </template>
     <template id="timeline-attachment">
-      <aside role="link" itemprop="attachment" itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
-        <h5 itemprop="description"></h5>
-        <meta itemprop="name">
-        <meta itemprop="contentSize">
-        <meta itemprop="encodingFormat">
+      <aside role="link" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
+        <h5 itemprop="summary"></h5>
+        <meta itemprop="file_name">
+        <meta itemprop="size">
+        <meta itemprop="content_type">
         <div></div>
       </aside>
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-hidden data-id data-hash" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
-        <meta itemprop="encodingFormat">
+        <meta itemprop="content_type">
         <meta itemprop="is_obsolete">
         <meta itemprop="is_unuploaded">
-        <span itemprop="creator" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
           <img alt="" itemprop="image">
           <meta itemprop="email">
         </span>
         <span itemprop="id"></span>
-        <span itemprop="description"></span>
-        <time data-simple="true" itemprop="dateModified"></time>
+        <span itemprop="summary"></span>
+        <time data-simple="true" itemprop="last_change_time"></time>
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemscope itemtype="http://schema.org/MediaObject http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
+      <section itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
         <header>
-          <h4 itemprop="description"></h4>
+          <h4 itemprop="summary"></h4>
           <ul>
-            <li><span itemprop="name"></span> &nbsp; <span itemprop="contentSize"></span> &nbsp; <meta itemprop="encodingFormat"> &nbsp; <meta itemprop="is_obsolete"></li>
-            <li>Created: <time itemprop="dateCreated" data-relative="false"></time> &nbsp; Modified: <time itemprop="dateModified" data-relative="false"></time></li>
-            <li role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
+            <li><span itemprop="file_name"></span> &nbsp; <span itemprop="size"></span> &nbsp; <meta itemprop="content_type"> &nbsp; <meta itemprop="is_obsolete"></li>
+            <li>Created: <time itemprop="creation_time" data-relative="false"></time> &nbsp; Modified: <time itemprop="last_change_time" data-relative="false"></time></li>
+            <li role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
             <li>
               <ul>
                 <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                  <span role="link" itemprop="creator" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
+                  <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
                   <span itemprop="name"></span>
                   <span itemprop="status"></span>
-                  <span role="link" itemprop="requestee" itemscope itemtype="http://schema.org/Person"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+                  <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
                 </li>
               </ul>
             </li>
@@ -871,35 +871,35 @@
       </section>
     </template><!-- end #details-attachment-content -->
     <template id="details-change">
-      <tr>
-        <td data-field="when"></td>
-        <td data-field="who"></td>
-        <td data-field="what"></td>
-        <td data-field="removed"></td>
-        <td data-field="added"></td>
+      <tr itemprop="change" itemscope itemtype="http://bzdeck.com/HistoryChange">
+        <td itemprop="when"></td>
+        <td itemprop="who"></td>
+        <td itemprop="what"></td>
+        <td itemprop="removed"></td>
+        <td itemprop="added"></td>
       </tr>
     </template><!-- end #details-change -->
     <template id="vertical-thread-item">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
-        <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
           <img alt="" itemprop="image">
           <meta itemprop="email">
         </span>
         <span itemprop="id"></span>
-        <span itemprop="name"></span>
-        <time data-simple="true" itemprop="dateModified"></time>
+        <span itemprop="summary"></span>
+        <time data-simple="true" itemprop="last_change_time"></time>
         <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
       </li>
     </template><!-- end #vertical-thread-item -->
     <template id="bug-tooltip">
       <aside role="tooltip" data-attrs="data-id" itemscope itemtype="http://bzdeck.com/Bug">
-        <span itemprop="contributor" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
           <img alt="" itemprop="image">
           <meta itemprop="email">
         </span>
         <span itemprop="id"></span>
-        <span itemprop="name"></span>
-        <time data-simple="true" itemprop="dateModified"></time>
+        <span itemprop="summary"></span>
+        <time data-simple="true" itemprop="last_change_time"></time>
       </aside>
     </template><!-- end #bug-tooltip -->
     <template id="person-finder">
@@ -909,7 +909,7 @@
       </span>
     </template><!-- end #person-finder -->
     <template id="person-finder-item">
-      <li tabindex="-1" role="option" aria-selected="false" data-attrs="id data-value" itemscope itemtype="http://schema.org/Person">
+      <li tabindex="-1" role="option" aria-selected="false" data-attrs="id data-value" itemscope itemtype="http://bzdeck.com/User">
         <img alt="" itemprop="image">
         <span itemprop="name"></span>
         <span itemprop="nick"></span>
@@ -917,10 +917,10 @@
       </li>
     </template><!-- end #person-finder-item -->
     <template id="person-with-image">
-      <span role="link" itemscope itemtype="http://schema.org/Person" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+      <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
     <template id="bug-participant">
-      <li tabindex="0" role="link" itemscope itemtype="http://schema.org/Person">
+      <li tabindex="0" role="link" itemscope itemtype="http://bzdeck.com/User">
         <meta itemprop="email">
         <meta itemprop="description">
         <img alt="" itemprop="image">
