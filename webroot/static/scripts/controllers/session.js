@@ -18,6 +18,14 @@ BzDeck.controllers.Session = function SessionController () {
   new BzDeck.views.Session();
   new BzDeck.views.LoginForm();
 
+  try {
+    sessionStorage.getItem('fake');
+  } catch (ex) {
+    this.trigger(':Error', { message: `The Web Storage API cannot be used on your browser. Make sure you are accepting \
+                                       cookies from ${location.hostname} and try again.` });
+    return;
+  }
+
   this.find_account();
 };
 
@@ -49,16 +57,15 @@ BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
   let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback'),
-      params = new URLSearchParams(location.search.substr(1)),
-      host = params.get('server') === 'dev' ? 'mozilla-dev' : 'mozilla', // TEMP
-      email = params.get('client_api_login'),
-      key = params.get('client_api_key');
+      host = 'mozilla', // TEMP
+      email = sessionStorage.getItem('client_api_login'),
+      key = sessionStorage.getItem('client_api_key');
 
+  // window.open doesn't work on the Android WebAppRT (Bug 1183897) so the user credentials are to be passed from the
+  // callback page through a temporary local storage. Otherwise, the credentials should be notified from a sub window
+  // over a BroadcastChannel.
   if (email && key) {
-    // As the Bugzilla Auth Delegation's callback, the user is redirected back from Bugzilla's auth.cgi and the URL
-    // params have an email and API key. Verify the user account immediately in such cases. This is a workaround for the
-    // Android WebAppRT where window.open() doesn't work. On other environments, a separate window and the following
-    // BroadcastChannel code will be used instead. (#293)
+    sessionStorage.clear();
     this.verify_account(host, email, key);
 
     return;
@@ -66,7 +73,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
 
   this.on('LoginFormView:LoginRequested', data => {
     bc.addEventListener('message', event => {
-      let { email, key } = event.data;
+      let { client_api_login: email, client_api_key: key } = event.data;
 
       if (email && key) {
         this.verify_account(data.host, email, key);

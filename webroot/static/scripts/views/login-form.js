@@ -74,12 +74,12 @@ BzDeck.views.LoginForm.prototype.activate_bugzilla_auth = function () {
 
     this.trigger(':LoginRequested', { host: this.host });
 
-    // Take the user to the Bugzilla auth page
+    // Take the user to the Bugzilla authentication page. window.open doesn't work on the Android WebAppRT (Bug 1183897)
+    // so open the auth (and later callback) page in the current window (#293). Otherwise, the auth flow should be done
+    // in a sub window.
     // http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html
     if (FlareTail.helpers.env.platform.android) {
-      // Since window.open() is not working on the Android WebAppRT, open the page in the current window (#293)
-      location.href = `${BzDeck.config.servers[this.host].url}/auth.cgi`
-                    + `?callback=${encodeURIComponent(location.origin)}&description=BzDeck`;
+      location.replace(auth_url);
     } else {
       window.open(auth_url, 'bugzilla-auth');
     }
