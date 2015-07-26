@@ -27,30 +27,28 @@
   line-height: 1.25;
 }
 
-[itemtype$="Attachment"][data-content-type] > header > ul {
-  margin: 0 1.2rem 1.2rem;
+[itemtype$="Attachment"][data-content-type] .fields {
+  display: flex;
+  margin: 0 .6rem 1.2rem;
   line-height: 1.6;
 }
 
-[itemtype$="Attachment"][data-content-type] [itemprop="content_type"],
-[itemtype$="Attachment"][data-content-type] [itemprop="is_obsolete"] {
-  display: inline;
+[itemtype$="Attachment"][data-content-type] .fields > * {
+  flex: 1 1 50%;
+  margin: 0 .6rem;
+}
+
+[itemtype$="Attachment"][data-content-type] .fields h5 {
+  position: absolute;
+  text-indent: -99999px;
+}
+
+[itemtype$="Attachment"][data-content-type] .properties meta {
+  margin-left: .8rem;
 }
 
 [itemtype$="Attachment"][data-content-type] [itemprop="content_type"]::before {
   content: '' !important; /* Hide the icon */
-}
-
-[itemtype$="Attachment"][data-content-type] [itemprop="content_type"]::after {
-  content: attr(content);
-}
-
-[itemtype$="Attachment"][data-content-type] [itemprop="content_type"][content="text/x-patch"]::after {
-  content: 'Patch';
-}
-
-[itemtype$="Attachment"][data-content-type] [itemprop="is_obsolete"][content="true"]::after {
-  content: '(Obsolete)';
 }
 
 [itemtype$="Attachment"][data-content-type] [itemprop="image"] {
@@ -74,6 +72,15 @@
 
 [itemtype$="Attachment"][data-content-type] li * {
   white-space: nowrap;
+}
+
+[itemtype$="Attachment"][data-content-type] li .blurred[role="textbox"] {
+  display: inline-block;
+  width: 80%;
+}
+
+[itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {
+  display: none;
 }
 
 [itemtype$="Attachment"][data-content-type]:not(.patch) .body {
@@ -188,8 +195,8 @@
   content: "\F0F6";
 }
 
-[itemtype$="Attachment"] [itemprop="content_type"][content="text/x-patch"]::before {
-  content: "\F1C9";
+[itemtype$="Attachment"] [itemprop="is_patch"][content="true"] ~ [itemprop="content_type"]::before {
+  content: "\F1C9" !important;
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"][content="text/x-github-pull-request"]::before,

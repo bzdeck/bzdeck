@@ -82,6 +82,7 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
 
   this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
   this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.hash));
+  this.on('BugController:AttachmentEdited', data => this.on_attachment_edited(data.change));
   this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
 };
 
@@ -106,7 +107,8 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
       summary: att.summary,
       last_change_time: att.last_change_time,
       creator: BzDeck.collections.users.get(att.creator, { name: att.creator }).properties,
-      content_type: att.is_patch ? 'text/x-patch' : att.content_type, // l10n
+      content_type: att.content_type,
+      is_patch: !!att.is_patch,
       is_obsolete: !!att.is_obsolete,
       is_unuploaded: !!att.is_unuploaded,
     }, {
@@ -235,6 +237,22 @@ BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
   this.$listbox.querySelector(`[data-hash='${hash}']`).remove();
   this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$listbox.update_members();
+};
+
+/*
+ * Called by BugController whenever a new attachment is edited by the user.
+ *
+ * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *                  property name and value
+ * [return] none
+ */
+BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
+  let { id, hash, prop, value } = change,
+      $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
+
+  if (['summary', 'content_type', 'is_patch', 'is_obsolete'].includes(prop)) {
+    $item.querySelector(`[itemprop="${prop}"]`).itemValue = value;
+  }
 };
 
 /*

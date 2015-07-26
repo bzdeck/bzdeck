@@ -60,6 +60,7 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   // Attachments
   this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
   this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.index));
+  this.on('BugController:AttachmentEdited', data => this.on_attachment_edited(data.change));
   this.on('BugController:AttachmentError', data => this.on_attachment_error(data.message));
   this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
   this.on('BugController:UploadOptionChanged', data => this.update_parallel_ui(data.uploads));
@@ -277,6 +278,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
       $tbody = this.$attachments_tbody,
       $row = this.get_template('bug-comment-form-attachments-row');
 
+  $row.dataset.hash = hash;
   $row.querySelector('[itemprop="summary"]').textContent = attachment.summary;
 
   $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
@@ -312,6 +314,21 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
   this.$attachments_tbody.rows[index].remove();
+};
+
+/*
+ * Called by BugController whenever a new attachment is edited by the user.
+ *
+ * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *                  property name and value
+ * [return] none
+ */
+BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
+  let { hash, prop, value } = change;
+
+  if (hash && prop === 'summary') {
+    this.$attachments_tbody.querySelector(`[data-hash="${hash}"] [itemprop="summary"]`).textContent = value;
+  }
 };
 
 /*

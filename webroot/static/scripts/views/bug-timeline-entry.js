@@ -178,12 +178,10 @@ BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
 
   this.fill($attachment, {
     summary: attachment.summary,
-    file_name: attachment.file_name,
-    size: attachment.size,
-    content_type: attachment.is_patch ? 'text/x-patch' : attachment.content_type
+    content_type: attachment.content_type,
+    is_patch: !!attachment.is_patch,
   }, {
     'data-att-id': attachment.id,
-    'data-content-type': attachment.is_patch ? 'text/x-patch' : attachment.content_type,
   });
 
   $attachment.title = [
@@ -259,6 +257,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
                conf_field[{
                  'flagtypes.name': 'flag',
                  'attachments.description': 'attachment.description',
+                 'attachments.filename': 'attachment.file_name',
                  'attachments.ispatch': 'attachment.is_patch',
                  'attachments.isobsolete': 'attachment.is_obsolete',
                  'attachments.isprivate': 'attachment.is_private',
@@ -321,7 +320,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
       removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined,
       removals = change.removed ? this.create_history_change_element(change, 'removed').outerHTML : undefined,
       additions = change.added ? this.create_history_change_element(change, 'added').outerHTML : undefined,
-      att_id = change.att_id,
+      att_id = change.attachment_id,
       attachment = att_id ? `<a href="/attachment/${att_id}" data-att-id="${att_id}">Attachment ${att_id}</a>`
                           : undefined; // l10n
 
@@ -435,6 +434,8 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
       $how.innerHTML = `changed ${attachment} flag: ${removals} →︎ ${additions}`; // l10n
     } else if (change.field_name.match(/^attachments?\.description$/)) {
       $how.innerHTML = `changed ${attachment} description: ${removals} →︎ ${additions}`; // l10n
+    } else if (change.field_name.match(/^attachments?\.file_?name$/)) {
+      $how.innerHTML = `changed ${attachment} filename: ${removals} →︎ ${additions}`; // l10n
     } else if (change.field_name.match(/^attachments?\.is_?patch$/)) {
       if (change.added === '1') {
         $how.innerHTML = `marked ${attachment} as patch`; // l10n

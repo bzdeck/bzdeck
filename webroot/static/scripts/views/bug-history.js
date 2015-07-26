@@ -45,6 +45,7 @@ BzDeck.views.BugHistory.prototype.render = function (history) {
                    conf_field[{
                      'flagtypes.name': 'flag',
                      'attachments.description': 'attachment.description',
+                     'attachments.filename': 'attachment.file_name',
                      'attachments.ispatch': 'attachment.is_patch',
                      'attachments.isobsolete': 'attachment.is_obsolete',
                      'attachments.isprivate': 'attachment.is_private',

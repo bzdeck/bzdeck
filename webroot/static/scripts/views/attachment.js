@@ -19,7 +19,8 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
     summary: att.summary,
     file_name: att.file_name,
     size: `${(att.size / 1024).toFixed(2)} KB`, // l10n
-    content_type: att.is_patch ? 'text/x-patch' : att.content_type,
+    content_type: att.content_type,
+    is_patch: !!att.is_patch,
     is_obsolete: !!att.is_obsolete,
     creation_time: att.creation_time,
     last_change_time: att.last_change_time,
@@ -31,17 +32,53 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
       requestee: flag.requestee ? get_person(flag.requestee) : {},
     }],
   }, {
-    'data-att-id': att.id || att.hash,
-    'data-content-type': att.is_patch ? 'text/x-patch' : att.content_type,
+    'data-att-id': att.id, // existing attachment
+    'data-att-hash': att.hash, // unuploaded attachment
+    'data-content-type': att.content_type,
   });
 
   this.$outer = this.$attachment.querySelector('.body');
 
+  this.activate();
   this.render();
 };
 
 BzDeck.views.Attachment.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
+
+/*
+ * Activate the editable widgets.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.Attachment.prototype.activate = function () {
+  let { id, hash } = this.attachment;
+
+  for (let $prop of this.$attachment.properties) {
+    let prop = $prop.itemProp.value,
+        trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
+
+    if ($prop.matches('[role="textbox"]')) {
+      let $$textbox = new this.widgets.TextBox($prop);
+
+      $$textbox.bind('Edited', event => {
+        let value = event.detail.value;
+
+        if (value) {
+          trigger(value);
+        } else {
+          // The property value cannot be empty; fill the default value
+          $$textbox.value = this.attachment[prop];
+        }
+      });
+    }
+
+    if ($prop.matches('[role="checkbox"]')) {
+      (new this.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
+    }
+  }
+};
 
 /*
  * Render the attachment on the placeholder.

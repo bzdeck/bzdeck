@@ -235,73 +235,20 @@
   cursor: pointer; /* Looks like a link */
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
-  line-height: 1.8rem;
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
-  float: left;
-  font-size: 2rem;
-  line-height: 2.4rem;
-  font-family: FontAwesome;
-  text-align: center;
-  content: "\F016";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="text/"] h5::before {
-  content: "\F0F6";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-patch"] h5::before {
-  content: "\F1C9";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-github-pull-request"] h5::before {
-  content: "\F09B";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="text/x-review-board-request"] h5::before {
-  content: "\F0EA"; /* clipboard icon */
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="image/"] h5::before {
-  content: "\F1C5";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="audio/"] h5::before {
-  content: "\F1C7";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type^="video/"] h5::before {
-  content: "\F1C8";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"][data-content-type="application/pdf"] h5::before {
-  content: "\F1C1";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/msword"],
-    [data-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) h5::before {
-  content: "\F1C2";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-excel"],
-    [data-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) h5::before {
-  content: "\F1C3";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/vnd.ms-powerpoint"],
-    [data-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) h5::before {
-  content: "\F1C4";
-}
-
-.bug-timeline [itemprop="comment"] [itemprop="attachment"]:-moz-any([data-type="application/zip"],
-    [data-type="application/gzip"], [data-type="application/x-gzip"], [data-type="application/x-bzip2"]) h5::before {
-  content: "\F1C6";
-}
-
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="content_type"] {
-  display: none;
+  display: block;
+  float: left;
+  padding: 1.2rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 2rem;
+  line-height: 2rem;
+  text-align: center;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
+  min-height: 2rem;
+  line-height: 1.8rem;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {

@@ -14,6 +14,7 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.id = `${id_prefix}-bug-${bug.id}`;
   this.bug = bug;
   this.reset_changes();
+  this.att_changes = new Map();
 
   this.uploads = Object.create(Array.prototype, {
     parallel: { writable: true, value: true },
@@ -22,10 +23,12 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
 
   Object.defineProperties(this, {
     has_changes:      { get: () => !!Object.keys(this.changes).length },
+    has_att_changes:  { get: () => !!this.att_changes.size },
     has_comment:      { get: () => !!this.changes.comment },
     has_attachments:  { get: () => !!this.uploads.length },
     has_errors:       { get: () => !!this.find_errors().length },
-    can_submit:       { get: () => !this.has_errors && (this.has_changes || this.has_attachments) },
+    can_submit:       { get: () => !this.has_errors &&
+                                    (this.has_changes || this.has_att_changes || this.has_attachments) },
   });
 
   // Attachments
@@ -35,6 +38,7 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:MoveUpAttachment', data => this.move_up_attachment(data.hash));
   this.on('V:MoveDownAttachment', data => this.move_down_attachment(data.hash));
   this.on('V:ChangeUploadOption', data => this.change_upload_option(data));
+  this.on('AttachmentView:EditAttachment', data => this.edit_attachment(data));
 
   // Other changes
   this.on('V:EditComment', data => this.edit_comment(data.text));
@@ -83,6 +87,19 @@ BzDeck.controllers.Bug.prototype.reset_changes = function (comment) {
 };
 
 /*
+ * Called internally whenever a bug field or an attachment property is edited by the user. Fire an event to notify the
+ * views of the change.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.controllers.Bug.prototype.onedit = function () {
+  let { changes, att_changes, uploads, can_submit } = this;
+
+  this.trigger(':BugEdited', { changes, att_changes, uploads, can_submit });
+};
+
+/*
  * Called by BugView whenever the new comment is edited by the user. Cache the comment and notify changes accordingly.
  *
  * [argument] comment (String) comment text
@@ -96,7 +113,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
 
     if (added) {
       this.trigger(':CommentAdded', { has_comment: true, can_submit: this.can_submit });
-      this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+      this.onedit();
     }
   } else {
     let removed = this.has_comment;
@@ -105,7 +122,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
 
     if (removed) {
       this.trigger(':CommentRemoved', { has_comment: false, can_submit: this.can_submit });
-      this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+      this.onedit();
     }
   }
 };
@@ -173,7 +190,7 @@ BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
     delete this.changes.dupe_of;
   }
 
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
 };
 
 /*
@@ -202,7 +219,7 @@ BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
   }
 
   this.trigger(':FlagEdited', { flags: this.changes.flags, flag, added });
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
 };
 
 /*
@@ -242,7 +259,7 @@ BzDeck.controllers.Bug.prototype.add_participant = function (field, email) {
   }
 
   this.trigger(':ParticipantAdded', { field, email });
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
   this.cleanup_multiple_item_change(field);
 
   return true;
@@ -277,7 +294,7 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
   }
 
   this.trigger(':ParticipantRemoved', { field, email });
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
   this.cleanup_multiple_item_change(field);
 
   return true;
@@ -418,13 +435,23 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
 };
 
 /*
- * Find an attachment from the cached new attachment list by comparing the hash values.
+ * Find an attachment index from the cached new attachment list by comparing the hash values.
  *
  * [argument] hash (String) hash value of the attachment object to find
  * [return] index (Number) 0 or a positive integer if the attachment is found, -1 if not found
  */
-BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
+BzDeck.controllers.Bug.prototype.find_att_index = function (hash) {
   return this.uploads.findIndex(a => a.hash === hash);
+};
+
+/*
+ * Find an attachment object from the cached new attachment list by comparing the hash values.
+ *
+ * [argument] hash (String) hash value of the attachment object to find
+ * [return] attachment (Proxy) AttachmentModel instance if the attachment is found, undefined if not found
+ */
+BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
+  return this.uploads.find(a => a.hash === hash);
 };
 
 /*
@@ -439,7 +466,7 @@ BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
   let attachment = BzDeck.collections.attachments.cache(att, size);
 
   // Check if the file has already been attached
-  if (this.find_attachment(attachment.hash) > -1) {
+  if (this.find_attachment(attachment.hash)) {
     return false;
   }
 
@@ -447,7 +474,7 @@ BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
 
   this.trigger(':AttachmentAdded', { attachment });
   this.trigger(':UploadListUpdated', { uploads: this.uploads });
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
 
   return true;
 };
@@ -459,7 +486,7 @@ BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
  * [return] result (Boolean) whether the attachment is found and removed
  */
 BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
-  let index = this.find_attachment(hash);
+  let index = this.find_att_index(hash);
 
   if (index === -1) {
     return false;
@@ -469,7 +496,65 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
 
   this.trigger(':AttachmentRemoved', { index, hash });
   this.trigger(':UploadListUpdated', { uploads: this.uploads });
-  this.trigger(':BugEdited', { changes: this.changes, uploads: this.uploads, can_submit: this.can_submit });
+  this.onedit();
+
+  return true;
+};
+
+/*
+ * Edit a property of a new or existing attachment
+ *
+ * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *                  property name and value
+ * [return] result (Boolean) whether the attachment is edited successfully
+ */
+BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
+  let attachment,
+      { id, hash, prop, value } = change;
+
+  if (hash) {
+    // Edit a new attachment
+    attachment = this.find_attachment(hash);
+
+    if (!attachment || attachment[prop] === value) {
+      return false;
+    }
+
+    attachment[prop] = value;
+  } else {
+    // Edit an existing attachment
+    attachment = BzDeck.collections.attachments.get(id);
+
+    if (!attachment || attachment.bug_id !== this.bug.id) {
+      return false;
+    }
+
+    let changes = this.att_changes.get(id) || {},
+        edited = true;
+
+    // The properties prefixed with 'is_' are supposed to be a boolean but actually 0 or 1, so use the non-strict
+    // inequality operator for comparison. This includes 'is_patch' and 'is_obsolete'.
+    if (attachment[prop] != value) {
+      changes[prop] = value;
+    } else if (prop in changes) {
+      delete changes[prop];
+    } else {
+      edited = false;
+    }
+
+    if (Object.keys(changes).length) {
+      this.att_changes.set(id, changes);
+    } else {
+      this.att_changes.delete(id);
+    }
+
+    if (!edited) {
+      return false;
+    }
+  }
+
+  this.trigger(':AttachmentEdited', { attachment, change });
+  this.onedit();
 
   return true;
 };
@@ -482,7 +567,7 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
  * [return] result (Boolean) whether the attachment is found and reordered
  */
 BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
-  let index = this.find_attachment(hash);
+  let index = this.find_att_index(hash);
 
   if (index === -1) {
     return false;
@@ -501,7 +586,7 @@ BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
  * [return] result (Boolean) whether the attachment is found and reordered
  */
 BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
-  let index = this.find_attachment(hash);
+  let index = this.find_att_index(hash);
 
   if (index === -1) {
     return false;
@@ -586,7 +671,10 @@ BzDeck.controllers.Bug.prototype.submit = function () {
       }).catch(error => reject(new Error(error.message)));
     }
   }).then(() => {
-    if (!this.uploads.length) {
+    // Update existing attachment(s)
+    return Promise.all([for (c of this.att_changes) this.post_att_changes(c[0], c[1])]);
+  }).then(() => {
+    if (!this.has_attachments) {
       // There is nothing more to do if no file is attached
       return Promise.resolve();
     }
@@ -601,6 +689,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
   }).then(() => {
     // All done! Clear the cached changes and uploads data
     this.reset_changes();
+    this.att_changes.clear();
     this.uploads.length = 0;
     this.uploads.total = 0;
 
@@ -624,11 +713,22 @@ BzDeck.controllers.Bug.prototype.submit = function () {
 /*
  * Post the meta data changes made on the bug to Bugzilla.
  *
- * [argument] none
+ * [argument] data (Object) bug change object
  * [return] request (Promise) can be a rejected Promise if any error is found
  */
 BzDeck.controllers.Bug.prototype.post_changes = function (data) {
   return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', auth: true, data });
+};
+
+/*
+ * Post attachment changes to Bugzilla.
+ *
+ * [argument] att_id (Integer) attachment id
+ * [argument] data (Object) attachment change object
+ * [return] request (Promise) can be a rejected Promise if any error is found
+ */
+BzDeck.controllers.Bug.prototype.post_att_changes = function (att_id, data) {
+  return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', auth: true, data });
 };
 
 /*
@@ -644,7 +744,7 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
   return this.request(`bug/${this.bug.id}/attachment`, null, {
     method: 'POST',
     auth: true,
-    data: Object.assign({}, attachment), // Clone the object to drop the custom properties (hash, uploaded)
+    data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
     upload_listeners: {
       progress: event => {
         if (!size) {

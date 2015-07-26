@@ -119,11 +119,11 @@
   bottom: 1rem;
 }
 
-.bug-attachments [role="option"] [itemprop="content_type"] {
+.bug-attachments [role="option"] :-moz-any([itemprop="is_patch"], [itemprop="content_type"]) {
   right: 1rem;
 }
 
-.bug-attachments [role="option"] [itemprop^="is_"] {
+.bug-attachments [role="option"] :-moz-any([itemprop="is_obsolete"], [itemprop="is_unuploaded"]) {
   right: 2.8rem;
 }
 

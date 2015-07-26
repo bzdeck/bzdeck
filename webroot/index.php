@@ -825,19 +825,19 @@
       </tr>
     </template>
     <template id="timeline-attachment">
-      <aside role="link" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
-        <h5 itemprop="summary"></h5>
-        <meta itemprop="file_name">
-        <meta itemprop="size">
+      <aside role="link" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id">
+        <meta itemprop="is_patch">
         <meta itemprop="content_type">
+        <h5 itemprop="summary"></h5>
         <div></div>
       </aside>
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-hidden data-id data-hash" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
-        <meta itemprop="content_type">
+        <meta itemprop="is_patch">
         <meta itemprop="is_obsolete">
         <meta itemprop="is_unuploaded">
+        <meta itemprop="content_type">
         <span itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
           <img alt="" itemprop="image">
           <meta itemprop="email">
@@ -848,25 +848,33 @@
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-content-type">
+      <section itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
         <header>
-          <h4 itemprop="summary"></h4>
-          <ul>
-            <li><span itemprop="file_name"></span> &nbsp; <span itemprop="size"></span> &nbsp; <meta itemprop="content_type"> &nbsp; <meta itemprop="is_obsolete"></li>
-            <li>Created: <time itemprop="creation_time" data-relative="false"></time> &nbsp; Modified: <time itemprop="last_change_time" data-relative="false"></time></li>
-            <li role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></li>
-            <li>
-              <ul>
-                <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                  <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
-                  <span itemprop="name"></span>
-                  <span itemprop="status"></span>
-                  <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          <h4><span class="blurred" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h4>
         </header>
+        <div class="fields">
+          <section class="properties">
+            <h5>Properties</h5>
+            <ul>
+              <li>Name: <span class="blurred" contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true" aria-multiline="true" data-nobreak="true"></span></li>
+              <li>Type: <span class="blurred" contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true" aria-multiline="true" data-nobreak="true"></span></li>
+              <li>Size: <span itemprop="size"></span> <meta tabindex="0" role="checkbox" itemprop="is_patch" aria-label="Patch"> <meta tabindex="0" role="checkbox" itemprop="is_obsolete" aria-label="Obsolete"></li>
+              <li>Created on <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
+              <li>Modified on <time itemprop="last_change_time" data-relative="false"></time></li>
+            </ul>
+          </section>
+          <section class="flags">
+            <h5>Flags</h5>
+            <ul>
+              <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
+                <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
+                <span itemprop="name"></span>
+                <span itemprop="status"></span>
+                <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+              </li>
+            </ul>
+          </section>
+        </div>
         <div class="body"></div>
       </section>
     </template><!-- end #details-attachment-content -->
