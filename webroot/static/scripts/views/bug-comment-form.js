@@ -123,11 +123,20 @@ BzDeck.views.BugCommentForm.prototype.init_comment_tabpanel = function () {
  * [return] none
  */
 BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
+  let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
+
+  if (can_choose_dir) {
+    this.$attach_button.title = 'Add attachments... (Shift+Click to choose directory)'; // l10n
+  }
+
   // Attach files using a file picker
   // The event here should be click; others including touchstart and mousedown don't work
-  this.$attach_button.addEventListener('click', event => this.$file_picker.click());
+  this.$attach_button.addEventListener('click', event => {
+    can_choose_dir && event.shiftKey ? this.$file_picker.chooseDirectory() : this.$file_picker.click();
+  });
+
   this.$file_picker.addEventListener('change', event => {
-    this.trigger('BugView:AttachFiles', { files: event.target.files });
+    this.trigger('BugView:FilesSelected', { input: event.target });
   });
 
   // Attach files by drag & drop
@@ -146,7 +155,7 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
     let dt = event.dataTransfer;
 
     if (dt.types.contains('Files')) {
-      this.trigger('BugView:AttachFiles', { files: dt.files });
+      this.trigger('BugView:FilesSelected', { input: dt });
     } else if (dt.types.contains('text/plain')) {
       this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
     }

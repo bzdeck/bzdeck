@@ -637,10 +637,10 @@
                     </div>
                     <div role="toolbar">
                       <ul role="none">
-                        <li role="none"><span class="iconic" title="Add an attachment" tabindex="0" role="button" data-command="add-attachment"></span></li>
+                        <li role="none"><span class="iconic" title="Add attachments..." tabindex="0" role="button" data-command="add-attachment"></span></li>
                         <li role="none"><span class="iconic" title="Remove an attachment" tabindex="0" role="button" aria-disabled="true" data-command="remove-attachment"></span></li>
                       </ul>
-                      <input type="file" hidden multiple>
+                      <input type="file" hidden multiple directory>
                     </div>
                   </div>
                   <div class="content" role="region">
@@ -749,7 +749,7 @@
           </div>
           <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
             <div role="group">
-              <input type="file" hidden multiple>
+              <input type="file" hidden multiple directory>
               <meta tabindex="0" role="checkbox" aria-label="Upload files in parallel" aria-checked="true" aria-hidden="true">
               <table>
                 <colgroup>
@@ -792,7 +792,7 @@
         <footer>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Attach Files..." tabindex="0" role="button" data-command="attach">Attach</span></li>
+              <li role="none"><span class="iconic" title="Add attachments..." tabindex="0" role="button" data-command="attach">Attach</span></li>
             </ul>
           </div>
           <div role="status"></div>

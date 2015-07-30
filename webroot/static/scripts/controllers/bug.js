@@ -335,7 +335,7 @@ BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field)
  * Called by BugView whenever new attachment files are selected by the user through a file input form control or a
  * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
  *
- * [argument] files (FileList) selected files
+ * [argument] files (FileList or Array) selected files
  * [return] none
  */
 BzDeck.controllers.Bug.prototype.attach_files = function (files) {

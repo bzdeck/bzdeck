@@ -31,6 +31,8 @@ BzDeck.views.Bug.prototype.init = function () {
       this.update(data.bug, data.changes);
     }
   }, true); // Enable the global option
+
+  this.on('BugView:FilesSelected', data => this.on_files_selected(data.input));
 };
 
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
@@ -448,6 +450,30 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
 
   if (name === 'resolution') {
     this.update_resolution_ui(value);
+  }
+};
+
+/*
+ * Called when the user selected files to attach through an input form control or drag and drop operation. If the
+ * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
+ * traditional File API to identify the files. In any case, notify the selected files to the controller.
+ *
+ * [argument] input (HTMLInputElement or DataTransfer) data source
+ * [return] none
+ */
+BzDeck.views.Bug.prototype.on_files_selected = function (input) {
+  let iterate = items => {
+    for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
+      item.getFilesAndDirectories().then(_items => iterate(_items));
+    } else {
+      this.trigger('BugView:AttachFiles', { files: [item] });
+    }
+  };
+
+  if (typeof input.getFilesAndDirectories === 'function') {
+    input.getFilesAndDirectories().then(items => iterate(items));
+  } else {
+    this.trigger('BugView:AttachFiles', { files: input.files });
   }
 };
 

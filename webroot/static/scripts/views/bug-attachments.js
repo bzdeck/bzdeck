@@ -155,7 +155,7 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
     let dt = event.dataTransfer;
 
     if (dt.types.contains('Files')) {
-      this.trigger('BugView:AttachFiles', { files: dt.files });
+      this.trigger('BugView:FilesSelected', { input: dt });
     } else if (dt.types.contains('text/plain')) {
       this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
     }
@@ -183,7 +183,15 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
     },
   });
 
-  this.$add_button.addEventListener('click', event => this.$file_picker.click());
+  let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
+
+  if (can_choose_dir) {
+    this.$add_button.title = 'Add attachments... (Shift+Click to choose directory)'; // l10n
+  }
+
+  this.$add_button.addEventListener('click', event => {
+    can_choose_dir && event.shiftKey ? this.$file_picker.chooseDirectory() : this.$file_picker.click();
+  });
 
   this.$remove_button.addEventListener('mousedown', event => {
     this.trigger('BugView:RemoveAttachment', { hash: this.$$listbox.view.selected[0].dataset.hash });
@@ -191,7 +199,7 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
   });
 
   this.$file_picker.addEventListener('change', event => {
-    this.trigger('BugView:AttachFiles', { files: event.target.files });
+    this.trigger('BugView:FilesSelected', { input: event.target });
   });
 };
 
