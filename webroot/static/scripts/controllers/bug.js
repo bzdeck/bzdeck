@@ -17,7 +17,6 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.att_changes = new Map();
 
   this.uploads = Object.create(Array.prototype, {
-    parallel: { writable: true, value: true },
     total:    { writable: true, value: 0 },
   });
 
@@ -37,7 +36,6 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:RemoveAttachment', data => this.remove_attachment(data.hash));
   this.on('V:MoveUpAttachment', data => this.move_up_attachment(data.hash));
   this.on('V:MoveDownAttachment', data => this.move_down_attachment(data.hash));
-  this.on('V:ChangeUploadOption', data => this.change_upload_option(data));
   this.on('AttachmentView:EditAttachment', data => this.edit_attachment(data));
 
   // Other changes
@@ -560,8 +558,7 @@ BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
 };
 
 /*
- * Move up an attachment within the cached new attachment list, when the parallel upload option is disabled and the
- * order of the unuploaded attachments matters.
+ * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
  * [return] result (Boolean) whether the attachment is found and reordered
@@ -579,8 +576,7 @@ BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
 };
 
 /*
- * Move down an attachment within the cached new attachment list, when the parallel upload option is disabled and the
- * order of the unuploaded attachments matters.
+ * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
  * [return] result (Boolean) whether the attachment is found and reordered
@@ -595,18 +591,6 @@ BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
   this.uploads.splice(index, 2, this.uploads[index + 1], this.uploads[index]);
 
   return true;
-};
-
-/*
- * Change the attachment upload option.
- *
- * [argument] option (Object) parallel upload is the only supported option at this moment
- * [return] none
- */
-BzDeck.controllers.Bug.prototype.change_upload_option = function (options) {
-  this.uploads.parallel = options.parallel;
-
-  this.trigger(':UploadOptionChanged', { uploads: this.uploads });
 };
 
 /*
@@ -677,11 +661,6 @@ BzDeck.controllers.Bug.prototype.submit = function () {
     if (!this.has_attachments) {
       // There is nothing more to do if no file is attached
       return Promise.resolve();
-    }
-
-    if (this.uploads.parallel) {
-      // Upload files in parallel
-      return Promise.all([for (att of this.uploads) this.post_attachment(att)]);
     }
 
     // Upload files in series

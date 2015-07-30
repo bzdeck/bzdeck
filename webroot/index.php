@@ -750,7 +750,6 @@
           <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
             <div role="group">
               <input type="file" hidden multiple directory>
-              <meta tabindex="0" role="checkbox" aria-label="Upload files in parallel" aria-checked="true" aria-hidden="true">
               <table>
                 <colgroup>
                   <col data-id="description">

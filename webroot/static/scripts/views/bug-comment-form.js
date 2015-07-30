@@ -29,7 +29,6 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.$file_picker = this.$form.querySelector('input[type="file"]');
   this.$attachments_table = this.$form.querySelector('[id$="tabpanel-attachments"] table');
   this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
-  this.$parallel_checkbox = this.$form.querySelector('[role="checkbox"]');
   this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
   this.$submit = this.$form.querySelector('[data-command="submit"]');
 
@@ -63,7 +62,6 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.on('BugController:AttachmentEdited', data => this.on_attachment_edited(data.change));
   this.on('BugController:AttachmentError', data => this.on_attachment_error(data.message));
   this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
-  this.on('BugController:UploadOptionChanged', data => this.update_parallel_ui(data.uploads));
 
   // Other changes
   this.on('BugController:BugEdited', data => this.on_bug_edited(data.can_submit));
@@ -162,10 +160,6 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
 
     this.$drop_target.setAttribute('aria-dropeffect', 'none');
     event.preventDefault();
-  });
-
-  new this.widgets.CheckBox(this.$parallel_checkbox).bind('Toggled', event => {
-    this.trigger('BugView:ChangeUploadOption', { parallel: event.detail.checked });
   });
 };
 
@@ -349,7 +343,6 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
 BzDeck.views.BugCommentForm.prototype.on_upload_list_updated = function (uploads) {
   this.$attachments_tab.setAttribute('aria-disabled', !uploads.length);
   this.$$tablist.view.selected = uploads.length ? this.$attachments_tab : this.$comment_tab;
-  this.update_parallel_ui(uploads);
 };
 
 /*
@@ -365,24 +358,6 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
     title: 'Error on attaching files', // l10n
     message: data.message.replace('\n', '<br>'),
   }).show();
-};
-
-/*
- * Called by BugController whenever a new attachment is added or removed by the user, or the upload option is changed.
- * Update the parallel upload UI based on the current option and the number of the new attachments.
- *
- * [argument] uploads (extended Array(Proxy)) list of the new attachments
- * [return] none
- */
-BzDeck.views.BugCommentForm.prototype.update_parallel_ui = function (uploads) {
-  let disabled = uploads.length < 2 || uploads.parallel;
-
-  for (let $button of this.$attachments_tbody.querySelectorAll('[data-command|="move"]')) {
-    $button.setAttribute('aria-disabled', disabled);
-  }
-
-  this.$attachments_table.setAttribute('data-parallel', disabled);
-  this.$parallel_checkbox.setAttribute('aria-hidden', uploads.length < 2);
 };
 
 /*

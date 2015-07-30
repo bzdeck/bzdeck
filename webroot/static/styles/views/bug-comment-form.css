@@ -175,11 +175,6 @@
   width: 2.4rem;
 }
 
-.bug-comment-form [id$="tabpanel-attachments"] table:not([data-parallel="false"]) col[data-id|="move"] {
-  visibility: collapse;
-  width: 0;
-}
-
 .bug-comment-form [id$="tabpanel-attachments"] tbody tr > * {
   border-top: .1rem solid var(--grid-header-background-color);
 }
