@@ -4,6 +4,7 @@
 
 BzDeck.views.BugTimelineEntry = function BugTimelineEntryView (view_id, bug, data) {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
+      comment = data.get('comment'),
       $fragment = new DocumentFragment(),
       $comment;
 
@@ -11,8 +12,21 @@ BzDeck.views.BugTimelineEntry = function BugTimelineEntryView (view_id, bug, dat
   this.bug = bug;
   this.data = data;
 
-  if (data.get('comment')) {
-    $comment = $fragment.appendChild(this.create_comment_entry());
+  if (comment) {
+    let dup = comment.text.match(/(?:Bug (\d+))? has been marked as a duplicate of (?:Bug (\d+))?\.?/i);
+
+    if (!dup || !dup[1]) {
+      $comment = $fragment.appendChild(this.create_comment_entry());
+    }
+
+    if (dup) {
+      // Treat duplication comments like history items
+      $fragment.appendChild(this.create_history_entry(comment.creator, comment.creation_time, {
+        field_name: dup[1] ? 'duplicates' : 'dupe_of',
+        added: dup[1] || dup[2],
+        removed: '',
+      }, comment));
+    }
   }
 
   if (data.get('attachment')) {
@@ -34,6 +48,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
       comment = this.data.get('comment'),
       author = BzDeck.collections.users.get(comment.creator, { name: comment.creator }),
       time = comment.creation_time,
+      text = comment.raw_text,
       $entry = this.get_template('timeline-comment'),
       $header = $entry.querySelector('header'),
       $author = $entry.querySelector('[itemprop="author"]'),
@@ -42,11 +57,6 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
       $reply_button = $entry.querySelector('[data-command="reply"]'),
       $comment_body = $entry.querySelector('[itemprop="text"]'),
       $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
-
-  // Duplicated bug changes are only in the text field, while the raw_text field could be empty for an attachment
-  // without a comment, so simply check the text first. It may not work with non-English Bugzilla instances though.
-  let text = comment.text.includes('has been marked as a duplicate of')
-           ? comment.text : comment.raw_text;
 
   comment.number = this.data.get('comment_number');
   $entry.id = `${this.id}-comment-${comment.id}`;
@@ -229,7 +239,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
 BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
-      changer = BzDeck.collections.users.get(history.who, { name: history.who }),
+      changer_name = history.who,
       time = history.when,
       $fragment = new DocumentFragment();
 
@@ -238,17 +248,18 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
       continue; // This field is not added by the user
     }
 
-    $fragment.appendChild(this.create_history_entry(changer, time, change, comment));
+    $fragment.appendChild(this.create_history_entry(changer_name, time, change, comment));
   }
 
   return $fragment;
 };
 
-BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer, time, change, comment) {
+BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer_name, time, change, comment) {
   let $change = this.get_template('timeline-change'),
       $changer = $change.querySelector('[itemprop="author"]'),
       $time = $change.querySelector('[itemprop="creation_time"]'),
       $how = $change.querySelector('[itemprop="how"]'),
+      changer = BzDeck.collections.users.get(changer_name, { name: changer_name }),
       conf_field = BzDeck.models.server.data.config.field,
       _field = conf_field[change.field_name] ||
                // Bug 909055 - Field name mismatch in history: group vs groups
@@ -262,12 +273,16 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
                  'attachments.isobsolete': 'attachment.is_obsolete',
                  'attachments.isprivate': 'attachment.is_private',
                  'attachments.mimetype': 'attachment.content_type',
+                 'duplicates': 'duplicates', // for duplication comments
+                 'dupe_of': 'dupe_of', // for duplication comments
                }[change.field_name]] ||
                // If the Bugzilla config is outdated, the field name can be null
                change,
       _field_label = {
         blocks: 'blockers', // l10n
         depends_on: 'dependencies', // l10n
+        duplicates: 'duplicates', // for duplication comments, unused
+        dupe_of: 'dupe_of', // for duplication comments, unused
       }[change.field_name] || _field.description || _field.field_name,
       field = `<span data-what="${change.field_name}">` + _field_label + '</span>';
 
@@ -345,6 +360,10 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
       $how.innerHTML = `gave negative feedback on ${attachment}`; // l10n
     } else if (att_id && change.field_name === 'flagtypes.name') {
       $how.innerHTML = `set the ${additions} flag to ${attachment}`; // l10n
+    } else if (change.field_name === 'duplicates') {
+      $how.innerHTML = `marked ${additions} as a duplicate of this bug`; // for duplication comments, l10n
+    } else if (change.field_name === 'dupe_of') {
+      $how.innerHTML = `marked this bug as a duplicate of ${additions}`; // for duplication comments, l10n
     } else if (change.field_name === 'keywords') {
       if (change.removed.split(', ').length === 1) {
         $how.innerHTML = `added the ${additions} keyword`; // l10n
@@ -495,7 +514,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_change_element = function
   let $elm = document.createElement('span'),
       ids;
 
-  if (['blocks', 'depends_on'].includes(change.field_name)) {
+  if (['blocks', 'depends_on', 'duplicates', 'dupe_of'].includes(change.field_name)) {
     if (change[how].split(', ').length > 1) {
       $elm.innerHTML = 'Bug ' + change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>'); // l10n
     } else {
