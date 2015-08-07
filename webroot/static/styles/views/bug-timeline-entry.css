@@ -138,10 +138,6 @@
   display: none;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] header ~ :not([itemprop="text"]) {
-  display: none;
-}
-
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
   overflow: hidden;
   padding-top: 0 !important;
@@ -153,7 +149,8 @@
   display: none;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
   position: relative;
   z-index: 10;
   margin-left: 4.8rem;
@@ -162,6 +159,10 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   line-height: 1.6rem;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:not(:empty) + [itemprop="attachment"] {
+  display: none;
 }
 
 .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] * {
@@ -235,6 +236,13 @@
   cursor: pointer; /* Looks like a link */
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
+  border: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  background-color: transparent;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="content_type"] {
   display: block;
   float: left;
@@ -246,14 +254,29 @@
   text-align: center;
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] [itemprop="content_type"] {
+  padding: 0;
+  font-size: 1.4rem;
+  line-height: 1.8rem;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
   min-height: 2rem;
   line-height: 1.8rem;
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] h5 {
+  display: inline;
+  padding: 0;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   position: relative;
   text-align: center;
+}
+
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] div {
+  display: none;
 }
 
 [data-ui-timeline-display-attachments-inline="false"]:root .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
@@ -315,8 +338,13 @@
 }
 
 @media (min-width: 1024px) {
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
     margin-top: -2.8rem;
+  }
+
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
+    padding: 0 1.2rem 1.2rem !important;
   }
   
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
@@ -352,8 +380,13 @@
     padding: .8rem;
   }
 
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] {
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
     margin-top: -2.4rem;
+  }
+
+  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
+    padding: 0 .8rem .8rem !important;
   }
   
   .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] .roles {
