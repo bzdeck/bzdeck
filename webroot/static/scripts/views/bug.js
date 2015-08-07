@@ -231,7 +231,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     depends_on: this.bug.depends_on,
     blocks: this.bug.blocks,
     see_also: this.bug.see_also,
-    dupe_of: this.bug.dupe_of || [],
+    dupe_of: this.bug.dupe_of || undefined,
     duplicate: this.bug.duplicates,
     flag: [for (flag of this.bug.flags) {
       creator: get_person(flag.setter),
