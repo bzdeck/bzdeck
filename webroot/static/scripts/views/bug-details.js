@@ -101,6 +101,21 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
   }
 };
 
+/*
+ * Add the number of the comments, attachments and history entries to the each relevant tab as a small badge.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
+  for (let prop of ['comments', 'attachments', 'history']) {
+    let tab_name = prop === 'comments' ? 'timeline' : prop,
+        number = (this.bug[prop] || []).length;
+
+    this.$tablist.querySelector(`[id$="tab-${tab_name}"] label`).dataset.badge = number;
+  }
+};
+
 BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),

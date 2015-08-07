@@ -280,6 +280,11 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   this.activate_widgets();
 
   this.helpers.event.async(() => {
+    // Number badge on tabs, only on the details tabs
+    if (this.add_tab_badges) {
+      this.add_tab_badges();
+    }
+
     // Attachments, only on the details tabs
     if (this.render_attachments) {
       this.render_attachments();

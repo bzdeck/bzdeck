@@ -92,6 +92,29 @@
   vertical-align: middle;
 }
 
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label[data-badge]::after {
+  display: inline-block;
+  box-sizing: border-box;
+  margin-left: .4rem;
+  border-radius: 1rem;
+  padding: 0 .4rem;
+  min-width: 1.8rem;
+  height: 1.8rem;
+  color: var(--secondary-region-header-foreground-color);
+  font-size: 1.1rem;
+  line-height: 1.8rem;
+  vertical-align: .1rem;
+  content: attr(data-badge);
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] label[data-badge]::after {
+  background-color: var(--region-header-background-color);
+}
+
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] label[data-badge]::after {
+  background-color: var(--secondary-region-header-background-color);
+}
+
 [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
   line-height: 2rem;
 }
