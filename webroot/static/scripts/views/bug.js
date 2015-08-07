@@ -566,6 +566,11 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
              .scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
+  // Update the tab badges
+  if (this.add_tab_badges) {
+    this.add_tab_badges();
+  }
+
   if (changes.has('attachment') && this.render_attachments) {
     this.$$attachments.render([changes.get('attachment')]);
   }
