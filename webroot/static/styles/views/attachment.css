@@ -28,14 +28,12 @@
 }
 
 [itemtype$="Attachment"][data-content-type] .fields {
-  display: flex;
-  margin: 0 .6rem 1.2rem;
+  margin: 0 .6rem;
   line-height: 1.6;
 }
 
 [itemtype$="Attachment"][data-content-type] .fields > * {
-  flex: 1 1 50%;
-  margin: 0 .6rem;
+  margin: 0 .6rem 1.2rem;
 }
 
 [itemtype$="Attachment"][data-content-type] .fields h5 {
@@ -252,4 +250,14 @@
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/zip"], [data-content-type="application/gzip"],
     [data-content-type="application/x-gzip"], [data-content-type="application/x-bzip2"]) .body > a::before {
   content: "\F1C6";
+}
+
+@media (min-width: 1024px) {
+  [itemtype$="Attachment"][data-content-type] .fields {
+    display: flex;
+  }
+
+  [itemtype$="Attachment"][data-content-type] .fields > * {
+    flex: 1 1 50%;
+  }
 }
