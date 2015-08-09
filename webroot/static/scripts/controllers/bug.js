@@ -38,6 +38,10 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:MoveDownAttachment', data => this.move_down_attachment(data.hash));
   this.on('AttachmentView:EditAttachment', data => this.edit_attachment(data));
 
+  // Subscription
+  this.on('V:Subscribe', data => this.update_subscription('add'));
+  this.on('V:Unsubscribe', data => this.update_subscription('remove'));
+
   // Other changes
   this.on('V:EditComment', data => this.edit_comment(data.text));
   this.on('V:EditField', data => this.edit_field(data.name, data.value));
@@ -296,6 +300,30 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
   this.cleanup_multiple_item_change(field);
 
   return true;
+};
+
+/*
+ * Subscribe to the bug by adding the user's email to the Cc list, or unsubscribe from the bug by removing the user's
+ * email from the Cc list.
+ *
+ * [argument] how (String) add or remove
+ * [return] request (Promise) can be a rejected Promise if any error is found
+ */
+BzDeck.controllers.Bug.prototype.update_subscription = function (how) {
+  let subscribe = how === 'add',
+      email = BzDeck.models.account.data.name;
+
+  // Update the view first
+  this.trigger(subscribe ? ':ParticipantAdded' : ':ParticipantRemoved', { field: 'cc', email });
+
+  return this.post_changes({ cc: { [how]: [email] }}).then(result => {
+    if (result.error) {
+      this.trigger(subscribe ? ':FailedToSubscribe' : ':FailedToUnsubscribe');
+    } else {
+      this.trigger(subscribe ? ':Subscribed' : ':Unsubscribed');
+      this.fetch();
+    }
+  });
 };
 
 /*
@@ -673,9 +701,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
     this.uploads.total = 0;
 
     // The timeline will soon be updated via Bugzfeed. Fetch the bug only if Bugzfeed is not working for some reason
-    if (!BzDeck.controllers.bugzfeed.websocket || !BzDeck.controllers.bugzfeed.subscription.has(this.bug.id)) {
-      BzDeck.collections.bugs.get(this.bug.id, { id: this.bug.id, _unread: true }).fetch();
-    }
+    this.fetch();
 
     this.trigger(':SubmitSuccess');
   }).catch(error => {
@@ -770,4 +796,22 @@ BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
       total = this.uploads.total;
 
   this.trigger(':SubmitProgress', { uploaded, total, percentage: Math.round(uploaded / total * 100) });
+};
+
+/*
+ * Retrieve the bug to update the timeline, when Bugzfeed is not working.
+ *
+ * [argument] none
+ * [return] result (Boolean) whether the fetcher is invoked
+ */
+BzDeck.controllers.Bug.prototype.fetch = function () {
+  let bugzfeed = BzDeck.controllers.bugzfeed;
+
+  if (bugzfeed.websocket && bugzfeed.subscription.has(this.bug.id)) {
+    return false;
+  }
+
+  this.bug.fetch();
+
+  return true;
 };

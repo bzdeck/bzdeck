@@ -35,7 +35,7 @@
   display: none;
 }
 
-.bug-participants [role="button"][data-command="take"] {
+.bug-participants header [role="button"] {
   width: auto;
   opacity: .6;
 }

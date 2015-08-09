@@ -27,8 +27,13 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
   this.$list = this.$section.querySelector('.list')
 
   this.remove_empty_person();
-  this.add_header_buttons();
   this.add_person_finder();
+
+  if (this.can_take) {
+    this.add_take_button();
+  } else {
+    this.add_subscribe_button();
+  }
 
   this.on('BugView:EditModeChanged', data => {
     if (data.category === 'participants') {
@@ -66,7 +71,7 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabled) {
   this.editing = enabled;
 
-  this.$take_button.setAttribute('aria-hidden', this.can_take && !this.editing);
+  this.$button.setAttribute('aria-hidden', this.can_take && !this.editing);
   this.$finder.setAttribute('aria-hidden', !this.editing);
 
   for (let $person of this.$list.querySelectorAll('[itemscope]')) {
@@ -86,22 +91,41 @@ BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabl
  * [argument] none
  * [return] none
  */
-BzDeck.views.BugParticipantList.prototype.add_header_buttons = function () {
-  this.$take_button = this.create_button('take', this.can_take ? 'Take' : 'Add me', {
+BzDeck.views.BugParticipantList.prototype.add_take_button = function () {
+  this.$button = this.create_button('take', 'Take', {
     assigned_to: 'Assign myself to this bug',
     qa_contact: 'Take myself the QA Contact of this bug',
     mentor: 'Take myself the mentor of this bug',
-    cc: 'Add myself to the Cc list of this bug',
   }[this.field]);
 
-  this.$take_button.setAttribute('aria-hidden', this.can_take);
-  this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
+  this.$button.setAttribute('aria-hidden', 'true');
+  this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
-  this.$take_button.addEventListener('click', event => {
+  this.$button.addEventListener('click', event => {
     this.trigger('BugView:AddParticipant', { field: this.field, email: this.my_email });
   });
 
-  this.$header.appendChild(this.$take_button);
+  this.$header.appendChild(this.$button);
+};
+
+/*
+ * Add the Subscribe button to the <header> in the <section>.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.BugParticipantList.prototype.add_subscribe_button = function () {
+  let listed = this.values.has(this.my_email),
+      label = listed ? 'Unsubscribe' : 'Subscribe',
+      aria_label = listed ? 'Remove myself from the Cc list' : 'Add myself to the Cc list';
+
+  this.$button = this.create_button('subscribe', label, aria_label);
+
+  this.$button.addEventListener('click', event => {
+    this.trigger(this.values.has(this.my_email) ? 'BugView:Unsubscribe' : 'BugView:Subscribe');
+  });
+
+  this.$header.appendChild(this.$button);
 };
 
 /*
@@ -135,7 +159,8 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
     return;
   }
 
-  let $person = this.$list.querySelector('[itemscope]');
+  let $person = this.$list.querySelector('[itemscope]'),
+      self = email === this.my_email;
 
   if (!this.multiple && $person) {
     let email = $person.properties.email[0].itemValue;
@@ -154,7 +179,13 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
 
   $person.itemProp.add(this.field);
   this.$list.insertBefore($person, this.$list.firstElementChild);
-  this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
+
+  if (this.can_take) {
+    this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
+  } else if (self) {
+    this.$button.label = this.$button.textContent = 'Unsubscribe';
+    this.$button.setAttribute('aria-label', 'Remove myself from the Cc list');
+  }
 
   if (this.editing) {
     this.add_remove_button_to_person($person);
@@ -174,7 +205,8 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
   }
 
   let $email = this.$list.querySelector(`[itemprop="email"][content="${email}"]`),
-      $person = $email ? $email.closest('[itemscope]') : undefined;
+      $person = $email ? $email.closest('[itemscope]') : undefined,
+      self = email === this.my_email;
 
   if (!$person) {
     return;
@@ -187,7 +219,13 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
   $person.classList.add('removing');
   $person.addEventListener('transitionend', event => {
     $person.remove();
-    this.$take_button.setAttribute('aria-disabled', this.values.has(this.my_email));
+
+    if (this.can_take) {
+      this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
+    } else if (self) {
+      this.$button.label = this.$button.textContent = 'Subscribe';
+      this.$button.setAttribute('aria-label', 'Add myself to the Cc list');
+    }
   });
 };
 
