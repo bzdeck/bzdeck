@@ -133,7 +133,7 @@ BzDeck.views.BugDetails.prototype.render_tracking_flags = function () {
         value = this.bug.data[name];
 
     // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
-    if (!name.startsWith('cf_') || !field.is_active || field.type !== 99) {
+    if (!name.startsWith('cf_') || !field || !field.is_active || field.type !== 99) {
       continue;
     }
 
