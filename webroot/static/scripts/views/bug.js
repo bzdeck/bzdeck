@@ -224,8 +224,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     return;
   }
 
-  let config = BzDeck.models.server.data.config,
-      get_person = name => BzDeck.collections.users.get(name, { name }).properties;
+  let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
   let _bug = {
     cc: [for (name of this.bug.cc) get_person(name)],
@@ -234,12 +233,6 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     see_also: this.bug.see_also,
     dupe_of: this.bug.dupe_of || undefined,
     duplicate: this.bug.duplicates,
-    flag: [for (flag of this.bug.flags) {
-      creator: get_person(flag.setter),
-      name: flag.name,
-      status: flag.status,
-      requestee: flag.requestee ? get_person(flag.requestee) : {},
-    }]
   };
 
   this.fill(this.$bug, _bug);
@@ -266,15 +259,10 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     }
   }
 
-  // Flags
-  let $flags = this.$bug.querySelector('[data-field="flags"]');
-
-  if ($flags) {
-    $flags.setAttribute('aria-hidden', !this.bug.flags.length);
-  }
-
-  // Tracking Flags, only on the details tabs
+  // Flags, only on the details tabs
   if (this.render_tracking_flags) {
+    new BzDeck.views.BugFlags(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+
     this.render_tracking_flags();
   }
 
@@ -328,7 +316,8 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
     }
   }
 
-  for (let $section of this.$bug.querySelectorAll('[data-field]')) {
+  // Iterate over the fields except the Flags secion which is activated by BugFlagsView
+  for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
     let name = $section.dataset.field,
         $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]'),
         $textbox = $section.querySelector('.blurred[role="textbox"]'),

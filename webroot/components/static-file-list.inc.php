@@ -21,6 +21,7 @@ $styles = [
   '/static/styles/views/bug-attachments.css',
   '/static/styles/views/bug-comment-form.css',
   '/static/styles/views/bug-details.css',
+  '/static/styles/views/bug-flags.css',
   '/static/styles/views/bug-history.css',
   '/static/styles/views/bug-participant-list.css',
   '/static/styles/views/bug-preview.css',
@@ -82,6 +83,7 @@ $scripts = [
   '/static/scripts/views/bug-attachments.js',
   '/static/scripts/views/bug-comment-form.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
+  '/static/scripts/views/bug-flags.js',
   '/static/scripts/views/bug-history.js',
   '/static/scripts/views/bug-participant-list.js',
   '/static/scripts/views/bug-timeline.js',

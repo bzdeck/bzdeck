@@ -519,17 +519,6 @@
                   <header>
                     <h3>Flags</h3>
                   </header>
-                  <section role="group" aria-label="General Flags" data-field="flags">
-                    <h4>General Flags</h4>
-                    <ul>
-                      <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                        <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
-                        <span itemprop="name"></span>
-                        <span itemprop="status"></span>
-                        <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
-                      </li>
-                    </ul>
-                  </section>
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
                   <header>
@@ -867,14 +856,6 @@
           </section>
           <section class="flags">
             <h5>Flags</h5>
-            <ul>
-              <li itemprop="flag" itemscope itemtype="http://bzdeck.com/Flag">
-                <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>:
-                <span itemprop="name"></span>
-                <span itemprop="status"></span>
-                <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
-              </li>
-            </ul>
           </section>
         </div>
         <div class="body"></div>
@@ -889,6 +870,16 @@
         <td itemprop="added"></td>
       </tr>
     </template><!-- end #details-change -->
+    <template id="details-flag">
+      <section role="group" itemscope itemtype="http://bzdeck.com/Flag" data-attrs="aria-label data-field data-has-value">
+        <h4 itemprop="name" data-attrs="aria-level"></h4>
+        <span role="combobox" aria-autocomplete="list" aria-readonly="true" data-attrs="aria-label">
+          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+        </span>
+        <span role="link" itemprop="setter" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+        <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+      </section>
+    </template><!-- end #details-flag -->
     <template id="details-tracking-flag">
       <section role="group" itemscope itemtype="http://bzdeck.com/TrackingFlag" data-attrs="aria-label data-field data-has-value">
         <h4 itemprop="name"></h4>

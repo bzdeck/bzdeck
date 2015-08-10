@@ -55,30 +55,41 @@
   height: 1.6rem;
 }
 
-[itemtype$="Attachment"][data-content-type] li {
+[itemtype$="Attachment"][data-content-type] .properties li {
   margin: .4rem 0;
   line-height: 1.5;
 }
 
-[itemtype$="Attachment"][data-content-type] li:first-of-type {
+[itemtype$="Attachment"][data-content-type] .properties li:first-of-type {
   margin-top: 0;
 }
 
-[itemtype$="Attachment"][data-content-type] li:last-of-type {
+[itemtype$="Attachment"][data-content-type] .properties li:last-of-type {
   margin-bottom: 0;
 }
 
-[itemtype$="Attachment"][data-content-type] li * {
+[itemtype$="Attachment"][data-content-type] .properties li * {
   white-space: nowrap;
 }
 
-[itemtype$="Attachment"][data-content-type] li .blurred[role="textbox"] {
+[itemtype$="Attachment"][data-content-type] .properties li .blurred[role="textbox"] {
   display: inline-block;
   width: 80%;
 }
 
 [itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {
   display: none;
+}
+
+[itemtype$="Attachment"][data-content-type] .flags [itemtype="http://bzdeck.com/Flag"] {
+  margin: .4rem 0;
+}
+
+[itemtype$="Attachment"][data-content-type] .flags [itemtype="http://bzdeck.com/Flag"] [itemprop="name"] {
+  display: inline-block;
+  margin: 0;
+  width: 14rem;
+  font-size: inherit;
 }
 
 [itemtype$="Attachment"][data-content-type]:not(.patch) .body {

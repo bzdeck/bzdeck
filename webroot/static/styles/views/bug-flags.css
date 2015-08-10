@@ -1,0 +1,20 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+[itemtype="http://bzdeck.com/Flag"] [role="combobox"]:not([aria-hidden="true"]) {
+  display: inline-block !important;
+  margin-right: .4rem;
+  width: 4.8rem;
+}
+
+[itemtype="http://bzdeck.com/Flag"] [itemprop="image"] {
+  display: inline-block;
+  margin-right: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+[itemtype="http://bzdeck.com/Flag"] [itemprop="requestee"]::before {
+  content: ' → ';
+}

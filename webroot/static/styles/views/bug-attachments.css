@@ -45,7 +45,7 @@
   overflow: hidden;
 }
 
-.bug-attachments [role="option"] {
+.bug-attachments .list [role="option"] {
   position: relative;
   border-width: 0 0 .1rem;
   border-style: solid;
@@ -54,14 +54,14 @@
   height: 3.2rem;
 }
 
-.bug-attachments [role="option"] > * {
+.bug-attachments .list [role="option"] > * {
   position: absolute;
   display: block;
   line-height: 1.25;
   pointer-events: none;
 }
 
-.bug-attachments [role="option"] [itemprop="creator"] {
+.bug-attachments .list [role="option"] [itemprop="creator"] {
   top: 1rem;
   left: 1rem;
   overflow: hidden;
@@ -73,20 +73,20 @@
   text-align: center;
 }
 
-.bug-attachments [role="option"] [itemprop="creator"] [itemprop="image"] {
+.bug-attachments .list [role="option"] [itemprop="creator"] [itemprop="image"] {
   display: block;
   max-width: 100%;
   max-height: 100%;
 }
 
-.bug-attachments [role="option"] [itemprop="id"] {
+.bug-attachments .list [role="option"] [itemprop="id"] {
   top: 1rem;
   left: 5.2rem;
   opacity: .8;
   font-size: 1.1rem;
 }
 
-.bug-attachments [role="option"] [itemprop="summary"] {
+.bug-attachments .list [role="option"] [itemprop="summary"] {
   right: 1rem;
   bottom: 1rem;
   left: 5.2rem;
@@ -98,36 +98,36 @@
   animation-iteration-count: infinite;
 }
 
-.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"] ~ [itemprop="summary"] {
+.bug-attachments .list [role="option"] [itemprop="is_obsolete"][content="true"] ~ [itemprop="summary"] {
   right: 4.8rem; /* Add some space for the obsolete and file type icons */
 }
 
-.bug-attachments [role="option"] [itemprop="is_obsolete"][content="false"] ~ [itemprop="summary"] {
+.bug-attachments .list [role="option"] [itemprop="is_obsolete"][content="false"] ~ [itemprop="summary"] {
   right: 3.2rem; /* Add some space for the file type icon only */
 }
 
-.bug-attachments [role="option"] [itemprop="last_change_time"] {
+.bug-attachments .list [role="option"] [itemprop="last_change_time"] {
   top: 1rem;
   right: 1em;
   opacity: .8;
   font-size: 1.1rem;
 }
 
-.bug-attachments [role="option"] meta {
+.bug-attachments .list [role="option"] meta {
   width: 1.6rem;
   height: 1.6rem;
   bottom: 1rem;
 }
 
-.bug-attachments [role="option"] :-moz-any([itemprop="is_patch"], [itemprop="content_type"]) {
+.bug-attachments .list [role="option"] :-moz-any([itemprop="is_patch"], [itemprop="content_type"]) {
   right: 1rem;
 }
 
-.bug-attachments [role="option"] :-moz-any([itemprop="is_obsolete"], [itemprop="is_unuploaded"]) {
+.bug-attachments .list [role="option"] :-moz-any([itemprop="is_obsolete"], [itemprop="is_unuploaded"]) {
   right: 2.8rem;
 }
 
-.bug-attachments [role="option"] meta::before {
+.bug-attachments .list [role="option"] meta::before {
   display: block;
   top: 0;
   left: 0;
@@ -139,11 +139,11 @@
   text-align: center;
 }
 
-.bug-attachments [role="option"] [itemprop="is_obsolete"][content="true"]::before {
+.bug-attachments .list [role="option"] [itemprop="is_obsolete"][content="true"]::before {
   content: '\F014';
 }
 
-.bug-attachments [role="option"] [itemprop="is_unuploaded"][content="true"]::before {
+.bug-attachments .list [role="option"] [itemprop="is_unuploaded"][content="true"]::before {
   content: '\F10C';
 }
 

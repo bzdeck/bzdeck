@@ -13,6 +13,7 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
   let att = this.attachment = attachment,
       get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
+  this.bug = BzDeck.collections.bugs.get(att.bug_id);
   this.$placeholder = $placeholder;
 
   this.$attachment = this.fill(this.get_template('details-attachment-content'), {
@@ -25,12 +26,6 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
     creation_time: att.creation_time,
     last_change_time: att.last_change_time,
     creator: get_person(att.creator),
-    flag: [for (flag of att.flags || []) {
-      creator: get_person(flag.setter),
-      name: flag.name,
-      status: flag.status,
-      requestee: flag.requestee ? get_person(flag.requestee) : {},
-    }],
   }, {
     'data-att-id': att.id, // existing attachment
     'data-att-hash': att.hash, // unuploaded attachment
@@ -38,6 +33,8 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
   });
 
   this.$outer = this.$attachment.querySelector('.body');
+
+  new BzDeck.views.BugFlags(this.bug, att).render(this.$attachment.querySelector('.flags'), 6);
 
   this.activate();
   this.render();

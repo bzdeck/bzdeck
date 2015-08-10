@@ -247,6 +247,7 @@
 
 .bug-fieldset [data-field] {
   min-height: 2rem;
+  line-height: 2rem;
 }
 
 .bug-info .bug-fieldset [data-field] {
@@ -373,13 +374,6 @@
   line-height: 1.4rem;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.bug-fieldset [itemprop="flag"] [itemprop="image"] {
-  display: inline-block;
-  margin-right: .4rem;
-  width: 1.6rem;
-  height: 1.6rem;
 }
 
 [data-bug-id]:-moz-any([data-status="RESOLVED"], [data-status="VERIFIED"], [data-status="CLOSED"]) {
