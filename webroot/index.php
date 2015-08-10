@@ -531,7 +531,11 @@
                       </li>
                     </ul>
                   </section>
-                  <!-- Project Flags, Tracking Flags -->
+                </section>
+                <section role="group" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
+                  <header>
+                    <h3>Tracking Flags</h3>
+                  </header>
                 </section>
               </div><!-- end .bug-info -->
             </div><!-- end #bug-TID-tabpanel-info -->
@@ -886,6 +890,14 @@
         <td itemprop="added"></td>
       </tr>
     </template><!-- end #details-change -->
+    <template id="details-tracking-flag">
+      <section role="group" itemscope itemtype="http://bzdeck.com/TrackingFlag" data-attrs="aria-label data-field data-has-value">
+        <h4 itemprop="name"></h4>
+        <span role="combobox" aria-autocomplete="list" aria-readonly="true" data-attrs="aria-label">
+          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="value"></span>
+        </span>
+      </section>
+    </template><!-- end #details-tracking-flag -->
     <template id="vertical-thread-item">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
         <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">

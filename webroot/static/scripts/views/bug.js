@@ -224,7 +224,8 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     return;
   }
 
-  let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
+  let config = BzDeck.models.server.data.config,
+      get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
   let _bug = {
     cc: [for (name of this.bug.cc) get_person(name)],
@@ -272,7 +273,33 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     $flags.setAttribute('aria-hidden', !this.bug.flags.length);
   }
 
-  // TODO: Show Project Flags and Tracking Flags
+  // Tracking Flags
+  {
+    let $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
+        $flag = this.get_template('details-tracking-flag'),
+        $fragment = new DocumentFragment();
+
+    for (let name of Object.keys(this.bug.data).sort()) {
+      let field = config.field[name],
+          value = this.bug.data[name];
+
+      // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
+      if (!name.startsWith('cf_') || !field.is_active || field.type !== 99) {
+        continue;
+      }
+
+      $fragment.appendChild(this.fill($flag.cloneNode(true), {
+        name: field.description,
+        value,
+      }, {
+        'aria-label': field.description,
+        'data-field': name,
+        'data-has-value': value !== '---',
+      }));
+    }
+
+    $outer.appendChild($fragment);
+  }
 
   // Prepare the timeline and comment form
   this.timeline = new BzDeck.views.BugTimeline(this.id, this.bug, this.$bug, delayed);

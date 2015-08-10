@@ -251,7 +251,7 @@
 
 .bug-info .bug-fieldset [data-field] {
   margin: .8rem 1.6rem;
-  padding-left: 12rem;
+  padding-left: 14rem;
 }
 
 .bug-fieldset [data-field] h4 {
@@ -260,7 +260,7 @@
 
 .bug-info .bug-fieldset [data-field] h4 {
   float: left;
-  margin-left: -12rem;
+  margin-left: -14rem;
   line-height: 2rem;
 }
 
