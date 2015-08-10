@@ -462,7 +462,6 @@
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
                     </span>
                   </section>
-                  <!-- Not available via API: Votes -->
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
                   <header>
@@ -489,11 +488,7 @@
                     <h4>See Also</h4>
                     <ul><li><a role="link" itemprop="see_also"></a></li></ul>
                   </section>
-                  <section role="group" aria-label="Duplicates" data-field="duplicate">
-                    <h4>Duplicates</h4>
-                    <ul><li role="button" itemprop="duplicate"></li></ul>
-                  </section>
-                  <!-- Not available via API: Crash Signature -->
+                  <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
                   <header>
@@ -514,6 +509,10 @@
                     <ul class="list">
                       <li role="button" itemprop="blocks"></li>
                     </ul>
+                  </section>
+                  <section role="group" aria-label="Duplicates" data-field="duplicate">
+                    <h4>Duplicates</h4>
+                    <ul><li role="button" itemprop="duplicate"></li></ul>
                   </section>
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
