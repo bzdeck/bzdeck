@@ -116,6 +116,40 @@ BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
   }
 };
 
+/*
+ * Render the Tracking Flags section on the bug info pane.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.views.BugDetails.prototype.render_tracking_flags = function () {
+  let config = BzDeck.models.server.data.config,
+      $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
+      $flag = this.get_template('details-tracking-flag'),
+      $fragment = new DocumentFragment();
+
+  for (let name of Object.keys(this.bug.data).sort()) {
+    let field = config.field[name],
+        value = this.bug.data[name];
+
+    // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
+    if (!name.startsWith('cf_') || !field.is_active || field.type !== 99) {
+      continue;
+    }
+
+    $fragment.appendChild(this.fill($flag.cloneNode(true), {
+      name: field.description,
+      value,
+    }, {
+      'aria-label': field.description,
+      'data-field': name,
+      'data-has-value': value !== '---',
+    }));
+  }
+
+  $outer.appendChild($fragment);
+};
+
 BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),

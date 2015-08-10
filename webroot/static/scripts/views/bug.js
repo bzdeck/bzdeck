@@ -273,32 +273,9 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     $flags.setAttribute('aria-hidden', !this.bug.flags.length);
   }
 
-  // Tracking Flags
-  {
-    let $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
-        $flag = this.get_template('details-tracking-flag'),
-        $fragment = new DocumentFragment();
-
-    for (let name of Object.keys(this.bug.data).sort()) {
-      let field = config.field[name],
-          value = this.bug.data[name];
-
-      // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
-      if (!name.startsWith('cf_') || !field.is_active || field.type !== 99) {
-        continue;
-      }
-
-      $fragment.appendChild(this.fill($flag.cloneNode(true), {
-        name: field.description,
-        value,
-      }, {
-        'aria-label': field.description,
-        'data-field': name,
-        'data-has-value': value !== '---',
-      }));
-    }
-
-    $outer.appendChild($fragment);
+  // Tracking Flags, only on the details tabs
+  if (this.render_tracking_flags) {
+    this.render_tracking_flags();
   }
 
   // Prepare the timeline and comment form
