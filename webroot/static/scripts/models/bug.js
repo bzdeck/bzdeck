@@ -13,6 +13,12 @@ BzDeck.models.Bug = function BugModel (data) {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'bugs';
   this.id = data.id;
+
+  // [2015-08-10] Remove unnecessary attachment data introduced by a bug on AttachmentModel
+  for (let key of Object.keys(data)) if (!isNaN(key)) {
+    delete data[key];
+  }
+
   this.cache(data);
 
   Object.defineProperties(this, {

@@ -84,8 +84,9 @@ BzDeck.models.Attachment.prototype.save = function () {
   if (bug && bug.attachments && bug.attachments.length) {
     for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
       bug.attachments[index].data = this.data.data;
-      bug.merge(bug.attachments);
     }
+
+    bug.save(bug.data);
   }
 
   return Promise.resolve(this.proxy());
