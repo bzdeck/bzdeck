@@ -1018,6 +1018,9 @@
             </li>
           </ul>
         </div>
+        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
+          <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
+        </ul>
       </header>
       <aside id="sidebar" tabindex="0" role="complementary">
         <div tabindex="0" role="region">
@@ -1034,9 +1037,6 @@
         </div>
       </aside><!-- end #sidebar -->
       <main role="main">
-        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
-          <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
-        </ul>
         <div id="main-tabpanels">
           <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
             <section>
