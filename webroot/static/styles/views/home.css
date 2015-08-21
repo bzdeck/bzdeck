@@ -101,6 +101,7 @@
     top: 0;
     right: 0;
     left: auto;
+    z-index: 200;
     border-width: 0;
     padding: 0;
     width: 60%;

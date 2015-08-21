@@ -10,8 +10,12 @@
   background-color: var(--application-header-background-color);
 }
 
+[data-device="desktop"]:root [role="banner"] {
+  z-index: 210;
+}
+
 [data-device|="mobile"]:root [role="banner"] {
-  height: 0;
+  display: none;
 }
 
 [role="banner"] h1 {

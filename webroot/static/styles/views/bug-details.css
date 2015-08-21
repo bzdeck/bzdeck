@@ -436,11 +436,6 @@
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ :-moz-any(.bug-info, .bug-participants) {
     top: 3.6rem;
   }
-
-  [data-device|="mobile"]:root [role="banner"] [role="toolbar"] {
-    right: auto;
-    width: 8rem;
-  }
 }
 
 @media (max-width: 1023px) {
