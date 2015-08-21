@@ -47,7 +47,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
   let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
-  BzDeck.views.toolbar.open_tab({
+  BzDeck.views.banner.open_tab({
     page_category: 'search',
     page_id: this.id,
     page_constructor: BzDeck.views.SearchPage,

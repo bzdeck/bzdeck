@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.controllers.AttachmentPage = function AttachmentPageController (att_id) {
-  let $$tablist = BzDeck.views.toolbar.$$tablist;
+  let $$tablist = BzDeck.views.banner.$$tablist;
 
   this.id = Date.now(); // The page/tab is not assosiated with an attachment, because it's reused when navigated
   this.att_id = att_id;
@@ -17,7 +17,7 @@ BzDeck.controllers.AttachmentPage = function AttachmentPageController (att_id) {
     }
   }
 
-  BzDeck.views.toolbar.open_tab({
+  BzDeck.views.banner.open_tab({
     page_category: 'attachment',
     page_id: this.id,
     page_constructor: BzDeck.views.AttachmentPage,

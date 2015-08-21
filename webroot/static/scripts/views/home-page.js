@@ -61,7 +61,7 @@ BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
 BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
-      $$tablist = BzDeck.views.toolbar.$$tablist;
+      $$tablist = BzDeck.views.banner.$$tablist;
 
   if (!$folder) {
     // Unknown folder; ignore
@@ -79,7 +79,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
     BzDeck.controllers.sidebar.open_folder(folder_id);
   }
 
-  BzDeck.views.toolbar.tab_path_map.set('tab-home', location.pathname);
+  BzDeck.views.banner.tab_path_map.set('tab-home', location.pathname);
   BzDeck.views.global.update_window_title($tab);
 };
 

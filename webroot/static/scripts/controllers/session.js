@@ -182,7 +182,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   }).catch(error => Promise.all([
     // Finally load the UI modules
     BzDeck.controllers.global.init(),
-    BzDeck.controllers.toolbar = new BzDeck.controllers.Toolbar(),
+    BzDeck.controllers.banner = new BzDeck.controllers.Banner(),
     BzDeck.controllers.sidebar = new BzDeck.controllers.Sidebar(),
     BzDeck.controllers.statusbar = new BzDeck.controllers.Statusbar(),
   ])).then(() => {

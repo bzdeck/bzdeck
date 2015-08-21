@@ -3,10 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
-  let $$tablist = BzDeck.views.toolbar.$$tablist;
+  let $$tablist = BzDeck.views.banner.$$tablist;
 
   // Find an existing tab. To enable navigation within a tab, the bug ID is not included to the tab's id attribute,
-  // that's why the tab look-up in BzDeck.views.toolbar.open_tab() is not working and we are doing it here instead.
+  // that's why the tab look-up in BzDeck.views.banner.open_tab() is not working and we are doing it here instead.
   // TODO: Refactor tabs and router relationship (#232)
   for (let [page_id, page_view] of BzDeck.views.pages.details_list || []) {
     if (page_view.bug_id === bug_id && page_view.$tab.parentElement) {
@@ -21,7 +21,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
   this.bug_id = bug_id;
   this.bug_ids = history.state ? history.state.ids : [];
 
-  BzDeck.views.toolbar.open_tab({
+  BzDeck.views.banner.open_tab({
     page_category: 'details',
     page_id: this.id,
     page_constructor: BzDeck.views.DetailsPage,

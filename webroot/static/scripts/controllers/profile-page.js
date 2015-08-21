@@ -9,7 +9,7 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   let server = BzDeck.models.server,
       self = email === BzDeck.models.account.data.name;
 
-  BzDeck.views.toolbar.open_tab({
+  BzDeck.views.banner.open_tab({
     page_category: 'profile',
     page_id: email,
     page_constructor: BzDeck.views.ProfilePage,

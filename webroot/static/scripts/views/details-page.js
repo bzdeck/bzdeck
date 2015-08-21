@@ -90,7 +90,7 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
   }
 
   // Prepare the Back button on the mobile banner
-  BzDeck.views.toolbar.add_back_button(this.$bug);
+  BzDeck.views.banner.add_back_button(this.$bug);
 };
 
 BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
@@ -106,7 +106,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
     this.$tabpanel.replaceChild($existing_bug, this.$bug);
     this.$tabpanel.removeAttribute('aria-busy');
     this.$bug = $existing_bug;
-    BzDeck.views.toolbar.$$tablist.close_tab($existing_bug.parentElement);
+    BzDeck.views.banner.$$tablist.close_tab($existing_bug.parentElement);
   } else {
     this.$bug.remove();
     this.$bug = undefined;
@@ -114,7 +114,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
 
   // Update relevant data
   this.bug_id = new_id;
-  BzDeck.views.toolbar.tab_path_map.set(`tab-details-${this.id}`, new_path);
+  BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, new_path);
   window.history.replaceState({ ids: this.bug_ids, previous: old_path }, '', new_path);
 
   // Notify the Controller

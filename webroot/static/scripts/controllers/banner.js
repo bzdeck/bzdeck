@@ -2,11 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.controllers.Toolbar = function ToolbarController () {
+BzDeck.controllers.Banner = function BannerController () {
   let name = BzDeck.models.account.data.name;
 
   this.user = BzDeck.collections.users.get(name, { name });
-  BzDeck.views.toolbar = new BzDeck.views.Toolbar(this.user);
+  BzDeck.views.banner = new BzDeck.views.Banner(this.user);
 
   this.user.get_gravatar_profile().then(profile => {
     this.trigger(':GravatarProfileFound', {
@@ -32,10 +32,10 @@ BzDeck.controllers.Toolbar = function ToolbarController () {
   this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
 };
 
-BzDeck.controllers.Toolbar.prototype = Object.create(BzDeck.controllers.Base.prototype);
-BzDeck.controllers.Toolbar.prototype.constructor = BzDeck.controllers.Toolbar;
+BzDeck.controllers.Banner.prototype = Object.create(BzDeck.controllers.Base.prototype);
+BzDeck.controllers.Banner.prototype.constructor = BzDeck.controllers.Banner;
 
-BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
+BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
   let params = new URLSearchParams();
 
   if (terms) {
@@ -47,7 +47,7 @@ BzDeck.controllers.Toolbar.prototype.exec_advanced_search = function (terms) {
   BzDeck.router.navigate('/search/' + Date.now(), { 'params' : params.toString() });
 };
 
-BzDeck.controllers.Toolbar.prototype.exec_quick_search = function (terms) {
+BzDeck.controllers.Banner.prototype.exec_quick_search = function (terms) {
   let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
       match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i')),
       bugs = BzDeck.collections.bugs.get_all();

@@ -12,7 +12,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     prefs.set(name, value);
   }
 
-  BzDeck.views.toolbar.open_tab({
+  BzDeck.views.banner.open_tab({
     page_category: 'settings',
     page_constructor: BzDeck.views.SettingsPage,
     page_constructor_args: [tab_id, prefs],

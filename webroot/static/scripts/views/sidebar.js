@@ -33,7 +33,7 @@ BzDeck.views.Sidebar.prototype.constructor = BzDeck.views.Sidebar;
 
 BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
   let home = BzDeck.views.pages.home,
-      toolbar = BzDeck.views.toolbar,
+      toolbar = BzDeck.views.banner,
       folder_label = [for (f of BzDeck.config.folders) if (f.data.id === folder_id) f][0].label,
       unread = [for (bug of bugs.values()) if (bug.unread) bug].length;
 

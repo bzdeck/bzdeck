@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.Toolbar = function ToolbarView (user) {
+BzDeck.views.Banner = function BannerView (user) {
   let mobile = this.helpers.env.device.mobile,
       $$tablist = this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist')),
       $root = document.documentElement, // <html>
@@ -121,10 +121,10 @@ BzDeck.views.Toolbar = function ToolbarView (user) {
   this.setup_searchbar();
 };
 
-BzDeck.views.Toolbar.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.Toolbar.prototype.constructor = BzDeck.views.Toolbar;
+BzDeck.views.Banner.prototype = Object.create(BzDeck.views.Base.prototype);
+BzDeck.views.Banner.prototype.constructor = BzDeck.views.Banner;
 
-BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
+BzDeck.views.Banner.prototype.setup_searchbar = function () {
   let $root = document.documentElement, // <html>
       $search_box = document.querySelector('#quicksearch [role="searchbox"]'),
       $search_button = document.querySelector('#quicksearch [role="button"]'),
@@ -222,7 +222,7 @@ BzDeck.views.Toolbar.prototype.setup_searchbar = function () {
   this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
 };
 
-BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
+BzDeck.views.Banner.prototype.show_quick_search_results = function (results) {
   let $$dropdown = this.$$search_dropdown;
 
   let data = [{
@@ -247,14 +247,14 @@ BzDeck.views.Toolbar.prototype.show_quick_search_results = function (results) {
   $$dropdown.open();
 };
 
-BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
+BzDeck.views.Banner.prototype.open_tab = function (options, controller) {
   let page,
       page_category = options.page_category,
       page_id = options.page_id,
       page_constructor = options.page_constructor,
       page_constructor_args = options.page_constructor_args || [],
       pages = BzDeck.views.pages[`${page_category}_list`],
-      $$tablist = BzDeck.views.toolbar.$$tablist,
+      $$tablist = BzDeck.views.banner.$$tablist,
       tab_id = options.page_category + (page_id ? '-' + page_id : ''),
       tab_label = options.tab_label,
       tab_desc = options.tab_desc || tab_label,
@@ -289,7 +289,7 @@ BzDeck.views.Toolbar.prototype.open_tab = function (options, controller) {
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };
 
-BzDeck.views.Toolbar.prototype.add_back_button = function ($parent) {
+BzDeck.views.Banner.prototype.add_back_button = function ($parent) {
   let $header = $parent.querySelector('header'),
       $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
