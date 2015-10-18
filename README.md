@@ -38,6 +38,16 @@ If you want to run a local development server without Apache, do the following:
 2. Run `bin/run_dev_server.sh`
 3. Open your browser ([Firefox Developer Edition](https://www.mozilla.org/firefox/developer/) or [Firefox Nightly](http://nightly.mozilla.org/)), go to `http://localhost:8000`
 
+### Sign in
+
+Due to the [updated Authentication Delegation implementation](https://github.com/bzdeck/bzdeck/issues/298) that requires 2 HTTP requests, it's now difficult to sign in to Bugzilla with a local server through the standard process. However, you can still sign in programmatically by entering the following code to the browser's Web Console:
+
+```js
+BzDeck.controllers.session.verify_account('(Server ID)', '(Your Bugzilla ID)', '(Your API key)');
+```
+
+The server ID will be `mozilla-dev` ([testing](https://bugzilla-dev.allizom.org/)) or `mozilla` ([production](https://bugzilla.mozilla.org/)). Your API key can be generated on the Preferences page of each Bugzilla instance.
+
 ## Debug mode
 
 Append `?debug=true` to any BzDeck URL to enable the debug mode. All the JavaScript files will be served separately and some debug messages will get dumped.
