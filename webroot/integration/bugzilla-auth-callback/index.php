@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['client_api_login'] && $_GET['
 
   if ($client_api_key) {
     // Delete the data
-    $db->exec("DELETE FROM auth WHERE ID='{$_id}'");
+    $db->exec("DELETE FROM auth WHERE id='{$_id}'");
 
 ?>
 <!DOCTYPE html>
