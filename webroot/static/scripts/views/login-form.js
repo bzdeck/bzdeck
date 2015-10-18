@@ -111,7 +111,7 @@ BzDeck.views.LoginForm.prototype.activate_qrcode_auth = function () {
       $scan_button.setAttribute('aria-disabled', 'true');
 
       if (stream) {
-        stream.stop();
+        stream.getVideoTracks()[0].stop();
         $video.pause();
       }
     };
