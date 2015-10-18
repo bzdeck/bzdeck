@@ -278,6 +278,7 @@ BzDeck.controllers.Session.prototype.clean = function () {
 
 window.addEventListener('DOMContentLoaded', event => {
   if (FlareTail.compatible) {
+    BzDeck.router = new FlareTail.app.Router(BzDeck);
     BzDeck.controllers.session = new BzDeck.controllers.Session();
   }
 });
