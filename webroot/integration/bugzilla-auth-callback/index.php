@@ -4,8 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // The current Bugzilla Auth Delegation implementation involves 2 calls for a better security practice, therefore we
-// need a session to retain the data. See Bug 1175643 for details.
-session_start();
+// need a database to retain the data. See Bug 1175643 for details.
+$db = new SQLite3($_SERVER['DOCUMENT_ROOT'] . '/../private/bzdeck.sqlite');
+$db->exec('CREATE TABLE IF NOT EXISTS auth (id TEXT PRIMARY KEY, client_api_login TEXT, client_api_key TEXT)');
 
 // Validate the API key
 function validate_api_key ($value) {
@@ -26,26 +27,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if ($client_api_login && $client_api_key) {
-    // Save the user name and API key as session data
-    $_SESSION['client_api_login'] = $client_api_login;
-    $_SESSION['client_api_key'] = $client_api_key;
+    // Generate a random ID
+    $id = md5(strval(mt_rand()));
+
+    // Save the Bugzilla user name and API key temporarily in the database
+    $_client_api_login = $db->escapeString($client_api_login);
+    $_client_api_key = $db->escapeString($client_api_key);
+    $db->exec("INSERT INTO auth VALUES ('{$id}', '{$_client_api_login}', '{$_client_api_key}')");
 
     // Return a JSON object
     header('Content-Type: application/json');
-    echo json_encode(array('result' => session_id()));
+    echo json_encode(array('result' => $id));
   }
 
   exit;
 }
 
 // Second call
-if ($_SERVER['REQUEST_METHOD'] === 'GET' &&
-    $_SESSION['client_api_login'] && $_SESSION['client_api_key'] &&
-    $_GET['client_api_login'] === $_SESSION['client_api_login'] &&
-    $_GET['callback_result'] === session_id()) {
-  // Retrieve session data
-  $client_api_login = $_SESSION['client_api_login'];
-  $client_api_key = $_SESSION['client_api_key'];
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['client_api_login'] && $_GET['callback_result']) {
+  $id = $_GET['callback_result'];
+  $client_api_login = $_GET['client_api_login'];
+
+  // Query the database
+  $_id = $db->escapeString($id);
+  $_client_api_login = $db->escapeString($client_api_login);
+  $client_api_key = $db->querySingle("SELECT client_api_key FROM auth " .
+                                     "WHERE id='{$_id}' AND client_api_login='{$_client_api_login}'");
+
+  if ($client_api_key) {
+    // Delete the data
+    $db->exec("DELETE FROM auth WHERE ID='{$_id}'");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +89,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' &&
   </body>
 </html>
 <?php
-
-  // End the session
-  session_abort();
+  }
 }
