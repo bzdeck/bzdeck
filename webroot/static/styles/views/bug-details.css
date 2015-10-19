@@ -252,7 +252,6 @@
 
 .bug-info .bug-fieldset [data-field] {
   margin: .8rem 1.6rem;
-  padding-left: 14rem;
 }
 
 .bug-fieldset [data-field] h4 {
@@ -260,8 +259,6 @@
 }
 
 .bug-info .bug-fieldset [data-field] h4 {
-  float: left;
-  margin-left: -14rem;
   line-height: 2rem;
 }
 
@@ -465,9 +462,30 @@
   }
 }
 
+@media (min-width: 640px) {
+  .bug-info .bug-fieldset [data-field] {
+    position: relative;
+    padding-left: 14rem;
+  }
+
+  .bug-info .bug-fieldset[data-category="tracking-flags"] [data-field] {
+    padding-left: 20rem;
+  }
+
+  .bug-info .bug-fieldset [data-field] h4 {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
 @media (max-width: 639px) {
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
     overflow: hidden;
     width: 2.4rem; /* Show icons only */
+  }
+
+  .bug-info .bug-fieldset [data-field] h4 {
+    margin-bottom: .2rem;
   }
 }

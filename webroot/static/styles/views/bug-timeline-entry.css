@@ -4,7 +4,7 @@
 
 .bug-timeline [itemprop="comment"] {
   position: relative;
-  margin: 1.2rem 1.2rem 0;
+  margin: var(--comment-margin) var(--comment-margin) 0;
   border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
@@ -28,7 +28,7 @@
 }
 
 .bug-timeline [itemprop="comment"] > * {
-  padding: 1.2rem;
+  padding: var(--comment-margin);
 }
 
 .bug-timeline [itemprop="comment"] header {
@@ -184,7 +184,7 @@
 }
 
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p {
-  margin: 1.2rem 0;
+  margin: var(--comment-margin) 0;
   white-space: pre-wrap;
   -moz-user-select: text;
   cursor: text;
@@ -234,6 +234,7 @@
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
+  margin: 0 var(--comment-margin) var(--comment-margin);
   border-width: .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
@@ -245,16 +246,17 @@
 }
 
 .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-  border: 0;
   margin-right: 0;
   margin-bottom: 0;
+  border: 0;
+  padding: 0 var(--comment-margin) var(--comment-margin) !important;
   background-color: transparent;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="content_type"] {
   display: block;
   float: left;
-  padding: 1.2rem;
+  padding: var(--comment-margin);
   width: 2rem;
   height: 2rem;
   font-size: 2rem;
@@ -269,6 +271,7 @@
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
+  padding: var(--comment-margin);
   min-height: 2rem;
   line-height: 1.8rem;
 }
@@ -280,6 +283,7 @@
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   position: relative;
+  padding: 0 var(--comment-margin) var(--comment-margin);
   text-align: center;
 }
 
@@ -307,7 +311,7 @@
 }
 
 .bug-timeline [itemprop="change"] {
-  margin: 1.2rem 2.5rem 0;
+  margin: var(--comment-margin) calc(var(--comment-margin) * 2 + .1rem) 0;
 }
 
 [data-ui-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
@@ -346,21 +350,18 @@
 }
 
 @media (min-width: 1024px) {
+  .bug-timeline [itemprop="comment"],
+  .bug-timeline [itemprop="change"] {
+    --comment-margin: 1.2rem;
+  }
+
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
     margin-top: -2.8rem;
   }
-
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-    padding: 0 1.2rem 1.2rem !important;
-  }
   
-  .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
-    margin: 0 1.2rem 1.2rem;
-  }
-
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
-    padding: 1.2rem 1.2rem 1.2rem 4.2rem;
+    padding-left: 4.2rem;
   }
 
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
@@ -368,54 +369,35 @@
     width: 2.4rem;
     height: 2.4rem;
   }
-
-  .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
-    padding: 0 1.2rem 1.2rem;
-  }
 }
 
 @media (max-width: 1023px) {
-  [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] {
-    margin: .8rem .8rem 0;
+  .bug-timeline [itemprop="comment"],
+  .bug-timeline [itemprop="change"] {
+    --comment-margin: .8rem;
   }
 
   [data-device|="mobile"][data-ui-timeline-sort-order="ascending"]:root .comments-wrapper > :last-child,
   [data-device|="mobile"][data-ui-timeline-sort-order="descending"]:root .comments-wrapper > :first-child {
-    margin-bottom: .8rem;
-  }
-
-  [data-device|="mobile"]:root .bug-timeline [itemprop="comment"] > * {
-    padding: .8rem;
+    margin-bottom: var(--comment-margin);
   }
 
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
     margin-top: -2.4rem;
   }
-
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-    padding: 0 .8rem .8rem !important;
-  }
   
   .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] .roles {
     display: none;
   }
 
-  .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
-    margin: 0 .8rem .8rem;
-  }
-
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
-    padding: .8rem .8rem .8rem 3.4rem;
+    padding-left: 3.4rem;
   }
 
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5::before {
     margin: -.1rem 0 0 -2.7rem;
     width: 2rem;
     height: 2rem;
-  }
-
-  .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
-    padding: 0 .8rem .8rem;
   }
 }

@@ -102,8 +102,8 @@
   --disabled-textbox-foreground-color: var(--base-foreground-color-2);
   --disabled-textbox-background-color: ; /* Unchanged */
   --active-textbox-border-color: var(--base-accent-color-1);
-  --active-textbox-foreground-color: #434343; /* same as the Light theme */
-  --active-textbox-background-color: var(--base-background-color-8);
+  --active-textbox-foreground-color: var(--base-foreground-color-5);
+  --active-textbox-background-color: var(--base-background-color-3);
 
   --grid-border-color: var(--base-background-color-4);
   --grid-foreground-color: var(--base-foreground-color-1);
@@ -127,8 +127,8 @@
   --focused-control-outline-color: var(--base-background-color-4);
 
   --content-foreground-color: var(--base-foreground-color-4);
-  --content-background-color: var(--base-background-color-7);
-  --content-background-color-alpha: rgba(32, 32, 32, .9);
+  --content-background-color: var(--base-background-color-6);
+  --content-background-color-alpha: rgba(40, 40, 40, .9);
   --secondary-content-foreground-color: var(--base-foreground-color-1);
 
   --selected-text-foreground-color: ; /* Unchanged */
@@ -165,6 +165,11 @@ ins, del {
 [role="textbox"]:focus, [role="searchbox"]:focus {
   box-shadow: 0 0 .4rem rgba(26, 96, 143, .6), /* --active-textbox-border-color */
               inset 0 0 .4rem rgba(28, 28, 28, .2); /* --control-shadow-color */
+}
+
+.blurred[role="textbox"]:not(:focus):hover {
+  border-color: rgba(48, 48, 48, .5); /* --textbox-border-color */
+  background-color: rgba(40, 40, 40, .5); /* --textbox-background-color */
 }
 
 /* ----------------------------------------------------------------------------------------------

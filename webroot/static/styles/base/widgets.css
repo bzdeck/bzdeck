@@ -130,15 +130,10 @@ meta[role="checkbox"]::after {
   transition: all .2s;
 }
 
-.blurred[role="textbox"]:hover {
-  border-color: rgba(0, 0, 0, .1);
-  background-color: rgba(255,255,255,.4);
-}
-
 .blurred[role="textbox"]:-moz-any(:focus, :active) {
-  border-color: rgba(0, 0, 0, .2);
+  border-color: var(--textbox-border-color);
   color: var(--content-foreground-color);
-  background-color: rgba(255,255,255,.8);
+  background-color: var(--active-textbox-background-color);
 }
 
 .blurred[role="textbox"]:-moz-any(:focus, :active)::after {
@@ -161,6 +156,10 @@ meta[role="checkbox"]::after {
 [role="combobox"] .listbox-outer {
   border-color: var(--control-border-color);
   box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+}
+
+[data-device|="mobile"]:root [role="combobox"] [role="option"] {
+  padding: .4rem .8rem;
 }
 
 [role="grid"] {
@@ -228,6 +227,10 @@ col[data-hidden="false"] {
 
 [role="menu"] [role^="menuitem"] {
   line-height: 2rem;
+}
+
+[data-device|="mobile"]:root [role="menu"] [role^="menuitem"] {
+  padding: .4rem 2.4rem;
 }
 
 [role="menuitem"][aria-haspopup="true"]::after {
