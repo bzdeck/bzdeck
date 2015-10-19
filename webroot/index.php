@@ -696,6 +696,7 @@
         <header>
           <div class="meta">
             <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><span class="roles"></span><meta itemprop="email"></span>
+            <span itemprop="name"></span>
             <time itemprop="creation_time"></time>
           </div>
           <div role="toolbar">

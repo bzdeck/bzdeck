@@ -68,7 +68,7 @@
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"],
-.bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="creation_time"] {
+.bug-timeline [itemprop="comment"][aria-expanded="true"] header .meta > [itemprop="name"] {
   display: inline-block;
   float: left;
   clear: both;
@@ -78,6 +78,11 @@
 .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] {
   flex: auto;
   padding-right: .8rem;
+}
+
+.bug-timeline [itemprop="comment"] header .meta > [itemprop="name"]::after {
+  color: var(--disabled-button-foreground-color);
+  content: "\00A0\00A0\00B7\00A0\00A0"; /* nbsp + nbsp + middot + nbsp + nbsp */
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
@@ -125,9 +130,12 @@
 }
 
 .bug-timeline [itemprop="comment"][aria-expanded="true"] header [itemprop="creation_time"] {
+  display: inline-block;
+  float: left;
   pointer-events: auto; /* Show the tooltip */
 }
 
+.bug-timeline [itemprop="comment"][aria-expanded="false"] header .meta > [itemprop="name"],
 .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="creation_time"] {
   flex: none;
   margin: .4rem 0;
