@@ -202,12 +202,16 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 
       if (width > $name.clientWidth) {
         let name = `${$option.id}-name-marquee`,
-            sheet = document.styleSheets[1],
-            index = [for (r of Iterator(sheet.cssRules)) if (r[1].type === 7 && r[1].name === name) r[0]][0];
+            sheet = document.styleSheets[1];
 
         // Delete the rule first in case of any width changes
-        if (index) {
-          sheet.deleteRule(index);
+        for (let index in sheet.cssRules) {
+          let rule = sheet.cssRules[index];
+
+          if (rule.type === 7 && rule.name === name) {
+            sheet.deleteRule(index);
+            break;
+          }
         }
 
         sheet.insertRule(`@keyframes ${name} { 0%, 10% { text-indent: 0 } 100% { text-indent: -${width+10}px } }`, 0);

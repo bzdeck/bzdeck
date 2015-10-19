@@ -83,13 +83,13 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
     label: value
   }));
 
-  let components = [];
+  let components = new Set();
 
-  for (let [key, { component: cs }] of Iterator(config.product)) {
-    components.push(...[for (c of Object.keys(cs)) if (!components.includes(c)) c]);
+  for (let key in config.product) for (let component of Object.keys(config.product[key].component)) {
+    components.add(component); // Duplicates will be automatically removed
   }
 
-  components = components.sort().map((value, index) => ({
+  components = [...components].sort().map((value, index) => ({
     id: `${$component_list.id}item-${index}`,
     label: value
   }));
@@ -151,8 +151,8 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
           resolution: $resolution_list
         };
 
-    for (let [name, list] of Iterator(map)) {
-      for (let $opt of list.querySelectorAll('[aria-selected="true"]')) {
+    for (let name in map) {
+      for (let $opt of map[name].querySelectorAll('[aria-selected="true"]')) {
         params.append(name, $opt.textContent);
       }
     }

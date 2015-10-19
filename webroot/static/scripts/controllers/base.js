@@ -13,7 +13,9 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   // We can't use the Fetch API here since it lacks progress events for now
   let server = BzDeck.models.server,
       xhr = new XMLHttpRequest(),
-      url = new URL(server.url + server.endpoints.rest);
+      url = new URL(server.url + server.endpoints.rest),
+      listeners = options.listeners || {},
+      upload_listeners = options.upload_listeners || {};
 
   params = params || new URLSearchParams();
 
@@ -36,12 +38,12 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
     xhr.setRequestHeader('X-Bugzilla-API-Key', key);
   }
 
-  for (let [type, listener] of Iterator(options.listeners || {})) {
-    xhr.addEventListener(type, event => listener(event));
+  for (let type in listeners) {
+    xhr.addEventListener(type, event => listeners[type](event));
   }
 
-  for (let [type, listener] of Iterator(options.upload_listeners || {})) {
-    xhr.upload.addEventListener(type, event => listener(event));
+  for (let type in upload_listeners) {
+    xhr.upload.addEventListener(type, event => upload_listeners[type](event));
   }
 
   return new Promise((resolve, reject) => {

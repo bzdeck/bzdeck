@@ -7,7 +7,9 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
       account = BzDeck.models.account,
       prefs = new Map();
 
-  for (let [name, value] of Iterator(BzDeck.config.prefs)) {
+  for (let name in BzDeck.config.prefs) {
+    let value = BzDeck.config.prefs[name];
+
     value.user = BzDeck.prefs.get(name);
     prefs.set(name, value);
   }
