@@ -81,7 +81,7 @@
   --alternate-hovered-button-foreground-color: ; /* Unchanged */
   --alternate-hovered-button-background-color: ; /* Unchanged */
   --alternate-pressed-button-border-color: ; /* Unchanged */
-  --alternate-pressed-button-foreground-color: var(--base-foreground-color-5);
+  --alternate-pressed-button-foreground-color: var(--base-foreground-color-6);
   --alternate-pressed-button-background-color: var(--base-background-color-3);
 
   --tab-border-color: var(--base-background-color-4);

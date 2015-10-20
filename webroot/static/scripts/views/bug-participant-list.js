@@ -35,12 +35,7 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
     this.add_subscribe_button();
   }
 
-  this.on('BugView:EditModeChanged', data => {
-    if (data.category === 'participants') {
-      this.on_edit_mode_toggled(data.enabled);
-    }
-  });
-
+  this.on('BugView:EditModeChanged', data => this.on_edit_mode_toggled(data.enabled));
   this.on('BugController:ParticipantAdded', data => this.on_participant_added(data.field, data.email));
   this.on('BugController:ParticipantRemoved', data => this.on_participant_removed(data.field, data.email));
 };

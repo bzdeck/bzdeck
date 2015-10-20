@@ -152,13 +152,20 @@ BzDeck.views.Bug.prototype.render = function () {
 
   this.set_product_tooltips();
 
-  let $button = this.$bug.querySelector('[role="button"][data-command="star"]'),
+  let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
+      $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]'),
+      $star_button = this.$bug.querySelector('[role="button"][data-command="star"]'),
       $timeline = this.$bug.querySelector('.bug-timeline');
 
-  // Star on the header
-  if ($button) {
-    $button.setAttribute('aria-pressed', this.bug.starred);
-    (new this.widgets.Button($button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
+  if ($edit_button) {
+    $edit_button.setAttribute('aria-disabled', !can_editbugs);
+    (new this.widgets.Button($edit_button)).bind('Pressed', event =>
+        this.trigger('BugView:EditModeChanged', { enabled: event.detail.pressed }));
+  }
+
+  if ($star_button) {
+    $star_button.setAttribute('aria-pressed', this.bug.starred);
+    (new this.widgets.Button($star_button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
   }
 
   if (!$timeline) {
@@ -303,18 +310,6 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
 
   let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
       is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
-
-  for (let $fieldset of this.$bug.querySelectorAll('.bug-fieldset')) {
-    let category = $fieldset.dataset.category,
-        $edit_button = $fieldset.querySelector('h3 + [role="button"][data-command="edit"]');
-
-    if ($edit_button) {
-      $edit_button.setAttribute('aria-disabled', !can_editbugs);
-
-      new this.widgets.Button($edit_button).bind('Pressed', event =>
-          this.trigger('BugView:EditModeChanged', { category, enabled: event.detail.pressed }));
-    }
-  }
 
   // Iterate over the fields except the Flags secion which is activated by BugFlagsView
   for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {

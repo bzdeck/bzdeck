@@ -332,8 +332,9 @@
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
+              <li role="none"><span class="iconic" title="Edit" tabindex="0" role="button" aria-pressed="false" aria-label="Edit the fields of this bug" data-command="edit"></span>
+              <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
+              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
             </ul>
             <ul class="nav" role="none">
               <li role="none"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
@@ -532,7 +533,6 @@
                 <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                   <header>
                     <h3>Participants</h3>
-                    <span role="button" class="iconic" tabindex="0" title="Edit" aria-pressed="false" aria-label="Edit the participants of the bug" data-command="edit"></span>
                   </header>
                   <section role="group" aria-label="Reporter" data-field="creator">
                     <header>

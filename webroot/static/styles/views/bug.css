@@ -59,7 +59,7 @@
   color: var(--alternate-button-foreground-color);
 }
 
-[itemtype$="Bug"] > header > [role="toolbar"] .iconic:active {
+[itemtype$="Bug"] > header > [role="toolbar"] .iconic[aria-pressed="true"] {
   color: var(--alternate-pressed-button-foreground-color);
 }
 
@@ -86,6 +86,10 @@
   text-align: center;
   text-indent: 0;
   vertical-align: top;
+}
+
+[itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
+  content: '\F040'; /* pencil */
 }
 
 [itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="false"]::before {
