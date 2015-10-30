@@ -21,7 +21,7 @@ function output_link_elements ($type) {
 
   if ($type === 'js') {
     foreach ((DEBUG ? $scripts : ['/static/scripts/combined.js']) as $path) {
-      echo "    <script type=\"application/javascript;version=1.8\" src=\"{$path}\"></script>\n";
+      echo "    <script src=\"{$path}\"></script>\n";
     }
   }
 

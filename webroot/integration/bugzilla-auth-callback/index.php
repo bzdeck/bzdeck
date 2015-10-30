@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['client_api_login'] && $_GET['
     <title>Bugzilla Authentication</title>
   </head>
   <body>
-    <script type="application/javascript;version=1.8">
+    <script>
       window.addEventListener('DOMContentLoaded', event => {
         let bc = new BroadcastChannel('BugzillaAuthCallback'),
             client_api_login = '<?php echo $client_api_login ?>',
