@@ -63,7 +63,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
   $entry.dataset.id = comment.id;
   $entry.dataset.time = (new Date(time)).getTime();
   $entry.setAttribute('data-comment-number', comment.number);
-  $entry.properties.name[0].itemValue = `Comment ${comment.number}`; // l10n
+  $entry.querySelector('[itemprop="name"]').textContent = `Comment ${comment.number}`; // l10n
   $comment_body.innerHTML = text ? BzDeck.controllers.global.parse_comment(text) : '';
 
   // Append the comment number to the URL when clicked
@@ -153,16 +153,16 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
     for (let role of roles) {
       let $role = document.createElement('span');
 
-      $role.itemProp.add('role'); // Not in Schema.org
-      $role.itemValue = role;
+      $role.setAttribute('itemprop', 'role'); // Not in Schema.org
+      $role.textContent = role;
       $roles.appendChild($role);
     }
   }
 
   $author.title = `${author.original_name || author.name}\n${author.email}`;
-  $author.querySelector('[itemprop="name"]').itemValue = author.name;
-  $author.querySelector('[itemprop="email"]').itemValue = author.email;
-  $author.querySelector('[itemprop="image"]').itemValue = author.image;
+  $author.querySelector('[itemprop="name"]').textContent = author.name;
+  $author.querySelector('[itemprop="email"]').content = author.email;
+  $author.querySelector('[itemprop="image"]').src = author.image;
   this.helpers.datetime.fill_element($time, time);
 
   // Mark unread

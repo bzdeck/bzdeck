@@ -57,12 +57,12 @@ BzDeck.views.Global = function GlobalView () {
         $person.title = title;
       }
 
-      if ($name && $name.itemValue !== user.name) {
-        $name.itemValue = user.name;
+      if ($name && $name.textContent !== user.name) {
+        $name.textContent = user.name;
       }
 
-      if ($image && $image.itemValue !== user.image) {
-        $image.itemValue = user.image; // Blob URL
+      if ($image && $image.src !== user.image) {
+        $image.src = user.image; // Blob URL
       }
     }
   }, true);
@@ -128,14 +128,14 @@ BzDeck.views.Global.prototype.onclick = function (event) {
   }
 
   if ($target.matches('[itemtype$="User"][role="link"]')) {
-    BzDeck.router.navigate('/profile/' + $target.properties.email[0].itemValue);
+    BzDeck.router.navigate('/profile/' + $target.querySelector('[itemprop="email"]').content);
 
     return this.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
   if ($target.parentElement && $target.parentElement.matches('[itemtype$="User"][role="link"]')) {
-    BzDeck.router.navigate('/profile/' + $target.parentElement.properties.email[0].itemValue);
+    BzDeck.router.navigate('/profile/' + $target.parentElement.querySelector('[itemprop="email"]').content);
 
     return this.helpers.event.ignore(event);
   }
@@ -150,9 +150,9 @@ BzDeck.views.Global.prototype.onclick = function (event) {
 
     // Attachment link: open in a new app tab
     if ($target.hasAttribute('data-att-id')) {
-      let props = $target.properties,
+      let $content_type = $target.querySelector('[itemprop="content_type"]'),
           att_id = Number($target.getAttribute('data-att-id')),
-          att_type = props.content_type ? props.content_type[0].itemValue : undefined,
+          att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined,
           bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
                     for (att of bug.attachments || []) if (att.id === att_id) bug.id][0];
 

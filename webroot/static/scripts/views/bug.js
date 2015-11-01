@@ -246,7 +246,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   // Depends on, Blocks and Duplicates
   for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], [itemprop="duplicate"]')) {
-    $li.setAttribute('data-bug-id', $li.itemValue);
+    $li.setAttribute('data-bug-id', $li.textContent);
 
     (new this.widgets.Button($li)).bind('Pressed', event =>
       BzDeck.router.navigate('/bug/' + event.target.textContent));
@@ -373,7 +373,8 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
         let $target = event.target;
 
         if ($target.matches('[itemprop][itemtype$="User"]') && !$target.title) {
-          $target.title = $target.properties.description[0].itemValue + '\n' + $target.properties.email[0].itemValue;
+          $target.title = $target.querySelector('[itemprop="description"]').textContent + '\n'
+                        + $target.querySelector('[itemprop="email"]').content;
         }
       });
     }
@@ -437,8 +438,8 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
     this.comboboxes.get($combobox).selected = value;
   }
 
-  if ($textbox && $textbox.itemValue !== String(value)) {
-    $textbox.itemValue = value;
+  if ($textbox && $textbox.textContent !== String(value)) {
+    $textbox.textContent = value;
   }
 
   if (name === 'resolution') {

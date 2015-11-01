@@ -69,7 +69,7 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
     let checked = event.detail.checked;
 
     for (let $att of this.$listbox.querySelectorAll('[role="option"]')) {
-      $att.setAttribute('aria-hidden', checked ? 'false' : $att.properties.is_obsolete[0].itemValue);
+      $att.setAttribute('aria-hidden', checked ? 'false' : $att.querySelector('[itemprop="is_obsolete"]').content);
     }
 
     this.$$listbox.update_members();
@@ -258,8 +258,12 @@ BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
   let { id, hash, prop, value } = change,
       $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
-  if (['summary', 'content_type', 'is_patch', 'is_obsolete'].includes(prop)) {
-    $item.querySelector(`[itemprop="${prop}"]`).itemValue = value;
+  if (['summary', 'content_type'].includes(prop)) {
+    $item.querySelector(`[itemprop="${prop}"]`).textContent = value;
+  }
+
+  if (['is_patch', 'is_obsolete'].includes(prop)) {
+    $item.querySelector(`[itemprop="${prop}"]`).content = value;
   }
 };
 

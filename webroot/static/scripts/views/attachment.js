@@ -52,8 +52,13 @@ BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 BzDeck.views.Attachment.prototype.activate = function () {
   let { id, hash } = this.attachment;
 
-  for (let $prop of this.$attachment.properties) {
-    let prop = $prop.itemProp.value,
+  for (let $prop of this.$attachment.querySelectorAll('[itemprop]')) {
+    // Check if the element is in the same itemscope
+    if ($prop.parentElement.closest('[itemscope]') !== this.$attachment) {
+      continue;
+    }
+
+    let prop = $prop.getAttribute('itemprop'),
         trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
 
     if ($prop.matches('[role="textbox"]')) {
@@ -86,7 +91,7 @@ BzDeck.views.Attachment.prototype.activate = function () {
 BzDeck.views.Attachment.prototype.render = function () {
   let media_type = this.attachment.content_type.split('/')[0];
 
-  this.$attachment.itemProp.add('attachment');
+  this.$attachment.setAttribute('itemprop', 'attachment');
   this.$placeholder.innerHTML = '';
   this.$placeholder.appendChild(this.$attachment);
 
@@ -124,7 +129,7 @@ BzDeck.views.Attachment.prototype.render_media = function () {
 
   this.attachment.get_data().then(result => {
     this.$media.src = URL.createObjectURL(result.blob);
-    this.$media.itemProp.add('url');
+    this.$media.setAttribute('itemprop', 'url');
     this.$outer.appendChild(this.$media);
     this.$attachment.classList.add('media');
   }, error => {

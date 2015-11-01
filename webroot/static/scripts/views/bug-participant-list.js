@@ -52,7 +52,7 @@ BzDeck.views.BugParticipantList.prototype.constructor = BzDeck.views.BugParticip
 BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
   let $person = this.$list.querySelector('[itemscope]');
 
-  if ($person && !$person.properties.email[0].itemValue) {
+  if ($person && !$person.querySelector('[itemprop="email"]').content) {
     $person.remove();
   }
 };
@@ -158,7 +158,7 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
       self = email === this.my_email;
 
   if (!this.multiple && $person) {
-    let email = $person.properties.email[0].itemValue;
+    let email = $person.querySelector('[itemprop="email"]').content;
 
     this.values.delete(email);
     this.$$finder.exclude.delete(email);
@@ -172,7 +172,7 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
   this.values.add(email);
   this.$$finder.exclude.add(email);
 
-  $person.itemProp.add(this.field);
+  $person.setAttribute('itemprop', this.field);
   this.$list.insertBefore($person, this.$list.firstElementChild);
 
   if (this.can_take) {
@@ -252,8 +252,8 @@ BzDeck.views.BugParticipantList.prototype.create_button = function (command, tex
  * [return] $button (Element) button
  */
 BzDeck.views.BugParticipantList.prototype.add_remove_button_to_person = function ($person) {
-  let email = $person.properties.email[0].itemValue,
-      name = $person.properties.name[0].itemValue,
+  let email = $person.querySelector('[itemprop="email"]').content,
+      name = $person.querySelector('[itemprop="name"]').textContent,
       $button = $person.querySelector('[role="button"]');
 
   if ($button) {
