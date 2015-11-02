@@ -4,7 +4,7 @@
 
 'use strict';
 
-let version = '2015-11-01-14';
+let version = '2015-11-01-18';
 
 // Files need to be cached
 let files = [
@@ -16,11 +16,11 @@ let files = [
   '/static/styles/combined.css',
   '/static/styles/themes/dark.css',
   '/static/styles/themes/light.css',
-  '/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.205',
-  '/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.105',
-  '/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.105',
-  '/vendor/Fira/fonts/FiraSans-Regular.woff2?v=4.105',
-  '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.3.0',
+  '/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.206',
+  '/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.106',
+  '/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.106',
+  '/vendor/Fira/fonts/FiraSans-Regular.woff2?v=4.106',
+  '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0',
 ];
 
 // Static URLs to be resolved to the app's base URL. This list should be synced with .htaccess
