@@ -24,6 +24,6 @@ if ($_SERVER['REQUEST_URI'] === '/static/scripts/combined.js') {
   include('webroot/components/combine-scripts.php');
 } else {
   // Handle everything else
-  include('webroot/index.php');
+  include('webroot/app/index.php');
 }
 

@@ -33,15 +33,15 @@ RewriteRule ^privacy/?$     https://marketplace.firefox.com/app/bzdeck/privacy [
 RewriteRule ^support/?$     https://github.com/bzdeck/bzdeck/wiki/FAQ [R,L]
 RewriteRule ^screenshots/?$ https://www.facebook.com/BzDeck/photos_stream [R,L]
 
-# Rewrite: static URLs
-RewriteRule ^home/\w+$ / [L]
-RewriteRule ^settings$ / [L]
-RewriteRule ^(?:bug|search)/\d+$ / [L]
-RewriteRule ^(?:attachment)/(?:\d+|[a-z0-9]{32})$ / [L]
-RewriteRule ^(?:profile)/.+$ / [L]
+# Rewrite: app landing (TODO: Provide the actual landing page)
+RewriteRule ^$ /app/ [L]
+
+# Rewrite: static URLs to be resolved to the app's base URL. This list should be synced with caches.js
+RewriteRule ^(attachment|bug|home|profile|search|settings) /app/ [L]
 
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
+RewriteRule ^sw-caches\.js$ /static/scripts/workers/caches.js [L]
 RewriteRule ^static/scripts/combined\.js$ /components/combine-static-files.php?type=js [L]
 RewriteRule ^static/styles/combined\.css$ /components/combine-static-files.php?type=css [L]
 

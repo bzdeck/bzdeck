@@ -26,6 +26,9 @@ BzDeck.controllers.Session = function SessionController () {
     return;
   }
 
+  // Register service workers. Due to the scope limitation, those files should be on the root directory
+  navigator.serviceWorker.register('/sw-caches.js');
+
   this.find_account();
 };
 
