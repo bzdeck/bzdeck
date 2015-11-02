@@ -223,7 +223,8 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
 
 /*
  * Get the duplicated bug list for this bug. The duplicates are currently not part of the API, so parse the comments to
- * generate the list. This list could be empty if the comments are not fetched yet.
+ * generate the list. This list could be empty if the comments are not fetched yet. This method won't be necessary once
+ * the API offers the duplicates field. Bug 880163, BzDeck #317.
  *
  * [argument] none
  * [return] duplicates (Array(Number)) duplicate bug list
