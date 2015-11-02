@@ -63,7 +63,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
   $entry.dataset.id = comment.id;
   $entry.dataset.time = (new Date(time)).getTime();
   $entry.setAttribute('data-comment-number', comment.number);
-  $entry.querySelector('[itemprop="name"]').textContent = `Comment ${comment.number}`; // l10n
+  $entry.querySelector(':not([itemscope]) > [itemprop="name"]').textContent = `Comment ${comment.number}`; // l10n
   $comment_body.innerHTML = text ? BzDeck.controllers.global.parse_comment(text) : '';
 
   // Append the comment number to the URL when clicked
