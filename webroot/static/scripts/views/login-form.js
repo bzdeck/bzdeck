@@ -28,6 +28,10 @@ BzDeck.views.LoginForm = function LoginFormView () {
 
   this.on('SessionController:Error', data => {
     this.show_status(data.message);
+
+    if (data.error) {
+      console.error(data.error);
+    }
   }, true);
 
   this.on('SessionController:Logout', data => {

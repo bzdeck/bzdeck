@@ -41,7 +41,7 @@ BzDeck.controllers.Session.prototype.find_account = function () {
     BzDeck.collections.accounts = new BzDeck.collections.Accounts();
     BzDeck.collections.servers = new BzDeck.collections.Servers();
   }, error => {
-    this.trigger(':Error', { message: error.message });
+    this.trigger(':Error', { error, message: error.message });
   }).then(() => Promise.all([
     BzDeck.collections.accounts.load(),
     BzDeck.collections.servers.load(),
@@ -147,7 +147,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
     BzDeck.prefs = new BzDeck.collections.Prefs();
     BzDeck.collections.users = new BzDeck.collections.Users();
   }, error => {
-    this.trigger(':Error', { message: error.message });
+    this.trigger(':Error', { error, message: error.message });
   }).then(() => Promise.all([
     BzDeck.collections.bugs.load(),
     BzDeck.prefs.load(),
@@ -162,7 +162,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   }).then(() => {
     this.init_components();
   }).catch(error => {
-    this.trigger(':Error', { message: error.message });
+    this.trigger(':Error', { error, message: error.message });
   });
 };
 
@@ -211,7 +211,7 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     // Fetch data for returning users
     return this.firstrun ? Promise.resolve() : this.fetch_data();
   }).catch(error => {
-    this.trigger(':Error', { message: error.message });
+    this.trigger(':Error', { error, message: error.message });
   });
 };
 
