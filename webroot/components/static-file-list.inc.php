@@ -103,8 +103,6 @@ $scripts = [
   '/static/scripts/views/statusbar.js',
   '/static/scripts/views/thread.js',
   '/static/scripts/views/tooltip.js',
-  // Helpers
-  '/static/scripts/helpers/base.js',
   // Controllers
   '/static/scripts/controllers/base.js',
   '/static/scripts/controllers/attachment-page.js',
