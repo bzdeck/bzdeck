@@ -16,7 +16,7 @@ BzDeck.models.Account = function AccountModel (data) {
   Object.defineProperties(this, {
     permissions: {
       enumerable: true,
-      value: data.bugzilla ? [for (group of data.bugzilla.groups || []) group.name] : [],
+      value: data.bugzilla && data.bugzilla.groups ? data.bugzilla.groups.map(group => group.name) : [],
     },
   });
 };

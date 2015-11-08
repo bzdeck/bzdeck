@@ -17,8 +17,8 @@ BzDeck.views.Bug.prototype.init = function () {
   this.render();
 
   // Custom scrollbars
-  this.scrollbars = new Set([for ($area of this.$bug.querySelectorAll('[role="region"]'))
-                                  new this.widgets.ScrollBar($area)]);
+  this.scrollbars = new Set([...this.$bug.querySelectorAll('[role="region"]')]
+                                .map($area => new this.widgets.ScrollBar($area)));
 
   this.on('BugModel:AnnotationUpdated', data => {
     if (this.$bug && data.bug.id === this.bug.id && data.type === 'starred') {
@@ -133,7 +133,7 @@ BzDeck.views.Bug.prototype.render = function () {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
-        _bug.mentor = [for (name of this.bug.mentors) BzDeck.collections.users.get(name, { name }).properties];
+        _bug.mentor = this.bug.mentors.map(name => BzDeck.collections.users.get(name, { name }).properties);
       } else if (type === 'person') {
         if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
           _bug[field] = BzDeck.collections.users.get(this.bug[field], { name: this.bug[field] }).properties;
@@ -145,8 +145,8 @@ BzDeck.views.Bug.prototype.render = function () {
   }
 
   // Other Contributors, excluding Cc
-  _bug.contributor = [for (name of this.bug.contributors) if (!this.bug.cc.includes(name))
-                        BzDeck.collections.users.get(name, { name }).properties];
+  _bug.contributor = [...this.bug.contributors].filter(name => !this.bug.cc.includes(name))
+                                               .map(name => BzDeck.collections.users.get(name, { name }).properties);
 
   this.fill(this.$bug, _bug);
 
@@ -234,7 +234,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
 
   let _bug = {
-    cc: [for (name of this.bug.cc) get_person(name)],
+    cc: this.bug.cc.map(name => get_person(name)),
     depends_on: this.bug.depends_on,
     blocks: this.bug.blocks,
     see_also: this.bug.see_also,
@@ -324,7 +324,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
 
       this.comboboxes.set($combobox, $$combobox);
       $combobox.setAttribute('aria-disabled', !can_editbugs);
-      $$combobox.build([for (value of this.get_field_values(name)) { value, selected: value === this.bug[name] }]);
+      $$combobox.build(this.get_field_values(name).map(value => ({ value, selected: value === this.bug[name] })));
       $$combobox.bind('Change', event => {
         let value = event.detail.value;
 
@@ -388,10 +388,10 @@ BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name
       { component, version_detail, target_milestone_detail } = product[product_name];
 
   let values = {
-    product: [for (name of Object.keys(product).sort()) if (product[name].is_active) name],
-    component: [for (name of Object.keys(component).sort()) if (component[name].is_active) name],
-    version: [for (version of version_detail) if (version.is_active) version.name],
-    target_milestone: [for (milestone of target_milestone_detail) if (milestone.is_active) milestone.name],
+    product: Object.keys(product).filter(name => product[name].is_active).sort(),
+    component: Object.keys(component).filter(name => component[name].is_active).sort(),
+    version: version_detail.filter(version => version.is_active).map(version => version.name),
+    target_milestone: target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name),
     status: field.status.transitions[this.bug.status], // The order matters
   };
 
@@ -426,7 +426,7 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
     // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
     for (let field_name of ['version', 'component', 'target_milestone']) {
       this.comboboxes.get(this.$bug.querySelector(`[data-field="${field_name}"] [role="combobox"]`))
-          .build([for (value of this.get_field_values(field_name, product_name)) { value, selected: false }]);
+          .build(this.get_field_values(field_name, product_name).map(value => ({ value, selected: false })));
     }
   }
 
@@ -502,8 +502,8 @@ BzDeck.views.Bug.prototype.set_product_tooltips = function () {
 };
 
 BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
-  let related_ids = new Set([for ($element of this.$bug.querySelectorAll('[data-bug-id]'))
-                             Number.parseInt($element.getAttribute('data-bug-id'))]);
+  let related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
+                                .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
 
   let set_tooltops = bug => {
     let title;
@@ -529,9 +529,9 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
     }
   };
 
-  if (related_ids.size) {
+  if (related_ids.length) {
     let bugs = BzDeck.collections.bugs.get_some(related_ids),
-        lookup_ids = new Set([for (id of related_ids) if (!bugs.get(id)) id]);
+        lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
 
     bugs.forEach(bug => set_tooltops(bug));
 

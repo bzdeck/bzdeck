@@ -153,8 +153,8 @@ BzDeck.views.Global.prototype.onclick = function (event) {
       let $content_type = $target.querySelector('[itemprop="content_type"]'),
           att_id = Number($target.getAttribute('data-att-id')),
           att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined,
-          bug_id = [for (bug of BzDeck.collections.bugs.get_all().values())
-                    for (att of bug.attachments || []) if (att.id === att_id) bug.id][0];
+          bug_id = [...BzDeck.collections.bugs.get_all().values()]
+                                .find(bug => (bug.attachments || []).some(att => att.id === att_id)).map(bug => bug.id);
 
       if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
         // Open the link directly in a new browser tab

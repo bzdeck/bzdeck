@@ -48,7 +48,7 @@ BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
 };
 
 BzDeck.controllers.Banner.prototype.exec_quick_search = function (terms) {
-  let words = [for (word of terms.trim().split(/\s+/)) word.toLowerCase()],
+  let words = terms.trim().split(/\s+/).map(word => word.toLowerCase()),
       match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i')),
       bugs = BzDeck.collections.bugs.get_all();
 

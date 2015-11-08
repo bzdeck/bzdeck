@@ -25,46 +25,20 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
       email = BzDeck.models.account.data.name,
       bugs = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
 
-  if (id === 'inbox') {
-    // Recent bugs changed in 10 days + unread bugs
-    bugs = new Map([for (bug of bugs.values()) if (bug.is_new) [bug.id, bug]]);
-  }
-
-  if (id === 'important') {
-    bugs = new Map([for (bug of bugs.values()) if (severities.includes(bug.severity)) [bug.id, bug]]);
-  }
-
-  if (id === 'watching') {
-    bugs = new Map([for (bug of bugs.values()) if (bug.cc && bug.cc.includes(email)) [bug.id, bug]]);
-  }
-
-  if (id === 'reported') {
-    bugs = new Map([for (bug of bugs.values()) if (bug.creator === email) [bug.id, bug]]);
-  }
-
-  if (id === 'assigned') {
-    bugs = new Map([for (bug of bugs.values()) if (bug.assigned_to === email) [bug.id, bug]]);
-  }
-
-  if (id === 'mentor') {
-    bugs = new Map([for (bug of bugs.values()) if (bug.mentors && bug.mentors.includes(email)) [bug.id, bug]]);
-  }
-
-  if (id === 'qa') {
-    bugs = new Map([for (bug of bugs.values()) if (bug.qa_contact === email) [bug.id, bug]]);
-  }
-
-  if (id === 'requests') {
-    bugs = new Map([for (bug of bugs.values())
-                    for (flag of bug.flags || []) if (flag.requestee === email) [bug.id, bug]]);
-  }
-
-  if (id === 'starred') {
-    // Starred bugs may include non-subscribed bugs, so get all bugs, not only subscriptions
-    bugs = new Map([for (bug of bugs.values()) if (bug.starred) [bug.id, bug]]);
-  }
-
-  return bugs;
+  return new Map([...bugs.values()].filter(bug => {
+    switch (id) {
+      case 'inbox':     return bug.is_new;
+      case 'important': return severities.includes(bug.severity);
+      case 'watching':  return bug.cc && bug.cc.includes(email);
+      case 'reported':  return bug.creator === email;
+      case 'assigned':  return bug.assigned_to === email;
+      case 'mentor':    return bug.mentors && bug.mentors.includes(email);
+      case 'qa':        return bug.qa_contact === email;
+      case 'requests':  return bug.flags && bug.flags.some(flag => flag.requestee === email);
+      case 'starred':   return bug.starred;
+      default:          return bug;
+    }
+  }).map(bug => [bug.id, bug]));
 };
 
 /*
@@ -75,12 +49,13 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
  */
 BzDeck.collections.Subscriptions.prototype.get_all = function () {
   let email = BzDeck.models.account.data.name,
-      bugs = BzDeck.collections.bugs.get_all();
+      bugs = [...BzDeck.collections.bugs.get_all().values()];
 
-  return new Map([for (bug of bugs.values())
-      if ((bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
-          (bug.mentors && bug.mentors.includes(email)) || bug.qa_contact === email ||
-          [for (flag of bug.flags || []) if (flag.requestee === email) flag].length) [bug.id, bug]]);
+  bugs = bugs.filter(bug => (bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
+                                bug.qa_contact === email || (bug.mentors && bug.mentors.includes(email)) ||
+                                (bug.flags && bug.flags.some(flag => flag.requestee === email)));
+
+  return new Map(bugs.map(bug => [bug.id, bug]));
 };
 
 /*
@@ -117,7 +92,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   // Append starred bugs to the query
   params.append('f9', 'bug_id');
   params.append('o9', 'anywords');
-  params.append('v9', [for (bug of cached_bugs.values()) if (bug.starred) bug.id].join());
+  params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
     last_loaded = Date.now();
@@ -133,7 +108,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     }
 
     if (result.bugs.length) {
-      return BzDeck.collections.bugs.fetch([for (_bug of result.bugs) _bug.id])
+      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id))
           .then(_bugs => Promise.all(_bugs.map(_bug => {
             _bug._unread = true;
 

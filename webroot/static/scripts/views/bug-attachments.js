@@ -119,7 +119,7 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
     });
   }
 
-  let has_obsolete = !![for (a of this.attachments.values()) if (!!a.is_obsolete) a].length;
+  let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
 
   this.update_list_title();
   this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
@@ -285,7 +285,7 @@ BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads
  */
 BzDeck.views.BugAttachments.prototype.update_list_title = function () {
   let total = this.attachments.size,
-      uploads = [for (att of this.attachments.values()) if (att.is_unuploaded) att].length,
+      uploads = [...this.attachments.values()].filter(att => att.is_unuploaded).length,
       text = total === 1 ? '1 attachment' : `${total} attachments`; // l10n
 
   if (uploads > 0) {

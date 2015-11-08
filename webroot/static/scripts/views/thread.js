@@ -48,9 +48,10 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
   this.$$grid = new this.widgets.Grid($grid, {
     rows: [],
     columns: columns.map(col => {
+      let _col = default_cols.find(__col => __col.id === col.id);
+
       // Add labels
-      col.label = [for (_col of default_cols) if (_col.id === col.id) _col.label][0] ||
-                  field[col.id].description;
+      col.label = _col ? _col.label : field[col.id].description;
 
       return col;
     })
@@ -118,7 +119,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
 
       if (Array.isArray(value)) {
         if (field === 'mentors') { // Array of Person
-          value = [for (name of bug[field]) BzDeck.collections.users.get(name, { name }).name].join(', ');
+          value = bug.mentors.map(name => BzDeck.collections.users.get(name, { name }).name).join(', ');
         } else { // Keywords
           value = value.join(', ');
         }
@@ -148,7 +149,7 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
         if (prop === 'unread') {
           bug.unread = value;
 
-          let row = [for (row of this.$$grid.data.rows) if (row.data.id === obj.id) row][0];
+          let row = this.$$grid.data.rows.find(row => row.data.id === obj.id);
 
           if (row && row.$element) {
             row.$element.dataset.unread = value;

@@ -24,5 +24,5 @@ BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
  * [return] account (Object) AccountModel instance
  */
 BzDeck.collections.Accounts.prototype.get_current = function () {
-  return [for (account of this.get_all().values()) if (account.data.active) account][0];
+  return [...this.get_all().values()].find(account => account.data.active);
 };

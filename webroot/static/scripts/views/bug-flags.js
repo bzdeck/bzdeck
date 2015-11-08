@@ -58,7 +58,7 @@ BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
 
     // let $$combobox = new this.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
 
-    // $$combobox.build([for (value of ['---', '?', '+', '-']) { value, selected: value === this.bug[name] }]);
+    // $$combobox.build(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
     // $$combobox.bind('Change', event => {});
   }
 

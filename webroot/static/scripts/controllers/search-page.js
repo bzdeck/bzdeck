@@ -13,7 +13,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
     get: (obj, prop) => {
       if (prop === 'bugs') {
         // Return a sorted bug list
-        return this.view.get_shown_bugs(new Map([for (bug of obj.bugs) [bug.id, bug]]));
+        return this.view.get_shown_bugs(new Map(obj.bugs.map(bug => [bug.id, bug])));
       }
 
       return obj[prop];
@@ -102,7 +102,7 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
     }
 
     let bugs = new Map(),
-        _bugs = this.data.bugs = new Map([for (_bug of result.bugs) [_bug.id, _bug]]);
+        _bugs = this.data.bugs = new Map(result.bugs.map(_bug => [_bug.id, _bug]));
 
     BzDeck.collections.bugs.get_some(_bugs.keys()).forEach((bug, id) => {
       let retrieved = _bugs.get(id); // Raw data object

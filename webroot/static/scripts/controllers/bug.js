@@ -166,7 +166,7 @@ BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
     if (name === 'product') {
       let { version: versions, component, target_milestone_detail } = product[value],
           components = Object.keys(component),
-          milestones = [for (milestone of target_milestone_detail) if (milestone.is_active) milestone.name];
+          milestones = target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name);
 
       this.changes.version = versions.find(v => ['unspecified'].includes(v)) || versions[0];
       this.changes.component = components.find(c => ['General'].includes(c)) || components[0];
@@ -413,7 +413,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
                link instead.`; // l10n
   }
 
-  message += '\n\n' + [for (file of oversized_files) `* ${file.name} (${num_format(file.size)} bytes)`].join('\n');
+  message += '\n\n' + oversized_files.map(file => `* ${file.name} (${num_format(file.size)} bytes)`).join('\n');
 
   this.trigger(':AttachmentError', { message });
 };
@@ -684,7 +684,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
     }
   }).then(() => {
     // Update existing attachment(s)
-    return Promise.all([for (c of this.att_changes) this.post_att_changes(c[0], c[1])]);
+    return Promise.all([...this.att_changes].map(c => this.post_att_changes(c[0], c[1])));
   }).then(() => {
     if (!this.has_attachments) {
       // There is nothing more to do if no file is attached
@@ -792,7 +792,7 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
  * [return] none
  */
 BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
-  let uploaded = [for (attachment of this.uploads) attachment.uploaded].reduce((p, c) => p + c),
+  let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c),
       total = this.uploads.total;
 
   this.trigger(':SubmitProgress', { uploaded, total, percentage: Math.round(uploaded / total * 100) });

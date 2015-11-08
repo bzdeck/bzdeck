@@ -74,7 +74,7 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
       }
 
       users.sort((a, b) => new Date(a.last_activity) > new Date(b.last_activity));
-      this.helpers.event.async(() => this.search(new Map([for (user of users) [user.name, user]])));
+      this.helpers.event.async(() => this.search(new Map(users.map(user => [user.name, user]))));
     });
   }, 1000);
 };
@@ -93,8 +93,8 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
 
     let person = BzDeck.collections.users.get(name, { name });
 
-    if ((has_colon && [for (nick of person.nick_names) if (find(`:${nick}`)) nick].length) ||
-        find(person.name) || find(person.email) || [for (nick of person.nick_names) if (find(nick)) nick].length) {
+    if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
+        find(person.name) || find(person.email)) {
       results.set(name, person);
       this.results.set(name, person); // Save all results as well
     }

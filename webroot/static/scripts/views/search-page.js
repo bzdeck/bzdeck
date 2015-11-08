@@ -197,9 +197,8 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
 };
 
 BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
-  let rows = this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
-
-  return [for ($row of rows) bugs.get(Number($row.dataset.id))];
+  return [...this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])')]
+                                .map($row => bugs.get(Number($row.dataset.id)));
 };
 
 BzDeck.views.SearchPage.prototype.show_preview = function (data) {

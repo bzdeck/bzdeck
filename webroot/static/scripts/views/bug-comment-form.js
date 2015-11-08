@@ -188,8 +188,8 @@ BzDeck.views.BugCommentForm.prototype.init_status_tab = function () {
  * [return] none
  */
 BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
-  let flags = [for (flag of this.bug.flags || []) if (flag.name === 'needinfo') flag],
-      names = [for (flag of flags) flag.requestee],
+  let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [],
+      names = flags.map(flag => flag.requestee),
       self_assigned = this.bug.creator === this.bug.assigned_to,
       $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
       $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),

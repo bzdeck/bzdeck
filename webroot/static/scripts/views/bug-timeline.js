@@ -8,8 +8,8 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
   this.$bug = $bug;
 
   let get_time = str => (new Date(str)).getTime(),
-      entries = new Map([for (c of this.bug.comments.entries())
-                             [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])]]),
+      entries = new Map([...this.bug.comments.entries()]
+          .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])])),
       show_cc_changes = BzDeck.prefs.get('ui.timeline.show_cc_changes') === true,
       click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
@@ -32,7 +32,7 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
   }
 
   // Sort by time
-  entries = new Map([for (entry of entries) [entry[0], entry[1]]].sort((a, b) => a[0] > b[0]));
+  entries = new Map([...entries].sort((a, b) => a[0] > b[0]));
 
   // Collapse read comments
   // If the fill_bug_details function is called after the bug details are fetched,

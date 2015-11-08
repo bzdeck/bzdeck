@@ -75,7 +75,7 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
 
   let reply = () => {
     let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
-        quote_lines = [for (line of text.match(/^$|.{1,78}(?:\b|$)/gm) || []) `> ${line}`],
+        quote_lines = (text.match(/^$|.{1,78}(?:\b|$)/gm) || []).map(line => `> ${line}`),
         quote = `${quote_header}\n${quote_lines.join('\n')}`,
         $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`),
         $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);

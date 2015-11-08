@@ -129,9 +129,10 @@ BzDeck.models.Bug.prototype.merge = function (data) {
       cached_time = new Date(cache.last_change_time),
       cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
       get_time = str => new Date(str).getTime(), // integer
-      new_comments = new Map([for (c of data.comments || []) if (cmp_time(c)) [get_time(c.creation_time), c]]),
-      new_attachments = new Map([for (a of data.attachments || []) if (cmp_time(a)) [get_time(a.creation_time), a]]),
-      new_history = new Map([for (h of data.history || []) if (cmp_time(h)) [get_time(h.when), h]]),
+      new_comments = new Map((data.comments || []).filter(c => cmp_time(c)).map(c => [get_time(c.creation_time), c])),
+      new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
+                                                        .map(a => [get_time(a.creation_time), a])),
+      new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h])),
       timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
   // Mark the bug unread if the user subscribes CC changes or the bug is already unread
@@ -139,7 +140,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
       // or there are unread comments or attachments
       new_comments.size || new_attachments.size ||
       // or there are unread non-CC changes
-      [for (h of new_history.values()) if ([for (c of h.changes) if (c.field_name !== 'cc') c].length) h].length) {
+      [...new_history.values()].some(h => h.changes.some(c => c.field_name !== 'cc'))) {
     data._unread = true;
   } else {
     // Looks like there are only CC changes, so mark the bug read
@@ -255,12 +256,12 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
       is_new = changed > Date.now() - 1000 * 60 * 60 * 24 * 11;
 
   // Check for new comments
-  if (viewed && [for (c of this.data.comments || []) if (new Date(c.creation_time) > viewed) c].length) {
+  if (viewed && this.data.comments && this.data.comments.some(c => new Date(c.creation_time) > viewed)) {
     return true;
   }
 
   // Check for new attachments
-  if (viewed && [for (a of this.data.attachments || []) if (new Date(a.creation_time) > viewed) a].length) {
+  if (viewed && this.data.attachments && this.data.attachments.some(a => new Date(a.creation_time) > viewed)) {
     return true;
   }
 
@@ -268,7 +269,7 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
   if (viewed && BzDeck.prefs.get('notifications.ignore_cc_changes') !== false) {
     for (let h of this.data.history || []) {
       let time = new Date(h.when).getTime(), // Should be an integer for the following === comparison
-          non_cc_changes = !![for (c of h.changes) if (c.field_name !== 'cc') c].length;
+          non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
       if (time > viewed && non_cc_changes) {
         return true;

@@ -40,7 +40,7 @@ BzDeck.models.User = function UserModel (data) {
     },
     nick_names: {
       enumerable: true,
-      get: () => [for (name of this.original_name.match(/\:[\w\-]+/g) || []) name.substr(1)] // Consider multiple nick
+      get: () => (this.original_name.match(/\:[\w\-]+/g) || []).map(name => name.substr(1)) // Consider multiple nick
     },
     // Images
     image: {

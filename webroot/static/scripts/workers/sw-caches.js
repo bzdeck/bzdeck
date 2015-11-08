@@ -64,6 +64,6 @@ this.addEventListener('fetch', event => {
 this.addEventListener('activate', event => {
   event.waitUntil(
     // Delete old caches
-    caches.keys().then(keys => Promise.all([for (key of keys) if (key !== version) caches.delete(key)]))
+    caches.keys().then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))
   );
 });

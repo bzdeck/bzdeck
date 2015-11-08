@@ -108,7 +108,7 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
       items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                        : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-  return new Map([for ($item of items) [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]]);
+  return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
 };
 
 BzDeck.views.HomePage.prototype.show_preview = function (data) {
