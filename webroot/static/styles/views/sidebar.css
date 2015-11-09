@@ -55,11 +55,12 @@
   left: 0;
   width: calc(320px - 4rem);
   background-color: var(--region-background-color);
-  transition: left .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
+  transform: translateX(0);
+  transition: transform .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
 [data-device|="mobile"]:root #sidebar[aria-hidden="true"] > div {
-  left: -100%;
+  transform: translateX(-100%);
 }
 
 #sidebar h2 {

@@ -446,11 +446,12 @@
   }
 
   [itemtype$="Bug"] > div > [role="tablist"] {
-    transition: top .4s;
+    transform: translateY(0);
+    transition: transform .4s;
   }
 
   [itemtype$="Bug"] > div > [role="tablist"][aria-hidden="true"] {
-    top: -4rem;
+    transform: translateY(-4rem);
     transition-duration: .8s;
   }
 }

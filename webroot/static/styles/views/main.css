@@ -34,8 +34,8 @@ main {
   top: 0;
   left: 0;
   background-color: var(--region-background-color);
-  transition: left .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
-  transform: translateZ(0); /* Get hardware acceleration? */
+  transform: translateX(0);
+  transition: transform .4s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"]:-moz-any([id|="tabpanel-profile"], #tabpanel-settings) {
@@ -47,7 +47,7 @@ main {
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"][aria-hidden="true"]:not(#tabpanel-home):not(.fixed) {
-  left: 100%;
+  transform: translateX(100%);
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"][aria-hidden="true"] * {
