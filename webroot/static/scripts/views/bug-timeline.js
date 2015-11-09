@@ -25,10 +25,10 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
     entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
   }
 
-  for (let history of this.bug.history) if (entries.has(get_time(history.when))) {
-    entries.get(get_time(history.when)).set('history', history);
+  for (let _history of this.bug.history) if (entries.has(get_time(_history.when))) {
+    entries.get(get_time(_history.when)).set('history', _history);
   } else {
-    entries.set(get_time(history.when), new Map([['history', history]]));
+    entries.set(get_time(_history.when), new Map([['history', _history]]));
   }
 
   // Sort by time
@@ -118,30 +118,7 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
     }
   }, true);
 
-  let check_fragment = () => {
-    let match = location.hash.match(/^#c(\d+)$/),
-        comment_number = match ? Number.parseInt(match[1]) : undefined;
-
-    // If the URL fragment has a valid comment number, scroll the comment into view
-    if (location.pathname === `/bug/${this.bug.id}` && comment_number) {
-      let $comment = $timeline.querySelector(`[data-comment-number="${comment_number}"]`);
-
-      if ($comment) {
-        if (this.$expander) {
-          // Expand all comments
-          this.$expander.dispatchEvent(new CustomEvent(click_event_type));
-        }
-
-        $comment.scrollIntoView({ block: 'start', behavior: 'smooth' });
-        $comment.focus();
-      }
-    }
-  };
-
-  // Check the fragment; use a timer to wait for rendering
-  window.setTimeout(window => check_fragment(), 150);
-  window.addEventListener('popstate', event => check_fragment());
-  window.addEventListener('hashchange', event => check_fragment());
+  this.on('BugController:HistoryUpdated', data => this.on_history_updated(data.hash));
 };
 
 BzDeck.views.BugTimeline.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -160,5 +137,31 @@ BzDeck.views.BugTimeline.prototype.expand_comments = function () {
 BzDeck.views.BugTimeline.prototype.collapse_comments = function () {
   for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
     $comment.setAttribute('aria-expanded', 'false')
+  }
+};
+
+/**
+ * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
+ * comment into view.
+ *
+ * [argument] hash (String) location.hash
+ * [return] none
+ */
+BzDeck.views.BugTimeline.prototype.on_history_updated = function (hash) {
+  let match = hash.match(/^#c(\d+)$/);
+
+  if (match) {
+    let number = Number.parseInt(match[1]),
+        $comment = this.$timeline.querySelector(`[data-comment-number="${number}"]`);
+
+    if ($comment) {
+      if (this.$expander) {
+        // Expand all comments
+        this.$expander.dispatchEvent(new CustomEvent(click_event_type));
+      }
+
+      $comment.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      $comment.focus();
+    }
   }
 };

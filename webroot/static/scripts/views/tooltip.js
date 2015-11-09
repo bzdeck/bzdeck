@@ -103,7 +103,7 @@ BzDeck.views.BugTooltip.prototype.show = function () {
     this.$tooltip.id = `bug-${bug.id}-tooltip`;
     this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
     this.$tooltip.style.left = `${Number.parseInt(rect.left)}px`;
-    this.$tooltip.addEventListener('mousedown', event => BzDeck.router.navigate(`/bug/${bug.id}`));
+    this.$tooltip.addEventListener('mousedown', event => this.trigger('GlobalView:OpenBug', { id: bug.id }));
     document.body.appendChild(this.$tooltip);
     this.$owner.setAttribute('aria-describedby', this.$tooltip.id);
   });

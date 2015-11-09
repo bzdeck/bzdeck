@@ -29,24 +29,8 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
   }
 
   this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
-
-  this.$$listbox.bind('click', event => {
-    let $selected = this.$$listbox.view.selected[0],
-        att_id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
-
-    if (att_id && mobile && mql.matches) {
-      BzDeck.router.navigate(`/attachment/${att_id}`);
-    }
-  });
-
-  this.$$listbox.bind('dblclick', event => {
-    let $selected = this.$$listbox.view.selected[0],
-        att_id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
-
-    if (att_id) {
-      BzDeck.router.navigate(`/attachment/${att_id}`);
-    }
-  });
+  this.$$listbox.bind('click', event => this.listbox_onclick(event));
+  this.$$listbox.bind('dblclick', event => this.listbox_onclick(event));
 
   this.$$listbox.bind('Selected', event => {
     let $target = event.detail.items[0];
@@ -77,13 +61,11 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
 
   this.init_uploader();
 
-  this.check_state();
-  window.addEventListener('popstate', event => this.check_state());
-
   this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
   this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.hash));
   this.on('BugController:AttachmentEdited', data => this.on_attachment_edited(data.change));
   this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
+  this.on('BugController:HistoryUpdated', data => this.on_history_updated(data.state));
 };
 
 BzDeck.views.BugAttachments.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -126,6 +108,23 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
   this.$listbox.insertBefore($fragment, this.$listbox.firstElementChild);
   this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$listbox.update_members();
+};
+
+/**
+ * Called whenever the attachment list is clicked.
+ *
+ * [argument] event (MouseEvent) click or dblclick
+ * [return] none
+ */
+BzDeck.views.BugAttachments.prototype.listbox_onclick = function (event) {
+  let $selected = this.$$listbox.view.selected[0],
+      id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined,
+      mobile = this.helpers.env.device.mobile,
+      narrow = window.matchMedia('(max-width: 1023px)').matches;
+
+  if (id && ((event.type === 'click' && mobile && mql) || event.type === 'dblclick')) {
+    this.trigger('GlobalView:OpenAttachment', { id });
+  }
 };
 
 /**
@@ -204,26 +203,6 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
 };
 
 /**
- * Check for the history state and show an attachment if the attachment ID is specified.
- *
- * [argument] none
- * [return] none
- */
-BzDeck.views.BugAttachments.prototype.check_state = function () {
-  let target_id = history.state ? history.state.att_id : undefined,
-      $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
-
-  if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches &&
-      location.pathname === `/bug/${this.bug_id}`) {
-    if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {
-      this.$obsolete_checkbox.click();
-    }
-
-    this.$$listbox.view.selected = this.$$listbox.view.focused = $target;
-  }
-};
-
-/**
  * Called by BugController whenever a new attachment is added by the user.
  *
  * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
@@ -293,4 +272,23 @@ BzDeck.views.BugAttachments.prototype.update_list_title = function () {
   }
 
   this.$title.textContent = text;
+};
+
+/**
+ * Called whenever the navigation history state is updated.
+ *
+ * [argument] state (Object) current history state
+ * [return] none
+ */
+BzDeck.views.BugAttachments.prototype.on_history_updated = function (state) {
+  let target_id = state ? state.att_id : undefined,
+      $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
+
+  if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
+    if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {
+      this.$obsolete_checkbox.click();
+    }
+
+    this.$$listbox.view.selected = this.$$listbox.view.focused = $target;
+  }
 };

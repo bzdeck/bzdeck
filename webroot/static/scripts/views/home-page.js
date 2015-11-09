@@ -65,7 +65,7 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
 
   if (!$folder) {
     // Unknown folder; ignore
-    BzDeck.router.navigate('/home/inbox');
+    this.trigger(':UnknownFolderSelected');
 
     return;
   }

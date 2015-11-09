@@ -248,8 +248,9 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], [itemprop="duplicate"]')) {
     $li.setAttribute('data-bug-id', $li.textContent);
 
-    (new this.widgets.Button($li)).bind('Pressed', event =>
-      BzDeck.router.navigate('/bug/' + event.target.textContent));
+    (new this.widgets.Button($li)).bind('Pressed', event => {
+      this.trigger('GlobalView:OpenBug', { id: Number(event.target.textContent) });
+    });
   }
 
   // See Also

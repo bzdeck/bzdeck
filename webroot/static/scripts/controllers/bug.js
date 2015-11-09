@@ -49,15 +49,48 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:AddParticipant', data => this.add_participant(data.field, data.email));
   this.on('V:RemoveParticipant', data => this.remove_participant(data.field, data.email));
 
+  // Timeline
+  this.on('V:CommentSelected', data => this.on_comment_selected(data.number));
+
   // Form submission
   this.on('V:Submit', () => this.submit());
 
   // Add the people involved in the bug to the local user database
   BzDeck.collections.users.add_from_bug(this.bug);
+
+  // Check the fragment; use a timer to wait for the timeline rendering
+  window.setTimeout(window => this.check_fragment(), 150);
+  window.addEventListener('popstate', event => this.check_fragment());
+  window.addEventListener('hashchange', event => this.check_fragment());
 };
 
 BzDeck.controllers.Bug.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
+
+/**
+ * Called by BugTimelineEntryView whenever a comment is selected.
+ *
+ * [argument] number (Integer) comment number
+ * [return] none
+ */
+BzDeck.controllers.Bug.prototype.on_comment_selected = function (number) {
+  if (location.pathname === `/bug/${this.bug.id}`) {
+    window.history.replaceState({}, document.title, `${location.pathname}#c${number}`);
+  }
+};
+
+/**
+ * Called in the constructor and whenever the location fragment or history state is updated. If the current bug is still
+ * displayed, fire an event so the relevant views can do something.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.controllers.Bug.prototype.check_fragment = function () {
+  if (location.pathname === `/bug/${this.bug.id}`) {
+    this.trigger(':HistoryUpdated', { hash: location.hash, state: history.state });
+  }
+};
 
 /**
  * Create a Proxy for the changes object that fires the FieldEdited event when any field value is modified.

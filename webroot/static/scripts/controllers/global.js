@@ -8,6 +8,11 @@ BzDeck.controllers.Global = function GlobalController () {
       this.toggle_unread();
     }
   }, true);
+
+  // Navigation, can be requested by any view
+  this.on('V:OpenBug', data => BzDeck.router.navigate(`/bug/${data.id}`, { ids: data.ids, att_id: data.att_id }), true);
+  this.on('V:OpenAttachment', data => BzDeck.router.navigate(`/attachment/${data.id}`), true);
+  this.on('V:OpenProfile', data => BzDeck.router.navigate(`/profile/${data.email}`), true);
 };
 
 BzDeck.controllers.Global.prototype = Object.create(BzDeck.controllers.Base.prototype);

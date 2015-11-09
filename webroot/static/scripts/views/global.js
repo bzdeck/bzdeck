@@ -120,7 +120,8 @@ BzDeck.views.Global.prototype.onpopstate = function (event) {
 };
 
 BzDeck.views.Global.prototype.onclick = function (event) {
-  let $target = event.target;
+  let $target = event.target,
+      $parent = $target.parentElement;
 
   // Discard clicks on the fullscreen dialog
   if ($target === document) {
@@ -128,14 +129,14 @@ BzDeck.views.Global.prototype.onclick = function (event) {
   }
 
   if ($target.matches('[itemtype$="User"][role="link"]')) {
-    BzDeck.router.navigate('/profile/' + $target.querySelector('[itemprop="email"]').content);
+    this.trigger('GlobalView:OpenProfile', { email: $target.querySelector('[itemprop="email"]').content });
 
     return this.helpers.event.ignore(event);
   }
 
   // Support clicks on the avatar image in a comment
-  if ($target.parentElement && $target.parentElement.matches('[itemtype$="User"][role="link"]')) {
-    BzDeck.router.navigate('/profile/' + $target.parentElement.querySelector('[itemprop="email"]').content);
+  if ($parent && $parent.matches('[itemtype$="User"][role="link"]')) {
+    this.trigger('GlobalView:OpenProfile', { email: $parent.querySelector('[itemprop="email"]').content });
 
     return this.helpers.event.ignore(event);
   }
@@ -143,7 +144,7 @@ BzDeck.views.Global.prototype.onclick = function (event) {
   if ($target.matches(':-moz-any-link, [role="link"]')) {
     // Bug link: open in a new app tab
     if ($target.hasAttribute('data-bug-id')) {
-      BzDeck.router.navigate('/bug/' + $target.getAttribute('data-bug-id'));
+      this.trigger('GlobalView:OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
 
       return this.helpers.event.ignore(event);
     }
@@ -160,9 +161,9 @@ BzDeck.views.Global.prototype.onclick = function (event) {
         // Open the link directly in a new browser tab
         window.open(`${BzDeck.models.server.url}/attachment.cgi?id=${att_id}`);
       } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-        BzDeck.router.navigate(`/attachment/${att_id}`);
+        this.trigger('GlobalView:OpenAttachment', { id: att_id });
       } else {
-        BzDeck.router.navigate(`/bug/${bug_id}`, { att_id });
+        this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
       }
 
       return this.helpers.event.ignore(event);

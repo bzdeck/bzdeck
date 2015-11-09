@@ -68,8 +68,8 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
 
   // Append the comment number to the URL when clicked
   $entry.addEventListener(click_event_type, event => {
-    if (location.pathname.startsWith('/bug/') && !event.target.matches(':-moz-any-link')) {
-      window.history.replaceState({}, document.title, `${location.pathname}#c${comment.number}`);
+    if (!event.target.matches(':-moz-any-link')) {
+      this.trigger('BugView:CommentSelected', { number: Number(comment.number) });
     }
   });
 

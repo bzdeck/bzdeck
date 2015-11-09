@@ -45,6 +45,8 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
     }
   });
 
+  this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
+
   this.on('V:OpeningTabRequested', data => {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.sorted_bugs.keys()] });
   });

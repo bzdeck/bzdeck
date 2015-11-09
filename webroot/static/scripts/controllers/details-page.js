@@ -33,9 +33,12 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
   this.init();
 
   this.on('V:NavigationRequested', data => {
-    this.bug_id = data.id;
+    let { id, ids, old_path, new_path, reinit } = data;
 
-    if (data.reinit) {
+    this.bug_id = id;
+    window.history.replaceState({ ids, previous: old_path }, '', new_path);
+
+    if (reinit) {
       this.init();
     }
   });

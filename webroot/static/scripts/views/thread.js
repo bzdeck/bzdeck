@@ -20,9 +20,18 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
   let $target = event.originalTarget;
 
   if ($target.matches(selector)) {
-    // Open Bug in New Tab
-    BzDeck.router.navigate('/bug/' + $target.dataset.id, { ids: [...this.consumer.controller.data.bugs.keys()] });
+    this.open_bug(Number($target.dataset.id));
   }
+};
+
+/**
+ * Open a specific bug in a new tab.
+ *
+ * [argument] id (Integer) bug ID
+ * [return] none
+ */
+BzDeck.views.Thread.prototype.open_bug = function (id) {
+  this.trigger('GlobalView:OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });
 };
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -242,8 +251,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
     // Open the bug in a new tab
     'O|Enter': event => {
-      BzDeck.router.navigate('/bug/' + this.consumer.controller.data.preview_id,
-                             { ids: [...this.consumer.controller.data.bugs.keys()] });
+      this.open_bug(this.consumer.controller.data.preview_id);
     },
   });
 

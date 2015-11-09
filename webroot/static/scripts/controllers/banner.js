@@ -28,12 +28,42 @@ BzDeck.controllers.Banner = function BannerController () {
     }
   });
 
+  this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
+  this.on('V:BackButtonClicked', data => this.on_back_button_clicked());
+  this.on('V:TabSelected', data => this.on_tab_selected(data.path));
   this.on('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.terms));
   this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
+  this.on('V:QuickSearchResultSelected', data => BzDeck.router.navigate(data.path));
 };
 
 BzDeck.controllers.Banner.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Banner.prototype.constructor = BzDeck.controllers.Banner;
+
+/**
+ * Called by BannerView whenever the Back button is clicked on the mobile view.
+ *
+ * [argument] none
+ * [return] none
+ */
+BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
+  if (history.state && history.state.previous) {
+    history.back();
+  } else {
+    BzDeck.router.navigate('/home/inbox');
+  }
+};
+
+/**
+ * Called by BannerView whenever a tab in the global tablist is selected.
+ *
+ * [argument] path (String) location pathname that corresponds to the tab 
+ * [return] none
+ */
+BzDeck.controllers.Banner.prototype.on_tab_selected = function (path) {
+  if (location.pathname + location.search !== path) {
+    BzDeck.router.navigate(path);
+  }
+};
 
 BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
   let params = new URLSearchParams();

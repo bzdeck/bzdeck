@@ -286,9 +286,9 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
 
   $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
     if (!this.id.startsWith('details-bug-') || mobile && mql.matches) {
-      BzDeck.router.navigate(`/attachment/${hash}`);
+      this.trigger('GlobalView:OpenAttachment', { id: hash });
     } else {
-      BzDeck.router.navigate(`/bug/${this.bug.id}`, { att_id: hash.substr(0, 7) });
+      this.trigger('GlobalView:OpenBug', { id: this.bug.id, att_id: hash.substr(0, 7) });
     }
   });
 

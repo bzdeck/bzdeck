@@ -29,8 +29,8 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
   });
 
   // Switch the tabs when an attachment is selected on the timeline or comment form
-  window.addEventListener('popstate', event => {
-    if (location.pathname === `/bug/${this.bug.id}` && history.state && history.state.att_id) {
+  this.on('BugController:HistoryUpdated', data => {
+    if (data.state && data.state.att_id) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
     }
   });

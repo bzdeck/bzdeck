@@ -33,14 +33,11 @@ BzDeck.views.Banner = function BannerView (user) {
       }
     }
 
-    if (location.pathname + location.search !== path) {
-      BzDeck.router.navigate(path);
-    }
+    this.trigger(':TabSelected', { path });
   });
 
   // Make the logo clickable
-  document.querySelector('[role="banner"] h1')
-          .addEventListener('mousedown', event => BzDeck.router.navigate('/home/inbox'));
+  document.querySelector('[role="banner"] h1').addEventListener('mousedown', event => this.trigger(':LogoClicked'));
 
   new this.widgets.MenuBar(document.querySelector('#main-menu'));
 
@@ -207,7 +204,7 @@ BzDeck.views.Banner.prototype.setup_searchbar = function () {
         id = $target.dataset.id;
 
     if (id) {
-      BzDeck.router.navigate('/bug/' + id);
+      this.trigger(':QuickSearchResultSelected', { path: `/bug/${id}` });
       cleanup();
     }
 
@@ -296,11 +293,7 @@ BzDeck.views.Banner.prototype.add_back_button = function ($parent) {
   if (this.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
     $button.setAttribute('aria-label', 'Back'); // l10n
     $button.addEventListener('touchstart', event => {
-      if (history.state && history.state.previous) {
-        history.back();
-      } else {
-        BzDeck.router.navigate('/home/inbox');
-      }
+      this.trigger(':BackButtonClicked');
 
       return this.helpers.event.ignore(event);
     });

@@ -115,8 +115,7 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
   // Update relevant data
   this.bug_id = new_id;
   BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, new_path);
-  window.history.replaceState({ ids: this.bug_ids, previous: old_path }, '', new_path);
 
   // Notify the Controller
-  this.trigger(':NavigationRequested', { id: new_id, reinit: !$existing_bug });
+  this.trigger(':NavigationRequested', { id: new_id, ids: this.bug_ids, old_path, new_path, reinit: !$existing_bug });
 };
