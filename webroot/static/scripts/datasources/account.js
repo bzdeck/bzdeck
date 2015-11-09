@@ -7,7 +7,7 @@ BzDeck.datasources.Account = function AccountDataSource () {};
 BzDeck.datasources.Account.prototype = Object.create(BzDeck.datasources.Base.prototype);
 BzDeck.datasources.Account.prototype.constructor = BzDeck.datasources.Account;
 
-/*
+/**
  * Preload the account-specific database.
  *
  * [argument] none
@@ -17,7 +17,7 @@ BzDeck.datasources.Account.prototype.load = function () {
   return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 2);
 };
 
-/*
+/**
  * Create object stores when the database is created or upgraded.
  *
  * [argument] event (IDBVersionChangeEvent) the upgradeneeded event

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Attachment Model.
  *
  * [argument] data (Object) Bugzilla's raw attachment data object
@@ -19,7 +19,7 @@ BzDeck.models.Attachment = function AttachmentModel (data) {
 BzDeck.models.Attachment.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Attachment.prototype.constructor = BzDeck.models.Attachment;
 
-/*
+/**
  * Retrieve attachment data from Bugzilla.
  *
  * [argument] none
@@ -33,7 +33,7 @@ BzDeck.models.Attachment.prototype.fetch = function () {
   });
 };
 
-/*
+/**
  * Get the attachment data only. If it's not in the cache, retrieve it from Bugzilla.
  *
  * [argument] none
@@ -72,7 +72,7 @@ BzDeck.models.Attachment.prototype.get_data = function () {
   });
 };
 
-/*
+/**
  * Save the attachment data as part of the relevant bug.
  *
  * [argument] none

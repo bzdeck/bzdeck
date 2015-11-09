@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Subscription Collection.
  *
  * [argument] none
@@ -14,7 +14,7 @@ BzDeck.collections.Subscriptions = function SubscriptionCollection () {
 BzDeck.collections.Subscriptions.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Subscriptions.prototype.constructor = BzDeck.collections.Subscriptions;
 
-/*
+/**
  * Get bugs the user is involving, with a specific key.
  *
  * [argument] id (String) key of the subscription
@@ -41,7 +41,7 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
   }).map(bug => [bug.id, bug]));
 };
 
-/*
+/**
  * Get all bugs the user is involving.
  *
  * [argument] none
@@ -58,7 +58,7 @@ BzDeck.collections.Subscriptions.prototype.get_all = function () {
   return new Map(bugs.map(bug => [bug.id, bug]));
 };
 
-/*
+/**
  * Retrieve data of bugs the user is involving, from Bugzilla.
  *
  * [argument] none

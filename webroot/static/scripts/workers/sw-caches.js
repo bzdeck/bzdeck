@@ -23,7 +23,7 @@ let files = [
   '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0',
 ];
 
-// Static URLs to be resolved to the app's base URL. This list should be synced with .htaccess
+// Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
 let pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
 this.addEventListener('install', event => {

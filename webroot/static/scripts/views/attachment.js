@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Attachment View.
  *
  * [argument] attachment (Proxy) AttachmentModel instance
@@ -43,7 +43,7 @@ BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
 BzDeck.views.Attachment.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 
-/*
+/**
  * Activate the editable widgets.
  *
  * [argument] none
@@ -82,7 +82,7 @@ BzDeck.views.Attachment.prototype.activate = function () {
   }
 };
 
-/*
+/**
  * Render the attachment on the placeholder.
  *
  * [argument] none
@@ -118,7 +118,7 @@ BzDeck.views.Attachment.prototype.render = function () {
   }
 };
 
-/*
+/**
  * Render the image, video or audio.
  *
  * [argument] none
@@ -139,7 +139,7 @@ BzDeck.views.Attachment.prototype.render_media = function () {
   });
 };
 
-/*
+/**
  * Render the patch with the Patch Viewer.
  *
  * [argument] none
@@ -158,7 +158,7 @@ BzDeck.views.Attachment.prototype.render_patch = function () {
   });
 };
 
-/*
+/**
  * Render a link to the file.
  *
  * [argument] none
@@ -188,7 +188,7 @@ BzDeck.views.Attachment.prototype.render_link = function () {
   this.$attachment.classList.add('link');
 };
 
-/*
+/**
  * Render an error message when the attachment cannot be retrieved.
  *
  * [argument] error (Error) error object

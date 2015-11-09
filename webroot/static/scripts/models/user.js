@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the User Model.
  *
  * [argument] data (Object) profile object including Bugzilla's raw user data
@@ -97,7 +97,7 @@ BzDeck.models.User = function UserModel (data) {
 BzDeck.models.User.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.User.prototype.constructor = BzDeck.models.User;
 
-/*
+/**
  * Retrieve the user's relevant data from Bugzilla and Gravatar.
  *
  * [argument] options (Object, optional) extra options
@@ -130,7 +130,7 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
   }).then(() => Promise.resolve(this.data));
 };
 
-/*
+/**
  * Get or retrieve the user's Bugzilla profile.
  *
  * [argument] options (Object, optional) extra options
@@ -159,7 +159,7 @@ BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
   });
 };
 
-/*
+/**
  * Get or retrieve the user's Gravatar profile.
  *
  * [argument] options (Object, optional) extra options
@@ -196,7 +196,7 @@ BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
   });
 };
 
-/*
+/**
  * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image.
  *
  * [argument] options (Object, optional) extra options

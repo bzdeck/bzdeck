@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Comment Form View. This view has a comment form and quick edit UI.
  *
  * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
@@ -79,7 +79,7 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
 BzDeck.views.BugCommentForm.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugCommentForm.prototype.constructor = BzDeck.views.BugCommentForm;
 
-/*
+/**
  * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
  * the newly selected tab.
  *
@@ -97,7 +97,7 @@ BzDeck.views.BugCommentForm.prototype.on_tab_selected = function ($tab) {
   }
 };
 
-/*
+/**
  * Prepare the content on the Comment tabpanel.
  *
  * [argument] none
@@ -114,7 +114,7 @@ BzDeck.views.BugCommentForm.prototype.init_comment_tabpanel = function () {
   this.helpers.kbd.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView:Submit') });
 };
 
-/*
+/**
  * Prepare the content on the Attachment tabpanel.
  *
  * [argument] none
@@ -163,7 +163,7 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
   });
 };
 
-/*
+/**
  * Show the Status tab when needed.
  *
  * [argument] none
@@ -181,7 +181,7 @@ BzDeck.views.BugCommentForm.prototype.init_status_tab = function () {
   }
 };
 
-/*
+/**
  * Prepare the content on the NeedInfo tabpanel.
  *
  * [argument] none
@@ -250,7 +250,7 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
   $tab.setAttribute('aria-hidden', 'false');
 };
 
-/*
+/**
  * Called by the textbox element whenever the new comment is edited by the user.
  *
  * [argument] none
@@ -267,7 +267,7 @@ BzDeck.views.BugCommentForm.prototype.oninput = function () {
   this.trigger('BugView:EditComment', { text: this.$textbox.value });
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is added by the user.
  *
  * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
@@ -309,7 +309,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
   $tbody.appendChild($row);
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is removed by the user.
  *
  * [argument] index (Integer) removed attachment's index in the cached list
@@ -319,7 +319,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
   this.$attachments_tbody.rows[index].remove();
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is edited by the user.
  *
  * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
@@ -334,7 +334,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
   }
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is added or removed by the user.
  *
  * [argument] uploads (extended Array(Proxy)) list of the new attachments
@@ -345,7 +345,7 @@ BzDeck.views.BugCommentForm.prototype.on_upload_list_updated = function (uploads
   this.$$tablist.view.selected = uploads.length ? this.$attachments_tab : this.$comment_tab;
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment added by the user has an error, such as an oversized file. Show an
  * alert dialog to notify the user of the error.
  *
@@ -360,7 +360,7 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
   }).show();
 };
 
-/*
+/**
  * Called by BugController whenever the new commend is added or removed by the user.
  *
  * [argument] has_comment (Boolean) whether the comment is empty
@@ -370,7 +370,7 @@ BzDeck.views.BugCommentForm.prototype.on_comment_edited = function (has_comment)
   this.$preview_tab.setAttribute('aria-disabled', !has_comment);
 };
 
-/*
+/**
  * Called by BugController whenever any of the fields, comments or attachments are edited by the user.
  *
  * [argument] can_submit (Boolean) whether the changes can be submitted immediately
@@ -380,7 +380,7 @@ BzDeck.views.BugCommentForm.prototype.on_bug_edited = function (can_submit) {
   this.$submit.setAttribute('aria-disabled', !can_submit);
 };
 
-/*
+/**
  * Called by BugController whenever the changes are about to be submitted to Bugzilla.
  *
  * [argument] none
@@ -392,7 +392,7 @@ BzDeck.views.BugCommentForm.prototype.on_submit = function () {
   this.$status.textContent = 'Submitting...';
 };
 
-/*
+/**
  * Called by BugController whenever the upload of a new attachment is in progress.
  *
  * [argument] data (object) includes the uploaded size, total size and percentage
@@ -403,7 +403,7 @@ BzDeck.views.BugCommentForm.prototype.on_submit_progress = function (data) {
   this.$status.textContent = `${data.percentage}% uploaded`;
 };
 
-/*
+/**
  * Called by BugController whenever all the changes are submitted successfully. Reset the form content.
  *
  * [argument] none
@@ -414,7 +414,7 @@ BzDeck.views.BugCommentForm.prototype.on_submit_success = function () {
   this.oninput();
 };
 
-/*
+/**
  * Called by BugController whenever any error is detected while submitting the changes.
  *
  * [argument] data (object) includes the errors and whether the submit button should be disabled
@@ -425,7 +425,7 @@ BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
   this.$status.textContent = data.error || 'There was an error while submitting your changes. Please try again.';
 };
 
-/*
+/**
  * Called by BugController once a submission is complete, regardless of errors.
  *
  * [argument] none

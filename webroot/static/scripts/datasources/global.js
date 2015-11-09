@@ -7,7 +7,7 @@ BzDeck.datasources.Global = function GlobalDataSource () {};
 BzDeck.datasources.Global.prototype = Object.create(BzDeck.datasources.Base.prototype);
 BzDeck.datasources.Global.prototype.constructor = BzDeck.datasources.Global;
 
-/*
+/**
  * Preload the app-wide database.
  *
  * [argument] none
@@ -17,7 +17,7 @@ BzDeck.datasources.Global.prototype.load = function () {
   return this.open_database('global', 1);
 };
 
-/*
+/**
  * Create object stores when the database is created or upgraded.
  *
  * [argument] event (IDBVersionChangeEvent) the upgradeneeded event

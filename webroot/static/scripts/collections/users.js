@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the User Collection.
  *
  * [argument] none
@@ -17,7 +17,7 @@ BzDeck.collections.Users = function UserCollection () {
 BzDeck.collections.Users.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
 
-/*
+/**
  * Add users participating in a bug.
  *
  * [argument] bug (Proxy) a BugCollection object

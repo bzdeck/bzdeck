@@ -35,7 +35,7 @@ RewriteRule ^screenshots/?$ https://www.facebook.com/BzDeck/photos_stream [R,L]
 # Rewrite: app landing (TODO: Provide the actual landing page)
 RewriteRule ^$ /app/ [L]
 
-# Rewrite: static URLs to be resolved to the app's base URL. This list should be synced with caches.js
+# Rewrite: Virtual URLs to be resolved to the app's static base URL. This list should be synced with caches.js
 RewriteRule ^(attachment|bug|home|profile|search|settings) /app/ [L]
 
 # Rewrite: misc

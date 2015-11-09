@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Account Collection.
  *
  * [argument] none
@@ -17,7 +17,7 @@ BzDeck.collections.Accounts = function AccountCollection () {
 BzDeck.collections.Accounts.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
 
-/*
+/**
  * Get the currently signed-in account if any.
  *
  * [argument] none

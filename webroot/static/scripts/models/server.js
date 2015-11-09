@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Server Model.
  *
  * [argument] data (Object) server data
@@ -25,7 +25,7 @@ BzDeck.models.Server = function ServerModel (data) {
 BzDeck.models.Server.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
 
-/*
+/**
  * Retrieve the Bugzilla configuration from cache or the remote Bugzilla instance.
  *
  * [argument] none

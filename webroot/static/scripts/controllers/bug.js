@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Controller. The following methods mainly aim to update a bug. See the Bugzilla API documentation
  * for details of the spec: http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug
  *
@@ -59,7 +59,7 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
 BzDeck.controllers.Bug.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
 
-/*
+/**
  * Create a Proxy for the changes object that fires the FieldEdited event when any field value is modified.
  *
  * [argument] none
@@ -88,7 +88,7 @@ BzDeck.controllers.Bug.prototype.reset_changes = function (comment) {
   return this.changes;
 };
 
-/*
+/**
  * Called internally whenever a bug field or an attachment property is edited by the user. Fire an event to notify the
  * views of the change.
  *
@@ -101,7 +101,7 @@ BzDeck.controllers.Bug.prototype.onedit = function () {
   this.trigger(':BugEdited', { changes, att_changes, uploads, can_submit });
 };
 
-/*
+/**
  * Called by BugView whenever the new comment is edited by the user. Cache the comment and notify changes accordingly.
  *
  * [argument] comment (String) comment text
@@ -129,7 +129,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
   }
 };
 
-/*
+/**
  * Called by BugView whenever any of the fields are edited by the user. Cache the value and notify changes accordingly.
  * Only the following fields are supported at this moment: status, resolution, dupe_of.
  *
@@ -195,7 +195,7 @@ BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
   this.onedit();
 };
 
-/*
+/**
  * Called by BugView whenever any of the flags are edited by the user. Cache the value and notify changes accordingly.
  *
  * [argument] flag (Object) flag change object
@@ -224,7 +224,7 @@ BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
   this.onedit();
 };
 
-/*
+/**
  * Called by BugView whenever a participant is added by the user. Cache the value and notify changes accordingly.
  *
  * [argument] field (String) assigned_to, qa_contact, mentor or cc
@@ -267,7 +267,7 @@ BzDeck.controllers.Bug.prototype.add_participant = function (field, email) {
   return true;
 };
 
-/*
+/**
  * Called by BugView whenever a participant is removed by the user. Cache the value and notify changes accordingly.
  *
  * [argument] field (String) assigned_to, qa_contact, mentor or cc
@@ -302,7 +302,7 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
   return true;
 };
 
-/*
+/**
  * Subscribe to the bug by adding the user's email to the Cc list, or unsubscribe from the bug by removing the user's
  * email from the Cc list.
  *
@@ -326,7 +326,7 @@ BzDeck.controllers.Bug.prototype.update_subscription = function (how) {
   });
 };
 
-/*
+/**
  * Clean up a change with both additions and removals, such as mentor or cc. If there are no changes, removed the
  * object from the cache.
  *
@@ -357,7 +357,7 @@ BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field)
   return true;
 };
 
-/*
+/**
  * Called by BugView whenever new attachment files are selected by the user through a file input form control or a
  * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
  *
@@ -418,7 +418,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
   this.trigger(':AttachmentError', { message });
 };
 
-/*
+/**
  * Called whenever a new attachment text is added by the user through a text input form control or a drag-and-drop
  * action. Read and cache the text.
  *
@@ -460,7 +460,7 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
   reader.readAsDataURL(blob);
 };
 
-/*
+/**
  * Find an attachment index from the cached new attachment list by comparing the hash values.
  *
  * [argument] hash (String) hash value of the attachment object to find
@@ -470,7 +470,7 @@ BzDeck.controllers.Bug.prototype.find_att_index = function (hash) {
   return this.uploads.findIndex(a => a.hash === hash);
 };
 
-/*
+/**
  * Find an attachment object from the cached new attachment list by comparing the hash values.
  *
  * [argument] hash (String) hash value of the attachment object to find
@@ -480,7 +480,7 @@ BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
   return this.uploads.find(a => a.hash === hash);
 };
 
-/*
+/**
  * Add an attachment to the cached new attachment list.
  *
  * [argument] att (Object) raw attachment upload object for Bugzilla
@@ -505,7 +505,7 @@ BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
   return true;
 };
 
-/*
+/**
  * Remove an attachment from the cached new attachment list.
  *
  * [argument] hash (String) hash value of the attachment object to remove
@@ -527,7 +527,7 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
   return true;
 };
 
-/*
+/**
  * Edit a property of a new or existing attachment
  *
  * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
@@ -585,7 +585,7 @@ BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
   return true;
 };
 
-/*
+/**
  * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
@@ -603,7 +603,7 @@ BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
   return true;
 };
 
-/*
+/**
  * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
  * [argument] hash (String) hash value of the attachment object to move
@@ -621,7 +621,7 @@ BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
   return true;
 };
 
-/*
+/**
  * Find any errors in the user-modified fields. Only the dupe_of field is supported at this moment.
  *
  * [argument] none
@@ -643,7 +643,7 @@ BzDeck.controllers.Bug.prototype.find_errors = function () {
   return errors;
 };
 
-/*
+/**
  * Submit the changes made on the bug to Bugzilla.
  *
  * [argument] none
@@ -715,7 +715,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
   });
 };
 
-/*
+/**
  * Post the meta data changes made on the bug to Bugzilla.
  *
  * [argument] data (Object) bug change object
@@ -725,7 +725,7 @@ BzDeck.controllers.Bug.prototype.post_changes = function (data) {
   return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', auth: true, data });
 };
 
-/*
+/**
  * Post attachment changes to Bugzilla.
  *
  * [argument] att_id (Integer) attachment id
@@ -736,7 +736,7 @@ BzDeck.controllers.Bug.prototype.post_att_changes = function (att_id, data) {
   return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', auth: true, data });
 };
 
-/*
+/**
  * Post the new attachments added to the bug to Bugzilla.
  *
  * [argument] attachment (Proxy) AttachmentModel instance
@@ -785,7 +785,7 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
   });
 };
 
-/*
+/**
  * Notify the upload progress while the new attachent is being uploaded to Bugzilla.
  *
  * [argument] none
@@ -798,7 +798,7 @@ BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
   this.trigger(':SubmitProgress', { uploaded, total, percentage: Math.round(uploaded / total * 100) });
 };
 
-/*
+/**
  * Retrieve the bug to update the timeline, when Bugzfeed is not working.
  *
  * [argument] none

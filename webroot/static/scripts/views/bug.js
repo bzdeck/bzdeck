@@ -447,7 +447,7 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
   }
 };
 
-/*
+/**
  * Called when the user selected files to attach through an input form control or drag and drop operation. If the
  * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
  * traditional File API to identify the files. In any case, notify the selected files to the controller.

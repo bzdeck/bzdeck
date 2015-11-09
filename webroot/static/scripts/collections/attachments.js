@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Attachment Collection.
  *
  * [argument] none
@@ -15,7 +15,7 @@ BzDeck.collections.Attachments = function AttachmentCollection () {
 BzDeck.collections.Attachments.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Attachments.prototype.constructor = BzDeck.collections.Attachments;
 
-/*
+/**
  * Load the all attachment data from local bug cache, create a new AttachmentModel instance for each item, cache them in
  * a new Map for faster access, then return a Promise to make consistent with the super load method.
  *
@@ -36,7 +36,7 @@ BzDeck.collections.Attachments.prototype.load = function () {
   return Promise.resolve(this.map);
 };
 
-/*
+/**
  * Cache an unuploaded attachment data temporarily on memory.
  *
  * [argument] att (Object) raw attachment upload object for Bugzilla

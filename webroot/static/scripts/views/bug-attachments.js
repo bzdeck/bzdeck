@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Attachments View.
  *
  * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
@@ -89,7 +89,7 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
 BzDeck.views.BugAttachments.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugAttachments.prototype.constructor = BzDeck.views.BugAttachments;
 
-/*
+/**
  * Render the provided attachments.
  *
  * [argument] attachments (Array(Proxy)) attachment list
@@ -128,7 +128,7 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
   this.$$listbox.update_members();
 };
 
-/*
+/**
  * Initialize the attachment uploading interface.
  *
  * [argument] none
@@ -203,7 +203,7 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
   });
 };
 
-/*
+/**
  * Check for the history state and show an attachment if the attachment ID is specified.
  *
  * [argument] none
@@ -223,7 +223,7 @@ BzDeck.views.BugAttachments.prototype.check_state = function () {
   }
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is added by the user.
  *
  * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
@@ -234,7 +234,7 @@ BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment
   this.render([attachment]);
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is removed by the user.
  *
  * [argument] hash (String) removed attachment's hash value in the cached list
@@ -247,7 +247,7 @@ BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
   this.$$listbox.update_members();
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is edited by the user.
  *
  * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
@@ -267,7 +267,7 @@ BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
   }
 };
 
-/*
+/**
  * Called by BugController whenever a new attachment is added or removed by the user.
  *
  * [argument] uploads (extended Array(Proxy)) list of the new attachments
@@ -277,7 +277,7 @@ BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads
   this.update_list_title();
 };
 
-/*
+/**
  * Update the list header title, showing the number of the attachments.
  *
  * [argument] none

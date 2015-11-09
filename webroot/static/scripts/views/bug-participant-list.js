@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the BugParticipantListView that represents the editable participant list on each bug details page, like
  * Assignee, Mentors or Cc.
  *
@@ -43,7 +43,7 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
 BzDeck.views.BugParticipantList.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugParticipantList.prototype.constructor = BzDeck.views.BugParticipantList;
 
-/*
+/**
  * Remove an empty person node on the list. This should be handled by the template engine.
  *
  * [argument] none
@@ -57,7 +57,7 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
   }
 };
 
-/*
+/**
  * Called by BugView whenever the participant list's edit mode is changed.
  *
  * [argument] enabled (Boolean) whether the edit mode is enabled
@@ -80,7 +80,7 @@ BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabl
   }
 };
 
-/*
+/**
  * Add the Take button to the <header> in the <section>.
  *
  * [argument] none
@@ -103,7 +103,7 @@ BzDeck.views.BugParticipantList.prototype.add_take_button = function () {
   this.$header.appendChild(this.$button);
 };
 
-/*
+/**
  * Add the Subscribe button to the <header> in the <section>.
  *
  * [argument] none
@@ -123,7 +123,7 @@ BzDeck.views.BugParticipantList.prototype.add_subscribe_button = function () {
   this.$header.appendChild(this.$button);
 };
 
-/*
+/**
  * Add a Person Finder under the <header>.
  *
  * [argument] none
@@ -142,7 +142,7 @@ BzDeck.views.BugParticipantList.prototype.add_person_finder = function () {
   this.$section.insertBefore(this.$$finder.$combobox, this.$header.nextElementSibling);
 };
 
-/*
+/**
  * Called by BugController whenever a new participant is added by the user. Add the person to the list.
  *
  * [argument] field (String) relevant bug field, like assigned_to or cc
@@ -187,7 +187,7 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
   }
 };
 
-/*
+/**
  * Called by BugController whenever a new participant is removed by the user. Remove the person from the list.
  *
  * [argument] field (String) relevant bug field, like assigned_to or cc
@@ -224,7 +224,7 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
   });
 };
 
-/*
+/**
  * Create a new button widget.
  *
  * [argument] command (String) description of the button's action
@@ -245,7 +245,7 @@ BzDeck.views.BugParticipantList.prototype.create_button = function (command, tex
   return $button;
 };
 
-/*
+/**
  * Add the Remove button to each person.
  *
  * [argument] $person (Element) person on the list

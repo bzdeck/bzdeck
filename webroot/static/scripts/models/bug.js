@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Model.
  *
  * [argument] data (Object) Bugzilla's raw bug data object
@@ -62,7 +62,7 @@ BzDeck.models.Bug = function BugModel (data) {
 BzDeck.models.Bug.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Bug.prototype.constructor = BzDeck.models.Bug;
 
-/*
+/**
  * Retrieve bug data from Bugzilla.
  *
  * [argument] include_metadata (Boolean, optional) whether to retrieve the metadata of the bug
@@ -106,7 +106,7 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
   }, error => Promise.reject(new Error('Failed to fetch bugs from Bugzilla.')));
 };
 
-/*
+/**
  * Merge the provided bug data with the cache, parse the changes to update the unread status, then notify any changes.
  *
  * [argument] data (Object, optional) Bugzilla's raw bug data object
@@ -176,7 +176,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
   return true;
 };
 
-/*
+/**
  * Update the bug's annotation and notify the change.
  *
  * [argument] type (String) annotation type, star or unread
@@ -222,7 +222,7 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   return true;
 };
 
-/*
+/**
  * Get the duplicated bug list for this bug. The duplicates are currently not part of the API, so parse the comments to
  * generate the list. This list could be empty if the comments are not fetched yet. This method won't be necessary once
  * the API offers the duplicates field. Bug 880163, BzDeck #317.
@@ -244,7 +244,7 @@ BzDeck.models.Bug.prototype.get_duplicates = function () {
   return [...duplicates].sort();
 };
 
-/*
+/**
  * Check if the bug is unread or has been changed in 10 days.
  *
  * [argument] none
@@ -294,7 +294,7 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
   return false;
 };
 
-/*
+/**
  * Get a list of people involved in the bug.
  *
  * [argument] none
@@ -340,7 +340,7 @@ BzDeck.models.Bug.prototype.get_participants = function () {
   return participants;
 };
 
-/*
+/**
  * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors.
  *
  * [argument] none

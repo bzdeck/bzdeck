@@ -101,7 +101,7 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
   }
 };
 
-/*
+/**
  * Add the number of the comments, attachments and history entries to the each relevant tab as a small badge.
  *
  * [argument] none
@@ -116,7 +116,7 @@ BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
   }
 };
 
-/*
+/**
  * Render the Tracking Flags section on the bug info pane.
  *
  * [argument] none

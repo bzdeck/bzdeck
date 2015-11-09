@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Collection.
  *
  * [argument] none
@@ -17,7 +17,7 @@ BzDeck.collections.Bugs = function BugCollection () {
 BzDeck.collections.Bugs.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Bugs.prototype.constructor = BzDeck.collections.Bugs;
 
-/*
+/**
  * Retrieve bug data from Bugzilla with specific IDs.
  *
  * [argument] ids (Array or Set) list of bug ID

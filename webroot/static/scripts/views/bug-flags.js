@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
+/**
  * Initialize the Bug Flags View.
  *
  * [argument] bug (Proxy) relevant bug with the flags
@@ -17,7 +17,7 @@ BzDeck.views.BugFlags = function BugFlagsView (bug, att = undefined) {
 BzDeck.views.BugFlags.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugFlags.prototype.constructor = BzDeck.views.BugFlags;
 
-/*
+/**
  * Render the Flags section on the bug info pane or attachment view.
  *
  * [argument] $outer (Element) container element to render
