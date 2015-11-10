@@ -18,7 +18,7 @@ BzDeck.config = {
       endpoints: {
         bzapi: '/bzapi/',
         rest: '/rest/',
-        // websocket: 'wss://bugzfeed.mozilla.org/'
+        websocket: 'wss://bugzfeed.herokuapp.com/',
       }
     },
     'mozilla-dev': {
@@ -29,7 +29,7 @@ BzDeck.config = {
       endpoints: {
         bzapi: '/bzapi/',
         rest: '/rest/',
-        // websocket: 'wss://bugzfeed-dev.allizom.org'
+        websocket: 'wss://bugzfeed.herokuapp.com/dev/',
       }
     }
   },
