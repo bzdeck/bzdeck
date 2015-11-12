@@ -4,7 +4,7 @@
 
 'use strict';
 
-let version = '2015-11-01-18';
+let version = '2015-11-12-02';
 
 // Files need to be cached
 let files = [
