@@ -5,9 +5,11 @@
 /**
  * Initialize the Bug Model.
  *
- * [argument] data (Object) Bugzilla's raw bug data object
- * [return] bug (Proxy) proxified instance of the BugModel object, when called with `new`, so consumers can access bug
- *                      data seamlessly using bug.prop instead of bug.data.prop
+ * @constructor
+ * @extends BaseModel
+ * @argument {Object} data - Bugzilla's raw bug data object.
+ * @return {Proxy} bug - proxified instance of the BugModel object, so consumers can access bug data seamlessly using
+ *  bug.prop instead of bug.data.prop
  */
 BzDeck.models.Bug = function BugModel (data) {
   this.datasource = BzDeck.datasources.account;
@@ -65,9 +67,9 @@ BzDeck.models.Bug.prototype.constructor = BzDeck.models.Bug;
 /**
  * Retrieve bug data from Bugzilla.
  *
- * [argument] include_metadata (Boolean, optional) whether to retrieve the metadata of the bug
- * [argument] include_details (Boolean, optional) whether to retrieve the comments, history and attachment metadata
- * [return] bug (Promise -> Proxy or Error) proxified instance of the BugModel object
+ * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
+ * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
+ * @return {Promise.<(Proxy|Error)>} bug - Proxified instance of the BugModel object.
  */
 BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_details = true) {
   let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
@@ -109,8 +111,8 @@ BzDeck.models.Bug.prototype.fetch = function (include_metadata = true, include_d
 /**
  * Merge the provided bug data with the cache, parse the changes to update the unread status, then notify any changes.
  *
- * [argument] data (Object, optional) Bugzilla's raw bug data object
- * [return] cached (Boolean) whether the cache is found
+ * @argument {Object} [data] - Bugzilla's raw bug data object.
+ * @return {Boolean} cached - Whether the cache is found.
  */
 BzDeck.models.Bug.prototype.merge = function (data) {
   let cache = this.data;
@@ -179,9 +181,9 @@ BzDeck.models.Bug.prototype.merge = function (data) {
 /**
  * Update the bug's annotation and notify the change.
  *
- * [argument] type (String) annotation type, star or unread
- * [argument] value (Boolean) whether to add star or mark as unread
- * [return] result (Boolean) whether the annotation is updated
+ * @argument {String} type - Annotation type, star or unread.
+ * @argument {Boolean} value - Whether to add star or mark as unread.
+ * @return {Boolean} result - Whether the annotation is updated.
  */
 BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   // Update the last-visited timestamp on Bugzilla
@@ -227,8 +229,8 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
  * generate the list. This list could be empty if the comments are not fetched yet. This method won't be necessary once
  * the API offers the duplicates field. Bug 880163, BzDeck #317.
  *
- * [argument] none
- * [return] duplicates (Array(Number)) duplicate bug list
+ * @argument {undefined}
+ * @return {Array.<Number>} duplicates - Duplicate bug list.
  */
 BzDeck.models.Bug.prototype.get_duplicates = function () {
   let duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
@@ -247,8 +249,8 @@ BzDeck.models.Bug.prototype.get_duplicates = function () {
 /**
  * Check if the bug is unread or has been changed in 10 days.
  *
- * [argument] none
- * [return] new (Boolean) whether the bug is new
+ * @argument {undefined}
+ * @return {Boolean} new - Whether the bug is new.
  */
 BzDeck.models.Bug.prototype.detect_if_new = function () {
   let viewed = this.data._last_viewed,
@@ -297,8 +299,8 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
 /**
  * Get a list of people involved in the bug.
  *
- * [argument] none
- * [return] participants (Map(String, Object)) list of all participants
+ * @argument {undefined}
+ * @return {Map.<String, Object>} participants - List of all participants.
  */
 BzDeck.models.Bug.prototype.get_participants = function () {
   let participants = new Map([[this.data.creator, this.data.creator_detail]]);
@@ -343,8 +345,8 @@ BzDeck.models.Bug.prototype.get_participants = function () {
 /**
  * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors.
  *
- * [argument] none
- * [return] contributors (Set(String)) list of all contributor names
+ * @argument {undefined}
+ * @return {Set.<String>} contributors - List of all contributor names.
  */
 BzDeck.models.Bug.prototype.get_contributors = function () {
   let contributors = new Map(), // key: name, value: number of contributions

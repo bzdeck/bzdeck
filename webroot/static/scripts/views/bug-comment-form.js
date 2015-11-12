@@ -5,10 +5,12 @@
 /**
  * Initialize the Bug Comment Form View. This view has a comment form and quick edit UI.
  *
- * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
- *                            notification events won't work
- * [argument] bug (Object) BugModel instance
- * [return] view (Object) BugCommentFormView instance, when called with `new`
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
+ *  notification events won't work.
+ * @argument {Object} bug - BugModel instance.
+ * @return {Object} view - New BugCommentFormView instance.
  */
 BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.id = view_id;
@@ -83,8 +85,8 @@ BzDeck.views.BugCommentForm.prototype.constructor = BzDeck.views.BugCommentForm;
  * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
  * the newly selected tab.
  *
- * [argument] $tab (Element) selected tab node
- * [return] none
+ * @argument {HTMLElement} $tab - Selected tab node.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_tab_selected = function ($tab) {
   if ($tab.id.endsWith('write')) {
@@ -100,8 +102,8 @@ BzDeck.views.BugCommentForm.prototype.on_tab_selected = function ($tab) {
 /**
  * Prepare the content on the Comment tabpanel.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.init_comment_tabpanel = function () {
   // Workaround a Firefox bug: the placeholder is not displayed in some cases
@@ -117,8 +119,8 @@ BzDeck.views.BugCommentForm.prototype.init_comment_tabpanel = function () {
 /**
  * Prepare the content on the Attachment tabpanel.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
   let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
@@ -166,8 +168,8 @@ BzDeck.views.BugCommentForm.prototype.init_attachment_tabpanel = function () {
 /**
  * Show the Status tab when needed.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.init_status_tab = function () {
   let $tab = this.$form.querySelector('[id$="tab-status"]'),
@@ -184,8 +186,8 @@ BzDeck.views.BugCommentForm.prototype.init_status_tab = function () {
 /**
  * Prepare the content on the NeedInfo tabpanel.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
   let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [],
@@ -253,8 +255,8 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
 /**
  * Called by the textbox element whenever the new comment is edited by the user.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.oninput = function () {
   this.$textbox.style.removeProperty('height');
@@ -270,8 +272,8 @@ BzDeck.views.BugCommentForm.prototype.oninput = function () {
 /**
  * Called by BugController whenever a new attachment is added by the user.
  *
- * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
- * [return] none
+ * @argument {Proxy} attachment - Added attachment data as AttachmentModel instance.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment) {
   let hash = attachment.hash,
@@ -312,8 +314,8 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
 /**
  * Called by BugController whenever a new attachment is removed by the user.
  *
- * [argument] index (Integer) removed attachment's index in the cached list
- * [return] none
+ * @argument {Integer} index - Removed attachment's index in the cached list.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
   this.$attachments_tbody.rows[index].remove();
@@ -322,9 +324,9 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
 /**
  * Called by BugController whenever a new attachment is edited by the user.
  *
- * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
- *                  property name and value
- * [return] none
+ * @argument {Object} change - Change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *  property name and value.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
   let { hash, prop, value } = change;
@@ -337,8 +339,8 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
 /**
  * Called by BugController whenever a new attachment is added or removed by the user.
  *
- * [argument] uploads (extended Array(Proxy)) list of the new attachments
- * [return] none
+ * @argument {Array.<Proxy>} uploads - List of the new attachments in Array-like Object.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_upload_list_updated = function (uploads) {
   this.$attachments_tab.setAttribute('aria-disabled', !uploads.length);
@@ -349,8 +351,8 @@ BzDeck.views.BugCommentForm.prototype.on_upload_list_updated = function (uploads
  * Called by BugController whenever a new attachment added by the user has an error, such as an oversized file. Show an
  * alert dialog to notify the user of the error.
  *
- * [argument] message (String) explanation of the detected error
- * [return] none
+ * @argument {String} message - Explanation of the detected error.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
   new this.widgets.Dialog({
@@ -363,8 +365,8 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
 /**
  * Called by BugController whenever the new commend is added or removed by the user.
  *
- * [argument] has_comment (Boolean) whether the comment is empty
- * [return] none
+ * @argument {Boolean} has_comment - Whether the comment is empty.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_comment_edited = function (has_comment) {
   this.$preview_tab.setAttribute('aria-disabled', !has_comment);
@@ -373,8 +375,8 @@ BzDeck.views.BugCommentForm.prototype.on_comment_edited = function (has_comment)
 /**
  * Called by BugController whenever any of the fields, comments or attachments are edited by the user.
  *
- * [argument] can_submit (Boolean) whether the changes can be submitted immediately
- * [return] none
+ * @argument {Boolean} can_submit - Whether the changes can be submitted immediately.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_bug_edited = function (can_submit) {
   this.$submit.setAttribute('aria-disabled', !can_submit);
@@ -383,8 +385,8 @@ BzDeck.views.BugCommentForm.prototype.on_bug_edited = function (can_submit) {
 /**
  * Called by BugController whenever the changes are about to be submitted to Bugzilla.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit = function () {
   this.$textbox.setAttribute('aria-readonly', 'true');
@@ -395,8 +397,8 @@ BzDeck.views.BugCommentForm.prototype.on_submit = function () {
 /**
  * Called by BugController whenever the upload of a new attachment is in progress.
  *
- * [argument] data (object) includes the uploaded size, total size and percentage
- * [return] none
+ * @argument {object} data - Includes the uploaded size, total size and percentage.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_progress = function (data) {
   // TODO: Use a progressbar (#159)
@@ -406,8 +408,8 @@ BzDeck.views.BugCommentForm.prototype.on_submit_progress = function (data) {
 /**
  * Called by BugController whenever all the changes are submitted successfully. Reset the form content.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_success = function () {
   this.$textbox.value = '';
@@ -417,8 +419,8 @@ BzDeck.views.BugCommentForm.prototype.on_submit_success = function () {
 /**
  * Called by BugController whenever any error is detected while submitting the changes.
  *
- * [argument] data (object) includes the errors and whether the submit button should be disabled
- * [return] none
+ * @argument {object} data - Includes the errors and whether the submit button should be disabled.
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
   this.$submit.setAttribute('aria-disabled', data.button_disabled);
@@ -428,8 +430,8 @@ BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
 /**
  * Called by BugController once a submission is complete, regardless of errors.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_complete = function () {
   // The textbox should be focused anyway

@@ -5,8 +5,10 @@
 /**
  * Initialize the Account Collection.
  *
- * [argument] none
- * [return] bugs (Object) new instance of the AccountCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} bugs - New AccountCollection instance.
  */
 BzDeck.collections.Accounts = function AccountCollection () {
   this.datasource = BzDeck.datasources.global;
@@ -20,8 +22,8 @@ BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
 /**
  * Get the currently signed-in account if any.
  *
- * [argument] none
- * [return] account (Object) AccountModel instance
+ * @argument {undefined}
+ * @return {Object} account - AccountModel instance.
  */
 BzDeck.collections.Accounts.prototype.get_current = function () {
   return [...this.get_all().values()].find(account => account.data.active);

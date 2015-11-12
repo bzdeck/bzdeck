@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Account DataSource.
+ *
+ * @constructor
+ * @extends BaseDataSource
+ * @argument {undefined}
+ * @return {Object} collection - New AccountDataSource instance.
+ */
 BzDeck.datasources.Account = function AccountDataSource () {};
 
 BzDeck.datasources.Account.prototype = Object.create(BzDeck.datasources.Base.prototype);
@@ -10,8 +18,8 @@ BzDeck.datasources.Account.prototype.constructor = BzDeck.datasources.Account;
 /**
  * Preload the account-specific database.
  *
- * [argument] none
- * [return] database (Promise -> IDBDatabase or Error) the target IndexedDB database
+ * @argument {undefined}
+ * @return {Promise.<(IDBDatabase|Error)>} database - Target IndexedDB database.
  */
 BzDeck.datasources.Account.prototype.load = function () {
   return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 2);
@@ -20,8 +28,8 @@ BzDeck.datasources.Account.prototype.load = function () {
 /**
  * Create object stores when the database is created or upgraded.
  *
- * [argument] event (IDBVersionChangeEvent) the upgradeneeded event
- * [return] database (IDBDatabase) the target IndexedDB database
+ * @argument {IDBVersionChangeEvent} event - The upgradeneeded event.
+ * @return {IDBDatabase} database - Target IndexedDB database.
  */
 BzDeck.datasources.Account.prototype.onupgradeneeded = function (event) {
   let database = event.target.result;

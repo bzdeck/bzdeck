@@ -5,9 +5,11 @@
 /**
  * Initialize the Attachment View.
  *
- * [argument] attachment (Proxy) AttachmentModel instance
- * [argument] $placeholder (Element) node to show the attachment
- * [return] view (Object) AttachmentView instance, when called with `new`
+ * @constructor
+ * @extends BaseView
+ * @argument {Proxy} attachment - AttachmentModel instance.
+ * @argument {HTMLElement} $placeholder - Node to show the attachment.
+ * @return {Object} view - New AttachmentView instance.
  */
 BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
   let att = this.attachment = attachment,
@@ -46,8 +48,8 @@ BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 /**
  * Activate the editable widgets.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.activate = function () {
   let { id, hash } = this.attachment;
@@ -85,8 +87,8 @@ BzDeck.views.Attachment.prototype.activate = function () {
 /**
  * Render the attachment on the placeholder.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.render = function () {
   let media_type = this.attachment.content_type.split('/')[0];
@@ -121,8 +123,8 @@ BzDeck.views.Attachment.prototype.render = function () {
 /**
  * Render the image, video or audio.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.render_media = function () {
   this.$outer.setAttribute('aria-busy', 'true');
@@ -142,8 +144,8 @@ BzDeck.views.Attachment.prototype.render_media = function () {
 /**
  * Render the patch with the Patch Viewer.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.render_patch = function () {
   this.$outer.setAttribute('aria-busy', 'true');
@@ -161,8 +163,8 @@ BzDeck.views.Attachment.prototype.render_patch = function () {
 /**
  * Render a link to the file.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.render_link = function () {
   let $link = document.createElement('a');
@@ -191,8 +193,8 @@ BzDeck.views.Attachment.prototype.render_link = function () {
 /**
  * Render an error message when the attachment cannot be retrieved.
  *
- * [argument] error (Error) error object
- * [return] none
+ * @argument {Error} error - Error object.
+ * @return {undefined}
  */
 BzDeck.views.Attachment.prototype.render_error = function (error) {
   let $error = document.createElement('p');

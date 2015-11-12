@@ -6,9 +6,11 @@
  * Initialize the Bug Controller. The following methods mainly aim to update a bug. See the Bugzilla API documentation
  * for details of the spec: http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug
  *
- * [argument] id_prefix (String) prefix for the instance ID, such as home, search or details
- * [argument] bug (Object) BugModel instance
- * [return] controller (Object) BugController instance, when called with `new`
+ * @constructor
+ * @extends BaseController
+ * @argument {String} id_prefix - Prefix for the instance ID, such as home, search or details.
+ * @argument {Object} bug - BugModel instance.
+ * @return {Object} controller - New BugController instance.
  */
 BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.id = `${id_prefix}-bug-${bug.id}`;
@@ -70,8 +72,8 @@ BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
 /**
  * Called by BugTimelineEntryView whenever a comment is selected.
  *
- * [argument] number (Integer) comment number
- * [return] none
+ * @argument {Integer} number - Comment number.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.on_comment_selected = function (number) {
   if (location.pathname === `/bug/${this.bug.id}`) {
@@ -83,8 +85,8 @@ BzDeck.controllers.Bug.prototype.on_comment_selected = function (number) {
  * Called in the constructor and whenever the location fragment or history state is updated. If the current bug is still
  * displayed, fire an event so the relevant views can do something.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.check_fragment = function () {
   if (location.pathname === `/bug/${this.bug.id}`) {
@@ -95,8 +97,8 @@ BzDeck.controllers.Bug.prototype.check_fragment = function () {
 /**
  * Create a Proxy for the changes object that fires the FieldEdited event when any field value is modified.
  *
- * [argument] none
- * [return] changes (Proxy) changes object
+ * @argument {undefined}
+ * @return {Proxy} changes - Changes object.
  */
 BzDeck.controllers.Bug.prototype.reset_changes = function (comment) {
   this.changes = new Proxy({}, {
@@ -125,8 +127,8 @@ BzDeck.controllers.Bug.prototype.reset_changes = function (comment) {
  * Called internally whenever a bug field or an attachment property is edited by the user. Fire an event to notify the
  * views of the change.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.onedit = function () {
   let { changes, att_changes, uploads, can_submit } = this;
@@ -137,8 +139,8 @@ BzDeck.controllers.Bug.prototype.onedit = function () {
 /**
  * Called by BugView whenever the new comment is edited by the user. Cache the comment and notify changes accordingly.
  *
- * [argument] comment (String) comment text
- * [return] none
+ * @argument {String} comment - Comment text.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
   if (comment.match(/\S/)) {
@@ -166,9 +168,9 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
  * Called by BugView whenever any of the fields are edited by the user. Cache the value and notify changes accordingly.
  * Only the following fields are supported at this moment: status, resolution, dupe_of.
  *
- * [argument] name (String) field name
- * [argument] value (Any) field value
- * [return] none
+ * @argument {String} name - Field name.
+ * @argument {*} value - Field value.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
   let { field, product } = BzDeck.models.server.data.config,
@@ -231,9 +233,9 @@ BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
 /**
  * Called by BugView whenever any of the flags are edited by the user. Cache the value and notify changes accordingly.
  *
- * [argument] flag (Object) flag change object
- * [argument] added (Boolean) whether the flag is newly added
- * [return] none
+ * @argument {Object} flag - Flag change object.
+ * @argument {Boolean} added - Whether the flag is newly added.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
   let flags = this.changes.flags = this.changes.flags || [];
@@ -260,9 +262,9 @@ BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
 /**
  * Called by BugView whenever a participant is added by the user. Cache the value and notify changes accordingly.
  *
- * [argument] field (String) assigned_to, qa_contact, mentor or cc
- * [argument] email (String) participant to be added
- * [return] result (Boolean) whether the participant is added to the cache successfully
+ * @argument {String} field - assigned_to, qa_contact, mentor or cc.
+ * @argument {String} email - Participant to be added.
+ * @return {Boolean} result - Whether the participant is added to the cache successfully.
  */
 BzDeck.controllers.Bug.prototype.add_participant = function (field, email) {
   if (['mentor', 'cc'].includes(field)) {
@@ -303,9 +305,9 @@ BzDeck.controllers.Bug.prototype.add_participant = function (field, email) {
 /**
  * Called by BugView whenever a participant is removed by the user. Cache the value and notify changes accordingly.
  *
- * [argument] field (String) assigned_to, qa_contact, mentor or cc
- * [argument] email (String) participant to be removed
- * [return] result (Boolean) whether the participant is removed from the cache successfully
+ * @argument {String} field - assigned_to, qa_contact, mentor or cc.
+ * @argument {String} email - Participant to be removed.
+ * @return {Boolean} result - Whether the participant is removed from the cache successfully.
  */
 BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
   if (['mentor', 'cc'].includes(field)) {
@@ -339,8 +341,8 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
  * Subscribe to the bug by adding the user's email to the Cc list, or unsubscribe from the bug by removing the user's
  * email from the Cc list.
  *
- * [argument] how (String) add or remove
- * [return] request (Promise) can be a rejected Promise if any error is found
+ * @argument {String} how - add or remove.
+ * @return {Promise} request - Can be a rejected Promise if any error is found.
  */
 BzDeck.controllers.Bug.prototype.update_subscription = function (how) {
   let subscribe = how === 'add',
@@ -363,8 +365,8 @@ BzDeck.controllers.Bug.prototype.update_subscription = function (how) {
  * Clean up a change with both additions and removals, such as mentor or cc. If there are no changes, removed the
  * object from the cache.
  *
- * [argument] field (String) mentor or cc
- * [return] result (Boolean) whether the change object is updated
+ * @argument {String} field - mentor or cc.
+ * @return {Boolean} result - Whether the change object is updated.
  */
 BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field) {
   let change = this.changes[field];
@@ -394,8 +396,8 @@ BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field)
  * Called by BugView whenever new attachment files are selected by the user through a file input form control or a
  * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
  *
- * [argument] files (FileList or Array) selected files
- * [return] none
+ * @argument {(FileList|Array)} files - Selected files.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.attach_files = function (files) {
   let oversized_files = new Set(),
@@ -455,8 +457,8 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
  * Called whenever a new attachment text is added by the user through a text input form control or a drag-and-drop
  * action. Read and cache the text.
  *
- * [argument] text (String) added plain text or URL string
- * [return] none
+ * @argument {String} text - Added plain text or URL string.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.attach_text = function (text) {
   let reader = new FileReader(),
@@ -496,8 +498,8 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
 /**
  * Find an attachment index from the cached new attachment list by comparing the hash values.
  *
- * [argument] hash (String) hash value of the attachment object to find
- * [return] index (Number) 0 or a positive integer if the attachment is found, -1 if not found
+ * @argument {String} hash - Hash value of the attachment object to find.
+ * @return {Number} index - 0 or a positive integer if the attachment is found, -1 if not found.
  */
 BzDeck.controllers.Bug.prototype.find_att_index = function (hash) {
   return this.uploads.findIndex(a => a.hash === hash);
@@ -506,8 +508,8 @@ BzDeck.controllers.Bug.prototype.find_att_index = function (hash) {
 /**
  * Find an attachment object from the cached new attachment list by comparing the hash values.
  *
- * [argument] hash (String) hash value of the attachment object to find
- * [return] attachment (Proxy) AttachmentModel instance if the attachment is found, undefined if not found
+ * @argument {String} hash - hash value of the attachment object to find
+ * @return {Proxy} attachment - AttachmentModel instance if the attachment is found, undefined if not found
  */
 BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
   return this.uploads.find(a => a.hash === hash);
@@ -516,9 +518,9 @@ BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
 /**
  * Add an attachment to the cached new attachment list.
  *
- * [argument] att (Object) raw attachment upload object for Bugzilla
- * [argument] size (Integer) actual file size
- * [return] result (Boolean) whether the attachment is cached
+ * @argument {Object} att - Raw attachment upload object for Bugzilla.
+ * @argument {Integer} size - Actual file size.
+ * @return {Boolean} result - Whether the attachment is cached.
  */
 BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
   // Cache as an AttachmentModel instance
@@ -541,8 +543,8 @@ BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
 /**
  * Remove an attachment from the cached new attachment list.
  *
- * [argument] hash (String) hash value of the attachment object to remove
- * [return] result (Boolean) whether the attachment is found and removed
+ * @argument {String} hash - Hash value of the attachment object to remove.
+ * @return {Boolean} result - Whether the attachment is found and removed.
  */
 BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
   let index = this.find_att_index(hash);
@@ -563,9 +565,9 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
 /**
  * Edit a property of a new or existing attachment
  *
- * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
- *                  property name and value
- * [return] result (Boolean) whether the attachment is edited successfully
+ * @argument {Object} change - Change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *  property name and value.
+ * @return {Boolean} result - Whether the attachment is edited successfully.
  */
 BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
   let attachment,
@@ -621,8 +623,8 @@ BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
 /**
  * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
- * [argument] hash (String) hash value of the attachment object to move
- * [return] result (Boolean) whether the attachment is found and reordered
+ * @argument {String} hash - Hash value of the attachment object to move.
+ * @return {Boolean} result - Whether the attachment is found and reordered.
  */
 BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
   let index = this.find_att_index(hash);
@@ -639,8 +641,8 @@ BzDeck.controllers.Bug.prototype.move_up_attachment = function (hash) {
 /**
  * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
  *
- * [argument] hash (String) hash value of the attachment object to move
- * [return] result (Boolean) whether the attachment is found and reordered
+ * @argument {String} hash - Hash value of the attachment object to move.
+ * @return {Boolean} result - Whether the attachment is found and reordered.
  */
 BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
   let index = this.find_att_index(hash);
@@ -657,8 +659,8 @@ BzDeck.controllers.Bug.prototype.move_down_attachment = function (hash) {
 /**
  * Find any errors in the user-modified fields. Only the dupe_of field is supported at this moment.
  *
- * [argument] none
- * [return] errors (Array(String)) list of the detected errors
+ * @argument {undefined}
+ * @return {Array.<String>} errors - List of the detected errors.
  */
 BzDeck.controllers.Bug.prototype.find_errors = function () {
   let errors = [];
@@ -679,8 +681,8 @@ BzDeck.controllers.Bug.prototype.find_errors = function () {
 /**
  * Submit the changes made on the bug to Bugzilla.
  *
- * [argument] none
- * [return] submission (Promise) can be a rejected Promise if any error is found
+ * @argument {undefined}
+ * @return {Promise} submission - Can be a rejected Promise if any error is found.
  */
 BzDeck.controllers.Bug.prototype.submit = function () {
   if (this.has_errors) {
@@ -751,8 +753,8 @@ BzDeck.controllers.Bug.prototype.submit = function () {
 /**
  * Post the meta data changes made on the bug to Bugzilla.
  *
- * [argument] data (Object) bug change object
- * [return] request (Promise) can be a rejected Promise if any error is found
+ * @argument {Object} data - Bug change object.
+ * @return {Promise} request - Can be a rejected Promise if any error is found.
  */
 BzDeck.controllers.Bug.prototype.post_changes = function (data) {
   return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', auth: true, data });
@@ -761,9 +763,9 @@ BzDeck.controllers.Bug.prototype.post_changes = function (data) {
 /**
  * Post attachment changes to Bugzilla.
  *
- * [argument] att_id (Integer) attachment id
- * [argument] data (Object) attachment change object
- * [return] request (Promise) can be a rejected Promise if any error is found
+ * @argument {Integer} att_id - Attachment ID.
+ * @argument {Object} data - Attachment change object.
+ * @return {Promise} request - Can be a rejected Promise if any error is found.
  */
 BzDeck.controllers.Bug.prototype.post_att_changes = function (att_id, data) {
   return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', auth: true, data });
@@ -772,8 +774,8 @@ BzDeck.controllers.Bug.prototype.post_att_changes = function (att_id, data) {
 /**
  * Post the new attachments added to the bug to Bugzilla.
  *
- * [argument] attachment (Proxy) AttachmentModel instance
- * [return] request (Promise) can be a rejected Promise if any error is found
+ * @argument {Proxy} attachment - AttachmentModel instance.
+ * @return {Promise} request - Can be a rejected Promise if any error is found.
  */
 BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
   let size_computable,
@@ -821,8 +823,8 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
 /**
  * Notify the upload progress while the new attachent is being uploaded to Bugzilla.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
   let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c),
@@ -834,8 +836,8 @@ BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
 /**
  * Retrieve the bug to update the timeline, when Bugzfeed is not working.
  *
- * [argument] none
- * [return] result (Boolean) whether the fetcher is invoked
+ * @argument {undefined}
+ * @return {Boolean} result - Whether the fetcher is invoked.
  */
 BzDeck.controllers.Bug.prototype.fetch = function () {
   let bugzfeed = BzDeck.controllers.bugzfeed;

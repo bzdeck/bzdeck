@@ -5,8 +5,10 @@
 /**
  * Initialize the Attachment Collection.
  *
- * [argument] none
- * [return] attachments (Object) AttachmentCollection instance, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} attachments - New AttachmentCollection instance.
  */
 BzDeck.collections.Attachments = function AttachmentCollection () {
   this.model = BzDeck.models.Attachment;
@@ -19,8 +21,8 @@ BzDeck.collections.Attachments.prototype.constructor = BzDeck.collections.Attach
  * Load the all attachment data from local bug cache, create a new AttachmentModel instance for each item, cache them in
  * a new Map for faster access, then return a Promise to make consistent with the super load method.
  *
- * [argument] none
- * [return] attachments (Promise -> Map(Number, Proxy)) AttachmentModel instances
+ * @argument {undefined}
+ * @return {Promise.<Map.<Number, Proxy>>} attachments - AttachmentModel instances.
  */
 BzDeck.collections.Attachments.prototype.load = function () {
   // This map's key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the cache
@@ -39,9 +41,9 @@ BzDeck.collections.Attachments.prototype.load = function () {
 /**
  * Cache an unuploaded attachment data temporarily on memory.
  *
- * [argument] att (Object) raw attachment upload object for Bugzilla
- * [argument] size (Integer) actual file size
- * [return] attachment (Proxy) AttachmentModel instance
+ * @argument {Object} att - Raw attachment upload object for Bugzilla.
+ * @argument {Integer} size - Actual file size.
+ * @return {Proxy} attachment - AttachmentModel instance.
  */
 BzDeck.collections.Attachments.prototype.cache = function (att, size) {
   let current_time = (new Date()).toISOString();

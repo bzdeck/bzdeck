@@ -5,8 +5,10 @@
 /**
  * Initialize the Login Form View.
  *
- * [argument] params (URLSearchParams) query info in the current URL
- * [return] view (Object) LoginFormView instance, when called with `new`
+ * @constructor
+ * @extends BaseView
+ * @argument {URLSearchParams} params - Query info in the current URL.
+ * @return {Object} view - New LoginFormView instance.
  */
 BzDeck.views.LoginForm = function LoginFormView (params) {
   // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now

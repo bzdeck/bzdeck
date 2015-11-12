@@ -5,8 +5,10 @@
 /**
  * Initialize the Subscription Collection.
  *
- * [argument] none
- * [return] subscriptions (Object) new instance of the SubscriptionCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} subscriptions - New SubscriptionCollection instance.
  */
 BzDeck.collections.Subscriptions = function SubscriptionCollection () {
 };
@@ -17,8 +19,8 @@ BzDeck.collections.Subscriptions.prototype.constructor = BzDeck.collections.Subs
 /**
  * Get bugs the user is involving, with a specific key.
  *
- * [argument] id (String) key of the subscription
- * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
+ * @argument {String} id - Key of the subscription.
+ * @return {Map.<Integer, Proxy>} bugs - New instances of the BugModel object.
  */
 BzDeck.collections.Subscriptions.prototype.get = function (id) {
   let severities = ['blocker', 'critical', 'major'],
@@ -44,8 +46,8 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
 /**
  * Get all bugs the user is involving.
  *
- * [argument] none
- * [return] bugs (Map(Integer, Proxy)) new instances of the BugModel object
+ * @argument {undefined}
+ * @return {Map.<Integer, Proxy>} bugs - New instances of the BugModel object.
  */
 BzDeck.collections.Subscriptions.prototype.get_all = function () {
   let email = BzDeck.models.account.data.name,
@@ -61,8 +63,8 @@ BzDeck.collections.Subscriptions.prototype.get_all = function () {
 /**
  * Retrieve data of bugs the user is involving, from Bugzilla.
  *
- * [argument] none
- * [return] bugs (Promise -> Array(Object) or Error) new instances of the BugModel object
+ * @argument {undefined}
+ * @return {Promise.<(Array.<Object>|Error)>} bugs - New instances of the BugModel object.
  */
 BzDeck.collections.Subscriptions.prototype.fetch = function () {
   let last_loaded = BzDeck.prefs.get('subscriptions.last_loaded'),

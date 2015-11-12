@@ -5,8 +5,10 @@
 /**
  * Initialize the Server Model.
  *
- * [argument] data (Object) server data
- * [return] bug (Proxy) instance of the ServerModel object, when called with `new`
+ * @constructor
+ * @extends BaseModel
+ * @argument {Object} data - Server data.
+ * @return {Proxy} bug - New ServerModel instance.
  */
 BzDeck.models.Server = function ServerModel (data) {
   this.datasource = BzDeck.datasources.global;
@@ -28,8 +30,8 @@ BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
 /**
  * Retrieve the Bugzilla configuration from cache or the remote Bugzilla instance.
  *
- * [argument] none
- * [return] config (Promise -> Object or Error) Bugzilla configuration data
+ * @argument {undefined}
+ * @return {Promise.<(Object|Error)>} config - Bugzilla configuration data.
  */
 BzDeck.models.Server.prototype.get_config = function () {
   if (!navigator.onLine) {

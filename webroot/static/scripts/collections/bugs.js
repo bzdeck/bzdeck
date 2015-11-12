@@ -5,8 +5,10 @@
 /**
  * Initialize the Bug Collection.
  *
- * [argument] none
- * [return] bugs (Object) new instance of the BugCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} bugs - New BugCollection instance.
  */
 BzDeck.collections.Bugs = function BugCollection () {
   this.datasource = BzDeck.datasources.account;
@@ -20,10 +22,10 @@ BzDeck.collections.Bugs.prototype.constructor = BzDeck.collections.Bugs;
 /**
  * Retrieve bug data from Bugzilla with specific IDs.
  *
- * [argument] ids (Array or Set) list of bug ID
- * [argument] include_metadata (Boolean, optional) whether to retrieve the metadata of the bug
- * [argument] include_details (Boolean, optional) whether to retrieve the comments, history and attachment metadata
- * [return] bugs (Promise -> Array(Object) or Error) list of retrieved Bugzilla data object
+ * @argument {(Array|Set)} ids - List of bug ID.
+ * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
+ * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
+ * @return {Promise.<(Array.<Object>|Error)>} bugs - List of retrieved Bugzilla data object.
  */
 BzDeck.collections.Bugs.prototype.fetch = function (ids, include_metadata = true, include_details = true) {
   // Sort the IDs to make sure the subsequent index access always works

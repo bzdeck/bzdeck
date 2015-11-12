@@ -5,8 +5,10 @@
 /**
  * Initialize the Account Model.
  *
- * [argument] data (Object) user account data
- * [return] account (Proxy) instance of the AccountModel object, when called with `new`
+ * @constructor
+ * @extends BaseModel
+ * @argument {Object} data - User account data.
+ * @return {Proxy} account - New AccountModel instance.
  */
 BzDeck.models.Account = function AccountModel (data) {
   this.datasource = BzDeck.datasources.global;

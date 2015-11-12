@@ -6,10 +6,12 @@
  * Initialize the BugParticipantListView that represents the editable participant list on each bug details page, like
  * Assignee, Mentors or Cc.
  *
- * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
- *                            notification events won't work
- * [argument] bug (Object) BugModel instance
- * [return] $section (Element) outer <section> element of the field
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
+ *  notification events won't work.
+ * @argument {Object} bug - BugModel instance.
+ * @return {HTMLElement} $section - Outer <section> element of the field.
  */
 BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug, $section) {
   this.id = view_id;
@@ -46,8 +48,8 @@ BzDeck.views.BugParticipantList.prototype.constructor = BzDeck.views.BugParticip
 /**
  * Remove an empty person node on the list. This should be handled by the template engine.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
   let $person = this.$list.querySelector('[itemscope]');
@@ -60,8 +62,8 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 /**
  * Called by BugView whenever the participant list's edit mode is changed.
  *
- * [argument] enabled (Boolean) whether the edit mode is enabled
- * [return] none
+ * @argument {Boolean} enabled - Whether the edit mode is enabled.
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabled) {
   this.editing = enabled;
@@ -83,8 +85,8 @@ BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabl
 /**
  * Add the Take button to the <header> in the <section>.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.add_take_button = function () {
   this.$button = this.create_button('take', 'Take', {
@@ -106,8 +108,8 @@ BzDeck.views.BugParticipantList.prototype.add_take_button = function () {
 /**
  * Add the Subscribe button to the <header> in the <section>.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.add_subscribe_button = function () {
   let listed = this.values.has(this.my_email),
@@ -126,8 +128,8 @@ BzDeck.views.BugParticipantList.prototype.add_subscribe_button = function () {
 /**
  * Add a Person Finder under the <header>.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.add_person_finder = function () {
   this.$$finder = new BzDeck.views.PersonFinder(`${this.id}-${this.field}-person-finder`, this.bug, this.values);
@@ -145,9 +147,9 @@ BzDeck.views.BugParticipantList.prototype.add_person_finder = function () {
 /**
  * Called by BugController whenever a new participant is added by the user. Add the person to the list.
  *
- * [argument] field (String) relevant bug field, like assigned_to or cc
- * [argument] email (String) email of the added person
- * [return] none
+ * @argument {String} field - Relevant bug field, like assigned_to or cc.
+ * @argument {String} email - Email of the added person.
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field, email) {
   if (field !== this.field) {
@@ -190,9 +192,9 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
 /**
  * Called by BugController whenever a new participant is removed by the user. Remove the person from the list.
  *
- * [argument] field (String) relevant bug field, like assigned_to or cc
- * [argument] email (String) email of the removed person
- * [return] none
+ * @argument {String} field - Relevant bug field, like assigned_to or cc.
+ * @argument {String} email - Email of the removed person.
+ * @return {undefined}
  */
 BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (field, email) {
   if (field !== this.field) {
@@ -227,10 +229,10 @@ BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (fie
 /**
  * Create a new button widget.
  *
- * [argument] command (String) description of the button's action
- * [argument] text (String) text used for the label and tooltip on the button
- * [argument] label (String) text used for the aria-label attribute
- * [return] $button (Element) button
+ * @argument {String} command - Description of the button's action.
+ * @argument {String} text - Text used for the label and tooltip on the button.
+ * @argument {String} label - Text used for the aria-label attribute.
+ * @return {HTMLElement} $button
  */
 BzDeck.views.BugParticipantList.prototype.create_button = function (command, text, label) {
   let $button = document.createElement('span');
@@ -248,8 +250,8 @@ BzDeck.views.BugParticipantList.prototype.create_button = function (command, tex
 /**
  * Add the Remove button to each person.
  *
- * [argument] $person (Element) person on the list
- * [return] $button (Element) button
+ * @argument {HTMLElement} $person - Person on the list.
+ * @return {HTMLElement} $button
  */
 BzDeck.views.BugParticipantList.prototype.add_remove_button_to_person = function ($person) {
   let email = $person.querySelector('[itemprop="email"]').content,

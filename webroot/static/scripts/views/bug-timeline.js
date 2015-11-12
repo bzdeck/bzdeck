@@ -144,8 +144,8 @@ BzDeck.views.BugTimeline.prototype.collapse_comments = function () {
  * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
  * comment into view.
  *
- * [argument] hash (String) location.hash
- * [return] none
+ * @argument {String} hash - location.hash.
+ * @return {undefined}
  */
 BzDeck.views.BugTimeline.prototype.on_history_updated = function (hash) {
   let match = hash.match(/^#c(\d+)$/);

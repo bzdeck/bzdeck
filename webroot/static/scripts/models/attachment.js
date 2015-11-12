@@ -5,9 +5,11 @@
 /**
  * Initialize the Attachment Model.
  *
- * [argument] data (Object) Bugzilla's raw attachment data object
- * [return] attachment (Proxy) proxified instance of the AttachmentModel object, when called with `new`, so consumers
- *                      can access attachment data seamlessly using attachment.prop instead of attachment.data.prop
+ * @constructor
+ * @extends BaseModel
+ * @argument {Object} data - Bugzilla's raw attachment data object.
+ * @return {Proxy} attachment - proxified instance of the AttachmentModel object, so consumers can access attachment
+ *  data seamlessly using attachment.prop instead of attachment.data.prop.
  */
 BzDeck.models.Attachment = function AttachmentModel (data) {
   this.id = data.id || data.hash; // Use the hash for unuploaded attachments
@@ -22,8 +24,8 @@ BzDeck.models.Attachment.prototype.constructor = BzDeck.models.Attachment;
 /**
  * Retrieve attachment data from Bugzilla.
  *
- * [argument] none
- * [return] attachment (Promise -> Proxy or Error) AttachmentModel instance
+ * @argument {undefined}
+ * @return {Promise.<(Proxy|Error)>} attachment - AttachmentModel instance.
  */
 BzDeck.models.Attachment.prototype.fetch = function () {
   return BzDeck.controllers.global.request(`bug/attachment/${this.id}`).then(result => {
@@ -36,8 +38,8 @@ BzDeck.models.Attachment.prototype.fetch = function () {
 /**
  * Get the attachment data only. If it's not in the cache, retrieve it from Bugzilla.
  *
- * [argument] none
- * [return] data (Promise -> Object or Error)
+ * @argument {undefined}
+ * @return {Promise.<(Object|Error)>} data
  */
 BzDeck.models.Attachment.prototype.get_data = function () {
   let convert = () => {
@@ -75,8 +77,8 @@ BzDeck.models.Attachment.prototype.get_data = function () {
 /**
  * Save the attachment data as part of the relevant bug.
  *
- * [argument] none
- * [return] item (Promise -> Proxy) proxified instance of the Attachment model object
+ * @argument {undefined}
+ * @return {Promise.<Proxy>} item - Proxified instance of the Attachment model object.
  */
 BzDeck.models.Attachment.prototype.save = function () {
   let bug = BzDeck.collections.bugs.get(this.data.bug_id);

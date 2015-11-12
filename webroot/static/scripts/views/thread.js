@@ -27,8 +27,8 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
 /**
  * Open a specific bug in a new tab.
  *
- * [argument] id (Integer) bug ID
- * [return] none
+ * @argument {Integer} id - Bug ID.
+ * @return {undefined}
  */
 BzDeck.views.Thread.prototype.open_bug = function (id) {
   this.trigger('GlobalView:OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });

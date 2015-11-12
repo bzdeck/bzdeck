@@ -42,8 +42,8 @@ BzDeck.controllers.Banner.prototype.constructor = BzDeck.controllers.Banner;
 /**
  * Called by BannerView whenever the Back button is clicked on the mobile view.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
   if (history.state && history.state.previous) {
@@ -56,8 +56,8 @@ BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
 /**
  * Called by BannerView whenever a tab in the global tablist is selected.
  *
- * [argument] path (String) location pathname that corresponds to the tab 
- * [return] none
+ * @argument {String} path - Location pathname that corresponds to the tab.
+ * @return {undefined}
  */
 BzDeck.controllers.Banner.prototype.on_tab_selected = function (path) {
   if (location.pathname + location.search !== path) {

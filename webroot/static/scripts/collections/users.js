@@ -5,8 +5,10 @@
 /**
  * Initialize the User Collection.
  *
- * [argument] none
- * [return] users (Object) new instance of the UserCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} users - New UserCollection instance.
  */
 BzDeck.collections.Users = function UserCollection () {
   this.datasource = BzDeck.datasources.account;
@@ -20,8 +22,8 @@ BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
 /**
  * Add users participating in a bug.
  *
- * [argument] bug (Proxy) a BugCollection object
- * [return] users (Map(String, Proxy)) new instances of the UserModel object
+ * @argument {Proxy} bug - BugCollection object.
+ * @return {Map.<String, Proxy>} users - New instances of the UserModel object.
  */
 BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
   let users = new Map();

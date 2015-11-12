@@ -104,8 +104,8 @@ BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
 /**
  * Add the number of the comments, attachments and history entries to the each relevant tab as a small badge.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
   for (let prop of ['comments', 'attachments', 'history']) {
@@ -119,8 +119,8 @@ BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
 /**
  * Render the Tracking Flags section on the bug info pane.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugDetails.prototype.render_tracking_flags = function () {
   let config = BzDeck.models.server.data.config,

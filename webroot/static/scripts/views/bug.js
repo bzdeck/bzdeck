@@ -453,8 +453,8 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
  * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
  * traditional File API to identify the files. In any case, notify the selected files to the controller.
  *
- * [argument] input (HTMLInputElement or DataTransfer) data source
- * [return] none
+ * @argument {(HTMLInputElement|DataTransfer)} input - Data source.
+ * @return {undefined}
  */
 BzDeck.views.Bug.prototype.on_files_selected = function (input) {
   let iterate = items => {

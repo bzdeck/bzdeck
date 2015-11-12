@@ -5,8 +5,10 @@
 /**
  * Initialize the Server Collection.
  *
- * [argument] none
- * [return] bugs (Object) new instance of the ServerCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} bugs - New ServerCollection instance.
  */
 BzDeck.collections.Servers = function ServerCollection () {
   this.datasource = BzDeck.datasources.global;

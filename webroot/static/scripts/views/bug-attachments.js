@@ -5,11 +5,13 @@
 /**
  * Initialize the Bug Attachments View.
  *
- * [argument] view_id (String) instance ID. It should be the same as the BugController instance, otherwise the related
- *                            notification events won't work
- * [argument] bug_id (Integer) corresponding bug ID
- * [argument] $container (Element) container node to render the attachments
- * [return] view (Object) BugAttachmentsView instance, when called with `new`
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
+ *  notification events won't work.
+ * @argument {Integer} bug_id - Corresponding bug ID.
+ * @argument {HTMLElement} $container - Container node to render the attachments.
+ * @return {Object} view - New BugAttachmentsView instance.
  */
 BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $container) {
   let mobile = this.helpers.env.device.mobile,
@@ -74,8 +76,8 @@ BzDeck.views.BugAttachments.prototype.constructor = BzDeck.views.BugAttachments;
 /**
  * Render the provided attachments.
  *
- * [argument] attachments (Array(Proxy)) attachment list
- * [return] none
+ * @argument {Array.<Proxy>} attachments - Attachment list.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.render = function (attachments) {
   let $fragment = new DocumentFragment(),
@@ -113,8 +115,8 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
 /**
  * Called whenever the attachment list is clicked.
  *
- * [argument] event (MouseEvent) click or dblclick
- * [return] none
+ * @argument {MouseEvent} event - click or dblclick.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.listbox_onclick = function (event) {
   let $selected = this.$$listbox.view.selected[0],
@@ -130,8 +132,8 @@ BzDeck.views.BugAttachments.prototype.listbox_onclick = function (event) {
 /**
  * Initialize the attachment uploading interface.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.init_uploader = function () {
   this.$drop_target = this.$container.querySelector('[aria-dropeffect]');
@@ -205,8 +207,8 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
 /**
  * Called by BugController whenever a new attachment is added by the user.
  *
- * [argument] attachment (Proxy) added attachment data as AttachmentModel instance
- * [return] none
+ * @argument {Proxy} attachment - Added attachment data as AttachmentModel instance.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment) {
   this.attachments.set(attachment.hash, attachment);
@@ -216,8 +218,8 @@ BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment
 /**
  * Called by BugController whenever a new attachment is removed by the user.
  *
- * [argument] hash (String) removed attachment's hash value in the cached list
- * [return] none
+ * @argument {String} hash - Removed attachment's hash value in the cached list.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
   this.attachments.delete(hash);
@@ -229,9 +231,9 @@ BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
 /**
  * Called by BugController whenever a new attachment is edited by the user.
  *
- * [argument] change (Object) change detail containing the attachment id (or hash for unuploaded attachments), changed
- *                  property name and value
- * [return] none
+ * @argument {Object} change - Change detail containing the attachment id (or hash for unuploaded attachments), changed
+ *  property name and value.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
   let { id, hash, prop, value } = change,
@@ -249,8 +251,8 @@ BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
 /**
  * Called by BugController whenever a new attachment is added or removed by the user.
  *
- * [argument] uploads (extended Array(Proxy)) list of the new attachments
- * [return] none
+ * @argument {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads) {
   this.update_list_title();
@@ -259,8 +261,8 @@ BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads
 /**
  * Update the list header title, showing the number of the attachments.
  *
- * [argument] none
- * [return] none
+ * @argument {undefined}
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.update_list_title = function () {
   let total = this.attachments.size,
@@ -277,8 +279,8 @@ BzDeck.views.BugAttachments.prototype.update_list_title = function () {
 /**
  * Called whenever the navigation history state is updated.
  *
- * [argument] state (Object) current history state
- * [return] none
+ * @argument {Object} state - Current history state.
+ * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_history_updated = function (state) {
   let target_id = state ? state.att_id : undefined,

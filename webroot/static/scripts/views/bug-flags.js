@@ -5,9 +5,11 @@
 /**
  * Initialize the Bug Flags View.
  *
- * [argument] bug (Proxy) relevant bug with the flags
- * [argument] att (Proxy, optional) relevant attachment
- * [return] none
+ * @constructor
+ * @extends BaseView
+ * @argument {Proxy} bug - Relevant bug with the flags.
+ * @argument {Proxy} [att] - Relevant attachment.
+ * @return {undefined}
  */
 BzDeck.views.BugFlags = function BugFlagsView (bug, att = undefined) {
   this.bug = bug;
@@ -20,9 +22,9 @@ BzDeck.views.BugFlags.prototype.constructor = BzDeck.views.BugFlags;
 /**
  * Render the Flags section on the bug info pane or attachment view.
  *
- * [argument] $outer (Element) container element to render
- * [argument] level (Integer, optional) aria-level for the label
- * [return] none
+ * @argument {HTMLElement} $outer - Container element to render.
+ * @argument {Integer} level - aria-level for the label.
+ * @return {undefined}
  */
 BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
   let config = BzDeck.models.server.data.config,

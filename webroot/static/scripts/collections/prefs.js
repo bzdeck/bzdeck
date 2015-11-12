@@ -5,8 +5,10 @@
 /**
  * Initialize the Pref Collection.
  *
- * [argument] none
- * [return] bugs (Object) new instance of the PrefCollection object, when called with `new`
+ * @constructor
+ * @extends BaseCollection
+ * @argument {undefined}
+ * @return {Object} bugs - New PrefCollection instance.
  */
 BzDeck.collections.Prefs = function PrefCollection () {
   this.datasource = BzDeck.datasources.account;

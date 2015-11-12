@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Base Model.
+ *
+ * @constructor
+ * @extends Model
+ * @argument {undefined}
+ * @return {Object} collection - New BaseModel instance.
+ */
 BzDeck.models = BzDeck.models || {};
 
 BzDeck.models.Base = function BaseModel () {};
