@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Pref Collection.
+ * Initialize the Pref Collection that represents the user's application settings.
  *
  * @constructor
  * @extends BaseCollection
  * @argument {undefined}
- * @return {Object} bugs - New PrefCollection instance.
+ * @return {Object} preferences - New PrefCollection instance.
  */
 BzDeck.collections.Prefs = function PrefCollection () {
   this.datasource = BzDeck.datasources.account;

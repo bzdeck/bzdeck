@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Account DataSource.
+ * Initialize the Account DataSource that contains the bugs, users, and prefs of each user account.
  *
  * @constructor
  * @extends BaseDataSource
  * @argument {undefined}
- * @return {Object} collection - New AccountDataSource instance.
+ * @return {Object} datasource - New AccountDataSource instance.
  */
 BzDeck.datasources.Account = function AccountDataSource () {};
 
@@ -19,17 +19,18 @@ BzDeck.datasources.Account.prototype.constructor = BzDeck.datasources.Account;
  * Preload the account-specific database.
  *
  * @argument {undefined}
- * @return {Promise.<(IDBDatabase|Error)>} database - Target IndexedDB database.
+ * @return {Promise.<IDBDatabase>} database - Target IndexedDB database.
  */
 BzDeck.datasources.Account.prototype.load = function () {
   return this.open_database(`${BzDeck.models.server.name}::${BzDeck.models.account.data.name}`, 2);
 };
 
 /**
- * Create object stores when the database is created or upgraded.
+ * Called whenever the database is created or upgraded. Create object stores and handle upgrades.
  *
  * @argument {IDBVersionChangeEvent} event - The upgradeneeded event.
  * @return {IDBDatabase} database - Target IndexedDB database.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
  */
 BzDeck.datasources.Account.prototype.onupgradeneeded = function (event) {
   let database = event.target.result;

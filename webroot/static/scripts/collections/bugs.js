@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Bug Collection.
+ * Initialize the Bug Collection that represents all downloaded bugs.
  *
  * @constructor
  * @extends BaseCollection
@@ -20,12 +20,13 @@ BzDeck.collections.Bugs.prototype = Object.create(BzDeck.collections.Base.protot
 BzDeck.collections.Bugs.prototype.constructor = BzDeck.collections.Bugs;
 
 /**
- * Retrieve bug data from Bugzilla with specific IDs.
+ * Retrieve multiple bugs from Bugzilla with specific bug IDs, and return raw bug objects.
  *
- * @argument {(Array|Set)} ids - List of bug ID.
+ * @argument {(Array|Set)} ids - List of bug ID to retrieve.
  * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
  * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
- * @return {Promise.<(Array.<Object>|Error)>} bugs - List of retrieved Bugzilla data object.
+ * @return {Promise.<Array.<Object>>} bugs - List of retrieved bug data objects.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
  */
 BzDeck.collections.Bugs.prototype.fetch = function (ids, include_metadata = true, include_details = true) {
   // Sort the IDs to make sure the subsequent index access always works

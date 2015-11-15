@@ -3,11 +3,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Account Model.
+ * Initialize the Account Model that represents the user's Bugzilla account. Available through the AccountCollection.
  *
  * @constructor
  * @extends BaseModel
- * @argument {Object} data - User account data.
+ * @argument {Object} data - User account data including Bugzilla account info.
  * @return {Proxy} account - New AccountModel instance.
  */
 BzDeck.models.Account = function AccountModel (data) {

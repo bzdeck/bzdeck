@@ -3,13 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the User Model.
+ * Initialize the User Model that represents a Bugzilla user. Available through the UserCollection.
  *
  * @constructor
  * @extends BaseModel
  * @argument {Object} data - Profile object including Bugzilla's raw user data.
- * @return {Proxy} user - Proxified instance of the UserModel object, so consumers can access user data seamlessly using
- *  user.prop instead of user.data.prop.
+ * @return {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via user.prop
+ *  instead of user.data.prop.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html}
  */
 BzDeck.models.User = function UserModel (data) {
   this.datasource = BzDeck.datasources.account;
@@ -44,7 +45,7 @@ BzDeck.models.User = function UserModel (data) {
       enumerable: true,
       get: () => (this.original_name.match(/\:[\w\-]+/g) || []).map(name => name.substr(1)) // Consider multiple nick
     },
-    // Images
+    // Images provided by Gravatar
     image: {
       enumerable: true,
       get: () => this.data.image_src || ''
@@ -62,7 +63,7 @@ BzDeck.models.User = function UserModel (data) {
                    + String(this.email.length).substr(0, 1);
       }}
     },
-    // Return basic info
+    // Return basic info for easier fill-in on views
     properties: {
       enumerable: true,
       get: () => ({
@@ -76,7 +77,7 @@ BzDeck.models.User = function UserModel (data) {
     },
   });
 
-  // Generate avatar's object URL for this session
+  // Generate the avatar's object URL for this session
   if (this.data.image_blob) {
     this.data.image_src = URL.createObjectURL(this.data.image_blob);
   }
@@ -100,10 +101,10 @@ BzDeck.models.User.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.User.prototype.constructor = BzDeck.models.User;
 
 /**
- * Retrieve the user's relevant data from Bugzilla and Gravatar.
+ * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
  *
  * @argument {Object} [options] - Extra options.
- * @return {Promise.<Proxy>} data - User profile data.
+ * @return {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
  */
 BzDeck.models.User.prototype.fetch = function (options = {}) {
   options.in_promise_all = true;
@@ -116,12 +117,12 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
   ]).then(results => {
     this.save({
       name: this.email, // String
-      id: results[0].id, // Integer
+      id: results[0].id, // Number
       bugzilla: results[0], // Object
       image_blob: results[1], // Blob
       image_src: results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
       gravatar: results[2] || undefined, // Object
-      updated: Date.now(), // Integer
+      updated: Date.now(), // Number
     });
   }).catch(error => {
     this.save({
@@ -133,15 +134,14 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
 };
 
 /**
- * Get or retrieve the user's Bugzilla profile.
+ * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel. If
+ * the refresh option is not specified, just return it.
  *
  * @argument {Object} [options] - Extra options.
- * @return {Promise.<Object>} bug - Bugzilla profile.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html}
+ * @return {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
 BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
-  // Bugzilla profile could be provided when the User is created.
-  // If the refresh option is not specified, just return it
   if (!options.refresh && this.data.bugzilla && this.data.bugzilla.id) {
     return Promise.resolve(this.data.bugzilla);
   }
@@ -166,7 +166,7 @@ BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
  * Get or retrieve the user's Gravatar profile.
  *
  * @argument {Object} [options] - Extra options.
- * @return {Promise.<Object>} bug - Gravatar profile.
+ * @return {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
  * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
  */
 BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
@@ -201,10 +201,10 @@ BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
 };
 
 /**
- * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image.
+ * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
  *
  * @argument {Object} [options] - Extra options.
- * @return {Promise.<Blob>} bug - Avatar image in the Blob format.
+ * @return {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
  * @see {@link https://en.gravatar.com/site/implement/images/}
  */
 BzDeck.models.User.prototype.get_gravatar_image = function (options = {}) {

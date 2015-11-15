@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Server Model.
+ * Initialize the Server Model that represents a remote Bugzilla instance. Available through the ServerCollection.
  *
  * @constructor
  * @extends BaseModel
@@ -28,10 +28,14 @@ BzDeck.models.Server.prototype = Object.create(BzDeck.models.Base.prototype);
 BzDeck.models.Server.prototype.constructor = BzDeck.models.Server;
 
 /**
- * Retrieve the Bugzilla configuration from cache or the remote Bugzilla instance.
+ * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current config
+ * from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI compat
+ * layer instead.
  *
  * @argument {undefined}
- * @return {Promise.<(Object|Error)>} config - Bugzilla configuration data.
+ * @return {Promise.<Object>} config - Promise to be resolved in the Bugzilla configuration data.
+ * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other}
+ * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937}
  */
 BzDeck.models.Server.prototype.get_config = function () {
   if (!navigator.onLine) {
@@ -44,7 +48,7 @@ BzDeck.models.Server.prototype.get_config = function () {
     return Promise.resolve(this.data.config);
   }
 
-  // The config is not available from the REST endpoint so use the BzAPI compat layer instead
+  // Fetch the config via BzAPI
   return this.helpers.network.json(`${this.url}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
     if (config && config.version) {
       let config_retrieved = this.data.config_retrieved = Date.now();

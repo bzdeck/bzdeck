@@ -3,13 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Attachment Model.
+ * Initialize the Attachment Model that represents a downloaded or unuploaded bug attachment. Available through the
+ * AttachmentCollection.
  *
  * @constructor
  * @extends BaseModel
- * @argument {Object} data - Bugzilla's raw attachment data object.
- * @return {Proxy} attachment - proxified instance of the AttachmentModel object, so consumers can access attachment
- *  data seamlessly using attachment.prop instead of attachment.data.prop.
+ * @argument {Object} data - Bugzilla's raw attachment object or unuploaded attachment object.
+ * @return {Proxy} attachment - Proxified AttachmentModel instance, so consumers can seamlessly access attachment
+ *  properties via attachment.prop instead of attachment.data.prop.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html}
  */
 BzDeck.models.Attachment = function AttachmentModel (data) {
   this.id = data.id || data.hash; // Use the hash for unuploaded attachments
@@ -22,10 +24,11 @@ BzDeck.models.Attachment.prototype = Object.create(BzDeck.models.Base.prototype)
 BzDeck.models.Attachment.prototype.constructor = BzDeck.models.Attachment;
 
 /**
- * Retrieve attachment data from Bugzilla.
+ * Retrieve the attachment from Bugzilla.
  *
  * @argument {undefined}
- * @return {Promise.<(Proxy|Error)>} attachment - AttachmentModel instance.
+ * @return {Promise.<Proxy>} attachment - Promise to be resolved in the AttachmentModel instance.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
  */
 BzDeck.models.Attachment.prototype.fetch = function () {
   return BzDeck.controllers.global.request(`bug/attachment/${this.id}`).then(result => {
@@ -36,10 +39,12 @@ BzDeck.models.Attachment.prototype.fetch = function () {
 };
 
 /**
- * Get the attachment data only. If it's not in the cache, retrieve it from Bugzilla.
+ * Get the attachment raw file data only. If it's not in the cache, retrieve the data from Bugzilla and save it in the
+ * local database.
  *
  * @argument {undefined}
- * @return {Promise.<(Object|Error)>} data
+ * @return {Promise.<Object>} data - Promise to be resolved in an object containing the Blob and plaintext data, and
+ *  this AttachmentModel.
  */
 BzDeck.models.Attachment.prototype.get_data = function () {
   let convert = () => {
@@ -75,10 +80,10 @@ BzDeck.models.Attachment.prototype.get_data = function () {
 };
 
 /**
- * Save the attachment data as part of the relevant bug.
+ * Save this attachment as part of the relevant bug.
  *
  * @argument {undefined}
- * @return {Promise.<Proxy>} item - Proxified instance of the Attachment model object.
+ * @return {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
  */
 BzDeck.models.Attachment.prototype.save = function () {
   let bug = BzDeck.collections.bugs.get(this.data.bug_id);

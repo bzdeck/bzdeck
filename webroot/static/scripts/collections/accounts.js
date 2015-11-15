@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Account Collection.
+ * Initialize the Account Collection that represents the user's Bugzilla accounts. Each account is an AccountModel.
  *
  * @constructor
  * @extends BaseCollection
  * @argument {undefined}
- * @return {Object} bugs - New AccountCollection instance.
+ * @return {Object} accounts - New AccountCollection instance.
  */
 BzDeck.collections.Accounts = function AccountCollection () {
   this.datasource = BzDeck.datasources.global;
@@ -20,7 +20,7 @@ BzDeck.collections.Accounts.prototype = Object.create(BzDeck.collections.Base.pr
 BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
 
 /**
- * Get the currently signed-in account if any.
+ * Get the currently signed-in user account if any.
  *
  * @argument {undefined}
  * @return {Object} account - AccountModel instance.

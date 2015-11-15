@@ -3,24 +3,24 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Subscription Collection.
+ * Initialize the Subscription Collection, which is a labelled bug list. The visual presentation of each subscription is
+ * a Sidebar folder, like Inbox, Starred or Reported.
  *
  * @constructor
  * @extends BaseCollection
  * @argument {undefined}
  * @return {Object} subscriptions - New SubscriptionCollection instance.
  */
-BzDeck.collections.Subscriptions = function SubscriptionCollection () {
-};
+BzDeck.collections.Subscriptions = function SubscriptionCollection () {};
 
 BzDeck.collections.Subscriptions.prototype = Object.create(BzDeck.collections.Base.prototype);
 BzDeck.collections.Subscriptions.prototype.constructor = BzDeck.collections.Subscriptions;
 
 /**
- * Get bugs the user is involving, with a specific key.
+ * Get bugs the user is participating from the local database with a specific key, like inbox, starred or reported.
  *
  * @argument {String} id - Key of the subscription.
- * @return {Map.<Integer, Proxy>} bugs - New instances of the BugModel object.
+ * @return {Map.<Number, Proxy>} bugs - Map of bug IDs and BugModel instances.
  */
 BzDeck.collections.Subscriptions.prototype.get = function (id) {
   let severities = ['blocker', 'critical', 'major'],
@@ -44,10 +44,10 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
 };
 
 /**
- * Get all bugs the user is involving.
+ * Get all bugs the user is participating from the local database.
  *
  * @argument {undefined}
- * @return {Map.<Integer, Proxy>} bugs - New instances of the BugModel object.
+ * @return {Map.<Number, Proxy>} bugs - Map of Bug IDs and BugModel instances.
  */
 BzDeck.collections.Subscriptions.prototype.get_all = function () {
   let email = BzDeck.models.account.data.name,
@@ -61,10 +61,11 @@ BzDeck.collections.Subscriptions.prototype.get_all = function () {
 };
 
 /**
- * Retrieve data of bugs the user is involving, from Bugzilla.
+ * Retrieve data of bugs the user is participating from the remote Bugzilla instance, and return those as models.
  *
  * @argument {undefined}
- * @return {Promise.<(Array.<Object>|Error)>} bugs - New instances of the BugModel object.
+ * @return {Promise.<Array.<Object>>} bugs - Promise to be resolved in an array of BugModel instances.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
  */
 BzDeck.collections.Subscriptions.prototype.fetch = function () {
   let last_loaded = BzDeck.prefs.get('subscriptions.last_loaded'),
@@ -81,7 +82,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     params.append('include_fields', 'id');
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
   } else {
-    // Fetch only solved bugs at initial startup
+    // Fetch only open bugs at initial startup
     params.append('resolution', '---');
   }
 
@@ -91,7 +92,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     params.append(`v${i}`, BzDeck.models.account.data.name);
   }
 
-  // Append starred bugs to the query
+  // Append starred bugs to the query, that may include bugs the user is currently not involved in
   params.append('f9', 'bug_id');
   params.append('o9', 'anywords');
   params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());

@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the User Collection.
+ * Initialize the User Collection that represents Bugzilla users. Each user is a UserModel.
  *
  * @constructor
  * @extends BaseCollection
@@ -20,10 +20,11 @@ BzDeck.collections.Users.prototype = Object.create(BzDeck.collections.Base.proto
 BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
 
 /**
- * Add users participating in a bug.
+ * Add bug participants, including Cc members, assignee, QA and menters, to the user database, and return the models of
+ * those users.
  *
- * @argument {Proxy} bug - BugCollection object.
- * @return {Map.<String, Proxy>} users - New instances of the UserModel object.
+ * @argument {Proxy} bug - BugModel object.
+ * @return {Map.<String, Proxy>} users - Map of the added user names and UserModel instances.
  */
 BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
   let users = new Map();

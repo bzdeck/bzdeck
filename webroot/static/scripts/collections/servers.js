@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Server Collection.
+ * Initialize the Server Collection that represents remote Bugzilla instances. Each server is a ServerModel.
  *
  * @constructor
  * @extends BaseCollection
  * @argument {undefined}
- * @return {Object} bugs - New ServerCollection instance.
+ * @return {Object} servers - New ServerCollection instance.
  */
 BzDeck.collections.Servers = function ServerCollection () {
   this.datasource = BzDeck.datasources.global;

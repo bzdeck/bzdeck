@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Global DataSource.
+ * Initialize the Global DataSource that stores Bugzilla instances and user accounts.
  *
  * @constructor
  * @extends BaseDataSource
  * @argument {undefined}
- * @return {Object} collection - New GlobalDataSource instance.
+ * @return {Object} datasource - New GlobalDataSource instance.
  */
 BzDeck.datasources.Global = function GlobalDataSource () {};
 
@@ -19,17 +19,18 @@ BzDeck.datasources.Global.prototype.constructor = BzDeck.datasources.Global;
  * Preload the app-wide database.
  *
  * @argument {undefined}
- * @return {Promise.<(IDBDatabase|Error)>} database - Target IndexedDB database.
+ * @return {Promise.<IDBDatabase>} database - Target IndexedDB database.
  */
 BzDeck.datasources.Global.prototype.load = function () {
   return this.open_database('global', 1);
 };
 
 /**
- * Create object stores when the database is created or upgraded.
+ * Called whenever the database is created or upgraded. Create object stores and handle upgrades.
  *
  * @argument {IDBVersionChangeEvent} event - The upgradeneeded event.
  * @return {IDBDatabase} database - Target IndexedDB database.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
  */
 BzDeck.datasources.Global.prototype.onupgradeneeded = function (event) {
   let database = event.target.result;
