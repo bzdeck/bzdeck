@@ -2,7 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// Bootstrapper
+/**
+ * Initialize the Session Controller serving as the application bootstrapper. The member functions require refactoring.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {undefined}
+ * @return {Object} controller - New SessionController instance.
+ */
 BzDeck.controllers.Session = function SessionController () {
   let params = new URLSearchParams(location.search.substr(1));
 
@@ -35,7 +42,12 @@ BzDeck.controllers.Session = function SessionController () {
 BzDeck.controllers.Session.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
 
-// Bootstrap Step 1. Find a user account from the local database
+/**
+ * Bootstrap Step 1. Find a user account from the local database.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.find_account = function () {
   BzDeck.datasources.global.load().then(database => {
     BzDeck.collections.accounts = new BzDeck.collections.Accounts();
@@ -55,7 +67,12 @@ BzDeck.controllers.Session.prototype.find_account = function () {
   });
 };
 
-// Bootstrap Step 2. Let the user sign in if an active account is not found
+/**
+ * Bootstrap Step 2. Let the user sign in if an active account could not be found.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
@@ -99,7 +116,14 @@ BzDeck.controllers.Session.prototype.force_login = function () {
   }, true);
 };
 
-// Bootstrap Step 3. Once the user's auth info is provided, check the email and API key are valid
+/**
+ * Bootstrap Step 3. Once the user's auth info is provided, check if the email and API key are valid.
+ *
+ * @argument {String} host - Host identifier like 'mozilla'.
+ * @argument {String} email - User's Bugzilla account name.
+ * @argument {String} api_key - User's 40-character Bugzilla API key.
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.verify_account = function (host, email, api_key) {
   let server = BzDeck.models.server = BzDeck.collections.servers.get(host, { host }),
       params = new URLSearchParams(`names=${email}`);
@@ -112,7 +136,7 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
     this.bootstrapping = true;
   }
 
-  return this.request('user', params, { api_key }).then(result => {
+  this.request('user', params, { api_key }).then(result => {
     return result.users ? Promise.resolve(result.users[0])
                         : Promise.reject(new Error(result.message || 'User Not Found'));
   }, error => {
@@ -138,7 +162,12 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
   });
 };
 
-// Bootstrap Step 4. Load data from local database once the user account is set
+/**
+ * Bootstrap Step 4. Load data from the local database once the user account is set.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.load_data = function () {
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
@@ -166,7 +195,12 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   });
 };
 
-// Bootstrap Step 5. Retrieve data from remote Bugzilla instance
+/**
+ * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.fetch_data = function () {
   this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading Bugzilla config and your bugs...' });
 
@@ -176,7 +210,12 @@ BzDeck.controllers.Session.prototype.fetch_data = function () {
   ]);
 };
 
-// Bootstrap Step 6. Setup everything including UI components
+/**
+ * Bootstrap Step 6. Set up everything including the global controllers and views, then complete bootstrapping.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.init_components = function () {
   this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
 
@@ -215,6 +254,12 @@ BzDeck.controllers.Session.prototype.init_components = function () {
   });
 };
 
+/**
+ * Show the startup notification if the user has been requested a review, feedback or info.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.show_first_notification = function () {
   // Authorize a notification
   this.helpers.app.auth_notification();
@@ -242,10 +287,22 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
 };
 
+/**
+ * Notify the view of the user's sign-in once prepared.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.login = function () {
   this.trigger(':Login');
 };
 
+/**
+ * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.logout = function () {
   this.trigger(':Logout');
   this.clean();
@@ -256,10 +313,22 @@ BzDeck.controllers.Session.prototype.logout = function () {
     .then(() => location.replace(BzDeck.config.app.root));
 };
 
+/**
+ * End the browsing session by closing the current app. This only works on WebAppRT.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.close = function () {
   window.close();
 };
 
+/**
+ * Clean up the browsing session by terminating all timers, notifications and Bugzfeed subscriptions.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Session.prototype.clean = function () {
   // Terminate timers
   for (let timer of BzDeck.controllers.global.timers.values()) {

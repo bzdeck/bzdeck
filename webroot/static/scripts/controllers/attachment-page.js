@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Attachment Page Controller. If the specified attachment has an existing
+ * tab, switch to it. Otherwise, open a new tab and try to load the attachment.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+ * @return {Object} controller - New AttachmentPageController instance.
+ */
 BzDeck.controllers.AttachmentPage = function AttachmentPageController (att_id) {
   let $$tablist = BzDeck.views.banner.$$tablist;
 
@@ -26,7 +35,7 @@ BzDeck.controllers.AttachmentPage = function AttachmentPageController (att_id) {
     tab_position: 'next',
   }, this);
 
-  this.init();
+  this.get_attachment();
 
   return this;
 };
@@ -36,7 +45,14 @@ BzDeck.controllers.AttachmentPage.route = '/attachment/(\\d+|[a-z0-9]{32})';
 BzDeck.controllers.AttachmentPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.AttachmentPage.prototype.constructor = BzDeck.controllers.AttachmentPage;
 
-BzDeck.controllers.AttachmentPage.prototype.init = function () {
+/**
+ * Prepare attachment data for the view. Find it from the local database or remote Bugzilla instance, then notify the
+ * result regardless of the availability.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.controllers.AttachmentPage.prototype.get_attachment = function () {
   let attachment = BzDeck.collections.attachments.get(this.att_id);
 
   // If found, show it

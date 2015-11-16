@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Settings Page Controller. If the Settings has an existing tab, switch to
+ * it. Otherwise, open a new tab and load the content.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {undefined}
+ * @return {Object} controller - New SettingsPageController instance.
+ */
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
       account = BzDeck.models.account,

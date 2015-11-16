@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Profile Page Controller. If the specified profile has an existing tab,
+ * switch to it. Otherwise, open a new tab and try to load the user profile.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {String} email - Person's Bugzilla account name.
+ * @return {Object} controller - New ProfilePageController instance.
+ */
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   this.id = email;
   this.user = BzDeck.collections.users.get(email, { name: email });

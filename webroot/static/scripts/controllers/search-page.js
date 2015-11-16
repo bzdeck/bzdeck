@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Search Page Controller. Unlike other pages, this controller doesn't check
+ * existing tabs, because the user can open multiple search tabs at the same time.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+ * @return {Object} controller - New SearchPageController instance.
+ */
 BzDeck.controllers.SearchPage = function SearchPageController (id) {
   this.id = id;
 
@@ -34,7 +43,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
         }
 
         if (oldval !== newval) {
-          this.prep_preview(oldval, newval);
+          this.prep_preview(newval);
           BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
@@ -72,7 +81,13 @@ BzDeck.controllers.SearchPage.route = '/search/(\\d{13,})';
 BzDeck.controllers.SearchPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchPage;
 
-BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval) {
+/**
+ * Prepare a bug preview displayed in the Preview Pane.
+ *
+ * @argument {Number} id - Bug ID to show.
+ * @return {undefined}
+ */
+BzDeck.controllers.SearchPage.prototype.prep_preview = function (id) {
   if (!newval) {
     this.trigger(':BugDataUnavailable');
   } else {
@@ -87,6 +102,12 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (oldval, newval)
   }
 };
 
+/**
+ * Search bugs from the remote Bugzilla instance, and provide the results as event data.
+ *
+ * @argument {URLSearchParams} params - Search query.
+ * @return {undefined}
+ */
 BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
   if (!navigator.onLine) {
     this.trigger(':Offline');

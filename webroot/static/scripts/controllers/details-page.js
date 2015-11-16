@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Details Page Controller. If the specified bug has an existing tab, switch
+ * to it. Otherwise, open a new tab and try to load the bug.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {Number} bug_id - Bug ID to show.
+ * @return {Object} controller - New DetailsPageController instance.
+ */
 BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
   let $$tablist = BzDeck.views.banner.$$tablist;
 
@@ -30,7 +39,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
     tab_position: 'next',
   }, this);
 
-  this.init();
+  this.get_bug();
 
   this.on('V:NavigationRequested', data => {
     let { id, ids, old_path, new_path, reinit } = data;
@@ -39,7 +48,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
     window.history.replaceState({ ids, previous: old_path }, '', new_path);
 
     if (reinit) {
-      this.init();
+      this.get_bug();
     }
   });
 
@@ -51,7 +60,14 @@ BzDeck.controllers.DetailsPage.route = '/bug/(\\d+)';
 BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
 
-BzDeck.controllers.DetailsPage.prototype.init = function () {
+/**
+ * Prepare bug data for the view. Find it from the local database or remote Bugzilla instance, then notify the result
+ * regardless of the availability.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.controllers.DetailsPage.prototype.get_bug = function () {
   let bug = BzDeck.collections.bugs.get(this.bug_id);
 
   new Promise(resolve => {

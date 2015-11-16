@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Called by the app router and initialize the Home Page Controller. Select the specified Sidebar folder.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {String} folder_id - Folder identifier defined in the app config.
+ * @return {Object} controller - New HomePageController instance.
+ */
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   if (BzDeck.controllers.homepage) {
     BzDeck.views.pages.home.connect(folder_id);
@@ -34,7 +42,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
         }
 
         if (oldval !== newval) {
-          this.prep_preview(oldval, newval);
+          this.prep_preview(newval);
           BzDeck.controllers.bugzfeed.subscribe([newval]);
         }
       }
@@ -63,7 +71,13 @@ BzDeck.controllers.HomePage.route = '/home/(\\w+)';
 BzDeck.controllers.HomePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
 
-BzDeck.controllers.HomePage.prototype.prep_preview = function (oldval, newval) {
+/**
+ * Prepare a bug preview displayed in the Preview Pane by loading the bug data.
+ *
+ * @argument {Number} id - Bug ID to show.
+ * @return {undefined}
+ */
+BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
   if (!newval) {
     this.trigger(':BugDataUnavailable');
   } else {

@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Global Controller that provides some utility functions for controllers.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {undefined}
+ * @return {Object} controller - New GlobalController instance.
+ */
 BzDeck.controllers.Global = function GlobalController () {
   this.on('BugModel:AnnotationUpdated', data => {
     if (data.type === 'unread') {
@@ -21,11 +29,22 @@ BzDeck.controllers.Global.prototype.constructor = BzDeck.controllers.Global;
 BzDeck.controllers.Global.prototype.notifications = new Set();
 BzDeck.controllers.Global.prototype.timers = new Map();
 
+/**
+ * Prepare the corresponding view. This should be called after the prefs are retrieved.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Global.prototype.init = function () {
-  // This should be called after prefs are retrieved
   this.view = BzDeck.views.global = new BzDeck.views.Global();
 };
 
+/**
+ * Determine the number of unread bugs and notify the view.
+ *
+ * @argument {Boolean} [loaded=false] - Whether bug data is loaded at startup.
+ * @return {undefined}
+ */
 BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
   if (!BzDeck.controllers.homepage) {
     return;
@@ -43,6 +62,13 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
   // this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
 };
 
+/**
+ * Show a desktop notification.
+ *
+ * @argument {String} title
+ * @argument {String} body
+ * @return {Promise.<MouseEvent>} event - Promise to be resolved in an event fired when the notification is clicked.
+ */
 BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
   if (BzDeck.prefs.get('notifications.show_desktop_notifications') === false) {
     return;
@@ -57,6 +83,14 @@ BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
   return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
 };
 
+/**
+ * Register the app for a Web activity. This is actually not working on Firefox OS.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ * @see {@link https://hacks.mozilla.org/2013/01/introducing-web-activities/}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MozActivityRequestHandler}
+ */
 BzDeck.controllers.Global.prototype.register_activity_handler = function () {
   // Match BMO's bug detail pages.
   // TODO: Implement a handler for attachments

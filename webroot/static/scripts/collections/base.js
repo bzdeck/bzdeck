@@ -5,7 +5,7 @@
 BzDeck.collections = BzDeck.collections || {};
 
 /**
- * Define the app's Base Collection. This constructor is intended to be inherited by app's each collection.
+ * Define the app's Base Collection. This constructor is intended to be inherited by the app's each collection.
  *
  * @constructor
  * @extends Collection

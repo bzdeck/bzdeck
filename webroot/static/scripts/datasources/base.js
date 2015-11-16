@@ -5,7 +5,7 @@
 BzDeck.datasources = BzDeck.datasources || {};
 
 /**
- * Define the app's Base DataSource. This constructor is intended to be inherited by app's each datasource.
+ * Define the app's Base DataSource. This constructor is intended to be inherited by the app's each datasource.
  *
  * @constructor
  * @extends IDBDataSource

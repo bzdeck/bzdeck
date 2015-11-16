@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Sidebar Controller that controls everything on the global application sidebar.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {undefined}
+ * @return {Object} controller - New SidebarController instance.
+ */
 BzDeck.controllers.Sidebar = function SidebarController () {
   let mobile = this.helpers.env.device.mobile;
 
@@ -52,12 +60,24 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 
+/**
+ * Open a specific folder by ID.
+ *
+ * @argument {String} folder_id - One of the folder IDs defined in the app config.
+ * @return {undefined}
+ */
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
   let bugs = BzDeck.controllers.homepage.data.bugs = BzDeck.collections.subscriptions.get(folder_id); // Map
 
   this.trigger(':FolderOpened', { folder_id, bugs });
 };
 
+/**
+ * Notify the number of unread bugs so the view can show it on the Inbox option.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.controllers.Sidebar.prototype.toggle_unread = function () {
   let number = [...BzDeck.collections.subscriptions.get_all().values()].filter(bug => bug.unread && bug.is_new).length;
 

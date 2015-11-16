@@ -5,7 +5,7 @@
 BzDeck.models = BzDeck.models || {};
 
 /**
- * Define the app's Base Model. This constructor is intended to be inherited by app's each model.
+ * Define the app's Base Model. This constructor is intended to be inherited by the app's each model.
  *
  * @constructor
  * @extends Model

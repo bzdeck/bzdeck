@@ -4,11 +4,29 @@
 
 BzDeck.controllers = BzDeck.controllers || {};
 
+/**
+ * Define the app's Base Controller. This constructor is intended to be inherited by each app controller.
+ *
+ * @constructor
+ * @extends Controller
+ * @argument {undefined}
+ * @return {Object} controller - New BaseController instance.
+ */
 BzDeck.controllers.Base = function BaseController () {};
 
 BzDeck.controllers.Base.prototype = Object.create(FlareTail.app.Controller.prototype);
 BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 
+/**
+ * Send an API request to the remote Bugzilla instance.
+ *
+ * @argument {String} path - Location including an API method.
+ * @argument {URLSearchParams} params - Search query.
+ * @argument {Object} [options] - Request method (default: GET), post data, API key, whether authenticating, download
+ *  and upload event listeners.
+ * @return {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
+ */
 BzDeck.controllers.Base.prototype.request = function (path, params, options = {}) {
   // We can't use the Fetch API here since it lacks progress events for now
   let server = BzDeck.models.server,
@@ -59,6 +77,14 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   });
 };
 
+/**
+ * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
+ * converted to internal links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support
+ * (#68) and improve the performance probably using a worker.
+ *
+ * @argument {String} str - Bug comment in plain text, as provided by Bugzilla.
+ * @return {String} str - HTML-formatted comment.
+ */
 BzDeck.controllers.Base.prototype.parse_comment = function (str) {
   let blockquote = p => {
     let regex = /^&gt;\s?/gm;

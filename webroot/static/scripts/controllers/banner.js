@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Banner Controller that controls everything on the global application header.
+ *
+ * @constructor
+ * @extends BaseController
+ * @argument {undefined}
+ * @return {Object} controller - New BannerController instance.
+ */
 BzDeck.controllers.Banner = function BannerController () {
   let name = BzDeck.models.account.data.name;
 
@@ -40,7 +48,8 @@ BzDeck.controllers.Banner.prototype = Object.create(BzDeck.controllers.Base.prot
 BzDeck.controllers.Banner.prototype.constructor = BzDeck.controllers.Banner;
 
 /**
- * Called by BannerView whenever the Back button is clicked on the mobile view.
+ * Called by BannerView whenever the Back button is clicked on the mobile view. Navigate backward when possible or just
+ * show Inbox.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -54,7 +63,7 @@ BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
 };
 
 /**
- * Called by BannerView whenever a tab in the global tablist is selected.
+ * Called by BannerView whenever a tab in the global tablist is selected. Navigate to the specified location.
  *
  * @argument {String} path - Location pathname that corresponds to the tab.
  * @return {undefined}
@@ -65,6 +74,12 @@ BzDeck.controllers.Banner.prototype.on_tab_selected = function (path) {
   }
 };
 
+/**
+ * Execute a new advanced search by opening a new search tab. This invokes SearchPageController.
+ *
+ * @argument {String} terms - Search terms entered by the user.
+ * @return {undefined}
+ */
 BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
   let params = new URLSearchParams();
 
@@ -77,6 +92,12 @@ BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
   BzDeck.router.navigate('/search/' + Date.now(), { 'params' : params.toString() });
 };
 
+/**
+ * Execute a local quick search and provide the results as event data.
+ *
+ * @argument {String} terms - Search terms entered by the user.
+ * @return {undefined}
+ */
 BzDeck.controllers.Banner.prototype.exec_quick_search = function (terms) {
   let words = terms.trim().split(/\s+/).map(word => word.toLowerCase()),
       match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i')),
