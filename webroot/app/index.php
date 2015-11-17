@@ -978,6 +978,7 @@
             <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
           </div>
           <ul id="toolbar-buttons">
+            <li role="none"><span id="throbber" role="status"></span></li>
             <li role="none">
               <ul id="main-menu" role="menubar">
                 <li role="none">

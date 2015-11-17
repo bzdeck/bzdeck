@@ -74,6 +74,9 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
       cached_bugs = BzDeck.collections.bugs.get_all(),
       fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
+  // Fire an event to show the throbber
+  this.trigger(':FetchingSubscriptionsStarted');
+
   params.append('j_top', 'OR');
 
   if (last_loaded) {
@@ -128,5 +131,6 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     }
 
     return Promise.all([]);
-  }).then(bugs => Promise.resolve(bugs), event => Promise.reject(new Error('Failed to load data.'))); // l10n
+  }).then(bugs => Promise.resolve(bugs), event => Promise.reject(new Error('Failed to load data.')) // l10n
+  ).then(() => this.trigger(':FetchingSubscriptionsComplete'));
 };

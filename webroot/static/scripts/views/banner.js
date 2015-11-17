@@ -125,6 +125,7 @@ BzDeck.views.Banner = function BannerView (user) {
   }
 
   this.setup_searchbar();
+  this.setup_throbber();
 };
 
 BzDeck.views.Banner.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -232,6 +233,19 @@ BzDeck.views.Banner.prototype.setup_searchbar = function () {
   $search_box.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true); // use capture
 
   this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
+};
+
+/**
+ * Set up the activity indicator or "throbber" displayed while loading bugs.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.Banner.prototype.setup_throbber = function () {
+  let $throbber = document.querySelector('#throbber');
+
+  this.on('SubscriptionCollection:FetchingSubscriptionsStarted', () => $throbber.textContent = 'Loading...', true);
+  this.on('SubscriptionCollection:FetchingSubscriptionsComplete', () => $throbber.textContent = '', true);
 };
 
 /**

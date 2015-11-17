@@ -49,7 +49,8 @@
   left: 4rem;
 }
 
-#toolbar-buttons {
+[data-device="desktop"]:root #toolbar-buttons {
+  display: flex;
   position: absolute;
   top: 0;
   right: 0;
@@ -57,25 +58,34 @@
 }
 
 [data-device|="mobile"]:root #toolbar-buttons {
-  width: 4rem;
+  display: none;
 }
 
-[data-device|="mobile"][data-quicksearch]:root #toolbar-buttons {
-  left: 0;
-  width: auto;
-}
-
-#toolbar-buttons > li {
-  float: right;
-}
-
-#toolbar-buttons > li:first-of-type {
+[data-device="desktop"]:root #toolbar-buttons > li {
+  flex: none;
   width: 4rem;
   height: 4rem;
 }
 
-[data-device|="mobile"]:root #toolbar-buttons > li:first-of-type {
-  display: none;
+#throbber {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  text-indent: -99999px;
+}
+
+#throbber:not(:empty)::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 2rem;
+  line-height: 4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  text-indent: 0;
+  content: '\F110'; /* Throbber */
+  animation: throbber 2s linear 0s infinite;
 }
 
 #main-menu--app {
