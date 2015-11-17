@@ -7,7 +7,7 @@
  *
  * @constructor
  * @extends BaseView
- * @argument {Map} prefs - User preference Map.
+ * @argument {Map.<String, Object>} prefs - User preference Map.
  * @argument {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
  * @return {Object} view - New SettingsPageView instance.
  */

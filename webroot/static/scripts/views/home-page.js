@@ -123,7 +123,7 @@ BzDeck.views.HomePage.prototype.setup_splitter = function () {
 /**
  * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
  *
- * @argument {Map} bugs - All bugs prepared for the thread.
+ * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
  * @return {Map.<Number, Proxy>} bugs - Bugs currently showing.
  */
 BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {

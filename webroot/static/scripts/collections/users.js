@@ -9,6 +9,7 @@
  * @extends BaseCollection
  * @argument {undefined}
  * @return {Object} users - New UserCollection instance.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
 BzDeck.collections.Users = function UserCollection () {
   this.datasource = BzDeck.datasources.account;

@@ -9,6 +9,7 @@ let BzDeck = {};
  * ------------------------------------------------------------------------------------------------------------------ */
 
 BzDeck.config = {
+  // List of supported servers
   servers: {
     mozilla: {
       label: 'Mozilla',
@@ -33,10 +34,12 @@ BzDeck.config = {
       }
     }
   },
+  // App path
   app: {
     root: '/',
     launch_path: '/home/inbox',
   },
+  // Columns on classic threads
   grid: {
     default_columns: [
       // Custom
@@ -74,6 +77,7 @@ BzDeck.config = {
       { id: 'last_change_time', type: 'time' },
     ]
   },
+  // Preferences types and default values
   prefs: {
     // Theme
     'ui.theme.selected': { type: 'string', default: 'Light' },
@@ -91,6 +95,7 @@ BzDeck.config = {
     'ui.timeline.show_cc_changes': { type: 'boolean', default: false },
     'ui.timeline.display_attachments_inline': { type: 'boolean', default: true },
   },
+  // Sidebar folders
   folders: [
     {
       id: 'sidebar-folders--inbox',

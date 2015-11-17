@@ -10,7 +10,7 @@
  * @argument {Object} data - Profile object including Bugzilla's raw user data.
  * @return {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via user.prop
  *  instead of user.data.prop.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
 BzDeck.models.User = function UserModel (data) {
   this.datasource = BzDeck.datasources.account;

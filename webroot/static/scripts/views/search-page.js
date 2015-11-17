@@ -222,7 +222,7 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
 /**
  * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the controller.
  *
- * @argument {Map} bugs - All bugs prepared for the thread.
+ * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
  * @return {Array.<Number>} ids - IDs of bugs currently showing.
  */
 BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
