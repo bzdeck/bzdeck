@@ -2,6 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Details Page View that represents the Bug Details page's tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
+ * @argument {Number} bug_id - ID of the bug to display.
+ * @argument {Array.<Number>} [bug_ids] - Optional list of bug IDs that can be navigated with the Back and Forward
+ *  buttons or keyboard shortcuts. If the selected bug is on a thread, all bugs on the thread should be listed here.
+ * @return {Object} view - New DetailsPageView instance.
+ */
 BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = []) {
   this.id = page_id;
   this.bug_id = bug_id;
@@ -51,10 +62,22 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
 BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.DetailsPage.prototype.constructor = BzDeck.views.DetailsPage;
 
+/**
+ * Generate a title string for the tab.
+ *
+ * @argument {Proxy} bug - The displayed bug.
+ * @return {String} title - Formatted label. If the bug is not available yet, just return "Loading".
+ */
 BzDeck.views.DetailsPage.prototype.get_tab_title = function (bug) {
   return `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
 };
 
+/**
+ * Set up the Back and Forward navigation when applicable, including the toolbar buttons and keyboard shortcuts.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
   let Button = this.widgets.Button,
       $toolbar = this.$bug.querySelector('header [role="toolbar"]'),
@@ -93,6 +116,12 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
   BzDeck.views.banner.add_back_button(this.$bug);
 };
 
+/**
+ * Switch to another bug within the same tab through the Back and Forward navigation.
+ *
+ * @argument {Number} new_id - ID of the bug to show next.
+ * @return {undefined}
+ */
 BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
   let old_id = this.bug_id,
       old_path = `/bug/${old_id}`,

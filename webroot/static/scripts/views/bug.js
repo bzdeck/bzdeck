@@ -2,6 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Bug View that represents the Preview Pane content on the Home page or Advanced Search page. The Bug
+ * Details page uses BugDetailsView instead.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Proxy} bug - Proxified BugModel instance.
+ * @argument {HTMLElement} $bug - Outer element to display the content.
+ * @return {Object} view - New BugView instance.
+ */
 BzDeck.views.Bug = function BugView (view_id, bug, $bug) {
   this.id = view_id;
   this.bug = bug;
@@ -13,6 +25,12 @@ BzDeck.views.Bug = function BugView (view_id, bug, $bug) {
 BzDeck.views.Bug.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Bug.prototype.constructor = BzDeck.views.Bug;
 
+/**
+ * Start rendering the content, activate the widgets and event listeners.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.init = function () {
   this.render();
 
@@ -35,6 +53,12 @@ BzDeck.views.Bug.prototype.init = function () {
   this.on('BugView:FilesSelected', data => this.on_files_selected(data.input));
 };
 
+/**
+ * Set up menu items on the toolbar.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.setup_toolbar = function () {
   let $button = this.$bug.querySelector('[data-command="show-menu"]');
 
@@ -116,6 +140,12 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
   }
 };
 
+/**
+ * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.render = function () {
   this.$bug.dataset.id = this.bug.id;
 
@@ -224,6 +254,12 @@ BzDeck.views.Bug.prototype.render = function () {
   }
 };
 
+/**
+ * Render the bug data on the view.
+ *
+ * @argument {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   // When the comments and history are loaded async, the template can be removed
   // or replaced at the time of call, if other bug is selected by user
@@ -305,6 +341,12 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
   BzDeck.views.statusbar.show('');
 };
 
+/**
+ * Activate the UI widgets such as textboxes and comboboxes.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.activate_widgets = function () {
   this.comboboxes = new WeakMap();
   this.on('BugController:FieldEdited', data => this.on_field_edited(data.name, data.value));
@@ -384,6 +426,15 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   this.update_resolution_ui(this.bug.resolution);
 };
 
+/**
+ * Get product-dependent field values that will be displayed in a combobox.
+ *
+ * @argument {String} field_name - One of the following bug field names: product, component, version, target_milestone
+ *  and status.
+ * @argument {String} [product_name] - The default is the bug's product name, but it could be different when the user
+ *  attempts to change the product.
+ * @return {Array} values - Field values.
+ */
 BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name = this.bug.product) {
   let { field, product } = BzDeck.models.server.data.config,
       { component, version_detail, target_milestone_detail } = product[product_name];
@@ -399,6 +450,12 @@ BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name
   return values[field_name] || field[field_name].values;
 };
 
+/**
+ * Update the Resolution field UI when the Status is changed.
+ *
+ * @argument {String} resolution - FIXED, DUPLICATE, etc.
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
   let is_open = resolution === '',
       is_dupe = resolution === 'DUPLICATE',
@@ -420,6 +477,13 @@ BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
   }
 };
 
+/**
+ * Called whenever any field is edited by the user. Update the relevante widget accordingly.
+ *
+ * @argument {String} name - Field name.
+ * @argument {String} value - Field value.
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
   if (name === 'product') {
     let product_name = value;
@@ -472,6 +536,12 @@ BzDeck.views.Bug.prototype.on_files_selected = function (input) {
   }
 };
 
+/**
+ * Set a tooltip on each product name that shows the Bugzilla-defined description of that product.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
   let config = BzDeck.models.server.data.config,
       strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
@@ -502,6 +572,12 @@ BzDeck.views.Bug.prototype.set_product_tooltips = function () {
   }
 };
 
+/**
+ * Set a tooptip on each bug ID that shows the summary and status of that bug.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   let related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
                                 .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
@@ -544,6 +620,14 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   }
 };
 
+/**
+ * Called whenever any bug field is updated on the remote Bugzilla instance. This may be called as part of the periodic
+ * fetches or Bugzfeed push notifications.
+ *
+ * @argument {Proxy} bug - Updated BugModel instance.
+ * @argument {Map.<String, Object>} changes - Change details.
+ * @return {undefined}
+ */
 BzDeck.views.Bug.prototype.update = function (bug, changes) {
   this.bug = bug;
 

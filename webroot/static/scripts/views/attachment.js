@@ -3,13 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Attachment View.
+ * Initialize the Attachment View that represents an attachment displayed in the Bug Details page or Attachment page.
  *
  * @constructor
  * @extends BaseView
  * @argument {Proxy} attachment - AttachmentModel instance.
  * @argument {HTMLElement} $placeholder - Node to show the attachment.
  * @return {Object} view - New AttachmentView instance.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
  */
 BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
   let att = this.attachment = attachment,
@@ -46,7 +47,7 @@ BzDeck.views.Attachment.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Attachment.prototype.constructor = BzDeck.views.Attachment;
 
 /**
- * Activate the editable widgets.
+ * Activate the editable widgets including textboxes and checkboxes.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -85,7 +86,7 @@ BzDeck.views.Attachment.prototype.activate = function () {
 };
 
 /**
- * Render the attachment on the placeholder.
+ * Start rendering the attachment in the placeholder.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -121,7 +122,7 @@ BzDeck.views.Attachment.prototype.render = function () {
 };
 
 /**
- * Render the image, video or audio.
+ * Render an image, video or audio.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -142,7 +143,7 @@ BzDeck.views.Attachment.prototype.render_media = function () {
 };
 
 /**
- * Render the patch with the Patch Viewer.
+ * Render a patch with the Patch Viewer.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -161,7 +162,7 @@ BzDeck.views.Attachment.prototype.render_patch = function () {
 };
 
 /**
- * Render a link to the file.
+ * Render a link to the binary file, GitHub pull request or Review Board request.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -191,7 +192,7 @@ BzDeck.views.Attachment.prototype.render_link = function () {
 };
 
 /**
- * Render an error message when the attachment cannot be retrieved.
+ * Render an error message when the attachment data could not be retrieved from the cache nor Bugzilla.
  *
  * @argument {Error} error - Error object.
  * @return {undefined}

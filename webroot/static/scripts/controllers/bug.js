@@ -235,8 +235,12 @@ BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
  * Called by BugView whenever any flag is edited by the user. Cache the value and notify changes accordingly.
  *
  * @argument {Object} flag - Flag change object.
+ * @argument {Number} flag.id - Bugzilla-defined numeric ID of the flag.
+ * @argument {String} flag.name - Type of the flag, such as 'review' or 'needinfo'.
+ * @argument {String} flag.requestee - Person created the flag.
  * @argument {Boolean} added - Whether the flag is newly added.
  * @return {undefined}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
  */
 BzDeck.controllers.Bug.prototype.edit_flag = function (flag, added) {
   let flags = this.changes.flags = this.changes.flags || [];
@@ -566,8 +570,11 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
 /**
  * Edit a property of an unuploaded or existing attachment.
  *
- * @argument {Object} change - Change detail containing the attachment ID (or hash for unuploaded attachments), changed
- *  property name and value.
+ * @argument {Object} change - Change details.
+ * @argument {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+ * @argument {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
+ * @argument {String} change.prop - Edited property name.
+ * @argument {*}      change.value - New value.
  * @return {Boolean} result - Whether the attachment is successfully edited.
  */
 BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {

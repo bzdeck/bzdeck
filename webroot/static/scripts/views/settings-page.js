@@ -2,7 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views.SettingsPage = function SettingsPageView (tab_id, prefs) {
+/**
+ * Initialize the Settings Page View that represents the Settings tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Map} prefs - User preference Map.
+ * @argument {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
+ * @return {Object} view - New SettingsPageView instance.
+ */
+BzDeck.views.SettingsPage = function SettingsPageView (prefs, tab_id) {
   if (this.helpers.env.device.mobile) {
     document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
     document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
@@ -30,6 +39,16 @@ BzDeck.views.SettingsPage = function SettingsPageView (tab_id, prefs) {
 BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.SettingsPage.prototype.constructor = BzDeck.views.SettingsPage;
 
+/**
+ * Activate each radiogroup on the Settings page.
+ *
+ * @argument {String} name - Preference name.
+ * @argument {Object} _value - Preference value.
+ * @argument {*}      _value.user - User-defined value.
+ * @argument {*}      _value.default - Default value.
+ * @argument {String} _value.type - Type of the value: boolean, integer or string.
+ * @return {undefined}
+ */
 BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value) {
   let $root = document.documentElement,
       $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`),
@@ -52,6 +71,13 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value
   });
 };
 
+/**
+ * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's Bugzilla
+ * account name and API key.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.SettingsPage.prototype.show_qrcode = function () {
   let $outer = document.querySelector('#settings-qrcode-outer');
 

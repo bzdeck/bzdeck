@@ -2,20 +2,41 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Define the Thread View. This constructor is intended to be inherited by each specific thread view.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {undefined}
+ * @return {Object} view - New ThreadView instance.
+ */
 BzDeck.views.Thread = function ThreadView () {};
 
 BzDeck.views.Thread.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Thread.prototype.constructor = BzDeck.views.Thread;
 
+/**
+ * Called whenever one or more items are selected on the thread. Show the last-selected bug in the relevant Preview Pane
+ * or a new tab.
+ *
+ * @argument {CustomEvent} event - Providing an array of seleted item IDs.
+ * @return {undefined}
+ */
 BzDeck.views.Thread.prototype.onselect = function (event) {
   let ids = event.detail.ids;
 
   if (ids.length) {
-    // Show the bug in the preview pane or a new tab
     this.consumer.controller.data.preview_id = Number.parseInt(ids[ids.length - 1]);
   }
 };
 
+/**
+ * Called whenever the thread is double-clicked. Show the selected bug in a new tab.
+ *
+ * @argument {MouseEvent} event - Fired dblclick event.
+ * @argument {String} selector - Defining the target element.
+ * @return {undefined}
+ */
 BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
   let $target = event.originalTarget;
 
@@ -27,7 +48,7 @@ BzDeck.views.Thread.prototype.ondblclick = function (event, selector) {
 /**
  * Open a specific bug in a new tab.
  *
- * @argument {Integer} id - Bug ID.
+ * @argument {Number} id - Bug ID to show.
  * @return {undefined}
  */
 BzDeck.views.Thread.prototype.open_bug = function (id) {
@@ -38,6 +59,17 @@ BzDeck.views.Thread.prototype.open_bug = function (id) {
  * Classic Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
+/**
+ * Initialize the Classic Thread View that represents a traditional tabular thread.
+ *
+ * @constructor
+ * @extends ThreadView
+ * @argument {Object} consumer - View that contains the thread.
+ * @argument {String} name - Identifier for the thread.
+ * @argument {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
+ * @argument {Object} options - Used for the Grid widget.
+ * @return {Object} view - New ClassicThreadView instance.
+ */
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
   let default_cols = BzDeck.config.grid.default_columns,
       columns = BzDeck.prefs.get(`${name}.list.columns`) || default_cols,
@@ -105,6 +137,12 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
 BzDeck.views.ClassicThread.prototype = Object.create(BzDeck.views.Thread.prototype);
 BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 
+/**
+ * Update the thread with the specified bugs.
+ *
+ * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
+ * @return {undefined}
+ */
 BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
@@ -175,6 +213,12 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   }));
 };
 
+/**
+ * Filter the thread with the specified bugs.
+ *
+ * @argument {Map.<Number, Proxy>} bugs - List of bugs to show.
+ * @return {undefined}
+ */
 BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
   this.$$grid.filter([...bugs.keys()]);
 };
@@ -183,6 +227,18 @@ BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
  * Vertical Thread
  * ------------------------------------------------------------------------------------------------------------------ */
 
+/**
+ * Initialize the Vertical Thread View that represents a modern linear thread.
+ *
+ * @constructor
+ * @extends ThreadView
+ * @argument {Object} consumer - View that contains the thread.
+ * @argument {String} name - Identifier for the thread.
+ * @argument {HTMLElement} $outer - Element that contains a child element with the listbox role.
+ * @argument {Object} options - Extra options for display.
+ * @argument {Object} options.sort_conditions - Thread sorting conditions.
+ * @return {Object} view - New VerticalThreadView instance.
+ */
 BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $outer, options) {
   let mobile = this.helpers.env.device.mobile;
 
@@ -281,6 +337,12 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
 BzDeck.views.VerticalThread.prototype = Object.create(BzDeck.views.Thread.prototype);
 BzDeck.views.VerticalThread.prototype.constructor = BzDeck.views.VerticalThread;
 
+/**
+ * Update the thread with the specified bugs.
+ *
+ * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
+ * @return {undefined}
+ */
 BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   let cond = this.options.sort_conditions;
 
@@ -296,6 +358,12 @@ BzDeck.views.VerticalThread.prototype.update = function (bugs) {
   });
 };
 
+/**
+ * Render thread items using a custom template.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.VerticalThread.prototype.render = function () {
   let $fragment = new DocumentFragment();
 

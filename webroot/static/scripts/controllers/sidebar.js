@@ -63,7 +63,7 @@ BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
 /**
  * Open a specific folder by ID.
  *
- * @argument {String} folder_id - One of the folder IDs defined in the app config.
+ * @argument {String} folder_id - One of the folder identifiers defined in the app config.
  * @return {undefined}
  */
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {

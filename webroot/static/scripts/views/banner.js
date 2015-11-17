@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Banner View that represents the global application header, containing the Quick Search bar, global
+ * tabs and application menu.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Proxy} user - UserModel instance of the application user.
+ * @return {Object} view - New BannerView instance.
+ */
 BzDeck.views.Banner = function BannerView (user) {
   let mobile = this.helpers.env.device.mobile,
       $$tablist = this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist')),
@@ -121,6 +130,12 @@ BzDeck.views.Banner = function BannerView (user) {
 BzDeck.views.Banner.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Banner.prototype.constructor = BzDeck.views.Banner;
 
+/**
+ * Set up the Quick Search functionality.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.Banner.prototype.setup_searchbar = function () {
   let $root = document.documentElement, // <html>
       $search_box = document.querySelector('#quicksearch [role="searchbox"]'),
@@ -219,6 +234,12 @@ BzDeck.views.Banner.prototype.setup_searchbar = function () {
   this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
 };
 
+/**
+ * Show Quick Search results on the drow down menu.
+ *
+ * @argument {Array.<Proxy>} results - List of bugs that match the criteria.
+ * @return {undefined}
+ */
 BzDeck.views.Banner.prototype.show_quick_search_results = function (results) {
   let $$dropdown = this.$$search_dropdown;
 
@@ -244,6 +265,20 @@ BzDeck.views.Banner.prototype.show_quick_search_results = function (results) {
   $$dropdown.open();
 };
 
+/**
+ * Open a new global tab and load the relevant tabpanel content. FIXME: Need refactoring (#232).
+ *
+ * @argument {Object} options - Defining tab details.
+ * @argument {String} options.page_category - Category of the tabpanel content, such as 'details' or 'settings'.
+ * @argument {(String|Number)} options.page_id - Unique identifier for the tab. Can be generated with Date.now().
+ * @argument {Object} options.page_constructor - View constructor for the tabpanel content.
+ * @argument {Array} [options.page_constructor_args] - Arguments used to create a new View instance.
+ * @argument {String} options.tab_label - Text displayed on the label
+ * @argument {String} [options.tab_desc] - Optional text displayed as the tooltip of the tab.
+ * @argument {String} [options.tab_position] - Where to show the tab: 'next' or 'last' (default).
+ * @argument {Object} controller - Controller instance that requests the tab.
+ * @return {undefined}
+ */
 BzDeck.views.Banner.prototype.open_tab = function (options, controller) {
   let page,
       page_category = options.page_category,
@@ -286,6 +321,12 @@ BzDeck.views.Banner.prototype.open_tab = function (options, controller) {
   this.tab_path_map.set($tab.id, location.pathname + location.search);
 };
 
+/**
+ * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global banner.
+ *
+ * @argument {HTMLElement} $parent - Tabpanel that contains the header.
+ * @return {undefined}
+ */
 BzDeck.views.Banner.prototype.add_back_button = function ($parent) {
   let $header = $parent.querySelector('header'),
       $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);

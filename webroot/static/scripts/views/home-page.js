@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Home Page View that represents the Home Page tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Object} controller - HomePageController instance.
+ * @return {Object} view - New HomePageView instance.
+ */
 BzDeck.views.HomePage = function HomePageView (controller) {
   let mobile = this.helpers.env.device.mobile,
       $preview_pane = document.querySelector('#home-preview-pane'),
@@ -29,7 +37,6 @@ BzDeck.views.HomePage = function HomePageView (controller) {
     });
   }
 
-  // A movable splitter between the thread pane and preview pane
   this.setup_splitter();
 
   let layout_pref = BzDeck.prefs.get('ui.home.layout'),
@@ -58,6 +65,12 @@ BzDeck.views.HomePage = function HomePageView (controller) {
 BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.HomePage.prototype.constructor = BzDeck.views.HomePage;
 
+/**
+ * Select the Home tab and open the specified Sidebar folder.
+ *
+ * @argument {String} folder_id - One of the folder identifiers defined in the app config.
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
       $tab = document.querySelector('#tab-home'),
@@ -83,6 +96,12 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
   BzDeck.views.global.update_window_title($tab);
 };
 
+/**
+ * Set up the movable splitter widget between the Thread Pane and Preview Pane.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.setup_splitter = function () {
   let $$splitter = this.$$preview_splitter = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
       prefix = 'ui.home.preview.splitter.position.',
@@ -101,6 +120,12 @@ BzDeck.views.HomePage.prototype.setup_splitter = function () {
   });
 };
 
+/**
+ * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
+ *
+ * @argument {Map} bugs - All bugs prepared for the thread.
+ * @return {Map.<Number, Proxy>} bugs - Bugs currently showing.
+ */
 BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
   let mobile = this.helpers.env.device.mobile,
       layout_pref = BzDeck.prefs.get('ui.home.layout'),
@@ -111,6 +136,14 @@ BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
   return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
 };
 
+/**
+ * Show the preview of a selected bug on the Preview Pane.
+ *
+ * @argument {Object} data - Preview data.
+ * @argument {Proxy}  data.bug - Bug to show.
+ * @argument {Object} data.controller - New BugController instance for that bug.
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.show_preview = function (data) {
   let mobile = this.helpers.env.device.mobile,
       $pane = document.querySelector('#home-preview-pane');
@@ -144,6 +177,14 @@ BzDeck.views.HomePage.prototype.show_preview = function (data) {
   $bug.removeAttribute('aria-hidden');
 };
 
+/**
+ * Switch between the Vertical layout and Classic layout.
+ *
+ * @argument {String} pref - User preference for the home page layout.
+ * @argument {Boolean} [sort_grid=false] - Whether the thread should be sorted after switching the layout. Currently,
+ *  the Vertical Thread always sorts bugs by date.
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = false) {
   let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical',
       $$splitter = this.$$preview_splitter;
@@ -173,6 +214,12 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
   }
 };
 
+/**
+ * Apply the Vertical layout to the home page.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
   let mql = window.matchMedia('(max-width: 1023px)'),
       $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
@@ -208,6 +255,12 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
   });
 };
 
+/**
+ * Apply the Classic layout to the home page.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
   let layout_pref = BzDeck.prefs.get('ui.home.layout'),
       vertical = this.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
@@ -246,6 +299,12 @@ BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
   }
 };
 
+/**
+ * Update the document title and tab label.
+ *
+ * @argument {String} title - Title to display.
+ * @return {undefined}
+ */
 BzDeck.views.HomePage.prototype.update_title = function (title) {
   if (!location.pathname.startsWith('/home/')) {
     return;

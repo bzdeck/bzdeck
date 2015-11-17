@@ -2,6 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Person Finder View that represents the finder UI to search a Bugzilla user.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} combobox_id - ID of an element with the combobox role.
+ * @argument {Proxy} [bug] - Specific bug to search against.
+ * @argument {Set.<String>} [exclude] - List of Bugzilla user accounts that should be excluded from search results. For
+ *  example, if the Person Finder is for Cc, the current Cc members should not be displayed on the results.
+ * @return {Object} view - New PersonFinderView instance.
+ */
 BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefined, exclude = new Set()) {
   this.bug = bug;
   this.participants = bug ? bug.participants : new Map();
@@ -20,6 +31,12 @@ BzDeck.views.PersonFinder = function PersonFinderView (combobox_id, bug = undefi
 BzDeck.views.PersonFinder.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.PersonFinder.prototype.constructor = BzDeck.views.PersonFinder;
 
+/**
+ * Called whenever the user is typing on the searchbox. Execute searches based on the terms.
+ *
+ * @argument {InputEvent} event - The input event fired on the searchbox.
+ * @return {undefined}
+ */
 BzDeck.views.PersonFinder.prototype.oninput = function (event) {
   this.value = event.detail.value.toLowerCase();
   this.results.clear();
@@ -41,14 +58,33 @@ BzDeck.views.PersonFinder.prototype.oninput = function (event) {
   }
 };
 
+/**
+ * Start searching from the specified bug.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.PersonFinder.prototype.search_bug = function () {
   this.helpers.event.async(() => this.search(this.participants));
 };
 
+/**
+ * Start searching from the local database.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.PersonFinder.prototype.search_local = function () {
   this.helpers.event.async(() => this.search(BzDeck.collections.users.data));
 };
 
+/**
+ * Start searching from the remote Bugzilla instance using the API.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
+ */
 BzDeck.views.PersonFinder.prototype.search_remote = function () {
   let value = this.value, // Keep this as local a variable for later use
       params = new URLSearchParams();
@@ -79,6 +115,12 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
   }, 1000);
 };
 
+/**
+ * Find matching people from the provided user list, and show the results on the drop down list.
+ *
+ * @argument {Map.<String, Proxy>} users - User list.
+ * @return {undefined}
+ */
 BzDeck.views.PersonFinder.prototype.search = function (users) {
   let has_colon = this.value.startsWith(':'),
       re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i'),
@@ -119,6 +161,12 @@ BzDeck.views.PersonFinder.prototype.search = function (users) {
   this.$$combobox.show_dropdown();
 };
 
+/**
+ * Clear any terms on the searchbox.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.PersonFinder.prototype.clear = function () {
   this.$$combobox.clear_input();
 };

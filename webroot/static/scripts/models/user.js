@@ -104,6 +104,7 @@ BzDeck.models.User.prototype.constructor = BzDeck.models.User;
  * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
  *
  * @argument {Object} [options] - Extra options.
+ * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
  * @return {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
  */
 BzDeck.models.User.prototype.fetch = function (options = {}) {
@@ -138,6 +139,9 @@ BzDeck.models.User.prototype.fetch = function (options = {}) {
  * the refresh option is not specified, just return it.
  *
  * @argument {Object} [options] - Extra options.
+ * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
+ * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
+ * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
  * @return {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
@@ -166,6 +170,8 @@ BzDeck.models.User.prototype.get_bugzilla_profile = function (options = {}) {
  * Get or retrieve the user's Gravatar profile.
  *
  * @argument {Object} [options] - Extra options.
+ * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
+ * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
  * @return {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
  * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
  */
@@ -204,6 +210,7 @@ BzDeck.models.User.prototype.get_gravatar_profile = function (options = {}) {
  * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
  *
  * @argument {Object} [options] - Extra options.
+ * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
  * @return {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
  * @see {@link https://en.gravatar.com/site/implement/images/}
  */

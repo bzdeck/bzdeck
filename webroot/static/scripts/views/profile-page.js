@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Profile Page View that represents the User Profile tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} email - Person's Bugzilla account name.
+ * @argument {Boolean} self - Whether this profile is the app user's own profile.
+ * @return {Object} view - New ProfilePageView instance.
+ */
 BzDeck.views.ProfilePage = function ProfilePageView (email, self) {
   this.id = email;
 

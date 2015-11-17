@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Login Form View.
+ * Initialize the Login Form View that represents the user sign-in UI on the landing page.
  *
  * @constructor
  * @extends BaseView
@@ -55,25 +55,55 @@ BzDeck.views.LoginForm = function LoginFormView (params) {
 BzDeck.views.LoginForm.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.LoginForm.prototype.constructor = BzDeck.views.LoginForm;
 
-BzDeck.views.LoginForm.prototype.show = function (firstrun = true) {
+/**
+ * Display the sign-in form when no active account is found.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.LoginForm.prototype.show = function () {
   this.$form.setAttribute('aria-hidden', 'false');
   this.$bzauth_button.focus();
-
-  return !firstrun;
 };
 
+/**
+ * Hide the sign-in form while loading data.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.LoginForm.prototype.hide = function () {
   this.$form.setAttribute('aria-hidden', 'true');
 };
 
+/**
+ * Hide the introductory paragraph on from the sign-in form.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.LoginForm.prototype.hide_intro = function () {
   document.querySelector('#app-intro').setAttribute('aria-hidden', 'true');
 };
 
+/**
+ * Display a message on the sign-in form.
+ *
+ * @argument {String} message - Message to show.
+ * @return {undefined}
+ */
 BzDeck.views.LoginForm.prototype.show_status = function (message) {
   this.$statusbar.textContent = message;
 };
 
+/**
+ * Display the "Sign in with Bugzilla" button that triggers Bugzilla's Authentication Delegation process. When the
+ * button is clicked, take the user to the Bugzilla authentication page.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html}
+ */
 BzDeck.views.LoginForm.prototype.activate_bugzilla_auth = function () {
   this.$bzauth_button = this.$form.querySelector('[data-id="bugzilla-auth"]');
 
@@ -86,10 +116,8 @@ BzDeck.views.LoginForm.prototype.activate_bugzilla_auth = function () {
 
     this.trigger(':LoginRequested', { host: this.host })
 
-    // Take the user to the Bugzilla authentication page. window.open doesn't work on the Android WebAppRT (Bug 1183897)
-    // so open the auth (and later callback) page in the current window (#293). Otherwise, the auth flow should be done
-    // in a sub window.
-    // http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html
+    // window.open doesn't work on the Android WebAppRT (Bug 1183897) so open the auth (and later callback) page in the
+    // current window (#293). Otherwise, the auth flow should be done in a sub window.
     if (FlareTail.helpers.env.platform.android) {
       location.replace(auth_url);
     } else {
@@ -98,6 +126,14 @@ BzDeck.views.LoginForm.prototype.activate_bugzilla_auth = function () {
   });
 };
 
+/**
+ * Display the "Sign in with QR Code" button on mobile. The user can quickly sign into the app by capturing a QR code
+ * displayed on BzDeck for desktop, that encodes the user's Bugzilla account name and API key. The decoding is done by a
+ * third-party library. This may not work depending on the spec of the device's camera.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.LoginForm.prototype.activate_qrcode_auth = function () {
   this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
   this.$qrauth_button.addEventListener('mousedown', event => {

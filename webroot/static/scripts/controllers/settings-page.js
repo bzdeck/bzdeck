@@ -26,7 +26,7 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
   BzDeck.views.banner.open_tab({
     page_category: 'settings',
     page_constructor: BzDeck.views.SettingsPage,
-    page_constructor_args: [tab_id, prefs],
+    page_constructor_args: [prefs, tab_id],
     tab_label: 'Settings',
   }, this);
 

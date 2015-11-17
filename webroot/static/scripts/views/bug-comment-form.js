@@ -3,13 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Bug Comment Form View. This view has a comment form and quick edit UI.
+ * Initialize the Bug Comment Form View that represents a comment form and quick edit UI under/above the bug timeline.
  *
  * @constructor
  * @extends BaseView
- * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
- *  notification events won't work.
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
  * @argument {Object} bug - BugModel instance.
+ * @argument {HTMLElement} $bug - Bug container element.
  * @return {Object} view - New BugCommentFormView instance.
  */
 BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
@@ -270,9 +271,9 @@ BzDeck.views.BugCommentForm.prototype.oninput = function () {
 };
 
 /**
- * Called by BugController whenever a new attachment is added by the user.
+ * Called by BugController whenever a new attachment is added by the user. Update the attachment list UI accordingly.
  *
- * @argument {Proxy} attachment - Added attachment data as AttachmentModel instance.
+ * @argument {Proxy} attachment - Added attachment data as an AttachmentModel instance.
  * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment) {
@@ -312,9 +313,9 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_added = function (attachment
 };
 
 /**
- * Called by BugController whenever a new attachment is removed by the user.
+ * Called by BugController whenever a new attachment is removed by the user. Update the attachment list UI accordingly.
  *
- * @argument {Integer} index - Removed attachment's index in the cached list.
+ * @argument {Number} index - Removed attachment's index in the cached list.
  * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
@@ -322,10 +323,12 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_removed = function (index) {
 };
 
 /**
- * Called by BugController whenever a new attachment is edited by the user.
+ * Called by BugController whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
  *
- * @argument {Object} change - Change detail containing the attachment id (or hash for unuploaded attachments), changed
- *  property name and value.
+ * @argument {Object} change - Change details.
+ * @argument {String} change.hash - Attachment hash for unuploaded attachment.
+ * @argument {String} change.prop - Changed property name.
+ * @argument {*}      change.value - New property value.
  * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
@@ -337,7 +340,8 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_edited = function (change) {
 };
 
 /**
- * Called by BugController whenever a new attachment is added or removed by the user.
+ * Called by BugController whenever a new attachment is added or removed by the user. If there is any unuploaded
+ * attachment, select the Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
  *
  * @argument {Array.<Proxy>} uploads - List of the new attachments in Array-like Object.
  * @return {undefined}
@@ -363,7 +367,8 @@ BzDeck.views.BugCommentForm.prototype.on_attachment_error = function (message) {
 };
 
 /**
- * Called by BugController whenever the new commend is added or removed by the user.
+ * Called by BugController whenever the a comment text is added or removed by the user. If the comment form is empty,
+ * disable the Preview tab.
  *
  * @argument {Boolean} has_comment - Whether the comment is empty.
  * @return {undefined}
@@ -373,7 +378,8 @@ BzDeck.views.BugCommentForm.prototype.on_comment_edited = function (has_comment)
 };
 
 /**
- * Called by BugController whenever any of the fields, comments or attachments are edited by the user.
+ * Called by BugController whenever any of the fields, comments or attachments are edited by the user. If there is
+ * any change, enable the Submit button. Otherwise, disable it.
  *
  * @argument {Boolean} can_submit - Whether the changes can be submitted immediately.
  * @return {undefined}
@@ -383,7 +389,8 @@ BzDeck.views.BugCommentForm.prototype.on_bug_edited = function (can_submit) {
 };
 
 /**
- * Called by BugController whenever the changes are about to be submitted to Bugzilla.
+ * Called by BugController whenever the changes are about to be submitted to Bugzilla. Disable the comment form and
+ * Submit button and update the statusbar message.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -395,13 +402,16 @@ BzDeck.views.BugCommentForm.prototype.on_submit = function () {
 };
 
 /**
- * Called by BugController whenever the upload of a new attachment is in progress.
+ * Called by BugController whenever the upload of a new attachment is in progress. Show the current status on the
+ * statusbar. TODO: Use a progressbar (#159)
  *
- * @argument {object} data - Includes the uploaded size, total size and percentage.
+ * @argument {object} data - Current uploading status.
+ * @argument {Number} data.total - Total size of attachments.
+ * @argument {Number} data.uploaded - Uploaded size of attachments.
+ * @argument {Number} data.percentage - Uploaded percentage.
  * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_progress = function (data) {
-  // TODO: Use a progressbar (#159)
   this.$status.textContent = `${data.percentage}% uploaded`;
 };
 
@@ -417,9 +427,12 @@ BzDeck.views.BugCommentForm.prototype.on_submit_success = function () {
 };
 
 /**
- * Called by BugController whenever any error is detected while submitting the changes.
+ * Called by BugController whenever any error is detected while submitting the changes. Show the error message on the
+ * statusbar.
  *
- * @argument {object} data - Includes the errors and whether the submit button should be disabled.
+ * @argument {object} data - Error details.
+ * @argument {String} data.error - Error message.
+ * @argument {Boolean} data.button_disabled - Whether the submit button should be disabled.
  * @return {undefined}
  */
 BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
@@ -428,7 +441,7 @@ BzDeck.views.BugCommentForm.prototype.on_submit_error = function (data) {
 };
 
 /**
- * Called by BugController once a submission is complete, regardless of errors.
+ * Called by BugController once a submission is complete, regardless of errors. Enable and focus on the comment form.
  *
  * @argument {undefined}
  * @return {undefined}

@@ -2,9 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// TODO: support non-unified formats
-// TODO: implement syntax highlight
-
+/**
+ * Initialize the Patch Viewer View. Render a patch file in HTML format so added and removed lines can be highlighted
+ * with CSS. TODO: Support non-unified formats. Implement syntax highlight (#279).
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} str - Raw patch content.
+ * @return {DocumentFragment} $fragment - formatted HTML fragment
+ */
 BzDeck.views.PatchViewer = function PatchViewerView (str) {
   let $fragment = new DocumentFragment();
 

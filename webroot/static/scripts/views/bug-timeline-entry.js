@@ -2,6 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Bug Timeline Entry View that represents each entry on the Bug Timeline: such as a comment,
+ * comment+attachment, comment+attachment+change(s) or only change(s).
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Proxy} bug - Proxified BugModel instance.
+ * @argument {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if any.
+ * @return {DocumentFragment} $fragment - Generated entry node in a fragment.
+ */
 BzDeck.views.BugTimelineEntry = function BugTimelineEntryView (view_id, bug, data) {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = data.get('comment'),
@@ -43,6 +55,12 @@ BzDeck.views.BugTimelineEntry = function BugTimelineEntryView (view_id, bug, dat
 BzDeck.views.BugTimelineEntry.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugTimelineEntry.prototype.constructor = BzDeck.views.BugTimelineEntry;
 
+/**
+ * Create a comment entry that contains the author name/image, timestamp, comment body and Reply button.
+ *
+ * @argument {undefined}
+ * @return {HTMLElement} $entry - Generated entry node.
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
   let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       comment = this.data.get('comment'),
@@ -180,6 +198,12 @@ BzDeck.views.BugTimelineEntry.prototype.create_comment_entry = function () {
   return $entry;
 };
 
+/**
+ * Create an Attachment box that will be added to the entry node.
+ *
+ * @argument {undefined}
+ * @return {HTMLElement} $attachment - Rendered attachment item.
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
   let attachment = BzDeck.collections.attachments.get(this.data.get('attachment').id),
       media_type = attachment.content_type.split('/')[0],
@@ -237,6 +261,12 @@ BzDeck.views.BugTimelineEntry.prototype.create_attachment_box = function () {
   return $attachment;
 };
 
+/**
+ * Create history entries that show any changes to the bug.
+ *
+ * @argument {undefined}
+ * @return {DocumentFragment} $fragment - Generated entries in a fragment.
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
   let comment = this.data.get('comment'),
       history = this.data.get('history'),
@@ -255,6 +285,16 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entries = function () {
   return $fragment;
 };
 
+/**
+ * Create a history entry that shows a change to the bug.
+ *
+ * @argument {String} changer_name - Account name of the person who made the change.
+ * @argument {String} time - Timestamp of the change.
+ * @argument {Object} change - Change details.
+ * @argument {undefined} [comment] - Comment posted at the same time as the change, if any.
+ * @return {HTMLElement} $change - Rendered change item.
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history}
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer_name, time, change, comment) {
   let $change = this.get_template('timeline-change'),
       $changer = $change.querySelector('[itemprop="author"]'),
@@ -494,6 +534,12 @@ BzDeck.views.BugTimelineEntry.prototype.create_history_entry = function (changer
   return $change;
 };
 
+/**
+ * Render one or more users in a pretty way, showing the avatar and real name and joining with a comma and "and".
+ *
+ * @argument {Set.<String>} set - List of user account names.
+ * @return {String} str - Rendered HTML string.
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_people_array = function (set) {
   let array = [...set].map(name => {
     let person = BzDeck.collections.users.get(name, { name }),
@@ -511,6 +557,13 @@ BzDeck.views.BugTimelineEntry.prototype.create_people_array = function (set) {
   return array.length ? array.join(', ') + ' and ' + last : last; // l10n
 };
 
+/**
+ * Render a history change in a pretty way, converting Bug IDs to in-app links.
+ *
+ * @argument {Object} change - Change details.
+ * @argument {String} how - How the change was made: 'added' or 'removed'.
+ * @return {HTMLElement} $elm - Rendered element.
+ */
 BzDeck.views.BugTimelineEntry.prototype.create_history_change_element = function (change, how) {
   let $elm = document.createElement('span'),
       ids;

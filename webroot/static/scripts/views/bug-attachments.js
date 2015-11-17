@@ -3,13 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Bug Attachments View.
+ * Initialize the Bug Attachments View that represents the Attachment tabpanel content within a Bug Details tabpanel.
  *
  * @constructor
  * @extends BaseView
- * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
- *  notification events won't work.
- * @argument {Integer} bug_id - Corresponding bug ID.
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Number} bug_id - Corresponding bug ID.
  * @argument {HTMLElement} $container - Container node to render the attachments.
  * @return {Object} view - New BugAttachmentsView instance.
  */
@@ -76,7 +76,7 @@ BzDeck.views.BugAttachments.prototype.constructor = BzDeck.views.BugAttachments;
 /**
  * Render the provided attachments.
  *
- * @argument {Array.<Proxy>} attachments - Attachment list.
+ * @argument {Array.<Proxy>} attachments - Attachment list of the bug.
  * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.render = function (attachments) {
@@ -130,7 +130,7 @@ BzDeck.views.BugAttachments.prototype.listbox_onclick = function (event) {
 };
 
 /**
- * Initialize the attachment uploading interface.
+ * Initialize the attachment uploading interface. This offers Add/Remove buttons as well as the drag-and-drop support.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -205,7 +205,7 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
 };
 
 /**
- * Called by BugController whenever a new attachment is added by the user.
+ * Called by BugController whenever a new attachment is added by the user. Add the item to the listbox.
  *
  * @argument {Proxy} attachment - Added attachment data as AttachmentModel instance.
  * @return {undefined}
@@ -216,7 +216,7 @@ BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment
 };
 
 /**
- * Called by BugController whenever a new attachment is removed by the user.
+ * Called by BugController whenever a new attachment is removed by the user. Remove the item from the listbox.
  *
  * @argument {String} hash - Removed attachment's hash value in the cached list.
  * @return {undefined}
@@ -229,10 +229,13 @@ BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
 };
 
 /**
- * Called by BugController whenever a new attachment is edited by the user.
+ * Called by BugController whenever a new attachment is edited by the user. Update the item on the listbox.
  *
- * @argument {Object} change - Change detail containing the attachment id (or hash for unuploaded attachments), changed
- *  property name and value.
+ * @argument {Object} change - Change details.
+ * @argument {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+ * @argument {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
+ * @argument {String} change.prop - Edited property name.
+ * @argument {*}      change.value - New value.
  * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
@@ -249,7 +252,7 @@ BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
 };
 
 /**
- * Called by BugController whenever a new attachment is added or removed by the user.
+ * Called by BugController whenever a new attachment is added or removed by the user. Update the list header title.
  *
  * @argument {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
  * @return {undefined}
@@ -259,7 +262,7 @@ BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads
 };
 
 /**
- * Update the list header title, showing the number of the attachments.
+ * Update the list header title, showing the number of the attachments including unuploaded ones.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -277,9 +280,11 @@ BzDeck.views.BugAttachments.prototype.update_list_title = function () {
 };
 
 /**
- * Called whenever the navigation history state is updated.
+ * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
+ * the listbox.
  *
- * @argument {Object} state - Current history state.
+ * @argument {Object} [state] - Current history state.
+ * @argument {String} [state.att_id] - Attachment ID or hash.
  * @return {undefined}
  */
 BzDeck.views.BugAttachments.prototype.on_history_updated = function (state) {

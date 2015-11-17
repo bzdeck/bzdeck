@@ -7,7 +7,7 @@
  *
  * @constructor
  * @extends BaseController
- * @argument {String} folder_id - Folder identifier defined in the app config.
+ * @argument {String} folder_id - One of the folder identifiers defined in the app config.
  * @return {Object} controller - New HomePageController instance.
  */
 BzDeck.controllers.HomePage = function HomePageController (folder_id) {

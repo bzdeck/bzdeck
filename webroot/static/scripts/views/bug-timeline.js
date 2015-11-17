@@ -2,6 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Bug Timeline View that represents ...
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Proxy} bug - Proxified BugModel instance.
+ * @argument {HTMLElement} $bug - Outer element to display the content.
+ * @argument {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
+ * @return {Object} view - New BugTimelineView instance.
+ */
 BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed) {
   this.id = view_id;
   this.bug = bug;
@@ -124,6 +136,12 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
 BzDeck.views.BugTimeline.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugTimeline.prototype.constructor = BzDeck.views.BugTimeline;
 
+/**
+ * Expand all comments on the timeline.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.BugTimeline.prototype.expand_comments = function () {
   if (this.$expander) {
     this.$expander.dispatchEvent(new CustomEvent(this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
@@ -134,6 +152,12 @@ BzDeck.views.BugTimeline.prototype.expand_comments = function () {
   }
 };
 
+/**
+ * Collapse all comments on the timeline.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.BugTimeline.prototype.collapse_comments = function () {
   for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
     $comment.setAttribute('aria-expanded', 'false')

@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Sidebar View that represents the global application sidebar.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {undefined}
+ * @return {Object} view - New SidebarView instance.
+ */
 BzDeck.views.Sidebar = function SidebarView () {
   let mobile = this.helpers.env.device.mobile,
       $root = document.documentElement, // <html>
@@ -31,6 +39,13 @@ BzDeck.views.Sidebar = function SidebarView () {
 BzDeck.views.Sidebar.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Sidebar.prototype.constructor = BzDeck.views.Sidebar;
 
+/**
+ * Open a specified folder by updating the document title and rendering the home page thread.
+ *
+ * @argument {String} folder_id - One of the folder identifiers defined in the app config.
+ * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
+ * @return {undefined}
+ */
 BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
   let home = BzDeck.views.pages.home,
       toolbar = BzDeck.views.banner,
@@ -49,6 +64,12 @@ BzDeck.views.Sidebar.prototype.open_folder = function (folder_id, bugs) {
   }
 };
 
+/**
+ * Show the number of unread bugs on the Inbox option.
+ *
+ * @argument {Number} num - Number of unread bugs.
+ * @return {undefined}
+ */
 BzDeck.views.Sidebar.prototype.toggle_unread = function (num) {
   let $label = document.querySelector('#sidebar-folders--inbox label'),
       $num = $label.querySelector('span');

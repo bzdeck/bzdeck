@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Bug Flags View.
+ * Initialize the Bug Flags View that represents a bug flag widget on each Bug Details page.
  *
  * @constructor
  * @extends BaseView
@@ -20,10 +20,10 @@ BzDeck.views.BugFlags.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugFlags.prototype.constructor = BzDeck.views.BugFlags;
 
 /**
- * Render the Flags section on the bug info pane or attachment view.
+ * Render the Flags section on the bug info pane or attachment view. This feature is still a work in progress.
  *
  * @argument {HTMLElement} $outer - Container element to render.
- * @argument {Integer} level - aria-level for the label.
+ * @argument {Number} level - aria-level for the label.
  * @return {undefined}
  */
 BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {

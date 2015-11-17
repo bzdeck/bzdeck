@@ -2,6 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Bug Details View that represents the content displayed on the Bug Details page.
+ *
+ * @constructor
+ * @extends BugView
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Proxy} bug - Proxified BugModel instance.
+ * @argument {HTMLElement} $bug - Outer element to display the content.
+ * @return {Object} view - New BugDetailsView instance.
+ */
 BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
   let mql = window.matchMedia('(max-width: 1023px)');
 
@@ -49,6 +60,12 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
 BzDeck.views.BugDetails.prototype = Object.create(BzDeck.views.Bug.prototype);
 BzDeck.views.BugDetails.prototype.constructor = BzDeck.views.BugDetails;
 
+/**
+ * Change the page layout by moving some elements, depending on the viewport.
+ *
+ * @argument {MediaQueryList} mql - Detecting the current viewport.
+ * @return {undefined}
+ */
 BzDeck.views.BugDetails.prototype.change_layout = function (mql) {
   let $info_tab = this.$bug.querySelector('[id$="-tab-info"]'),
       $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]'),
@@ -74,10 +91,15 @@ BzDeck.views.BugDetails.prototype.change_layout = function (mql) {
   }
 };
 
+/**
+ * Add a UI gimmic for mobile that hides the tabs when scrolled down.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.BugDetails.prototype.add_mobile_tweaks = function () {
   let mql = window.matchMedia('(max-width: 1023px)');
 
-  // Hide tabs when scrolled down on mobile
   for (let $content of this.$bug.querySelectorAll('.scrollable-area-content')) {
     let info = $content.parentElement.matches('.bug-info'),
         top = 0,
@@ -150,7 +172,13 @@ BzDeck.views.BugDetails.prototype.render_tracking_flags = function () {
   $outer.appendChild($fragment);
 };
 
-BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
+/**
+ * Render the Attachments tabpanel content with BugAttachmentsView.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.BugDetails.prototype.render_attachments = function () {
   let mobile = this.helpers.env.device.mobile,
       mql = window.matchMedia('(max-width: 1023px)'),
       $field = this.$bug.querySelector('[data-field="attachments"]');
@@ -176,7 +204,13 @@ BzDeck.views.BugDetails.prototype.render_attachments = function (attachments) {
   });
 };
 
-BzDeck.views.BugDetails.prototype.render_history = function (history) {
+/**
+ * Render the History tabpanel content with BugHistoryView.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.BugDetails.prototype.render_history = function () {
   let $tab = this.$tablist.querySelector('[id$="-tab-history"]');
 
   this.$$history = new BzDeck.views.BugHistory(this.id, this.$bug.querySelector('[data-field="history"]'));

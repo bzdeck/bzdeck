@@ -3,15 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the BugParticipantListView that represents the editable participant list on each bug details page, like
+ * Initialize the BugParticipantListView that represents an editable participant list on each Bug Details page, like
  * Assignee, Mentors or Cc.
  *
  * @constructor
  * @extends BaseView
- * @argument {String} view_id - Instance ID. It should be the same as the BugController instance, otherwise the related
- *  notification events won't work.
- * @argument {Object} bug - BugModel instance.
- * @return {HTMLElement} $section - Outer <section> element of the field.
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {Proxy} bug - BugModel instance.
+ * @argument {HTMLElement} $section - Outer <section> element of the field.
+ * @return {Object} view - New BugParticipantListView instance.
  */
 BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug, $section) {
   this.id = view_id;
@@ -46,7 +47,7 @@ BzDeck.views.BugParticipantList.prototype = Object.create(BzDeck.views.Base.prot
 BzDeck.views.BugParticipantList.prototype.constructor = BzDeck.views.BugParticipantList;
 
 /**
- * Remove an empty person node on the list. This should be handled by the template engine.
+ * Remove an empty person node on the list. FIXME: This should be handled by the template engine.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -60,7 +61,7 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 };
 
 /**
- * Called by BugView whenever the participant list's edit mode is changed.
+ * Called by BugView whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
  *
  * @argument {Boolean} enabled - Whether the edit mode is enabled.
  * @return {undefined}

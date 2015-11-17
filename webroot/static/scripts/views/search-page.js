@@ -2,6 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Settings Page View that represents the Advanced Search tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+ * @argument {URLSearchParams} params - Search query.
+ * @argument {Object} config - Bugzilla server configuration that contains products, components and more.
+ * @return {Object} view - New SearchPageView instance.
+ */
 BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
   this.id = id;
   this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
@@ -59,6 +69,13 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
 BzDeck.views.SearchPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.SearchPage.prototype.constructor = BzDeck.views.SearchPage;
 
+/**
+ * Set up the Basic Seach Pane that contains options for classification, product, component, status and resolution, as
+ * well as search term textbox.
+ *
+ * @argument {Object} config - Bugzilla server configuration that contains products, components and more.
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
 
@@ -166,6 +183,12 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
   });
 };
 
+/**
+ * Set up the Result Pane that shows search results in a classic thread.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
       mobile = this.helpers.env.device.mobile;
@@ -196,11 +219,25 @@ BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   });
 };
 
+/**
+ * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the controller.
+ *
+ * @argument {Map} bugs - All bugs prepared for the thread.
+ * @return {Array.<Number>} ids - IDs of bugs currently showing.
+ */
 BzDeck.views.SearchPage.prototype.get_shown_bugs = function (bugs) {
   return [...this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])')]
                                 .map($row => bugs.get(Number($row.dataset.id)));
 };
 
+/**
+ * Show the preview of a selected bug on the Preview Pane.
+ *
+ * @argument {Object} data - Preview data.
+ * @argument {Proxy}  data.bug - Bug to show.
+ * @argument {Object} data.controller - New BugController instance for that bug.
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.show_preview = function (data) {
   let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
 
@@ -236,17 +273,35 @@ BzDeck.views.SearchPage.prototype.show_preview = function (data) {
   }
 };
 
+/**
+ * Hide the Preview Pane and show the Basic Seach Pane instead.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.show_basic_search_pane = function () {
   this.panes['basic-search'].setAttribute('aria-hidden', 'false');
   this.panes['preview'].setAttribute('aria-hidden', 'true');
 };
 
+/**
+ * Display a message on the statusbar.
+ *
+ * @argument {String} str - Message to show.
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.show_status = function (str) {
   this.$status.firstElementChild.textContent = str;
   this.$status.setAttribute('aria-hidden', str === '');
   this.$grid.setAttribute('aria-hidden', str !== '');
 };
 
+/**
+ * Remove any message from the statusbar.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
 BzDeck.views.SearchPage.prototype.hide_status = function () {
   this.show_status('');
 };

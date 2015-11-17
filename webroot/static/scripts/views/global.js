@@ -2,6 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Global View that provides some utility functions for views.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {undefined}
+ * @return {Object} view - New GlobalView instance.
+ */
 BzDeck.views.Global = function GlobalView () {
   let datetime = this.helpers.datetime,
       value,
@@ -81,6 +89,14 @@ BzDeck.views.Global = function GlobalView () {
 BzDeck.views.Global.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Global.prototype.constructor = BzDeck.views.Global;
 
+/**
+ * Update the document title and statusbar message when the number of unread bugs is changed.
+ *
+ * @argument {Array.<Proxy>} bugs - All unread bugs in the database.
+ * @argument {Boolean} loaded - Whether bug data is loaded at startup.
+ * @argument {Number} unread_num - Number of unread bugs currently displayed on the home page.
+ * @return {undefined}
+ */
 BzDeck.views.Global.prototype.toggle_unread = function (bugs, loaded, unread_num) {
   if (document.documentElement.getAttribute('data-current-tab') === 'home') {
     BzDeck.views.pages.home.update_title(document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : ''));
@@ -103,6 +119,12 @@ BzDeck.views.Global.prototype.toggle_unread = function (bugs, loaded, unread_num
   BzDeck.views.statusbar.show(status);
 };
 
+/**
+ * Update the document title based on the specified tab.
+ *
+ * @argument {HTMLElement} $tab - Tab to retrieve the label.
+ * @return {undefined}
+ */
 BzDeck.views.Global.prototype.update_window_title = function ($tab) {
   if ($tab.id === 'tab-home') {
     BzDeck.views.pages.home.update_title($tab.title);
@@ -111,14 +133,26 @@ BzDeck.views.Global.prototype.update_window_title = function ($tab) {
   }
 };
 
+/**
+ * Called whenever the history state is updated. Hide the Sidebar on mobile.
+ *
+ * @argument {PopStateEvent} event - The popstate event.
+ * @return {undefined}
+ */
 BzDeck.views.Global.prototype.onpopstate = function (event) {
-  // Hide sidebar
   if (this.helpers.env.device.mobile) {
     document.documentElement.setAttribute('data-sidebar-hidden', 'true');
     document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
   }
 };
 
+/**
+ * Called whenever any item is clicked or tapped on the page. If the target element is a button or link, open the
+ * relevant content in a new in-app tab or browser tab.
+ *
+ * @argument {MouseEvent} event - The click event.
+ * @return {Boolean} default - Whether the event should lead to the default action.
+ */
 BzDeck.views.Global.prototype.onclick = function (event) {
   let $target = event.target,
       $parent = $target.parentElement;
@@ -178,11 +212,17 @@ BzDeck.views.Global.prototype.onclick = function (event) {
   return true;
 };
 
+/**
+ * Called whenever any key is pressed on desktop. Prevent the browser's built-in keyboard shortcuts being triggered,
+ * like Ctrl+F to find in page or Ctrl+S to save the page.
+ *
+ * @argument {KeyboardEvent} event - The keydown event.
+ * @return {undefined}
+ */
 BzDeck.views.Global.prototype.onkeydown = function (event) {
   let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
       tab = event.key === 'Tab';
 
-  // Stop showing the Search Bar in Firefox
   if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
     event.preventDefault();
   }

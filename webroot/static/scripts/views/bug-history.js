@@ -2,6 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Bug History View that represents the History tabpanel content in the Bug Details page.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+ *  relevant notification events won't work.
+ * @argument {HTMLElement} $container - Outer element to display the content.
+ * @return {Object} view - New BugHistoryView instance.
+ */
 BzDeck.views.BugHistory = function BugHistoryView (view_id, $container) {
   this.id = view_id;
   this.history = [];
@@ -16,6 +26,12 @@ BzDeck.views.BugHistory = function BugHistoryView (view_id, $container) {
 BzDeck.views.BugHistory.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugHistory.prototype.constructor = BzDeck.views.BugHistory;
 
+/**
+ * Render the history on the view.
+ *
+ * @argument {Array} history - Bug's history property.
+ * @return {undefined}
+ */
 BzDeck.views.BugHistory.prototype.render = function (history) {
   let conf_field = BzDeck.models.server.data.config.field,
       $row = this.get_template('details-change');
@@ -63,6 +79,13 @@ BzDeck.views.BugHistory.prototype.render = function (history) {
   }
 };
 
+/**
+ * Generate the content for a table cell. Bug ID will be converted to a link.
+ *
+ * @argument {String} field - Changed bug field name, like 'summary' or 'blocks'.
+ * @argument {String} content - Old or new value for the field.
+ * @return {undefined}
+ */
 BzDeck.views.BugHistory.prototype.get_cell_content = function (field, content) {
   if (['blocks', 'depends_on'].includes(field)) {
     return content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');

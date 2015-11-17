@@ -2,6 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * Initialize the Attachment Page View that represents the Bug Attachment Page tabpanel content.
+ *
+ * @constructor
+ * @extends BaseView
+ * @argument {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
+ * @argument {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+ * @return {Object} view - New AttachmentPageView instance.
+ */
 BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, att_id) {
   this.id = page_id;
   this.att_id = att_id;

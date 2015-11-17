@@ -22,8 +22,14 @@ BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
  *
  * @argument {String} path - Location including an API method.
  * @argument {URLSearchParams} params - Search query.
- * @argument {Object} [options] - Request method (default: GET), post data, API key, whether authenticating, download
- *  and upload event listeners.
+ * @argument {Object} [options] - Extra options.
+ * @argument {String} [options.method='GET'] - Request method.
+ * @argument {Object} [options.data] - Post data.
+ * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
+ * @argument {Boolean} [options.auth] - Whether the request requires an authentication.
+ * @argument {Object} [options.listeners] - Download event listeners. The object key is an event type like 'progress',
+ *  the value is an event handler function.
+ * @argument {Object} [options.upload_listeners] - Upload event listeners.
  * @return {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
  */
@@ -79,8 +85,8 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
 
 /**
  * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
- * converted to internal links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support
- * (#68) and improve the performance probably using a worker.
+ * converted to in-app links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support (#68)
+ * and improve the performance probably using a worker.
  *
  * @argument {String} str - Bug comment in plain text, as provided by Bugzilla.
  * @return {String} str - HTML-formatted comment.
