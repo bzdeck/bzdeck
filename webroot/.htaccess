@@ -70,9 +70,6 @@ Header always append Content-Security-Policy "\
   media-src mediastream:\
     https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
     https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org;\
-  frame-src 'self'\
-    https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
-    https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org;\
   connect-src\
     https://bugzilla.mozilla.org wss://bugzfeed.mozilla.org\
     https://bugzilla-dev.allizom.org wss://bugzfeed.herokuapp.com"
