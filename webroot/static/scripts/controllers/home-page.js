@@ -78,10 +78,10 @@ BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
  * @return {undefined}
  */
 BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
-  if (!newval) {
+  if (!id) {
     this.trigger(':BugDataUnavailable');
   } else {
-    let bug = BzDeck.collections.bugs.get(newval);
+    let bug = BzDeck.collections.bugs.get(id);
 
     if (bug) {
       bug.unread = false;

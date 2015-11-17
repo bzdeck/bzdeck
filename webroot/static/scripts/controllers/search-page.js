@@ -88,10 +88,10 @@ BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchP
  * @return {undefined}
  */
 BzDeck.controllers.SearchPage.prototype.prep_preview = function (id) {
-  if (!newval) {
+  if (!id) {
     this.trigger(':BugDataUnavailable');
   } else {
-    let bug = BzDeck.collections.bugs.get(newval);
+    let bug = BzDeck.collections.bugs.get(id);
 
     if (bug) {
       bug.unread = false;
