@@ -44,22 +44,10 @@ BzDeck.views.HomePage = function HomePageView (controller) {
 
   this.change_layout(layout_pref);
 
-  this.on('SettingsPageView:PrefValueChanged', data => {
-    if (data.name === 'ui.home.layout') {
-      this.change_layout(data.value, true);
-    }
-  }, true);
-
+  this.subscribe('SettingsPageView:PrefValueChanged', true);
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
   this.on('C:BugDataAvailable', data => this.show_preview(data));
-
-  // Refresh the thread when bugs are updated
-  // TODO: add/remove/update each bug when required, instead of refreshing the entire thread unconditionally
-  this.on('SubscriptionCollection:Updated', data => {
-    if (BzDeck.controllers.sidebar) {
-      BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
-    }
-  }, true);
+  this.on('SubscriptionCollection:Updated', data => this.on_subscriptions_updated(), true);
 };
 
 BzDeck.views.HomePage.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -313,4 +301,33 @@ BzDeck.views.HomePage.prototype.update_title = function (title) {
   document.title = document.querySelector('#tab-home').title = title;
   document.querySelector('#tab-home label').textContent =
       document.querySelector('#tabpanel-home h2').textContent = title.replace(/\s\(\d+\)$/, '');
+};
+
+/**
+ * Called by SettingsPageView whenever a preference value is changed by the user. Toggle the layout where necessary.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.name - Preference name.
+ * @argument {*}      data.value - New value.
+ * @return {undefined}
+ */
+BzDeck.views.HomePage.prototype.on_pref_value_changed = function (data) {
+  let { name, value } = data;
+
+  if (name === 'ui.home.layout') {
+    this.change_layout(value, true);
+  }
+};
+
+/**
+ * Called by SubscriptionCollection whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug
+ * when required, instead of refreshing the entire thread unconditionally.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.HomePage.prototype.on_subscriptions_updated = function () {
+  if (BzDeck.controllers.sidebar) {
+    BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
+  }
 };

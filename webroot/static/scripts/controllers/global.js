@@ -11,11 +11,7 @@
  * @return {Object} controller - New GlobalController instance.
  */
 BzDeck.controllers.Global = function GlobalController () {
-  this.on('BugModel:AnnotationUpdated', data => {
-    if (data.type === 'unread') {
-      this.toggle_unread();
-    }
-  }, true);
+  this.subscribe('BugModel:AnnotationUpdated', true);
 
   // Navigation, can be requested by any view
   this.on('V:OpenBug', data => BzDeck.router.navigate(`/bug/${data.id}`, { ids: data.ids, att_id: data.att_id }), true);
@@ -37,6 +33,21 @@ BzDeck.controllers.Global.prototype.timers = new Map();
  */
 BzDeck.controllers.Global.prototype.init = function () {
   this.view = BzDeck.views.global = new BzDeck.views.Global();
+};
+
+/**
+ * Called by BugModel whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+ *
+ * @argument {Object} data - Annotation change details.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+ * @argument {Boolean} data.value - New annotation value.
+ * @return {undefined}
+ */
+BzDeck.controllers.Global.prototype.on_annotation_updated = function (data) {
+  if (data.type === 'unread') {
+    this.toggle_unread();
+  }
 };
 
 /**
@@ -119,4 +130,88 @@ BzDeck.controllers.Global.prototype.register_activity_handler = function () {
       }
     });
   }
+};
+
+/**
+ * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
+ * converted to in-app links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support (#68)
+ * and improve the performance probably using a worker.
+ *
+ * @argument {String} str - Bug comment in plain text, as provided by Bugzilla.
+ * @return {String} str - HTML-formatted comment.
+ */
+BzDeck.controllers.Global.prototype.parse_comment = function (str) {
+  let blockquote = p => {
+    let regex = /^&gt;\s?/gm;
+
+    if (!p.match(regex)) {
+      return p;
+    }
+
+    let lines = p.split(/\n/),
+        quote = [];
+
+    for (let [i, line] of lines.entries()) {
+      if (line.match(regex)) {
+        // A quote start
+        quote.push(line);
+      }
+
+      if ((!line.match(regex) || !lines[i + 1]) && quote.length) {
+        // A quote end, the next line is not a part of the quote, or no more lines
+        let quote_str = quote.join('\n'),
+            quote_repl = quote_str.replace(regex, '');
+
+        if (quote_repl.match(regex)) {
+          // Nested quote(s) found, do recursive processing
+          quote_repl = blockquote(quote_repl);
+        }
+
+        for (let p of quote_repl.split(/\n{2,}/)) {
+          quote_repl = quote_repl.replace(p, `<p>${p}</p>`);
+        }
+
+        p = p.replace(quote_str, `<blockquote>${quote_repl}</blockquote>`);
+        quote = [];
+      }
+    }
+
+    return p;
+  };
+
+  str = this.helpers.string.sanitize(str);
+
+  // Quotes
+  for (let p of str.split(/\n{2,}/)) {
+    str = str.replace(p, `<p>${blockquote(p)}</p>`);
+  }
+
+  str = str.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
+
+  // General links
+  str = str.replace(
+    /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
+    '<a href="$1">$1</a>'
+  );
+
+  // Email links
+  // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
+  str = str.replace(
+    /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
+    '<a href="mailto:$1">$1</a>'
+  );
+
+  // Bugs
+  str = str.replace(
+    /Bug\s*#?(\d+)/igm,
+    '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
+  );
+
+  // Attachments
+  str = str.replace(
+    /Attachment\s*#?(\d+)/igm,
+    '<a href="/attachment/$1" data-att-id="$1">Attachment $1</a>' // l10n
+  );
+
+  return str;
 };

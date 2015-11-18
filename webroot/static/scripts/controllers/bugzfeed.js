@@ -63,12 +63,13 @@ BzDeck.controllers.BugzfeedClient.prototype.send = function (command, bugs) {
 };
 
 /**
- * Subscribe to one or more bugs.
+ * Subscribe to one or more bugs. Because FlareTail.app.Events has the subscribe function, this function begins with an
+ * underscore.
  *
  * @argument {Array.<Number>} bugs - Bug IDs to subscribe.
  * @return {undefined}
  */
-BzDeck.controllers.BugzfeedClient.prototype.subscribe = function (bugs) {
+BzDeck.controllers.BugzfeedClient.prototype._subscribe = function (bugs) {
   for (let bug of bugs) {
     this.subscription.add(bug);
   }
@@ -82,7 +83,7 @@ BzDeck.controllers.BugzfeedClient.prototype.subscribe = function (bugs) {
  * @argument {Array.<Number>} bugs - Bug IDs to unsubscribe.
  * @return {undefined}
  */
-BzDeck.controllers.BugzfeedClient.prototype.unsubscribe = function (bugs) {
+BzDeck.controllers.BugzfeedClient.prototype._unsubscribe = function (bugs) {
   for (let bug of bugs) {
     this.subscription.delete(bug);
   }
@@ -103,7 +104,7 @@ BzDeck.controllers.BugzfeedClient.prototype.onopen = function (event) {
   }
 
   if (this.subscription.size) {
-    this.subscribe([...this.subscription]);
+    this._subscribe([...this.subscription]);
   }
 };
 

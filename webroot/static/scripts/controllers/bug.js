@@ -53,7 +53,7 @@ BzDeck.controllers.Bug = function BugController (id_prefix, bug) {
   this.on('V:RemoveParticipant', data => this.remove_participant(data.field, data.email));
 
   // Timeline
-  this.on('V:CommentSelected', data => this.on_comment_selected(data.number));
+  this.subscribe('V:CommentSelected');
 
   // Form submission
   this.on('V:Submit', () => this.submit());
@@ -73,12 +73,13 @@ BzDeck.controllers.Bug.prototype.constructor = BzDeck.controllers.Bug;
 /**
  * Called by BugTimelineEntryView whenever a comment is selected. Update the location hash to include the comment ID.
  *
- * @argument {Number} number - Comment number.
+ * @argument {Object} data - Passed data.
+ * @argument {Number} data.number - Comment number.
  * @return {undefined}
  */
-BzDeck.controllers.Bug.prototype.on_comment_selected = function (number) {
+BzDeck.controllers.Bug.prototype.on_comment_selected = function (data) {
   if (location.pathname === `/bug/${this.bug.id}`) {
-    window.history.replaceState({}, document.title, `${location.pathname}#c${number}`);
+    window.history.replaceState({}, document.title, `${location.pathname}#c${data.number}`);
   }
 };
 
@@ -150,7 +151,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
     this.changes.comment = { body: comment };
 
     if (added) {
-      this.trigger(':CommentAdded', { has_comment: true, can_submit: this.can_submit });
+      this.trigger(':CommentEdited', { added: true, has_comment: true, can_submit: this.can_submit });
       this.onedit();
     }
   } else {
@@ -159,7 +160,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
     delete this.changes.comment;
 
     if (removed) {
-      this.trigger(':CommentRemoved', { has_comment: false, can_submit: this.can_submit });
+      this.trigger(':CommentEdited', { removed: true, has_comment: false, can_submit: this.can_submit });
       this.onedit();
     }
   }

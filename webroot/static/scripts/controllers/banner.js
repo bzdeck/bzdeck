@@ -22,23 +22,10 @@ BzDeck.controllers.Banner = function BannerController () {
     });
   });
 
-  this.on('V:AppMenuItemSelected', data => {
-    let func = {
-      'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
-      'show-settings': () => BzDeck.router.navigate('/settings'),
-      'install-app': () => this.helpers.app.install(),
-      logout: () => BzDeck.controllers.session.logout(),
-      quit: () => BzDeck.controllers.session.close(),
-    }[data.command];
-
-    if (func) {
-      func();
-    }
-  });
-
   this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
-  this.on('V:BackButtonClicked', data => this.on_back_button_clicked());
-  this.on('V:TabSelected', data => this.on_tab_selected(data.path));
+  this.subscribe('V:BackButtonClicked');
+  this.subscribe('V:TabSelected');
+  this.subscribe('V:AppMenuItemSelected');
   this.on('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.terms));
   this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
   this.on('V:QuickSearchResultSelected', data => BzDeck.router.navigate(data.path));
@@ -65,12 +52,34 @@ BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
 /**
  * Called by BannerView whenever a tab in the global tablist is selected. Navigate to the specified location.
  *
- * @argument {String} path - Location pathname that corresponds to the tab.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.path - Location pathname that corresponds to the tab.
  * @return {undefined}
  */
-BzDeck.controllers.Banner.prototype.on_tab_selected = function (path) {
-  if (location.pathname + location.search !== path) {
-    BzDeck.router.navigate(path);
+BzDeck.controllers.Banner.prototype.on_tab_selected = function (data) {
+  if (location.pathname + location.search !== data.path) {
+    BzDeck.router.navigate(data.path);
+  }
+};
+
+/**
+ * Called by BannerView whenever an Application menu item is selected.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.command - Command name of the menu itme.
+ * @return {undefined}
+ */
+BzDeck.controllers.Banner.prototype.on_app_menu_item_selected = function (data) {
+  let func = {
+    'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
+    'show-settings': () => BzDeck.router.navigate('/settings'),
+    'install-app': () => this.helpers.app.install(),
+    logout: () => BzDeck.controllers.session.logout(),
+    quit: () => BzDeck.controllers.session.close(),
+  }[data.command];
+
+  if (func) {
+    func();
   }
 };
 

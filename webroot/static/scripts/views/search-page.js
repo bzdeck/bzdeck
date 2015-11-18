@@ -34,34 +34,11 @@ BzDeck.views.SearchPage = function SearchPageView (id, params, config) {
     this.panes['basic-search'].querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
   }
 
-  this.on('C:Offline', data => {
-    this.show_status('You have to go online to search bugs.'); // l10n
-  });
-
-  this.on('C:SearchStarted', data => {
-    this.$grid.removeAttribute('aria-hidden');
-    this.$grid.setAttribute('aria-busy', 'true');
-    this.hide_status();
-    this.thread.update(new Map()); // Clear grid body
-  });
-
-  this.on('C:SearchResultsAvailable', data => {
-    if (data.bugs.size > 0) {
-      this.thread.update(data.bugs);
-      this.hide_status();
-    } else {
-      this.show_status('Zarro Boogs found.'); // l10n
-    }
-  });
-
-  this.on('C:SearchError', data => {
-    this.show_status(data.error.message);
-  });
-
-  this.on('C:SearchComplete', data => {
-    this.$grid.removeAttribute('aria-busy');
-  });
-
+  this.subscribe('C:Offline');
+  this.subscribe('C:SearchStarted');
+  this.subscribe('C:SearchResultsAvailable');
+  this.subscribe('C:SearchError');
+  this.subscribe('C:SearchComplete');
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
   this.on('C:BugDataAvailable', data => this.show_preview(data));
 };
@@ -304,4 +281,65 @@ BzDeck.views.SearchPage.prototype.show_status = function (str) {
  */
 BzDeck.views.SearchPage.prototype.hide_status = function () {
   this.show_status('');
+};
+
+/**
+ * Called by SearchPageController when the search results cannot be retrieved because the device or browser is offline.
+ * Show a message to ask the user to go online. TODO: reload when going online.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_offline = function () {
+  this.show_status('You have to go online to search bugs.'); // l10n
+};
+
+/**
+ * Called by SearchPageController when fetching the search results started. Empty the results and show a throbber.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_search_started = function () {
+  this.$grid.removeAttribute('aria-hidden');
+  this.$grid.setAttribute('aria-busy', 'true');
+  this.hide_status();
+  this.thread.update(new Map()); // Clear grid body
+};
+
+/**
+ * Called by SearchPageController when the search results is retrieved. Show the results on the thread.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_search_results_available = function (data) {
+  if (data.bugs.size > 0) {
+    this.thread.update(data.bugs);
+    this.hide_status();
+  } else {
+    this.show_status('Zarro Boogs found.'); // l10n
+  }
+};
+
+/**
+ * Called by SearchPageController when fetching the search results failed. Show an error message accordingly.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Error} data.error - Error encountered.
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_search_error = function (data) {
+  this.show_status(data.error.message);
+};
+
+/**
+ * Called by SearchPageController when fetching the search results completed. Remove the throbber.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_search_complete = function () {
+  this.$grid.removeAttribute('aria-busy');
 };

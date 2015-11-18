@@ -30,32 +30,43 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
     tab_label: 'Settings',
   }, this);
 
-  this.on('V:PrefValueChanged', data => {
-    let { name, value } = data;
-
-    BzDeck.prefs.set(name, value);
-
-    if (name === 'ui.theme.selected') {
-      this.helpers.theme.selected = value;
-    }
-
-    if (name === 'ui.date.timezone') {
-      this.helpers.datetime.options.timezone = value;
-    }
-
-    if (name === 'ui.date.relative') {
-      this.helpers.datetime.options.relative = value
-    }
-
-    if (name === 'notifications.show_desktop_notifications') {
-      if (value === true && Notification.permission === 'default') {
-        this.helpers.app.auth_notification();
-      }
-    }
-  });
+  this.subscribe('V:PrefValueChanged');
 };
 
 BzDeck.controllers.SettingsPage.route = '/settings';
 
 BzDeck.controllers.SettingsPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.SettingsPage.prototype.constructor = BzDeck.controllers.SettingsPage;
+
+/**
+ * Called by SettingsPageView whenever a preference value is changed by the user. Save it to the database and update
+ * the UI where necessary.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.name - Preference name.
+ * @argument {*}      data.value - New value.
+ * @return {undefined}
+ */
+BzDeck.controllers.SettingsPage.prototype.on_pref_value_changed = function (data) {
+  let { name, value } = data;
+
+  BzDeck.prefs.set(name, value);
+
+  if (name === 'ui.theme.selected') {
+    this.helpers.theme.selected = value;
+  }
+
+  if (name === 'ui.date.timezone') {
+    this.helpers.datetime.options.timezone = value;
+  }
+
+  if (name === 'ui.date.relative') {
+    this.helpers.datetime.options.relative = value
+  }
+
+  if (name === 'notifications.show_desktop_notifications') {
+    if (value === true && Notification.permission === 'default') {
+      this.helpers.app.auth_notification();
+    }
+  }
+};

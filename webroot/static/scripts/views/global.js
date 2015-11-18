@@ -52,28 +52,7 @@ BzDeck.views.Global = function GlobalView () {
   this.helpers.theme.preload_images();
 
   // Update user name & image asynchronously
-  this.on('UserModel:UserInfoUpdated', data => {
-    let user = BzDeck.collections.users.get(data.name, { name: data.name });
-
-    for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
-      let title = `${user.original_name || user.name}\n${user.email}`,
-          $person = $email.closest('[itemtype$="User"]'),
-          $name = $person.querySelector('[itemprop="name"]'),
-          $image = $person.querySelector('[itemprop="image"]');
-
-      if ($person.title && $person.title !== title) {
-        $person.title = title;
-      }
-
-      if ($name && $name.textContent !== user.name) {
-        $name.textContent = user.name;
-      }
-
-      if ($image && $image.src !== user.image) {
-        $image.src = user.image; // Blob URL
-      }
-    }
-  }, true);
+  this.subscribe('UserModel:UserInfoUpdated', true);
 
   // General events
   window.addEventListener('contextmenu', event => event.preventDefault());
@@ -225,5 +204,37 @@ BzDeck.views.Global.prototype.onkeydown = function (event) {
 
   if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
     event.preventDefault();
+  }
+};
+
+/**
+ * Called by UserModel whenever any information of a user is updated. This may happen, for example, when the user's
+ * Gravatar is retrieved. Find the user's node on the view and update the displayed information accordingly.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.name - Name of the updated person.
+ * @return {undefined}
+ */
+BzDeck.views.Global.prototype.on_user_info_updated = function (data) {
+  let { name } = data,
+      user = BzDeck.collections.users.get(name, { name });
+
+  for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
+    let title = `${user.original_name || user.name}\n${user.email}`,
+        $person = $email.closest('[itemtype$="User"]'),
+        $name = $person.querySelector('[itemprop="name"]'),
+        $image = $person.querySelector('[itemprop="image"]');
+
+    if ($person.title && $person.title !== title) {
+      $person.title = title;
+    }
+
+    if ($name && $name.textContent !== user.name) {
+      $name.textContent = user.name;
+    }
+
+    if ($image && $image.src !== user.image) {
+      $image.src = user.image; // Blob URL
+    }
   }
 };

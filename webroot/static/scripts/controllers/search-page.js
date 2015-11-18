@@ -44,7 +44,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
 
         if (oldval !== newval) {
           this.prep_preview(newval);
-          BzDeck.controllers.bugzfeed.subscribe([newval]);
+          BzDeck.controllers.bugzfeed._subscribe([newval]);
         }
       }
 
@@ -70,10 +70,7 @@ BzDeck.controllers.SearchPage = function SearchPageController (id) {
   }
 
   this.on('V:SearchRequested', data => this.exec_search(data.params));
-
-  this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.bugs.keys()] });
-  });
+  this.on('V:OpeningTabRequested', data => this.open_tab());
 };
 
 BzDeck.controllers.SearchPage.route = '/search/(\\d{13,})';
@@ -100,6 +97,17 @@ BzDeck.controllers.SearchPage.prototype.prep_preview = function (id) {
       this.trigger(':BugDataUnavailable');
     }
   }
+};
+
+/**
+ * Called by SearchPageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of
+ * the same search resuts so the user can easily navigate through those bugs.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.controllers.SearchPage.prototype.open_tab = function () {
+  BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.bugs.keys()] });
 };
 
 /**

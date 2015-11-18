@@ -39,12 +39,7 @@ BzDeck.views.BugDetails = function BugDetailsView (view_id, bug, $bug) {
     }
   });
 
-  // Switch the tabs when an attachment is selected on the timeline or comment form
-  this.on('BugController:HistoryUpdated', data => {
-    if (data.state && data.state.att_id) {
-      this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
-    }
-  });
+  this.subscribe('BugController:HistoryUpdated');
 
   // Call BzDeck.views.Bug.prototype.init
   this.init();
@@ -218,5 +213,19 @@ BzDeck.views.BugDetails.prototype.render_history = function () {
   if ((this.bug.history || []).length) {
     this.$$history.render(this.bug.history);
     $tab.setAttribute('aria-disabled', 'false');
+  }
+};
+
+/**
+ * Called by BugController whenever the location fragment or history state is updated. Switch the tabs when an
+ * attachment is selected on the timeline or comment form.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.hash - location.hash.
+ * @return {undefined}
+ */
+BzDeck.views.BugDetails.prototype.on_history_updated = function (data) {
+  if (data.state && data.state.att_id) {
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
   }
 };

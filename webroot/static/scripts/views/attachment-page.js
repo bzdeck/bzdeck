@@ -19,45 +19,91 @@ BzDeck.views.AttachmentPage = function AttachmentPageView (page_id, att_id) {
   this.$tabpanel = document.querySelector(`#tabpanel-attachment-${this.id}`);
   this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.att_id;
 
-  this.on('C:AttachmentAvailable', data => {
-    let attachment = this.attachment = data.attachment,
-        { id, hash, summary } = attachment;
-
-    new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
-    new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
-
-    if (hash) {
-      this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n
-    } else {
-      this.$tab.title = `Attachment ${id}\n${summary}`; // l10n
-    }
-
-    BzDeck.views.global.update_window_title(this.$tab);
-  });
-
-  this.on('C:AttachmentUnavailable', data => {
-    let id = this.att_id,
-        error = data.attachment && data.attachment.error ? data.attachment.error : '';
-
-    BzDeck.views.statusbar.show(`The attachment ${id} cannot be retrieved. ${error}`); // l10n
-  });
-
-  this.on('C:Offline', () => {
-    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
-  });
-
-  this.on('C:LoadingStarted', () => {
-    BzDeck.views.statusbar.show('Loading...'); // l10n
-  });
-
-  this.on('C:LoadingError', () => {
-    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
-  });
-
-  this.on('C:LoadingComplete', () => {
-    this.$tabpanel.removeAttribute('aria-busy');
-  });
+  this.subscribe('C:AttachmentAvailable');
+  this.subscribe('C:AttachmentUnavailable');
+  this.subscribe('C:Offline');
+  this.subscribe('C:LoadingStarted');
+  this.subscribe('C:LoadingError');
+  this.subscribe('C:LoadingComplete');
 };
 
 BzDeck.views.AttachmentPage.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.AttachmentPage.prototype.constructor = BzDeck.views.AttachmentPage;
+
+/**
+ * Called by BugController when the attachment is found. Render it on the page.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_attachment_available = function (data) {
+  let attachment = this.attachment = data.attachment,
+      { id, hash, summary } = attachment;
+
+  new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
+  new BzDeck.views.Attachment(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
+
+  if (hash) {
+    this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n
+  } else {
+    this.$tab.title = `Attachment ${id}\n${summary}`; // l10n
+  }
+
+  BzDeck.views.global.update_window_title(this.$tab);
+};
+
+/**
+ * Called by BugController when the attachment is not found. Show an error message on the page.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_attachment_unavailable = function (data) {
+  let id = this.att_id,
+      error = data.attachment && data.attachment.error ? data.attachment.error : '';
+
+  BzDeck.views.statusbar.show(`The attachment ${id} cannot be retrieved. ${error}`); // l10n
+};
+
+/**
+ * Called by BugController when the attachment cannot be retrieved because the device or browser is offline. Show a
+ * message to ask the user to go online. TODO: reload when going online.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_offline = function () {
+  BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
+};
+
+/**
+ * Called by BugController when loading the attachment started. Show a message accordingly.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_loading_started = function () {
+  BzDeck.views.statusbar.show('Loading...'); // l10n
+};
+
+/**
+ * Called by BugController when loading the attachment failed. Show a message accordingly.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_loading_error = function () {
+  BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
+};
+
+/**
+ * Called by BugController when loading the attachment completed. Remove the throbber.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.AttachmentPage.prototype.on_loading_complete = function () {
+  this.$tabpanel.removeAttribute('aria-busy');
+};

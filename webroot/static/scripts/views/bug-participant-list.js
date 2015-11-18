@@ -38,9 +38,9 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
     this.add_subscribe_button();
   }
 
-  this.on('BugView:EditModeChanged', data => this.on_edit_mode_toggled(data.enabled));
-  this.on('BugController:ParticipantAdded', data => this.on_participant_added(data.field, data.email));
-  this.on('BugController:ParticipantRemoved', data => this.on_participant_removed(data.field, data.email));
+  this.subscribe('BugView:EditModeChanged');
+  this.subscribe('BugController:ParticipantAdded');
+  this.subscribe('BugController:ParticipantRemoved');
 };
 
 BzDeck.views.BugParticipantList.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -63,11 +63,12 @@ BzDeck.views.BugParticipantList.prototype.remove_empty_person = function () {
 /**
  * Called by BugView whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
  *
- * @argument {Boolean} enabled - Whether the edit mode is enabled.
+ * @argument {Object} data - Passed data.
+ * @argument {Boolean} data.enabled - Whether the edit mode is enabled.
  * @return {undefined}
  */
-BzDeck.views.BugParticipantList.prototype.on_edit_mode_toggled = function (enabled) {
-  this.editing = enabled;
+BzDeck.views.BugParticipantList.prototype.on_edit_mode_changed = function (data) {
+  this.editing = data.enabled;
 
   this.$button.setAttribute('aria-hidden', this.can_take && !this.editing);
   this.$finder.setAttribute('aria-hidden', !this.editing);
@@ -148,17 +149,18 @@ BzDeck.views.BugParticipantList.prototype.add_person_finder = function () {
 /**
  * Called by BugController whenever a new participant is added by the user. Add the person to the list.
  *
- * @argument {String} field - Relevant bug field, like assigned_to or cc.
- * @argument {String} email - Email of the added person.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.field - Relevant bug field, like assigned_to or cc.
+ * @argument {String} data.email - Email of the added person.
  * @return {undefined}
  */
-BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field, email) {
-  if (field !== this.field) {
+BzDeck.views.BugParticipantList.prototype.on_participant_added = function (data) {
+  if (data.field !== this.field) {
     return;
   }
 
   let $person = this.$list.querySelector('[itemscope]'),
-      self = email === this.my_email;
+      self = data.email === this.my_email;
 
   if (!this.multiple && $person) {
     let email = $person.querySelector('[itemprop="email"]').content;
@@ -170,10 +172,10 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
   }
 
   $person = this.fill(this.get_template('bug-participant'),
-                      BzDeck.collections.users.get(email, { name: email }).properties);
+                      BzDeck.collections.users.get(data.email, { name: data.email }).properties);
 
-  this.values.add(email);
-  this.$$finder.exclude.add(email);
+  this.values.add(data.email);
+  this.$$finder.exclude.add(data.email);
 
   $person.setAttribute('itemprop', this.field);
   this.$list.insertBefore($person, this.$list.firstElementChild);
@@ -193,25 +195,26 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (field
 /**
  * Called by BugController whenever a new participant is removed by the user. Remove the person from the list.
  *
- * @argument {String} field - Relevant bug field, like assigned_to or cc.
- * @argument {String} email - Email of the removed person.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.field - Relevant bug field, like assigned_to or cc.
+ * @argument {String} data.email - Email of the removed person.
  * @return {undefined}
  */
-BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (field, email) {
-  if (field !== this.field) {
+BzDeck.views.BugParticipantList.prototype.on_participant_removed = function (data) {
+  if (data.field !== this.field) {
     return;
   }
 
-  let $email = this.$list.querySelector(`[itemprop="email"][content="${email}"]`),
+  let $email = this.$list.querySelector(`[itemprop="email"][content="${data.email}"]`),
       $person = $email ? $email.closest('[itemscope]') : undefined,
-      self = email === this.my_email;
+      self = data.email === this.my_email;
 
   if (!$person) {
     return;
   }
 
-  this.values.delete(email);
-  this.$$finder.exclude.delete(email);
+  this.values.delete(data.email);
+  this.$$finder.exclude.delete(data.email);
 
   // Add a simple animation effect on removing participants
   $person.classList.add('removing');

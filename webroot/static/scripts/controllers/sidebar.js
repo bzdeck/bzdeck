@@ -50,11 +50,7 @@ BzDeck.controllers.Sidebar = function SidebarController () {
 
   // Update the sidebar Inbox folder at startup and whenever notified
   this.toggle_unread();
-  this.on('BugModel:AnnotationUpdated', data => {
-    if (data.type === 'unread') {
-      this.toggle_unread();
-    }
-  }, true);
+  this.subscribe('BugModel:AnnotationUpdated', true);
 };
 
 BzDeck.controllers.Sidebar.prototype = Object.create(BzDeck.controllers.Base.prototype);
@@ -70,6 +66,21 @@ BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
   let bugs = BzDeck.controllers.homepage.data.bugs = BzDeck.collections.subscriptions.get(folder_id); // Map
 
   this.trigger(':FolderOpened', { folder_id, bugs });
+};
+
+/**
+ * Called by BugModel whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+ *
+ * @argument {Object} data - Annotation change details.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+ * @argument {Boolean} data.value - New annotation value.
+ * @return {undefined}
+ */
+BzDeck.controllers.Sidebar.prototype.on_annotation_updated = function (data) {
+  if (data.type === 'unread') {
+    this.toggle_unread();
+  }
 };
 
 /**

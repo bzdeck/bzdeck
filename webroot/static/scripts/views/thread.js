@@ -121,17 +121,7 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
     S: event => toggle_prop('starred'),
   });
 
-  this.on('BugModel:AnnotationUpdated', data => {
-    let $row = $grid.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
-
-    if ($row) {
-      $row.setAttribute(`data-${data.type}`, data.value);
-
-      if (data.type === 'starred') {
-        $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', data.value);
-      }
-    }
-  }, true);
+  this.subscribe('BugModel:AnnotationUpdated', true);
 };
 
 BzDeck.views.ClassicThread.prototype = Object.create(BzDeck.views.Thread.prototype);
@@ -223,6 +213,27 @@ BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
   this.$$grid.filter([...bugs.keys()]);
 };
 
+/**
+ * Called by BugModel whenever a bug annotation is updated. Update the bug row on the thread.
+ *
+ * @argument {Object} data - Annotation change details.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+ * @argument {Boolean} data.value - New annotation value.
+ * @return {undefined}
+ */
+BzDeck.views.ClassicThread.prototype.on_annotation_updated = function (data) {
+  let $row = $grid.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
+
+  if ($row) {
+    $row.setAttribute(`data-${data.type}`, data.value);
+
+    if (data.type === 'starred') {
+      $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', data.value);
+    }
+  }
+};
+
 /* ------------------------------------------------------------------------------------------------------------------
  * Vertical Thread
  * ------------------------------------------------------------------------------------------------------------------ */
@@ -311,20 +322,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     },
   });
 
-  this.on('BugModel:AnnotationUpdated', data => {
-    let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);
-
-    if ($option) {
-      $option.setAttribute(`data-${data.type}`, data.value);
-
-      if (data.type === 'starred') {
-        let $checkbox = $option.querySelector('[itemprop="starred"]');
-
-        $checkbox.setAttribute('aria-checked', data.value);
-        $checkbox.setAttribute('content', data.value);
-      }
-    }
-  }, true);
+  this.subscribe('BugModel:AnnotationUpdated', true);
 
   // Lazy loading while scrolling
   this.$scrollable_area.addEventListener('scroll', event => {
@@ -388,4 +386,28 @@ BzDeck.views.VerticalThread.prototype.render = function () {
   this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
   this.$$listbox.update_members();
   this.$$scrollbar.set_height();
+};
+
+/**
+ * Called by BugModel whenever a bug annotation is updated. Update the bug item on the thread.
+ *
+ * @argument {Object} data - Annotation change details.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+ * @argument {Boolean} data.value - New annotation value.
+ * @return {undefined}
+ */
+BzDeck.views.VerticalThread.prototype.on_annotation_updated = function (data) {
+  let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);
+
+  if ($option) {
+    $option.setAttribute(`data-${data.type}`, data.value);
+
+    if (data.type === 'starred') {
+      let $checkbox = $option.querySelector('[itemprop="starred"]');
+
+      $checkbox.setAttribute('aria-checked', data.value);
+      $checkbox.setAttribute('content', data.value);
+    }
+  }
 };

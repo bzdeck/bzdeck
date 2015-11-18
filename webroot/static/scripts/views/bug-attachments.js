@@ -63,11 +63,11 @@ BzDeck.views.BugAttachments = function BugAttachmentsView (view_id, bug_id, $con
 
   this.init_uploader();
 
-  this.on('BugController:AttachmentAdded', data => this.on_attachment_added(data.attachment));
-  this.on('BugController:AttachmentRemoved', data => this.on_attachment_removed(data.hash));
-  this.on('BugController:AttachmentEdited', data => this.on_attachment_edited(data.change));
-  this.on('BugController:UploadListUpdated', data => this.on_upload_list_updated(data.uploads));
-  this.on('BugController:HistoryUpdated', data => this.on_history_updated(data.state));
+  this.subscribe('BugController:AttachmentAdded');
+  this.subscribe('BugController:AttachmentRemoved');
+  this.subscribe('BugController:AttachmentEdited');
+  this.subscribe('BugController:UploadListUpdated');
+  this.subscribe('BugController:HistoryUpdated');
 };
 
 BzDeck.views.BugAttachments.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -207,10 +207,13 @@ BzDeck.views.BugAttachments.prototype.init_uploader = function () {
 /**
  * Called by BugController whenever a new attachment is added by the user. Add the item to the listbox.
  *
- * @argument {Proxy} attachment - Added attachment data as AttachmentModel instance.
+ * @argument {Object} data - Passed data.
+ * @argument {Proxy}  data.attachment - Added attachment data as AttachmentModel instance.
  * @return {undefined}
  */
-BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment) {
+BzDeck.views.BugAttachments.prototype.on_attachment_added = function (data) {
+  let { attachment } = data;
+
   this.attachments.set(attachment.hash, attachment);
   this.render([attachment]);
 };
@@ -218,10 +221,13 @@ BzDeck.views.BugAttachments.prototype.on_attachment_added = function (attachment
 /**
  * Called by BugController whenever a new attachment is removed by the user. Remove the item from the listbox.
  *
- * @argument {String} hash - Removed attachment's hash value in the cached list.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.hash - Removed attachment's hash value in the cached list.
  * @return {undefined}
  */
-BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
+BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (data) {
+  let { hash } = data;
+
   this.attachments.delete(hash);
   this.$listbox.querySelector(`[data-hash='${hash}']`).remove();
   this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
@@ -231,15 +237,16 @@ BzDeck.views.BugAttachments.prototype.on_attachment_removed = function (hash) {
 /**
  * Called by BugController whenever a new attachment is edited by the user. Update the item on the listbox.
  *
- * @argument {Object} change - Change details.
- * @argument {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
- * @argument {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
- * @argument {String} change.prop - Edited property name.
- * @argument {*}      change.value - New value.
+ * @argument {Object} data - Passed data.
+ * @argument {Object} data.change - Change details.
+ * @argument {Number} data.change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+ * @argument {String} data.change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
+ * @argument {String} data.change.prop - Edited property name.
+ * @argument {*}      data.change.value - New value.
  * @return {undefined}
  */
-BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
-  let { id, hash, prop, value } = change,
+BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (data) {
+  let { id, hash, prop, value } = data.change,
       $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
   if (['summary', 'content_type'].includes(prop)) {
@@ -254,10 +261,11 @@ BzDeck.views.BugAttachments.prototype.on_attachment_edited = function (change) {
 /**
  * Called by BugController whenever a new attachment is added or removed by the user. Update the list header title.
  *
- * @argument {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
+ * @argument {Object} data - Passed data.
+ * @argument {Array.<Proxy>} data.uploads - List of the new attachments in Array-like object.
  * @return {undefined}
  */
-BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (uploads) {
+BzDeck.views.BugAttachments.prototype.on_upload_list_updated = function (data) {
   this.update_list_title();
 };
 
@@ -283,12 +291,13 @@ BzDeck.views.BugAttachments.prototype.update_list_title = function () {
  * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
  * the listbox.
  *
- * @argument {Object} [state] - Current history state.
- * @argument {String} [state.att_id] - Attachment ID or hash.
+ * @argument {Object} data - Passed data.
+ * @argument {Object} [data.state] - Current history state.
+ * @argument {String} [data.state.att_id] - Attachment ID or hash.
  * @return {undefined}
  */
-BzDeck.views.BugAttachments.prototype.on_history_updated = function (state) {
-  let target_id = state ? state.att_id : undefined,
+BzDeck.views.BugAttachments.prototype.on_history_updated = function (data) {
+  let target_id = data.state ? data.state.att_id : undefined,
       $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
   if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {

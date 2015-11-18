@@ -43,7 +43,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
 
         if (oldval !== newval) {
           this.prep_preview(newval);
-          BzDeck.controllers.bugzfeed.subscribe([newval]);
+          BzDeck.controllers.bugzfeed._subscribe([newval]);
         }
       }
 
@@ -54,10 +54,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   });
 
   this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
-
-  this.on('V:OpeningTabRequested', data => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.sorted_bugs.keys()] });
-  });
+  this.on('V:OpeningTabRequested', data => this.open_tab());
 
   BzDeck.controllers.homepage = this;
   this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(this);
@@ -90,4 +87,15 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
       this.trigger(':BugDataUnavailable');
     }
   }
+};
+
+/**
+ * Called by HomePageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the
+ * home page thread so the user can easily navigate through those bugs.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.controllers.HomePage.prototype.open_tab = function () {
+  BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.sorted_bugs.keys()] });
 };

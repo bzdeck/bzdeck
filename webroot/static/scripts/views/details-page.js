@@ -22,41 +22,9 @@ BzDeck.views.DetailsPage = function DetailsPageView (page_id, bug_id, bug_ids = 
   this.$tabpanel = document.querySelector(`#tabpanel-details-${this.id}`);
   this.$tabpanel.setAttribute('aria-busy', 'true');
 
-  this.on('C:BugDataAvailable', data => {
-    // Prepare the newly opened tabpanel
-    if (!this.$bug && this.$tabpanel && data.bug.summary) {
-      this.$bug = this.$tabpanel.appendChild(this.get_template('bug-details-template', data.bug.id));
-      this.$$bug = new BzDeck.views.BugDetails(data.controller.id, data.bug, this.$bug);
-      this.$tab.querySelector('label').textContent = this.bug_id;
-      this.$tab.title = this.get_tab_title(data.bug);
-      BzDeck.views.global.update_window_title(this.$tab);
-
-      // Set Back & Forward navigation
-      if (this.bug_ids.length) {
-        this.setup_navigation();
-      }
-
-      this.$tabpanel.removeAttribute('aria-busy');
-    }
-  });
-
-  this.on('C:LoadingStarted', data => {
-    BzDeck.views.statusbar.show('Loading...'); // l10n
-  });
-
-  this.on('C:BugDataUnavailable', data => {
-    if (!this.$bug && this.$tabpanel) {
-      this.$bug = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
-        id: this.bug_id,
-        status: data.message,
-      }, {
-        'data-error-code': data.code,
-      });
-
-      this.$tabpanel.appendChild(this.$bug);
-      this.$tabpanel.removeAttribute('aria-busy');
-    }
-  });
+  this.subscribe('C:BugDataAvailable');
+  this.subscribe('C:LoadingStarted');
+  this.subscribe('C:BugDataUnavailable');
 };
 
 BzDeck.views.DetailsPage.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -147,4 +115,69 @@ BzDeck.views.DetailsPage.prototype.navigate = function (new_id) {
 
   // Notify the Controller
   this.trigger(':NavigationRequested', { id: new_id, ids: this.bug_ids, old_path, new_path, reinit: !$existing_bug });
+};
+
+/**
+ * Called by DetailsPageController when the bug data is found. Prepare the newly opened tabpanel.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Proxy}  data.bug - Bug to show.
+ * @argument {Object} data.controller - New BugController instance for that bug.
+ * @return {Boolean} result - Whether the view is updated.
+ */
+BzDeck.views.DetailsPage.prototype.on_bug_data_available = function (data) {
+  if (this.$bug || !this.$tabpanel || !data.bug.summary) {
+    return false;
+  }
+
+  this.$bug = this.$tabpanel.appendChild(this.get_template('bug-details-template', data.bug.id));
+  this.$$bug = new BzDeck.views.BugDetails(data.controller.id, data.bug, this.$bug);
+  this.$tab.querySelector('label').textContent = this.bug_id;
+  this.$tab.title = this.get_tab_title(data.bug);
+  BzDeck.views.global.update_window_title(this.$tab);
+
+  // Set Back & Forward navigation
+  if (this.bug_ids.length) {
+    this.setup_navigation();
+  }
+
+  this.$tabpanel.removeAttribute('aria-busy');
+
+  return true;
+};
+
+/**
+ * Called by DetailsPageController when fetching the bug data is started. Update the statusbar accordingly.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.DetailsPage.prototype.on_loading_started = function () {
+  BzDeck.views.statusbar.show('Loading...'); // l10n
+};
+
+/**
+ * Called by DetailsPageController when an error was encountered while fetching the bug data. Show the error message.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Number} data.code - Error code usually defined by Bugzilla.
+ * @argument {String} data.message - Error message text.
+ * @return {Boolean} result - Whether the view is updated.
+ */
+BzDeck.views.DetailsPage.prototype.on_bug_data_unavailable = function (data) {
+  if (this.$bug || !this.$tabpanel) {
+    return false;
+  }
+
+  this.$bug = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
+    id: this.bug_id,
+    status: data.message,
+  }, {
+    'data-error-code': data.code,
+  });
+
+  this.$tabpanel.appendChild(this.$bug);
+  this.$tabpanel.removeAttribute('aria-busy');
+
+  return true;
 };

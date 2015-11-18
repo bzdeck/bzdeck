@@ -107,30 +107,8 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
   $parent.scrollTop = 0;
   $timeline.removeAttribute('aria-busy', 'false');
 
-  // Show media when the pref is enabled
-  this.on('SettingsPageView:PrefValueChanged', data => {
-    if (data.name === 'ui.timeline.display_attachments_inline' && data.value === true) {
-      for (let $attachment of $timeline.querySelectorAll('[itemprop="attachment"]')) {
-        let $media = $attachment.querySelector('img, audio, video');
-
-        if ($media && !$media.src) {
-          let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id')),
-              attachment = BzDeck.collections.attachments.get(att_id);
-
-          $media.parentElement.setAttribute('aria-busy', 'true');
-
-          attachment.get_data().then(result => {
-            $media.src = URL.createObjectURL(result.blob);
-            attachment.data = result.attachment.data;
-          }).then(() => {
-            $media.parentElement.removeAttribute('aria-busy');
-          });
-        }
-      }
-    }
-  }, true);
-
-  this.on('BugController:HistoryUpdated', data => this.on_history_updated(data.hash));
+  this.subscribe('SettingsPageView:PrefValueChanged', true);
+  this.subscribe('BugController:HistoryUpdated');
 };
 
 BzDeck.views.BugTimeline.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -168,11 +146,12 @@ BzDeck.views.BugTimeline.prototype.collapse_comments = function () {
  * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
  * comment into view.
  *
- * @argument {String} hash - location.hash.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.hash - location.hash.
  * @return {undefined}
  */
-BzDeck.views.BugTimeline.prototype.on_history_updated = function (hash) {
-  let match = hash.match(/^#c(\d+)$/);
+BzDeck.views.BugTimeline.prototype.on_history_updated = function (data) {
+  let match = data.hash.match(/^#c(\d+)$/);
 
   if (match) {
     let number = Number.parseInt(match[1]),
@@ -186,6 +165,38 @@ BzDeck.views.BugTimeline.prototype.on_history_updated = function (hash) {
 
       $comment.scrollIntoView({ block: 'start', behavior: 'smooth' });
       $comment.focus();
+    }
+  }
+};
+
+/**
+ * Called by SettingsPageView whenever a preference value is changed by the user. Show media when the pref is enabled.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.name - Preference name.
+ * @argument {*}      data.value - New value.
+ * @return {undefined}
+ */
+BzDeck.views.BugTimeline.prototype.on_pref_value_changed = function (data) {
+  if (data.name !== 'ui.timeline.display_attachments_inline' || data.value !== true) {
+    return;
+  }
+
+  for (let $attachment of $timeline.querySelectorAll('[itemprop="attachment"]')) {
+    let $media = $attachment.querySelector('img, audio, video');
+
+    if ($media && !$media.src) {
+      let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id')),
+          attachment = BzDeck.collections.attachments.get(att_id);
+
+      $media.parentElement.setAttribute('aria-busy', 'true');
+
+      attachment.get_data().then(result => {
+        $media.src = URL.createObjectURL(result.blob);
+        attachment.data = result.attachment.data;
+      }).then(() => {
+        $media.parentElement.removeAttribute('aria-busy');
+      });
     }
   }
 };

@@ -38,19 +38,9 @@ BzDeck.views.Bug.prototype.init = function () {
   this.scrollbars = new Set([...this.$bug.querySelectorAll('[role="region"]')]
                                 .map($area => new this.widgets.ScrollBar($area)));
 
-  this.on('BugModel:AnnotationUpdated', data => {
-    if (this.$bug && data.bug.id === this.bug.id && data.type === 'starred') {
-      this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
-    }
-  }, true);
-
-  this.on('BugModel:Updated', data => { // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
-    if (data.bug.id === this.bug.id) {
-      this.update(data.bug, data.changes);
-    }
-  }, true); // Enable the global option
-
-  this.on('BugView:FilesSelected', data => this.on_files_selected(data.input));
+  this.subscribe('BugModel:AnnotationUpdated', true); // Enable the global option
+  this.subscribe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
+  this.subscribe('BugView:FilesSelected');
 };
 
 /**
@@ -349,7 +339,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
  */
 BzDeck.views.Bug.prototype.activate_widgets = function () {
   this.comboboxes = new WeakMap();
-  this.on('BugController:FieldEdited', data => this.on_field_edited(data.name, data.value));
+  this.subscribe('BugController:FieldEdited');
 
   let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
       is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
@@ -480,11 +470,14 @@ BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
 /**
  * Called whenever any field is edited by the user. Update the relevante widget accordingly.
  *
- * @argument {String} name - Field name.
- * @argument {String} value - Field value.
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.name - Field name.
+ * @argument {String} data.value - Field value.
  * @return {undefined}
  */
-BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
+BzDeck.views.Bug.prototype.on_field_edited = function (data) {
+  let { name, value } = data;
+
   if (name === 'product') {
     let product_name = value;
 
@@ -517,10 +510,11 @@ BzDeck.views.Bug.prototype.on_field_edited = function (name, value) {
  * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
  * traditional File API to identify the files. In any case, notify the selected files to the controller.
  *
- * @argument {(HTMLInputElement|DataTransfer)} input - Data source.
+ * @argument {Object} data - Passed data.
+ * @argument {(HTMLInputElement|DataTransfer)} data.input - Data source.
  * @return {undefined}
  */
-BzDeck.views.Bug.prototype.on_files_selected = function (input) {
+BzDeck.views.Bug.prototype.on_files_selected = function (data) {
   let iterate = items => {
     for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
       item.getFilesAndDirectories().then(_items => iterate(_items));
@@ -529,10 +523,10 @@ BzDeck.views.Bug.prototype.on_files_selected = function (input) {
     }
   };
 
-  if (typeof input.getFilesAndDirectories === 'function') {
-    input.getFilesAndDirectories().then(items => iterate(items));
+  if (typeof data.input.getFilesAndDirectories === 'function') {
+    data.input.getFilesAndDirectories().then(items => iterate(items));
   } else {
-    this.trigger('BugView:AttachFiles', { files: input.files });
+    this.trigger('BugView:AttachFiles', { files: data.input.files });
   }
 };
 
@@ -669,5 +663,34 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
     this.fill(this.$bug, _bug);
     this.$$history.render([changes.get('history')]);
     this.$tablist.querySelector('[id$="-tab-history"]').setAttribute('aria-disabled', 'false');
+  }
+};
+
+/**
+ * Called by BugModel whenever a bug annotation is updated. Update the Star button on the toolbar.
+ *
+ * @argument {Object} data - Annotation change details.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+ * @argument {Boolean} data.value - New annotation value.
+ * @return {undefined}
+ */
+BzDeck.views.Bug.prototype.on_annotation_updated = function (data) {
+  if (this.$bug && data.bug.id === this.bug.id && data.type === 'starred') {
+    this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
+  }
+};
+
+/**
+ * Called by BugModel whenever any field of a bug is updated. Update the view if the bug ID matches.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Proxy} data.bug - Changed bug.
+ * @argument {Map}   data.changes - Change details.
+ * @return {undefined}
+ */
+BzDeck.views.Bug.prototype.on_updated = function (data) {
+  if (data.bug.id === this.bug.id) {
+    this.update(data.bug, data.changes);
   }
 };

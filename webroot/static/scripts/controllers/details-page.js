@@ -41,16 +41,7 @@ BzDeck.controllers.DetailsPage = function DetailsPageController (bug_id) {
 
   this.get_bug();
 
-  this.on('V:NavigationRequested', data => {
-    let { id, ids, old_path, new_path, reinit } = data;
-
-    this.bug_id = id;
-    window.history.replaceState({ ids, previous: old_path }, '', new_path);
-
-    if (reinit) {
-      this.get_bug();
-    }
-  });
+  this.subscribe('V:NavigationRequested');
 
   return this;
 };
@@ -59,6 +50,28 @@ BzDeck.controllers.DetailsPage.route = '/bug/(\\d+)';
 
 BzDeck.controllers.DetailsPage.prototype = Object.create(BzDeck.controllers.Base.prototype);
 BzDeck.controllers.DetailsPage.prototype.constructor = BzDeck.controllers.DetailsPage;
+
+/**
+ * Called by DetailsPageView whenever navigating to other bug within the same tabpanel is requested.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Number} data.id - New bug ID to navigate.
+ * @argument {Array}  data.ids - List of bugs in the same navigation session.
+ * @argument {String} data.old_path - Previous location path.
+ * @argument {String} data.new_path - New location path.
+ * @argument {Boolean} data.reinit - Whether there's an existing tabpanel content for the new bug.
+ * @return {undefined}
+ */
+BzDeck.controllers.DetailsPage.prototype.on_navigation_requested = function (data) {
+  let { id, ids, old_path, new_path, reinit } = data;
+
+  this.bug_id = id;
+  window.history.replaceState({ ids, previous: old_path }, '', new_path);
+
+  if (reinit) {
+    this.get_bug();
+  }
+};
 
 /**
  * Prepare bug data for the view. Find it from the local database or remote Bugzilla instance, then notify the result
@@ -98,5 +111,5 @@ BzDeck.controllers.DetailsPage.prototype.get_bug = function () {
     this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('details', bug) });
   });
 
-  BzDeck.controllers.bugzfeed.subscribe([this.bug_id]);
+  BzDeck.controllers.bugzfeed._subscribe([this.bug_id]);
 };

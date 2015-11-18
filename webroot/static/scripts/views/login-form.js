@@ -20,30 +20,9 @@ BzDeck.views.LoginForm = function LoginFormView (params) {
   // Hide the incompatible browser message
   this.show_status('');
 
-  this.on('SessionController:StatusUpdate', data => {
-    this.show_status(data.message);
-
-    if (data.status === 'ForcingLogin') {
-      this.show();
-    }
-
-    if (data.status === 'LoadingData') {
-      this.hide();
-      this.hide_intro();
-    }
-  }, true);
-
-  this.on('SessionController:Error', data => {
-    this.show_status(data.message);
-
-    if (data.error) {
-      console.error(data.error);
-    }
-  }, true);
-
-  this.on('SessionController:Logout', data => {
-    this.show();
-  }, true);
+  this.subscribe('SessionController:StatusUpdate', true);
+  this.subscribe('SessionController:Error', true);
+  this.subscribe('SessionController:Logout', true);
 
   this.activate_bugzilla_auth();
 
@@ -188,4 +167,51 @@ BzDeck.views.LoginForm.prototype.activate_qrcode_auth = function () {
       this.trigger(':QRCodeError', { error });
     });
   });
+};
+
+/**
+ * Called by SessionController whenever the sign-in status is updated. Update the UI accordingly.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {String} data.status - Current status.
+ * @argument {String} data.message - Message text to display.
+ * @return {undefined}
+ */
+BzDeck.views.LoginForm.prototype.on_status_update = function (data) {
+  this.show_status(data.message);
+
+  if (data.status === 'ForcingLogin') {
+    this.show();
+  }
+
+  if (data.status === 'LoadingData') {
+    this.hide();
+    this.hide_intro();
+  }
+};
+
+/**
+ * Called by SessionController whenever an error is detected during the sign-in process. Show the error message.
+ *
+ * @argument {Object} data - Passed data.
+ * @argument {Error}  data.error - Error encountered.
+ * @argument {String} data.message - Message text to display.
+ * @return {undefined}
+ */
+BzDeck.views.LoginForm.prototype.on_error = function (data) {
+  this.show_status(data.message);
+
+  if (data.error) {
+    console.error(data.error);
+  }
+};
+
+/**
+ * Called by SessionController when the user has logged out from the app. Show the sign-in form again.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.views.LoginForm.prototype.on_logout = function () {
+  this.show();
 };
