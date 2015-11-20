@@ -16,6 +16,9 @@ BzDeck.controllers.Banner = function BannerController () {
   this.user = BzDeck.collections.users.get(name, { name });
   BzDeck.views.banner = new BzDeck.views.Banner(this.user);
 
+  // Subcontrollers
+  BzDeck.controllers.quick_search = new BzDeck.controllers.QuickSearch();
+
   this.user.get_gravatar_profile().then(profile => {
     this.trigger(':GravatarProfileFound', {
       style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
@@ -26,9 +29,6 @@ BzDeck.controllers.Banner = function BannerController () {
   this.subscribe('V:BackButtonClicked');
   this.subscribe('V:TabSelected');
   this.subscribe('V:AppMenuItemSelected');
-  this.on('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.terms));
-  this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.terms));
-  this.on('V:QuickSearchResultSelected', data => BzDeck.router.navigate(data.path));
 };
 
 BzDeck.controllers.Banner.prototype = Object.create(BzDeck.controllers.Base.prototype);
@@ -81,42 +81,4 @@ BzDeck.controllers.Banner.prototype.on_app_menu_item_selected = function (data) 
   if (func) {
     func();
   }
-};
-
-/**
- * Execute a new advanced search by opening a new search tab. This invokes SearchPageController.
- *
- * @argument {String} terms - Search terms entered by the user.
- * @return {undefined}
- */
-BzDeck.controllers.Banner.prototype.exec_advanced_search = function (terms) {
-  let params = new URLSearchParams();
-
-  if (terms) {
-    params.append('short_desc', terms);
-    params.append('short_desc_type', 'allwordssubstr');
-    params.append('resolution', '---'); // Search only open bugs
-  }
-
-  BzDeck.router.navigate('/search/' + Date.now(), { 'params' : params.toString() });
-};
-
-/**
- * Execute a local quick search and provide the results as event data.
- *
- * @argument {String} terms - Search terms entered by the user.
- * @return {undefined}
- */
-BzDeck.controllers.Banner.prototype.exec_quick_search = function (terms) {
-  let words = terms.trim().split(/\s+/).map(word => word.toLowerCase()),
-      match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i')),
-      bugs = BzDeck.collections.bugs.get_all();
-
-  let results = [...bugs.values()].filter(bug => {
-    return words.every(word => bug.summary && match(bug.summary, word)) ||
-           words.every(word => match(bug.aliases.join(), word)) ||
-           words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
-  });
-
-  this.trigger(':QuickSearchResultsAvailable', { results });
 };

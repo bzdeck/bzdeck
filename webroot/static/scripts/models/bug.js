@@ -57,6 +57,10 @@ BzDeck.models.Bug = function BugModel (data) {
       enumerable: true,
       get: () => this.get_contributors(),
     },
+    search_result: {
+      enumerable: true,
+      get: () => this.get_search_result(),
+    },
   });
 
   return this.proxy();
@@ -378,4 +382,22 @@ BzDeck.models.Bug.prototype.get_contributors = function () {
   }
 
   return new Set([...contributors.keys()].sort((a, b) => contributors.get(b) - contributors.get(a)));
+};
+
+/**
+ * Extract some properties for a bug search result.
+ *
+ * @argument {undefined}
+ * @return {Object} result - Bug search result.
+ */
+BzDeck.models.Bug.prototype.get_search_result = function () {
+  let contributor = this.data.comments ? this.data.comments[this.data.comments.length - 1].creator : this.data.creator;
+
+  return {
+    type: 'bug',
+    id: this.data.id,
+    summary: this.data.summary,
+    last_change_time: this.data.last_change_time,
+    contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
+  };
 };

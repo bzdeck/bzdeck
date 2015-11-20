@@ -1,0 +1,187 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#quicksearch {
+  position: relative;
+}
+
+[data-device="desktop"]:root #quicksearch {
+  margin: .6rem 0;
+  width: 44rem;
+  height: 2.8rem; /* same as the logo */
+}
+
+[data-device|="mobile"]:root #quicksearch {
+  margin: .6rem;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+[data-device|="mobile"][data-quicksearch]:root #quicksearch {
+  width: calc(100% - 1.2rem);
+}
+
+#quicksearch [role="searchbox"] {
+  position: absolute;
+  box-sizing: border-box;
+  border-width: .1rem;
+  border-color: var(--application-header-background-color);
+  padding: .4rem 3.2rem .4rem .8rem;
+  width: 100%;
+  height: 100%;
+  font-size: 1.25rem;
+}
+
+[data-device|="mobile"]:root #quicksearch [role="searchbox"] {
+  display: none;
+  line-height: 2rem;
+}
+
+[data-device|="mobile"][data-quicksearch]:root #quicksearch [role="searchbox"] {
+  display: block;
+}
+
+#quicksearch > [role="button"] {
+  position: absolute;
+  overflow: hidden;
+  right: .4rem;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent !important;
+  text-indent: -9999rem;
+}
+
+#quicksearch > [role="button"]::after {
+  display: block;
+  width: 100%;
+  height: 100%;
+  float: right;
+  font-family: FontAwesome;
+  text-align: center;
+  text-indent: 0;
+  content: "\F002";
+}
+
+[data-device="desktop"]:root #quicksearch > [role="button"] {
+  top: .2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+[data-device="desktop"]:root #quicksearch > [role="button"]::after {
+  font-size: 1.6rem;
+  line-height: 2.2rem;
+}
+
+[data-device|="mobile"]:root #quicksearch > [role="button"] {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+[data-device|="mobile"]:root #quicksearch > [role="button"]::after {
+  font-size: 2rem;
+  line-height: 2.6rem;
+}
+
+[data-device|="mobile"]:root:not([data-quicksearch]) #quicksearch > [role="button"]::after {
+  color: var(--application-header-foreground-color);
+}
+
+#quicksearch-results {
+  position: absolute;
+  top: 2.8rem;
+  right: 0;
+  z-index: 500;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  background-color: var(--secondary-region-background-color);
+}
+
+#quicksearch-results > header {
+  position: absolute;
+  left: -99999px;
+}
+
+#quicksearch-results section header {
+  padding: .4rem 1rem;
+  color: var(--secondary-region-header-foreground-color);
+  background-color: var(--secondary-region-header-background-color);
+}
+
+#quicksearch-results section header h3 {
+  line-height: 1.6rem;
+}
+
+#quicksearch-results [role="menuitem"] {
+  position: relative;
+  border-width: 0 0 .1rem;
+  border-style: solid;
+  border-color: var(--secondary-grid-border-color);
+  padding: 1rem;
+  height: 3.2rem;
+}
+
+#quicksearch-results [role="menuitem"] > * {
+  position: absolute;
+  display: block;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+#quicksearch-results [itemtype$="Bug"] [itemprop="contributor"],
+#quicksearch-results [itemtype$="User"] [itemprop="image"] {
+  top: 1rem;
+  left: 1rem;
+  overflow: hidden;
+  width: 3.2rem;
+  height: 3.2rem;
+  color: #FCFCFC;
+  font-size: 1.6rem;
+  line-height: 3.2rem;
+  text-align: center;
+}
+
+#quicksearch-results [itemtype$="Bug"] [itemprop="image"] {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#quicksearch-results [itemtype$="Bug"] [itemprop="summary"],
+#quicksearch-results [itemtype$="User"] [itemprop="name"] {
+  top: 1rem;
+  right: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#quicksearch-results [role="menuitem"] > span:last-child {
+  right: 1rem;
+  bottom: 1rem;
+  left: 5.2rem;
+  overflow: hidden;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: .8;
+}
+
+#quicksearch-results [role="menuitem"] > span:last-child > span:first-child:after {
+  content: '\00A0\00B7'; /* nbsp + middot */
+}
+
+#quicksearch-results [itemtype$="User"] [itemprop="alternateName"]:empty {
+  display: none;
+}
+
+#quicksearch-results [data-command] {
+  padding: .8rem;
+  height: auto;
+  text-align: center;
+}

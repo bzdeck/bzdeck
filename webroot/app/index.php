@@ -889,6 +889,23 @@
         </span>
       </section>
     </template><!-- end #details-tracking-flag -->
+    <template id="quicksearch-results-bugs-item">
+      <li tabindex="-1" role="menuitem" aria-selected="false" data-attrs="id data-id" itemscope itemtype="http://bzdeck.com/Bug">
+        <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
+          <img alt="" itemprop="image">
+          <meta itemprop="email">
+        </span>
+        <span itemprop="summary"></span>
+        <span><span itemprop="id"></span> <time itemprop="last_change_time"></time></time>
+      </li>
+    </template><!-- end #quicksearch-results-bugs-item -->
+    <template id="quicksearch-results-users-item">
+      <li tabindex="-1" role="menuitem" aria-selected="false" data-attrs="id data-id" itemscope itemtype="http://bzdeck.com/User">
+        <img alt="" itemprop="image">
+        <span itemprop="name"></span>
+        <span><span itemprop="alternateName"></span> <span itemprop="email"></span></span>
+      </li>
+    </template><!-- end #quicksearch-results-users-item -->
     <template id="vertical-thread-item">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
         <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
@@ -973,9 +990,34 @@
         <h1 role="button">BzDeck</h1>
         <div role="toolbar">
           <div id="quicksearch" title="Search for bugs" role="search">
-            <input type="search" placeholder="Search for bugs" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-dropdown">
+            <input type="search" placeholder="Search for bugs" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-results">
             <span tabindex="0" title="Search" role="button">Go</span>
-            <ul id="quicksearch-dropdown" role="menu" aria-expanded="false"></ul>
+            <section id="quicksearch-results" role="menu" aria-labelledby="quicksearch-results-title" aria-expanded="false">
+              <header>
+                <h2 id="quicksearch-results-title">Quick Search Results</h2>
+              </header>
+              <section id="quicksearch-results-recent" role="group" aria-hidden="true" aria-labelledby="quicksearch-results-recent-title">
+                <header>
+                  <h3 id="quicksearch-results-recent-title">Recent Searches</h3>
+                </header>
+                <ul id="quicksearch-results-recent-list"></ul>
+              </section>
+              <section id="quicksearch-results-bugs" role="group" aria-hidden="true" aria-labelledby="quicksearch-results-bugs-title">
+                <header>
+                  <h3 id="quicksearch-results-bugs-title">Bugs</h3>
+                </header>
+                <ul id="quicksearch-results-bugs-list"></ul>
+                <footer>
+                  <div id="quicksearch-results-bugs-all" tabindex="-1" role="menuitem" aria-selected="false" data-command="search-all-bugs">Search All Bugs...</div>
+                </footer>
+              </section>
+              <section id="quicksearch-results-users" role="group" aria-hidden="true" aria-labelledby="quicksearch-results-users-title">
+                <header>
+                  <h3 id="quicksearch-results-users-title">People</h3>
+                </header>
+                <ul id="quicksearch-results-users-list"></ul>
+              </section>
+            </section>
           </div>
           <ul id="toolbar-buttons">
             <li role="none"><span id="throbber" role="status"></span></li>

@@ -124,116 +124,11 @@ BzDeck.views.Banner = function BannerView (user) {
     this.helpers.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
   }
 
-  this.setup_searchbar();
   this.setup_throbber();
 };
 
 BzDeck.views.Banner.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.Banner.prototype.constructor = BzDeck.views.Banner;
-
-/**
- * Set up the Quick Search functionality.
- *
- * @argument {undefined}
- * @return {undefined}
- */
-BzDeck.views.Banner.prototype.setup_searchbar = function () {
-  let $root = document.documentElement, // <html>
-      $search_box = document.querySelector('#quicksearch [role="searchbox"]'),
-      $search_button = document.querySelector('#quicksearch [role="button"]'),
-      $search_dropdown = document.querySelector('#quicksearch-dropdown');
-
-  this.$$search_dropdown = new this.widgets.Menu($search_dropdown);
-
-  let cleanup = () => {
-    if ($root.hasAttribute('data-quicksearch')) {
-      this.$$search_dropdown.close();
-      $root.removeAttribute('data-quicksearch');
-      $search_box.value = '';
-    }
-  };
-
-  let exec_quick_search = () => {
-    this.trigger(':QuickSearchRequested', { terms: $search_box.value });
-  };
-
-  let exec_advanced_search = () => {
-    this.trigger(':AdvancedSearchRequested', { terms: $search_box.value });
-    cleanup();
-  };
-
-  this.helpers.kbd.assign(window, {
-    'Accel+K': event => {
-      $search_box.focus();
-      event.preventDefault();
-    },
-  });
-
-  window.addEventListener('mousedown', event => cleanup());
-  window.addEventListener('popstate', event => cleanup());
-
-  $search_box.addEventListener('input', event => {
-    if (event.target.value.trim()) {
-      exec_quick_search();
-    } else {
-      this.$$search_dropdown.close();
-    }
-  });
-
-  this.helpers.kbd.assign($search_box, {
-    'ArrowUp|ArrowDown': event => {
-      if (event.target.value.trim() && this.$$search_dropdown.closed) {
-        exec_quick_search();
-      }
-    },
-    Enter: event => {
-      this.$$search_dropdown.close();
-      exec_advanced_search();
-    },
-  });
-
-  $search_box.addEventListener('mousedown', event => event.stopPropagation());
-
-  this.helpers.kbd.assign($search_button, {
-    'Enter|Space': event => exec_advanced_search(),
-  });
-
-  $search_button.addEventListener('mousedown', event => {
-    event.stopPropagation();
-
-    if (this.helpers.env.device.mobile) {
-      if (!$root.hasAttribute('data-quicksearch')) {
-        $root.setAttribute('data-quicksearch', 'activated');
-        // Somehow moving focus doesn't work, so use the async function here
-        this.helpers.event.async(() => $search_box.focus());
-      } else if ($search_box.value) {
-        exec_advanced_search();
-      }
-    } else {
-      exec_advanced_search();
-    }
-  });
-
-  $search_dropdown.addEventListener('MenuItemSelected', event => {
-    // Show the bug or search results
-    let $target = event.detail.target,
-        id = $target.dataset.id;
-
-    if (id) {
-      this.trigger(':QuickSearchResultSelected', { path: `/bug/${id}` });
-      cleanup();
-    }
-
-    if ($target.matches('#quicksearch-dropdown-more')) {
-      exec_advanced_search();
-    }
-  });
-
-  // Suppress context menu
-  $search_box.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true); // use capture
-
-  this.on('C:QuickSearchResultsAvailable', data => this.show_quick_search_results(data.results));
-};
 
 /**
  * Set up the activity indicator or "throbber" displayed while loading bugs.
@@ -246,37 +141,6 @@ BzDeck.views.Banner.prototype.setup_throbber = function () {
 
   this.on('SubscriptionCollection:FetchingSubscriptionsStarted', () => $throbber.textContent = 'Loading...', true);
   this.on('SubscriptionCollection:FetchingSubscriptionsComplete', () => $throbber.textContent = '', true);
-};
-
-/**
- * Show Quick Search results on the drow down menu.
- *
- * @argument {Array.<Proxy>} results - List of bugs that match the criteria.
- * @return {undefined}
- */
-BzDeck.views.Banner.prototype.show_quick_search_results = function (results) {
-  let $$dropdown = this.$$search_dropdown;
-
-  let data = [{
-    id: 'quicksearch-dropdown-header',
-    label: results.length ? 'Local Search' : 'Local Search: No Results', // l10n
-    disabled: true
-  }];
-
-  for (let bug of results.reverse().slice(0, 20)) {
-    data.push({
-      id: 'quicksearch-dropdown-' + bug.id,
-      label: bug.id + ' - ' + (bug.aliases.length ? '(' + bug.aliases.join(', ') + ') ' : '') + bug.summary,
-      data: { id: bug.id }
-    });
-  }
-
-  data.push({ type: 'separator' });
-  data.push({ id: 'quicksearch-dropdown-more', label: 'Search All Bugs...' }); // l10n
-
-  $$dropdown.build(data);
-  $$dropdown.view.$container.scrollTop = 0;
-  $$dropdown.open();
 };
 
 /**
