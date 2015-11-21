@@ -21,7 +21,7 @@ BzDeck.views.QuickSearch = function QuickSearchView () {
   this.$input.addEventListener('onblur', event => this.cleanup());
   this.$input.addEventListener('mousedown', event => event.stopPropagation());
   this.$input.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true); // Suppress context menu
-  this.$button.addEventListener('mousedown', event => this.onsubmit());
+  this.$button.addEventListener('mousedown', event => { event.stopPropagation(); this.onsubmit() });
   this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
   window.addEventListener('mousedown', event => this.cleanup());
   window.addEventListener('popstate', event => this.cleanup());
@@ -119,8 +119,6 @@ BzDeck.views.QuickSearch.prototype.onsubmit = function () {
   } else {
     this.exec_advanced_search();
   }
-
-  event.stopPropagation();
 };
 
 /**
