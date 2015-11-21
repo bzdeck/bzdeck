@@ -93,24 +93,11 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
   params.append('limit', 10);
 
   this.timer = window.setTimeout(() => {
-    BzDeck.controllers.global.request('user', params, { auth: true }).then(result => {
+    BzDeck.collections.users.search_remote(params).then(users => {
       // Check if the search term is not updated
-      if (this.value !== value || !result.users || !result.users.length) {
-        return;
+      if (this.value === value && users.length) {
+        this.search(new Map(users.map(user => [user.name, user])));
       }
-
-      let users = [];
-
-      for (let user of result.users) {
-        if (!BzDeck.collections.users.has(user.name)) {
-          BzDeck.collections.users.set(user.name, { bugzilla: user });
-        }
-
-        users.push(user);
-      }
-
-      users.sort((a, b) => new Date(a.last_activity) > new Date(b.last_activity));
-      this.helpers.event.async(() => this.search(new Map(users.map(user => [user.name, user]))));
     });
   }, 1000);
 };
@@ -121,7 +108,7 @@ BzDeck.views.PersonFinder.prototype.search_remote = function () {
  * @argument {Map.<String, Proxy>} users - User list.
  * @return {undefined}
  */
-BzDeck.views.PersonFinder.prototype.search = function (users) {
+BzDeck.views.PersonFinder.prototype.search = function (users = new Map()) {
   let has_colon = this.value.startsWith(':'),
       re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i'),
       find = str => re.test(str),

@@ -125,29 +125,8 @@ BzDeck.controllers.SearchPage.prototype.exec_search = function (params) {
 
   this.trigger(':SearchStarted');
 
-  this.request('bug', params).then(result => {
-    if (!result.bugs.length) {
-      return;
-    }
-
-    let bugs = new Map(),
-        _bugs = this.data.bugs = new Map(result.bugs.map(_bug => [_bug.id, _bug]));
-
-    BzDeck.collections.bugs.get_some(_bugs.keys()).forEach((bug, id) => {
-      let retrieved = _bugs.get(id); // Raw data object
-
-      // Mark as unread
-      retrieved._unread = true;
-
-      if (!bug) {
-        bug = BzDeck.collections.bugs.set(id, retrieved);
-      } else if (bug.last_change_time < retrieved.last_change_time) {
-        bug.merge(retrieved);
-      }
-
-      bugs.set(id, bug);
-    });
-
+  BzDeck.collections.bugs.search_remote(params).then(bugs => {
+    bugs = this.data.bugs = new Map(bugs.map(bug => [bug.id, bug]));
     this.trigger(':SearchResultsAvailable', { bugs });
   }).catch(error => {
     this.trigger(':SearchError', { error });

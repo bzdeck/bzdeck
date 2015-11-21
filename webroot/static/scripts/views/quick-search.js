@@ -28,14 +28,14 @@ BzDeck.views.QuickSearch = function QuickSearchView () {
   this.on('C:ResultsAvailable', data => this.render_results(data), true);
 
   this.assign_keyboard_bindings();
-  this.activate_listboxes();
+  this.activate_results();
 };
 
 BzDeck.views.QuickSearch.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.QuickSearch.prototype.constructor = BzDeck.views.QuickSearch;
 
 /**
- * Enable some keyboard shortcuts on each element.
+ * Enable some keyboard shortcuts on the elements.
  *
  * @argument {undefined}
  * @return {undefined}
@@ -68,12 +68,12 @@ BzDeck.views.QuickSearch.prototype.assign_keyboard_bindings = function () {
 };
 
 /**
- * Activate each listbox widget and cache them in a Map for later access.
+ * Activate each result sections and cache them in a Map for later access.
  *
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.QuickSearch.prototype.activate_listboxes = function () {
+BzDeck.views.QuickSearch.prototype.activate_results = function () {
   this.sections = new Map();
 
   for (let $section of this.$results.querySelectorAll('[role="group"]')) {
@@ -146,7 +146,7 @@ BzDeck.views.QuickSearch.prototype.exec_advanced_search = function () {
  * Show search results on the drop down list.
  *
  * @argument {Object} data - Passed data.
- * @argument {String} data.category - Search category, such as 'recent' or 'bugs'.
+ * @argument {String} data.category - Search category, such as 'recent', 'bugs' or 'users'.
  * @argument {String} data.input - Original search terms.
  * @argument {Array}  data.results - Search results.
  * @return {Boolean} displayed - Whether the results are displayed.
@@ -228,7 +228,8 @@ BzDeck.views.QuickSearch.prototype.cleanup = function () {
 };
 
 /**
- * Called whenever a search result is selected.
+ * Called whenever a search result is selected. Open the object or Advanced Search page in a new tab, and close the drop
+ * down list.
  *
  * @argument {HTMLElement} $target - Selected element.
  * @return {undefined}
@@ -255,7 +256,7 @@ BzDeck.views.QuickSearch.prototype.on_result_selected = function ($target) {
  *
  * @constructor
  * @extends BaseView
- * @argument {String} category - Search category, such as 'recent' or 'bugs'.
+ * @argument {String} category - Search category, such as 'recent', 'bugs' or 'users'.
  * @argument {HTMLElement} $outer - Section node.
  * @return {Object} view - New QuickSearchResultsView instance.
  */
@@ -265,6 +266,10 @@ BzDeck.views.QuickSearchResults = function QuickSearchResultsView (category, $ou
 
   this.$outer = $outer;
   this.$list = this.$outer.querySelector('ul');
+  this.templates = {
+    bug: this.get_template('quicksearch-results-bugs-item'),
+    user: this.get_template('quicksearch-results-users-item'),
+  };
 };
 
 BzDeck.views.QuickSearchResults.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -302,22 +307,17 @@ BzDeck.views.QuickSearchResults.prototype.hide = function () {
  */
 BzDeck.views.QuickSearchResults.prototype.render = function (results) {
   let $fragment = new DocumentFragment();
-  let templates = {
-    bug: this.get_template('quicksearch-results-bugs-item'),
-    user: this.get_template('quicksearch-results-users-item'),
-  };
 
   this.results = results;
 
   // Show 5 results for people
   for (let result of results.slice(0, this.category === 'users' ? 4 : 6)) {
-    $fragment.appendChild(this.fill(templates[result.type].cloneNode(true), result, {
+    $fragment.appendChild(this.fill(this.templates[result.type].cloneNode(true), result, {
       id: `quicksearch-results-${this.category}-item-${result.id}`,
       'data-id': result.id,
     }));
   }
 
-  // Manually update the listbox
   this.$list.innerHTML = '';
   this.$list.appendChild($fragment);
 

@@ -23,7 +23,7 @@ BzDeck.controllers.QuickSearch.prototype = Object.create(BzDeck.controllers.Base
 BzDeck.controllers.QuickSearch.prototype.constructor = BzDeck.controllers.QuickSearch;
 
 /**
- * Provide recent searches done by the user.
+ * Provide recent searches done by the user. Notify the results with an event.
  *
  * @argument {undefined}
  * @return {Boolean} provided - Whether the results are provided.
@@ -39,7 +39,7 @@ BzDeck.controllers.QuickSearch.prototype.provide_recent_searches = function () {
       let bug = BzDeck.collections.bugs.get(id);
 
       if (bug) {
-        results.push(bug.search_result);
+        results.push(this.get_bug_result(bug));
       }
     }
 
@@ -47,7 +47,7 @@ BzDeck.controllers.QuickSearch.prototype.provide_recent_searches = function () {
       let user = BzDeck.collections.users.get(id);
 
       if (user) {
-        results.push(Object.assign({ type: 'user' }, user.properties));
+        results.push(this.get_user_result(user));
       }
     }
   }
@@ -62,29 +62,80 @@ BzDeck.controllers.QuickSearch.prototype.provide_recent_searches = function () {
 };
 
 /**
- * Execute a quick search. TODO: Add support for other objects like products/components and attachments.
+ * Execute a quick search and notify the results with an event. TODO: Add support for other objects like products and
+ * components (#326).
  *
  * @argument {String} input - Original search terms, may contain spaces.
  * @return {undefined}
  */
 BzDeck.controllers.QuickSearch.prototype.exec_quick_search = function (input) {
-  let words = input.trim().split(/\s+/).map(word => word.toLowerCase()),
-      trigger = (category, results) => this.trigger(':ResultsAvailable', { category, input, results });
+  input = input.trim();
 
-  if (words.length) {
-    BzDeck.collections.bugs.search_local(input, words).then(results => trigger('bugs', results));
-    BzDeck.collections.users.search_local(input, words).then(results => trigger('users', results));
+  if (!input) {
+    return;
   }
 
+  let params_bugs = new URLSearchParams(),
+      params_users = new URLSearchParams();
+
+  let return_bugs = bugs => this.trigger(':ResultsAvailable', {
+    category: 'bugs',
+    input,
+    results: bugs.map(bug => this.get_bug_result(bug)),
+  });
+
+  let return_users = users => this.trigger(':ResultsAvailable', {
+    category: 'users',
+    input,
+    results: users.map(user => this.get_user_result(user)),
+  });
+
+  params_bugs.append('short_desc', input);
+  params_bugs.append('short_desc_type', 'allwordssubstr');
+  params_bugs.append('resolution', '---'); // Search only open bugs
+  BzDeck.collections.bugs.search_local(params_bugs).then(bugs => return_bugs(bugs));
+
+  params_users.append('match', input);
+  params_users.append('limit', 10);
+  BzDeck.collections.users.search_local(params_users).then(users => return_users(users));
+
   // Remote searches require at learst 3 characters
-  if (input.trim().length >= 3) {
+  if (input.length >= 3) {
     // Use a .5 second timer not to send requests so frequently while the user is typing
     window.clearTimeout(this.searchers);
     this.searchers = window.setTimeout(() => {
-      BzDeck.collections.bugs.search_remote(input, words).then(results => trigger('bugs', results));
-      BzDeck.collections.users.search_remote(input, words).then(results => trigger('users', results));
+      BzDeck.collections.bugs.search_remote(params_bugs).then(bugs => return_bugs(bugs));
+      BzDeck.collections.users.search_remote(params_users).then(users => return_users(users));
     }, 500);
   }
+};
+
+/**
+ * Extract some bug properties for a quick search result.
+ *
+ * @argument {Proxy} bug - BugModel instance.
+ * @return {Object} result - Bug search result.
+ */
+BzDeck.controllers.QuickSearch.prototype.get_bug_result = function (bug) {
+  let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+
+  return {
+    type: 'bug',
+    id: bug.id,
+    summary: bug.summary,
+    last_change_time: bug.last_change_time,
+    contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
+  };
+};
+
+/**
+ * Extract some user properties for a quick search result.
+ *
+ * @argument {Proxy} user - UserModel instance.
+ * @return {Object} result - User search result.
+ */
+BzDeck.controllers.QuickSearch.prototype.get_user_result = function (user) {
+  return Object.assign({ type: 'user', id: user.email }, user.properties);
 };
 
 /**
@@ -94,11 +145,10 @@ BzDeck.controllers.QuickSearch.prototype.exec_quick_search = function (input) {
  * @return {undefined}
  */
 BzDeck.controllers.QuickSearch.prototype.exec_advanced_search = function (input) {
-  let words = input.trim().split(/\s+/).map(word => word.toLowerCase()),
-      params = new URLSearchParams();
+  let params = new URLSearchParams();
 
-  if (words.length) {
-    params.append('short_desc', words.join(' '));
+  if (input.trim()) {
+    params.append('short_desc', input.trim());
     params.append('short_desc_type', 'allwordssubstr');
     params.append('resolution', '---'); // Search only open bugs
   }

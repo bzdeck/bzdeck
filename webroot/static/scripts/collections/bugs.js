@@ -64,14 +64,15 @@ BzDeck.collections.Bugs.prototype.fetch = function (ids, include_metadata = true
 };
 
 /**
- * Search bugs from the local database and return the results. TODO: Add support for Bugzilla quick search queries.
+ * Search bugs from the local database and return the results. TODO: Add support for Bugzilla quick search queries
+ * (#327).
  *
- * @argument {String} input - Original search terms, may contain spaces.
- * @argument {Array} words - Search terms in an array, without spaces.
+ * @argument {URLSearchParams} params - Search query.
  * @return {Promise.<Object>} Promise to be resolved in the search results.
  */
-BzDeck.collections.Bugs.prototype.search_local = function (input, words) {
-  let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+BzDeck.collections.Bugs.prototype.search_local = function (params) {
+  let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase()),
+      match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
 
   let bugs = [...this.get_all().values()].filter(bug => {
     return words.every(word => bug.summary && match(bug.summary, word)) ||
@@ -85,17 +86,11 @@ BzDeck.collections.Bugs.prototype.search_local = function (input, words) {
 /**
  * Search bugs from the remote Bugzilla instnace and return the results.
  *
- * @argument {String} input - Original search terms, may contain spaces.
- * @argument {Array} words - Search terms in an array, without spaces.
- * @return {Promise.<Object>} results - Promise to be resolved in the search results.
+ * @argument {URLSearchParams} params - Search query.
+ * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
-BzDeck.collections.Bugs.prototype.search_remote = function (input, words) {
-  let params = new URLSearchParams(),
-      bugs = [];
-
-  params.append('short_desc', words.join(' '));
-  params.append('short_desc_type', 'allwordssubstr');
-  params.append('resolution', '---'); // Search only open bugs
+BzDeck.collections.Bugs.prototype.search_remote = function (params) {
+  let bugs = [];
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
     if (!result.bugs || !result.bugs.length) {
@@ -124,16 +119,17 @@ BzDeck.collections.Bugs.prototype.search_remote = function (input, words) {
 };
 
 /**
- * Sort and return search results. TODO: Improve the sorting algorithm.
+ * Sort descending (new to old) and return search results. TODO: Improve the sorting algorithm.
  *
  * @argument {Array.<Proxy>} bugs - List of found bugs.
- * @return {Promise.<Object>} results - Promise to be resolved in the search results.
+ * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
 BzDeck.collections.Bugs.prototype.get_search_results = function (bugs) {
-  bugs.sort((a, b) => {
-    // Descending (new to old)
-    return new Date(a.last_change_time) < new Date(b.last_change_time);
-  });
+  // Sort by the last updated time
+  bugs.sort((a, b) => new Date(a.last_change_time) < new Date(b.last_change_time));
+  // Sort by the last visited time
+  bugs.sort((a, b) => new Date(a._last_viewed || 0) < new Date(b._last_viewed || 0));
+  // Another possible factors: How often the user visited the bug? How active the bug is?
 
-  return Promise.resolve(bugs.map(bug => bug.search_result));
+  return Promise.resolve(bugs);
 };

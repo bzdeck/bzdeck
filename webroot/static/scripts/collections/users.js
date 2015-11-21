@@ -40,12 +40,12 @@ BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
 /**
  * Search users from the local database and return the results.
  *
- * @argument {String} input - Original search terms, may contain spaces.
- * @argument {Array} words - Search terms in an array, without spaces.
+ * @argument {URLSearchParams} params - Search query.
  * @return {undefined}
  */
-BzDeck.collections.Users.prototype.search_local = function (input, words) {
-  let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+BzDeck.collections.Users.prototype.search_local = function (params) {
+  let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase()),
+      match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
 
   // If the search string starts with a colon, remove it so a nick name may match
   if (words.length === 1 && words[0].startsWith(':')) {
@@ -63,18 +63,13 @@ BzDeck.collections.Users.prototype.search_local = function (input, words) {
 /**
  * Search users from the remote Bugzilla instnace and return the results.
  *
- * @argument {String} input - Original search terms, may contain spaces.
- * @argument {Array} words - Search terms in an array, without spaces.
- * @return {Promise.<Object>} results - Promise to be resolved in the search results.
+ * @argument {URLSearchParams} params - Search query.
+ * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
-BzDeck.collections.Users.prototype.search_remote = function (input, words) {
-  let params = new URLSearchParams(),
-      users = [];
+BzDeck.collections.Users.prototype.search_remote = function (params) {
+  let users = [];
 
-  params.append('match', words.join(' ')); // Require auth
-  params.append('limit', 10);
-
-  return BzDeck.controllers.global.request('user', params, { auth: true }).then(result => {
+  return BzDeck.controllers.global.request('user', params, { auth: params.has('match') }).then(result => {
     if (!result.users || !result.users.length) {
       return Promise.resolve([]);
     }
@@ -96,16 +91,15 @@ BzDeck.collections.Users.prototype.search_remote = function (input, words) {
 };
 
 /**
- * Sort and return search results. TODO: Improve the sorting algorithm.
+ * Sort descending (new to old) and return search results. TODO: Improve the sorting algorithm.
  *
  * @argument {Array.<Proxy>} users - List of found users.
- * @return {Promise.<Object>} results - Promise to be resolved in the search results.
+ * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
 BzDeck.collections.Users.prototype.get_search_results = function (users) {
-  users.sort((a, b) => {
-    // Descending (new to old)
-    return new Date(a.last_activity) < new Date(b.last_activity);
-  });
+  // Sort by the last active time
+  users.sort((a, b) => new Date(a.last_activity) < new Date(b.last_activity));
+  // Another possible factors: How active the person is? How often the person has interacted with the user?
 
-  return Promise.resolve(users.map(user => Object.assign({ type: 'user', id: user.email }, user.properties)));
+  return Promise.resolve(users);
 };
