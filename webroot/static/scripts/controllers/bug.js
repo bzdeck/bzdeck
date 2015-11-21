@@ -767,7 +767,7 @@ BzDeck.controllers.Bug.prototype.submit = function () {
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
  */
 BzDeck.controllers.Bug.prototype.post_changes = function (data) {
-  return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', auth: true, data });
+  return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', data });
 };
 
 /**
@@ -779,7 +779,7 @@ BzDeck.controllers.Bug.prototype.post_changes = function (data) {
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
  */
 BzDeck.controllers.Bug.prototype.post_att_changes = function (att_id, data) {
-  return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', auth: true, data });
+  return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
 };
 
 /**
@@ -795,7 +795,6 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
 
   return this.request(`bug/${this.bug.id}/attachment`, null, {
     method: 'POST',
-    auth: true,
     data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
     upload_listeners: {
       progress: event => {

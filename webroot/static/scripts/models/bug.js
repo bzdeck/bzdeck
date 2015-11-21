@@ -193,7 +193,6 @@ BzDeck.models.Bug.prototype.update_annotation = function (type, value) {
   if (type === 'unread' && value === false) {
     BzDeck.controllers.global.request('bug_user_last_visit/' + this.id, null, {
       method: 'POST',
-      auth: true,
     }).then(result => {
       if (result[0] && result[0].id === this.id && result[0].last_visit_ts) {
         return Promise.resolve(result[0].last_visit_ts);

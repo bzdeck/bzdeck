@@ -69,7 +69,7 @@ BzDeck.collections.Users.prototype.search_local = function (params) {
 BzDeck.collections.Users.prototype.search_remote = function (params) {
   let users = [];
 
-  return BzDeck.controllers.global.request('user', params, { auth: params.has('match') }).then(result => {
+  return BzDeck.controllers.global.request('user', params).then(result => {
     if (!result.users || !result.users.length) {
       return Promise.resolve([]);
     }

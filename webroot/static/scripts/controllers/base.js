@@ -26,7 +26,6 @@ BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
  * @argument {String} [options.method='GET'] - Request method.
  * @argument {Object} [options.data] - Post data.
  * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
- * @argument {Boolean} [options.auth] - Whether the request requires an authentication.
  * @argument {Object} [options.listeners] - Download event listeners. The object key is an event type like 'progress',
  *  the value is an event handler function.
  * @argument {Object} [options.upload_listeners] - Upload event listeners.
@@ -47,19 +46,10 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   url.search = '?' + params.toString();
   xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
   xhr.setRequestHeader('Accept', 'application/json');
+  xhr.setRequestHeader('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
 
   if (!navigator.onLine) {
     return Promise.reject(new Error('You have to go online to load data.')); // l10n
-  }
-
-  if (options.api_key || options.auth) {
-    let key = options.api_key || BzDeck.models.account.data.api_key;
-
-    if (!key) {
-      return Promise.reject(new Error('Your API key is required to authenticate against Bugzilla but not found.'));
-    }
-
-    xhr.setRequestHeader('X-Bugzilla-API-Key', key);
   }
 
   for (let type in listeners) {
