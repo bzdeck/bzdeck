@@ -5,7 +5,7 @@
 'use strict';
 
 // Cache version: this has to be updated whenever a file is modified
-let version = '2015-11-20-16-25';
+let version = '2015-11-21-14-36';
 
 // Files need to be cached
 let files = [
