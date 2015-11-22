@@ -47,17 +47,22 @@ BzDeck.models.Attachment.prototype.fetch = function () {
  *  this AttachmentModel.
  */
 BzDeck.models.Attachment.prototype.get_data = function () {
-  let convert = () => {
-    let binary = window.atob(this.data.data),
-        text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined,
-        blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))],
-                        { type: this.content_type });
+  let decode = () => new Promise(resolve => {
+    let worker = new SharedWorker('/static/scripts/workers/shared.js');
 
-    return { blob, text, attachment: this };
-  };
+    worker.port.addEventListener('message', event => {
+      let { binary, blob } = event.data,
+          text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
+
+      resolve({ blob, text, attachment: this });
+    });
+
+    worker.port.start();
+    worker.port.postMessage(['decode', { str: this.data.data, type: this.content_type }]);
+  });
 
   if (this.data.data) {
-    return Promise.resolve(convert());
+    return Promise.resolve(decode());
   }
 
   return BzDeck.controllers.global.request(`bug/attachment/${this.id}`,
@@ -73,7 +78,7 @@ BzDeck.models.Attachment.prototype.get_data = function () {
     BzDeck.collections.attachments.set(this.id, this.data);
     this.save();
 
-    return Promise.resolve(convert());
+    return Promise.resolve(decode());
   }).catch(error => {
     return Promise.reject(new Error(`The attachment ${this.id} cannot be retrieved from Bugzilla.`));
   });

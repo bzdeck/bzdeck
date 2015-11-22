@@ -410,7 +410,8 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       max_size = BzDeck.models.server.data.config.max_attachment_size;
 
   for (let _file of files) {
-    let reader = new FileReader(),
+    // Firefox crashes when a File is passed to a SharedWorker (Bug 1226927) so use a dedicated Worker here instead
+    let worker = new Worker('/static/scripts/workers/readfile.js'),
         file = _file, // Redeclare the variable so it can be used in the following load event
         is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
 
@@ -421,9 +422,9 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       continue;
     }
 
-    reader.addEventListener('load', event => {
+    worker.addEventListener('message', event => {
       this.add_attachment({
-        data: reader.result.split(',')[1], // Drop 'data:<type>;base64,'
+        data: event.data.split(',')[1], // Drop 'data:<type>;base64,'
         summary: is_patch ? 'Patch' : file.name,
         file_name: file.name,
         content_type: is_patch ? 'text/plain' : file.type || 'application/x-download',
@@ -431,7 +432,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       }, file.size);
     });
 
-    reader.readAsDataURL(file);
+    worker.postMessage(file);
   }
 
   if (!oversized_files.size) {
@@ -467,7 +468,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
  * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.attach_text = function (text) {
-  let reader = new FileReader(),
+  let worker = new SharedWorker('/static/scripts/workers/shared.js'),
       blob = new Blob([text], { type: 'text/plain' }),
       summary = text.substr(0, 25) + (text.length > 25 ? '...' : ''),
       file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
@@ -491,14 +492,14 @@ BzDeck.controllers.Bug.prototype.attach_text = function (text) {
     content_type = 'text/x-review-board-request';
   }
 
-  // Use FileReader instead of btoa() to avoid overflow
-  reader.addEventListener('load', event => {
-    let data = reader.result.split(',')[1]; // Drop 'data:text/plain;base64,'
+  worker.port.addEventListener('message', event => {
+    let data = event.data.split(',')[1]; // Drop 'data:text/plain;base64,'
 
     this.add_attachment({ data, summary, file_name, content_type, is_patch }, blob.size);
   });
 
-  reader.readAsDataURL(blob);
+  worker.port.start();
+  worker.port.postMessage(['readfile', { file: blob }]);
 };
 
 /**
@@ -796,16 +797,16 @@ BzDeck.controllers.Bug.prototype.post_attachment = function (attachment) {
   return this.request(`bug/${this.bug.id}/attachment`, null, {
     method: 'POST',
     data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
-    upload_listeners: {
-      progress: event => {
+    listeners: {
+      progress: data => {
         if (!size) {
-          size_computable = event.lengthComputable;
-          size = event.total;
+          size_computable = data.lengthComputable;
+          size = data.total;
           this.uploads.total += size;
         }
 
         if (size_computable) {
-          attachment.uploaded = event.loaded;
+          attachment.uploaded = data.loaded;
           this.notify_upload_progress();
         }
       }

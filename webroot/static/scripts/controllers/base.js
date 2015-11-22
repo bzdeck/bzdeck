@@ -18,57 +18,64 @@ BzDeck.controllers.Base.prototype = Object.create(FlareTail.app.Controller.proto
 BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 
 /**
- * Send an API request to the remote Bugzilla instance.
+ * Send an API request to the remote Bugzilla instance. Use a Worker on a different thread.
  *
  * @argument {String} path - Location including an API method.
- * @argument {URLSearchParams} params - Search query.
+ * @argument {URLSearchParams} [params] - Search query.
  * @argument {Object} [options] - Extra options.
  * @argument {String} [options.method='GET'] - Request method.
  * @argument {Object} [options.data] - Post data.
  * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
- * @argument {Object} [options.listeners] - Download event listeners. The object key is an event type like 'progress',
- *  the value is an event handler function.
- * @argument {Object} [options.upload_listeners] - Upload event listeners.
+ * @argument {Object.<String, Function>} [options.listeners] - Event listeners. The key is an event type like 'load',
+ *  the value is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
  * @return {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
  */
 BzDeck.controllers.Base.prototype.request = function (path, params, options = {}) {
-  // We can't use the Fetch API here since it lacks progress events for now
-  let server = BzDeck.models.server,
-      xhr = new XMLHttpRequest(),
-      url = new URL(server.url + server.endpoints.rest),
-      listeners = options.listeners || {},
-      upload_listeners = options.upload_listeners || {};
-
-  params = params || new URLSearchParams();
-
-  url.pathname += path;
-  url.search = '?' + params.toString();
-  xhr.open(options.method || (options.data ? 'POST' : 'GET'), url.toString(), true);
-  xhr.setRequestHeader('Accept', 'application/json');
-  xhr.setRequestHeader('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
-
   if (!navigator.onLine) {
     return Promise.reject(new Error('You have to go online to load data.')); // l10n
   }
 
-  for (let type in listeners) {
-    xhr.addEventListener(type, event => listeners[type](event));
+  let worker = new SharedWorker('/static/scripts/workers/shared.js'),
+      server = BzDeck.models.server,
+      url = new URL(server.url + server.endpoints.rest + path),
+      method = options.method || (options.data ? 'POST' : 'GET'),
+      headers = new Map(),
+      listeners = options.listeners || {};
+
+  if (params) {
+    url.search = params.toString();
   }
 
-  for (let type in upload_listeners) {
-    xhr.upload.addEventListener(type, event => upload_listeners[type](event));
-  }
+  headers.set('Accept', 'application/json');
+  headers.set('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
 
   return new Promise((resolve, reject) => {
-    xhr.addEventListener('load', event => {
-      let text = event.target.responseText;
+    worker.port.addEventListener('message', event => {
+      let type = event.data.type;
 
-      text ? resolve(JSON.parse(text)) : reject(new Error('Data not found or not valid in the response.'));
+      if (type === 'abort') {
+        reject(new Error('Connection aborted.'));
+      }
+
+      if (type === 'error') {
+        reject(new Error('Connection error.'));
+      }
+
+      if (type === 'load') {
+        try {
+          resolve(JSON.parse(event.data.response));
+        } catch (ex) {
+          reject(new Error('Data not found or not valid in the response.'));
+        }
+      }
+
+      if (type in listeners) {
+        listeners[type](event.data);
+      }
     });
 
-    xhr.addEventListener('error', event => reject(new Error('Connection error.')));
-    xhr.addEventListener('abort', event => reject(new Error('Connection aborted.')));
-    xhr.send(options.data ? JSON.stringify(options.data) : null);
+    worker.port.start();
+    worker.port.postMessage(['xhr', { url: url.toString(), method, headers, data: options.data }]);
   });
 };

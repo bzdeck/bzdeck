@@ -131,6 +131,9 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     }
 
     return Promise.all([]);
-  }).then(bugs => Promise.resolve(bugs), event => Promise.reject(new Error('Failed to load data.')) // l10n
-  ).then(() => this.trigger(':FetchingSubscriptionsComplete'));
+  }).then(bugs => Promise.resolve(bugs), error => {
+    console.error(error);
+
+    return Promise.reject(new Error('Failed to load data.')); // l10n
+  }).then(() => this.trigger(':FetchingSubscriptionsComplete'));
 };
