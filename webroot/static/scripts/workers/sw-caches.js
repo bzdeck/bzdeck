@@ -5,10 +5,10 @@
 'use strict';
 
 // Cache version: this has to be updated whenever a file is modified
-let version = '2015-11-22-00-17';
+const version = '2015-11-22-00-17';
 
 // Files need to be cached
-let files = [
+const files = [
   '/app/',
   '/static/images/logo/icon-256-white.png',
   '/static/images/themes/dark/sprite.png',
@@ -27,16 +27,16 @@ let files = [
 ];
 
 // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
-let pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
+const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
-this.addEventListener('install', event => {
+self.addEventListener('install', event => {
   event.waitUntil(
     // Cache the files
     caches.open(version).then(cache => cache.addAll(files))
   );
 });
 
-this.addEventListener('fetch', event => {
+self.addEventListener('fetch', event => {
   let request = event.request;
 
   // Rewrite in-app requests as .htaccess does
@@ -64,7 +64,7 @@ this.addEventListener('fetch', event => {
   );
 });
 
-this.addEventListener('activate', event => {
+self.addEventListener('activate', event => {
   event.waitUntil(
     // Delete old caches
     caches.keys().then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))

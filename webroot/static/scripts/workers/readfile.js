@@ -4,8 +4,7 @@
 
 'use strict';
 
-this.addEventListener('message', event => {
-  let reader = new FileReaderSync();
-
-  postMessage(reader.readAsDataURL(event.data));
+self.addEventListener('message', event => {
+  self.postMessage((new FileReaderSync()).readAsDataURL(event.data));
+  self.close();
 });

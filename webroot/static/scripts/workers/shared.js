@@ -4,7 +4,7 @@
 
 'use strict';
 
-let tasks = {};
+const tasks = {};
 
 /**
  * Send a XMLHttpRequest, and post the result events, not only load, but also abort, error and progress.
@@ -22,13 +22,14 @@ tasks.xhr = (port, args) => {
       xhr = new XMLHttpRequest();
 
   let post = event => {
-    let message = { type: event.type };
+    let type = event.type,
+        message = { type };
 
-    if (event.type === 'load') {
+    if (type === 'load') {
       message.response = event.target.response;
     }
 
-    if (event.type === 'progress') {
+    if (type === 'progress') {
       message.total = event.total;
       message.loaded = event.loaded;
       message.lengthComputable = event.lengthComputable;
@@ -83,7 +84,7 @@ tasks.readfile = (port, args) => {
   port.postMessage(reader.readAsDataURL(file));
 };
 
-this.addEventListener('connect', event => {
+self.addEventListener('connect', event => {
   let port = event.ports[0];
 
   port.addEventListener('message', event => tasks[event.data[0]](port, event.data[1]));
