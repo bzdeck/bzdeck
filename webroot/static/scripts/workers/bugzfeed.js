@@ -172,11 +172,11 @@ BzDeck.workers.BugzfeedClient.prototype.onerror = function (event) {
 BzDeck.workers.BugzfeedClient.prototype.onmessage = function (event) {
   let { command, bug, bugs, result, when } = JSON.parse(event.data);
 
-  if (command === 'update' && result === 'ok') {
+  if (command === 'update') {
     trigger('Bugzfeed', 'BugUpdated', { id: bug });
   }
 
-  if (command === 'subscribe') {
+  if (command === 'subscribe' && result === 'ok') {
     trigger('Bugzfeed', 'SubscriptionUpdated', { ids: bugs });
   }
 };
