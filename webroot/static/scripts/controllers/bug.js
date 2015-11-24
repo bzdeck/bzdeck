@@ -854,7 +854,7 @@ BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
 BzDeck.controllers.Bug.prototype.fetch = function () {
   let bugzfeed = BzDeck.controllers.bugzfeed;
 
-  if (bugzfeed.websocket && bugzfeed.subscription.has(this.bug.id)) {
+  if (bugzfeed.connected && bugzfeed.subscription.has(this.bug.id)) {
     return false;
   }
 

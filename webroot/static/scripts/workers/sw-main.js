@@ -4,6 +4,8 @@
 
 'use strict';
 
+const BzDeck = { workers: {}};
+
 // Cache version: this has to be updated whenever a file is modified
 const version = '2015-11-22-00-17';
 
@@ -29,10 +31,29 @@ const files = [
 // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
 const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
+// Import sub scripts
+self.importScripts('/static/scripts/workers/bugzfeed.js');
+
+// Initialize the services
+BzDeck.workers.bugzfeed = new BzDeck.workers.BugzfeedClient();
+
 self.addEventListener('install', event => {
   event.waitUntil(
-    // Cache the files
-    caches.open(version).then(cache => cache.addAll(files))
+    caches.open(version)
+        // Cache the files
+        .then(cache => cache.addAll(files))
+        // Activate the worker immediately
+        .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+        // Delete old caches
+        .then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))
+        // Activate the worker for the main thread
+        .then(() => self.clients.claim())
   );
 });
 
@@ -64,9 +85,14 @@ self.addEventListener('fetch', event => {
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    // Delete old caches
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))
-  );
-});
+/**
+ * Send a message to the main thread.
+ *
+ * @argument {String} service - Related service.
+ * @argument {String} type - Event type.
+ * @argument {Object} [detail] - Event detail.
+ * @return {undefined}
+ */
+function trigger (service, type, detail) {
+  self.clients.matchAll().then(_clients => _clients.forEach(client => client.postMessage([service, type, detail])));
+};

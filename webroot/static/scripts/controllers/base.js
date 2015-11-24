@@ -18,6 +18,18 @@ BzDeck.controllers.Base.prototype = Object.create(FlareTail.app.Controller.proto
 BzDeck.controllers.Base.prototype.constructor = BzDeck.controllers.Base;
 
 /**
+ * Send a message to the service worker.
+ *
+ * @argument {String} service - Related service.
+ * @argument {String} type - Event type.
+ * @argument {Object} detail - Event detail.
+ * @return {undefined}
+ */
+BzDeck.controllers.Base.prototype.notify_worker = function (service, type, detail) {
+  navigator.serviceWorker.ready.then(registration => registration.active.postMessage([service, type, detail]));
+};
+
+/**
  * Send an API request to the remote Bugzilla instance. Use a Worker on a different thread.
  *
  * @argument {String} path - Location including an API method.

@@ -14,6 +14,8 @@ BzDeck.collections.Bugs = function BugCollection () {
   this.datasource = BzDeck.datasources.account;
   this.store_name = 'bugs';
   this.model = BzDeck.models.Bug;
+
+  this.subscribe('BugzfeedClientController:BugUpdated', true);
 };
 
 BzDeck.collections.Bugs.prototype = Object.create(BzDeck.collections.Base.prototype);
@@ -132,4 +134,16 @@ BzDeck.collections.Bugs.prototype.get_search_results = function (bugs) {
   // Another possible factors: How often the user visited the bug? How active the bug is?
 
   return Promise.resolve(bugs);
+};
+
+/**
+ * Called by BugzfeedClientController whenever a bug is updated. Retrieve the latest data from Bugzilla.
+ *
+ * @argument {Object} data - Passed data.
+ * @return {undefined}
+ */
+BzDeck.collections.Bugs.prototype.on_bug_updated = function (data) {
+  let { id } = data;
+
+  this.get(id, { id, _unread: true }).fetch();
 };
