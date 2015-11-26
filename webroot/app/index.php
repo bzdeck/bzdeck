@@ -88,11 +88,11 @@
           </div>
         </section>
       </div><!-- end #tabpanel-search-TID -->
-    </template><!-- end #tabpanel-search -->
+    </template><!-- end #tabpanel-search-template -->
     <template id="tabpanel-details-template">
       <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
       </div><!-- end #tabpanel-details-TID -->
-    </template><!-- end #tabpanel-details -->
+    </template><!-- end #tabpanel-details-template -->
     <template id="tabpanel-attachment-template">
       <div id="tabpanel-attachment-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-attachment-TID">
         <article id="attachment-TID" role="article">
@@ -102,7 +102,7 @@
           <div role="region"></div>
         </article>
       </div><!-- end #tabpanel-attachment-TID -->
-    </template><!-- end #tabpanel-attachment -->
+    </template><!-- end #tabpanel-attachment-template -->
     <template id="tabpanel-settings-template">
       <div id="tabpanel-settings" tabindex="0" role="tabpanel" aria-labelledby="tab-settings">
         <section>
@@ -251,7 +251,7 @@
                 <li data-id="gravatar-background"><a href="https://en.gravatar.com/profiles/edit/#custom-background">Change your background image</a></li>
               </ul>
               <p>This User Profile panel is under development. More information will be added in the future.</p>
-            </article>
+            </article><!-- end #profile-TID -->
           </div>
           <footer>
             <div role="status"></div>
@@ -280,15 +280,15 @@
                 <a id="home-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="home-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
-            </ul>
-          </div>
+            </ul><!-- end #home-preview-bug-menu -->
+          </div><!-- end [role="toolbar"] -->
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
-        </div>
+        </div><!-- end #home-preview-bug-timeline-wrapper -->
       </article><!-- end #home-preview-bug -->
     </template><!-- end #home-preview-bug-template -->
     <template id="search-preview-bug-template">
@@ -315,15 +315,15 @@
                 <a id="search-TID-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="search-TID-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
-            </ul>
-          </div>
+            </ul><!-- end #search-TID-preview-bug-menu -->
+          </div><!-- end [role="toolbar"] -->
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
-        </div>
+        </div><!-- end #search-TID-preview-bug-timeline-wrapper -->
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
@@ -352,7 +352,7 @@
                 <a id="bug-TID-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
             </ul>
-          </div>
+          </div><!-- end [role="toolbar"] -->
         </header>
         <div>
           <ul id="bug-TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
@@ -361,7 +361,7 @@
             <li id="bug-TID-tab-participants" role="tab" aria-controls="bug-TID-tabpanel-participants" aria-selected="false"><label>Participants</label></li>
             <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-selected="false"><label>Attachments</label></li>
             <li id="bug-TID-tab-history" role="tab" aria-controls="bug-TID-tabpanel-history" aria-disabled="true" aria-selected="false"><label>History</label></li>
-          </ul>
+          </ul><!-- end #bug-TID-tablist -->
           <div id="bug-TID-tabpanels">
             <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
@@ -731,15 +731,15 @@
             <li id="TID-tab-attachments" role="tab" aria-controls="TID-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
             <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-hidden="true"><label>Status</label></li>
             <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
-          </ul>
+          </ul><!-- end #TID-tablist -->
           <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
             <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
-          </div>
+          </div><!-- end #TID-tabpanel-comment -->
           <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
               <div role="text" itemprop="text"></div>
             </article>
-          </div>
+          </div><!-- end #TID-tabpanel-preview -->
           <div id="TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-attachments">
             <div role="group">
               <input type="file" hidden multiple directory>
@@ -754,7 +754,7 @@
                 <tbody></tbody>
               </table>
             </div>
-          </div>
+          </div><!-- end #TID-tabpanel-attachments -->
           <div id="TID-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-status">
             <div role="group">
               <span data-field="status">
@@ -772,14 +772,14 @@
                 <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
               </span>
             </div>
-          </div>
+          </div><!-- end #TID-tabpanel-status -->
           <div id="TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-needinfo">
             <div role="group">
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>
               </div>
             </div> 
-          </div>
+          </div><!-- end #TID-tabpanel-needinfo -->
         </div>
         <footer>
           <div role="toolbar">
@@ -795,7 +795,7 @@
           </div>
         </footer>
         <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
-      </section>
+      </section><!-- end #TID -->
     </template><!-- end #bug-comment-form -->
     <template id="bug-comment-form-request-needinfo-row">
       <div class="request-needinfo-row">
@@ -858,7 +858,7 @@
           <section class="flags">
             <h5>Flags</h5>
           </section>
-        </div>
+        </div><!-- end .fields -->
         <div class="body"></div>
       </section>
     </template><!-- end #details-attachment-content -->
@@ -966,7 +966,7 @@
           <p><span class="cta" role="button" tabindex="0" aria-disabled="true" data-id="scan">Scan to sign in</span></p>
         </div>
         <iframe hidden src="/integration/qrcode-decoder/"></iframe>
-      </section>
+      </section><!-- end #qrcode-auth-overlay -->
     </template><!-- end #qrcode-auth-overlay-template -->
   </head>
   <body role="application">
@@ -1017,8 +1017,8 @@
                 </header>
                 <ul id="quicksearch-results-users-list"></ul>
               </section>
-            </section>
-          </div>
+            </section><!-- end #quicksearch-results -->
+          </div><!-- end #quicksearch -->
           <ul id="toolbar-buttons">
             <li role="none"><span id="throbber" role="status"></span></li>
             <li role="none">
@@ -1056,15 +1056,15 @@
                     <li role="none">
                       <span id="main-menu--app--quit" role="menuitem" aria-hidden="true" data-command="quit"><label>Quit BzDeck</label></span>
                     </li>
-                  </ul>
+                  </ul><!-- end #main-menu--app-menu -->
                 </li>
-              </ul>
+              </ul><!-- end #main-menu -->
             </li>
-          </ul>
-        </div>
+          </ul><!-- end #toolbar-buttons -->
+        </div><!-- end [role="toolbar"] -->
         <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
-        </ul>
+        </ul><!-- end #main-tablist -->
       </header>
       <aside id="sidebar" tabindex="0" role="complementary">
         <div tabindex="0" role="region">
