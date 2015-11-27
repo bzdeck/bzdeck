@@ -79,7 +79,7 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
 
   let components = new Set();
 
-  for (let key in config.product) for (let component of Object.keys(config.product[key].component)) {
+  for (let [key, product] of Object.entries(config.product)) for (let component of Object.keys(product.component)) {
     components.add(component); // Duplicates will be automatically removed
   }
 
@@ -145,8 +145,8 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
           resolution: $resolution_list
         };
 
-    for (let name in map) {
-      for (let $opt of map[name].querySelectorAll('[aria-selected="true"]')) {
+    for (let [name, $element] of Object.entries(map)) {
+      for (let $opt of $element.querySelectorAll('[aria-selected="true"]')) {
         params.append(name, $opt.textContent);
       }
     }

@@ -19,8 +19,8 @@ BzDeck.models.Server = function ServerModel (data) {
   let config = BzDeck.config.servers[this.name];
 
   // Extract the local config for easier access
-  for (let key in config) {
-    this[key] = config[key];
+  for (let [key, value] of Object.entries(config)) {
+    this[key] = value;
   }
 };
 

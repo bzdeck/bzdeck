@@ -282,9 +282,7 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
             sheet = document.styleSheets[1];
 
         // Delete the rule first in case of any width changes
-        for (let index in sheet.cssRules) {
-          let rule = sheet.cssRules[index];
-
+        for (let [index, rule] of Object.entries(sheet.cssRules)) {
           if (rule.type === 7 && rule.name === name) {
             sheet.deleteRule(index);
             break;
