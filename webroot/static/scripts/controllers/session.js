@@ -49,6 +49,8 @@ BzDeck.controllers.Session.prototype.constructor = BzDeck.controllers.Session;
  * @return {undefined}
  */
 BzDeck.controllers.Session.prototype.find_account = function () {
+  this.trigger(':StatusUpdate', { message: 'Looking for your account...' }); // l10n
+
   BzDeck.datasources.global.load().then(database => {
     BzDeck.collections.accounts = new BzDeck.collections.Accounts();
     BzDeck.collections.servers = new BzDeck.collections.Servers();
@@ -169,6 +171,8 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
  * @return {undefined}
  */
 BzDeck.controllers.Session.prototype.load_data = function () {
+  this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
+
   BzDeck.datasources.account.load().then(database => {
     BzDeck.collections.bugs = new BzDeck.collections.Bugs();
     BzDeck.collections.attachments = new BzDeck.collections.Attachments();
@@ -202,7 +206,7 @@ BzDeck.controllers.Session.prototype.load_data = function () {
  * @return {undefined}
  */
 BzDeck.controllers.Session.prototype.fetch_data = function () {
-  this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading Bugzilla config and your bugs...' });
+  this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
   return Promise.all([
     BzDeck.collections.subscriptions.fetch(),
