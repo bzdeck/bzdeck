@@ -988,8 +988,8 @@
       <header role="banner">
         <h1 role="button">BzDeck</h1>
         <div role="toolbar">
-          <div id="quicksearch" title="Search for bugs" role="search">
-            <input type="search" placeholder="Search for bugs" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-results">
+          <div id="quicksearch" title="Search for bugs and people" role="search">
+            <input type="search" placeholder="Search for bugs and people" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-results">
             <span tabindex="0" title="Search" role="button">Go</span>
             <section id="quicksearch-results" role="menu" aria-labelledby="quicksearch-results-title" aria-expanded="false">
               <header>
