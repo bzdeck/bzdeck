@@ -10,14 +10,13 @@ main {
 }
 
 [data-device="desktop"]:root main {
-  top: 4rem;
+  top: 8rem; /* height of the banner */
 }
 
 [data-device|="mobile"]:root main {
   top: 0;
 }
 
-#tab-home:only-child,
 #tab-home .close {
   display: none;
 }

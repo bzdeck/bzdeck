@@ -10,7 +10,7 @@
 }
 
 [data-device="desktop"]:root #sidebar {
-  top: 4rem;
+  top: 8rem; /* height of the banner */
   bottom: 0;
   width: 16rem;
   border-width: 0 .1rem 0 0;

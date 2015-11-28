@@ -33,6 +33,7 @@
   border-style: solid;
   border-color: var(--grid-border-color);
   padding: .8rem 1rem;
+  height: 1.2rem;
   background-color: var(--grid-header-background-color);
 }
 
@@ -79,16 +80,9 @@
   max-height: 100%;
 }
 
-.bug-attachments .list [role="option"] [itemprop="id"] {
-  top: 1rem;
-  left: 5.2rem;
-  opacity: .8;
-  font-size: 1.1rem;
-}
-
 .bug-attachments .list [role="option"] [itemprop="summary"] {
+  top: 1rem;
   right: 1rem;
-  bottom: 1rem;
   left: 5.2rem;
   overflow: hidden;
   font-size: 1.25rem;
@@ -106,17 +100,22 @@
   right: 3.2rem; /* Add some space for the file type icon only */
 }
 
-.bug-attachments .list [role="option"] [itemprop="last_change_time"] {
-  top: 1rem;
-  right: 1em;
+.bug-attachments .list [role="option"] > span:last-of-type {
+  right: 4.8rem;
+  bottom: 1rem;
+  left: 5.2rem;
   opacity: .8;
   font-size: 1.1rem;
+}
+
+.bug-attachments .list [role="option"] [itemprop="id"]::after {
+  content: '\00A0\00B7'; /* nbsp + middot */
 }
 
 .bug-attachments .list [role="option"] meta {
   width: 1.6rem;
   height: 1.6rem;
-  bottom: 1rem;
+  top: 1rem;
 }
 
 .bug-attachments .list [role="option"] :-moz-any([itemprop="is_patch"], [itemprop="content_type"]) {
@@ -127,7 +126,7 @@
   right: 2.8rem;
 }
 
-.bug-attachments .list [role="option"] meta::before {
+.bug-attachments .list [role="option"] meta:not([itemprop="id"])::before {
   display: block;
   top: 0;
   left: 0;

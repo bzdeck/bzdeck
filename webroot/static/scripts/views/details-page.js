@@ -132,7 +132,6 @@ BzDeck.views.DetailsPage.prototype.on_bug_data_available = function (data) {
 
   this.$bug = this.$tabpanel.appendChild(this.get_template('bug-details-template', data.bug.id));
   this.$$bug = new BzDeck.views.BugDetails(data.controller.id, data.bug, this.$bug);
-  this.$tab.querySelector('label').textContent = this.bug_id;
   this.$tab.title = this.get_tab_title(data.bug);
   BzDeck.views.global.update_window_title(this.$tab);
 

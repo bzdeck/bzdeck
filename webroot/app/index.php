@@ -826,6 +826,7 @@
     </template><!-- end #timeline-attachment -->
     <template id="details-attachment-listitem">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id aria-hidden data-id data-hash" itemprop="attachment" itemscope itemtype="http://bzdeck.com/Attachment">
+        <meta itemprop="id">
         <meta itemprop="is_patch">
         <meta itemprop="is_obsolete">
         <meta itemprop="is_unuploaded">
@@ -834,9 +835,8 @@
           <img alt="" itemprop="image">
           <meta itemprop="email">
         </span>
-        <span itemprop="id"></span>
         <span itemprop="summary"></span>
-        <time data-simple="true" itemprop="last_change_time"></time>
+        <span><time itemprop="last_change_time"></time></span>
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
@@ -896,7 +896,7 @@
           <meta itemprop="email">
         </span>
         <span itemprop="summary"></span>
-        <span><span itemprop="id"></span> <time itemprop="last_change_time"></time></time>
+        <span><span itemprop="id"></span> <time itemprop="last_change_time"></time></span>
       </li>
     </template><!-- end #quicksearch-results-bugs-item -->
     <template id="quicksearch-results-users-item">
@@ -912,9 +912,8 @@
           <img alt="" itemprop="image">
           <meta itemprop="email">
         </span>
-        <span itemprop="id"></span>
         <span itemprop="summary"></span>
-        <time data-simple="true" itemprop="last_change_time"></time>
+        <span><span itemprop="id"></span> <time itemprop="last_change_time"></time></span>
         <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
       </li>
     </template><!-- end #vertical-thread-item -->

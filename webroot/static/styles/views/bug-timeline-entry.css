@@ -82,7 +82,7 @@
 
 .bug-timeline [itemprop="comment"] header .meta > [itemprop="name"]::after {
   color: var(--disabled-button-foreground-color);
-  content: "\00A0\00A0\00B7\00A0\00A0"; /* nbsp + nbsp + middot + nbsp + nbsp */
+  content: "\00A0\00B7\00A0"; /* nbsp + middot + nbsp */
 }
 
 .bug-timeline [itemprop="comment"] header [itemprop="author"] [itemprop="image"] {
