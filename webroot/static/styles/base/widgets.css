@@ -372,7 +372,7 @@ col[data-hidden="false"] {
 }
 
 [itemtype$="User"] [itemprop="image"] {
-  border-radius: 10%;
+  border-radius: 50%;
 }
 
 [itemtype$="User"] [itemprop="image"][src=""] {

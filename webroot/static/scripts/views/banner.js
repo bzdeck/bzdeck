@@ -105,11 +105,8 @@ BzDeck.views.Banner.prototype.activate_fullscreen_menuitem = function () {
  * @return {undefined}
  */
 BzDeck.views.Banner.prototype.setup_account_label = function (user) {
-  let $menu_label = document.querySelector('#main-menu--app label'),
-      $account_label = document.querySelector('#main-menu--app--account label');
-
-  $account_label.innerHTML = `<strong>${user.name}</strong><br>${user.email}`;
-  $account_label.style['background-image'] = $menu_label.style['background-image'] = `url(${user.image})`;
+  document.querySelector('#main-menu--app label').style.setProperty('background-image', `url(${user.image})`);
+  this.fill(document.querySelector('#main-menu--app--account label'), user);
 
   this.on('C:GravatarProfileFound', data => {
     document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];

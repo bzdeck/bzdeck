@@ -1026,7 +1026,13 @@
                   <span id="main-menu--app" title="Application Menu" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app-menu"><label>App</label></span>
                   <ul id="main-menu--app-menu" role="menu" aria-expanded="false">
                     <li role="none">
-                      <span id="main-menu--app--account" role="menuitem" aria-disabled="true"><label>My Account</label></span>
+                      <span id="main-menu--app--account" role="menuitem" aria-disabled="true">
+                        <label itemscope itemtype="http://bzdeck.com/User">
+                          <img alt="" itemprop="image">
+                          <strong itemprop="name"></strong>
+                          <span itemprop="email"></span>
+                        </label>
+                      </span>
                     </li>
                     <li role="separator"></li>
                     <li role="none">

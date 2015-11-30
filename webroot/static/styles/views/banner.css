@@ -94,7 +94,7 @@
 
 #main-menu--app label {
   margin: 1rem;
-  border-radius: 10%;
+  border-radius: 50%;
   width: 2.8rem;
   height: 2.8rem;
   background-image: -moz-image-rect(var(--base-sprite-image), 64, 64, 128, 0);
@@ -153,8 +153,12 @@
   line-height: 1.6rem;
 }
 
-[data-device="desktop"]:root #main-menu--app--account label {
-  background-image: none !important;
+#main-menu--app--account label * {
+  display: block;
+}
+
+[data-device="desktop"]:root #main-menu--app--account [itemprop="image"] {
+  display: none;
 }
 
 #main-menu--app--account label strong {

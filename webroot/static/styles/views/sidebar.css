@@ -162,12 +162,23 @@
 }
 
 [data-device|="mobile"]:root #sidebar-account #main-menu--app--account label {
+  position: relative;
   padding-left: 4rem;
+  height: 3.2rem;
   color: rgba(255, 255, 255, .9);
-  background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
-  background-repeat: no-repeat;
-  background-size: contain;
   text-shadow: 0 0 .1rem rgba(0, 0, 0, .6);
+}
+
+[data-device|="mobile"]:root #sidebar-account #main-menu--app--account [itemprop="image"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+}
+
+[data-device|="mobile"]:root #sidebar-account #main-menu--app--account [itemprop="email"] {
+  opacity: .8;
 }
 
 [data-device|="mobile"]:root #sidebar-menu {
