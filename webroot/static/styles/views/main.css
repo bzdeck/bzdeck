@@ -178,6 +178,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > header {
   box-sizing: border-box;
+  padding-bottom: .4rem; /* = padding-top on #main-tablist */
   height: 3.6rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
@@ -189,7 +190,7 @@ main {
   overflow: hidden;
   padding: 0 1.2rem;
   font-size: 1.6rem;
-  line-height: 3.6rem;
+  line-height: 3.2rem;
   font-weight: 300;
   font-style: italic;
 }

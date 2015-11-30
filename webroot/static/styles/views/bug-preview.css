@@ -12,6 +12,7 @@ article[id$="preview-bug"] > header {
   display: flex;
   position: absolute;
   left: 0;
+  padding-bottom: .4rem; /* = padding-top on #main-tablist */
   width: 100%;
 }
 

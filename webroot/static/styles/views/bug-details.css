@@ -43,7 +43,7 @@
 }
 
 [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
-  height: 3.6rem;
+  height: 3.2rem;
 }
 
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] {
@@ -395,7 +395,7 @@
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] {
-    margin: .6rem .2rem;
+    margin: .4rem .2rem;
     border-width: 0;
     border-radius: .4rem;
     padding: 0;

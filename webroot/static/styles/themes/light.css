@@ -28,10 +28,9 @@
   --base-foreground-color-4: #B3B3B3;
   --base-foreground-color-5: #E3E3E3;
   --base-foreground-color-6: #FBFBFB;
-  --base-background-color-0: #444;
-  --base-background-color-1: #545454;
-  --base-background-color-2: #646464;
-  --base-background-color-3: #7C7C7C;
+  --base-background-color-1: #444;
+  --base-background-color-2: #545454;
+  --base-background-color-3: #646464;
   --base-background-color-4: #CCC;
   --base-background-color-5: #E4E4E4;
   --base-background-color-6: #F4F4F4;
@@ -42,9 +41,9 @@
   --application-background-color: var(--base-background-color-6);
   --application-header-border-color: var(--base-background-color-1);
   --application-header-foreground-color: var(--base-foreground-color-5);
-  --application-header-background-color: var(--base-background-color-0);
+  --application-header-background-color: var(--base-background-color-1);
   --secondary-application-header-foreground-color: var(--base-foreground-color-4);
-  --secondary-application-header-background-color: var(--base-background-color-1);
+  --secondary-application-header-background-color: var(--base-background-color-2);
 
   --region-border-color: var(--base-background-color-3);
   --region-background-color: var(--base-background-color-5);

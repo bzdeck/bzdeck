@@ -7,10 +7,6 @@
   height: 3.2rem;
 }
 
-[data-device="desktop"]:root [itemtype$="Bug"] header [role="toolbar"] {
-  margin: .2rem 0;
-}
-
 [itemtype$="Bug"] [role="toolbar"] ul:not([role="menu"]) {
   display: inline-flex;
   height: 2.2rem;
@@ -49,7 +45,7 @@
   overflow: hidden;
   padding: 0 1.2rem;
   font-size: 1.6rem;
-  line-height: 3.6rem;
+  line-height: 3.2rem;
   font-weight: 300;
   font-style: italic;
 }
