@@ -258,15 +258,21 @@ BzDeck.models.Bug.prototype.get_duplicates = function () {
 BzDeck.models.Bug.prototype.detect_if_new = function () {
   let viewed = this.data._last_viewed,
       changed = new Date(this.data.last_change_time).getTime(),
-      is_new = changed > Date.now() - 1000 * 60 * 60 * 24 * 11;
+      time10d = Date.now() - 1000 * 60 * 60 * 24 * 10,
+      is_new = changed > time10d;
+
+  let has_new = entry => {
+    let time = new Date(entry.creation_time);
+    return (viewed && time > viewed) || time > time10d;
+  };
 
   // Check for new comments
-  if (viewed && this.data.comments && this.data.comments.some(c => new Date(c.creation_time) > viewed)) {
+  if (this.data.comments && this.data.comments.some(has_new)) {
     return true;
   }
 
   // Check for new attachments
-  if (viewed && this.data.attachments && this.data.attachments.some(a => new Date(a.creation_time) > viewed)) {
+  if (this.data.attachments && this.data.attachments.some(has_new)) {
     return true;
   }
 
