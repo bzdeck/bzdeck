@@ -10,7 +10,7 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
 
 ## How to run the app locally
 
-BzDeck is mostly written in static HTML, CSS and JavaScript, but you need PHP as well. No server-side database is required at this moment.
+BzDeck is mostly written in static HTML, CSS and JavaScript, but you need PHP as well to combine CSS/JavaScript files and handle the authentication explained below with a SQLite database.
 
 ### Apache + PHP
 

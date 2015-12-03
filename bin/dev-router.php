@@ -19,11 +19,17 @@ if (file_exists(__DIR__ . '/../webroot' . $_SERVER['REQUEST_URI'])) {
   return false;
 }
 
-if ($_SERVER['REQUEST_URI'] === '/static/scripts/combined.js') {
-  // Map combined.js to PHP
-  include('webroot/components/combine-scripts.php');
+// Map several URLs to PHP files in the same way as .htaccess
+$rewrite_map = array(
+  'service-worker.js' => '/static/scripts/workers/sw-main.js',
+  'static/scripts/combined.js' => '/components/combine-static-files.php?type=js',
+  'static/styles/combined.css' => '/components/combine-static-files.php?type=css',
+);
+
+if (array_key_exists($_SERVER['REQUEST_URI'], $rewrite_map)) {
+  // Rewrite the URL
+  include($rewrite_map[$_SERVER['REQUEST_URI']]);
 } else {
   // Handle everything else
   include('webroot/app/index.php');
 }
-
