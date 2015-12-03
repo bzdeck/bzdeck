@@ -101,9 +101,6 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
-    last_loaded = Date.now();
-    BzDeck.prefs.set('subscriptions.last_loaded', last_loaded);
-
     if (firstrun) {
       return Promise.all(result.bugs.map(_bug => {
         // Mark all bugs read if the session is firstrun
@@ -131,9 +128,12 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
     }
 
     return Promise.all([]);
-  }).then(bugs => Promise.resolve(bugs), error => {
-    console.error(error);
+  }).then(bugs => {
+    last_loaded = Date.now();
+    BzDeck.prefs.set('subscriptions.last_loaded', last_loaded);
 
+    return Promise.resolve(bugs);
+  }).catch(error => {
     return Promise.reject(new Error('Failed to load data.')); // l10n
   }).then(() => this.trigger(':FetchingSubscriptionsComplete'));
 };
