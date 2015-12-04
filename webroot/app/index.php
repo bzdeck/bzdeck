@@ -1019,7 +1019,7 @@
             </section><!-- end #quicksearch-results -->
           </div><!-- end #quicksearch -->
           <ul id="toolbar-buttons">
-            <li role="none"><span id="throbber" role="status"></span></li>
+            <li role="none"><span id="reload-button" role="button" aria-busy="false" aria-disabled="false"></span></li>
             <li role="none">
               <ul id="main-menu" role="menubar">
                 <li role="none">

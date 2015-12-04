@@ -42,7 +42,7 @@ BzDeck.views.Banner = function BannerView (user) {
 
   this.setup_account_label(user);
   this.setup_app_install_menuitem();
-  this.setup_throbber();
+  this.setup_reload_button();
 };
 
 BzDeck.views.Banner.prototype = Object.create(BzDeck.views.Base.prototype);
@@ -127,16 +127,28 @@ BzDeck.views.Banner.prototype.setup_app_install_menuitem = function () {
 };
 
 /**
- * Set up the activity indicator or "throbber" displayed while loading bugs.
+ * Set up the Reload button which also works as the activity indicator or "throbber" displayed while loading bugs.
  *
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.Banner.prototype.setup_throbber = function () {
-  let $throbber = document.querySelector('#throbber');
+BzDeck.views.Banner.prototype.setup_reload_button = function () {
+  let $button = document.querySelector('#reload-button'),
+      $$button = new this.widgets.Button($button);
 
-  this.on('SubscriptionCollection:FetchingSubscriptionsStarted', () => $throbber.textContent = 'Loading...', true);
-  this.on('SubscriptionCollection:FetchingSubscriptionsComplete', () => $throbber.textContent = '', true);
+  $$button.bind('Pressed', event => this.trigger(':ReloadButtonPressed'));
+
+  this.on('SubscriptionCollection:FetchingSubscriptionsStarted', () => {
+    $button.setAttribute('aria-busy', 'true');
+    $button.setAttribute('aria-disabled', 'true');
+    $button.textContent = $button.title = 'Loading...'; // l10n
+  }, true);
+
+  this.on('SubscriptionCollection:FetchingSubscriptionsComplete', () => {
+    $button.setAttribute('aria-busy', 'false');
+    $button.setAttribute('aria-disabled', 'false');
+    $button.textContent = $button.title = 'Reload'; // l10n
+  }, true);
 };
 
 /**

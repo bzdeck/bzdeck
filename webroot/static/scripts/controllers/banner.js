@@ -27,6 +27,7 @@ BzDeck.controllers.Banner = function BannerController () {
 
   this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
   this.subscribe('V:BackButtonClicked');
+  this.subscribe('V:ReloadButtonPressed');
   this.subscribe('V:TabSelected');
   this.subscribe('V:AppMenuItemSelected');
 };
@@ -47,6 +48,22 @@ BzDeck.controllers.Banner.prototype.on_back_button_clicked = function () {
   } else {
     BzDeck.router.navigate('/home/inbox');
   }
+};
+
+/**
+ * Called by BannerView whenever the Reload button is clicked on the mobile view. Fetch the latest data from Bugzilla
+ * instance.
+ *
+ * @argument {undefined}
+ * @return {undefined}
+ */
+BzDeck.controllers.Banner.prototype.on_reload_button_pressed = function () {
+  // Reset the timer
+  window.clearInterval(BzDeck.controllers.global.timers.get('fetch_subscriptions'));
+  BzDeck.controllers.global.timers.set('fetch_subscriptions', window.setInterval(() =>
+      BzDeck.collections.subscriptions.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
+
+  BzDeck.collections.subscriptions.fetch();
 };
 
 /**

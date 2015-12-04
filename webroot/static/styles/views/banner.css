@@ -64,15 +64,20 @@
   height: 4.4rem;
 }
 
-#throbber {
+#reload-button {
   display: block;
   overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
+  color: var(--alternate-button-foreground-color);
+  background-color: transparent;
   text-indent: -99999px;
 }
 
-#throbber:not(:empty)::before {
+#reload-button::before {
   display: block;
   width: 100%;
   height: 100%;
@@ -81,7 +86,13 @@
   font-family: FontAwesome;
   text-align: center;
   text-indent: 0;
-  content: '\F110'; /* Throbber */
+  content: '\F021'; /* Refresh */
+}
+
+#reload-button[aria-busy="true"]::before {
+  margin: 0;
+  background-image: none;
+  position: static;
   animation: throbber 2s linear 0s infinite;
 }
 
