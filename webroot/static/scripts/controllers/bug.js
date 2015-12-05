@@ -175,7 +175,7 @@ BzDeck.controllers.Bug.prototype.edit_comment = function (comment) {
  * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.edit_field = function (name, value) {
-  let { field, product } = BzDeck.models.server.data.config,
+  let { field, product } = BzDeck.server.data.config,
       is_closed = value => field.status.closed.includes(value);
 
   if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
@@ -333,7 +333,7 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
 
     this.changes[field] = change;
   } else {
-    this.changes[field] = field === 'assigned_to' ? BzDeck.models.server.default_assignee : '';
+    this.changes[field] = field === 'assigned_to' ? BzDeck.server.default_assignee : '';
   }
 
   this.trigger(':ParticipantRemoved', { field, email });
@@ -352,7 +352,7 @@ BzDeck.controllers.Bug.prototype.remove_participant = function (field, email) {
  */
 BzDeck.controllers.Bug.prototype.update_subscription = function (how) {
   let subscribe = how === 'add',
-      email = BzDeck.models.account.data.name;
+      email = BzDeck.account.data.name;
 
   // Update the view first
   this.trigger(subscribe ? ':ParticipantAdded' : ':ParticipantRemoved', { field: 'cc', email });
@@ -407,7 +407,7 @@ BzDeck.controllers.Bug.prototype.cleanup_multiple_item_change = function (field)
  */
 BzDeck.controllers.Bug.prototype.attach_files = function (files) {
   let oversized_files = new Set(),
-      max_size = BzDeck.models.server.data.config.max_attachment_size;
+      max_size = BzDeck.server.data.config.max_attachment_size;
 
   for (let _file of files) {
     // Firefox crashes when a File is passed to a SharedWorker (Bug 1226927) so use a dedicated Worker here instead

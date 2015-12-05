@@ -27,7 +27,7 @@ BzDeck.views.BugFlags.prototype.constructor = BzDeck.views.BugFlags;
  * @return {undefined}
  */
 BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
-  let config = BzDeck.models.server.data.config,
+  let config = BzDeck.server.data.config,
       get_person = name => BzDeck.collections.users.get(name, { name }).properties,
       _flags = (this.att ? this.att.flags : this.bug.flags) || [],
       $flag = this.get_template('details-flag'),

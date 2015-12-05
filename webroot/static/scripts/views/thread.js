@@ -73,7 +73,7 @@ BzDeck.views.Thread.prototype.open_bug = function (id) {
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
   let default_cols = BzDeck.config.grid.default_columns,
       columns = BzDeck.prefs.get(`${name}.list.columns`) || default_cols,
-      field = BzDeck.models.server.data.config.field;
+      field = BzDeck.server.data.config.field;
 
   let toggle_prop = prop => {
     for (let $item of this.$$grid.view.selected) {

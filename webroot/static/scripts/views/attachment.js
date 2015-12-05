@@ -170,7 +170,7 @@ BzDeck.views.Attachment.prototype.render_patch = function () {
 BzDeck.views.Attachment.prototype.render_link = function () {
   let $link = document.createElement('a');
 
-  $link.href = `${BzDeck.models.server.url}/attachment.cgi?id=${this.attachment.id || this.attachment.hash}`;
+  $link.href = `${BzDeck.server.url}/attachment.cgi?id=${this.attachment.id || this.attachment.hash}`;
   $link.text = {
     'text/x-github-pull-request': 'See the GitHub pull request',
     'text/x-review-board-request': 'See the Review Board request',

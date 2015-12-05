@@ -12,11 +12,10 @@
  * @return {Object} controller - New ProfilePageController instance.
  */
 BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
+  let self = email === BzDeck.account.data.name;
+
   this.id = email;
   this.user = BzDeck.collections.users.get(email, { name: email });
-
-  let server = BzDeck.models.server,
-      self = email === BzDeck.models.account.data.name;
 
   BzDeck.views.banner.open_tab({
     page_category: 'profile',
@@ -43,8 +42,8 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
         image: this.user.image,
       },
       links: {
-        'bugzilla-profile': server.url + '/user_profile?login=' + encodeURI(email),
-        'bugzilla-activity': server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
+        'bugzilla-profile': BzDeck.server.url + '/user_profile?login=' + encodeURI(email),
+        'bugzilla-activity': BzDeck.server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
       },
       style: {
         'background-color': this.user.color,

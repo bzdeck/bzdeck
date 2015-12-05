@@ -23,7 +23,7 @@ BzDeck.views.BugParticipantList = function BugParticipantListView (view_id, bug,
   this.multiple = ['mentor', 'cc'].includes(this.field);
   this.can_take = ['assigned_to', 'qa_contact', 'mentor'].includes(this.field);
   this.values = new Set(this.multiple ? this.bug[this.field] : this.bug[this.field] ? [this.bug[this.field]] : []);
-  this.my_email = BzDeck.models.account.data.name;
+  this.my_email = BzDeck.account.data.name;
 
   this.$section = $section;
   this.$header = this.$section.querySelector('header');

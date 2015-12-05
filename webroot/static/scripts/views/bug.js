@@ -116,7 +116,7 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
   }
 
   if ($bugzilla_link) {
-    $bugzilla_link.href = `${BzDeck.models.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
+    $bugzilla_link.href = `${BzDeck.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
   }
 
   if ($tweet_link) {
@@ -172,7 +172,7 @@ BzDeck.views.Bug.prototype.render = function () {
 
   this.set_product_tooltips();
 
-  let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
+  let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
       $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]'),
       $star_button = this.$bug.querySelector('[role="button"][data-command="star"]'),
       $timeline = this.$bug.querySelector('.bug-timeline');
@@ -281,7 +281,7 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
 
   // See Also
   for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    let re = new RegExp(`^${BzDeck.models.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
+    let re = new RegExp(`^${BzDeck.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
         match = $link.href.match(re);
 
     if (match) {
@@ -341,8 +341,8 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
   this.comboboxes = new WeakMap();
   this.subscribe('BugController:FieldEdited');
 
-  let can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
-      is_closed = value => BzDeck.models.server.data.config.field.status.closed.includes(value);
+  let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
+      is_closed = value => BzDeck.server.data.config.field.status.closed.includes(value);
 
   // Iterate over the fields except the Flags secion which is activated by BugFlagsView
   for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
@@ -426,7 +426,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
  * @return {Array} values - Field values.
  */
 BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name = this.bug.product) {
-  let { field, product } = BzDeck.models.server.data.config,
+  let { field, product } = BzDeck.server.data.config,
       { component, version_detail, target_milestone_detail } = product[product_name];
 
   let values = {
@@ -449,7 +449,7 @@ BzDeck.views.Bug.prototype.get_field_values = function (field_name, product_name
 BzDeck.views.Bug.prototype.update_resolution_ui = function (resolution) {
   let is_open = resolution === '',
       is_dupe = resolution === 'DUPLICATE',
-      can_editbugs = BzDeck.models.account.permissions.includes('editbugs'),
+      can_editbugs = BzDeck.account.permissions.includes('editbugs'),
       $resolution = this.$bug.querySelector('[data-field="resolution"]'),
       $combobox = $resolution.querySelector('[role="combobox"]'),
       $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]'),
@@ -537,7 +537,7 @@ BzDeck.views.Bug.prototype.on_files_selected = function (data) {
  * @return {undefined}
  */
 BzDeck.views.Bug.prototype.set_product_tooltips = function () {
-  let config = BzDeck.models.server.data.config,
+  let config = BzDeck.server.data.config,
       strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
       classification = config.classification[this.bug.classification],
       product = config.product[this.bug.product],

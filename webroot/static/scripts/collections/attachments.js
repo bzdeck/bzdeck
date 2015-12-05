@@ -58,7 +58,7 @@ BzDeck.collections.Attachments.prototype.cache = function (att, size) {
     hash: { value: md5([att.file_name, att.content_type, String(size)].join()) },
     is_unuploaded: { value: true },
     // Emulate properties on the existing attachment objects
-    creator: { value: BzDeck.models.account.data.name },
+    creator: { value: BzDeck.account.data.name },
     creation_time: { value: current_time },
     last_change_time: { value: current_time },
     size: { value: size },

@@ -11,7 +11,7 @@
  * @return {Object} controller - New BannerController instance.
  */
 BzDeck.controllers.Banner = function BannerController () {
-  let name = BzDeck.models.account.data.name;
+  let name = BzDeck.account.data.name;
 
   this.user = BzDeck.collections.users.get(name, { name });
   BzDeck.views.banner = new BzDeck.views.Banner(this.user);

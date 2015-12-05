@@ -87,7 +87,7 @@ BzDeck.views.SettingsPage.prototype.prepare_qrcode = function () {
   // Because the QRCode library doesn't support the strict mode, load the script in an iframe
   let generate = event => {
     let QRCode = event.target.contentWindow.QRCode,
-        { name, api_key } = BzDeck.models.account.data;
+        { name, api_key } = BzDeck.account.data;
 
     new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
 

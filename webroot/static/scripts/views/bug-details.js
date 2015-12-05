@@ -140,7 +140,7 @@ BzDeck.views.BugDetails.prototype.add_tab_badges = function () {
  * @return {undefined}
  */
 BzDeck.views.BugDetails.prototype.render_tracking_flags = function () {
-  let config = BzDeck.models.server.data.config,
+  let config = BzDeck.server.data.config,
       $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
       $flag = this.get_template('details-tracking-flag'),
       $fragment = new DocumentFragment();

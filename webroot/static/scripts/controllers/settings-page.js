@@ -13,7 +13,7 @@
  */
 BzDeck.controllers.SettingsPage = function SettingsPageController () {
   let tab_id = history.state ? history.state.tab_id : undefined,
-      account = BzDeck.models.account,
+      account = BzDeck.account,
       prefs = new Map();
 
   for (let [name, value] of Object.entries(BzDeck.config.prefs)) {

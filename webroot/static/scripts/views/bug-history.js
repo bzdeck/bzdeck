@@ -33,7 +33,7 @@ BzDeck.views.BugHistory.prototype.constructor = BzDeck.views.BugHistory;
  * @return {undefined}
  */
 BzDeck.views.BugHistory.prototype.render = function (history) {
-  let conf_field = BzDeck.models.server.data.config.field,
+  let conf_field = BzDeck.server.data.config.field,
       $row = this.get_template('details-change');
 
   for (let hist of history) {

@@ -63,8 +63,8 @@ BzDeck.controllers.BugzfeedClient.prototype.onmessage = function (event) {
  * @return {undefined}
  */
 BzDeck.controllers.BugzfeedClient.prototype.connect = function () {
-  if (BzDeck.models.server) {
-    this.notify_worker('Bugzfeed', 'Connect', { endpoint: BzDeck.models.server.endpoints.websocket });
+  if (BzDeck.server) {
+    this.notify_worker('Bugzfeed', 'Connect', { endpoint: BzDeck.server.endpoints.websocket });
   }
 };
 

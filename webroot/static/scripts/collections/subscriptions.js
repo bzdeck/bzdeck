@@ -24,7 +24,7 @@ BzDeck.collections.Subscriptions.prototype.constructor = BzDeck.collections.Subs
  */
 BzDeck.collections.Subscriptions.prototype.get = function (id) {
   let severities = ['blocker', 'critical', 'major'],
-      email = BzDeck.models.account.data.name,
+      email = BzDeck.account.data.name,
       bugs = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
 
   return new Map([...bugs.values()].filter(bug => {
@@ -50,7 +50,7 @@ BzDeck.collections.Subscriptions.prototype.get = function (id) {
  * @return {Map.<Number, Proxy>} bugs - Map of Bug IDs and BugModel instances.
  */
 BzDeck.collections.Subscriptions.prototype.get_all = function () {
-  let email = BzDeck.models.account.data.name,
+  let email = BzDeck.account.data.name,
       bugs = [...BzDeck.collections.bugs.get_all().values()];
 
   bugs = bugs.filter(bug => (bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
@@ -80,7 +80,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   params.append('j_top', 'OR');
 
   if (last_loaded) {
-    let date = this.helpers.datetime.get_shifted_date(new Date(last_loaded), BzDeck.models.server.timezone);
+    let date = this.helpers.datetime.get_shifted_date(new Date(last_loaded), BzDeck.server.timezone);
 
     params.append('include_fields', 'id');
     params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
@@ -92,7 +92,7 @@ BzDeck.collections.Subscriptions.prototype.fetch = function () {
   for (let [i, name] of fields.entries()) {
     params.append(`f${i}`, name);
     params.append(`o${i}`, 'equals');
-    params.append(`v${i}`, BzDeck.models.account.data.name);
+    params.append(`v${i}`, BzDeck.account.data.name);
   }
 
   // Append starred bugs to the query, that may include bugs the user is currently not involved in

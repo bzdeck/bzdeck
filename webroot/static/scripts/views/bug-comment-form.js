@@ -50,7 +50,7 @@ BzDeck.views.BugCommentForm = function BugCommentFormView (view_id, bug, $bug) {
   this.init_attachment_tabpanel();
 
   // Prepare the content available only to the users who have the "editbugs" permission on Bugzilla
-  if (!this.editor_tabpanels_enabled && BzDeck.models.account.permissions.includes('editbugs')) {
+  if (!this.editor_tabpanels_enabled && BzDeck.account.permissions.includes('editbugs')) {
     this.init_status_tab();
     this.init_needinfo_tabpanel();
     this.editor_tabpanels_enabled = true;
@@ -228,7 +228,7 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
   }
 
   for (let { id, requestee } of flags) {
-    add_row(requestee, requestee === BzDeck.models.account.data.name, { id });
+    add_row(requestee, requestee === BzDeck.account.data.name, { id });
   }
 
   if (!names.includes(this.bug.creator)) {

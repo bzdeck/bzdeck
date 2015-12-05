@@ -49,7 +49,7 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   }
 
   let worker = new SharedWorker('/static/scripts/workers/shared.js'),
-      server = BzDeck.models.server,
+      server = BzDeck.server,
       url = new URL(server.url + server.endpoints.rest + path),
       method = options.method || (options.data ? 'POST' : 'GET'),
       headers = new Map(),
@@ -60,7 +60,7 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
   }
 
   headers.set('Accept', 'application/json');
-  headers.set('X-Bugzilla-API-Key', options.api_key || BzDeck.models.account.data.api_key);
+  headers.set('X-Bugzilla-API-Key', options.api_key || BzDeck.account.data.api_key);
 
   return new Promise((resolve, reject) => {
     worker.port.addEventListener('message', event => {

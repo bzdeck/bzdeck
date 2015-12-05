@@ -60,8 +60,8 @@ BzDeck.controllers.Session.prototype.find_account = function () {
     BzDeck.collections.accounts.load(),
     BzDeck.collections.servers.load(),
   ])).then(() => {
-    BzDeck.models.account = BzDeck.collections.accounts.get_current();
-    BzDeck.models.server = BzDeck.collections.servers.get(BzDeck.models.account.data.host);
+    BzDeck.account = BzDeck.collections.accounts.get_current();
+    BzDeck.server = BzDeck.collections.servers.get(BzDeck.account.data.host);
   }).then(() => {
     this.load_data();
   }).catch(error => {
@@ -127,7 +127,7 @@ BzDeck.controllers.Session.prototype.force_login = function () {
  * @return {undefined}
  */
 BzDeck.controllers.Session.prototype.verify_account = function (host, email, api_key) {
-  let server = BzDeck.models.server = BzDeck.collections.servers.get(host, { host }),
+  let server = BzDeck.server = BzDeck.collections.servers.get(host, { host }),
       params = new URLSearchParams(`names=${email}`);
 
   this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
@@ -146,8 +146,8 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
   }).then(user => {
     return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
   }).then(user => {
-    let account = BzDeck.models.account = new BzDeck.models.Account({
-      host: BzDeck.models.server.name,
+    let account = BzDeck.account = new BzDeck.models.Account({
+      host: BzDeck.server.name,
       name: email,
       api_key,
       loaded: Date.now(), // key
@@ -210,7 +210,7 @@ BzDeck.controllers.Session.prototype.fetch_data = function () {
 
   return Promise.all([
     BzDeck.collections.subscriptions.fetch(),
-    BzDeck.models.server.get_config(),
+    BzDeck.server.get_config(),
   ]);
 };
 
@@ -313,7 +313,7 @@ BzDeck.controllers.Session.prototype.logout = function () {
 
   // Delete the account data and refresh the page to ensure the app works properly
   // TODO: Support multiple account by removing only the current account
-  BzDeck.collections.accounts.delete(BzDeck.models.account.data.loaded)
+  BzDeck.collections.accounts.delete(BzDeck.account.data.loaded)
     .then(() => location.replace(BzDeck.config.app.root));
 };
 
