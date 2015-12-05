@@ -122,8 +122,8 @@
                 <h3>Account</h3>
                 <section id="settings-qrcode-outer">
                   <h4>BzDeck on mobile</h4>
-                  <div><iframe hidden src="/integration/qrcode-encoder/"></iframe></div>
-                  <p>Do you know BzDeck works with Android and Firefox&nbsp;OS? Get the app from the Firefox Marketplace on your phone or tablet, and scan this QR code to sign in quickly.</p>
+                  <div class="placeholder" hidden></div>
+                  <p>Do you know BzDeck works with Android and Firefox&nbsp;OS? Get the app from the Firefox Marketplace on your phone or tablet, and scan this QR code to sign in quickly:<br><span role="button">Show QR Code</span></p>
                 </section>
               </section>
             </div><!-- end #settings-tabpanel-account -->

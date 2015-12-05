@@ -147,7 +147,7 @@
   margin-top: 0;
 }
 
-#settings-qrcode-outer div {
+#settings-qrcode-outer .placeholder {
   display: inline-block;
   float: right;
   margin-left: 2rem;
@@ -155,6 +155,18 @@
   width: 192px; /* same as the inner <canvas> */
   height: 192px; /* same as the inner <canvas> */
   background-color: #FFF; /* for a better recognition */
+}
+
+#settings-qrcode-outer .placeholder[hidden] {
+  display: none;
+}
+
+#settings-qrcode-outer [role="button"] {
+  margin: .8rem 0;
+  padding: .4rem 1.2rem;
+  color: var(--highlighted-button-foreground-color);
+  background-color: var(--highlighted-button-background-color);
+  line-height: 1.6rem;
 }
 
 @media (min-width: 1024px) {

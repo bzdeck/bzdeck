@@ -19,7 +19,7 @@ BzDeck.views.SettingsPage = function SettingsPageView (prefs, tab_id) {
     document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
     document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
   } else {
-    this.show_qrcode();
+    this.prepare_qrcode();
   }
 
   // Activate tabs
@@ -78,14 +78,38 @@ BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.SettingsPage.prototype.show_qrcode = function () {
-  let $outer = document.querySelector('#settings-qrcode-outer');
+BzDeck.views.SettingsPage.prototype.prepare_qrcode = function () {
+  let $outer = document.querySelector('#settings-qrcode-outer'),
+      $placeholder = $outer.querySelector('.placeholder'),
+      $iframe = $outer.querySelector('iframe'),
+      $button = $outer.querySelector('[role="button"]');
 
   // Because the QRCode library doesn't support the strict mode, load the script in an iframe
-  $outer.querySelector('iframe').addEventListener('load', event => {
+  let generate = event => {
     let QRCode = event.target.contentWindow.QRCode,
         { name, api_key } = BzDeck.models.account.data;
 
-    new QRCode($outer.querySelector('div'), { text: [name, api_key].join('|'), width: 192, height: 192 });
+    new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
+
+    $iframe.removeEventListener('load', generate);
+  };
+
+  // Show the code on demand
+  $button.addEventListener('click', event => {
+    if ($placeholder.hidden) {
+      $placeholder.hidden = false;
+      $button.textContent = 'Hide QR Code'; // l10n
+
+      if (!$iframe) {
+        $iframe = document.createElement('iframe'),
+        $iframe.addEventListener('load', generate);
+        $iframe.hidden = true;
+        $iframe.src = '/integration/qrcode-encoder/';
+        $outer.appendChild($iframe);
+      }
+    } else {
+      $placeholder.hidden = true;
+      $button.textContent = 'Show QR Code'; // l10n
+    }
   });
 };
