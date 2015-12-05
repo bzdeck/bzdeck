@@ -101,7 +101,7 @@ BzDeck.views.SettingsPage.prototype.prepare_qrcode = function () {
       $button.textContent = 'Hide QR Code'; // l10n
 
       if (!$iframe) {
-        $iframe = document.createElement('iframe'),
+        $iframe = document.createElement('iframe');
         $iframe.addEventListener('load', generate);
         $iframe.hidden = true;
         $iframe.src = '/integration/qrcode-encoder/';
