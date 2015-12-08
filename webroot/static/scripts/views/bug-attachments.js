@@ -124,7 +124,7 @@ BzDeck.views.BugAttachments.prototype.listbox_onclick = function (event) {
       mobile = this.helpers.env.device.mobile,
       narrow = window.matchMedia('(max-width: 1023px)').matches;
 
-  if (id && ((event.type === 'click' && mobile && mql) || event.type === 'dblclick')) {
+  if (id && ((event.type === 'click' && mobile && narrow) || event.type === 'dblclick')) {
     this.trigger('GlobalView:OpenAttachment', { id });
   }
 };
