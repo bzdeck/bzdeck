@@ -290,7 +290,7 @@ BzDeck.views.SearchPage.prototype.hide_status = function () {
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.AttachmentPage.prototype.on_offline = function () {
+BzDeck.views.SearchPage.prototype.on_offline = function () {
   this.show_status('You have to go online to search bugs.'); // l10n
 };
 
@@ -300,7 +300,7 @@ BzDeck.views.AttachmentPage.prototype.on_offline = function () {
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.AttachmentPage.prototype.on_search_started = function () {
+BzDeck.views.SearchPage.prototype.on_search_started = function () {
   this.$grid.removeAttribute('aria-hidden');
   this.$grid.setAttribute('aria-busy', 'true');
   this.hide_status();
@@ -314,7 +314,7 @@ BzDeck.views.AttachmentPage.prototype.on_search_started = function () {
  * @argument {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
  * @return {undefined}
  */
-BzDeck.views.AttachmentPage.prototype.on_search_results_available = function (data) {
+BzDeck.views.SearchPage.prototype.on_search_results_available = function (data) {
   if (data.bugs.size > 0) {
     this.thread.update(data.bugs);
     this.hide_status();
@@ -330,7 +330,7 @@ BzDeck.views.AttachmentPage.prototype.on_search_results_available = function (da
  * @argument {Error} data.error - Error encountered.
  * @return {undefined}
  */
-BzDeck.views.AttachmentPage.prototype.on_search_error = function (data) {
+BzDeck.views.SearchPage.prototype.on_search_error = function (data) {
   this.show_status(data.error.message);
 };
 
@@ -340,6 +340,6 @@ BzDeck.views.AttachmentPage.prototype.on_search_error = function (data) {
  * @argument {undefined}
  * @return {undefined}
  */
-BzDeck.views.AttachmentPage.prototype.on_search_complete = function () {
+BzDeck.views.SearchPage.prototype.on_search_complete = function () {
   this.$grid.removeAttribute('aria-busy');
 };
