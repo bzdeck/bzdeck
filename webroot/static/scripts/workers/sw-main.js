@@ -7,7 +7,7 @@
 const BzDeck = { workers: {}};
 
 // Cache version: this has to be updated whenever a file is modified
-const version = '2015-12-03-11-30';
+const version = '2015-12-24-03-25';
 
 // Files need to be cached
 const files = [
