@@ -53,6 +53,7 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
       url = new URL(server.url + server.endpoints.rest + path),
       method = options.method || (options.data ? 'POST' : 'GET'),
       headers = new Map(),
+      data = options.data ? Object.assign({}, options.data) : undefined, // Avoid DataCloneError by postMessage
       listeners = options.listeners || {};
 
   if (params) {
@@ -88,6 +89,6 @@ BzDeck.controllers.Base.prototype.request = function (path, params, options = {}
     });
 
     worker.port.start();
-    worker.port.postMessage(['xhr', { url: url.toString(), method, headers, data: options.data }]);
+    worker.port.postMessage(['xhr', { url: url.toString(), method, headers, data }]);
   });
 };
