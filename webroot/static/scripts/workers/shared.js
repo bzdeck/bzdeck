@@ -69,8 +69,7 @@ tasks.decode = (port, args) => {
 };
 
 /**
- * Read the content of a Blob or File, and post the data URL. Use FileReaderSync instead of btoa() to avoid overflow.
- * The async FileReader API is not available in workers yet (Bug 901097).
+ * Read the content of a Blob or File, and post the data URL. Use FileReader instead of btoa() to avoid overflow.
  *
  * @argument {MessagePort} port - Allow sending messages.
  * @argument {Object} args - Arguments.
@@ -79,9 +78,10 @@ tasks.decode = (port, args) => {
  */
 tasks.readfile = (port, args) => {
   let { file } = args,
-      reader = new FileReaderSync();
+      reader = new FileReader();
 
-  port.postMessage(reader.readAsDataURL(file));
+  reader.addEventListener('load', event => port.postMessage(event.target.result));
+  reader.readAsDataURL(file);
 };
 
 self.addEventListener('connect', event => {
