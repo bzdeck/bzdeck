@@ -410,8 +410,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       max_size = BzDeck.server.data.config.max_attachment_size;
 
   for (let _file of files) {
-    // Firefox crashes when a File is passed to a SharedWorker (Bug 1226927) so use a dedicated Worker here instead
-    let worker = new Worker('/static/scripts/workers/readfile.js'),
+    let worker = new SharedWorker('/static/scripts/workers/shared.js'),
         file = _file, // Redeclare the variable so it can be used in the following load event
         is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
 
@@ -422,7 +421,7 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       continue;
     }
 
-    worker.addEventListener('message', event => {
+    worker.port.addEventListener('message', event => {
       this.add_attachment({
         data: event.data.split(',')[1], // Drop 'data:<type>;base64,'
         summary: is_patch ? 'Patch' : file.name,
@@ -432,7 +431,8 @@ BzDeck.controllers.Bug.prototype.attach_files = function (files) {
       }, file.size);
     });
 
-    worker.postMessage(file);
+    worker.port.start();
+    worker.port.postMessage(['readfile', { file }]);
   }
 
   if (!oversized_files.size) {

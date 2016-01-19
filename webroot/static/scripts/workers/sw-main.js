@@ -16,7 +16,6 @@ const files = [
   '/static/images/themes/dark/sprite.png',
   '/static/images/themes/light/sprite.png',
   '/static/scripts/combined.js',
-  '/static/scripts/workers/readfile.js',
   '/static/scripts/workers/shared.js',
   '/static/styles/combined.css',
   '/static/styles/themes/dark.css',
