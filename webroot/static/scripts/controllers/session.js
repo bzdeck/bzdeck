@@ -78,20 +78,8 @@ BzDeck.controllers.Session.prototype.find_account = function () {
 BzDeck.controllers.Session.prototype.force_login = function () {
   this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
 
-  let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback'),
-      host = 'mozilla', // TEMP
-      email = sessionStorage.getItem('client_api_login'),
-      key = sessionStorage.getItem('client_api_key');
-
-  // window.open doesn't work on the Android WebAppRT (Bug 1183897) so the user credentials are to be passed from the
-  // callback page through a temporary local storage. Otherwise, the credentials should be notified from a sub window
-  // over a BroadcastChannel.
-  if (email && key) {
-    sessionStorage.clear();
-    this.verify_account(host, email, key);
-
-    return;
-  }
+  // User credentials will be passed from a sub window over a BroadcastChannel
+  let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
 
   this.on('LoginFormView:LoginRequested', data => {
     bc.addEventListener('message', event => {
@@ -242,10 +230,6 @@ BzDeck.controllers.Session.prototype.init_components = function () {
     BzDeck.controllers.global.timers.set('fetch_subscriptions',
         window.setInterval(() => BzDeck.collections.subscriptions.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
   }).then(() => {
-    // Register the app for an activity on Firefox OS
-    // Comment out this since it's not working and even causes an error on the Android WebAppRT (#194)
-    // BzDeck.controllers.global.register_activity_handler();
-  }).then(() => {
     this.trigger(':StatusUpdate', { message: 'Loading complete.' }); // l10n
     this.show_first_notification();
     this.login();
@@ -315,16 +299,6 @@ BzDeck.controllers.Session.prototype.logout = function () {
   // TODO: Support multiple account by removing only the current account
   BzDeck.collections.accounts.delete(BzDeck.account.data.loaded)
     .then(() => location.replace(BzDeck.config.app.root));
-};
-
-/**
- * End the browsing session by closing the current app. This only works on WebAppRT.
- *
- * @argument {undefined}
- * @return {undefined}
- */
-BzDeck.controllers.Session.prototype.close = function () {
-  window.close();
 };
 
 /**

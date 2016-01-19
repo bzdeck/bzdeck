@@ -90,9 +90,7 @@ BzDeck.controllers.Banner.prototype.on_app_menu_item_selected = function (data) 
   let func = {
     'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
     'show-settings': () => BzDeck.router.navigate('/settings'),
-    'install-app': () => this.helpers.app.install(),
     logout: () => BzDeck.controllers.session.logout(),
-    quit: () => BzDeck.controllers.session.close(),
   }[data.command];
 
   if (func) {

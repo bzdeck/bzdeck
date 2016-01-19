@@ -35,13 +35,7 @@ BzDeck.views.Banner = function BannerView (user) {
     this.activate_fullscreen_menuitem();
   }
 
-  // Show the Quit menu item if the app runs on WebAppRT
-  if (!window.locationbar.visible) {
-    document.querySelector('#main-menu--app--quit').removeAttribute('aria-hidden');
-  }
-
   this.setup_account_label(user);
-  this.setup_app_install_menuitem();
   this.setup_reload_button();
 };
 
@@ -111,19 +105,6 @@ BzDeck.views.Banner.prototype.setup_account_label = function (user) {
   this.on('C:GravatarProfileFound', data => {
     document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];
   });
-};
-
-/**
- * Set up the app install menu item.
- *
- * @argument {undefined}
- * @return {undefined}
- */
-BzDeck.views.Banner.prototype.setup_app_install_menuitem = function () {
-  let $menuitem = document.querySelector('#main-menu--app--install');
-
-  this.on('AppInstalled', () => $menuitem.setAttribute('aria-disabled', 'true'), true);
-  this.helpers.app.can_install().then(() => $menuitem.removeAttribute('aria-hidden')).catch(error => {});
 };
 
 /**

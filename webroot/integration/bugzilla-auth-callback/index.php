@@ -72,18 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['client_api_login'] && $_GET['
             client_api_login = '<?php echo $client_api_login ?>',
             client_api_key = '<?php echo $client_api_key ?>';
 
-        // window.open doesn't work on the Android WebAppRT (Bug 1183897) so this page is *not* in a sub window. In that
-        // case, store the user credentials in a temporary local storage and transition to the app's landing page.
-        // Otherwise, notify the credentials to the main window over a BroadcastChannel and close this sub window.
-        if (navigator.userAgent.includes('Android')) {
-          sessionStorage.setItem('client_api_login', client_api_login);
-          sessionStorage.setItem('client_api_key', client_api_key);
-          location.replace(location.origin);
-        } else {
-          bc.postMessage({ client_api_login, client_api_key });
-          bc.close();
-          window.close();
-        }
+        // Notify the credentials to the main window over a BroadcastChannel and close this sub window
+        bc.postMessage({ client_api_login, client_api_key });
+        bc.close();
+        window.close();
       });
     </script>
   </body>

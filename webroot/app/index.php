@@ -123,7 +123,7 @@
                 <section id="settings-qrcode-outer">
                   <h4>BzDeck on mobile</h4>
                   <div class="placeholder" hidden></div>
-                  <p>Do you know BzDeck works with Android and Firefox&nbsp;OS? Get the app from the Firefox Marketplace on your phone or tablet, and scan this QR code to sign in quickly:<br><span role="button">Show QR Code</span></p>
+                  <p>Do you know BzDeck works with Android? Open the app with Firefox on your Android phone or tablet, and scan this QR code to sign in quickly:<br><span role="button">Show QR Code</span></p>
                 </section>
               </section>
             </div><!-- end #settings-tabpanel-account -->
@@ -960,7 +960,7 @@
           <h2>Scan QR Code</h2>
         </header>
         <div>
-          <p>Install BzDeck on your desktop and open the Settings. Tap the button below to scan the displayed QR code.</p>
+          <p>Open BzDeck with Firefox for desktop. Go to the Settings, then tap the button below to scan the displayed QR code.</p>
           <video></video>
           <p><span class="cta" role="button" tabindex="0" aria-disabled="true" data-id="scan">Scan to sign in</span></p>
         </div>
@@ -1044,9 +1044,6 @@
                     <li role="none">
                       <span id="main-menu--app--fullscreen" role="menuitem" aria-hidden="true" data-command="toggle-fullscreen"><label>Enter Full Screen</label></span>
                     </li>
-                    <li role="none">
-                      <span id="main-menu--app--install" role="menuitem" aria-hidden="true" data-command="install-app"><label>Install as App</label></span>
-                    </li>
                     <li role="separator"></li>
                     <li role="none">
                       <a id="main-menu--app--about" href="/about/" role="menuitem" data-command="show-about"><label>About BzDeck</label></a>
@@ -1057,9 +1054,6 @@
                     <li role="separator"></li>
                     <li role="none">
                       <span id="main-menu--app--logout" role="menuitem" data-command="logout"><label>Sign Out</label></span>
-                    </li>
-                    <li role="none">
-                      <span id="main-menu--app--quit" role="menuitem" aria-hidden="true" data-command="quit"><label>Quit BzDeck</label></span>
                     </li>
                   </ul><!-- end #main-menu--app-menu -->
                 </li>
@@ -1138,7 +1132,9 @@
       <meta itemprop="operatingSystem" content="Mac">
       <meta itemprop="operatingSystem" content="Linux">
       <meta itemprop="operatingSystem" content="Android">
+      <!-- Firefox OS support has been disabled due to the lack of the Service Workers support (Bug 1207265)
       <meta itemprop="operatingSystem" content="Firefox OS">
+      -->
       <meta itemprop="browserRequirements" content="Firefox Developer Edition">
       <meta itemprop="browserRequirements" content="Firefox Nightly">
     </div>

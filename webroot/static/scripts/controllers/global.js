@@ -95,44 +95,6 @@ BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
 };
 
 /**
- * Register the app for a Web activity. This is actually not working on Firefox OS.
- *
- * @argument {undefined}
- * @return {undefined}
- * @see {@link https://hacks.mozilla.org/2013/01/introducing-web-activities/}
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/MozActivityRequestHandler}
- */
-BzDeck.controllers.Global.prototype.register_activity_handler = function () {
-  // Match BMO's bug detail pages.
-  // TODO: Implement a handler for attachments
-  let re = /^https?:\/\/(?:bugzilla\.mozilla\.org\/show_bug\.cgi\?id=|bugzil\.la\/)(\d+)$/;
-
-  // Not implemented yet on Firefox OS nor Firefox for Android
-  if (typeof navigator.mozRegisterActivityHandler === 'function') {
-    navigator.mozRegisterActivityHandler({
-      name: 'view',
-      filters: {
-        type: 'url',
-        url: {
-          required: true,
-          regexp: re
-        }
-      }
-    });
-  }
-
-  if (typeof navigator.mozSetMessageHandler === 'function') {
-    navigator.mozSetMessageHandler('activity', req => {
-      let match = req.source.url.match(re);
-
-      if (match) {
-        BzDeck.router.navigate('/bug/' + match[1]);
-      }
-    });
-  }
-};
-
-/**
  * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
  * converted to in-app links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support (#68)
  * and improve the performance probably using a worker.
