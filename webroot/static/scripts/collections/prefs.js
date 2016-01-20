@@ -3,18 +3,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Pref Collection that represents the user's application settings.
- *
- * @constructor
- * @extends BaseCollection
- * @argument {undefined}
- * @return {Object} preferences - New PrefCollection instance.
+ * Define the Pref Collection that represents the user's application settings.
+ * @extends BzDeck.BaseCollection
  */
-BzDeck.collections.Prefs = function PrefCollection () {
-  this.datasource = BzDeck.datasources.account;
-  this.store_name = 'prefs';
-  this.store_type = 'simple';
-};
+BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
+  /**
+   * Get a PrefCollection instance.
+   * @argument {undefined}
+   * @return {Object} prefs - New PrefCollection instance.
+   */
+  constructor () {
+    super(); // This does nothing but is required before using `this`
 
-BzDeck.collections.Prefs.prototype = Object.create(BzDeck.collections.Base.prototype);
-BzDeck.collections.Prefs.prototype.constructor = BzDeck.collections.Prefs;
+    this.datasource = BzDeck.datasources.account;
+    this.store_name = 'prefs';
+    this.store_type = 'simple';
+  }
+}

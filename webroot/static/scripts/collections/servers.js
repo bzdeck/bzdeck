@@ -3,18 +3,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Server Collection that represents remote Bugzilla instances. Each server is a ServerModel.
- *
- * @constructor
- * @extends BaseCollection
- * @argument {undefined}
- * @return {Object} servers - New ServerCollection instance.
+ * Define the Server Collection that represents remote Bugzilla instances. Each server is a ServerModel.
+ * @extends BzDeck.BaseCollection
  */
-BzDeck.collections.Servers = function ServerCollection () {
-  this.datasource = BzDeck.datasources.global;
-  this.store_name = 'bugzilla';
-  this.model = BzDeck.models.Server;
-};
+BzDeck.ServerCollection = class ServerCollection extends BzDeck.BaseCollection {
+  /**
+   * Get a ServerCollection instance.
+   * @argument {undefined}
+   * @return {Object} servers - New ServerCollection instance.
+   */
+  constructor () {
+    super(); // This does nothing but is required before using `this`
 
-BzDeck.collections.Servers.prototype = Object.create(BzDeck.collections.Base.prototype);
-BzDeck.collections.Servers.prototype.constructor = BzDeck.collections.Servers;
+    this.datasource = BzDeck.datasources.global;
+    this.store_name = 'bugzilla';
+    this.model = BzDeck.models.Server;
+  }
+}

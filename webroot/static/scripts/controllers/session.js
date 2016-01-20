@@ -52,8 +52,8 @@ BzDeck.controllers.Session.prototype.find_account = function () {
   this.trigger(':StatusUpdate', { message: 'Looking for your account...' }); // l10n
 
   BzDeck.datasources.global.load().then(database => {
-    BzDeck.collections.accounts = new BzDeck.collections.Accounts();
-    BzDeck.collections.servers = new BzDeck.collections.Servers();
+    BzDeck.collections.accounts = new BzDeck.AccountCollection();
+    BzDeck.collections.servers = new BzDeck.ServerCollection();
   }, error => {
     this.trigger(':Error', { error, message: error.message });
   }).then(() => Promise.all([
@@ -168,11 +168,11 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
 
   BzDeck.datasources.account.load().then(database => {
-    BzDeck.collections.bugs = new BzDeck.collections.Bugs();
-    BzDeck.collections.attachments = new BzDeck.collections.Attachments();
-    BzDeck.collections.subscriptions = new BzDeck.collections.Subscriptions();
-    BzDeck.prefs = new BzDeck.collections.Prefs();
-    BzDeck.collections.users = new BzDeck.collections.Users();
+    BzDeck.collections.bugs = new BzDeck.BugCollection();
+    BzDeck.collections.attachments = new BzDeck.AttachmentCollection();
+    BzDeck.collections.subscriptions = new BzDeck.SubscriptionCollection();
+    BzDeck.prefs = new BzDeck.PrefCollection();
+    BzDeck.collections.users = new BzDeck.UserCollection();
   }, error => {
     this.trigger(':Error', { error, message: error.message });
   }).then(() => Promise.all([

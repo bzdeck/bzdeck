@@ -6,13 +6,6 @@ BzDeck.collections = BzDeck.collections || {};
 
 /**
  * Define the app's Base Collection. This constructor is intended to be inherited by the app's each collection.
- *
- * @constructor
- * @extends Collection
- * @argument {undefined}
- * @return {Object} collection - New BaseCollection instance.
+ * @extends FlareTail.app.Collection
  */
-BzDeck.collections.Base = function BaseCollection () {};
-
-BzDeck.collections.Base.prototype = Object.create(FlareTail.app.Collection.prototype);
-BzDeck.collections.Base.prototype.constructor = BzDeck.collections.Base;
+BzDeck.BaseCollection = class BaseCollection extends FlareTail.app.Collection {}

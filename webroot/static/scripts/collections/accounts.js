@@ -3,28 +3,30 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Account Collection that represents the user's Bugzilla accounts. Each account is an AccountModel.
- *
- * @constructor
- * @extends BaseCollection
- * @argument {undefined}
- * @return {Object} accounts - New AccountCollection instance.
+ * Define the Account Collection that represents the user's Bugzilla accounts. Each account is an AccountModel.
+ * @extends BzDeck.BaseCollection
  */
-BzDeck.collections.Accounts = function AccountCollection () {
-  this.datasource = BzDeck.datasources.global;
-  this.store_name = 'accounts';
-  this.model = BzDeck.models.Account;
-};
+BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection {
+  /**
+   * Get an AccountCollection instance.
+   * @constructor
+   * @argument {undefined}
+   * @return {Object} accounts - New AccountCollection instance.
+   */
+  constructor () {
+    super(); // This does nothing but is required before using `this`
 
-BzDeck.collections.Accounts.prototype = Object.create(BzDeck.collections.Base.prototype);
-BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
+    this.datasource = BzDeck.datasources.global;
+    this.store_name = 'accounts';
+    this.model = BzDeck.models.Account;
+  }
 
-/**
- * Get the currently signed-in user account if any.
- *
- * @argument {undefined}
- * @return {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
- */
-BzDeck.collections.Accounts.prototype.get_current = function () {
-  return this.get_all().then(accounts => [...accounts.values()].find(account => account.data.active));
-};
+  /**
+   * Get the currently signed-in user account if any.
+   * @argument {undefined}
+   * @return {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
+   */
+  get_current () {
+    return this.get_all().then(accounts => [...accounts.values()].find(account => account.data.active));
+  }
+}
