@@ -172,7 +172,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
         mql = window.matchMedia('(max-width: 1023px)'),
         $field = this.$bug.querySelector('[data-field="attachments"]');
 
-    this.$$attachments = new BzDeck.views.BugAttachments(this.id, this.bug.id, $field);
+    this.$$attachments = new BzDeck.BugAttachmentsView(this.id, this.bug.id, $field);
 
     if ((this.bug.attachments || []).length) {
       Promise.all(this.bug.attachments.map(att => BzDeck.collections.attachments.get(att.id))).then(attachments => {

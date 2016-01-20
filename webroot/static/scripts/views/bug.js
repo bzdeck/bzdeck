@@ -328,7 +328,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Prepare the timeline and comment form
       this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed);
-      this.comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug, this.$bug),
+      this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
       this.activate_widgets();
     }).then(() => {
       this.helpers.event.async(() => {

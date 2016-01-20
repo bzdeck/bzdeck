@@ -6,7 +6,7 @@
  * Define the Bug Attachments View that represents the Attachment tabpanel content within a Bug Details tabpanel.
  * @extends BzDeck.BaseView
  */
-BzDeck.views.BugAttachments = class BugAttachmentsView extends BzDeck.BaseView {
+BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Get a BugAttachmentsView instance.
    * @constructor

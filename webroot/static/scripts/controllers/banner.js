@@ -20,7 +20,7 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
 
     BzDeck.collections.users.get(name, { name }).then(user => {
       this.user = user;
-      BzDeck.views.banner = new BzDeck.views.Banner(this.user);
+      BzDeck.views.banner = new BzDeck.BannerView(this.user);
 
       this.user.get_gravatar_profile().then(profile => {
         this.trigger(':GravatarProfileFound', {

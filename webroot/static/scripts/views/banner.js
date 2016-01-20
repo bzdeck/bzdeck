@@ -7,7 +7,7 @@
  * and application menu.
  * @extends BzDeck.BaseView
  */
-BzDeck.views.Banner = class BannerView extends BzDeck.BaseView {
+BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   /**
    * Get a BannerView instance.
    * @constructor

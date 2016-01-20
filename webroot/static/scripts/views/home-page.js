@@ -6,7 +6,7 @@
  * Define the Home Page View that represents the Home Page tabpanel content.
  * @extends BzDeck.BaseView
  */
-BzDeck.views.HomePage = class HomePageView extends BzDeck.BaseView {
+BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Get a HomePageView instance.
    * @constructor

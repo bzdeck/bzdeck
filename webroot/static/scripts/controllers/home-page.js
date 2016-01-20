@@ -64,7 +64,7 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
     this.on('V:OpeningTabRequested', data => this.open_tab());
 
     BzDeck.controllers.homepage = this;
-    this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(this);
+    this.view = BzDeck.views.pages.home = new BzDeck.HomePageView(this);
     this.view.connect(folder_id);
 
     return this;

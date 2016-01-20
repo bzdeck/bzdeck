@@ -6,7 +6,7 @@
  * Define the Bug Comment Form View that represents a comment form and quick edit UI under/above the bug timeline.
  * @extends BzDeck.BaseView
  */
-BzDeck.views.BugCommentForm = class BugCommentFormView extends BzDeck.BaseView {
+BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Get a BugCommentFormView instance.
    * @constructor
