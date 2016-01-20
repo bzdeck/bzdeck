@@ -6,13 +6,6 @@ BzDeck.datasources = BzDeck.datasources || {};
 
 /**
  * Define the app's Base DataSource. This constructor is intended to be inherited by the app's each datasource.
- *
- * @constructor
- * @extends IDBDataSource
- * @argument {undefined}
- * @return {Object} datasource - New BaseDataSource instance.
+ * @extends FlareTail.app.DataSource.IndexedDB
  */
-BzDeck.datasources.Base = function BaseDataSource () {};
-
-BzDeck.datasources.Base.prototype = Object.create(FlareTail.app.DataSource.IndexedDB.prototype);
-BzDeck.datasources.Base.prototype.constructor = BzDeck.datasources.Base;
+BzDeck.BaseDataSource = class BaseDataSource extends FlareTail.app.DataSource.IndexedDB {}

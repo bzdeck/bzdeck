@@ -17,8 +17,8 @@ BzDeck.controllers.Session = function SessionController () {
 
   this.bootstrapping = true;
 
-  BzDeck.datasources.global = new BzDeck.datasources.Global();
-  BzDeck.datasources.account = new BzDeck.datasources.Account();
+  BzDeck.datasources.global = new BzDeck.GlobalDataSource();
+  BzDeck.datasources.account = new BzDeck.AccountDataSource();
   BzDeck.controllers.global = new BzDeck.controllers.Global();
   BzDeck.controllers.bugzfeed = new BzDeck.controllers.BugzfeedClient();
 
