@@ -6,13 +6,6 @@ BzDeck.models = BzDeck.models || {};
 
 /**
  * Define the app's Base Model. This constructor is intended to be inherited by the app's each model.
- *
- * @constructor
- * @extends Model
- * @argument {undefined}
- * @return {Object} model - New BaseModel instance.
+ * @extends FlareTail.app.Model
  */
-BzDeck.models.Base = function BaseModel () {};
-
-BzDeck.models.Base.prototype = Object.create(FlareTail.app.Model.prototype);
-BzDeck.models.Base.prototype.constructor = BzDeck.models.Base;
+BzDeck.BaseModel = class BaseModel extends FlareTail.app.Model {}

@@ -18,7 +18,7 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
 
     this.datasource = BzDeck.datasources.global;
     this.store_name = 'accounts';
-    this.model = BzDeck.models.Account;
+    this.model = BzDeck.AccountModel;
   }
 
   /**

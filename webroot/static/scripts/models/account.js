@@ -4,24 +4,27 @@
 
 /**
  * Initialize the Account Model that represents the user's Bugzilla account. Available through the AccountCollection.
- *
- * @constructor
- * @extends BaseModel
- * @argument {Object} data - User account data including Bugzilla account info.
- * @return {Proxy} account - New AccountModel instance.
+ * @extends BzDeck.BaseModel
  */
-BzDeck.models.Account = function AccountModel (data) {
-  this.datasource = BzDeck.datasources.global;
-  this.store_name = 'accounts';
-  this.data = data;
+BzDeck.AccountModel = class AccountModel extends BzDeck.BaseModel {
+  /**
+   * Get an AccountModel instance.
+   * @constructor
+   * @argument {Object} data - User account data including Bugzilla account info.
+   * @return {Proxy} account - New AccountModel instance.
+   */
+  constructor (data) {
+    super(); // This does nothing but is required before using `this`
 
-  Object.defineProperties(this, {
-    permissions: {
-      enumerable: true,
-      value: data.bugzilla && data.bugzilla.groups ? data.bugzilla.groups.map(group => group.name) : [],
-    },
-  });
-};
+    this.datasource = BzDeck.datasources.global;
+    this.store_name = 'accounts';
+    this.data = data;
 
-BzDeck.models.Account.prototype = Object.create(BzDeck.models.Base.prototype);
-BzDeck.models.Account.prototype.constructor = BzDeck.models.Account;
+    Object.defineProperties(this, {
+      permissions: {
+        enumerable: true,
+        value: data.bugzilla && data.bugzilla.groups ? data.bugzilla.groups.map(group => group.name) : [],
+      },
+    });
+  }
+}

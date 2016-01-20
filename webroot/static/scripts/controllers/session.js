@@ -140,7 +140,7 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
   }).then(user => {
     return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
   }).then(user => {
-    let account = BzDeck.account = new BzDeck.models.Account({
+    let account = BzDeck.account = new BzDeck.AccountModel({
       host: BzDeck.server.name,
       name: email,
       api_key,

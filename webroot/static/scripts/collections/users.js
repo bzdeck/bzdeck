@@ -19,7 +19,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'users';
-    this.model = BzDeck.models.User;
+    this.model = BzDeck.UserModel;
   }
 
   /**

@@ -17,7 +17,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    this.model = BzDeck.models.Attachment;
+    this.model = BzDeck.AttachmentModel;
   }
 
   /**

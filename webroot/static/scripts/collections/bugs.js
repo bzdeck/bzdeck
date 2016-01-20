@@ -18,7 +18,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'bugs';
-    this.model = BzDeck.models.Bug;
+    this.model = BzDeck.BugModel;
 
     this.subscribe('BugzfeedClientController:BugUpdated', true);
   }

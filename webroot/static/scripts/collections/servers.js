@@ -17,6 +17,6 @@ BzDeck.ServerCollection = class ServerCollection extends BzDeck.BaseCollection {
 
     this.datasource = BzDeck.datasources.global;
     this.store_name = 'bugzilla';
-    this.model = BzDeck.models.Server;
+    this.model = BzDeck.ServerModel;
   }
 }
