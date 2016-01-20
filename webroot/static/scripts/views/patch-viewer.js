@@ -3,75 +3,78 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Patch Viewer View. Render a patch file in HTML format so added and removed lines can be highlighted
- * with CSS. TODO: Support non-unified formats. Implement syntax highlight (#279).
- *
- * @constructor
- * @extends BaseView
- * @argument {String} str - Raw patch content.
- * @return {DocumentFragment} $fragment - formatted HTML fragment
+ * Define the Patch Viewer View. Render a patch file in HTML format so added and removed lines can be highlighted with
+ * CSS. TODO: Support non-unified formats. Implement syntax highlight (#279).
+ * @extends BzDeck.BaseView
  */
-BzDeck.views.PatchViewer = function PatchViewerView (str) {
-  let $fragment = new DocumentFragment();
+BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
+  /**
+   * Get a PatchViewerView instance.
+   * @constructor
+   * @argument {String} str - Raw patch content.
+   * @return {DocumentFragment} $fragment - formatted HTML fragment
+   */
+  constructor (str) {
+    super(); // This does nothing but is required before using `this`
 
-  str = str.replace(/\r\n?/g, '\n');
+    let $fragment = new DocumentFragment();
 
-  for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
-    let lines = file.split(/\n/),
-        [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, '')),
-        removed_ln = 0,
-        added_ln = 0,
-        $details = $fragment.appendChild(document.createElement('details')),
-        $summary = $details.appendChild(document.createElement('summary')),
-        $table = $details.appendChild(document.createElement('table'));
+    str = str.replace(/\r\n?/g, '\n');
 
-    $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
+    for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
+      let lines = file.split(/\n/),
+          [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, '')),
+          removed_ln = 0,
+          added_ln = 0,
+          $details = $fragment.appendChild(document.createElement('details')),
+          $summary = $details.appendChild(document.createElement('summary')),
+          $table = $details.appendChild(document.createElement('table'));
 
-    for (let line of lines) {
-      let $row = $table.insertRow(),
-          $removed_ln = $row.insertCell(),
-          $added_ln = $row.insertCell(),
-          $sign = $row.insertCell(),
-          $line = $row.insertCell();
+      $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
 
-      $removed_ln.classList.add('ln', 'removed');
-      $added_ln.classList.add('ln', 'removed');
-      $sign.classList.add('sign');
-      $line.classList.add('code');
+      for (let line of lines) {
+        let $row = $table.insertRow(),
+            $removed_ln = $row.insertCell(),
+            $added_ln = $row.insertCell(),
+            $sign = $row.insertCell(),
+            $line = $row.insertCell();
 
-      if (line.startsWith('@@')) {
-        let match = line.match(/^@@\ \-(\d+),\d+\s\+(\d+),\d+\s@@/);
+        $removed_ln.classList.add('ln', 'removed');
+        $added_ln.classList.add('ln', 'removed');
+        $sign.classList.add('sign');
+        $line.classList.add('code');
 
-        removed_ln = Number(match[1]);
-        added_ln = Number(match[2]);
-        $row.classList.add('head');
-        $removed_ln.textContent = '...';
-        $added_ln.textContent = '...';
-        $line.textContent = line;
-      } else if (line.startsWith('-')) {
-        $row.classList.add('removed');
-        $removed_ln.textContent = removed_ln;
-        $sign.textContent = line.substr(0, 1);
-        $line.textContent = line.substr(1);
-        removed_ln++;
-      } else if (line.startsWith('+')) {
-        $row.classList.add('added');
-        $added_ln.textContent = added_ln;
-        $sign.textContent = line.substr(0, 1);
-        $line.textContent = line.substr(1);
-        added_ln++;
-      } else {
-        $removed_ln.textContent = removed_ln;
-        $added_ln.textContent = added_ln;
-        $line.textContent = line.substr(1);
-        removed_ln++;
-        added_ln++;
+        if (line.startsWith('@@')) {
+          let match = line.match(/^@@\ \-(\d+),\d+\s\+(\d+),\d+\s@@/);
+
+          removed_ln = Number(match[1]);
+          added_ln = Number(match[2]);
+          $row.classList.add('head');
+          $removed_ln.textContent = '...';
+          $added_ln.textContent = '...';
+          $line.textContent = line;
+        } else if (line.startsWith('-')) {
+          $row.classList.add('removed');
+          $removed_ln.textContent = removed_ln;
+          $sign.textContent = line.substr(0, 1);
+          $line.textContent = line.substr(1);
+          removed_ln++;
+        } else if (line.startsWith('+')) {
+          $row.classList.add('added');
+          $added_ln.textContent = added_ln;
+          $sign.textContent = line.substr(0, 1);
+          $line.textContent = line.substr(1);
+          added_ln++;
+        } else {
+          $removed_ln.textContent = removed_ln;
+          $added_ln.textContent = added_ln;
+          $line.textContent = line.substr(1);
+          removed_ln++;
+          added_ln++;
+        }
       }
     }
+
+    return $fragment;
   }
-
-  return $fragment;
-};
-
-BzDeck.views.PatchViewer.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.PatchViewer.prototype.constructor = BzDeck.views.PatchViewer;
+}

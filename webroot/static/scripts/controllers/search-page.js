@@ -64,7 +64,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     BzDeck.views.banner.open_tab({
       page_category: 'search',
       page_id: this.id,
-      page_constructor: BzDeck.views.SearchPage,
+      page_constructor: BzDeck.SearchPageView,
       page_constructor_args: [this.id, params, BzDeck.server.data.config],
       tab_label: 'Search', // l10n
       tab_desc: 'Search & Browse Bugs', // l10n

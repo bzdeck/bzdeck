@@ -38,7 +38,7 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
     BzDeck.views.banner.open_tab({
       page_category: 'details',
       page_id: this.id,
-      page_constructor: BzDeck.views.DetailsPage,
+      page_constructor: BzDeck.DetailsPageView,
       page_constructor_args: [this.id, this.bug_id, this.bug_ids],
       tab_label: `Bug ${this.bug_id}`,
       tab_position: 'next',

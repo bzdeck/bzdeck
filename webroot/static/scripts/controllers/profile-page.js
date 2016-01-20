@@ -24,7 +24,7 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
     BzDeck.views.banner.open_tab({
       page_category: 'profile',
       page_id: email,
-      page_constructor: BzDeck.views.ProfilePage,
+      page_constructor: BzDeck.ProfilePageView,
       page_constructor_args: [email, self],
       tab_label: 'Profile', // l10n
       tab_desc: 'User Profile', // l10n

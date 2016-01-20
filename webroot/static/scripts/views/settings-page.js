@@ -3,113 +3,114 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Settings Page View that represents the Settings tabpanel content.
- *
- * @constructor
- * @extends BaseView
- * @argument {Map.<String, Object>} prefs - User preference Map.
- * @argument {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
- * @return {Object} view - New SettingsPageView instance.
+ * Define the Settings Page View that represents the Settings tabpanel content.
+ * @extends BzDeck.BaseView
  */
-BzDeck.views.SettingsPage = function SettingsPageView (prefs, tab_id) {
-  if (this.helpers.env.device.mobile) {
-    document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
-    document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
-    document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
-    document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
-    document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
-  } else {
-    this.prepare_qrcode();
-  }
+BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
+  /**
+   * Get a SettingsPageView instance.
+   * @constructor
+   * @argument {Map.<String, Object>} prefs - User preference Map.
+   * @argument {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
+   * @return {Object} view - New SettingsPageView instance.
+   */
+  constructor (prefs, tab_id) {
+    super(); // This does nothing but is required before using `this`
 
-  // Activate tabs
-  this.$$tablist = new this.widgets.TabList(document.querySelector('#settings-tablist'));
-
-  if (tab_id) {
-    this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
-  }
-
-  // Currently the radiogroup/radio widget is not data driven.
-  // A modern preference system is needed.
-  for (let [name, value] of prefs) {
-    this.activate_radiogroup(name, value);
-  }
-};
-
-BzDeck.views.SettingsPage.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.SettingsPage.prototype.constructor = BzDeck.views.SettingsPage;
-
-/**
- * Activate each radiogroup on the Settings page.
- *
- * @argument {String} name - Preference name.
- * @argument {Object} _value - Preference value.
- * @argument {*}      _value.user - User-defined value.
- * @argument {*}      _value.default - Default value.
- * @argument {String} _value.type - Type of the value: boolean, integer or string.
- * @return {undefined}
- */
-BzDeck.views.SettingsPage.prototype.activate_radiogroup = function (name, _value) {
-  let $root = document.documentElement,
-      $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`),
-      value = _value.user !== undefined ? _value.user : _value.default,
-      attr = 'data-' + name.replace(/[\._]/g, '-');
-
-  for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
-    $radio.tabIndex = 0;
-    $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
-  }
-
-  (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
-    value = event.detail.items[0].dataset.value;
-    value = _value.type === 'boolean' ? value === 'true' : value;
-    this.trigger(':PrefValueChanged', { name, value });
-
-    if ($root.hasAttribute(attr)) {
-      $root.setAttribute(attr, String(value));
-    }
-  });
-};
-
-/**
- * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's Bugzilla
- * account name and API key.
- *
- * @argument {undefined}
- * @return {undefined}
- */
-BzDeck.views.SettingsPage.prototype.prepare_qrcode = function () {
-  let $outer = document.querySelector('#settings-qrcode-outer'),
-      $placeholder = $outer.querySelector('.placeholder'),
-      $iframe = $outer.querySelector('iframe'),
-      $button = $outer.querySelector('[role="button"]');
-
-  // Because the QRCode library doesn't support the strict mode, load the script in an iframe
-  let generate = event => {
-    let QRCode = event.target.contentWindow.QRCode,
-        { name, api_key } = BzDeck.account.data;
-
-    new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
-
-    $iframe.removeEventListener('load', generate);
-  };
-
-  // Show the code on demand
-  $button.addEventListener('click', event => {
-    if ($placeholder.hidden) {
-      $placeholder.hidden = false;
-      $button.textContent = 'Hide QR Code'; // l10n
-
-      if (!$iframe) {
-        $iframe = document.createElement('iframe');
-        $iframe.addEventListener('load', generate);
-        $iframe.hidden = true;
-        $iframe.src = '/integration/qrcode-encoder/';
-        $outer.appendChild($iframe);
-      }
+    if (this.helpers.env.device.mobile) {
+      document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
+      document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
+      document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
+      document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
+      document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
     } else {
-      $placeholder.hidden = true;
-      $button.textContent = 'Show QR Code'; // l10n
+      this.prepare_qrcode();
     }
-  });
-};
+
+    // Activate tabs
+    this.$$tablist = new this.widgets.TabList(document.querySelector('#settings-tablist'));
+
+    if (tab_id) {
+      this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
+    }
+
+    // Currently the radiogroup/radio widget is not data driven.
+    // A modern preference system is needed.
+    for (let [name, value] of prefs) {
+      this.activate_radiogroup(name, value);
+    }
+  }
+
+  /**
+   * Activate each radiogroup on the Settings page.
+   * @argument {String} name - Preference name.
+   * @argument {Object} _value - Preference value.
+   * @argument {*}      _value.user - User-defined value.
+   * @argument {*}      _value.default - Default value.
+   * @argument {String} _value.type - Type of the value: boolean, integer or string.
+   * @return {undefined}
+   */
+  activate_radiogroup (name, _value) {
+    let $root = document.documentElement,
+        $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`),
+        value = _value.user !== undefined ? _value.user : _value.default,
+        attr = 'data-' + name.replace(/[\._]/g, '-');
+
+    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
+      $radio.tabIndex = 0;
+      $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
+    }
+
+    (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
+      value = event.detail.items[0].dataset.value;
+      value = _value.type === 'boolean' ? value === 'true' : value;
+      this.trigger(':PrefValueChanged', { name, value });
+
+      if ($root.hasAttribute(attr)) {
+        $root.setAttribute(attr, String(value));
+      }
+    });
+  }
+
+  /**
+   * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's Bugzilla
+   * account name and API key.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  prepare_qrcode () {
+    let $outer = document.querySelector('#settings-qrcode-outer'),
+        $placeholder = $outer.querySelector('.placeholder'),
+        $iframe = $outer.querySelector('iframe'),
+        $button = $outer.querySelector('[role="button"]');
+
+    // Because the QRCode library doesn't support the strict mode, load the script in an iframe
+    let generate = event => {
+      let QRCode = event.target.contentWindow.QRCode,
+          { name, api_key } = BzDeck.account.data;
+
+      new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
+
+      $iframe.removeEventListener('load', generate);
+    };
+
+    // Show the code on demand
+    $button.addEventListener('click', event => {
+      if ($placeholder.hidden) {
+        $placeholder.hidden = false;
+        $button.textContent = 'Hide QR Code'; // l10n
+
+        if (!$iframe) {
+          $iframe = document.createElement('iframe');
+          $iframe.addEventListener('load', generate);
+          $iframe.hidden = true;
+          $iframe.src = '/integration/qrcode-encoder/';
+          $outer.appendChild($iframe);
+        }
+      } else {
+        $placeholder.hidden = true;
+        $button.textContent = 'Show QR Code'; // l10n
+      }
+    });
+  }
+}

@@ -16,6 +16,6 @@ BzDeck.StatusbarController = class StatusbarController extends BzDeck.BaseContro
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    BzDeck.views.statusbar = new BzDeck.views.Statusbar();
+    BzDeck.views.statusbar = new BzDeck.StatusbarView();
   }
 }

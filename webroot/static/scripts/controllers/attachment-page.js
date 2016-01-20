@@ -34,7 +34,7 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
     BzDeck.views.banner.open_tab({
       page_category: 'attachment',
       page_id: this.id,
-      page_constructor: BzDeck.views.AttachmentPage,
+      page_constructor: BzDeck.AttachmentPageView,
       page_constructor_args: [this.id, this.att_id],
       tab_label: isNaN(this.att_id) ? 'New Attachment' : `Attachment ${this.att_id}`,
       tab_position: 'next',

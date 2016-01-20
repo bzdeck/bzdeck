@@ -27,8 +27,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     BzDeck.controllers.global = new BzDeck.GlobalController();
     BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedClientController();
 
-    new BzDeck.views.Session();
-    new BzDeck.views.LoginForm(params);
+    new BzDeck.SessionView();
+    new BzDeck.LoginFormView(params);
 
     try {
       sessionStorage.getItem('fake');

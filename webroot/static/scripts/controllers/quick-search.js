@@ -16,7 +16,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    BzDeck.views.quick_search = new BzDeck.views.QuickSearch();
+    BzDeck.views.quick_search = new BzDeck.QuickSearchView();
 
     this.on('V:RecentSearchesRequested', data => this.provide_recent_searches());
     this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.input));

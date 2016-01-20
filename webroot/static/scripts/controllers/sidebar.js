@@ -49,7 +49,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
       }
     });
 
-    BzDeck.views.sidebar = new BzDeck.views.Sidebar();
+    BzDeck.views.sidebar = new BzDeck.SidebarView();
 
     this.on('V:FolderSelected', data => this.data.folder_id = data.id);
 

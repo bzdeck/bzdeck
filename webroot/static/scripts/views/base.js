@@ -7,13 +7,6 @@ BzDeck.views.pages = {};
 
 /**
  * Define the app's Base View. This constructor is intended to be inherited by each app view.
- *
- * @constructor
- * @extends View
- * @argument {undefined}
- * @return {Object} view - New BaseView instance.
+ * @extends FlareTail.app.View
  */
-BzDeck.views.Base = function BaseView () {};
-
-BzDeck.views.Base.prototype = Object.create(FlareTail.app.View.prototype);
-BzDeck.views.Base.prototype.constructor = BzDeck.views.Base;
+BzDeck.BaseView = class BaseView extends FlareTail.app.View {}

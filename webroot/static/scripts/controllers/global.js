@@ -31,7 +31,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @return {undefined}
    */
   init () {
-    this.view = BzDeck.views.global = new BzDeck.views.Global();
+    this.view = BzDeck.views.global = new BzDeck.GlobalView();
   }
 
   /**

@@ -3,28 +3,30 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Statusbar View that represents the global application statusbar.
- *
- * @constructor
- * @extends BaseView
- * @argument {undefined}
- * @return {Object} view - New StatusbarView instance.
+ * Define the Statusbar View that represents the global application statusbar.
+ * @extends BzDeck.BaseView
  */
-BzDeck.views.Statusbar = function StatusbarView () {
-  this.$statusbar = document.querySelector('#app-login [role="status"]');
-};
+BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
+  /**
+   * Get a StatusbarView instance.
+   * @constructor
+   * @argument {undefined}
+   * @return {Object} view - New StatusbarView instance.
+   */
+  constructor () {
+    super(); // This does nothing but is required before using `this`
 
-BzDeck.views.Statusbar.prototype = Object.create(BzDeck.views.Base.prototype);
-BzDeck.views.Statusbar.prototype.constructor = BzDeck.views.Statusbar;
-
-/**
- * Show a message on the statusbar.
- *
- * @argument {String} message
- * @return {undefined}
- */
-BzDeck.views.Statusbar.prototype.show = function (message) {
-  if (this.$statusbar) {
-    this.$statusbar.textContent = message;
+    this.$statusbar = document.querySelector('#app-login [role="status"]');
   }
-};
+
+  /**
+   * Show a message on the statusbar.
+   * @argument {String} message
+   * @return {undefined}
+   */
+  show (message) {
+    if (this.$statusbar) {
+      this.$statusbar.textContent = message;
+    }
+  }
+}
