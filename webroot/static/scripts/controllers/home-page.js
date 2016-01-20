@@ -24,7 +24,7 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
   {
     get: (obj, prop) => {
       if (prop === 'sorted_bugs') {
-        // Return a sorted bug list
+        // Return a sorted bug list (Promise)
         return this.view.get_shown_bugs(obj.bugs);
       }
 
@@ -36,7 +36,9 @@ BzDeck.controllers.HomePage = function HomePageController (folder_id) {
       if (prop === 'preview_id') {
         // Show the bug preview only when the preview pane is visible (on desktop and tablet)
         if (this.view.preview_is_hidden) {
-          BzDeck.router.navigate('/bug/' + newval, { ids: [...this.data.sorted_bugs.keys()] });
+          this.data.sorted_bugs.then(bugs => {
+            BzDeck.router.navigate('/bug/' + newval, { ids: [...bugs.keys()] });
+          });
 
           return true; // Do not save the value
         }
@@ -77,16 +79,18 @@ BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
 BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
   if (!id) {
     this.trigger(':BugDataUnavailable');
-  } else {
-    let bug = BzDeck.collections.bugs.get(id);
 
+    return;
+  }
+
+  BzDeck.collections.bugs.get(id).then(bug => {
     if (bug) {
       bug.unread = false;
       this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('home', bug) });
     } else {
       this.trigger(':BugDataUnavailable');
     }
-  }
+  });
 };
 
 /**
@@ -97,5 +101,7 @@ BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
  * @return {undefined}
  */
 BzDeck.controllers.HomePage.prototype.open_tab = function () {
-  BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.sorted_bugs.keys()] });
+  this.data.sorted_bugs.then(bugs => {
+    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...bugs.keys()] });
+  });
 };

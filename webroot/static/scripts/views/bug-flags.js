@@ -28,7 +28,7 @@ BzDeck.views.BugFlags.prototype.constructor = BzDeck.views.BugFlags;
  */
 BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
   let config = BzDeck.server.data.config,
-      get_person = name => BzDeck.collections.users.get(name, { name }).properties,
+      get_person = name => BzDeck.collections.users.get(name, { name }), // Promise
       _flags = (this.att ? this.att.flags : this.bug.flags) || [],
       $flag = this.get_template('details-flag'),
       $fragment = new DocumentFragment();
@@ -42,17 +42,22 @@ BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
       continue;
     }
 
-    $fragment.appendChild(this.fill($_flag, {
-      name: flag.name,
-      status: _flag ? _flag.status : '---',
-      setter: _flag && _flag.setter ? get_person(_flag.setter) : {},
-      requestee: _flag && _flag.requestee ? get_person(_flag.requestee) : {},
-    }, {
-      'aria-label': flag.name,
-      'aria-level': level,
-      'data-field': flag.name,
-      'data-has-value': _flag && !!_flag.status,
-    }));
+    Promise.all([
+      _flag && _flag.setter ? get_person(_flag.setter) : Promise.resolve({}),
+      _flag && _flag.requestee ? get_person(_flag.requestee) : Promise.resolve({}),
+    ]).then(people => {
+      $fragment.appendChild(this.fill($_flag, {
+        name: flag.name,
+        status: _flag ? _flag.status : '---',
+        setter: people[0].properties || {},
+        requestee: people[1].properties || {},
+      }, {
+        'aria-label': flag.name,
+        'aria-level': level,
+        'data-field': flag.name,
+        'data-has-value': _flag && !!_flag.status,
+      }));
+    });
 
     for (let prop of ['setter', 'requestee']) {
       $_flag.querySelector(`[itemprop="${prop}"]`).setAttribute('aria-hidden', !_flag || !_flag[prop]);
@@ -60,7 +65,7 @@ BzDeck.views.BugFlags.prototype.render = function ($outer, level = 4) {
 
     // let $$combobox = new this.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
 
-    // $$combobox.build(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
+    // $$combobox.build_dropdown(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
     // $$combobox.bind('Change', event => {});
   }
 

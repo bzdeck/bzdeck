@@ -75,7 +75,7 @@ BzDeck.views.PersonFinder.prototype.search_bug = function () {
  * @return {undefined}
  */
 BzDeck.views.PersonFinder.prototype.search_local = function () {
-  this.helpers.event.async(() => this.search(BzDeck.collections.users.data));
+  BzDeck.collections.users.get_all().then(users => this.search(users));
 };
 
 /**
@@ -115,37 +115,43 @@ BzDeck.views.PersonFinder.prototype.search = function (users = new Map()) {
       results = new Map(),
       $fragment = new DocumentFragment();
 
-  for (let [name, user] of users) {
-    if (this.exclude.has(name) || this.results.has(name)) {
-      continue;
+  Promise.all([...users.keys()].map(name => {
+    return BzDeck.collections.users.get(name, { name });
+  })).then(people => {
+    return new Map(people.map(person => [person.email, person]));
+  }).then(people => {
+    for (let [name, user] of users) {
+      if (this.exclude.has(name) || this.results.has(name)) {
+        continue;
+      }
+
+      let person = people.get(name); // name = email
+
+      if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
+          find(person.name) || find(person.email)) {
+        results.set(name, person);
+        this.results.set(name, person); // Save all results as well
+      }
+
+      if (results.size === 10) {
+        break;
+      }
+    }
+  }).then(() => {
+    if (!results.size) {
+      return;
     }
 
-    let person = BzDeck.collections.users.get(name, { name });
+    for (let [name, user] of results) {
+      let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image },
+          attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
 
-    if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
-        find(person.name) || find(person.email)) {
-      results.set(name, person);
-      this.results.set(name, person); // Save all results as well
+      $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
     }
 
-    if (results.size === 10) {
-      break;
-    }
-  }
-
-  if (!results.size) {
-    return;
-  }
-
-  for (let [name, user] of results) {
-    let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image },
-        attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
-
-    $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
-  }
-
-  this.$$combobox.fill_dropdown($fragment);
-  this.$$combobox.show_dropdown();
+    this.$$combobox.fill_dropdown($fragment);
+    this.$$combobox.show_dropdown();
+  });
 };
 
 /**

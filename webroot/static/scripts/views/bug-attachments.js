@@ -83,14 +83,18 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
   let $fragment = new DocumentFragment(),
       $listitem = this.get_template('details-attachment-listitem');
 
-  for (let att of attachments.reverse()) { // The newest attachment should be on the top of the list
+  attachments.reverse(); // The newest attachment should be on the top of the list
+
+  Promise.all(attachments.map(att => {
+    return BzDeck.collections.users.get(att.creator, { name: att.creator });
+  })).then(creators => attachments.forEach((att, index) => {
     this.attachments.set(att.id || att.hash, att);
 
     this.fill($fragment.appendChild($listitem.cloneNode(true)), {
       id: att.hash ? att.hash.substr(0, 7) : att.id,
       summary: att.summary,
       last_change_time: att.last_change_time,
-      creator: BzDeck.collections.users.get(att.creator, { name: att.creator }).properties,
+      creator: creators[index].properties,
       content_type: att.content_type,
       is_patch: !!att.is_patch,
       is_obsolete: !!att.is_obsolete,
@@ -101,15 +105,15 @@ BzDeck.views.BugAttachments.prototype.render = function (attachments) {
       'data-id': att.id,
       'data-hash': att.hash,
     });
-  }
+  })).then(() => {
+    let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
 
-  let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
-
-  this.update_list_title();
-  this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
-  this.$listbox.insertBefore($fragment, this.$listbox.firstElementChild);
-  this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
-  this.$$listbox.update_members();
+    this.update_list_title();
+    this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
+    this.$listbox.insertBefore($fragment, this.$listbox.firstElementChild);
+    this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
+    this.$$listbox.update_members();
+  });
 };
 
 /**

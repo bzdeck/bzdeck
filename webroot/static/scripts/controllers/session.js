@@ -60,8 +60,13 @@ BzDeck.controllers.Session.prototype.find_account = function () {
     BzDeck.collections.accounts.load(),
     BzDeck.collections.servers.load(),
   ])).then(() => {
-    BzDeck.account = BzDeck.collections.accounts.get_current();
-    BzDeck.server = BzDeck.collections.servers.get(BzDeck.account.data.host);
+    return BzDeck.collections.accounts.get_current();
+  }).then(account => {
+    BzDeck.account = account;
+  }).then(() => {
+    return BzDeck.collections.servers.get(BzDeck.account.data.host);
+  }).then(server => {
+    BzDeck.server = server;
   }).then(() => {
     this.load_data();
   }).catch(error => {
@@ -115,9 +120,6 @@ BzDeck.controllers.Session.prototype.force_login = function () {
  * @return {undefined}
  */
 BzDeck.controllers.Session.prototype.verify_account = function (host, email, api_key) {
-  let server = BzDeck.server = BzDeck.collections.servers.get(host, { host }),
-      params = new URLSearchParams(`names=${email}`);
-
   this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
 
   if (!this.bootstrapping) {
@@ -126,7 +128,11 @@ BzDeck.controllers.Session.prototype.verify_account = function (host, email, api
     this.bootstrapping = true;
   }
 
-  this.request('user', params, { api_key }).then(result => {
+  BzDeck.collections.servers.get(host, { host }).then(server => {
+    BzDeck.server = server;
+  }).then(() => {
+    return this.request('user', new URLSearchParams(`names=${email}`), { api_key });
+  }).then(result => {
     return result.users ? Promise.resolve(result.users[0])
                         : Promise.reject(new Error(result.message || 'User Not Found'));
   }, error => {
@@ -176,7 +182,9 @@ BzDeck.controllers.Session.prototype.load_data = function () {
   ])).then(() => Promise.all([
     BzDeck.collections.attachments.load(), // Depends on BzDeck.collections.bugs
   ])).then(() => {
-    this.firstrun = !BzDeck.collections.bugs.get_all().size;
+    return BzDeck.collections.bugs.get_all();
+  }).then(bugs => {
+    this.firstrun = !bugs.size;
   }).then(() => {
     // Fetch data for new users before showing the main app window, or defer fetching for returning users
     return this.firstrun ? this.fetch_data() : Promise.resolve();
@@ -256,23 +264,22 @@ BzDeck.controllers.Session.prototype.show_first_notification = function () {
   BzDeck.controllers.global.toggle_unread(true);
 
   // Notify requests
-  let bugs = BzDeck.collections.subscriptions.get('requests'),
-      len = bugs.size;
+  BzDeck.collections.subscriptions.get('requests').then(bugs => bugs.size).then(len => {
+    if (!len) {
+      return;
+    }
 
-  if (!len) {
-    return;
-  }
+    let title = len > 1 ? `You have ${len} requests`
+                        : 'You have 1 request'; // l10n
+    let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
+                       : 'Select the Requests folder to browse the bug.'; // l10n
 
-  let title = len > 1 ? `You have ${len} requests`
-                      : 'You have 1 request'; // l10n
-  let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
-                     : 'Select the Requests folder to browse the bug.'; // l10n
+    // TODO: Improve the notification body to describe more about the requests,
+    // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
 
-  // TODO: Improve the notification body to describe more about the requests,
-  // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
-
-  // Select the Requests folder when the notification is clicked
-  BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+    // Select the Requests folder when the notification is clicked
+    BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
+  });
 };
 
 /**

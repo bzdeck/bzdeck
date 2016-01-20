@@ -47,7 +47,7 @@ BzDeck.models.Bug = function BugModel (data) {
     },
     is_new: {
       enumerable: true,
-      get: () => this.detect_if_new(),
+      get: () => this.detect_if_new(), // Promise
     },
     participants: {
       enumerable: true,
@@ -129,8 +129,7 @@ BzDeck.models.Bug.prototype.merge = function (data) {
   // Deproxify cache and merge data
   data = Object.assign({}, cache, data);
 
-  let ignore_cc = BzDeck.prefs.get('notifications.ignore_cc_changes') !== false,
-      cached_time = new Date(cache.last_change_time),
+  let cached_time = new Date(cache.last_change_time),
       cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
       get_time = str => new Date(str).getTime(), // integer
       new_comments = new Map((data.comments || []).filter(c => cmp_time(c)).map(c => [get_time(c.creation_time), c])),
@@ -139,43 +138,47 @@ BzDeck.models.Bug.prototype.merge = function (data) {
       new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h])),
       timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
-  // Mark the bug unread if the user subscribes CC changes or the bug is already unread
-  if (!ignore_cc || cache._unread || !cache._last_viewed ||
-      // or there are unread comments or attachments
-      new_comments.size || new_attachments.size ||
-      // or there are unread non-CC changes
-      [...new_history.values()].some(h => h.changes.some(c => c.field_name !== 'cc'))) {
-    data._unread = true;
-  } else {
-    // Looks like there are only CC changes, so mark the bug read
-    data._unread = false;
-  }
+  BzDeck.prefs.get('notifications.ignore_cc_changes').then(ignore_cc => {
+    ignore_cc = ignore_cc !== false;
 
-  data._update_needed = false;
-
-  // Combine all changes into one Map, then notify
-  for (let time of timestamps) {
-    let changes = new Map(),
-        comment = new_comments.get(time),
-        attachment = new_attachments.get(time),
-        history = new_history.get(time);
-
-    if (comment) {
-      changes.set('comment', comment);
+    // Mark the bug unread if the user subscribes CC changes or the bug is already unread
+    if (!ignore_cc || cache._unread || !cache._last_viewed ||
+        // or there are unread comments or attachments
+        new_comments.size || new_attachments.size ||
+        // or there are unread non-CC changes
+        [...new_history.values()].some(h => h.changes.some(c => c.field_name !== 'cc'))) {
+      data._unread = true;
+    } else {
+      // Looks like there are only CC changes, so mark the bug read
+      data._unread = false;
     }
 
-    if (attachment) {
-      changes.set('attachment', attachment);
+    data._update_needed = false;
+
+    // Combine all changes into one Map, then notify
+    for (let time of timestamps) {
+      let changes = new Map(),
+          comment = new_comments.get(time),
+          attachment = new_attachments.get(time),
+          history = new_history.get(time);
+
+      if (comment) {
+        changes.set('comment', comment);
+      }
+
+      if (attachment) {
+        changes.set('attachment', attachment);
+      }
+
+      if (history) {
+        changes.set('history', history);
+      }
+
+      this.trigger(':Updated', { bug: data, changes });
     }
 
-    if (history) {
-      changes.set('history', history);
-    }
-
-    this.trigger(':Updated', { bug: data, changes });
-  }
-
-  this.save(data);
+    this.save(data);
+  });
 
   return true;
 };
@@ -253,7 +256,7 @@ BzDeck.models.Bug.prototype.get_duplicates = function () {
  * Check if the bug is unread or has been changed within the last 10 days.
  *
  * @argument {undefined}
- * @return {Boolean} new - Whether the bug is new.
+ * @return {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
  */
 BzDeck.models.Bug.prototype.detect_if_new = function () {
   let viewed = this.data._last_viewed,
@@ -268,41 +271,43 @@ BzDeck.models.Bug.prototype.detect_if_new = function () {
 
   // Check for new comments
   if (this.data.comments && this.data.comments.some(has_new)) {
-    return true;
+    return Promise.resolve(true);
   }
 
   // Check for new attachments
   if (this.data.attachments && this.data.attachments.some(has_new)) {
-    return true;
+    return Promise.resolve(true);
   }
 
-  // Ignore CC Changes option
-  if (viewed && BzDeck.prefs.get('notifications.ignore_cc_changes') !== false) {
-    for (let h of this.data.history || []) {
-      let time = new Date(h.when).getTime(), // Should be an integer for the following === comparison
-          non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
+  return BzDeck.prefs.get('notifications.ignore_cc_changes').then(ignore_cc => {
+    // Ignore CC Changes option
+    if (viewed && ignore_cc !== false) {
+      for (let h of this.data.history || []) {
+        let time = new Date(h.when).getTime(), // Should be an integer for the following === comparison
+            non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
-      if (time > viewed && non_cc_changes) {
-        return true;
-      }
+        if (time > viewed && non_cc_changes) {
+          return true;
+        }
 
-      if (time === changed && !non_cc_changes) {
-        return false;
+        if (time === changed && !non_cc_changes) {
+          return false;
+        }
       }
     }
-  }
 
-  // Check the unread status
-  if (is_new && this.unread) {
-    return true;
-  }
+    // Check the unread status
+    if (is_new && this.unread) {
+      return true;
+    }
 
-  // Check the date
-  if (is_new) {
-    return true;
-  }
+    // Check the date
+    if (is_new) {
+      return true;
+    }
 
-  return false;
+    return false;
+  });
 };
 
 /**

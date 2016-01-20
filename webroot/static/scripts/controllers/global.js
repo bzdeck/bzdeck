@@ -61,16 +61,19 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
     return;
   }
 
-  let bugs = [...BzDeck.collections.bugs.get_all().values()].filter(bug => bug.unread),
-      status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
-      extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n'),
-      unread_num = [...BzDeck.controllers.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+  BzDeck.collections.bugs.get_all().then(bugs => {
+    return [...bugs.values()].filter(bug => bug.unread);
+  }).then(bugs => {
+    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
+        extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n'),
+        unread_num = [...BzDeck.controllers.homepage.data.bugs.values()].filter(bug => bug.unread).length;
 
-  // Update View
-  this.view.toggle_unread(bugs, loaded, unread_num);
+    // Update View
+    this.view.toggle_unread(bugs, loaded, unread_num);
 
-  // Select Inbox when the notification is clicked
-  // this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
+    // Select Inbox when the notification is clicked
+    // this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
+  });
 };
 
 /**
@@ -81,17 +84,19 @@ BzDeck.controllers.Global.prototype.toggle_unread = function (loaded = false) {
  * @return {Promise.<MouseEvent>} event - Promise to be resolved in an event fired when the notification is clicked.
  */
 BzDeck.controllers.Global.prototype.show_notification = function (title, body) {
-  if (BzDeck.prefs.get('notifications.show_desktop_notifications') === false) {
-    return;
-  }
+  return BzDeck.prefs.get('notifications.show_desktop_notifications').then(value => {
+    if (value === false) {
+      return;
+    }
 
-  // Firefox OS requires a complete URL for the icon
-  let icon = location.origin + '/static/images/logo/icon-128.png',
-      notification = new Notification(title, { body, icon });
+    // Firefox OS requires a complete URL for the icon
+    let icon = location.origin + '/static/images/logo/icon-128.png',
+        notification = new Notification(title, { body, icon });
 
-  this.notifications.add(notification);
+    this.notifications.add(notification);
 
-  return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
+    return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
+  });
 };
 
 /**

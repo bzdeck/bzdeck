@@ -7,40 +7,43 @@
  *
  * @constructor
  * @extends BaseView
- * @argument {Proxy} attachment - AttachmentModel instance.
+ * @argument {Proxy} att - AttachmentModel instance.
  * @argument {HTMLElement} $placeholder - Node to show the attachment.
  * @return {Object} view - New AttachmentView instance.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
  */
-BzDeck.views.Attachment = function AttachmentView (attachment, $placeholder) {
-  let att = this.attachment = attachment,
-      get_person = name => BzDeck.collections.users.get(name, { name }).properties;
-
-  this.bug = BzDeck.collections.bugs.get(att.bug_id);
+BzDeck.views.Attachment = function AttachmentView (att, $placeholder) {
+  this.attachment = att;
   this.$placeholder = $placeholder;
 
-  this.$attachment = this.fill(this.get_template('details-attachment-content'), {
-    summary: att.summary,
-    file_name: att.file_name,
-    size: `${(att.size / 1024).toFixed(2)} KB`, // l10n
-    content_type: att.content_type,
-    is_patch: !!att.is_patch,
-    is_obsolete: !!att.is_obsolete,
-    creation_time: att.creation_time,
-    last_change_time: att.last_change_time,
-    creator: get_person(att.creator),
-  }, {
-    'data-att-id': att.id, // existing attachment
-    'data-att-hash': att.hash, // unuploaded attachment
-    'data-content-type': att.content_type,
+  BzDeck.collections.bugs.get(att.bug_id).then(bug => {
+    this.bug = bug;
+  }).then(() => {
+    return BzDeck.collections.users.get(att.creator, { name: att.creator });
+  }).then(_creator => {
+    this.$attachment = this.fill(this.get_template('details-attachment-content'), {
+      summary: att.summary,
+      file_name: att.file_name,
+      size: `${(att.size / 1024).toFixed(2)} KB`, // l10n
+      content_type: att.content_type,
+      is_patch: !!att.is_patch,
+      is_obsolete: !!att.is_obsolete,
+      creation_time: att.creation_time,
+      last_change_time: att.last_change_time,
+      creator: _creator.properties,
+    }, {
+      'data-att-id': att.id, // existing attachment
+      'data-att-hash': att.hash, // unuploaded attachment
+      'data-content-type': att.content_type,
+    });
+  }).then(() => {
+    this.$outer = this.$attachment.querySelector('.body');
+
+    new BzDeck.views.BugFlags(this.bug, att).render(this.$attachment.querySelector('.flags'), 6);
+
+    this.activate();
+    this.render();
   });
-
-  this.$outer = this.$attachment.querySelector('.body');
-
-  new BzDeck.views.BugFlags(this.bug, att).render(this.$attachment.querySelector('.flags'), 6);
-
-  this.activate();
-  this.render();
 };
 
 BzDeck.views.Attachment.prototype = Object.create(BzDeck.views.Base.prototype);

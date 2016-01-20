@@ -53,17 +53,6 @@ BzDeck.controllers.AttachmentPage.prototype.constructor = BzDeck.controllers.Att
  * @return {undefined}
  */
 BzDeck.controllers.AttachmentPage.prototype.get_attachment = function () {
-  let attachment = BzDeck.collections.attachments.get(this.att_id);
-
-  // If found, show it
-  if (attachment) {
-    this.attachment = attachment;
-    this.trigger(':AttachmentAvailable', { attachment });
-    this.trigger(':LoadingComplete');
-
-    return;
-  }
-
   // If the ID is hash, it's an unuploaded attachment. And if the cache cound not be found, just raise an error
   if (isNaN(this.att_id)) {
     this.trigger(':LoadingError');
@@ -80,16 +69,29 @@ BzDeck.controllers.AttachmentPage.prototype.get_attachment = function () {
   // If no cache found, try to retrieve it from Bugzilla
   this.trigger(':LoadingStarted');
 
-  BzDeck.collections.attachments.get(this.att_id, { id: this.att_id }).fetch().then(attachment => {
+  BzDeck.collections.attachments.get(this.att_id).then(attachment => {
+    // If found, show it
     if (attachment) {
       this.attachment = attachment;
       this.trigger(':AttachmentAvailable', { attachment });
-    } else {
-      this.trigger(':AttachmentUnavailable', { attachment });
+      this.trigger(':LoadingComplete');
+
+      return;
     }
-  }).catch(error => {
-    this.trigger(':LoadingError');
-  }).then(() => {
-    this.trigger(':LoadingComplete');
+
+    BzDeck.collections.attachments.get(this.att_id, { id: this.att_id }).then(attachment => {
+      return attachment.fetch();
+    }).then(attachment => {
+      if (attachment) {
+        this.attachment = attachment;
+        this.trigger(':AttachmentAvailable', { attachment });
+      } else {
+        this.trigger(':AttachmentUnavailable', { attachment });
+      }
+    }).catch(error => {
+      this.trigger(':LoadingError');
+    }).then(() => {
+      this.trigger(':LoadingComplete');
+    });
   });
 };

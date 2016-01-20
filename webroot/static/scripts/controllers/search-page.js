@@ -87,16 +87,18 @@ BzDeck.controllers.SearchPage.prototype.constructor = BzDeck.controllers.SearchP
 BzDeck.controllers.SearchPage.prototype.prep_preview = function (id) {
   if (!id) {
     this.trigger(':BugDataUnavailable');
-  } else {
-    let bug = BzDeck.collections.bugs.get(id);
 
+    return;
+  }
+
+  BzDeck.collections.bugs.get(id).then(bug => {
     if (bug) {
       bug.unread = false;
       this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('search', bug) });
     } else {
       this.trigger(':BugDataUnavailable');
     }
-  }
+  });
 };
 
 /**

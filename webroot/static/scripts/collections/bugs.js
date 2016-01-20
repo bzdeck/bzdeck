@@ -76,13 +76,11 @@ BzDeck.collections.Bugs.prototype.search_local = function (params) {
   let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase()),
       match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
 
-  let bugs = [...this.get_all().values()].filter(bug => {
+  return this.get_all().then(bugs => [...bugs.values()].filter(bug => {
     return words.every(word => bug.summary && match(bug.summary, word)) ||
            words.every(word => bug.aliases.some(alias => match(alias, word))) ||
            words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
-  });
-
-  return this.get_search_results(bugs);
+  })).then(bugs => this.get_search_results(bugs));
 };
 
 /**
@@ -92,30 +90,35 @@ BzDeck.collections.Bugs.prototype.search_local = function (params) {
  * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
 BzDeck.collections.Bugs.prototype.search_remote = function (params) {
-  let bugs = [];
+  let _bugs;
 
   return BzDeck.controllers.global.request('bug', params).then(result => {
     if (!result.bugs || !result.bugs.length) {
       return Promise.resolve([]);
     }
 
-    let _bugs = new Map(result.bugs.map(bug => [bug.id, bug]));
-
-    for (let [id, bug] of this.get_some(_bugs.keys())) {
-      let retrieved = _bugs.get(id); // Raw data object
+    _bugs = new Map(result.bugs.map(bug => [bug.id, bug]));
+  }).then(() => {
+    return this.get_some(_bugs.keys());
+  }).then(__bugs => {
+    return Promise.all([...__bugs].map(entry => new Promise(resolve => {
+      let [id, bug] = entry,
+          retrieved = _bugs.get(id); // Raw data object
 
       // Mark as unread
       retrieved._unread = true;
 
-      if (!bug) {
-        bug = this.set(id, retrieved);
-      } else if (bug.last_change_time < retrieved.last_change_time) {
-        bug.merge(retrieved);
+      if (bug) {
+        if (bug.last_change_time < retrieved.last_change_time) {
+          bug.merge(retrieved);
+        }
+
+        resolve(bug);
+      } else {
+        this.set(id, retrieved).then(bug => resolve(bug));
       }
-
-      bugs.push(bug);
-    }
-
+    })));
+  }).then(bugs => {
     return this.get_search_results(bugs);
   });
 };
@@ -145,5 +148,5 @@ BzDeck.collections.Bugs.prototype.get_search_results = function (bugs) {
 BzDeck.collections.Bugs.prototype.on_bug_updated = function (data) {
   let { id } = data;
 
-  this.get(id, { id, _unread: true }).fetch();
+  this.get(id, { id, _unread: true }).then(bug => bug.fetch());
 };

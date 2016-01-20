@@ -80,15 +80,18 @@ BzDeck.views.Bug.prototype.setup_toolbar = function () {
 
   $menu.addEventListener('MenuOpened', event => {
     let collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \
-                                                  [itemprop="comment"][aria-expanded="false"]').length,
-        cc_shown = !!BzDeck.prefs.get('ui.timeline.show_cc_changes');
+                                                  [itemprop="comment"][aria-expanded="false"]').length;
 
-    $toggle_comments.setAttribute('aria-disabled', !this.timeline);
-    $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
-    $toggle_comments.firstElementChild.textContent = collapsed ? 'Expand All Comments' : 'Collapse All Comments';
-    $toggle_cc.setAttribute('aria-disabled', !this.timeline);
-    $toggle_cc.setAttribute('data-command', cc_shown ? 'hide-cc': 'show-cc');
-    $toggle_cc.firstElementChild.textContent = cc_shown ? 'Hide CC Changes' : 'Show CC Changes';
+    BzDeck.prefs.get('ui.timeline.show_cc_changes').then(show_cc_changes => {
+      let cc_shown = !!show_cc_changes;
+
+      $toggle_comments.setAttribute('aria-disabled', !this.timeline);
+      $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
+      $toggle_comments.firstElementChild.textContent = collapsed ? 'Expand All Comments' : 'Collapse All Comments';
+      $toggle_cc.setAttribute('aria-disabled', !this.timeline);
+      $toggle_cc.setAttribute('data-command', cc_shown ? 'hide-cc': 'show-cc');
+      $toggle_cc.firstElementChild.textContent = cc_shown ? 'Hide CC Changes' : 'Show CC Changes';
+    });
   });
 
   $menu.addEventListener('MenuItemSelected', event => (handlers[event.detail.command] || (() => {}))());
@@ -146,31 +149,43 @@ BzDeck.views.Bug.prototype.render = function () {
 
   this.setup_toolbar();
 
-  let _bug = {};
+  let _bug = {},
+      get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
-  for (let { id: field, type } of BzDeck.config.grid.default_columns) {
+  Promise.all(BzDeck.config.grid.default_columns.map(column => {
+    let { id: field, type } = column;
+
     if (this.bug[field] !== undefined) {
       if (field === 'keywords') {
         _bug.keyword = this.bug.keywords;
       } else if (field === 'mentors') {
-        _bug.mentor = this.bug.mentors.map(name => BzDeck.collections.users.get(name, { name }).properties);
+        return Promise.all(this.bug.mentors.map(name => get_user(name))).then(mentors => {
+          _bug.mentor = mentors.map(mentor => mentor.properties);
+        });
       } else if (type === 'person') {
         if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
-          _bug[field] = BzDeck.collections.users.get(this.bug[field], { name: this.bug[field] }).properties;
+          return get_user(this.bug[field]).then(user => {
+            _bug[field] = user.properties;
+          });
         }
       } else {
         _bug[field] = this.bug[field] || '';
       }
     }
-  }
 
-  // Other Contributors, excluding Cc
-  _bug.contributor = [...this.bug.contributors].filter(name => !this.bug.cc.includes(name))
-                                               .map(name => BzDeck.collections.users.get(name, { name }).properties);
-
-  this.fill(this.$bug, _bug);
-
-  this.set_product_tooltips();
+    return Promise.resolve();
+  })).then(() => {
+    // Other Contributors, excluding Cc
+    return Promise.all([...this.bug.contributors].filter(name => !this.bug.cc.includes(name)).map(name => {
+      return get_user(name);
+    })).then(contributors => {
+      _bug.contributor = contributors.map(contributor => contributor.properties);
+    });
+  }).then(() => {
+    this.fill(this.$bug, _bug);
+  }).then(() => {
+    this.set_product_tooltips();
+  });
 
   let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
       $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]'),
@@ -212,18 +227,20 @@ BzDeck.views.Bug.prototype.render = function () {
 
   // Focus management
   let set_focus = shift => {
-    let ascending = BzDeck.prefs.get('ui.timeline.sort.order') !== 'descending',
-        entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
+    BzDeck.prefs.get('ui.timeline.sort.order').then(order => {
+      let ascending = order !== 'descending',
+          entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
-    entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+      entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
 
-    // Focus the first (or last) visible entry
-    for (let $_entry of entries) if ($_entry.clientHeight) {
-      $_entry.focus();
-      $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
+      // Focus the first (or last) visible entry
+      for (let $_entry of entries) if ($_entry.clientHeight) {
+        $_entry.focus();
+        $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
-      break;
-    }
+        break;
+      }
+    });
   };
 
   // Assign keyboard shortcuts
@@ -257,78 +274,81 @@ BzDeck.views.Bug.prototype.fill_details = function (delayed) {
     return;
   }
 
-  let get_person = name => BzDeck.collections.users.get(name, { name }).properties;
+  let _bug = {};
 
-  let _bug = {
-    cc: this.bug.cc.map(name => get_person(name)),
-    depends_on: this.bug.depends_on,
-    blocks: this.bug.blocks,
-    see_also: this.bug.see_also,
-    dupe_of: this.bug.dupe_of || undefined,
-    duplicate: this.bug.duplicates,
-  };
+  Promise.all(this.bug.cc.map(name => BzDeck.collections.users.get(name, { name }))).then(_cc => {
+    _bug = {
+      cc: _cc.map(person => person.properties),
+      depends_on: this.bug.depends_on,
+      blocks: this.bug.blocks,
+      see_also: this.bug.see_also,
+      dupe_of: this.bug.dupe_of || undefined,
+      duplicate: this.bug.duplicates,
+    };
+  }).then(() => {
+    this.fill(this.$bug, _bug);
+  }).then(() => {
+    // Depends on, Blocks and Duplicates
+    for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
+                                                [itemprop="duplicate"]')) {
+      $li.setAttribute('data-bug-id', $li.textContent);
 
-  this.fill(this.$bug, _bug);
+      (new this.widgets.Button($li)).bind('Pressed', event => {
+        this.trigger('GlobalView:OpenBug', { id: Number(event.target.textContent) });
+      });
+    }
 
-  // Depends on, Blocks and Duplicates
-  for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], [itemprop="duplicate"]')) {
-    $li.setAttribute('data-bug-id', $li.textContent);
+    // See Also
+    for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
+      let re = new RegExp(`^${BzDeck.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
+          match = $link.href.match(re);
 
-    (new this.widgets.Button($li)).bind('Pressed', event => {
-      this.trigger('GlobalView:OpenBug', { id: Number(event.target.textContent) });
+      if (match) {
+        $link.text = match[1];
+        $link.setAttribute('data-bug-id', match[1]);
+        $link.setAttribute('role', 'button');
+      } else {
+        $link.text = $link.href;
+      }
+    }
+
+    // Flags, only on the details tabs
+    if (this.render_tracking_flags) {
+      new BzDeck.views.BugFlags(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+
+      this.render_tracking_flags();
+    }
+
+    // Prepare the timeline and comment form
+    this.timeline = new BzDeck.views.BugTimeline(this.id, this.bug, this.$bug, delayed);
+    this.comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug, this.$bug),
+    this.activate_widgets();
+  }).then(() => {
+    this.helpers.event.async(() => {
+      // Number badge on tabs, only on the details tabs
+      if (this.add_tab_badges) {
+        this.add_tab_badges();
+      }
+
+      // Attachments, only on the details tabs
+      if (this.render_attachments) {
+        this.render_attachments();
+      }
+
+      // History, only on the details tabs
+      if (this.render_history) {
+        this.render_history();
+      }
+
+      // Add tooltips to the related bugs
+      this.set_bug_tooltips();
+
+      // Force updating the scrollbars because sometimes those are not automatically updated
+      this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
     });
-  }
-
-  // See Also
-  for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-    let re = new RegExp(`^${BzDeck.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
-        match = $link.href.match(re);
-
-    if (match) {
-      $link.text = match[1];
-      $link.setAttribute('data-bug-id', match[1]);
-      $link.setAttribute('role', 'button');
-    } else {
-      $link.text = $link.href;
-    }
-  }
-
-  // Flags, only on the details tabs
-  if (this.render_tracking_flags) {
-    new BzDeck.views.BugFlags(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
-
-    this.render_tracking_flags();
-  }
-
-  // Prepare the timeline and comment form
-  this.timeline = new BzDeck.views.BugTimeline(this.id, this.bug, this.$bug, delayed);
-  this.comment_form = new BzDeck.views.BugCommentForm(this.id, this.bug, this.$bug),
-  this.activate_widgets();
-
-  this.helpers.event.async(() => {
-    // Number badge on tabs, only on the details tabs
-    if (this.add_tab_badges) {
-      this.add_tab_badges();
-    }
-
-    // Attachments, only on the details tabs
-    if (this.render_attachments) {
-      this.render_attachments();
-    }
-
-    // History, only on the details tabs
-    if (this.render_history) {
-      this.render_history();
-    }
-
-    // Add tooltips to the related bugs
-    this.set_bug_tooltips();
-
-    // Force updating the scrollbars because sometimes those are not automatically updated
-    this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
+  }).then(() => {
+    BzDeck.views.statusbar.show('');
   });
-
-  BzDeck.views.statusbar.show('');
 };
 
 /**
@@ -357,7 +377,7 @@ BzDeck.views.Bug.prototype.activate_widgets = function () {
 
       this.comboboxes.set($combobox, $$combobox);
       $combobox.setAttribute('aria-disabled', !can_editbugs);
-      $$combobox.build(this.get_field_values(name).map(value => ({ value, selected: value === this.bug[name] })));
+      $$combobox.build_dropdown(this.get_field_values(name).map(value => ({ value, selected: value === this.bug[name] })));
       $$combobox.bind('Change', event => {
         let value = event.detail.value;
 
@@ -576,6 +596,10 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
   let related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
                                 .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
 
+  if (!related_ids.length) {
+    return;
+  }
+
   let set_tooltops = bug => {
     let title;
 
@@ -600,18 +624,21 @@ BzDeck.views.Bug.prototype.set_bug_tooltips = function () {
     }
   };
 
-  if (related_ids.length) {
-    let bugs = BzDeck.collections.bugs.get_some(related_ids),
-        lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
+  BzDeck.collections.bugs.get_some(related_ids).then(bugs => {
+    let lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
 
     bugs.forEach(bug => set_tooltops(bug));
 
     // BzDeck.collections.bugs.fetch() fails when one or more bugs in the result are private, so retrieve each bug
     // individually (Bug 1169040)
     for (let id of lookup_ids) {
-      BzDeck.collections.bugs.get(id, { id, _unread: true }).fetch(true, false).then(bug => set_tooltops(bug));
+      BzDeck.collections.bugs.get(id, { id, _unread: true }).then(bug => {
+        return bug.fetch(true, false);
+      }).then(bug => {
+        set_tooltops(bug)
+      });
     }
-  }
+  });
 };
 
 /**
@@ -628,10 +655,11 @@ BzDeck.views.Bug.prototype.update = function (bug, changes) {
   let $timeline = this.$bug.querySelector('.bug-timeline');
 
   if ($timeline) {
-    $timeline.querySelector('.comments-wrapper')
-             .appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, changes));
-    $timeline.querySelector('.comments-wrapper > article:last-of-type')
-             .scrollIntoView({ block: 'start', behavior: 'smooth' });
+    (new BzDeck.views.BugTimelineEntry(this.id, this.bug, changes)).create().then(entry => {
+      $timeline.querySelector('.comments-wrapper').appendChild(entry.$outer);
+      $timeline.querySelector('.comments-wrapper > article:last-of-type')
+               .scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
   }
 
   // Update the tab badges

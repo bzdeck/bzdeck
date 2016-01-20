@@ -81,20 +81,23 @@ BzDeck.controllers.DetailsPage.prototype.on_navigation_requested = function (dat
  * @return {undefined}
  */
 BzDeck.controllers.DetailsPage.prototype.get_bug = function () {
-  let bug = BzDeck.collections.bugs.get(this.bug_id);
+  if (!navigator.onLine) {
+    this.trigger(':BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
 
-  new Promise(resolve => {
+    return;
+  }
+
+  BzDeck.collections.bugs.get(this.bug_id).then(bug => {
     if (bug && !bug.error) {
-      resolve(bug);
-    } else if (!navigator.onLine) {
-      this.trigger(':BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
-    } else {
-      this.trigger(':LoadingStarted');
-      bug = BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id, _unread: true });
-      bug.fetch().then(bug => resolve(bug))
-          .catch(error => this.trigger(':BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
+      return bug;
     }
-  }).then(bug => new Promise(resolve => {
+
+    this.trigger(':LoadingStarted');
+
+    return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id, _unread: true }).then(bug => {
+      return bug.fetch();
+    }).catch(error => this.trigger(':BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
+  }).then(bug => new Promise((resolve, reject) => {
     if (bug.data && bug.data.summary) {
       resolve(bug);
     } else {
@@ -105,6 +108,7 @@ BzDeck.controllers.DetailsPage.prototype.get_bug = function () {
       }[code] || 'This bug data is not available.';
 
       this.trigger(':BugDataUnavailable', { code, message });
+      reject(new Error(message));
     }
   })).then(bug => {
     bug.unread = false;

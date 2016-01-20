@@ -12,44 +12,51 @@
  */
 BzDeck.views.Global = function GlobalView () {
   let datetime = this.helpers.datetime,
-      value,
-      theme = BzDeck.prefs.get('ui.theme.selected'),
       $root = document.documentElement;
 
   // Automatically update relative dates on the app
   datetime.options.updater_enabled = true;
 
+  // Theme
+  BzDeck.prefs.get('ui.theme.selected').then(theme => {
+    // Change the theme
+    if (theme && this.helpers.theme.list.contains(theme)) {
+      this.helpers.theme.selected = theme;
+    }
+
+    // Preload images from CSS
+    this.helpers.theme.preload_images();
+  });
+
   // Date format
-  value = BzDeck.prefs.get('ui.date.relative');
-  datetime.options.relative = value !== undefined ? value : true;
+  BzDeck.prefs.get('ui.date.relative').then(value => {
+    datetime.options.relative = value !== undefined ? value : true;
+  });
 
   // Date timezone
-  value = BzDeck.prefs.get('ui.date.timezone');
-  datetime.options.timezone = value || 'local';
+  BzDeck.prefs.get('ui.date.timezone').then(value => {
+    datetime.options.timezone = value || 'local';
+  });
 
   // Timeline: Font
-  value = BzDeck.prefs.get('ui.timeline.font.family');
-  $root.setAttribute('data-ui-timeline-font-family', value || 'proportional');
+  BzDeck.prefs.get('ui.timeline.font.family').then(value => {
+    $root.setAttribute('data-ui-timeline-font-family', value || 'proportional');
+  });
 
   // Timeline: Sort order
-  value = BzDeck.prefs.get('ui.timeline.sort.order');
-  $root.setAttribute('data-ui-timeline-sort-order', value || 'ascending');
+  BzDeck.prefs.get('ui.timeline.sort.order').then(value => {
+    $root.setAttribute('data-ui-timeline-sort-order', value || 'ascending');
+  });
 
   // Timeline: Changes
-  value = BzDeck.prefs.get('ui.timeline.show_cc_changes');
-  $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
+  BzDeck.prefs.get('ui.timeline.show_cc_changes').then(value => {
+    $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
+  });
 
   // Timeline: Attachments
-  value = BzDeck.prefs.get('ui.timeline.display_attachments_inline');
-  $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
-
-  // Change the theme
-  if (theme && this.helpers.theme.list.contains(theme)) {
-    this.helpers.theme.selected = theme;
-  }
-
-  // Preload images from CSS
-  this.helpers.theme.preload_images();
+  BzDeck.prefs.get('ui.timeline.display_attachments_inline').then(value => {
+    $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
+  });
 
   // Update user name & image asynchronously
   this.subscribe('UserModel:UserInfoUpdated', true);
@@ -166,18 +173,20 @@ BzDeck.views.Global.prototype.onclick = function (event) {
     if ($target.hasAttribute('data-att-id')) {
       let $content_type = $target.querySelector('[itemprop="content_type"]'),
           att_id = Number($target.getAttribute('data-att-id')),
-          att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined,
-          bug_id = [...BzDeck.collections.bugs.get_all().values()]
-                                .find(bug => (bug.attachments || []).some(att => att.id === att_id)).map(bug => bug.id);
+          att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
 
-      if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
-        // Open the link directly in a new browser tab
-        window.open(`${BzDeck.server.url}/attachment.cgi?id=${att_id}`);
-      } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-        this.trigger('GlobalView:OpenAttachment', { id: att_id });
-      } else {
-        this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
-      }
+      BzDeck.collections.bugs.get_all().then(bugs => {
+        return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
+      }).then(bug_id => {
+        if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
+          // Open the link directly in a new browser tab
+          window.open(`${BzDeck.server.url}/attachment.cgi?id=${att_id}`);
+        } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+          this.trigger('GlobalView:OpenAttachment', { id: att_id });
+        } else {
+          this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
+        }
+      });
 
       return this.helpers.event.ignore(event);
     }
@@ -216,25 +225,26 @@ BzDeck.views.Global.prototype.onkeydown = function (event) {
  * @return {undefined}
  */
 BzDeck.views.Global.prototype.on_user_info_updated = function (data) {
-  let { name } = data,
-      user = BzDeck.collections.users.get(name, { name });
+  let { name } = data;
 
-  for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
-    let title = `${user.original_name || user.name}\n${user.email}`,
-        $person = $email.closest('[itemtype$="User"]'),
-        $name = $person.querySelector('[itemprop="name"]'),
-        $image = $person.querySelector('[itemprop="image"]');
+  BzDeck.collections.users.get(name, { name }).then(user => {
+    for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
+      let title = `${user.original_name || user.name}\n${user.email}`,
+          $person = $email.closest('[itemtype$="User"]'),
+          $name = $person.querySelector('[itemprop="name"]'),
+          $image = $person.querySelector('[itemprop="image"]');
 
-    if ($person.title && $person.title !== title) {
-      $person.title = title;
+      if ($person.title && $person.title !== title) {
+        $person.title = title;
+      }
+
+      if ($name && $name.textContent !== user.name) {
+        $name.textContent = user.name;
+      }
+
+      if ($image && $image.src !== user.image) {
+        $image.src = user.image; // Blob URL
+      }
     }
-
-    if ($name && $name.textContent !== user.name) {
-      $name.textContent = user.name;
-    }
-
-    if ($image && $image.src !== user.image) {
-      $image.src = user.image; // Blob URL
-    }
-  }
+  });
 };

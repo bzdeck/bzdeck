@@ -91,15 +91,13 @@ BzDeck.models.Attachment.prototype.get_data = function () {
  * @return {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
  */
 BzDeck.models.Attachment.prototype.save = function () {
-  let bug = BzDeck.collections.bugs.get(this.data.bug_id);
+  return BzDeck.collections.bugs.get(this.data.bug_id).then(bug => {
+    if (bug && bug.attachments && bug.attachments.length) {
+      for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
+        bug.attachments[index].data = this.data.data;
+      }
 
-  if (bug && bug.attachments && bug.attachments.length) {
-    for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
-      bug.attachments[index].data = this.data.data;
+      bug.save(bug.data);
     }
-
-    bug.save(bug.data);
-  }
-
-  return Promise.resolve(this.proxy());
+  }).then(() => this.proxy());
 };

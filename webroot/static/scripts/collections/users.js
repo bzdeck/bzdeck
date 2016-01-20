@@ -25,23 +25,23 @@ BzDeck.collections.Users.prototype.constructor = BzDeck.collections.Users;
  * those users.
  *
  * @argument {Proxy} bug - BugModel object.
- * @return {Map.<String, Proxy>} users - Map of the added user names and UserModel instances.
+ * @return {undefined}
  */
 BzDeck.collections.Users.prototype.add_from_bug = function (bug) {
-  let users = new Map();
-
   for (let [name, person] of bug.participants) {
-    users.set(name, this.get(name) || this.set(name, { name, bugzilla: person }));
+    this.get(name).then(user => {
+      if (!user) {
+        this.set(name, { name, bugzilla: person });
+      }
+    });
   }
-
-  return users;
 };
 
 /**
  * Search users from the local database and return the results.
  *
  * @argument {URLSearchParams} params - Search query.
- * @return {undefined}
+ * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
 BzDeck.collections.Users.prototype.search_local = function (params) {
   let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase()),
@@ -52,12 +52,10 @@ BzDeck.collections.Users.prototype.search_local = function (params) {
     words[0] = words[0].substr(1);
   }
 
-  let users = [...this.get_all().values()].filter(user => {
+  return this.get_all().then(users => [...users.values()].filter(user => {
     return words.every(word => match(user.name, word)) ||
            words.every(word => user.nick_names.some(nick => match(nick, word)));
-  });
-
-  return this.get_search_results(users);
+  })).then(users => this.get_search_results(users));
 };
 
 /**
@@ -67,25 +65,28 @@ BzDeck.collections.Users.prototype.search_local = function (params) {
  * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
  */
 BzDeck.collections.Users.prototype.search_remote = function (params) {
-  let users = [];
+  let _users;
 
   return BzDeck.controllers.global.request('user', params).then(result => {
     if (!result.users || !result.users.length) {
       return Promise.resolve([]);
     }
 
-    let _users = new Map(result.users.map(user => [user.name, user]));
+    _users = new Map(result.users.map(user => [user.name, user])); // Raw data objects
+  }).then(() => {
+    return this.get_some(_users.keys());
+  }).then(__users => {
+    return Promise.all([...__users].map(entry => new Promise(resolve => {
+      let [name, user] = entry,
+          retrieved = _users.get(name); // Raw data object
 
-    for (let [name, user] of this.get_some(_users.keys())) {
-      let retrieved = _users.get(name); // Raw data object
-
-      if (!user) {
-        user = this.set(name, { name, bugzilla: retrieved });
+      if (user) {
+        resolve(user);
+      } else {
+        this.set(name, { name, bugzilla: retrieved }).then(user => resolve(user));
       }
-
-      users.push(user);
-    }
-
+    })));
+  }).then(users => {
     return this.get_search_results(users);
   });
 };

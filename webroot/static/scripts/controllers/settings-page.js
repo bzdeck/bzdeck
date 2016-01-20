@@ -16,17 +16,21 @@ BzDeck.controllers.SettingsPage = function SettingsPageController () {
       account = BzDeck.account,
       prefs = new Map();
 
-  for (let [name, value] of Object.entries(BzDeck.config.prefs)) {
-    value.user = BzDeck.prefs.get(name);
-    prefs.set(name, value);
-  }
+  Promise.all([...Object.entries(BzDeck.config.prefs)].map(entry => {
+    let [name, value] = entry;
 
-  BzDeck.views.banner.open_tab({
-    page_category: 'settings',
-    page_constructor: BzDeck.views.SettingsPage,
-    page_constructor_args: [prefs, tab_id],
-    tab_label: 'Settings',
-  }, this);
+    return BzDeck.prefs.get(name).then(_value => {
+      value.user = _value;
+      prefs.set(name, value);
+    });
+  })).then(() => {
+    BzDeck.views.banner.open_tab({
+      page_category: 'settings',
+      page_constructor: BzDeck.views.SettingsPage,
+      page_constructor_args: [prefs, tab_id],
+      tab_label: 'Settings',
+    }, this);
+  });
 
   this.subscribe('V:PrefValueChanged');
 };

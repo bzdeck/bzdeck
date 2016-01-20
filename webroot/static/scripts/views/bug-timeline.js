@@ -22,14 +22,13 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
   let get_time = str => (new Date(str)).getTime(),
       entries = new Map([...this.bug.comments.entries()]
           .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])])),
-      show_cc_changes = BzDeck.prefs.get('ui.timeline.show_cc_changes') === true,
       click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
       read_comments_num = 0,
       last_comment_time,
+      data_arr = [],
       $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline'),
       timeline_id = $timeline.id = `${this.id}-timeline`,
       $expander,
-      $fragment = new DocumentFragment(),
       $comments_wrapper = $timeline.querySelector('.comments-wrapper'),
       $parent = $timeline.querySelector('.scrollable-area-content');
 
@@ -44,12 +43,15 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
   }
 
   // Sort by time
-  entries = new Map([...entries].sort((a, b) => a[0] > b[0]));
+  this.entries = new Map([...entries].sort((a, b) => a[0] > b[0]));
 
   // Collapse read comments
   // If the fill_bug_details function is called after the bug details are fetched,
   // the _last_viewed annotation is already true, so check the delayed argument here
-  for (let [time, data] of entries) {
+  for (let [time, data] of this.entries) {
+    // Append the time in data for later use
+    data.set('time', time);
+
     if (!delayed && this.bug._last_viewed && time < this.bug._last_viewed) {
       if (data.has('comment')) {
         read_comments_num++;
@@ -60,15 +62,12 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
     }
   }
 
-  // Generate entries
-  for (let [time, data] of entries) if (data.has('rendering') || time >= last_comment_time) {
-    $fragment.appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, data));
-    data.delete('rendering');
-    data.set('rendered', true);
+  for (let [time, data] of this.entries) if (data.has('rendering') || time >= last_comment_time) {
+    data_arr.push(data);
   }
 
   // Append entries to the timeline
-  $comments_wrapper.appendChild($fragment);
+  this.generate_entries(data_arr).then($f => $comments_wrapper.appendChild($f));
 
   // Show an expander if there are read comments
   if (read_comments_num > 1) {
@@ -82,25 +81,32 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
     $expander.tabIndex = 0;
     $expander.setAttribute('role', 'button');
     $expander.addEventListener(click_event_type, event => {
+      let $fragment = new DocumentFragment(),
+          data_arr = [];
+
       $expander.textContent = 'Loading...'; // l10n
-      $fragment = new DocumentFragment();
 
-      for (let [time, data] of entries) if (!data.get('rendered')) {
-        $fragment.appendChild(new BzDeck.views.BugTimelineEntry(this.id, this.bug, data));
-        data.set('rendered', true);
+      for (let [time, data] of this.entries) if (!data.get('rendered')) {
+        data_arr.push(data);
       }
 
-      // Collapse comments by default
-      for (let $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
-        $comment.setAttribute('aria-expanded', 'false');
-      }
+      this.generate_entries(data_arr).then($f => {
+        $fragment.appendChild($f);
 
-      $timeline.focus();
-      $comments_wrapper.replaceChild($fragment, $expander);
-      delete this.$expander;
+        // Collapse comments by default
+        for (let $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
+          $comment.setAttribute('aria-expanded', 'false');
+        }
+
+        $timeline.focus();
+        $comments_wrapper.replaceChild($fragment, $expander);
+
+        delete this.$expander;
+      });
 
       return this.helpers.event.ignore(event);
     });
+
     $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('article'));
   }
 
@@ -113,6 +119,28 @@ BzDeck.views.BugTimeline = function BugTimelineView (view_id, bug, $bug, delayed
 
 BzDeck.views.BugTimeline.prototype = Object.create(BzDeck.views.Base.prototype);
 BzDeck.views.BugTimeline.prototype.constructor = BzDeck.views.BugTimeline;
+
+/**
+ * Generate timeline entries.
+ *
+ * @argument {Array.<Map>} data_arr - List of entry data.
+ * @return {Promise.<HTMLElement>} $fragment - Promise to be resolved in a flagment containing entry nodes.
+ */
+BzDeck.views.BugTimeline.prototype.generate_entries = function (data_arr) {
+  return Promise.all(data_arr.map(data => {
+    return (new BzDeck.views.BugTimelineEntry(this.id, this.bug, data)).create();
+  })).then(_entries => {
+    let $fragment = new DocumentFragment();
+
+    for (let entry of _entries) {
+      $fragment.appendChild(entry.$outer);
+      this.entries.get(entry.time).delete('rendering');
+      this.entries.get(entry.time).set('rendered', true);
+    }
+
+    return $fragment;
+  });
+};
 
 /**
  * Expand all comments on the timeline.
@@ -186,12 +214,11 @@ BzDeck.views.BugTimeline.prototype.on_pref_value_changed = function (data) {
     let $media = $attachment.querySelector('img, audio, video');
 
     if ($media && !$media.src) {
-      let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id')),
-          attachment = BzDeck.collections.attachments.get(att_id);
+      let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id'));
 
       $media.parentElement.setAttribute('aria-busy', 'true');
 
-      attachment.get_data().then(result => {
+      BzDeck.collections.attachments.get(att_id).then(attachment => attachment.get_data()).then(result => {
         $media.src = URL.createObjectURL(result.blob);
         attachment.data = result.attachment.data;
       }).then(() => {

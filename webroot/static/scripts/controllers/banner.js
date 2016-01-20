@@ -13,17 +13,19 @@
 BzDeck.controllers.Banner = function BannerController () {
   let name = BzDeck.account.data.name;
 
-  this.user = BzDeck.collections.users.get(name, { name });
-  BzDeck.views.banner = new BzDeck.views.Banner(this.user);
+  BzDeck.collections.users.get(name, { name }).then(user => {
+    this.user = user;
+    BzDeck.views.banner = new BzDeck.views.Banner(this.user);
+
+    this.user.get_gravatar_profile().then(profile => {
+      this.trigger(':GravatarProfileFound', {
+        style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
+      });
+    });
+  });
 
   // Subcontrollers
   BzDeck.controllers.quick_search = new BzDeck.controllers.QuickSearch();
-
-  this.user.get_gravatar_profile().then(profile => {
-    this.trigger(':GravatarProfileFound', {
-      style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
-    });
-  });
 
   this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
   this.subscribe('V:BackButtonClicked');

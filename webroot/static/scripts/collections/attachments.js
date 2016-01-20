@@ -30,13 +30,11 @@ BzDeck.collections.Attachments.prototype.constructor = BzDeck.collections.Attach
 BzDeck.collections.Attachments.prototype.load = function () {
   this.map = new Map();
 
-  for (let bug of BzDeck.collections.bugs.get_all().values()) {
-    for (let att of bug.attachments || []) {
+  return BzDeck.collections.bugs.get_all().then(bugs => {
+    for (let [id, bug] of bugs) for (let att of bug.attachments || []) {
       this.map.set(att.id, new this.model(att));
     }
-  }
-
-  return Promise.resolve(this.map);
+  }).then(() => this.map);
 };
 
 /**
@@ -46,7 +44,7 @@ BzDeck.collections.Attachments.prototype.load = function () {
  *
  * @argument {Object} att - Raw attachment upload object for Bugzilla.
  * @argument {Number} size - Actual file size.
- * @return {Proxy} attachment - AttachmentModel instance.
+ * @return {Promise.<Proxy>} attachment - Promise to be resolved in AttachmentModel instance.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
  */
 BzDeck.collections.Attachments.prototype.cache = function (att, size) {
@@ -68,5 +66,5 @@ BzDeck.collections.Attachments.prototype.cache = function (att, size) {
   att = new this.model(att);
   this.map.set(att.hash, att);
 
-  return att;
+  return Promise.resolve(att);
 };

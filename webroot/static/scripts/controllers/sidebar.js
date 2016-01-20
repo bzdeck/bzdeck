@@ -63,9 +63,10 @@ BzDeck.controllers.Sidebar.prototype.constructor = BzDeck.controllers.Sidebar;
  * @return {undefined}
  */
 BzDeck.controllers.Sidebar.prototype.open_folder = function (folder_id) {
-  let bugs = BzDeck.controllers.homepage.data.bugs = BzDeck.collections.subscriptions.get(folder_id); // Map
-
-  this.trigger(':FolderOpened', { folder_id, bugs });
+  BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
+    BzDeck.controllers.homepage.data.bugs = bugs; // Map
+    this.trigger(':FolderOpened', { folder_id, bugs });
+  });
 };
 
 /**
@@ -90,7 +91,13 @@ BzDeck.controllers.Sidebar.prototype.on_annotation_updated = function (data) {
  * @return {undefined}
  */
 BzDeck.controllers.Sidebar.prototype.toggle_unread = function () {
-  let number = [...BzDeck.collections.subscriptions.get_all().values()].filter(bug => bug.unread && bug.is_new).length;
+  BzDeck.collections.subscriptions.get_all().then(bugs => {
+    let _bugs = [...bugs.values()];
 
-  this.trigger(':UnreadToggled', { number });
+    return Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
+      this.trigger(':UnreadToggled', {
+        number: _bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
+      });
+    });
+  });
 };

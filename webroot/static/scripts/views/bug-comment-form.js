@@ -205,13 +205,16 @@ BzDeck.views.BugCommentForm.prototype.init_needinfo_tabpanel = function () {
         type = id ? 'clear' : 'request',
         flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee },
         $row = this.get_template(`bug-comment-form-${type}-needinfo-row`),
-        $person = this.fill(this.get_template('person-with-image'),
-                            BzDeck.collections.users.get(requestee, { name: requestee }).properties),
         $checkbox = $row.querySelector('[role="checkbox"]'),
         $$checkbox = new this.widgets.CheckBox($checkbox),
         $label = $checkbox.querySelector('span');
 
-    $row.replaceChild($person, $row.querySelector('strong'));
+    BzDeck.collections.users.get(requestee, { name: requestee }).then(_requestee => {
+      return this.fill(this.get_template('person-with-image'), _requestee.properties);
+    }).then($person => {
+      $row.replaceChild($person, $row.querySelector('strong'));
+    });
+
     $$checkbox.bind('Toggled', event => this.trigger('BugView:EditFlag', { flag, added: event.detail.checked }));
     $$checkbox.checked = checked;
 

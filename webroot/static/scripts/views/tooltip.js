@@ -133,26 +133,28 @@ BzDeck.views.BugTooltip.prototype.constructor = BzDeck.views.BugTooltip;
  * @return {undefined}
  */
 BzDeck.views.BugTooltip.prototype.show = function () {
+  let bug;
+
   new Promise(resolve => {
-    let bug = BzDeck.collections.bugs.get(this.id, { id: this.id, _unread: true });
-
-    if (bug.summary) {
-      resolve(bug);
-    } else {
-      bug.fetch().then(bug => resolve(bug));
-    }
-  }).then(bug => {
-    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator,
-        rect = this.$owner.getBoundingClientRect();
-
+    BzDeck.collections.bugs.get(this.id, { id: this.id, _unread: true }).then(bug => {
+      bug.summary ? resolve(bug) : bug.fetch().then(bug => resolve(bug));
+    });
+  }).then(_bug => {
+    bug = _bug;
+  }).then(() => {
+    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    return BzDeck.collections.users.get(contributor, { name: contributor });
+  }).then(_contributor => {
     this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
       id: bug.id,
       summary: bug.summary,
       last_change_time: bug.last_change_time,
-      contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
+      contributor: _contributor.properties,
     }, {
       'data-id': bug.id,
     });
+  }).then(() => {
+    let rect = this.$owner.getBoundingClientRect();
 
     this.$tooltip.id = `bug-${bug.id}-tooltip`;
     this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;

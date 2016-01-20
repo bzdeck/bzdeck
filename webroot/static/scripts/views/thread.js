@@ -72,7 +72,6 @@ BzDeck.views.Thread.prototype.open_bug = function (id) {
  */
 BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, options) {
   let default_cols = BzDeck.config.grid.default_columns,
-      columns = BzDeck.prefs.get(`${name}.list.columns`) || default_cols,
       field = BzDeck.server.data.config.field;
 
   let toggle_prop = prop => {
@@ -86,39 +85,41 @@ BzDeck.views.ClassicThread = function ClassicThreadView (consumer, name, $grid, 
   this.consumer = consumer;
   this.bugs = [];
 
-  this.$$grid = new this.widgets.Grid($grid, {
-    rows: [],
-    columns: columns.map(col => {
-      let _col = default_cols.find(__col => __col.id === col.id);
+  BzDeck.prefs.get(`${name}.list.columns`).then(columns => {
+    this.$$grid = new this.widgets.Grid($grid, {
+      rows: [],
+      columns: (columns || default_cols).map(col => {
+        let _col = default_cols.find(__col => __col.id === col.id);
 
-      // Add labels
-      col.label = _col ? _col.label : field[col.id].description;
+        // Add labels
+        col.label = _col ? _col.label : field[col.id].description;
 
-      return col;
-    })
-  }, options);
+        return col;
+      })
+    }, options);
 
-  this.$$grid.bind('Selected', event => this.onselect(event));
-  this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
-  this.$$grid.bind('Sorted', event => BzDeck.prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
+    this.$$grid.bind('Selected', event => this.onselect(event));
+    this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
+    this.$$grid.bind('Sorted', event => BzDeck.prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
 
-  this.$$grid.bind('ColumnModified', event => {
-    BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
-      id: col.id,
-      type: col.type || 'string',
-      hidden: col.hidden || false
-    })));
-  });
+    this.$$grid.bind('ColumnModified', event => {
+      BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
+        id: col.id,
+        type: col.type || 'string',
+        hidden: col.hidden || false
+      })));
+    });
 
-  this.$$grid.assign_key_bindings({
-    // Show previous bug, an alias of UP
-    B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
-    // Show next bug, an alias of DOWN
-    F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
-    // Toggle read
-    M: event => toggle_prop('unread'),
-    // Toggle star
-    S: event => toggle_prop('starred'),
+    this.$$grid.assign_key_bindings({
+      // Show previous bug, an alias of UP
+      B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
+      // Show next bug, an alias of DOWN
+      F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
+      // Toggle read
+      M: event => toggle_prop('unread'),
+      // Toggle star
+      S: event => toggle_prop('starred'),
+    });
   });
 
   this.subscribe('BugModel:AnnotationUpdated', true);
@@ -136,7 +137,7 @@ BzDeck.views.ClassicThread.prototype.constructor = BzDeck.views.ClassicThread;
 BzDeck.views.ClassicThread.prototype.update = function (bugs) {
   this.bugs = bugs;
 
-  this.$$grid.build_body([...bugs.values()].map(bug => {
+  Promise.all([...bugs.values()].map(bug => {
     let row = {
       id: `${this.$$grid.view.$container.id}-row-${bug.id}`,
       data: {},
@@ -146,61 +147,61 @@ BzDeck.views.ClassicThread.prototype.update = function (bugs) {
       }
     };
 
-    for (let column of this.$$grid.data.columns) {
+    return Promise.all(this.$$grid.data.columns.map(column => {
       let field = column.id,
           value = bug[field];
 
-      if (!value) {
-        value = '';
-      }
-
-      if (Array.isArray(value)) {
-        if (field === 'mentors') { // Array of Person
-          value = bug.mentors.map(name => BzDeck.collections.users.get(name, { name }).name).join(', ');
-        } else { // Keywords
-          value = value.join(', ');
-        }
-      }
-
-      if (typeof value === 'object' && !Array.isArray(value)) { // Person
-        value = BzDeck.collections.users.get(value.name, { name: value.name }).name;
-      }
-
-      if (field === 'starred') {
-        value = bug.starred;
-      }
-
-      if (field === 'unread') {
-        value = value === true;
-      }
-
-      row.data[field] = value;
-    }
-
-    row.data = new Proxy(row.data, {
-      set: (obj, prop, value) => {
-        if (prop === 'starred') {
-          bug.starred = value;
+      return new Promise(resolve => {
+        if (!value) {
+          resolve('');
         }
 
-        if (prop === 'unread') {
-          bug.unread = value;
-
-          let row = this.$$grid.data.rows.find(row => row.data.id === obj.id);
-
-          if (row && row.$element) {
-            row.$element.dataset.unread = value;
+        if (Array.isArray(value)) {
+          if (field === 'mentors') { // Array of Person
+            Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name }))).then(mentors => {
+              resolve(mentors.map(mentor => mentors.name).join(', '));
+            });
+          } else { // Keywords
+            resolve(value.join(', '));
           }
         }
 
-        obj[prop] = value;
+        if (typeof value === 'object' && !Array.isArray(value)) { // Person
+          BzDeck.collections.users.get(value.name, { name: value.name }).then(user => resolve(user.name));
+        }
 
-        return true;
-      }
-    });
+        if (field === 'starred') {
+          resolve(bug.starred);
+        }
 
-    return row;
-  }));
+        if (field === 'unread') {
+          resolve(value === true);
+        }
+      }).then(value => row.data[field] = value);
+    })).then(() => {
+      row.data = new Proxy(row.data, {
+        set: (obj, prop, value) => {
+          if (prop === 'starred') {
+            bug.starred = value;
+          }
+
+          if (prop === 'unread') {
+            bug.unread = value;
+
+            let row = this.$$grid.data.rows.find(row => row.data.id === obj.id);
+
+            if (row && row.$element) {
+              row.$element.dataset.unread = value;
+            }
+          }
+
+          obj[prop] = value;
+
+          return true;
+        }
+      });
+    }).then(() => row);
+  })).then(rows => this.$$grid.build_body(rows));
 };
 
 /**
@@ -223,7 +224,7 @@ BzDeck.views.ClassicThread.prototype.filter = function (bugs) {
  * @return {undefined}
  */
 BzDeck.views.ClassicThread.prototype.on_annotation_updated = function (data) {
-  let $row = $grid.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
+  let $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
 
   if ($row) {
     $row.setAttribute(`data-${data.type}`, data.value);
@@ -304,14 +305,17 @@ BzDeck.views.VerticalThread = function VerticalThreadView (consumer, name, $oute
     // Toggle read
     M: event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.collections.bugs.get(Number($item.dataset.id)).unread = $item.dataset.unread === 'false';
+        BzDeck.collections.bugs.get(Number($item.dataset.id)).then(bug => {
+          bug.unread = $item.dataset.unread === 'false';
+        });
       }
     },
     // Toggle star
     S: event => {
       for (let $item of this.$$listbox.view.selected) {
-        BzDeck.collections.bugs.get(Number($item.dataset.id))
-                          .starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
+        BzDeck.collections.bugs.get(Number($item.dataset.id)).then(bug => {
+          bug.starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
+        });
       }
     },
     // Open the bug in a new tab
@@ -361,29 +365,31 @@ BzDeck.views.VerticalThread.prototype.update = function (bugs) {
  * @return {undefined}
  */
 BzDeck.views.VerticalThread.prototype.render = function () {
-  let $fragment = new DocumentFragment();
+  let bugs = this.unrendered_bugs.splice(0, 50),
+      $fragment = new DocumentFragment();
 
-  for (let bug of this.unrendered_bugs.splice(0, 50)) {
+  Promise.all(bugs.map(bug => {
     // TODO: combine primary participants' avatars/initials (#124)
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-
-    let $option = $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
+    return BzDeck.collections.users.get(contributor, { name: contributor });
+  })).then(contributors => bugs.forEach((bug, index) => {
+    $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
       id: bug.id,
       summary: bug.summary,
       last_change_time: bug.last_change_time,
-      contributor: BzDeck.collections.users.get(contributor, { name: contributor }).properties,
+      contributor: contributors[index].properties,
       starred: bug.starred,
     }, {
       id: `${this.name}-vertical-thread-bug-${bug.id}`,
       'data-id': bug.id,
       'data-unread': !!bug.unread,
     }));
-  }
-
-  this.$listbox.appendChild($fragment);
-  this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
-  this.$$listbox.update_members();
-  this.$$scrollbar.set_height();
+  })).then(() => {
+    this.$listbox.appendChild($fragment);
+    this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
+    this.$$listbox.update_members();
+    this.$$scrollbar.set_height();
+  });
 };
 
 /**

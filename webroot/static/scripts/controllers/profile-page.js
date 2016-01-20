@@ -15,7 +15,6 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
   let self = email === BzDeck.account.data.name;
 
   this.id = email;
-  this.user = BzDeck.collections.users.get(email, { name: email });
 
   BzDeck.views.banner.open_tab({
     page_category: 'profile',
@@ -25,6 +24,25 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
     tab_label: 'Profile', // l10n
     tab_desc: 'User Profile', // l10n
   }, this);
+
+  BzDeck.collections.users.get(email, { name: email }).then(user => this.on_user_retrieved(user));
+};
+
+BzDeck.controllers.ProfilePage.route = '/profile/(.+)';
+
+BzDeck.controllers.ProfilePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
+BzDeck.controllers.ProfilePage.prototype.constructor = BzDeck.controllers.ProfilePage;
+
+/**
+ * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
+ *
+ * @argument {Proxy} user - UserModel instance.
+ * @return {undefined}
+ */
+BzDeck.controllers.ProfilePage.prototype.on_user_retrieved = function (user) {
+  let email = this.id;
+
+  this.user = user;
 
   this.user.get_gravatar_profile().then(profile => {
     this.trigger(':GravatarProfileFound', {
@@ -55,8 +73,3 @@ BzDeck.controllers.ProfilePage = function ProfilePageController (email) {
     this.trigger(':BugzillaProfileFetchingComplete');
   });
 };
-
-BzDeck.controllers.ProfilePage.route = '/profile/(.+)';
-
-BzDeck.controllers.ProfilePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
-BzDeck.controllers.ProfilePage.prototype.constructor = BzDeck.controllers.ProfilePage;

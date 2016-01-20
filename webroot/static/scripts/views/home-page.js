@@ -38,11 +38,7 @@ BzDeck.views.HomePage = function HomePageView (controller) {
   }
 
   this.setup_splitter();
-
-  let layout_pref = BzDeck.prefs.get('ui.home.layout'),
-      vertical = mobile || !layout_pref || layout_pref === 'vertical';
-
-  this.change_layout(layout_pref);
+  BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
   this.subscribe('SettingsPageView:PrefValueChanged', true);
   this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
@@ -92,12 +88,13 @@ BzDeck.views.HomePage.prototype.connect = function (folder_id) {
  */
 BzDeck.views.HomePage.prototype.setup_splitter = function () {
   let $$splitter = this.$$preview_splitter = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
-      prefix = 'ui.home.preview.splitter.position.',
-      pref = BzDeck.prefs.get(prefix + $$splitter.data.orientation);
+      prefix = 'ui.home.preview.splitter.position.';
 
-  if (pref) {
-    $$splitter.data.position = pref;
-  }
+  BzDeck.prefs.get(prefix + $$splitter.data.orientation).then(pref => {
+    if (pref) {
+      $$splitter.data.position = pref;
+    }
+  });
 
   $$splitter.bind('Resized', event => {
     let position = event.detail.position;
@@ -112,16 +109,17 @@ BzDeck.views.HomePage.prototype.setup_splitter = function () {
  * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
  *
  * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
- * @return {Map.<Number, Proxy>} bugs - Bugs currently showing.
+ * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
  */
 BzDeck.views.HomePage.prototype.get_shown_bugs = function (bugs) {
-  let mobile = this.helpers.env.device.mobile,
-      layout_pref = BzDeck.prefs.get('ui.home.layout'),
-      vertical = mobile || !layout_pref || layout_pref === 'vertical',
-      items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
-                       : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+  return BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
+    let mobile = this.helpers.env.device.mobile,
+        vertical = mobile || !layout_pref || layout_pref === 'vertical',
+        items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
+                         : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-  return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
+    return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
+  });
 };
 
 /**
@@ -149,11 +147,12 @@ BzDeck.views.HomePage.prototype.show_preview = function (data) {
   this.helpers.kbd.assign($bug, {
     // [B] previous bug or [F] next bug: handle on the home thread
     'B|F': event => {
-      let pref = BzDeck.prefs.get('ui.home.layout'),
-          vertical = mobile || !pref || pref === 'vertical',
-          $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
+      BzDeck.prefs.get('ui.home.layout').then(pref => {
+        let vertical = mobile || !pref || pref === 'vertical',
+            $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
-      this.helpers.kbd.dispatch($target, event.key);
+        this.helpers.kbd.dispatch($target, event.key);
+      });
     },
     // Open the bug in a new tab
     O: event => this.trigger(':OpeningTabRequested'),
@@ -191,14 +190,15 @@ BzDeck.views.HomePage.prototype.change_layout = function (pref, sort_grid = fals
   }
 
   if ($$splitter) {
-    let orientation = vertical ? 'vertical' : 'horizontal',
-        pref = BzDeck.prefs.get(`ui.home.preview.splitter.position.${orientation}`);
+    let orientation = vertical ? 'vertical' : 'horizontal';
 
     $$splitter.data.orientation = orientation;
 
-    if (pref) {
-      $$splitter.data.position = pref;
-    }
+    BzDeck.prefs.get(`ui.home.preview.splitter.position.${orientation}`).then(pref => {
+      if (pref) {
+        $$splitter.data.position = pref;
+      }
+    });
   }
 };
 
@@ -229,8 +229,10 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
     // Star button
     $listbox.addEventListener('mousedown', event => {
       if (event.target.matches('[itemprop="starred"]')) {
-        BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id))
-                          .starred = event.target.matches('[aria-checked="false"]');
+        BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id)).then(bug => {
+          bug.starred = event.target.matches('[aria-checked="false"]');
+        });
+
         event.stopPropagation();
       }
     });
@@ -250,41 +252,46 @@ BzDeck.views.HomePage.prototype.apply_vertical_layout = function () {
  * @return {undefined}
  */
 BzDeck.views.HomePage.prototype.apply_classic_layout = function () {
-  let layout_pref = BzDeck.prefs.get('ui.home.layout'),
-      vertical = this.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
-  this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
-    date: { simple: false },
-    sortable: true,
-    reorderable: true,
-    sort_conditions: BzDeck.prefs.get('home.list.sort_conditions') ||
-                       { key: 'id', order: 'ascending' }
-  });
+  BzDeck.prefs.get('home.list.sort_conditions').then(sort_cond => {
+    this.thread = new BzDeck.views.ClassicThread(this, 'home', document.querySelector('#home-list'), {
+      date: { simple: false },
+      sortable: true,
+      reorderable: true,
+      sort_conditions: sort_cond || { key: 'id', order: 'ascending' }
+    });
 
-  let $$grid = this.thread.$$grid;
+    let $$grid = this.thread.$$grid;
 
-  $$grid.options.adjust_scrollbar = !vertical;
-  $$grid.options.date.simple = vertical;
+    BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
+      let vertical = this.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
 
-  if (!this.classic_thread_initialized) {
-    // Fill the thread with all saved bugs, and filter the rows later
-    this.thread.update(BzDeck.collections.bugs.get_all());
+      $$grid.options.adjust_scrollbar = !vertical;
+      $$grid.options.date.simple = vertical;
 
-    // Select the first bug on the list automatically when a folder is opened
-    // TODO: Remember the last selected bug for each folder
-    $$grid.bind('Filtered', event => {
-      if ($$grid.view.members.length) {
-        $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
+      // Change the date format on the thread pane
+      for (let $time of $$grid.view.$container.querySelectorAll('time')) {
+        $time.textContent = this.helpers.datetime.format($time.dateTime, { simple: vertical });
+        $time.dataset.simple = vertical;
       }
     });
 
-    this.classic_thread_initialized = true;
-  }
+    if (!this.classic_thread_initialized) {
+      BzDeck.collections.bugs.get_all().then(bugs => {
+        // Fill the thread with all saved bugs, and filter the rows later
+        this.thread.update(bugs);
 
-  // Change the date format on the thread pane
-  for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-    $time.textContent = this.helpers.datetime.format($time.dateTime, { simple: vertical });
-    $time.dataset.simple = vertical;
-  }
+        // Select the first bug on the list automatically when a folder is opened
+        // TODO: Remember the last selected bug for each folder
+        $$grid.bind('Filtered', event => {
+          if ($$grid.view.members.length) {
+            $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
+          }
+        });
+
+        this.classic_thread_initialized = true;
+      });
+    }
+  });
 };
 
 /**

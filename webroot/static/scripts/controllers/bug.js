@@ -527,24 +527,22 @@ BzDeck.controllers.Bug.prototype.find_attachment = function (hash) {
  *
  * @argument {Object} att - Raw attachment upload object for Bugzilla.
  * @argument {Number} size - Actual file size.
- * @return {Boolean} result - Whether the attachment is cached.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.add_attachment = function (att, size) {
   // Cache as an AttachmentModel instance
-  let attachment = BzDeck.collections.attachments.cache(att, size);
+  BzDeck.collections.attachments.cache(att, size).then(attachment => {
+    // Check if the file has already been attached
+    if (this.find_attachment(attachment.hash)) {
+      return;
+    }
 
-  // Check if the file has already been attached
-  if (this.find_attachment(attachment.hash)) {
-    return false;
-  }
+    this.uploads.push(attachment);
 
-  this.uploads.push(attachment);
-
-  this.trigger(':AttachmentAdded', { attachment });
-  this.trigger(':UploadListUpdated', { uploads: this.uploads });
-  this.onedit();
-
-  return true;
+    this.trigger(':AttachmentAdded', { attachment });
+    this.trigger(':UploadListUpdated', { uploads: this.uploads });
+    this.onedit();
+  });
 };
 
 /**
@@ -577,27 +575,29 @@ BzDeck.controllers.Bug.prototype.remove_attachment = function (hash) {
  * @argument {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
  * @argument {String} change.prop - Edited property name.
  * @argument {*}      change.value - New value.
- * @return {Boolean} result - Whether the attachment is successfully edited.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
-  let attachment,
-      { id, hash, prop, value } = change;
+  let { id, hash, prop, value } = change;
 
   if (hash) {
     // Edit a new attachment
-    attachment = this.find_attachment(hash);
+    let attachment = this.find_attachment(hash);
 
-    if (!attachment || attachment[prop] === value) {
-      return false;
+    if (attachment && attachment[prop] !== value) {
+      attachment[prop] = value;
+
+      this.trigger(':AttachmentEdited', { attachment, change });
+      this.onedit();
     }
 
-    attachment[prop] = value;
-  } else {
-    // Edit an existing attachment
-    attachment = BzDeck.collections.attachments.get(id);
+    return;
+  }
 
+  // Edit an existing attachment
+  BzDeck.collections.attachments.get(id).then(attachment => {
     if (!attachment || attachment.bug_id !== this.bug.id) {
-      return false;
+      return;
     }
 
     let changes = this.att_changes.get(id) || {},
@@ -620,14 +620,12 @@ BzDeck.controllers.Bug.prototype.edit_attachment = function (change) {
     }
 
     if (!edited) {
-      return false;
+      return;
     }
-  }
 
-  this.trigger(':AttachmentEdited', { attachment, change });
-  this.onedit();
-
-  return true;
+    this.trigger(':AttachmentEdited', { attachment, change });
+    this.onedit();
+  });
 };
 
 /**
@@ -849,16 +847,14 @@ BzDeck.controllers.Bug.prototype.notify_upload_progress = function () {
  * Retrieve the bug to update the timeline, when Bugzfeed is not working.
  *
  * @argument {undefined}
- * @return {Boolean} result - Whether the fetcher is invoked.
+ * @return {undefined}
  */
 BzDeck.controllers.Bug.prototype.fetch = function () {
   let bugzfeed = BzDeck.controllers.bugzfeed;
 
-  if (bugzfeed.connected && bugzfeed.subscription.has(this.bug.id)) {
-    return false;
-  }
-
-  this.bug.fetch();
-
-  return true;
+  bugzfeed.subscription.has(this.bug.id).then(has => {
+    if (!bugzfeed.connected || !has) {
+      this.bug.fetch();
+    }
+  });
 };

@@ -181,7 +181,9 @@ BzDeck.views.BugDetails.prototype.render_attachments = function () {
   this.$$attachments = new BzDeck.views.BugAttachments(this.id, this.bug.id, $field);
 
   if ((this.bug.attachments || []).length) {
-    this.$$attachments.render(this.bug.attachments.map(att => BzDeck.collections.attachments.get(att.id)));
+    Promise.all(this.bug.attachments.map(att => BzDeck.collections.attachments.get(att.id))).then(attachments => {
+      this.$$attachments.render(attachments);
+    });
   }
 
   // Select the first non-obsolete attachment when the Attachment tab is selected for the first time

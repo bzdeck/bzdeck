@@ -56,11 +56,9 @@ BzDeck.views.DetailsPage.prototype.setup_navigation = function () {
       next = this.bug_ids[index + 1],
       assign_key_binding = (key, command) => this.helpers.kbd.assign(this.$bug, { [key]: command });
 
-  let set_button_tooltip = (id, $$button) => {
-    let bug = BzDeck.collections.bugs.get(id);
-
+  let set_button_tooltip = (id, $$button) => BzDeck.collections.bugs.get(id).then(bug => {
     $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
-  };
+  });
 
   if (prev) {
     set_button_tooltip(prev, $$btn_back);

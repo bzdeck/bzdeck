@@ -23,8 +23,8 @@ BzDeck.collections.Accounts.prototype.constructor = BzDeck.collections.Accounts;
  * Get the currently signed-in user account if any.
  *
  * @argument {undefined}
- * @return {Object} account - AccountModel instance.
+ * @return {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
  */
 BzDeck.collections.Accounts.prototype.get_current = function () {
-  return [...this.get_all().values()].find(account => account.data.active);
+  return this.get_all().then(accounts => [...accounts.values()].find(account => account.data.active));
 };

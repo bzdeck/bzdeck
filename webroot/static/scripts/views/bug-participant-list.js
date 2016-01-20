@@ -171,14 +171,8 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (data)
     $person.remove();
   }
 
-  $person = this.fill(this.get_template('bug-participant'),
-                      BzDeck.collections.users.get(data.email, { name: data.email }).properties);
-
   this.values.add(data.email);
   this.$$finder.exclude.add(data.email);
-
-  $person.setAttribute('itemprop', this.field);
-  this.$list.insertBefore($person, this.$list.firstElementChild);
 
   if (this.can_take) {
     this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
@@ -187,9 +181,15 @@ BzDeck.views.BugParticipantList.prototype.on_participant_added = function (data)
     this.$button.setAttribute('aria-label', 'Remove myself from the Cc list');
   }
 
-  if (this.editing) {
-    this.add_remove_button_to_person($person);
-  }
+  BzDeck.collections.users.get(data.email, { name: data.email }).then(participant => {
+    $person = this.fill(this.get_template('bug-participant'), participant.properties);
+    $person.setAttribute('itemprop', this.field);
+    this.$list.insertBefore($person, this.$list.firstElementChild);
+
+    if (this.editing) {
+      this.add_remove_button_to_person($person);
+    }
+  });
 };
 
 /**

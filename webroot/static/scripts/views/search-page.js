@@ -168,24 +168,27 @@ BzDeck.views.SearchPage.prototype.setup_basic_search_pane = function (config) {
  */
 BzDeck.views.SearchPage.prototype.setup_result_pane = function () {
   let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
+      $$grid,
       mobile = this.helpers.env.device.mobile;
 
-  this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
-    sortable: true,
-    reorderable: true,
-    sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
-                              : BzDeck.prefs.get('home.list.sort_conditions') || { key: 'id', order: 'ascending' }
+  BzDeck.prefs.get('home.list.sort_conditions').then(sort_cond => {
+    this.thread = new BzDeck.views.ClassicThread(this, 'search', this.$grid, {
+      sortable: true,
+      reorderable: true,
+      sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
+                                : sort_cond || { key: 'id', order: 'ascending' }
+    });
+
+    $$grid = this.thread.$$grid;
+
+    // Force to change the sort condition when switched to the mobile layout
+    if (mobile) {
+      let cond = $$grid.options.sort_conditions;
+
+      cond.key = 'last_change_time';
+      cond.order = 'descending';
+    }
   });
-
-  let $$grid = this.thread.$$grid;
-
-  // Force to change the sort condition when switched to the mobile layout
-  if (mobile) {
-    let cond = $$grid.options.sort_conditions;
-
-    cond.key = 'last_change_time';
-    cond.order = 'descending';
-  }
 
   $pane.addEventListener('transitionend', event => {
     let selected = $$grid.view.selected;
