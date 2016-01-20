@@ -3,105 +3,106 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Called by the app router and initialize the Home Page Controller. Select the specified Sidebar folder.
- *
- * @constructor
- * @extends BaseController
- * @argument {String} folder_id - One of the folder identifiers defined in the app config.
- * @return {Object} controller - New HomePageController instance.
+ * Define the Home Page Controller.
+ * @extends BzDeck.BaseController
  */
-BzDeck.controllers.HomePage = function HomePageController (folder_id) {
-  if (BzDeck.controllers.homepage) {
-    BzDeck.views.pages.home.connect(folder_id);
+BzDeck.HomePageController = class HomePageController extends BzDeck.BaseController {
+  /**
+   * Called by the app router and initialize the Home Page Controller. Select the specified Sidebar folder.
+   * @constructor
+   * @argument {String} folder_id - One of the folder identifiers defined in the app config.
+   * @return {Object} controller - New HomePageController instance.
+   */
+  constructor (folder_id) {
+    super(); // This does nothing but is required before using `this`
 
-    return BzDeck.controllers.homepage;
-  }
+    if (BzDeck.controllers.homepage) {
+      BzDeck.views.pages.home.connect(folder_id);
 
-  this.data = new Proxy({
-    bugs: new Map(),
-    preview_id: null
-  },
-  {
-    get: (obj, prop) => {
-      if (prop === 'sorted_bugs') {
-        // Return a sorted bug list (Promise)
-        return this.view.get_shown_bugs(obj.bugs);
-      }
+      return BzDeck.controllers.homepage;
+    }
 
-      return obj[prop];
+    this.data = new Proxy({
+      bugs: new Map(),
+      preview_id: null
     },
-    set: (obj, prop, newval) => {
-      let oldval = obj[prop];
-
-      if (prop === 'preview_id') {
-        // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-        if (this.view.preview_is_hidden) {
-          this.data.sorted_bugs.then(bugs => {
-            BzDeck.router.navigate('/bug/' + newval, { ids: [...bugs.keys()] });
-          });
-
-          return true; // Do not save the value
+    {
+      get: (obj, prop) => {
+        if (prop === 'sorted_bugs') {
+          // Return a sorted bug list (Promise)
+          return this.view.get_shown_bugs(obj.bugs);
         }
 
-        if (oldval !== newval) {
-          this.prep_preview(newval);
-          BzDeck.controllers.bugzfeed._subscribe([newval]);
+        return obj[prop];
+      },
+      set: (obj, prop, newval) => {
+        let oldval = obj[prop];
+
+        if (prop === 'preview_id') {
+          // Show the bug preview only when the preview pane is visible (on desktop and tablet)
+          if (this.view.preview_is_hidden) {
+            this.data.sorted_bugs.then(bugs => {
+              BzDeck.router.navigate('/bug/' + newval, { ids: [...bugs.keys()] });
+            });
+
+            return true; // Do not save the value
+          }
+
+          if (oldval !== newval) {
+            this.prep_preview(newval);
+            BzDeck.controllers.bugzfeed._subscribe([newval]);
+          }
         }
+
+        obj[prop] = newval;
+
+        return true;
       }
+    });
 
-      obj[prop] = newval;
+    this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
+    this.on('V:OpeningTabRequested', data => this.open_tab());
 
-      return true;
-    }
-  });
+    BzDeck.controllers.homepage = this;
+    this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(this);
+    this.view.connect(folder_id);
 
-  this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
-  this.on('V:OpeningTabRequested', data => this.open_tab());
-
-  BzDeck.controllers.homepage = this;
-  this.view = BzDeck.views.pages.home = new BzDeck.views.HomePage(this);
-  this.view.connect(folder_id);
-
-  return this;
-};
-
-BzDeck.controllers.HomePage.route = '/home/(\\w+)';
-
-BzDeck.controllers.HomePage.prototype = Object.create(BzDeck.controllers.Base.prototype);
-BzDeck.controllers.HomePage.prototype.constructor = BzDeck.controllers.HomePage;
-
-/**
- * Prepare a bug preview displayed in the Preview Pane by loading the bug data.
- *
- * @argument {Number} id - Bug ID to show.
- * @return {undefined}
- */
-BzDeck.controllers.HomePage.prototype.prep_preview = function (id) {
-  if (!id) {
-    this.trigger(':BugDataUnavailable');
-
-    return;
+    return this;
   }
 
-  BzDeck.collections.bugs.get(id).then(bug => {
-    if (bug) {
-      bug.unread = false;
-      this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.controllers.Bug('home', bug) });
-    } else {
+  /**
+   * Prepare a bug preview displayed in the Preview Pane by loading the bug data.
+   * @argument {Number} id - Bug ID to show.
+   * @return {undefined}
+   */
+  prep_preview (id) {
+    if (!id) {
       this.trigger(':BugDataUnavailable');
-    }
-  });
-};
 
-/**
- * Called by HomePageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the
- * home page thread so the user can easily navigate through those bugs.
- *
- * @argument {undefined}
- * @return {undefined}
- */
-BzDeck.controllers.HomePage.prototype.open_tab = function () {
-  this.data.sorted_bugs.then(bugs => {
-    BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...bugs.keys()] });
-  });
-};
+      return;
+    }
+
+    BzDeck.collections.bugs.get(id).then(bug => {
+      if (bug) {
+        bug.unread = false;
+        this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('home', bug) });
+      } else {
+        this.trigger(':BugDataUnavailable');
+      }
+    });
+  }
+
+  /**
+   * Called by HomePageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of
+   * the home page thread so the user can easily navigate through those bugs.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  open_tab () {
+    this.data.sorted_bugs.then(bugs => {
+      BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...bugs.keys()] });
+    });
+  }
+}
+
+BzDeck.HomePageController.prototype.route = '/home/(\\w+)';
