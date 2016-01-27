@@ -30,14 +30,6 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     new BzDeck.SessionView();
     new BzDeck.LoginFormView(params);
 
-    try {
-      sessionStorage.getItem('fake');
-    } catch (ex) {
-      this.trigger(':Error', { message: `The Web Storage API cannot be used on your browser. Make sure you are \
-                                         accepting cookies from ${location.hostname} and try again.` });
-      return;
-    }
-
     // Register service workers. Due to the scope limitation, those files should be on the root directory
     navigator.serviceWorker.register('/service-worker.js');
 
