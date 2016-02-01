@@ -400,7 +400,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
         max_size = BzDeck.server.data.config.max_attachment_size;
 
     for (let _file of files) {
-      let worker = new SharedWorker('/static/scripts/workers/shared.js'),
+      let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
           file = _file, // Redeclare the variable so it can be used in the following load event
           is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
 
@@ -457,7 +457,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {undefined}
    */
   attach_text (text) {
-    let worker = new SharedWorker('/static/scripts/workers/shared.js'),
+    let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
         blob = new Blob([text], { type: 'text/plain' }),
         summary = text.substr(0, 25) + (text.length > 25 ? '...' : ''),
         file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',

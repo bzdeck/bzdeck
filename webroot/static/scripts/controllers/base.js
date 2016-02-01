@@ -38,7 +38,7 @@ BzDeck.BaseController = class BaseController extends FlareTail.app.Controller {
       return Promise.reject(new Error('You have to go online to load data.')); // l10n
     }
 
-    let worker = new SharedWorker('/static/scripts/workers/shared.js'),
+    let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
         server = BzDeck.server,
         url = new URL(server.url + server.endpoints.rest + path),
         method = options.method || (options.data ? 'POST' : 'GET'),

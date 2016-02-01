@@ -48,7 +48,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    */
   get_data () {
     let decode = () => new Promise(resolve => {
-      let worker = new SharedWorker('/static/scripts/workers/shared.js');
+      let worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
       worker.port.addEventListener('message', event => {
         let { binary, blob } = event.data,
