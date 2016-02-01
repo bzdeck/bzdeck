@@ -167,7 +167,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Get or retrieve the user's Gravatar profile.
+   * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
+   * access, delegate the process to GlobalController.
    * @argument {Object} [options] - Extra options.
    * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
@@ -184,29 +185,34 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise((resolve, reject) => {
-      this.helpers.network.jsonp(`https://secure.gravatar.com/${this.hash}.json`)
-          .then(data => data.entry[0]).then(profile => {
-        this.data.gravatar = profile;
-        resolve(profile);
-      }).catch(error => {
-        let profile = this.data.gravatar = { error: 'Not Found' };
+      this.on('GlobalController:GravatarProfileProvided', data => {
+        let { hash, profile } = data;
 
-        // Resolve anyway if this is called in Promise.all()
-        if (options.in_promise_all) {
-          resolve(profile);
-        } else {
-          reject(new Error('The Gravatar profile cannot be found'));
-        }
-      }).then(() => {
-        if (!options.in_promise_all) {
-          this.save();
+        if (hash === this.hash) {
+          if (profile) {
+            this.data.gravatar = profile;
+            resolve(profile);
+          } else if (options.in_promise_all) {
+            // Resolve anyway if this is called in Promise.all()
+            this.data.gravatar = profile = { error: 'Not Found' };
+            resolve(profile);
+          } else {
+            reject(new Error('The Gravatar profile cannot be found'));
+          }
+
+          if (!options.in_promise_all) {
+            this.save();
+          }
         }
       });
+
+      this.trigger(':GravatarProfileRequested', { hash: this.hash });
     });
   }
 
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
+   * Because this requires DOM access, delegate the process to GlobalController.
    * @argument {Object} [options] - Extra options.
    * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @return {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
@@ -217,34 +223,16 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       return Promise.resolve(this.data.image_blob);
     }
 
-    let $image = new Image(),
-        $canvas = document.createElement('canvas'),
-        ctx = $canvas.getContext('2d');
+    return new Promise(resolve => {
+      let { hash, color, initial } = this;
 
-    $image.crossOrigin = 'anonymous';
-    $canvas.width = 160;
-    $canvas.height = 160;
-
-    return new Promise((resolve, reject) => {
-      $image.addEventListener('load', event => {
-        ctx.drawImage($image, 0, 0);
-        $canvas.toBlob(blob => resolve(blob));
+      this.on('GlobalController:GravatarImageProvided', data => {
+        if (data.hash === hash) {
+          resolve(data.blob);
+        }
       });
 
-      $image.addEventListener('error', event => {
-        // Plain background of the user's color
-        ctx.fillStyle = this.color;
-        ctx.fillRect(0, 0, 160, 160);
-        // Initial at the center of the canvas
-        ctx.font = '110px FiraSans';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#FFF';
-        ctx.fillText(this.initial, 80, 85); // Adjust the baseline by 5px
-        $canvas.toBlob(blob => resolve(blob));
-      });
-
-      $image.src = `https://secure.gravatar.com/avatar/${this.hash}?s=160&d=404`;
+      this.trigger(':GravatarImageRequested', { hash, color, initial });
     });
   }
 }

@@ -17,6 +17,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
     super(); // This does nothing but is required before using `this`
 
     this.subscribe('BugModel:AnnotationUpdated', true);
+    this.subscribe('UserModel:GravatarProfileRequested', true);
+    this.subscribe('UserModel:GravatarImageRequested', true);
 
     // Navigation, can be requested by any view
     this.on('V:OpenBug',
@@ -46,6 +48,62 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
     if (data.type === 'unread') {
       this.toggle_unread();
     }
+  }
+
+  /**
+   * Called by UserModel whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar
+   * doesn't support CORS. Notify UserModel when the profile is ready.
+   * @argument {Object} data - User details.
+   * @argument {String} data.hash - Hash value of the user's email.
+   * @return {undefined}
+   */
+  on_gravatar_profile_requested (data) {
+    let { hash } = data,
+        nofity = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
+
+    this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
+        .then(data => data.entry[0]).then(profile => nofity(profile)).catch(error => nofity(undefined));
+  }
+
+  /**
+   * Called by UserModel whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the
+   * Gravatar image could not be found. Notify UserModel when the image is ready.
+   * @argument {Object} data - User details.
+   * @argument {String} data.hash - Hash value of the user's email.
+   * @argument {String} data.color - Generated color of the user for the fallback image.
+   * @argument {String} data.initial - Initial of the user for the fallback image.
+   * @return {undefined}
+   */
+  on_gravatar_image_requested (data) {
+    let { hash, color, initial } = data,
+        nofity = blob => this.trigger(':GravatarImageProvided', { hash, blob }),
+        $image = new Image(),
+        $canvas = document.createElement('canvas'),
+        ctx = $canvas.getContext('2d');
+
+    $canvas.width = 160;
+    $canvas.height = 160;
+
+    $image.addEventListener('load', event => {
+      ctx.drawImage($image, 0, 0);
+      $canvas.toBlob(nofity);
+    });
+
+    $image.addEventListener('error', event => {
+      // Plain background of the user's color
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 160, 160);
+      // Initial at the center of the canvas
+      ctx.font = '110px FiraSans';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#FFF';
+      ctx.fillText(initial, 80, 85); // Adjust the baseline by 5px
+      $canvas.toBlob(nofity);
+    });
+
+    $image.crossOrigin = 'anonymous';
+    $image.src = `https://secure.gravatar.com/avatar/${hash}?s=160&d=404`;
   }
 
   /**
