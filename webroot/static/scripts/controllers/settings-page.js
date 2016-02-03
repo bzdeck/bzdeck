@@ -65,10 +65,12 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
       this.helpers.datetime.options.relative = value
     }
 
-    if (name === 'notifications.show_desktop_notifications') {
-      if (value === true && Notification.permission === 'default') {
-        this.helpers.app.auth_notification();
-      }
+    if (name === 'notifications.show_desktop_notifications' && value === true) {
+      navigator.permissions.query({ name: 'notifications' }).then(result => {
+        if (result.state !== 'granted') {
+          Notification.requestPermission(permission => {}); // Permissions.prototype.request() is not implemented yet
+        }
+      });
     }
   }
 }

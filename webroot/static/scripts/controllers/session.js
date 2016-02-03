@@ -228,7 +228,6 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
                              1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
     }).then(() => {
       this.trigger(':StatusUpdate', { message: 'Loading complete.' }); // l10n
-      this.show_first_notification();
       this.login();
       this.bootstrapping = false;
     }).then(() => {
@@ -236,37 +235,6 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       return this.firstrun ? Promise.resolve() : this.fetch_data();
     }).catch(error => {
       this.trigger(':Error', { error, message: error.message });
-    });
-  }
-
-  /**
-   * Show the startup notification if the user has been requested a review, feedback or info.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  show_first_notification () {
-    // Authorize a notification
-    this.helpers.app.auth_notification();
-
-    // Update UI & Show a notification
-    BzDeck.controllers.global.toggle_unread(true);
-
-    // Notify requests
-    BzDeck.collections.subscriptions.get('requests').then(bugs => bugs.size).then(len => {
-      if (!len) {
-        return;
-      }
-
-      let title = len > 1 ? `You have ${len} requests`
-                          : 'You have 1 request'; // l10n
-      let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
-                         : 'Select the Requests folder to browse the bug.'; // l10n
-
-      // TODO: Improve the notification body to describe more about the requests,
-      // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
-
-      // Select the Requests folder when the notification is clicked
-      BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
     });
   }
 
@@ -295,7 +263,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   }
 
   /**
-   * Clean up the browsing session by terminating all timers, notifications and Bugzfeed subscriptions.
+   * Clean up the browsing session by terminating all timers and Bugzfeed subscriptions.
    * @argument {undefined}
    * @return {undefined}
    */
@@ -306,13 +274,6 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     }
 
     BzDeck.controllers.global.timers.clear();
-
-    // Destroy all notifications
-    for (let notification of BzDeck.controllers.global.notifications) {
-      notification.close();
-    }
-
-    BzDeck.controllers.global.notifications.clear();
 
     // Disconnect from the Bugzfeed server
     BzDeck.controllers.bugzfeed.disconnect();
