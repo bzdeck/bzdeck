@@ -42,7 +42,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
     let attachment = this.attachment = data.attachment,
         { id, hash, summary } = attachment;
 
-    new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
+    new FlareTail.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
     new BzDeck.AttachmentView(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
 
     if (hash) {

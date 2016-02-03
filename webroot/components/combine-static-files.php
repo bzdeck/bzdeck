@@ -11,10 +11,14 @@ $paths = [];
 
 ob_start();
 
-if ($type == 'js') {
+if ($type == 'main.js') {
   header('Content-Type: application/javascript; charset=utf-8', true);
-  echo "'use strict';\n";
-  $paths = $scripts;
+  $paths = $main_scripts;
+}
+
+if ($type == 'worker.js') {
+  header('Content-Type: application/javascript; charset=utf-8', true);
+  $paths = $worker_scripts;
 }
 
 if ($type == 'css') {

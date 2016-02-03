@@ -35,7 +35,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       $attachment.remove();
     }
 
-    this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
+    this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$$listbox.bind('click', event => this.listbox_onclick(event));
     this.$$listbox.bind('dblclick', event => this.listbox_onclick(event));
 
@@ -48,13 +48,13 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
       let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
 
-      new this.widgets.ScrollBar(this.$container.querySelector('.content'));
+      new FlareTail.widgets.ScrollBar(this.$container.querySelector('.content'));
       new BzDeck.AttachmentView(attachment, this.$container.querySelector('.content .scrollable-area-content'));
 
       this.trigger('BugView:AttachmentSelected', { attachment });
     });
 
-    this.$$obsolete_checkbox = new this.widgets.CheckBox(this.$obsolete_checkbox);
+    this.$$obsolete_checkbox = new FlareTail.widgets.CheckBox(this.$obsolete_checkbox);
 
     this.$$obsolete_checkbox.bind('Toggled', event => {
       let checked = event.detail.checked;

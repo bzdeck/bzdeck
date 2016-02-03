@@ -45,37 +45,34 @@ $styles = [
 ];
 
 /*
- * Scripts
- * For each section, base.js should go first
+ * Scripts for the main thread
+ * For each section, core.js and base.js should go first
  */
-$scripts = [
+$main_scripts = [
   // Vendor
+  '/vendor/flaretail.js/scripts/helpers/core.js',
+  '/vendor/flaretail.js/scripts/helpers/main.js',
+  '/vendor/flaretail.js/scripts/app/core.js',
+  '/vendor/flaretail.js/scripts/app/main.js',
+  '/vendor/flaretail.js/scripts/widgets/core.js',
+  '/vendor/flaretail.js/scripts/widgets/button.js',
+  '/vendor/flaretail.js/scripts/widgets/checkbox.js',
+  '/vendor/flaretail.js/scripts/widgets/combobox.js',
+  '/vendor/flaretail.js/scripts/widgets/dialog.js',
+  '/vendor/flaretail.js/scripts/widgets/grid.js',
+  '/vendor/flaretail.js/scripts/widgets/listbox.js',
+  '/vendor/flaretail.js/scripts/widgets/menu.js',
+  '/vendor/flaretail.js/scripts/widgets/menubar.js',
+  '/vendor/flaretail.js/scripts/widgets/radiogroup.js',
+  '/vendor/flaretail.js/scripts/widgets/scrollbar.js',
+  '/vendor/flaretail.js/scripts/widgets/separator.js',
+  '/vendor/flaretail.js/scripts/widgets/splitter.js',
+  '/vendor/flaretail.js/scripts/widgets/tablist.js',
+  '/vendor/flaretail.js/scripts/widgets/textbox.js',
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
-  '/vendor/flaretail.js/scripts/helpers.js',
-  '/vendor/flaretail.js/scripts/widgets.js',
-  '/vendor/flaretail.js/scripts/app.js',
-  // Config
-  '/static/scripts/config/app.js',
-  // Datasources
-  '/static/scripts/datasources/base.js',
-  '/static/scripts/datasources/account.js',
-  '/static/scripts/datasources/global.js',
-  // Models
-  '/static/scripts/models/base.js',
-  '/static/scripts/models/account.js',
-  '/static/scripts/models/attachment.js',
-  '/static/scripts/models/bug.js',
-  '/static/scripts/models/server.js',
-  '/static/scripts/models/user.js',
-  // Collections
-  '/static/scripts/collections/base.js',
-  '/static/scripts/collections/accounts.js',
-  '/static/scripts/collections/attachments.js',
-  '/static/scripts/collections/bugs.js',
-  '/static/scripts/collections/prefs.js',
-  '/static/scripts/collections/servers.js',
-  '/static/scripts/collections/subscriptions.js',
-  '/static/scripts/collections/users.js',
+  // Bootstrap
+  '/static/scripts/bootstrap/main.js',
+  '/static/scripts/bootstrap/config.js',
   // Views
   '/static/scripts/views/base.js',
   '/static/scripts/views/attachment.js',
@@ -121,4 +118,44 @@ $scripts = [
   '/static/scripts/controllers/settings-page.js',
   '/static/scripts/controllers/sidebar.js',
   '/static/scripts/controllers/statusbar.js',
+];
+
+/*
+ * Scripts for the shared worker thread
+ * For each section, base.js should go first
+ */
+$worker_scripts = [
+  // Vendor
+  '/vendor/flaretail.js/scripts/helpers/core.js',
+  '/vendor/flaretail.js/scripts/helpers/worker.js',
+  '/vendor/flaretail.js/scripts/app/core.js',
+  '/vendor/flaretail.js/scripts/app/worker.js',
+  '/vendor/JavaScript-MD5/scripts/md5.min.js',
+  // Bootstrap
+  '/static/scripts/bootstrap/worker.js',
+  '/static/scripts/bootstrap/config.js',
+  // Datasources
+  '/static/scripts/datasources/base.js',
+  '/static/scripts/datasources/account.js',
+  '/static/scripts/datasources/global.js',
+  // Models
+  '/static/scripts/models/base.js',
+  '/static/scripts/models/account.js',
+  '/static/scripts/models/attachment.js',
+  '/static/scripts/models/bug.js',
+  '/static/scripts/models/server.js',
+  '/static/scripts/models/user.js',
+  // Collections
+  '/static/scripts/collections/base.js',
+  '/static/scripts/collections/accounts.js',
+  '/static/scripts/collections/attachments.js',
+  '/static/scripts/collections/bugs.js',
+  '/static/scripts/collections/prefs.js',
+  '/static/scripts/collections/servers.js',
+  '/static/scripts/collections/subscriptions.js',
+  '/static/scripts/collections/users.js',
+  // Handlers
+  '/static/scripts/handlers/base.js',
+  '/static/scripts/handlers/bugzfeed.js',
+  '/static/scripts/handlers/session.js',
 ];

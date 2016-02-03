@@ -9,18 +9,18 @@ include_once('static-file-list.inc.php');
 define('DEBUG', $_GET['debug'] && $_GET['debug'] === 'true');
 
 function output_link_elements ($type) {
-  global $styles, $scripts;
+  global $styles, $main_scripts;
 
   ob_start();
 
   if ($type === 'css') {
-    foreach ((DEBUG ? $styles : ['/static/styles/combined.css']) as $path) {
+    foreach ((DEBUG ? $styles : ['/static/styles/main.css']) as $path) {
       echo "    <link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"{$path}\">\n";
     }
   }
 
   if ($type === 'js') {
-    foreach ((DEBUG ? $scripts : ['/static/scripts/combined.js']) as $path) {
+    foreach ((DEBUG ? $main_scripts : ['/static/scripts/main.js']) as $path) {
       echo "    <script src=\"{$path}\"></script>\n";
     }
   }

@@ -5,48 +5,26 @@
 /**
  * Implement a client of the Bugzfeed push notification service offered by bugzilla.mozilla.org, enabling live update of
  * bug timelines.
+ * @extends BzDeck.BaseHandler
  * @see {@link https://wiki.mozilla.org/BMO/ChangeNotificationSystem}
  */
-BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
+BzDeck.BugzfeedHandler = class BugzfeedHandler extends BzDeck.BaseHandler {
   /**
    * Initialize the Bugzfeed background service.
    * @constructor
    * @argument {undefined}
-   * @return {Object} worker - New BugzfeedClientWorker instance.
+   * @return {Object} worker - New BugzfeedHandler instance.
    */
   constructor () {
+    super(); // This does nothing but is required before using `this`
+
     this.subscription = new Set();
 
-    self.addEventListener('message', event => this._onmessage(event));
-  }
-
-  /**
-   * Called whenever a message is received from the main thread.
-   * @argument {ServiceWorkerMessageEvent} event - The message event.
-   * @return {undefined}
-   */
-  _onmessage (event) {
-    let [ service, type, detail ] = event.data;
-
-    if (service !== 'Bugzfeed') {
-      return;
-    }
-
-    if (type === 'Connect') {
-      this.connect(detail.endpoint);
-    }
-
-    if (type === 'Disconnect') {
-      this.disconnect();
-    }
-
-    if (type === 'Subscribe') {
-      this.subscribe(detail.ids);
-    }
-
-    if (type === 'Unsubscribe') {
-      this.unsubscribe(detail.ids);
-    }
+    this.on('C:Connect', data => this.connect(data.endpoint), true);
+    this.on('C:Disconnect', data => this.disconnect(), true);
+    this.on('C:Subscribe', data => this.subscribe(data.ids), true);
+    this.on('C:Unsubscribe', data => this.unsubscribe(data.ids), true);
+    this.on('SessionController:Logout', () => this.disconnect(), true);
   }
 
   /**
@@ -127,7 +105,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       this.subscribe([...this.subscription]);
     }
 
-    trigger('Bugzfeed', 'Connected');
+    this.trigger(':Connected');
   }
 
   /**
@@ -141,7 +119,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    trigger('Bugzfeed', 'Disonnected');
+    this.trigger(':Disonnected');
   }
 
   /**
@@ -155,7 +133,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    trigger('Bugzfeed', 'Disonnected');
+    this.trigger(':Disonnected');
   }
 
   /**
@@ -167,11 +145,11 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
     let { command, bug, bugs, result, when } = JSON.parse(event.data);
 
     if (command === 'update') {
-      trigger('Bugzfeed', 'BugUpdated', { id: bug });
+      this.trigger(':BugUpdated', { id: bug });
     }
 
     if (command === 'subscribe' && result === 'ok') {
-      trigger('Bugzfeed', 'SubscriptionUpdated', { ids: bugs });
+      this.trigger(':SubscriptionUpdated', { ids: bugs });
     }
   }
 }

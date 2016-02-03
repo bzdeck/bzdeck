@@ -20,7 +20,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     this.store_name = 'bugs';
     this.model = BzDeck.BugModel;
 
-    this.subscribe('BugzfeedClientController:BugUpdated', true);
+    this.subscribe('BugzfeedHandler:BugUpdated', true);
   }
 
   /**
@@ -39,7 +39,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       let params = new URLSearchParams(param_str);
 
       ids.forEach(id => params.append('ids', id));
-      BzDeck.controllers.global.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
+      BzDeck.server.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
           .then(result => resolve(result.bugs), event => reject(new Error()));
     });
 
@@ -91,7 +91,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   search_remote (params) {
     let _bugs;
 
-    return BzDeck.controllers.global.request('bug', params).then(result => {
+    return BzDeck.server.request('bug', params).then(result => {
       if (!result.bugs || !result.bugs.length) {
         return Promise.resolve([]);
       }
@@ -138,7 +138,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Called by BugzfeedClientController whenever a bug is updated. Retrieve the latest data from Bugzilla.
+   * Called by BugzfeedController whenever a bug is updated. Retrieve the latest data from Bugzilla.
    * @argument {Object} data - Passed data.
    * @return {undefined}
    */

@@ -47,7 +47,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   setup_navigation () {
-    let Button = this.widgets.Button,
+    let Button = FlareTail.widgets.Button,
         $toolbar = this.$bug.querySelector('header [role="toolbar"]'),
         $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
         $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),

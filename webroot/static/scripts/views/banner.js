@@ -17,7 +17,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   constructor (user) {
     super(); // This does nothing but is required before using `this`
 
-    this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist'));
+    this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#main-tablist'));
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail));
     this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
 
@@ -25,7 +25,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     this.$logo = document.querySelector('[role="banner"] h1');
     this.$logo.addEventListener('mousedown', event => this.trigger(':LogoClicked'));
 
-    this.$$menu = new this.widgets.MenuBar(document.querySelector('#main-menu'));
+    this.$$menu = new FlareTail.widgets.MenuBar(document.querySelector('#main-menu'));
     this.$app_menu = document.querySelector('#main-menu--app-menu');
 
     this.$app_menu.addEventListener('MenuItemSelected', event => {
@@ -113,7 +113,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    */
   setup_reload_button () {
     let $button = document.querySelector('#reload-button'),
-        $$button = new this.widgets.Button($button);
+        $$button = new FlareTail.widgets.Button($button);
 
     $$button.bind('Pressed', event => this.trigger(':ReloadButtonPressed'));
 

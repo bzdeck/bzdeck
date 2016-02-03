@@ -43,7 +43,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     // Custom scrollbars
     this.scrollbars = new Set([...this.$bug.querySelectorAll('[role="region"]')]
-                                  .map($area => new this.widgets.ScrollBar($area)));
+                                  .map($area => new FlareTail.widgets.ScrollBar($area)));
 
     this.subscribe('BugModel:AnnotationUpdated', true); // Enable the global option
     this.subscribe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
@@ -63,7 +63,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return;
     }
 
-    new this.widgets.Button($button);
+    new FlareTail.widgets.Button($button);
 
     let $timeline = this.$bug.querySelector('.bug-timeline'),
         $menu = document.getElementById($button.getAttribute('aria-owns')),
@@ -201,13 +201,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($edit_button) {
       $edit_button.setAttribute('aria-disabled', !can_editbugs);
-      (new this.widgets.Button($edit_button)).bind('Pressed', event =>
+      (new FlareTail.widgets.Button($edit_button)).bind('Pressed', event =>
           this.trigger('BugView:EditModeChanged', { enabled: event.detail.pressed }));
     }
 
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
-      (new this.widgets.Button($star_button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
+      (new FlareTail.widgets.Button($star_button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
     }
 
     if (!$timeline) {
@@ -300,7 +300,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
                                                   [itemprop="duplicate"]')) {
         $li.setAttribute('data-bug-id', $li.textContent);
 
-        (new this.widgets.Button($li)).bind('Pressed', event => {
+        (new FlareTail.widgets.Button($li)).bind('Pressed', event => {
           this.trigger('GlobalView:OpenBug', { id: Number(event.target.textContent) });
         });
       }
@@ -380,7 +380,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Activate comboboxes
       if ($combobox) {
-        let $$combobox = new this.widgets.ComboBox($combobox);
+        let $$combobox = new FlareTail.widgets.ComboBox($combobox);
 
         this.comboboxes.set($combobox, $$combobox);
         $combobox.setAttribute('aria-disabled', !can_editbugs);
@@ -399,7 +399,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Activate textboxes
       if ($textbox) {
-        let $$textbox = new this.widgets.TextBox($textbox);
+        let $$textbox = new FlareTail.widgets.TextBox($textbox);
 
         $textbox.tabIndex = 0;
         $textbox.spellcheck = false;

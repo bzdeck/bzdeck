@@ -22,7 +22,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     this.id = data.id || data.hash; // Use the hash for unuploaded attachments
     this.data = data;
 
-    return this.proxy();
+    return this.proxy;
   }
 
   /**
@@ -32,10 +32,10 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
    */
   fetch () {
-    return BzDeck.controllers.global.request(`bug/attachment/${this.id}`).then(result => {
+    return BzDeck.server.request(`bug/attachment/${this.id}`).then(result => {
       this.data = result.attachments[this.id];
 
-      return Promise.resolve(this.proxy());
+      return Promise.resolve(this.proxy);
     });
   }
 
@@ -48,25 +48,19 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    */
   get_data () {
     let decode = () => new Promise(resolve => {
-      let worker = new SharedWorker('/static/scripts/workers/tasks.js');
+      let binary = atob(this.data.data),
+          blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type: this.content_type }),
+          text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
 
-      worker.port.addEventListener('message', event => {
-        let { binary, blob } = event.data,
-            text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
-
-        resolve({ blob, text, attachment: this });
-      });
-
-      worker.port.start();
-      worker.port.postMessage(['decode', { str: this.data.data, type: this.content_type }]);
+      resolve({ blob, text, attachment: this });
     });
 
     if (this.data.data) {
       return Promise.resolve(decode());
     }
 
-    return BzDeck.controllers.global.request(`bug/attachment/${this.id}`,
-                                             new URLSearchParams('include_fields=data')).then(result => {
+    return BzDeck.server.request(`bug/attachment/${this.id}`,
+                                 new URLSearchParams('include_fields=data')).then(result => {
       let attachment = result.attachments[this.id],
           data = attachment && attachment.data ? attachment.data : undefined;
 
@@ -98,6 +92,6 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
         bug.save(bug.data);
       }
-    }).then(() => this.proxy());
+    }).then(() => this.proxy);
   }
 }

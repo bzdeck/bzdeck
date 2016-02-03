@@ -59,7 +59,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
     // Custom scrollbar
     for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-      new this.widgets.ScrollBar($outer, true);
+      new FlareTail.widgets.ScrollBar($outer, true);
     }
 
     let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
@@ -100,7 +100,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       selected: !value // Select '---' to search open bugs
     }));
 
-    let ListBox = this.widgets.ListBox,
+    let ListBox = FlareTail.widgets.ListBox,
         $$classification_list = new ListBox($classification_list, classifications),
         $$product_list = new ListBox($product_list, products),
         $$component_list = new ListBox($component_list, components),
@@ -134,7 +134,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     });
 
     let $textbox = $pane.querySelector('.text-box [role="searchbox"]'),
-        $$button = new this.widgets.Button($pane.querySelector('.text-box [role="button"]'));
+        $$button = new FlareTail.widgets.Button($pane.querySelector('.text-box [role="button"]'));
 
     $$button.bind('Pressed', event => {
       let params = new URLSearchParams(),
@@ -225,9 +225,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
         $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
     // Activate the toolbar buttons
-    new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
+    new FlareTail.widgets.Button($bug.querySelector('[data-command="show-details"]'))
         .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
-    new this.widgets.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
+    new FlareTail.widgets.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
         .bind('Pressed', event => this.show_basic_search_pane());
 
     // Assign keyboard shortcuts

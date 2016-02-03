@@ -125,31 +125,6 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
       // Update View
       this.view.toggle_unread(bugs, loaded, unread_num);
-
-      // Select Inbox when the notification is clicked
-      // this.show_notification(status, extract).then(event => BzDeck.router.navigate('/home/inbox'));
-    });
-  }
-
-  /**
-   * Show a desktop notification.
-   * @argument {String} title
-   * @argument {String} body
-   * @return {Promise.<MouseEvent>} event - Promise to be resolved in an event fired when the notification is clicked.
-   */
-  show_notification (title, body) {
-    return BzDeck.prefs.get('notifications.show_desktop_notifications').then(value => {
-      if (value === false) {
-        return;
-      }
-
-      // Firefox OS requires a complete URL for the icon
-      let icon = location.origin + '/static/images/logo/icon-128.png',
-          notification = new Notification(title, { body, icon });
-
-      this.notifications.add(notification);
-
-      return new Promise(resolve => notification.addEventListener('click', event => resolve(event)));
     });
   }
 
@@ -236,6 +211,3 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
     return str;
   }
 }
-
-BzDeck.GlobalController.prototype.notifications = new Set();
-BzDeck.GlobalController.prototype.timers = new Map();

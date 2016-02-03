@@ -745,7 +745,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
    */
   post_changes (data) {
-    return this.request(`bug/${this.bug.id}`, null, { method: 'PUT', data });
+    return BzDeck.server.request(`bug/${this.bug.id}`, null, { method: 'PUT', data });
   }
 
   /**
@@ -756,7 +756,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
    */
   post_att_changes (att_id, data) {
-    return this.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
+    return BzDeck.server.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
   }
 
   /**
@@ -769,7 +769,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     let size_computable,
         size = 0;
 
-    return this.request(`bug/${this.bug.id}/attachment`, null, {
+    return BzDeck.server.request(`bug/${this.bug.id}/attachment`, null, {
       method: 'POST',
       data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
       listeners: {

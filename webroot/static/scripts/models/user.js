@@ -99,7 +99,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       });
     }
 
-    return this.proxy();
+    return this.proxy;
   }
 
   /**
@@ -160,7 +160,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     params.append('names', this.email);
 
     return new Promise((resolve, reject) => {
-      BzDeck.controllers.global.request('user', params, _options).then(result => {
+      BzDeck.server.request('user', params, _options).then(result => {
         result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
       }).catch(error => reject(error));
     });

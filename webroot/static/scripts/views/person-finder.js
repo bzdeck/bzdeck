@@ -28,7 +28,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
     this.$input = this.$combobox.querySelector('[role="searchbox"]');
     this.$option = this.get_template('person-finder-item');
 
-    this.$$combobox = new this.widgets.ComboBox(this.$combobox);
+    this.$$combobox = new FlareTail.widgets.ComboBox(this.$combobox);
     this.$$combobox.$container.id = this.combobox_id = combobox_id;
     this.$$combobox.on('Input', event => this.oninput(event));
   }

@@ -77,7 +77,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
     this.bugs = [];
 
     BzDeck.prefs.get(`${name}.list.columns`).then(columns => {
-      this.$$grid = new this.widgets.Grid($grid, {
+      this.$$grid = new FlareTail.widgets.Grid($grid, {
         rows: [],
         columns: (columns || default_cols).map(col => {
           let _col = default_cols.find(__col => __col.id === col.id);
@@ -247,9 +247,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$outer = $outer;
     this.$listbox = $outer.querySelector('[role="listbox"]');
-    this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
+    this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
-    this.$$scrollbar = new this.widgets.ScrollBar($outer);
+    this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer);
     this.$scrollable_area = mobile ? $outer.querySelector('.scrollable-area-content') : $outer;
 
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));

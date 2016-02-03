@@ -28,7 +28,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
     }
 
     // Activate tabs
-    this.$$tablist = new this.widgets.TabList(document.querySelector('#settings-tablist'));
+    this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#settings-tablist'));
 
     if (tab_id) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
@@ -61,7 +61,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
     }
 
-    (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
+    (new FlareTail.widgets.RadioGroup($rgroup)).bind('Selected', event => {
       value = event.detail.items[0].dataset.value;
       value = _value.type === 'boolean' ? value === 'true' : value;
       this.trigger(':PrefValueChanged', { name, value });

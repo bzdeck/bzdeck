@@ -10,22 +10,18 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   /**
    * Get a BannerController instance.
    * @constructor
-   * @argument {undefined}
+   * @argument {Object} user - UserModel instance.
    * @return {Object} controller - New BannerController instance.
    */
-  constructor () {
+  constructor (user) {
     super(); // This does nothing but is required before using `this`
 
-    let name = BzDeck.account.data.name;
+    this.user = user;
+    BzDeck.views.banner = new BzDeck.BannerView(this.user);
 
-    BzDeck.collections.users.get(name, { name }).then(user => {
-      this.user = user;
-      BzDeck.views.banner = new BzDeck.BannerView(this.user);
-
-      this.user.get_gravatar_profile().then(profile => {
-        this.trigger(':GravatarProfileFound', {
-          style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
-        });
+    this.user.get_gravatar_profile().then(profile => {
+      this.trigger(':GravatarProfileFound', {
+        style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
       });
     });
 
@@ -33,8 +29,8 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
     BzDeck.controllers.quick_search = new BzDeck.QuickSearchController();
 
     this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
+    this.on('V:ReloadButtonPressed', () => BzDeck.collections.subscriptions.reload());
     this.subscribe('V:BackButtonClicked');
-    this.subscribe('V:ReloadButtonPressed');
     this.subscribe('V:TabSelected');
     this.subscribe('V:AppMenuItemSelected');
   }
@@ -51,21 +47,6 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
     } else {
       BzDeck.router.navigate('/home/inbox');
     }
-  }
-
-  /**
-   * Called by BannerView whenever the Reload button is clicked on the mobile view. Fetch the latest data from Bugzilla
-   * instance.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  on_reload_button_pressed () {
-    // Reset the timer
-    window.clearInterval(BzDeck.controllers.global.timers.get('fetch_subscriptions'));
-    BzDeck.controllers.global.timers.set('fetch_subscriptions', window.setInterval(() =>
-        BzDeck.collections.subscriptions.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
-
-    BzDeck.collections.subscriptions.fetch();
   }
 
   /**

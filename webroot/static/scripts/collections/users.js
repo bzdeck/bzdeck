@@ -66,7 +66,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   search_remote (params) {
     let _users;
 
-    return BzDeck.controllers.global.request('user', params).then(result => {
+    return BzDeck.server.request('user', params).then(result => {
       if (!result.users || !result.users.length) {
         return Promise.resolve([]);
       }

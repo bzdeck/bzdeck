@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.collections = BzDeck.collections || {};
-
 /**
  * Define the app's Base Collection. This constructor is intended to be inherited by the app's each collection.
  * @extends FlareTail.app.Collection

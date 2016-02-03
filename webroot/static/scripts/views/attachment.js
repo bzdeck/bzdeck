@@ -69,7 +69,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
           trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
-        let $$textbox = new this.widgets.TextBox($prop);
+        let $$textbox = new FlareTail.widgets.TextBox($prop);
 
         $$textbox.bind('Edited', event => {
           let value = event.detail.value;
@@ -84,7 +84,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
 
       if ($prop.matches('[role="checkbox"]')) {
-        (new this.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
+        (new FlareTail.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
       }
     }
   }

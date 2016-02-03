@@ -19,6 +19,10 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
     this.datasource = BzDeck.datasources.global;
     this.store_name = 'accounts';
     this.model = BzDeck.AccountModel;
+
+    // Delete the account data and refresh the page to ensure the app works properly
+    // TODO: Support multiple account by removing only the current account
+    this.on('SessionController:Logout', () => this.delete(BzDeck.account.data.loaded), true);
   }
 
   /**

@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the app's Base Model. This constructor is intended to be inherited by the app's each model.
- * @extends FlareTail.app.Model
+ * Define the app's Base Handler. This constructor is intended to be inherited by each app controller.
+ * @extends FlareTail.app.Handler
  */
-BzDeck.BaseModel = class BaseModel extends FlareTail.app.Model {}
+BzDeck.BaseHandler = class BaseHandler extends FlareTail.app.Handler {}

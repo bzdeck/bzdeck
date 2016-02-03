@@ -25,8 +25,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // Hide the incompatible browser message
     this.show_status('');
 
-    this.subscribe('SessionController:StatusUpdate', true);
-    this.subscribe('SessionController:Error', true);
+    this.subscribe('Bootstrapper:StatusUpdate', true);
+    this.subscribe('Bootstrapper:Error', true);
     this.subscribe('SessionController:Logout', true);
 
     this.activate_bugzilla_auth();
@@ -195,10 +195,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    */
   on_error (data) {
     this.show_status(data.message);
-
-    if (data.error) {
-      console.error(data.error);
-    }
   }
 
   /**

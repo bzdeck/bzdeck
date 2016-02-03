@@ -4,10 +4,8 @@
 
 'use strict';
 
-const BzDeck = { workers: {}};
-
 // Cache version: this has to be updated whenever a file is modified
-const version = '2016-02-01-11-17';
+const version = '2015-12-24-03-25';
 
 // Files need to be cached
 const files = [
@@ -15,9 +13,9 @@ const files = [
   '/static/images/logo/icon-256-white.png',
   '/static/images/themes/dark/sprite.png',
   '/static/images/themes/light/sprite.png',
-  '/static/scripts/combined.js',
+  '/static/scripts/main.js',
   '/static/scripts/workers/tasks.js',
-  '/static/styles/combined.css',
+  '/static/styles/main.css',
   '/static/styles/themes/dark.css',
   '/static/styles/themes/light.css',
   '/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.206',
@@ -26,15 +24,6 @@ const files = [
   '/vendor/Fira/fonts/FiraSans-Regular.woff2?v=4.106',
   '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0',
 ];
-
-// Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
-const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
-
-// Import sub scripts
-self.importScripts('/static/scripts/workers/bugzfeed.js');
-
-// Initialize the services
-BzDeck.workers.bugzfeed = new BzDeck.workers.BugzfeedClient();
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -57,6 +46,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
+  const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
+
   let request = event.request;
 
   // Rewrite in-app requests as .htaccess does
@@ -83,15 +75,3 @@ self.addEventListener('fetch', event => {
     .catch(error => new Response('404 Not Found', { status: 404 }))
   );
 });
-
-/**
- * Send a message to the main thread.
- *
- * @argument {String} service - Related service.
- * @argument {String} type - Event type.
- * @argument {Object} [detail] - Event detail.
- * @return {undefined}
- */
-function trigger (service, type, detail) {
-  self.clients.matchAll().then(_clients => _clients.forEach(client => client.postMessage([service, type, detail])));
-};

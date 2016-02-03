@@ -27,7 +27,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
     this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
     this.$tablist = this.$form.querySelector('[role="tablist"]');
-    this.$$tablist = new this.widgets.TabList(this.$tablist);
+    this.$$tablist = new FlareTail.widgets.TabList(this.$tablist);
     this.$comment_tab = this.$form.querySelector('[id$="tab-comment"]');
     this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
     this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
@@ -43,7 +43,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
 
     for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
-      new this.widgets.ScrollBar($tabpanel);
+      new FlareTail.widgets.ScrollBar($tabpanel);
     }
 
     this.$form.addEventListener('wheel', event => event.stopPropagation());
@@ -203,7 +203,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
           flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee },
           $row = this.get_template(`bug-comment-form-${type}-needinfo-row`),
           $checkbox = $row.querySelector('[role="checkbox"]'),
-          $$checkbox = new this.widgets.CheckBox($checkbox),
+          $$checkbox = new FlareTail.widgets.CheckBox($checkbox),
           $label = $checkbox.querySelector('span');
 
       BzDeck.collections.users.get(requestee, { name: requestee }).then(_requestee => {
@@ -361,7 +361,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_attachment_error (data) {
-    new this.widgets.Dialog({
+    new FlareTail.widgets.Dialog({
       type: 'alert',
       title: 'Error on attaching files', // l10n
       message: data.message.replace('\n', '<br>'),

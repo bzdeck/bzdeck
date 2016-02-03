@@ -87,7 +87,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   setup_splitter () {
-    let $$splitter = this.$$preview_splitter = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
+    let $$splitter = this.$$preview_splitter = new FlareTail.widgets.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.';
 
     BzDeck.prefs.get(prefix + $$splitter.data.orientation).then(pref => {
@@ -138,7 +138,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
     // Activate the toolbar buttons
-    new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
+    new FlareTail.widgets.Button($bug.querySelector('[data-command="show-details"]'))
         .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
 
     // Assign keyboard shortcuts

@@ -2,9 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-BzDeck.views = BzDeck.views || {};
-BzDeck.views.pages = {};
-
 /**
  * Define the app's Base View. This constructor is intended to be inherited by each app view.
  * @extends FlareTail.app.View

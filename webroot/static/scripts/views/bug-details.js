@@ -23,7 +23,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
     this.$tablist = this.$bug.querySelector('[role="tablist"]');
     this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
-    this.$$tablist = new this.widgets.TabList(this.$tablist);
+    this.$$tablist = new FlareTail.widgets.TabList(this.$tablist);
 
     this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
 

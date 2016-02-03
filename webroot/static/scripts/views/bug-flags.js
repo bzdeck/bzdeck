@@ -64,7 +64,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
         $_flag.querySelector(`[itemprop="${prop}"]`).setAttribute('aria-hidden', !_flag || !_flag[prop]);
       }
 
-      // let $$combobox = new this.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
+      // let $$combobox = new FlareTail.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
 
       // $$combobox.build_dropdown(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
       // $$combobox.bind('Change', event => {});

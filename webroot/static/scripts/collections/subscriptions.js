@@ -96,7 +96,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       params.append('o9', 'anywords');
       params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
     }).then(() => {
-      return BzDeck.controllers.global.request('bug', params);
+      return BzDeck.server.request('bug', params);
     }).then(result => {
       if (firstrun) {
         return Promise.all(result.bugs.map(_bug => {
@@ -136,5 +136,19 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     }).catch(error => {
       return Promise.reject(new Error('Failed to load data.')); // l10n
     }).then(() => this.trigger(':FetchingSubscriptionsComplete'));
+  }
+
+  /**
+   * Refresh the subscriptions immediately.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  reload () {
+    // Reset the timer
+    self.clearInterval(BzDeck.handlers.session.timers.get('fetch_subscriptions'));
+    BzDeck.handlers.session.timers.set('fetch_subscriptions', self.setInterval(() =>
+        this.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
+
+    this.fetch();
   }
 }

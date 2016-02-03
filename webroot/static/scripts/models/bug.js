@@ -64,7 +64,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       },
     });
 
-    return this.proxy();
+    return this.proxy;
   }
 
   /**
@@ -75,7 +75,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   fetch (include_metadata = true, include_details = true) {
     let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
-      BzDeck.controllers.global.request(`bug/${this.id}` + (method ? `/${method}` : ''), new URLSearchParams(param_str))
+      BzDeck.server.request(`bug/${this.id}` + (method ? `/${method}` : ''), new URLSearchParams(param_str))
           .then(result => resolve(result), event => reject(new Error()));
     });
 
@@ -106,7 +106,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       this.merge(_bug);
 
-      return Promise.resolve(this.proxy());
+      return Promise.resolve(this.proxy);
     }, error => Promise.reject(new Error('Failed to fetch bugs from Bugzilla.')));
   };
 
@@ -193,7 +193,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   update_annotation (type, value) {
     if (type === 'unread' && value === false) {
-      BzDeck.controllers.global.request('bug_user_last_visit/' + this.id, null, {
+      BzDeck.server.request('bug_user_last_visit/' + this.id, null, {
         method: 'POST',
       }).then(result => {
         if (result[0] && result[0].id === this.id && result[0].last_visit_ts) {
@@ -209,7 +209,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         return Date.now();
       }).then(timestamp => {
         this.data._last_viewed = timestamp;
-        this.trigger(':AnnotationUpdated', { bug: this.proxy(), type: 'last_viewed', value: timestamp });
+        this.trigger(':AnnotationUpdated', { bug: this.proxy, type: 'last_viewed', value: timestamp });
       });
     }
 
@@ -223,7 +223,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     this.data[`_${type}`] = value;
-    this.trigger(':AnnotationUpdated', { bug: this.proxy(), type, value });
+    this.trigger(':AnnotationUpdated', { bug: this.proxy, type, value });
 
     return true;
   };

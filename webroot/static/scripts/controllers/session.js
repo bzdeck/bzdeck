@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Session Controller serving as the application bootstrapper. The member functions require refactoring.
+ * Define the Session Controller serving as the main application bootstrapper.
  * @extends BzDeck.BaseController
  */
 BzDeck.SessionController = class SessionController extends BzDeck.BaseController {
@@ -16,55 +16,22 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    let params = new URLSearchParams(location.search.substr(1));
+    let params = new URLSearchParams(location.search.substr(1)),
+        worker = BzDeck.workers.shared = new SharedWorker('/static/scripts/worker.js');
 
     BzDeck.config.debug = params.get('debug') === 'true';
 
-    this.bootstrapping = true;
-
-    BzDeck.datasources.global = new BzDeck.GlobalDataSource();
-    BzDeck.datasources.account = new BzDeck.AccountDataSource();
-    BzDeck.controllers.global = new BzDeck.GlobalController();
-    BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedClientController();
-
-    new BzDeck.SessionView();
-    new BzDeck.LoginFormView(params);
-
     // Register service workers. Due to the scope limitation, those files should be on the root directory
-    navigator.serviceWorker.register('/service-worker.js');
+    // navigator.serviceWorker.register('/service-worker.js');
 
-    this.find_account();
-  }
+    BzDeck.controllers.global = new BzDeck.GlobalController();
+    BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedController();
+    BzDeck.views.session = new BzDeck.SessionView();
+    BzDeck.views.login_form = new BzDeck.LoginFormView(params);
 
-  /**
-   * Bootstrap Step 1. Find a user account from the local database.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  find_account () {
-    this.trigger(':StatusUpdate', { message: 'Looking for your account...' }); // l10n
-
-    BzDeck.datasources.global.load().then(database => {
-      BzDeck.collections.accounts = new BzDeck.AccountCollection();
-      BzDeck.collections.servers = new BzDeck.ServerCollection();
-    }, error => {
-      this.trigger(':Error', { error, message: error.message });
-    }).then(() => Promise.all([
-      BzDeck.collections.accounts.load(),
-      BzDeck.collections.servers.load(),
-    ])).then(() => {
-      return BzDeck.collections.accounts.get_current();
-    }).then(account => {
-      BzDeck.account = account;
-    }).then(() => {
-      return BzDeck.collections.servers.get(BzDeck.account.data.host);
-    }).then(server => {
-      BzDeck.server = server;
-    }).then(() => {
-      this.load_data();
-    }).catch(error => {
-      this.force_login();
-    });
+    // Subscribe to events
+    this.on('H:UserAccountNotFound', () => this.force_login());
+    this.on('H:UserDataLoaded', () => this.init_components());
   }
 
   /**
@@ -73,130 +40,43 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * @return {undefined}
    */
   force_login () {
-    this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
+    this.trigger('Bootstrapper:StatusUpdate', { status: 'ForcingLogin', message: '' });
 
     // User credentials will be passed from a sub window over a BroadcastChannel
-    let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
+    let bc = new BroadcastChannel('BugzillaAuthCallback');
 
     this.on('LoginFormView:LoginRequested', data => {
-      bc.addEventListener('message', event => {
-        let { client_api_login: email, client_api_key: key } = event.data;
+      let { host } = data;
 
-        if (email && key) {
-          this.verify_account(data.host, email, key);
+      bc.addEventListener('message', event => {
+        let { client_api_login: email, client_api_key: api_key } = event.data;
+
+        if (email && api_key) {
+          this.trigger(':UserAccountVerifying', { host, email, api_key });
         } else {
-          this.trigger(':Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
+          this.trigger('Bootstrapper:Error', { message: 'Your Bugzilla user name and API key could not be retrieved. \
+                                                         Try again.' });
         }
       });
     }, true);
 
     this.on('LoginFormView:QRCodeDecoded', data => {
+      let { host } = data;
+
       if (data.result && data.result.match(/^.+@.+\..+\|[A-Za-z0-9]{40}$/)) {
-        this.verify_account(data.host, ...data.result.split('|'));
+        let [ email, api_key ] = data.result.split('|');
+
+        this.trigger(':UserAccountVerifying', { host, email, api_key });
       } else {
-        this.trigger(':Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
+        this.trigger('Bootstrapper:Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
       }
     }, true);
 
     this.on('LoginFormView:QRCodeError', data => {
-      this.trigger(':Error', { message: 'Failed to access a camera on your device. Try again.' });
+      this.trigger('Bootstrapper:Error', { message: 'Failed to access a camera on your device. Try again.' });
     }, true);
-  }
 
-  /**
-   * Bootstrap Step 3. Once the user's auth info is provided, check if the email and API key are valid.
-   * @argument {String} host - Host identifier like 'mozilla'.
-   * @argument {String} email - User's Bugzilla account name.
-   * @argument {String} api_key - User's 40-character Bugzilla API key.
-   * @return {undefined}
-   */
-  verify_account (host, email, api_key) {
-    this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
-
-    if (!this.bootstrapping) {
-      // User is trying to re-login
-      this.relogin = true;
-      this.bootstrapping = true;
-    }
-
-    BzDeck.collections.servers.get(host, { host }).then(server => {
-      BzDeck.server = server;
-    }).then(() => {
-      return this.request('user', new URLSearchParams(`names=${email}`), { api_key });
-    }).then(result => {
-      return result.users ? Promise.resolve(result.users[0])
-                          : Promise.reject(new Error(result.message || 'User Not Found'));
-    }, error => {
-      return Promise.reject(error);
-    }).then(user => {
-      return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
-    }).then(user => {
-      let account = BzDeck.account = new BzDeck.AccountModel({
-        host: BzDeck.server.name,
-        name: email,
-        api_key,
-        loaded: Date.now(), // key
-        active: true,
-        bugzilla: user,
-      });
-
-      account.save();
-      this.trigger(':UserFound');
-      this.auth_callback_bc.close();
-      this.load_data();
-    }).catch(error => {
-      this.trigger(':Error', { message: error.message || 'Failed to find your account.' }); // l10n
-    });
-  }
-
-  /**
-   * Bootstrap Step 4. Load data from the local database once the user account is set.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  load_data () {
-    this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
-
-    BzDeck.datasources.account.load().then(database => {
-      BzDeck.collections.bugs = new BzDeck.BugCollection();
-      BzDeck.collections.attachments = new BzDeck.AttachmentCollection();
-      BzDeck.collections.subscriptions = new BzDeck.SubscriptionCollection();
-      BzDeck.prefs = new BzDeck.PrefCollection();
-      BzDeck.collections.users = new BzDeck.UserCollection();
-    }, error => {
-      this.trigger(':Error', { error, message: error.message });
-    }).then(() => Promise.all([
-      BzDeck.collections.bugs.load(),
-      BzDeck.prefs.load(),
-      BzDeck.collections.users.load(),
-    ])).then(() => Promise.all([
-      BzDeck.collections.attachments.load(), // Depends on BzDeck.collections.bugs
-    ])).then(() => {
-      return BzDeck.collections.bugs.get_all();
-    }).then(bugs => {
-      this.firstrun = !bugs.size;
-    }).then(() => {
-      // Fetch data for new users before showing the main app window, or defer fetching for returning users
-      return this.firstrun ? this.fetch_data() : Promise.resolve();
-    }).then(() => {
-      this.init_components();
-    }).catch(error => {
-      this.trigger(':Error', { error, message: error.message });
-    });
-  }
-
-  /**
-   * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  fetch_data () {
-    this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
-
-    return Promise.all([
-      BzDeck.collections.subscriptions.fetch(),
-      BzDeck.server.get_config(),
-    ]);
+    this.on('H:UserAccountVerified', () => bc.close(), true);
   }
 
   /**
@@ -205,73 +85,55 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * @return {undefined}
    */
   init_components () {
-    this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
+    let worker = BzDeck.workers.shared;
+
+    this.trigger('Bootstrapper:StatusUpdate', { message: 'Initializing UI...' }); // l10n
+
+    // Proxify the collections to seamlessly use the member functions
+    BzDeck.collections.accounts = new FlareTail.app.WorkerProxy('BzDeck.collections.accounts', worker);
+    BzDeck.collections.servers = new FlareTail.app.WorkerProxy('BzDeck.collections.servers', worker);
+    BzDeck.collections.bugs = new FlareTail.app.WorkerProxy('BzDeck.collections.bugs', worker);
+    BzDeck.collections.attachments = new FlareTail.app.WorkerProxy('BzDeck.collections.attachments', worker);
+    BzDeck.collections.subscriptions = new FlareTail.app.WorkerProxy('BzDeck.collections.subscriptions', worker);
+    BzDeck.collections.users = new FlareTail.app.WorkerProxy('BzDeck.collections.users', worker);
+    BzDeck.prefs = new FlareTail.app.WorkerProxy('BzDeck.prefs', worker);
 
     new Promise((resolve, reject) => {
       this.relogin ? resolve() : reject();
-    }).catch(error => Promise.all([
+    }).catch(error => {
+      return BzDeck.collections.accounts.get_current();
+    }).then(account => {
+      BzDeck.account = account;
+
+      return BzDeck.collections.users.get(account.data.name, { name: account.data.name });
+    }).then(user => {
       // Finally load the UI modules
       BzDeck.controllers.global.init(),
-      BzDeck.controllers.banner = new BzDeck.BannerController(),
+      BzDeck.controllers.banner = new BzDeck.BannerController(user),
       BzDeck.controllers.sidebar = new BzDeck.SidebarController(),
       BzDeck.controllers.statusbar = new BzDeck.StatusbarController(),
-    ])).then(() => {
+
+      console.log(BzDeck.controllers.sidebar, BzDeck.controllers.statusbar);
+      console.log(BzDeck.controllers.banner, BzDeck.views.banner);
+      console.log('here');
+
       // Connect to the push notification server
       BzDeck.controllers.bugzfeed.connect();
     }).then(() => {
       // Activate the router
       BzDeck.router.locate();
     }).then(() => {
-      // Timer to check for updates, call every 5 minutes or per minute if debugging is enabled
-      BzDeck.controllers.global.timers.set('fetch_subscriptions',
-          window.setInterval(() => BzDeck.collections.subscriptions.fetch(),
-                             1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
-    }).then(() => {
-      this.trigger(':StatusUpdate', { message: 'Loading complete.' }); // l10n
-      this.show_first_notification();
+      this.trigger('Bootstrapper:StatusUpdate', { message: 'Loading complete.' }); // l10n
       this.login();
-      this.bootstrapping = false;
-    }).then(() => {
-      // Fetch data for returning users
-      return this.firstrun ? Promise.resolve() : this.fetch_data();
+      BzDeck.controllers.global.toggle_unread(true);
     }).catch(error => {
-      this.trigger(':Error', { error, message: error.message });
+      console.error(error);
+      this.trigger('Bootstrapper:Error', { error, message: error.message });
     });
   }
 
   /**
-   * Show the startup notification if the user has been requested a review, feedback or info.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  show_first_notification () {
-    // Authorize a notification
-    this.helpers.app.auth_notification();
-
-    // Update UI & Show a notification
-    BzDeck.controllers.global.toggle_unread(true);
-
-    // Notify requests
-    BzDeck.collections.subscriptions.get('requests').then(bugs => bugs.size).then(len => {
-      if (!len) {
-        return;
-      }
-
-      let title = len > 1 ? `You have ${len} requests`
-                          : 'You have 1 request'; // l10n
-      let body = len > 1 ? 'Select the Requests folder to browse those bugs.'
-                         : 'Select the Requests folder to browse the bug.'; // l10n
-
-      // TODO: Improve the notification body to describe more about the requests,
-      // e.g. There are 2 bugs awaiting your information, 3 patches awaiting your review.
-
-      // Select the Requests folder when the notification is clicked
-      BzDeck.controllers.global.show_notification(title, body).then(event => BzDeck.router.navigate('/home/requests'));
-    });
-  }
-
-  /**
-   * Notify the view of the user's sign-in once prepared.
+   * Notify of sign-in once prepared.
    * @argument {undefined}
    * @return {undefined}
    */
@@ -280,52 +142,13 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   }
 
   /**
-   * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
+   * Notify of sign-out.
    * @argument {undefined}
    * @return {undefined}
    */
   logout () {
     this.trigger(':Logout');
-    this.clean();
 
-    // Delete the account data and refresh the page to ensure the app works properly
-    // TODO: Support multiple account by removing only the current account
-    BzDeck.collections.accounts.delete(BzDeck.account.data.loaded)
-      .then(() => location.replace(BzDeck.config.app.root));
-  }
-
-  /**
-   * Clean up the browsing session by terminating all timers, notifications and Bugzfeed subscriptions.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  clean () {
-    // Terminate timers
-    for (let timer of BzDeck.controllers.global.timers.values()) {
-      window.clearInterval(timer);
-    }
-
-    BzDeck.controllers.global.timers.clear();
-
-    // Destroy all notifications
-    for (let notification of BzDeck.controllers.global.notifications) {
-      notification.close();
-    }
-
-    BzDeck.controllers.global.notifications.clear();
-
-    // Disconnect from the Bugzfeed server
-    BzDeck.controllers.bugzfeed.disconnect();
+    window.setTimeout(() => location.replace(BzDeck.config.app.root), 150);
   }
 }
-
-window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.compatible) {
-    BzDeck.router = new FlareTail.app.Router(BzDeck);
-    BzDeck.controllers.session = new BzDeck.SessionController();
-  }
-});
-
-window.addEventListener('beforeunload', event => {
-  BzDeck.controllers.session.clean();
-});

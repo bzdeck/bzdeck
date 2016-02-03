@@ -19,7 +19,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$input = document.querySelector('#quicksearch [role="searchbox"]');
     this.$button = document.querySelector('#quicksearch [role="button"]');
     this.$results = document.querySelector('#quicksearch-results');
-    this.$$results = new this.widgets.Menu(this.$results);
+    this.$$results = new FlareTail.widgets.Menu(this.$results);
 
     this.$input.addEventListener('input', event => this.oninput());
     this.$input.addEventListener('focus', event => this.oninput());

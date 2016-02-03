@@ -3,15 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bugzfeed Client Controller. This works with the BugzfeedClientWorker background service.
+ * Define the Bugzfeed Client Controller. This works with BugzfeedHandler on the shared worker.
  * @extends BzDeck.BaseController
  */
-BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.BaseController {
+BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseController {
   /**
-   * Get a BugzfeedClientController instance.
+   * Get a BugzfeedController instance.
    * @constructor
    * @argument {undefined}
-   * @return {Object} controller - New BugzfeedClientController instance.
+   * @return {Object} controller - New BugzfeedController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -26,36 +26,9 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
     window.addEventListener('pagehide', event => this.disconnect());
 
     // Listen messages from the service worker.
-    navigator.serviceWorker.addEventListener('message', event => this.onmessage(event));
-  }
-
-  /**
-   * Called whenever a message is received from the service worker.
-   * @argument {ServiceWorkerMessageEvent} event - The message event.
-   * @return {undefined}
-   */
-  onmessage (event) {
-    let [ service, type, detail ] = event.data;
-
-    if (service !== 'Bugzfeed') {
-      return;
-    }
-
-    if (type === 'Connected') {
-      this.connected = true;
-    }
-
-    if (type === 'Disonnected') {
-      this.connected = false;
-    }
-
-    if (type === 'BugUpdated') {
-      this.trigger(':BugUpdated', { id: detail.id });
-    }
-
-    if (type === 'SubscriptionUpdated') {
-      this.subscription = new Set(detail.ids);
-    }
+    this.on('H:Connected', data => this.connected = true, true);
+    this.on('H:Disonnected', data => this.connected = false, true);
+    this.on('H:SubscriptionUpdated', data => this.subscription = new Set(detail.ids), true);
   }
 
   /**
@@ -65,7 +38,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    */
   connect () {
     if (BzDeck.server) {
-      this.notify_worker('Bugzfeed', 'Connect', { endpoint: BzDeck.server.endpoints.websocket });
+      this.trigger(':Connect', { endpoint: BzDeck.server.endpoints.websocket });
     }
   }
 
@@ -75,7 +48,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   disconnect () {
-    this.notify_worker('Bugzfeed', 'Disconnect');
+    this.trigger(':Disconnect');
   }
 
   /**
@@ -85,7 +58,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   _subscribe (ids) {
-    this.notify_worker('Bugzfeed', 'Subscribe', { ids });
+    this.trigger(':Subscribe', { ids });
   }
 
   /**
@@ -94,6 +67,6 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   _unsubscribe (ids) {
-    this.notify_worker('Bugzfeed', 'Unsubscribe', { ids });
+    this.trigger(':Unsubscribe', { ids });
   }
 }
