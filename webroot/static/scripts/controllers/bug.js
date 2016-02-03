@@ -827,10 +827,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   fetch () {
     let bugzfeed = BzDeck.controllers.bugzfeed;
 
-    bugzfeed.subscription.has(this.bug.id).then(has => {
-      if (!bugzfeed.connected || !has) {
-        this.bug.fetch();
-      }
-    });
+    if (!bugzfeed.connected || !bugzfeed.subscriptions.has(this.bug.id)) {
+      this.bug.fetch();
+    }
   }
 }

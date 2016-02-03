@@ -25,7 +25,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     BzDeck.datasources.global = new BzDeck.GlobalDataSource();
     BzDeck.datasources.account = new BzDeck.AccountDataSource();
     BzDeck.controllers.global = new BzDeck.GlobalController();
-    BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedClientController();
+    BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedController();
 
     new BzDeck.SessionView();
     new BzDeck.LoginFormView(params);

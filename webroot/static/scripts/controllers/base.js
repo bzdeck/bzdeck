@@ -10,17 +10,6 @@ BzDeck.controllers = BzDeck.controllers || {};
  */
 BzDeck.BaseController = class BaseController extends FlareTail.app.Controller {
   /**
-   * Send a message to the service worker.
-   * @argument {String} service - Related service.
-   * @argument {String} type - Event type.
-   * @argument {Object} detail - Event detail.
-   * @return {undefined}
-   */
-  notify_worker (service, type, detail) {
-    navigator.serviceWorker.ready.then(registration => registration.active.postMessage([service, type, detail]));
-  }
-
-  /**
    * Send an API request to the remote Bugzilla instance. Use a Worker on a different thread.
    * @argument {String} path - Location including an API method.
    * @argument {URLSearchParams} [params] - Search query.

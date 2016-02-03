@@ -3,19 +3,25 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
+ * Declare the BzDeck app namespace. This code is on a dedicated worker thread.
+ * @namespace
+ */
+const BzDeck = { workers: {} };
+
+/**
  * Implement a client of the Bugzfeed push notification service offered by bugzilla.mozilla.org, enabling live update of
  * bug timelines.
  * @see {@link https://wiki.mozilla.org/BMO/ChangeNotificationSystem}
  */
-BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
+BzDeck.BugzfeedWorker = class BugzfeedWorker {
   /**
    * Initialize the Bugzfeed background service.
    * @constructor
    * @argument {undefined}
-   * @return {Object} worker - New BugzfeedClientWorker instance.
+   * @return {Object} worker - New BugzfeedWorker instance.
    */
   constructor () {
-    this.subscription = new Set();
+    this.subscriptions = new Set();
 
     self.addEventListener('message', event => this._onmessage(event));
   }
@@ -26,26 +32,17 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
    * @return {undefined}
    */
   _onmessage (event) {
-    let [ service, type, detail ] = event.data;
+    let { command, endpoint, ids } = event.data;
 
-    if (service !== 'Bugzfeed') {
-      return;
-    }
+    let func = {
+      'Connect': () => this.connect(endpoint),
+      'Disconnect': () => this.disconnect(),
+      'Subscribe': () => this.subscribe(ids),
+      'Unsubscribe': () => this.unsubscribe(ids),
+    }[command];
 
-    if (type === 'Connect') {
-      this.connect(detail.endpoint);
-    }
-
-    if (type === 'Disconnect') {
-      this.disconnect();
-    }
-
-    if (type === 'Subscribe') {
-      this.subscribe(detail.ids);
-    }
-
-    if (type === 'Unsubscribe') {
-      this.unsubscribe(detail.ids);
+    if (func) {
+      func()
     }
   }
 
@@ -98,7 +95,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
    * @return {undefined}
    */
   subscribe (ids) {
-    ids.forEach(id => this.subscription.add(id));
+    ids.forEach(id => this.subscriptions.add(id));
     this.send('subscribe', ids);
   }
 
@@ -108,7 +105,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
    * @return {undefined}
    */
   unsubscribe (ids) {
-    ids.forEach(id => this.subscription.delete(id));
+    ids.forEach(id => this.subscriptions.delete(id));
     this.send('unsubscribe', ids);
   }
 
@@ -123,11 +120,11 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       delete this.reconnector;
     }
 
-    if (this.subscription.size) {
-      this.subscribe([...this.subscription]);
+    if (this.subscriptions.size) {
+      this.subscribe([...this.subscriptions]);
     }
 
-    trigger('Bugzfeed', 'Connected');
+    self.postMessage({ status: 'Connected' });
   }
 
   /**
@@ -141,7 +138,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    trigger('Bugzfeed', 'Disonnected');
+    self.postMessage({ status: 'Disonnected' });
   }
 
   /**
@@ -155,7 +152,7 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    trigger('Bugzfeed', 'Disonnected');
+    self.postMessage({ status: 'Disonnected' });
   }
 
   /**
@@ -167,11 +164,13 @@ BzDeck.workers.BugzfeedClient = class BugzfeedClientWorker {
     let { command, bug, bugs, result, when } = JSON.parse(event.data);
 
     if (command === 'update') {
-      trigger('Bugzfeed', 'BugUpdated', { id: bug });
+      self.postMessage({ status: 'BugUpdated', id: bug });
     }
 
     if (command === 'subscribe' && result === 'ok') {
-      trigger('Bugzfeed', 'SubscriptionUpdated', { ids: bugs });
+      self.postMessage({ status: 'SubscriptionsUpdated', ids: bugs });
     }
   }
 }
+
+BzDeck.workers.bugzfeed = new BzDeck.BugzfeedWorker();

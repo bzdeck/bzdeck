@@ -20,7 +20,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     this.store_name = 'bugs';
     this.model = BzDeck.BugModel;
 
-    this.subscribe('BugzfeedClientController:BugUpdated', true);
+    this.subscribe('BugzfeedController:BugUpdated', true);
   }
 
   /**
@@ -138,7 +138,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Called by BugzfeedClientController whenever a bug is updated. Retrieve the latest data from Bugzilla.
+   * Called by BugzfeedController whenever a bug is updated. Retrieve the latest data from Bugzilla.
    * @argument {Object} data - Passed data.
    * @return {undefined}
    */

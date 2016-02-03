@@ -3,21 +3,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bugzfeed Client Controller. This works with the BugzfeedClientWorker background service.
+ * Define the Bugzfeed Controller. This works with the BugzfeedWorker background service.
  * @extends BzDeck.BaseController
  */
-BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.BaseController {
+BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseController {
   /**
-   * Get a BugzfeedClientController instance.
+   * Get a BugzfeedController instance.
    * @constructor
    * @argument {undefined}
-   * @return {Object} controller - New BugzfeedClientController instance.
+   * @return {Object} controller - New BugzfeedController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
 
+    this.worker = new Worker('/static/scripts/workers/bugzfeed.js');
     this.connected = false;
-    this.subscription = new Set();
+    this.subscriptions = new Set();
 
     // Add event handlers. Disconnect from the WebSocket server when the page is closed, otherwise the client continues
     // working background. Connect when the page is opened again or the network status has changed.
@@ -25,37 +26,45 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
     window.addEventListener('pageshow', event => this.connect());
     window.addEventListener('pagehide', event => this.disconnect());
 
-    // Listen messages from the service worker.
-    navigator.serviceWorker.addEventListener('message', event => this.onmessage(event));
+    // Listen messages from the worker.
+    this.worker.addEventListener('message', event => this.onmessage(event.data));
   }
 
   /**
-   * Called whenever a message is received from the service worker.
-   * @argument {ServiceWorkerMessageEvent} event - The message event.
+   * Called whenever a message is received from the worker.
+   * @argument {Object} data - Posted message.
    * @return {undefined}
    */
-  onmessage (event) {
-    let [ service, type, detail ] = event.data;
+  onmessage (data) {
+    let { status, id, ids } = data;
 
-    if (service !== 'Bugzfeed') {
-      return;
+    let func = {
+      'Connected': () => this.connected = true,
+      'Disonnected': () => this.connected = false,
+      'BugUpdated': () => this.trigger(':BugUpdated', { id }),
+      'SubscriptionsUpdated': () => this.subscriptions = new Set(ids),
+    }[status];
+
+    if (BzDeck.config.debug) {
+      console.info('BugzfeedController.onmessage', data)
     }
 
-    if (type === 'Connected') {
-      this.connected = true;
+    if (func) {
+      func()
+    }
+  }
+
+  /**
+   * Post a message to BugzfeedWorker.
+   * @argument {Object} data
+   * @return {undefined}
+   */
+  notify (data) {
+    if (BzDeck.config.debug) {
+      console.info('BugzfeedController.notify', data)
     }
 
-    if (type === 'Disonnected') {
-      this.connected = false;
-    }
-
-    if (type === 'BugUpdated') {
-      this.trigger(':BugUpdated', { id: detail.id });
-    }
-
-    if (type === 'SubscriptionUpdated') {
-      this.subscription = new Set(detail.ids);
-    }
+    this.worker.postMessage(data);
   }
 
   /**
@@ -65,7 +74,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    */
   connect () {
     if (BzDeck.server) {
-      this.notify_worker('Bugzfeed', 'Connect', { endpoint: BzDeck.server.endpoints.websocket });
+      this.notify({ command: 'Connect', endpoint: BzDeck.server.endpoints.websocket });
     }
   }
 
@@ -75,7 +84,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   disconnect () {
-    this.notify_worker('Bugzfeed', 'Disconnect');
+    this.notify({ command: 'Disconnect' });
   }
 
   /**
@@ -85,7 +94,7 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   _subscribe (ids) {
-    this.notify_worker('Bugzfeed', 'Subscribe', { ids });
+    this.notify({ command: 'Subscribe', ids });
   }
 
   /**
@@ -94,6 +103,6 @@ BzDeck.BugzfeedClientController = class BugzfeedClientController extends BzDeck.
    * @return {undefined}
    */
   _unsubscribe (ids) {
-    this.notify_worker('Bugzfeed', 'Unsubscribe', { ids });
+    this.notify({ command: 'Unsubscribe', ids });
   }
 }

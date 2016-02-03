@@ -16,6 +16,7 @@ const files = [
   '/static/images/themes/dark/sprite.png',
   '/static/images/themes/light/sprite.png',
   '/static/scripts/combined.js',
+  '/static/scripts/workers/bugzfeed.js',
   '/static/scripts/workers/tasks.js',
   '/static/styles/combined.css',
   '/static/styles/themes/dark.css',
@@ -29,12 +30,6 @@ const files = [
 
 // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
 const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
-
-// Import sub scripts
-self.importScripts('/static/scripts/workers/bugzfeed.js');
-
-// Initialize the services
-BzDeck.workers.bugzfeed = new BzDeck.workers.BugzfeedClient();
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -83,15 +78,3 @@ self.addEventListener('fetch', event => {
     .catch(error => new Response('404 Not Found', { status: 404 }))
   );
 });
-
-/**
- * Send a message to the main thread.
- *
- * @argument {String} service - Related service.
- * @argument {String} type - Event type.
- * @argument {Object} [detail] - Event detail.
- * @return {undefined}
- */
-function trigger (service, type, detail) {
-  self.clients.matchAll().then(_clients => _clients.forEach(client => client.postMessage([service, type, detail])));
-};
