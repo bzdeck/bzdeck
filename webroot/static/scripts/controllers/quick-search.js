@@ -61,10 +61,10 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   }
 
   /**
-   * Execute a quick search and notify the results with an event. TODO: Add support for other objects like products and
-   * components (#326).
+   * Execute a quick search and notify the results with an event.
    * @argument {String} input - Original search terms, may contain spaces.
    * @return {undefined}
+   * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {
     input = input.trim();

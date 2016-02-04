@@ -50,7 +50,7 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
     }
 
     if (func) {
-      func()
+      func();
     }
   }
 

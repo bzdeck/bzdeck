@@ -67,10 +67,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Search bugs from the local database and return the results. TODO: Add support for Bugzilla quick search queries
-   * (#327).
+   * Search bugs from the local database and return the results.
    * @argument {URLSearchParams} params - Search query.
    * @return {Promise.<Object>} Promise to be resolved in the search results.
+   * @todo Add support for Bugzilla quick search queries (#327).
    */
   search_local (params) {
     let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase()),
@@ -123,9 +123,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Sort descending (new to old) and return search results. TODO: Improve the sorting algorithm.
+   * Sort descending (new to old) and return search results.
    * @argument {Array.<Proxy>} bugs - List of found bugs.
    * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @todo Improve the sorting algorithm.
    */
   get_search_results (bugs) {
     // Sort by the last updated time

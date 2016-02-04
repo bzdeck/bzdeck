@@ -30,9 +30,9 @@ BzDeck.ServerModel = class ServerModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current config
-   * from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI compat
-   * layer instead.
+   * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current
+   * config from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI
+   * compat layer instead.
    * @argument {undefined}
    * @return {Promise.<Object>} config - Promise to be resolved in the Bugzilla configuration data.
    * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other}

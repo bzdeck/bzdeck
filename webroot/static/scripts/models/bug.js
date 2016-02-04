@@ -108,7 +108,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       return Promise.resolve(this.proxy());
     }, error => Promise.reject(new Error('Failed to fetch bugs from Bugzilla.')));
-  };
+  }
 
   /**
    * Merge the provided bug data with the locally cached data, parse the changes to update the unread status, then
@@ -181,7 +181,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     });
 
     return true;
-  };
+  }
 
   /**
    * Update the bug's annotation and notify the change. If the bug is being marked as read, update the last-visited
@@ -226,7 +226,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.trigger(':AnnotationUpdated', { bug: this.proxy(), type, value });
 
     return true;
-  };
+  }
 
   /**
    * Get the duplicated bug list for this bug. The duplicates are currently not part of the API, so parse the comments
@@ -248,7 +248,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     return [...duplicates].sort();
-  };
+  }
 
   /**
    * Check if the bug is unread or has been changed within the last 10 days.
@@ -305,7 +305,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       return false;
     });
-  };
+  }
 
   /**
    * Get a list of people involved in the bug.
@@ -351,7 +351,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     return participants;
-  };
+  }
 
   /**
    * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors. The list may
@@ -383,5 +383,5 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     return new Set([...contributors.keys()].sort((a, b) => contributors.get(b) - contributors.get(a)));
-  };
+  }
 }

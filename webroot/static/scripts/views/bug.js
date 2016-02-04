@@ -34,7 +34,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Start rendering the content, activate the widgets and event listeners.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -52,7 +51,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set up menu items on the toolbar.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -142,7 +140,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -270,7 +267,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Render the bug data on the view.
-   *
    * @argument {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @return {undefined}
    */
@@ -360,7 +356,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -384,7 +379,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
         this.comboboxes.set($combobox, $$combobox);
         $combobox.setAttribute('aria-disabled', !can_editbugs);
-        $$combobox.build_dropdown(this.get_field_values(name).map(value => ({ value, selected: value === this.bug[name] })));
+        $$combobox.build_dropdown(this.get_field_values(name)
+            .map(value => ({ value, selected: value === this.bug[name] })));
         $$combobox.bind('Change', event => {
           let value = event.detail.value;
 
@@ -445,7 +441,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Get product-dependent field values that will be displayed in a combobox.
-   *
    * @argument {String} field_name - One of the following bug field names: product, component, version, target_milestone
    *  and status.
    * @argument {String} [product_name] - The default is the bug's product name, but it could be different when the user
@@ -469,7 +464,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Update the Resolution field UI when the Status is changed.
-   *
    * @argument {String} resolution - FIXED, DUPLICATE, etc.
    * @return {undefined}
    */
@@ -496,7 +490,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any field is edited by the user. Update the relevante widget accordingly.
-   *
    * @argument {Object} data - Passed data.
    * @argument {String} data.name - Field name.
    * @argument {String} data.value - Field value.
@@ -536,7 +529,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the user selected files to attach through an input form control or drag and drop operation. If the
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
    * traditional File API to identify the files. In any case, notify the selected files to the controller.
-   *
    * @argument {Object} data - Passed data.
    * @argument {(HTMLInputElement|DataTransfer)} data.input - Data source.
    * @return {undefined}
@@ -559,7 +551,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set a tooltip on each product name that shows the Bugzilla-defined description of that product.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -595,7 +586,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set a tooptip on each bug ID that shows the summary and status of that bug.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -649,9 +639,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever any bug field is updated on the remote Bugzilla instance. This may be called as part of the periodic
-   * fetches or Bugzfeed push notifications.
-   *
+   * Called whenever any bug field is updated on the remote Bugzilla instance. This may be called as part of the
+   * periodic fetches or Bugzfeed push notifications.
    * @argument {Proxy} bug - Updated BugModel instance.
    * @argument {Map.<String, Object>} changes - Change details.
    * @return {undefined}
@@ -703,7 +692,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called by BugModel whenever a bug annotation is updated. Update the Star button on the toolbar.
-   *
    * @argument {Object} data - Annotation change details.
    * @argument {Proxy} data.bug - Changed bug.
    * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
@@ -718,7 +706,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called by BugModel whenever any field of a bug is updated. Update the view if the bug ID matches.
-   *
    * @argument {Object} data - Passed data.
    * @argument {Proxy} data.bug - Changed bug.
    * @argument {Map}   data.changes - Change details.

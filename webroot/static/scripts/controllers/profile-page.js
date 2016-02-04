@@ -71,7 +71,7 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
     }).then(() => {
       this.trigger(':BugzillaProfileFetchingComplete');
     });
-  };
+  }
 }
 
 BzDeck.ProfilePageController.prototype.route = '/profile/(.+)';

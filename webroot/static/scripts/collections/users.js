@@ -23,8 +23,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Add bug participants, including Cc members, assignee, QA and menters, to the user database, and return the models of
-   * those users.
+   * Add bug participants, including Cc members, assignee, QA and menters, to the user database, and return the models
+   * of those users.
    * @argument {Proxy} bug - BugModel object.
    * @return {undefined}
    */
@@ -91,9 +91,10 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Sort descending (new to old) and return search results. TODO: Improve the sorting algorithm.
+   * Sort descending (new to old) and return search results.
    * @argument {Array.<Proxy>} users - List of found users.
    * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @todo Improve the sorting algorithm.
    */
   get_search_results (users) {
     // Sort by the last active time

@@ -404,12 +404,13 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever the upload of a new attachment is in progress. Show the current status on the
-   * statusbar. TODO: Use a progressbar (#159)
+   * statusbar.
    * @argument {object} data - Current uploading status.
    * @argument {Number} data.total - Total size of attachments.
    * @argument {Number} data.uploaded - Uploaded size of attachments.
    * @argument {Number} data.percentage - Uploaded percentage.
    * @return {undefined}
+   * @todo Use a progressbar (#159)
    */
   on_submit_progress (data) {
     this.$status.textContent = `${data.percentage}% uploaded`;

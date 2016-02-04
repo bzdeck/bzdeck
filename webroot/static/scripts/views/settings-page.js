@@ -73,8 +73,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's Bugzilla
-   * account name and API key.
+   * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's
+   * Bugzilla account name and API key.
    * @argument {undefined}
    * @return {undefined}
    */

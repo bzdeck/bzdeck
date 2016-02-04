@@ -40,11 +40,11 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by ProfilePageController when the User's Gravatar profile is retrieved. Apply the background image. TODO:
-   * Add more info such as the location and social accounts.
+   * Called by ProfilePageController when the User's Gravatar profile is retrieved. Apply the background image.
    * @argument {Object} data - Data passed.
    * @argument {Object} data.style - CSS style rules including the background image.
    * @return {Boolean} result - Whether the view is updated.
+   * @todo Add more info such as the location and social accounts.
    */
   on_gravatar_profile_found (data) {
     if (!this.$header) {

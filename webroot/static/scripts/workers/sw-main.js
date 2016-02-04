@@ -4,8 +4,6 @@
 
 'use strict';
 
-const BzDeck = { workers: {}};
-
 // Cache version: this has to be updated whenever a file is modified
 const version = '2016-02-03-18-34';
 

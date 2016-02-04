@@ -4,8 +4,10 @@
 
 /**
  * Define the Patch Viewer View. Render a patch file in HTML format so added and removed lines can be highlighted with
- * CSS. TODO: Support non-unified formats. Implement syntax highlight (#279).
+ * CSS.
  * @extends BzDeck.BaseView
+ * @todo Support non-unified formats.
+ * @todo Implement syntax highlight (#279).
  */
 BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
   /**

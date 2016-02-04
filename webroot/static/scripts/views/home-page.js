@@ -87,7 +87,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   setup_splitter () {
-    let $$splitter = this.$$preview_splitter = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
+    let $$splitter = this.$$preview_splitter
+                   = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
         prefix = 'ui.home.preview.splitter.position.';
 
     BzDeck.prefs.get(prefix + $$splitter.data.orientation).then(pref => {

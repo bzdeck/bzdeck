@@ -3,9 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Tooltip View. This constructor is intended to be inherited by each specific tooptip view. TODO: Add more
- * controls, like position, delay, duration, etc.
+ * Define the Tooltip View. This constructor is intended to be inherited by each specific tooptip view.
  * @extends BzDeck.BaseView
+ * @todo Add more controls, like position, delay, duration, etc.
  */
 BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   /**

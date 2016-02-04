@@ -39,11 +39,10 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
     this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
     this.on('C:UnreadToggled', data => this.toggle_unread(data.number));
-  };
+  }
 
   /**
    * Open a specified folder by updating the document title and rendering the home page thread.
-   *
    * @argument {String} folder_id - One of the folder identifiers defined in the app config.
    * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
    * @return {undefined}
@@ -68,7 +67,6 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Show the number of unread bugs on the Inbox option.
-   *
    * @argument {Number} num - Number of unread bugs.
    * @return {undefined}
    */

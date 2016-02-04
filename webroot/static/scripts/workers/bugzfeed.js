@@ -42,7 +42,7 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
     }[command];
 
     if (func) {
-      func()
+      func();
     }
   }
 

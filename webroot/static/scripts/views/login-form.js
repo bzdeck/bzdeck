@@ -38,7 +38,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Display the sign-in form when no active account is found.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -49,7 +48,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Hide the sign-in form while loading data.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -59,7 +57,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Hide the introductory paragraph on from the sign-in form.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -69,7 +66,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Display a message on the sign-in form.
-   *
    * @argument {String} message - Message to show.
    * @return {undefined}
    */
@@ -80,7 +76,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Display the "Sign in with Bugzilla" button that triggers Bugzilla's Authentication Delegation process. When the
    * button is clicked, take the user to the Bugzilla authentication page.
-   *
    * @argument {undefined}
    * @return {undefined}
    * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html}
@@ -104,7 +99,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * Display the "Sign in with QR Code" button on mobile. The user can quickly sign into the app by capturing a QR code
    * displayed on BzDeck for desktop, that encodes the user's Bugzilla account name and API key. The decoding is done by
    * a third-party library. This may not work depending on the spec of the device's camera.
-   *
    * @argument {undefined}
    * @return {undefined}
    */
@@ -166,7 +160,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called by SessionController whenever the sign-in status is updated. Update the UI accordingly.
-   *
    * @argument {Object} data - Passed data.
    * @argument {String} data.status - Current status.
    * @argument {String} data.message - Message text to display.
@@ -187,7 +180,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called by SessionController whenever an error is detected during the sign-in process. Show the error message.
-   *
    * @argument {Object} data - Passed data.
    * @argument {Error}  data.error - Error encountered.
    * @argument {String} data.message - Message text to display.
@@ -203,7 +195,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called by SessionController when the user has logged out from the app. Show the sign-in form again.
-   *
    * @argument {undefined}
    * @return {undefined}
    */

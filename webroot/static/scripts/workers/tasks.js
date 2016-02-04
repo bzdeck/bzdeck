@@ -4,6 +4,10 @@
 
 'use strict';
 
+/**
+ * Define the module namespace.
+ * @namespace
+ */
 const tasks = {};
 
 /**

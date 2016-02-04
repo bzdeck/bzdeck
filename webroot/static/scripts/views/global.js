@@ -86,7 +86,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    */
   toggle_unread (bugs, loaded, unread_num) {
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
-      BzDeck.views.pages.home.update_title(document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : ''));
+      BzDeck.views.pages.home.update_title(
+          document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : ''));
     }
 
     if (!loaded) {

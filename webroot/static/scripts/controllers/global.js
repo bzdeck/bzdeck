@@ -130,10 +130,11 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
   /**
    * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
-   * converted to in-app links. Quotes are nested in <blockquote> elements. TODO: Add more autolinkification support
-   * (#68) and improve the performance probably using a worker.
+   * converted to in-app links. Quotes are nested in <blockquote> elements.
    * @argument {String} str - Bug comment in plain text, as provided by Bugzilla.
    * @return {String} str - HTML-formatted comment.
+   * @todo Add more autolinkification support (#68)
+   * @todo Improve the performance probably using a worker.
    */
   parse_comment (str) {
     let blockquote = p => {

@@ -25,7 +25,10 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$input.addEventListener('focus', event => this.oninput());
     this.$input.addEventListener('onblur', event => this.cleanup());
     this.$input.addEventListener('mousedown', event => event.stopPropagation());
-    this.$input.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true); // Suppress context menu
+
+    // Suppress context menu
+    this.$input.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true);
+
     this.$button.addEventListener('mousedown', event => { event.stopPropagation(); this.onsubmit() });
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
     window.addEventListener('mousedown', event => this.cleanup());
@@ -84,8 +87,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever the user is typing or focusing on the search box. If the box is has some characters, show the search
-   * results. Otherwise, show the Recent Searches if any.
+   * Called whenever the user is typing or focusing on the search box. If the box is has some characters, show the
+   * search results. Otherwise, show the Recent Searches if any.
    * @argument {undefined}
    * @return {undefined}
    */
@@ -220,8 +223,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever a search result is selected. Open the object or Advanced Search page in a new tab, and close the drop
-   * down list.
+   * Called whenever a search result is selected. Open the object or Advanced Search page in a new tab, and close the
+   * drop down list.
    * @argument {HTMLElement} $target - Selected element.
    * @return {undefined}
    */

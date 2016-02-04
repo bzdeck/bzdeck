@@ -69,9 +69,10 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when the attachment cannot be retrieved because the device or browser is offline. Show a
-   * message to ask the user to go online. TODO: reload when going online.
+   * message to ask the user to go online.
    * @argument {undefined}
    * @return {undefined}
+   * @todo reload when going online.
    */
   on_offline () {
     BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n

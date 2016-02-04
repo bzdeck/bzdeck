@@ -394,6 +394,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
    * @argument {(FileList|Array)} files - Selected files.
    * @return {undefined}
+   * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
     let oversized_files = new Set(),
@@ -428,8 +429,6 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     if (!oversized_files.size) {
       return;
     }
-
-    // TODO: Integrate online storage APIs to upload large attachments (#111)
 
     let message,
         num_format = num => num.toLocaleString('en-US'),

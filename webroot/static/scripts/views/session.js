@@ -18,14 +18,14 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
 
     this.on('C:Login', () => this.login());
     this.on('C:Logout', () => this.logout());
-  };
+  }
 
   /**
    * Called once the application is ready and the user is signed in. Hide the sign-in page and show the main application
    * page instead.
-   *
    * @argument {undefined}
    * @return {undefined}
+   * @todo Focus handling.
    */
   login () {
     BzDeck.views.statusbar.$statusbar = document.querySelector('#statusbar');
@@ -35,13 +35,10 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
 
     this.$app_login.setAttribute('aria-hidden', 'true');
     this.$app_body.removeAttribute('aria-hidden');
-
-    // TODO: focus handling
   }
 
   /**
    * Called once the user is signed out from the app. Hide the main application page and show the sign-in page instead.
-   *
    * @argument {undefined}
    * @return {undefined}
    */

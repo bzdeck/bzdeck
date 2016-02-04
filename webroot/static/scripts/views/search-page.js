@@ -283,9 +283,10 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called by SearchPageController when the search results cannot be retrieved because the device or browser is
-   * offline. Show a message to ask the user to go online. TODO: reload when going online.
+   * offline. Show a message to ask the user to go online.
    * @argument {undefined}
    * @return {undefined}
+   * @todo Reload when going online.
    */
   on_offline () {
     this.show_status('You have to go online to search bugs.'); // l10n

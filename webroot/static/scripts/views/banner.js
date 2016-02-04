@@ -216,7 +216,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   }
 
   /**
-   * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global banner.
+   * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global
+   * banner.
    * @argument {HTMLElement} $parent - Tabpanel that contains the header.
    * @return {undefined}
    */
