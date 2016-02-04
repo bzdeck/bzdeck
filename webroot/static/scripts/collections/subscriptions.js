@@ -96,7 +96,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       params.append('o9', 'anywords');
       params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
     }).then(() => {
-      return BzDeck.controllers.global.request('bug', params);
+      return BzDeck.server.request('bug', params);
     }).then(result => {
       if (firstrun) {
         return Promise.all(result.bugs.map(_bug => {

@@ -122,7 +122,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     BzDeck.collections.servers.get(host, { host }).then(server => {
       BzDeck.server = server;
     }).then(() => {
-      return this.request('user', new URLSearchParams(`names=${email}`), { api_key });
+      return BzDeck.server.request('user', new URLSearchParams(`names=${email}`), { api_key });
     }).then(result => {
       return result.users ? Promise.resolve(result.users[0])
                           : Promise.reject(new Error(result.message || 'User Not Found'));
