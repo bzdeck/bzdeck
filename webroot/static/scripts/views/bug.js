@@ -429,7 +429,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
           let $target = event.target;
 
           if ($target.matches('[itemprop][itemtype$="User"]') && !$target.title) {
-            $target.title = $target.querySelector('[itemprop="description"]').textContent + '\n'
+            $target.title = $target.querySelector('[itemprop="description"]').content + '\n'
                           + $target.querySelector('[itemprop="email"]').content;
           }
         });
