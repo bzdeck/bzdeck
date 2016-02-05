@@ -1132,9 +1132,6 @@
       <meta itemprop="operatingSystem" content="Mac">
       <meta itemprop="operatingSystem" content="Linux">
       <meta itemprop="operatingSystem" content="Android">
-      <!-- Firefox OS support has been disabled due to the lack of the Service Workers support (Bug 1207265)
-      <meta itemprop="operatingSystem" content="Firefox OS">
-      -->
       <meta itemprop="browserRequirements" content="Firefox Developer Edition">
       <meta itemprop="browserRequirements" content="Firefox Nightly">
     </div>
