@@ -40,7 +40,7 @@ RewriteRule ^(attachment|bug|home|profile|search|settings) /app/ [L]
 
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
-RewriteRule ^service-worker\.js$ /static/scripts/workers/sw-main.js [L]
+RewriteRule ^service-worker\.js$ /static/scripts/workers/service-worker.js [L]
 RewriteRule ^static/scripts/combined\.js$ /components/combine-static-files.php?type=js [L]
 RewriteRule ^static/styles/combined\.css$ /components/combine-static-files.php?type=css [L]
 
