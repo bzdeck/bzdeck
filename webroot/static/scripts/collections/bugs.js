@@ -39,7 +39,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       let params = new URLSearchParams(param_str);
 
       ids.forEach(id => params.append('ids', id));
-      BzDeck.server.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
+      BzDeck.host.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
           .then(result => resolve(result.bugs), event => reject(new Error()));
     });
 
@@ -91,7 +91,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   search_remote (params) {
     let _bugs;
 
-    return BzDeck.server.request('bug', params).then(result => {
+    return BzDeck.host.request('bug', params).then(result => {
       if (!result.bugs || !result.bugs.length) {
         return Promise.resolve([]);
       }

@@ -321,7 +321,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         $changer = $change.querySelector('[itemprop="author"]'),
         $time = $change.querySelector('[itemprop="creation_time"]'),
         $how = $change.querySelector('[itemprop="how"]'),
-        conf_field = BzDeck.server.data.config.field,
+        conf_field = BzDeck.host.data.config.field,
         _field = conf_field[change.field_name] ||
                  // Bug 909055 - Field name mismatch in history: group vs groups
                  conf_field[change.field_name.replace(/s$/, '')] ||
@@ -595,7 +595,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       $elm.innerHTML = `<a href="${change[how]}">${change[how]}</a>`;
     } else if (change.field_name === 'see_also') {
       $elm.innerHTML = change[how].split(', ').map(url => {
-        let prefix = BzDeck.server.url + '/show_bug.cgi?id=',
+        let prefix = BzDeck.host.origin + '/show_bug.cgi?id=',
             bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
 
         if (bug_id) {

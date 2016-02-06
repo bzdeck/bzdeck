@@ -87,7 +87,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // blocked by the browser's popup blocker
     this.$bzauth_button.addEventListener('click', event => {
       let callback_url = `${location.origin}/integration/bugzilla-auth-callback/`,
-          auth_url = `${BzDeck.config.servers[this.host].url}/auth.cgi`
+          auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
                    + `?callback=${encodeURIComponent(callback_url)}&description=BzDeck`;
 
       this.trigger(':LoginRequested', { host: this.host })

@@ -124,7 +124,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if ($bugzilla_link) {
-      $bugzilla_link.href = `${BzDeck.server.url}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
+      $bugzilla_link.href = `${BzDeck.host.origin}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
     }
 
     if ($tweet_link) {
@@ -303,7 +303,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // See Also
       for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-        let re = new RegExp(`^${BzDeck.server.url}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
+        let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
             match = $link.href.match(re);
 
         if (match) {
@@ -364,7 +364,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.subscribe('BugController:FieldEdited');
 
     let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
-        is_closed = value => BzDeck.server.data.config.field.status.closed.includes(value);
+        is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
 
     // Iterate over the fields except the Flags secion which is activated by BugFlagsView
     for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
@@ -448,7 +448,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {Array} values - Field values.
    */
   get_field_values (field_name, product_name = this.bug.product) {
-    let { field, product } = BzDeck.server.data.config,
+    let { field, product } = BzDeck.host.data.config,
         { component, version_detail, target_milestone_detail } = product[product_name];
 
     let values = {
@@ -555,7 +555,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {undefined}
    */
   set_product_tooltips () {
-    let config = BzDeck.server.data.config,
+    let config = BzDeck.host.data.config,
         strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
         classification = config.classification[this.bug.classification],
         product = config.product[this.bug.product],

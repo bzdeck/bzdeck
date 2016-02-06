@@ -80,7 +80,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       firstrun = !last_loaded;
 
       if (last_loaded) {
-        let date = this.helpers.datetime.get_shifted_date(new Date(last_loaded), BzDeck.server.timezone);
+        let date = this.helpers.datetime.get_shifted_date(new Date(last_loaded), BzDeck.host.timezone);
 
         params.append('include_fields', 'id');
         params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
@@ -96,7 +96,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       params.append('o9', 'anywords');
       params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
     }).then(() => {
-      return BzDeck.server.request('bug', params);
+      return BzDeck.host.request('bug', params);
     }).then(result => {
       if (firstrun) {
         return Promise.all(result.bugs.map(_bug => {

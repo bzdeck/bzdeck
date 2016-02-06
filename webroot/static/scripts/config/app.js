@@ -12,13 +12,13 @@ const BzDeck = {};
  * Config
  */
 BzDeck.config = {
-  // List of supported servers
-  servers: {
+  // List of supported Bugzilla instances
+  hosts: {
     mozilla: {
       label: 'Mozilla',
       timezone: -8,
       default_assignee: 'nobody@mozilla.org',
-      url: 'https://bugzilla.mozilla.org',
+      origin: 'https://bugzilla.mozilla.org',
       endpoints: {
         bzapi: '/bzapi/',
         rest: '/rest/',
@@ -29,7 +29,7 @@ BzDeck.config = {
       label: 'Mozilla Dev',
       timezone: -8,
       default_assignee: 'nobody@mozilla.org',
-      url: 'https://bugzilla-dev.allizom.org',
+      origin: 'https://bugzilla-dev.allizom.org',
       endpoints: {
         bzapi: '/bzapi/',
         rest: '/rest/',

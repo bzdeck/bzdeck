@@ -135,7 +135,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @return {undefined}
    */
   render_tracking_flags () {
-    let config = BzDeck.server.data.config,
+    let config = BzDeck.host.data.config,
         $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
         $flag = this.get_template('details-tracking-flag'),
         $fragment = new DocumentFragment();

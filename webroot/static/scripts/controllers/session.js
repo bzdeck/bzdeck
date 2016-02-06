@@ -46,20 +46,20 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
     BzDeck.datasources.global.load().then(database => {
       BzDeck.collections.accounts = new BzDeck.AccountCollection();
-      BzDeck.collections.servers = new BzDeck.ServerCollection();
+      BzDeck.collections.hosts = new BzDeck.HostCollection();
     }, error => {
       this.trigger(':Error', { error, message: error.message });
     }).then(() => Promise.all([
       BzDeck.collections.accounts.load(),
-      BzDeck.collections.servers.load(),
+      BzDeck.collections.hosts.load(),
     ])).then(() => {
       return BzDeck.collections.accounts.get_current();
     }).then(account => {
       BzDeck.account = account;
     }).then(() => {
-      return BzDeck.collections.servers.get(BzDeck.account.data.host);
-    }).then(server => {
-      BzDeck.server = server;
+      return BzDeck.collections.hosts.get(BzDeck.account.data.host);
+    }).then(host => {
+      BzDeck.host = host;
     }).then(() => {
       this.load_data();
     }).catch(error => {
@@ -105,12 +105,12 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 3. Once the user's auth info is provided, check if the email and API key are valid.
-   * @argument {String} host - Host identifier like 'mozilla'.
+   * @argument {String} host_id - Host identifier like 'mozilla'.
    * @argument {String} email - User's Bugzilla account name.
    * @argument {String} api_key - User's 40-character Bugzilla API key.
    * @return {undefined}
    */
-  verify_account (host, email, api_key) {
+  verify_account (host_id, email, api_key) {
     this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
 
     if (!this.bootstrapping) {
@@ -119,10 +119,10 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       this.bootstrapping = true;
     }
 
-    BzDeck.collections.servers.get(host, { host }).then(server => {
-      BzDeck.server = server;
+    BzDeck.collections.hosts.get(host_id, { host: host_id }).then(host => {
+      BzDeck.host = host;
     }).then(() => {
-      return BzDeck.server.request('user', new URLSearchParams(`names=${email}`), { api_key });
+      return BzDeck.host.request('user', new URLSearchParams(`names=${email}`), { api_key });
     }).then(result => {
       return result.users ? Promise.resolve(result.users[0])
                           : Promise.reject(new Error(result.message || 'User Not Found'));
@@ -132,7 +132,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       return user.error ? Promise.reject(new Error(user.error)) : Promise.resolve(user);
     }).then(user => {
       let account = BzDeck.account = new BzDeck.AccountModel({
-        host: BzDeck.server.name,
+        host: BzDeck.host.name,
         name: email,
         api_key,
         loaded: Date.now(), // key
@@ -195,7 +195,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
     return Promise.all([
       BzDeck.collections.subscriptions.fetch(),
-      BzDeck.server.get_config(),
+      BzDeck.host.get_config(),
     ]);
   }
 

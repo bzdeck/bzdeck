@@ -32,7 +32,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
    */
   fetch () {
-    return BzDeck.server.request(`bug/attachment/${this.id}`).then(result => {
+    return BzDeck.host.request(`bug/attachment/${this.id}`).then(result => {
       this.data = result.attachments[this.id];
 
       return Promise.resolve(this.proxy());
@@ -65,8 +65,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
       return Promise.resolve(decode());
     }
 
-    return BzDeck.server.request(`bug/attachment/${this.id}`,
-                                             new URLSearchParams('include_fields=data')).then(result => {
+    return BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data')).then(result => {
       let attachment = result.attachments[this.id],
           data = attachment && attachment.data ? attachment.data : undefined;
 

@@ -28,7 +28,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   render ($outer, level = 4) {
-    let config = BzDeck.server.data.config,
+    let config = BzDeck.host.data.config,
         get_person = name => BzDeck.collections.users.get(name, { name }), // Promise
         _flags = (this.att ? this.att.flags : this.bug.flags) || [],
         $flag = this.get_template('details-flag'),

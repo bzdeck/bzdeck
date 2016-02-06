@@ -75,7 +75,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   fetch (include_metadata = true, include_details = true) {
     let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
-      BzDeck.server.request(`bug/${this.id}` + (method ? `/${method}` : ''), new URLSearchParams(param_str))
+      BzDeck.host.request(`bug/${this.id}` + (method ? `/${method}` : ''), new URLSearchParams(param_str))
           .then(result => resolve(result), event => reject(new Error()));
     });
 
@@ -193,7 +193,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   update_annotation (type, value) {
     if (type === 'unread' && value === false) {
-      BzDeck.server.request('bug_user_last_visit/' + this.id, null, {
+      BzDeck.host.request('bug_user_last_visit/' + this.id, null, {
         method: 'POST',
       }).then(result => {
         if (result[0] && result[0].id === this.id && result[0].last_visit_ts) {

@@ -63,7 +63,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
     super(); // This does nothing but is required before using `this`
 
     let default_cols = BzDeck.config.grid.default_columns,
-        field = BzDeck.server.data.config.field;
+        field = BzDeck.host.data.config.field;
 
     let toggle_prop = prop => {
       for (let $item of this.$$grid.view.selected) {

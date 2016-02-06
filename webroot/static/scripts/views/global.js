@@ -179,7 +179,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         }).then(bug_id => {
           if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
             // Open the link directly in a new browser tab
-            window.open(`${BzDeck.server.url}/attachment.cgi?id=${att_id}`);
+            window.open(`${BzDeck.host.origin}/attachment.cgi?id=${att_id}`);
           } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
             this.trigger('GlobalView:OpenAttachment', { id: att_id });
           } else {

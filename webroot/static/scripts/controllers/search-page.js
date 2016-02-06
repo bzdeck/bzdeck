@@ -65,7 +65,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
       page_category: 'search',
       page_id: this.id,
       page_constructor: BzDeck.SearchPageView,
-      page_constructor_args: [this.id, params, BzDeck.server.data.config],
+      page_constructor_args: [this.id, params, BzDeck.host.data.config],
       tab_label: 'Search', // l10n
       tab_desc: 'Search & Browse Bugs', // l10n
     }, this);

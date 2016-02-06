@@ -170,7 +170,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   render_link () {
     let $link = document.createElement('a');
 
-    $link.href = `${BzDeck.server.url}/attachment.cgi?id=${this.attachment.id || this.attachment.hash}`;
+    $link.href = `${BzDeck.host.origin}/attachment.cgi?id=${this.attachment.id || this.attachment.hash}`;
     $link.text = {
       'text/x-github-pull-request': 'See the GitHub pull request',
       'text/x-review-board-request': 'See the Review Board request',

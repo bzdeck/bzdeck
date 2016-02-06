@@ -65,15 +65,15 @@ $scripts = [
   '/static/scripts/models/account.js',
   '/static/scripts/models/attachment.js',
   '/static/scripts/models/bug.js',
-  '/static/scripts/models/server.js',
+  '/static/scripts/models/host.js',
   '/static/scripts/models/user.js',
   // Collections
   '/static/scripts/collections/base.js',
   '/static/scripts/collections/accounts.js',
   '/static/scripts/collections/attachments.js',
   '/static/scripts/collections/bugs.js',
+  '/static/scripts/collections/hosts.js',
   '/static/scripts/collections/prefs.js',
-  '/static/scripts/collections/servers.js',
   '/static/scripts/collections/subscriptions.js',
   '/static/scripts/collections/users.js',
   // Views

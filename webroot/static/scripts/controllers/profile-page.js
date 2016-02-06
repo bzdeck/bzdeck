@@ -59,8 +59,8 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
           image: this.user.image,
         },
         links: {
-          'bugzilla-profile': BzDeck.server.url + '/user_profile?login=' + encodeURI(email),
-          'bugzilla-activity': BzDeck.server.url + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
+          'bugzilla-profile': BzDeck.host.origin + '/user_profile?login=' + encodeURI(email),
+          'bugzilla-activity': BzDeck.host.origin + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
         },
         style: {
           'background-color': this.user.color,

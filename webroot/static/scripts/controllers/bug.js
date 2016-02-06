@@ -171,7 +171,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {undefined}
    */
   edit_field (name, value) {
-    let { field, product } = BzDeck.server.data.config,
+    let { field, product } = BzDeck.host.data.config,
         is_closed = value => field.status.closed.includes(value);
 
     if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
@@ -326,7 +326,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
       this.changes[field] = change;
     } else {
-      this.changes[field] = field === 'assigned_to' ? BzDeck.server.default_assignee : '';
+      this.changes[field] = field === 'assigned_to' ? BzDeck.host.default_assignee : '';
     }
 
     this.trigger(':ParticipantRemoved', { field, email });
@@ -398,7 +398,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    */
   attach_files (files) {
     let oversized_files = new Set(),
-        max_size = BzDeck.server.data.config.max_attachment_size;
+        max_size = BzDeck.host.data.config.max_attachment_size;
 
     for (let _file of files) {
       let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
@@ -744,7 +744,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
    */
   post_changes (data) {
-    return BzDeck.server.request(`bug/${this.bug.id}`, null, { method: 'PUT', data });
+    return BzDeck.host.request(`bug/${this.bug.id}`, null, { method: 'PUT', data });
   }
 
   /**
@@ -755,7 +755,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
    */
   post_att_changes (att_id, data) {
-    return BzDeck.server.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
+    return BzDeck.host.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
   }
 
   /**
@@ -768,7 +768,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     let size_computable,
         size = 0;
 
-    return BzDeck.server.request(`bug/${this.bug.id}/attachment`, null, {
+    return BzDeck.host.request(`bug/${this.bug.id}/attachment`, null, {
       method: 'POST',
       data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
       listeners: {

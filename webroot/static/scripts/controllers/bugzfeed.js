@@ -73,8 +73,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
    * @return {undefined}
    */
   connect () {
-    if (BzDeck.server) {
-      this.notify({ command: 'Connect', endpoint: BzDeck.server.endpoints.websocket });
+    if (BzDeck.host) {
+      this.notify({ command: 'Connect', endpoint: BzDeck.host.endpoints.websocket });
     }
   }
 

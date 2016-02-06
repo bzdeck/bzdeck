@@ -3,15 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Initialize the Server Model that represents a remote Bugzilla instance. Available through the ServerCollection.
+ * Initialize the Host Model that represents a remote Bugzilla instance. Available through the HostCollection.
  * @extends BzDeck.BaseModel
  */
-BzDeck.ServerModel = class ServerModel extends BzDeck.BaseModel {
+BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
    * @constructor
-   * @argument {Object} data - Server data.
-   * @return {Proxy} bug - New ServerModel instance.
+   * @argument {Object} data - Host data.
+   * @return {Proxy} bug - New HostModel instance.
    */
   constructor (data) {
     super(); // This does nothing but is required before using `this`
@@ -21,7 +21,7 @@ BzDeck.ServerModel = class ServerModel extends BzDeck.BaseModel {
     this.data = data;
     this.name = data.host;
 
-    let config = BzDeck.config.servers[this.name];
+    let config = BzDeck.config.hosts[this.name];
 
     // Extract the local config for easier access
     for (let [key, value] of Object.entries(config)) {
@@ -48,7 +48,7 @@ BzDeck.ServerModel = class ServerModel extends BzDeck.BaseModel {
     }
 
     let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
-        url = new URL(this.url + this.endpoints.rest + path),
+        url = new URL(this.origin + this.endpoints.rest + path),
         method = options.method || (options.data ? 'POST' : 'GET'),
         headers = new Map(),
         data = options.data ? Object.assign({}, options.data) : undefined, // Avoid DataCloneError by postMessage
@@ -112,7 +112,7 @@ BzDeck.ServerModel = class ServerModel extends BzDeck.BaseModel {
     }
 
     // Fetch the config via BzAPI
-    return this.helpers.network.json(`${this.url}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
+    return this.helpers.network.json(`${this.origin}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
       if (config && config.version) {
         let config_retrieved = this.data.config_retrieved = Date.now();
 
