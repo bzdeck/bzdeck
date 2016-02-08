@@ -22,6 +22,8 @@
     <meta name="twitter:site" content="@BzDeck">
     <meta name="twitter:domain" content="BzDeck.com">
     <meta name="twitter:url" content="https://www.bzdeck.com/">
+    <meta name="msapplication-TileColor" content="#444444">
+    <meta name="msapplication-TileImage" content="/static/images/logo/tile.png">
     <link rel="canonical" href="https://www.bzdeck.com/">
     <link rel="publisher" href="https://plus.google.com/+BzDeck">
 <?php output_link_elements('css') ?>
