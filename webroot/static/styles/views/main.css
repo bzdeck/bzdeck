@@ -10,7 +10,7 @@ main {
 }
 
 [data-device="desktop"]:root main {
-  top: 8rem; /* height of the banner */
+  top: 4.4rem; /* height of the banner */
 }
 
 [data-device|="mobile"]:root main {

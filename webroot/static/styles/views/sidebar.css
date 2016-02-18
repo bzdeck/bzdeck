@@ -10,14 +10,14 @@
 }
 
 [data-device="desktop"]:root #sidebar {
-  top: 8rem; /* height of the banner */
+  top: 4.4rem; /* height of the banner */
   bottom: 0;
   width: 16rem;
   border-width: 0 .1rem 0 0;
   border-style: solid;
-  border-color: var(--region-header-border-color);
-  color: var(--region-header-foreground-color);
-  background-color: var(--region-header-background-color);
+  border-color: var(--application-header-border-color);
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
 }
 
 [data-device|="mobile"]:root #sidebar {
@@ -97,7 +97,7 @@
 
 [data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"]:hover,
 [data-current-tab="home"][data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
-  background-color: var(--secondary-region-header-background-color);
+  background-color: var(--region-header-background-color);
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {

@@ -32,7 +32,7 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
     // Subcontrollers
     BzDeck.controllers.quick_search = new BzDeck.QuickSearchController();
 
-    this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/inbox'));
+    this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/' + BzDeck.controllers.sidebar.data.folder_id));
     this.subscribe('V:BackButtonClicked');
     this.subscribe('V:ReloadButtonPressed');
     this.subscribe('V:TabSelected');
