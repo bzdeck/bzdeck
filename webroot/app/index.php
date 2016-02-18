@@ -1092,6 +1092,9 @@
               </header>
               <div>
                 <div id="home-list-pane" tabindex="0" role="region">
+                  <header>
+                    <h3>Inbox</h3>
+                  </header>
                   <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
                   </section>
                   <section id="home-vertical-thread" tabindex="0" role="region">
