@@ -179,7 +179,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     let match = data.hash.match(/^#c(\d+)$/);
 
     if (match) {
-      let number = Number.parseInt(match[1]),
+      let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
+          number = Number.parseInt(match[1]),
           $comment = this.$timeline.querySelector(`[data-comment-number="${number}"]`);
 
       if ($comment) {
