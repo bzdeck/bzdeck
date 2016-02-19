@@ -5,7 +5,7 @@
 'use strict';
 
 // Cache version: this has to be updated whenever a file is modified
-const version = '2016-02-19-09-12';
+const version = '2016-02-19-09-20';
 
 // Files need to be cached
 const files = [
@@ -52,6 +52,9 @@ const files = [
   '/static/styles/views/sidebar.css',
   '/static/styles/views/thread.css',
   '/static/styles/views/tooltip.css',
+  // Theme styles
+  '/static/styles/themes/dark.css',
+  '/static/styles/themes/light.css',
   // Scripts (should be the same as the list in static-file-list.inc.php)
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
   '/vendor/flaretail.js/scripts/helpers.js',
