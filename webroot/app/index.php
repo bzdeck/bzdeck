@@ -982,7 +982,7 @@
             <p><span class="cta" role="button" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
             <p><span class="cta" role="button" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
           </div>
-          <p role="status">This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="http://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
+          <p role="status">This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
         </div>
       </div>
     </section><!-- end #app-login -->
