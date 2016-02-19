@@ -28,7 +28,7 @@ RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
 # Redirects
 RewriteRule ^about/?$       https://github.com/bzdeck/bzdeck/wiki [R,L]
 RewriteRule ^faq/?$         https://github.com/bzdeck/bzdeck/wiki/FAQ [R,L]
-RewriteRule ^privacy/?$     https://github.com/bzdeck/bzdeck/wiki/Privacy-Policy [R,L]
+RewriteRule ^privacy/?$     https://github.com/bzdeck/bzdeck/wiki/Privacy-Notice [R,L]
 RewriteRule ^support/?$     https://github.com/bzdeck/bzdeck/wiki/FAQ [R,L]
 RewriteRule ^screenshots/?$ https://www.facebook.com/BzDeck/photos_stream [R,L]
 
