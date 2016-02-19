@@ -22,8 +22,6 @@ if (file_exists(__DIR__ . '/../webroot' . $_SERVER['REQUEST_URI'])) {
 // Map several URLs to PHP files in the same way as .htaccess
 $rewrite_map = array(
   'service-worker.js' => '/static/scripts/workers/sw-main.js',
-  'static/scripts/combined.js' => '/components/combine-static-files.php?type=js',
-  'static/styles/combined.css' => '/components/combine-static-files.php?type=css',
 );
 
 if (array_key_exists($_SERVER['REQUEST_URI'], $rewrite_map)) {

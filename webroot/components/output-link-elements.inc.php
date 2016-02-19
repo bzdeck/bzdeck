@@ -14,13 +14,13 @@ function output_link_elements ($type) {
   ob_start();
 
   if ($type === 'css') {
-    foreach ((DEBUG ? $styles : ['/static/styles/combined.css']) as $path) {
+    foreach ($styles as $path) {
       echo "    <link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"{$path}\">\n";
     }
   }
 
   if ($type === 'js') {
-    foreach ((DEBUG ? $scripts : ['/static/scripts/combined.js']) as $path) {
+    foreach ($scripts as $path) {
       echo "    <script src=\"{$path}\"></script>\n";
     }
   }
