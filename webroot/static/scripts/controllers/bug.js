@@ -19,7 +19,10 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   constructor (id_prefix, bug) {
     super(); // This does nothing but is required before using `this`
 
-    this.id = `${id_prefix}-bug-${bug.id}`;
+    // Set the Controller (and View) ID. Add a timestamp to avoid multiple submissions (#303) but there would be a
+    // better way to solve the issue... The Controller and View should be reused whenever possible.
+    this.id = `${id_prefix}-${Date.now()}-bug-${bug.id}`;
+
     this.bug = bug;
     this.reset_changes();
     this.att_changes = new Map();
