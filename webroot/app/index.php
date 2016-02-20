@@ -988,7 +988,7 @@
     </section><!-- end #app-login -->
     <section id="app-body" aria-hidden="true">
       <header role="banner">
-        <h1 role="button">BzDeck</h1>
+        <h1 role="button" title="Home">BzDeck</h1>
         <div role="toolbar">
           <div id="quicksearch" title="Search for bugs and people" role="search">
             <input type="search" placeholder="Search for bugs and people" tabindex="1" role="searchbox" aria-haspopup="true" aria-owns="quicksearch-results">
@@ -1021,7 +1021,7 @@
             </section><!-- end #quicksearch-results -->
           </div><!-- end #quicksearch -->
           <ul id="toolbar-buttons">
-            <li role="none"><span id="reload-button" role="button" aria-busy="false" aria-disabled="false"></span></li>
+            <li role="none"><span id="reload-button" role="button" title="Reload" aria-busy="false" aria-disabled="false"></span></li>
             <li role="none">
               <ul id="main-menu" role="menubar">
                 <li role="none">
