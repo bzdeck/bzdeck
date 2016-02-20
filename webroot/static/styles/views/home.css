@@ -29,6 +29,7 @@
 
 [data-home-layout="vertical"]:root #home-list-pane {
   display: flex;
+  overflow: hidden;
   flex-direction: column;
   width: 40%;
   min-width: 24rem;
@@ -73,6 +74,7 @@
 }
 
 #home-preview-pane {
+  overflow: hidden;
   flex: auto;
   border-width: .1rem 0 0 0;
   border-style: solid;
