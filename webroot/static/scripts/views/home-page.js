@@ -209,7 +209,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     let mql = window.matchMedia('(max-width: 1023px)'),
         $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
 
-    let show_preview = mql => {
+    let show_preview = () => {
       let $$listbox = this.thread.$$listbox;
 
       if ($$listbox.view.members.length && document.querySelector('#home-preview-pane').clientHeight) {
@@ -218,9 +218,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     };
 
     if (!this.vertical_thread_initialized) {
-      // Select the first bug on the list automatically when a folder is opened
+      // Select the first bug on the list automatically when a folder is opened. Wait a sec until the listbox is ready.
       // TODO: Remember the last selected bug for each folder
-      $listbox.addEventListener('Updated', event => show_preview(mql));
+      $listbox.addEventListener('Updated', event => window.setTimeout(() => show_preview(), 100));
       mql.addListener(show_preview);
 
       // Star button
