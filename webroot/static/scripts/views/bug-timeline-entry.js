@@ -395,8 +395,11 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           needinfos,
           added_needinfos = _needinfos.added.size ? this.create_people_array(_needinfos.added) : undefined,
           removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined,
-          removals = change.removed ? this.create_history_change_element(change, 'removed').outerHTML : undefined,
-          additions = change.added ? this.create_history_change_element(change, 'added').outerHTML : undefined,
+          get_removals = change.removed ?
+              this.create_history_change_element(change, 'removed').then($elm => $elm.outerHTML) : undefined,
+          get_additions = change.added ?
+              this.create_history_change_element(change, 'added').then($elm => $elm.outerHTML) : undefined,
+          render = str => $how.innerHTML = str,
           att_id = change.attachment_id,
           attachment = att_id ? `<a href="/attachment/${att_id}" data-att-id="${att_id}">Attachment ${att_id}</a>`
                               : undefined; // l10n
@@ -404,72 +407,74 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       // Addition only
       if (!change.removed && change.added) {
         if (_reviews.added.size && att_id) {
-          added_reviews.then(reviews => $how.innerHTML = `requested ${reviews} to review ${attachment}`); // l10n
+          added_reviews.then(reviews => render(`requested ${reviews} to review ${attachment}`)); // l10n
         } else if (_feedbacks.added.size && att_id) {
           added_feedbacks.then(feedbacks =>
-              $how.innerHTML = `requested ${feedbacks} to give feedback on ${attachment}`); // l10n
+              render(`requested ${feedbacks} to give feedback on ${attachment}`)); // l10n
         } else if (_needinfos.added.size) {
-          added_needinfos.then(needinfos => $how.innerHTML = `requested information from ${needinfos}`); // l10n
+          added_needinfos.then(needinfos => render(`requested information from ${needinfos}`)); // l10n
         } else if (att_id && change.added === 'review+') {
-          $how.innerHTML = `approved ${attachment}`; // l10n
+          render(`approved ${attachment}`); // l10n
         } else if (att_id && change.added === 'review-') {
-          $how.innerHTML = `rejected ${attachment}`; // l10n
+          render(`rejected ${attachment}`); // l10n
         } else if (att_id && change.added === 'feedback+') {
-          $how.innerHTML = `gave positive feedback on ${attachment}`; // l10n
+          render(`gave positive feedback on ${attachment}`); // l10n
         } else if (att_id && change.added === 'feedback-') {
-          $how.innerHTML = `gave negative feedback on ${attachment}`; // l10n
+          render(`gave negative feedback on ${attachment}`); // l10n
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          $how.innerHTML = `set the ${additions} flag to ${attachment}`; // l10n
+          get_additions.then(additions => render(`set the ${additions} flag to ${attachment}`)); // l10n
         } else if (change.field_name === 'duplicates') {
-          $how.innerHTML = `marked ${additions} as a duplicate of this bug`; // for duplication comments, l10n
+          // for duplication comments, l10n
+          get_additions.then(additions => render(`marked ${additions} as a duplicate of this bug`));
         } else if (change.field_name === 'dupe_of') {
-          $how.innerHTML = `marked this bug as a duplicate of ${additions}`; // for duplication comments, l10n
+          // for duplication comments, l10n
+          get_additions.then(additions => render(`marked this bug as a duplicate of ${additions}`));
         } else if (change.field_name === 'keywords') {
           if (change.removed.split(', ').length === 1) {
-            $how.innerHTML = `added the ${additions} keyword`; // l10n
+            get_additions.then(additions => render(`added the ${additions} keyword`)); // l10n
           } else {
-            $how.innerHTML = `added the ${additions} keywords`; // l10n
+            get_additions.then(additions => render(`added the ${additions} keywords`)); // l10n
           }
         } else if (change.field_name === 'cc' && change.added === changer.email) {
-          $how.innerHTML = `subscribed to the bug`; // l10n
+          render(`subscribed to the bug`); // l10n
         } else if (change.field_name === 'status' && change.added === 'REOPENED') {
-          $how.innerHTML = `reopened the bug`; // l10n
+          render(`reopened the bug`); // l10n
         } else if (change.field_name === 'resolution' && change.added === 'FIXED') {
-          $how.innerHTML = `marked the bug <strong>${change.added}</strong>`; // l10n
+          render(`marked the bug <strong>${change.added}</strong>`); // l10n
         } else {
-          $how.innerHTML = `added ${additions} to the ${field}`; // l10n
+          get_additions.then(additions => render(`added ${additions} to the ${field}`)); // l10n
         }
       }
 
       // Removal only
       if (change.removed && !change.added) {
         if (att_id && _reviews.removed.size) {
-          removed_reviews.then(reviews => $how.innerHTML = `canceled ${attachment} review by ${reviews}`); // l10n
+          removed_reviews.then(reviews => render(`canceled ${attachment} review by ${reviews}`)); // l10n
         } else if (att_id && _feedbacks.removed.size) {
           removed_feedbacks.then(feedbacks =>
-              $how.innerHTML = `canceled feedback of ${attachment} by ${feedbacks}`); // l10n
+              render(`canceled feedback of ${attachment} by ${feedbacks}`)); // l10n
         } else if (_needinfos.removed.size) {
           removed_needinfos.then(needinfos => {
             if (!comment) {
-              $how.innerHTML = `canceled information request from ${needinfos}`; // l10n
+              render(`canceled information request from ${needinfos}`); // l10n
             } else if (_needinfos.removed.size === 1 && _needinfos.removed.has(changer.email)) {
-              $how.innerHTML = `provided information`; // l10n
+              render(`provided information`); // l10n
             } else {
-              $how.innerHTML = `provided information on behalf of ${needinfos}`; // l10n
+              render(`provided information on behalf of ${needinfos}`); // l10n
             }
           });
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          $how.innerHTML = `remvoed the ${additions} flag from ${attachment}`; // l10n
+          get_additions.then(additions => render(`remvoed the ${additions} flag from ${attachment}`)); // l10n
         } else if (change.field_name === 'keywords') {
           if (change.removed.split(', ').length === 1) {
-            $how.innerHTML = `removed the ${removals} keyword`; // l10n
+            get_removals.then(removals => render(`removed the ${removals} keyword`)); // l10n
           } else {
-            $how.innerHTML = `removed the ${removals} keywords`; // l10n
+            get_removals.then(removals => render(`removed the ${removals} keywords`)); // l10n
           }
         } else if (change.field_name === 'cc' && change.removed === changer.email) {
-          $how.innerHTML = `unsubscribed from the bug`; // l10n
+          render(`unsubscribed from the bug`); // l10n
         } else {
-          $how.innerHTML = `removed ${removals} from the ${field}`; // l10n
+          get_removals.then(removals => render(`removed ${removals} from the ${field}`)); // l10n
         }
       }
 
@@ -477,75 +482,82 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       if (change.removed && change.added) {
         if ((['priority', 'target_milestone'].includes(change.field_name) || change.field_name.startsWith('cf_')) &&
             change.removed.startsWith('--')) {
-          $how.innerHTML = `set the ${field} to ${additions}`; // l10n
+          get_additions.then(additions => render(`set the ${field} to ${additions}`)); // l10n
         } else if (att_id && change.added === 'review+' && _reviews.removed.size) {
           if (_reviews.removed.size === 1 && _reviews.removed.has(changer.email)) {
-            $how.innerHTML = `approved ${attachment}`; // l10n
+            render(`approved ${attachment}`); // l10n
           } else {
-            removed_reviews.then(reviews => $how.innerHTML = `approved ${attachment} on behalf of ${reviews}`); // l10n
+            removed_reviews.then(reviews => render(`approved ${attachment} on behalf of ${reviews}`)); // l10n
           }
         } else if (att_id && change.added === 'review-' && _reviews.removed.size) {
           if (_reviews.removed.size === 1 && _reviews.removed.has(changer.email)) {
-            $how.innerHTML = `rejected ${attachment}`; // l10n
+            render(`rejected ${attachment}`); // l10n
           } else {
-            removed_reviews.then(reviews => $how.innerHTML = `rejected ${attachment} on behalf of ${reviews}`); // l10n
+            removed_reviews.then(reviews => render(`rejected ${attachment} on behalf of ${reviews}`)); // l10n
           }
         } else if (att_id && _reviews.removed.size) {
           Promise.all([added_reviews, removed_reviews]).then(reviews =>
-              $how.innerHTML = `changed ${attachment} reviewer from ${reviews[0]} to ${reviews[1]}`); // l10n
+              render(`changed ${attachment} reviewer from ${reviews[0]} to ${reviews[1]}`)); // l10n
         } else if (att_id && change.added === 'feedback+' && _feedbacks.removed.size) {
           if (_feedbacks.removed.size === 1 && _feedbacks.removed.has(changer.email)) {
-            $how.innerHTML = `gave positive feedback on ${attachment}`; // l10n
+            render(`gave positive feedback on ${attachment}`); // l10n
           } else {
             removed_feedbacks.then(feedbacks =>
-                $how.innerHTML = `gave positive feedback on ${attachment} on behalf of ${feedbacks}`); // l10n
+                render(`gave positive feedback on ${attachment} on behalf of ${feedbacks}`)); // l10n
           }
         } else if (att_id && change.added === 'feedback-' && _feedbacks.removed.size) {
           if (_feedbacks.removed.size === 1 && _feedbacks.removed.has(changer.email)) {
-            $how.innerHTML = `gave negative feedback on ${attachment}`; // l10n
+            render(`gave negative feedback on ${attachment}`); // l10n
           } else {
             removed_feedbacks.then(feedbacks =>
-                $how.innerHTML = `gave negative feedback on ${attachment} on behalf of ${feedbacks}`); // l10n
+                render(`gave negative feedback on ${attachment} on behalf of ${feedbacks}`)); // l10n
           }
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          $how.innerHTML = `changed ${attachment} flag: ${removals} →︎ ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed ${attachment} flag: ${changes[0]} →︎ ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.description$/)) {
-          $how.innerHTML = `changed ${attachment} description: ${removals} →︎ ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed ${attachment} description: ${changes[0]} →︎ ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.file_?name$/)) {
-          $how.innerHTML = `changed ${attachment} filename: ${removals} →︎ ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed ${attachment} filename: ${changes[0]} →︎ ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.is_?patch$/)) {
           if (change.added === '1') {
-            $how.innerHTML = `marked ${attachment} as patch`; // l10n
+            render(`marked ${attachment} as patch`); // l10n
           } else {
-            $how.innerHTML = `unmarked ${attachment} as patch`; // l10n
+            render(`unmarked ${attachment} as patch`); // l10n
           }
         } else if (change.field_name.match(/^attachments?\.is_?obsolete$/)) {
           if (change.added === '1') {
-            $how.innerHTML = `marked ${attachment} as obsolete`; // l10n
+            render(`marked ${attachment} as obsolete`); // l10n
           } else {
-            $how.innerHTML = `unmarked ${attachment} as obsolete`; // l10n
+            render(`unmarked ${attachment} as obsolete`); // l10n
           }
         } else if (_needinfos.removed.size) {
           Promise.all([added_needinfos, removed_needinfos]).then(needinfos =>
-              $how.innerHTML = `requested information from ${needinfos[0]} instead of ${needinfos[1]}`); // l10n
+              render(`requested information from ${needinfos[0]} instead of ${needinfos[1]}`)); // l10n
         } else if (change.field_name === 'assigned_to' && change.removed.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
           // TODO: nobody@mozilla.org and *@bugzilla.bugs are the default assignees on BMO. It might be different on
           // other Bugzilla instances. The API should provide the info...
           if (change.added === changer.email) {
-            $how.innerHTML = `self-assigned to the bug`; // l10n
+            render(`self-assigned to the bug`); // l10n
           } else {
-            $how.innerHTML = `assigned ${additions} to the bug`; // l10n
+            get_additions.then(additions => render(`assigned ${additions} to the bug`)); // l10n
           }
         } else if (change.field_name === 'assigned_to' && change.added.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
-          $how.innerHTML = `removed ${removals} from the assignee`; // l10n
+          get_removals.then(removals => render(`removed ${removals} from the assignee`)); // l10n
         } else if (change.field_name === 'keywords') {
-          $how.innerHTML = `changed the keywords: removed ${removals}, added ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed the keywords: removed ${changes[0]}, added ${changes[1]}`)); // l10n
         } else if (change.field_name === 'blocks') {
-          $how.innerHTML = `changed the blockers: removed ${removals}, added ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed the blockers: removed ${changes[0]}, added ${changes[1]}`)); // l10n
         } else if (change.field_name === 'depends_on') {
-          $how.innerHTML = `changed the dependencies: removed ${removals}, added ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed the dependencies: removed ${changes[0]}, added ${changes[1]}`)); // l10n
         } else {
-          $how.innerHTML = `changed the ${field}: ${removals} → ${additions}`; // l10n
+          Promise.all([get_removals, get_additions]).then(changes =>
+              render(`changed the ${field}: ${changes[0]} → ${changes[1]}`)); // l10n
         }
       }
 
@@ -577,24 +589,29 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * Render a history change in a pretty way, converting Bug IDs to in-app links.
    * @argument {Object} change - Change details.
    * @argument {String} how - How the change was made: 'added' or 'removed'.
-   * @return {HTMLElement} $elm - Rendered element.
+   * @return {Promise.<HTMLElement>} $elm - Promise to be resolved in a rendered element.
    */
   create_history_change_element (change, how) {
     let $elm = document.createElement('span'),
+        render = str => $elm.innerHTML = str,
         ids;
 
-    if (['blocks', 'depends_on', 'duplicates', 'dupe_of'].includes(change.field_name)) {
+    $elm.setAttribute('data-how', how);
+
+    if (['assigned_to', 'qa_contact', 'mentors', 'cc'].includes(change.field_name)) {
+      return this.create_people_array(change[how].split(', ')).then(array => {
+        render(array);
+      }).then(() => $elm);
+    } else if (['blocks', 'depends_on', 'duplicates', 'dupe_of'].includes(change.field_name)) {
       if (change[how].split(', ').length > 1) {
-        $elm.innerHTML = 'Bug ' + change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>'); // l10n
+        render('Bug ' + change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>')); // l10n
       } else {
-        $elm.innerHTML = change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>'); // l10n
+        render(change[how].replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>')); // l10n
       }
-    } else if (['assigned_to', 'qa_contact', 'mentors', 'cc'].includes(change.field_name)) {
-      this.create_people_array(change[how].split(', ')).then(array => $elm.innerHTML = array);
     } else if (change.field_name === 'url') {
-      $elm.innerHTML = `<a href="${change[how]}">${change[how]}</a>`;
+      render(`<a href="${change[how]}">${change[how]}</a>`);
     } else if (change.field_name === 'see_also') {
-      $elm.innerHTML = change[how].split(', ').map(url => {
+      render(change[how].split(', ').map(url => {
         let prefix = BzDeck.host.origin + '/show_bug.cgi?id=',
             bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
 
@@ -603,13 +620,11 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         }
 
         return `<a href="${url}">${url}</a>`;
-      }).join(', ');
+      }).join(', '));
     } else {
-      $elm.innerHTML = this.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span');
+      render(this.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span'));
     }
 
-    $elm.setAttribute('data-how', how);
-
-    return $elm;
+    return Promise.resolve($elm);
   }
 }
