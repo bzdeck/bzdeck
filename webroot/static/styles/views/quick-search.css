@@ -7,7 +7,7 @@
 }
 
 [data-device="desktop"]:root #quicksearch {
-  margin: 1rem 0;
+  margin: .8rem 0;
   width: 56rem;
   height: 2.8rem; /* same as the logo */
 }

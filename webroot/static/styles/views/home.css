@@ -39,7 +39,7 @@
   display: flex;
   flex: none;
   box-sizing: border-box;
-  height: 3.6rem;
+  height: 3.2rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);

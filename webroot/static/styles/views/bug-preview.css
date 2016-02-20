@@ -12,7 +12,6 @@ article[id$="preview-bug"] > header {
   display: flex;
   position: absolute;
   left: 0;
-  padding-bottom: .4rem; /* = padding-top on #main-tablist */
   width: 100%;
 }
 
@@ -22,7 +21,7 @@ article[id$="preview-bug"] > div {
 }
 
 [data-device="desktop"]:root article[id$="preview-bug"] > div {
-  margin-top: 3.6rem !important;
+  margin-top: 3.2rem !important;
 }
 
 article[id$="preview-bug"] > .bug-info {

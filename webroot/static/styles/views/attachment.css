@@ -19,6 +19,7 @@
 
 [itemtype$="Attachment"][data-content-type] > header ~ * {
   flex: auto;
+  overflow: hidden;
 }
 
 [itemtype$="Attachment"][data-content-type] h4 {
@@ -74,6 +75,7 @@
 
 [itemtype$="Attachment"][data-content-type] .properties li .blurred[role="textbox"] {
   display: inline-block;
+  overflow: hidden;
   width: 80%;
 }
 
@@ -126,6 +128,7 @@
 
 [itemtype$="Attachment"][data-content-type].patch .body table {
   background-color: var(--grid-background-color); /* Hide the default <details> style on click */
+  table-layout: fixed;
 }
 
 [itemtype$="Attachment"][data-content-type].patch .body tbody {
@@ -155,20 +158,21 @@
   border-width: 0 .1rem 0 0;
   border-style: solid;
   border-color: var(--secondary-grid-border-color);
-  min-width: 3ex;
+  width: 2rem;
   color: var(--disabled-control-foreground-color);
   font-size: 1.1rem;
   text-align: right;
 }
 
 [itemtype$="Attachment"][data-content-type].patch .body td.sign {
+  width: 1rem;
   padding-right: 0;
   color: var(--disabled-control-foreground-color);
 }
 
 [itemtype$="Attachment"][data-content-type].patch .body td.code {
-  width: 100%;
-  font-size: 1.15rem;
+  width: auto;
+  font-size: 1rem;
   -moz-user-select: text;
   cursor: text;
 }

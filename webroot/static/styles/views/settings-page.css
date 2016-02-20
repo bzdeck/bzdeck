@@ -10,7 +10,6 @@
   border-width: 0 .1rem 0 0;
   border-style: solid;
   border-color: var(--application-header-border-color);
-  padding: .8rem 0;
   width: 16rem;
   height: 100%;
   color: var(--application-header-foreground-color);

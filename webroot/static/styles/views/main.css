@@ -178,8 +178,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > header {
   box-sizing: border-box;
-  padding-bottom: .4rem; /* = padding-top on #main-tablist */
-  height: 3.6rem;
+  height: 3.2rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);

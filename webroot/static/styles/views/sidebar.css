@@ -72,10 +72,6 @@
   background: transparent;
 }
 
-[data-device="desktop"]:root #sidebar-folders {
-  margin: .8rem 0;
-}
-
 [data-device="desktop"]:root #sidebar [role="option"] {
   border-width: 0 0 0 .4rem;
   border-style: solid;
@@ -184,7 +180,7 @@
 [data-device|="mobile"]:root #sidebar-menu {
   border-width: .1rem 0 0;
   border-style: solid;
-  border-color: var(--region-border-color);
+  border-color: var(--secondary-region-border-color);
 }
 
 [data-device|="mobile"]:root #sidebar-menu #main-menu--app-menu {

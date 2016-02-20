@@ -226,7 +226,7 @@ col[data-hidden="false"] {
 }
 
 [role="menu"] [role^="menuitem"] {
-  line-height: 2rem;
+  line-height: 2.4rem;
 }
 
 [data-device|="mobile"]:root [role="menu"] [role^="menuitem"] {

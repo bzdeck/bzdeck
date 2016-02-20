@@ -174,7 +174,7 @@
 }
 
 [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
-  top: 3.6rem; /* A space for the tabs */
+  top: 3.2rem; /* A space for the tabs */
 }
 
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
@@ -385,7 +385,7 @@
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div {
-    margin-top: -3.6rem;
+    margin-top: -3.2rem;
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
@@ -431,7 +431,7 @@
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ :-moz-any(.bug-info, .bug-participants) {
-    top: 3.6rem;
+    top: 3.2rem;
   }
 }
 
