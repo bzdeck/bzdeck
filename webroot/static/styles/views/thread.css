@@ -167,7 +167,7 @@
 }
 
 .bug-list [role="gridcell"][data-type="boolean"] [role="checkbox"]::before {
-  line-height: 2.6rem;
+  line-height: 2rem;
 }
 
 .bug-list [role="gridcell"][data-type="boolean"] [aria-checked="false"]::before {

@@ -56,10 +56,11 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @argument {Object} consumer - View that contains the thread.
    * @argument {String} name - Identifier for the thread.
    * @argument {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
+   * @argument {Array} columns - Column list.
    * @argument {Object} options - Used for the Grid widget.
    * @return {Object} view - New ClassicThreadView instance.
    */
-  constructor (consumer, name, $grid, options) {
+  constructor (consumer, name, $grid, columns, options) {
     super(); // This does nothing but is required before using `this`
 
     let default_cols = BzDeck.config.grid.default_columns,
@@ -76,41 +77,36 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
     this.consumer = consumer;
     this.bugs = [];
 
-    BzDeck.prefs.get(`${name}.list.columns`).then(columns => {
-      this.$$grid = new this.widgets.Grid($grid, {
-        rows: [],
-        columns: (columns || default_cols).map(col => {
-          let _col = default_cols.find(__col => __col.id === col.id);
+    this.$$grid = new this.widgets.Grid($grid, {
+      rows: [],
+      columns: (columns || default_cols).map(col => {
+        col.label = (default_cols.find(__col => __col.id === col.id) || {}).label || field[col.id].description;
 
-          // Add labels
-          col.label = _col ? _col.label : field[col.id].description;
+        return col;
+      })
+    }, options);
 
-          return col;
-        })
-      }, options);
+    this.$$grid.bind('Selected', event => this.onselect(event));
+    this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
+    this.$$grid.bind('Sorted', event => BzDeck.prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
 
-      this.$$grid.bind('Selected', event => this.onselect(event));
-      this.$$grid.bind('dblclick', event => this.ondblclick(event, '[role="row"]'));
-      this.$$grid.bind('Sorted', event => BzDeck.prefs.set(`${name}.list.sort_conditions`, event.detail.conditions));
+    this.$$grid.bind('ColumnModified', event => {
+      BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
+        id: col.id,
+        type: col.type || 'string',
+        hidden: col.hidden || false
+      })));
+    });
 
-      this.$$grid.bind('ColumnModified', event => {
-        BzDeck.prefs.set(`${name}.list.columns`, event.detail.columns.map(col => ({
-          id: col.id,
-          type: col.type || 'string',
-          hidden: col.hidden || false
-        })));
-      });
-
-      this.$$grid.assign_key_bindings({
-        // Show previous bug, an alias of UP
-        B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
-        // Show next bug, an alias of DOWN
-        F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
-        // Toggle read
-        M: event => toggle_prop('unread'),
-        // Toggle star
-        S: event => toggle_prop('starred'),
-      });
+    this.$$grid.assign_key_bindings({
+      // Show previous bug, an alias of UP
+      B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
+      // Show next bug, an alias of DOWN
+      F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
+      // Toggle read
+      M: event => toggle_prop('unread'),
+      // Toggle star
+      S: event => toggle_prop('starred'),
     });
 
     this.subscribe('BugModel:AnnotationUpdated', true);
@@ -141,9 +137,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
         return new Promise(resolve => {
           if (!value) {
             resolve('');
-          }
-
-          if (Array.isArray(value)) {
+          } else if (Array.isArray(value)) {
             if (field === 'mentors') { // Array of Person
               Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name }))).then(mentors => {
                 resolve(mentors.map(mentor => mentors.name).join(', '));
@@ -151,18 +145,14 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
             } else { // Keywords
               resolve(value.join(', '));
             }
-          }
-
-          if (typeof value === 'object' && !Array.isArray(value)) { // Person
+          } else if (typeof value === 'object' && !Array.isArray(value)) { // Person
             BzDeck.collections.users.get(value.name, { name: value.name }).then(user => resolve(user.name));
-          }
-
-          if (field === 'starred') {
+          } else if (field === 'starred') {
             resolve(bug.starred);
-          }
-
-          if (field === 'unread') {
+          } else if (field === 'unread') {
             resolve(value === true);
+          } else {
+            resolve(value); // Simply return the value in String or Number
           }
         }).then(value => row.data[field] = value);
       })).then(() => {

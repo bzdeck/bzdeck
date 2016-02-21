@@ -248,8 +248,13 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   apply_classic_layout () {
-    BzDeck.prefs.get('home.list.sort_conditions').then(sort_cond => {
-      this.thread = new BzDeck.ClassicThreadView(this, 'home', document.querySelector('#home-list'), {
+    Promise.all([
+      BzDeck.prefs.get('home.list.sort_conditions'),
+      BzDeck.prefs.get('home.list.columns'),
+    ]).then(prefs => {
+      let [sort_cond, columns] = prefs;
+
+      this.thread = new BzDeck.ClassicThreadView(this, 'home', document.querySelector('#home-list'), columns, {
         date: { simple: false },
         sortable: true,
         reorderable: true,

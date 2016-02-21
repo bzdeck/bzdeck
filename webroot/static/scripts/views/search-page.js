@@ -171,8 +171,13 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
         $$grid,
         mobile = this.helpers.env.device.mobile;
 
-    BzDeck.prefs.get('home.list.sort_conditions').then(sort_cond => {
-      this.thread = new BzDeck.ClassicThreadView(this, 'search', this.$grid, {
+    Promise.all([
+      BzDeck.prefs.get('home.list.sort_conditions'),
+      BzDeck.prefs.get('search.list.columns'),
+    ]).then(prefs => {
+      let [sort_cond, columns] = prefs;
+
+      this.thread = new BzDeck.ClassicThreadView(this, 'search', this.$grid, columns, {
         sortable: true,
         reorderable: true,
         sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
