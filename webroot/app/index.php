@@ -286,12 +286,12 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div><!-- end #home-preview-bug-timeline-wrapper -->
+        <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #home-preview-bug -->
     </template><!-- end #home-preview-bug-template -->
     <template id="search-preview-bug-template">
@@ -322,12 +322,12 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
           </div>
         </div><!-- end #search-TID-preview-bug-timeline-wrapper -->
+        <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
@@ -369,7 +369,6 @@
           <div id="bug-TID-tabpanels">
             <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
-                <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
                 <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
                     <header class="bug-summary" data-field="summary">
@@ -666,6 +665,7 @@
             </div><!-- end #bug-TID-tabpanel-history -->
           </div><!-- end #bug-TID-tabpanels -->
         </div>
+        <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-template -->
     <template id="bug-details-error-template">

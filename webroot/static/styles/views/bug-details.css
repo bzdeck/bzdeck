@@ -384,7 +384,7 @@
     width: 32%;
   }
 
-  [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div {
+  [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div:not([aria-dropeffect]) {
     margin-top: -3.2rem;
   }
 

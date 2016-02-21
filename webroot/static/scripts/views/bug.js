@@ -39,6 +39,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    */
   init () {
     this.render();
+    this.init_att_drop_target();
 
     // Custom scrollbars
     this.scrollbars = new Set([...this.$bug.querySelectorAll('[role="region"]')]
@@ -437,6 +438,48 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     this.update_resolution_ui(this.bug.resolution);
+  }
+
+  /**
+   * Initialize the attachment drag & drop support.
+   * @argument {undefined}
+   * @return {Boolean} result - Whether the attachment drop target is found and initialized.
+   */
+  init_att_drop_target () {
+    let timer,
+        $target = this.$bug.querySelector('.att-drop-target');
+
+    if (!$target) {
+      return false;
+    }
+
+    this.$bug.addEventListener('dragenter', event => {
+      $target.setAttribute('aria-dropeffect', 'copy');
+    });
+
+    this.$bug.addEventListener('dragover', event => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
+
+      // Use a timer to hide the drop target, because the dragleave event is not fired for some reason when the mouse
+      // pointer leaves the target by crossing one of the borders shared with the window.
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => $target.setAttribute('aria-dropeffect', 'none'), 200);
+    });
+
+    this.$bug.addEventListener('drop', event => {
+      let dt = event.dataTransfer;
+
+      if (dt.types.contains('Files')) {
+        this.trigger('BugView:FilesSelected', { input: dt });
+      } else if (dt.types.contains('text/plain')) {
+        this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
+      }
+
+      event.preventDefault();
+    });
+
+    return true;
   }
 
   /**

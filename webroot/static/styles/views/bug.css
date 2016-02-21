@@ -125,3 +125,59 @@
   top: calc(100% - .4rem);
   right: .4rem;
 }
+
+[itemtype$="Bug"] .att-drop-target {
+  position: absolute !important;
+  top: 3.2rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 200;
+  color: var(--hyperlink-text-foreground-color);
+  background-color: var(--content-background-color-alpha);
+  transition: opacity .2s;
+}
+
+[itemtype$="Bug"] .att-drop-target[aria-dropeffect="none"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+[itemtype$="Bug"] .att-drop-target[aria-dropeffect="copy"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+[itemtype$="Bug"] .att-drop-target[aria-dropeffect] div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 1.6rem;
+  border: .4rem dashed var(--hyperlink-text-foreground-color);
+  border-radius: .8rem;
+  width: calc(100% - 3.2rem);
+  height: calc(100% - 3.2rem);
+  font-size: 1.6rem;
+  pointer-events: none;
+}
+
+[itemtype$="Bug"] .att-drop-target[aria-dropeffect] label {
+  display: block;
+  position: relative;
+  padding-top: 8rem;
+}
+
+[itemtype$="Bug"] .att-drop-target[aria-dropeffect] label::before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: calc(50% - 20rem);
+  width: 40rem;
+  font-size: 6.4rem;
+  font-family: FontAwesome;
+  text-align: center;
+  text-indent: .8rem;
+  letter-spacing: .8rem;
+  content: '\F1C5\F1C9\F1C6\F0F6';
+}

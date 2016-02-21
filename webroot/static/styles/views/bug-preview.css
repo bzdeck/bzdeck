@@ -20,7 +20,7 @@ article[id$="preview-bug"] > div {
   pointer-events: auto;
 }
 
-[data-device="desktop"]:root article[id$="preview-bug"] > div {
+[data-device="desktop"]:root article[id$="preview-bug"] > div:not([aria-dropeffect]) {
   margin-top: 3.2rem !important;
 }
 
