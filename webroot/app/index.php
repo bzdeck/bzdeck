@@ -286,6 +286,7 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
+          <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
@@ -321,6 +322,7 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
+          <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
             <div class="comments-wrapper"></div>
@@ -367,6 +369,7 @@
           <div id="bug-TID-tabpanels">
             <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
+                <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
                 <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
                   <section>
                     <header class="bug-summary" data-field="summary">
@@ -796,7 +799,6 @@
             </ul>
           </div>
         </footer>
-        <div aria-dropeffect="none"><label>Drop text or files here to attach</label></div>
       </section><!-- end #TID -->
     </template><!-- end #bug-comment-form -->
     <template id="bug-comment-form-request-needinfo-row">

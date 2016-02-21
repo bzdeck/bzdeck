@@ -117,8 +117,50 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $parent.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
+    this.init_drop_zone();
+
     this.subscribe('SettingsPageView:PrefValueChanged', true);
     this.subscribe('BugController:HistoryUpdated');
+  }
+
+  /**
+   * Initialize the attachment drag & drop support.
+   * @argument {undefined}
+   * @return {Boolean} result - Whether the attachment drop zone is initialized.
+   */
+  init_drop_zone () {
+    let $wrapper = this.$bug.querySelector('.bug-timeline-wrapper'),
+        $target = $wrapper.querySelector('[aria-dropeffect]');
+
+    if (!$target) {
+      return false;
+    }
+
+    $wrapper.addEventListener('dragover', event => {
+      $target.setAttribute('aria-dropeffect', 'copy');
+      event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
+      event.preventDefault();
+    });
+
+    $wrapper.addEventListener('dragleave', event => {
+      $target.setAttribute('aria-dropeffect', 'none');
+      event.preventDefault();
+    });
+
+    $wrapper.addEventListener('drop', event => {
+      let dt = event.dataTransfer;
+
+      if (dt.types.contains('Files')) {
+        this.trigger('BugView:FilesSelected', { input: dt });
+      } else if (dt.types.contains('text/plain')) {
+        this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
+      }
+
+      $target.setAttribute('aria-dropeffect', 'none');
+      event.preventDefault();
+    });
+
+    return true;
   }
 
   /**

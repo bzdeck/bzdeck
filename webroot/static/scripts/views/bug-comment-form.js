@@ -37,7 +37,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$file_picker = this.$form.querySelector('input[type="file"]');
     this.$attachments_table = this.$form.querySelector('[id$="tabpanel-attachments"] table');
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
-    this.$drop_target = this.$form.querySelector('[aria-dropeffect]');
     this.$submit = this.$form.querySelector('[data-command="submit"]');
 
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
@@ -136,31 +135,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     this.$file_picker.addEventListener('change', event => {
       this.trigger('BugView:FilesSelected', { input: event.target });
-    });
-
-    // Attach files by drag & drop
-    this.$form.addEventListener('dragover', event => {
-      this.$drop_target.setAttribute('aria-dropeffect', 'copy');
-      event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
-      event.preventDefault();
-    });
-
-    this.$form.addEventListener('dragleave', event => {
-      this.$drop_target.setAttribute('aria-dropeffect', 'none');
-      event.preventDefault();
-    });
-
-    this.$form.addEventListener('drop', event => {
-      let dt = event.dataTransfer;
-
-      if (dt.types.contains('Files')) {
-        this.trigger('BugView:FilesSelected', { input: dt });
-      } else if (dt.types.contains('text/plain')) {
-        this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
-      }
-
-      this.$drop_target.setAttribute('aria-dropeffect', 'none');
-      event.preventDefault();
     });
   }
 
