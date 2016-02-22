@@ -174,18 +174,20 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
             att_id = Number($target.getAttribute('data-att-id')),
             att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
 
-        BzDeck.collections.bugs.get_all().then(bugs => {
-          return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
-        }).then(bug_id => {
-          if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
-            // Open the link directly in a new browser tab
-            window.open(`${BzDeck.host.origin}/attachment.cgi?id=${att_id}`);
-          } else if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-            this.trigger('GlobalView:OpenAttachment', { id: att_id });
-          } else {
-            this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
-          }
-        });
+        if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
+          // Open the link directly in a new browser tab
+          window.open(`${BzDeck.host.origin}/attachment.cgi?id=${att_id}`);
+        } else {
+          BzDeck.collections.bugs.get_all().then(bugs => {
+            return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
+          }).then(bug_id => {
+            if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+              this.trigger('GlobalView:OpenAttachment', { id: att_id });
+            } else {
+              this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
+            }
+          });
+        }
 
         return this.helpers.event.ignore(event);
       }
