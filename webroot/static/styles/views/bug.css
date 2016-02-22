@@ -132,7 +132,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 200;
+  z-index: 2000;
   color: var(--hyperlink-text-foreground-color);
   background-color: var(--content-background-color-alpha);
   transition: opacity .2s;
