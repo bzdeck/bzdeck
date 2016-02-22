@@ -1,7 +1,7 @@
 {
   "name": "BzDeck",
   "description": "A useful, experimental Bugzilla client demonstrating modern Web application technologies such as CSS3, DOM4, HTML5, ECMAScript 6 and WAI-ARIA.",
-  "version": "2016-02-21-07-57",
+  "version": "2016-02-21-22-48",
   "launch_path": "/",
   "developer": {
     "name": "Team BzDeck",
