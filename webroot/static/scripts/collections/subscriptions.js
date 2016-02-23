@@ -15,7 +15,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    */
   get (id) {
     let email = BzDeck.account.data.name,
-        get_all = ['all', 'inbox', 'important'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
+        get_all = ['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
 
     return get_all.then(bugs => {
       let _bugs = [...bugs.values()];
@@ -24,7 +24,6 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
         return _bugs.filter((bug, index) => {
           switch (id) {
             case 'inbox':     return is_new_results[index];
-            case 'important': return ['blocker', 'critical', 'major'].includes(bug.severity);
             case 'watching':  return bug.cc && bug.cc.includes(email);
             case 'reported':  return bug.creator === email;
             case 'assigned':  return bug.assigned_to === email;

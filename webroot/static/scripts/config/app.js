@@ -142,11 +142,6 @@ BzDeck.config = {
       data: { id: 'qa' }
     },
     {
-      id: 'sidebar-folders--important',
-      label: 'Important',
-      data: { id: 'important' }
-    },
-    {
       id: 'sidebar-folders--all',
       label: 'All Bugs',
       data: { id: 'all' }
