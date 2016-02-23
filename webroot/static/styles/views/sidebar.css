@@ -16,6 +16,7 @@
   border-width: 0 .1rem 0 0;
   border-style: solid;
   border-color: var(--application-header-border-color);
+  padding: .8rem 0;
   color: var(--application-header-foreground-color);
   background-color: var(--application-header-background-color);
 }
@@ -76,7 +77,7 @@
   border-width: 0 0 0 .4rem;
   border-style: solid;
   border-color: transparent;
-  padding: .4rem 1.2rem;
+  padding: .4rem .8rem;
   background-color: transparent;
   font-size: 1.25rem;
   transition: all .2s;
@@ -93,7 +94,7 @@
 
 [data-device="desktop"]:root #sidebar [role="option"][aria-selected="false"]:hover,
 [data-current-tab="home"][data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
-  background-color: var(--region-header-background-color);
+  background-color: var(--secondary-region-header-background-color);
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="listbox"], [role="menu"]) {
@@ -105,6 +106,86 @@
   height: 2.4rem;
   font-size: 1.4rem;
   line-height: 2.4rem;
+}
+
+#sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+  display: inline-block;
+  font-size: 1.6rem;
+  font-family: FontAwesome;
+  text-align: center;
+  vertical-align: middle;
+}
+
+[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+  margin-right: .8rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+[data-device|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+  margin-right: 1.2rem;
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+#sidebar-folders--inbox label::before {
+  content: '\F01C';
+}
+
+#sidebar-folders--starred label::before {
+  content: '\F005';
+}
+
+#sidebar-folders--requests label::before {
+  content: '\F06A';
+}
+
+#sidebar-folders--reported label::before {
+  content: '\F1D8';
+}
+
+#sidebar-folders--watching label::before {
+  content: '\F02E';
+}
+
+#sidebar-folders--assigned label::before {
+  content: '\F0F2';
+}
+
+#sidebar-folders--mentor label::before {
+  content: '\F1CD';
+}
+
+#sidebar-folders--qa label::before {
+  content: '\F164';
+}
+
+#sidebar-folders--all label::before {
+  content: '\F036';
+}
+
+[data-device|="mobile"]:root #main-menu--app--profile label::before {
+  content: '\F007';
+}
+
+[data-device|="mobile"]:root #main-menu--app--settings label::before {
+  content: '\F013';
+}
+
+[data-device|="mobile"]:root #main-menu--app--fullscreen label::before {
+  content: '\F065';
+}
+
+[data-device|="mobile"]:root #main-menu--app--about label::before {
+  content: '\F05A';
+}
+
+[data-device|="mobile"]:root #main-menu--app--support label::before {
+  content: '\F059';
+}
+
+[data-device|="mobile"]:root #main-menu--app--logout label::before {
+  content: '\F08B';
 }
 
 #sidebar-folder-list [role="option"] label span {
