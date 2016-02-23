@@ -145,18 +145,11 @@
 }
 
 [id|="tabpanel-search"] [id$="result-pane"] [role="status"] {
-  display: table;
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-}
-
-[id|="tabpanel-search"] [id$="result-pane"] [role="status"] span {
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle;
 }
 
 [id|="tabpanel-search"] [id$="basic-search-pane"][aria-hidden="true"] + [id$="result-pane"] {
