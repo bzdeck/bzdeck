@@ -92,11 +92,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     let _bugs;
 
     return BzDeck.host.request('bug', params).then(result => {
-      if (!result.bugs || !result.bugs.length) {
-        return Promise.resolve([]);
-      }
-
-      _bugs = new Map(result.bugs.map(bug => [bug.id, bug]));
+      _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
     }).then(() => {
       return this.get_some(_bugs.keys());
     }).then(__bugs => {
