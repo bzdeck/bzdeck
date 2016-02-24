@@ -47,7 +47,7 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
         $line.classList.add('code');
 
         if (line.startsWith('@@')) {
-          let match = line.match(/^@@\ \-(\d+),\d+\s\+(\d+),\d+\s@@/);
+          let match = line.match(/^@@\ \-(\d+)(?:,\d+)?\s\+(\d+)(?:,\d+)?\s@@/);
 
           removed_ln = Number(match[1]);
           added_ln = Number(match[2]);
