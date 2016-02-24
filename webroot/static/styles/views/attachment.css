@@ -19,7 +19,6 @@
 
 [itemtype$="Attachment"][data-content-type] > header ~ * {
   flex: auto;
-  overflow: hidden;
 }
 
 [itemtype$="Attachment"][data-content-type] h4 {
@@ -77,6 +76,7 @@
   display: inline-block;
   overflow: hidden;
   width: 80%;
+  vertical-align: middle;
 }
 
 [itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {
@@ -127,6 +127,7 @@
 }
 
 [itemtype$="Attachment"][data-content-type].patch .body table {
+  overflow: hidden;
   background-color: var(--grid-background-color); /* Hide the default <details> style on click */
   table-layout: fixed;
 }
