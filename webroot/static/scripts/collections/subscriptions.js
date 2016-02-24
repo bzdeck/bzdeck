@@ -9,6 +9,17 @@
  */
 BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.BaseCollection {
   /**
+   * Get a SubscriptionCollection instance. This constructor is required to fire events in the member functions.
+   * Otherwise `constructor.name` will be blank and `this.trigger` doesn't work.
+   * @constructor
+   * @argument {undefined}
+   * @return {Object} collection - New SubscriptionCollection instance.
+   */
+  constructor () {
+    super(); // This does nothing but is required before using `this`
+  }
+
+  /**
    * Get bugs the user is participating from the local database with a specific key, like inbox, starred or reported.
    * @argument {String} id - Key of the subscription.
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
