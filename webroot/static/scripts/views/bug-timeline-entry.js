@@ -422,7 +422,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         } else if (att_id && change.added === 'feedback-') {
           render(`gave negative feedback on ${attachment}`); // l10n
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          get_additions.then(additions => render(`set the ${additions} flag to ${attachment}`)); // l10n
+          get_additions.then(additions => render(`set ${additions} flag to ${attachment}`)); // l10n
         } else if (change.field_name === 'duplicates') {
           // for duplication comments, l10n
           get_additions.then(additions => render(`marked ${additions} as a duplicate of this bug`));
@@ -430,10 +430,10 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           // for duplication comments, l10n
           get_additions.then(additions => render(`marked this bug as a duplicate of ${additions}`));
         } else if (change.field_name === 'keywords') {
-          if (change.removed.split(', ').length === 1) {
-            get_additions.then(additions => render(`added the ${additions} keyword`)); // l10n
+          if (change.added.split(', ').length === 1) {
+            get_additions.then(additions => render(`added ${additions} keyword`)); // l10n
           } else {
-            get_additions.then(additions => render(`added the ${additions} keywords`)); // l10n
+            get_additions.then(additions => render(`added ${additions} keywords`)); // l10n
           }
         } else if (change.field_name === 'cc' && change.added === changer.email) {
           render(`subscribed to the bug`); // l10n
@@ -442,7 +442,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         } else if (change.field_name === 'resolution' && change.added === 'FIXED') {
           render(`marked the bug <strong>${change.added}</strong>`); // l10n
         } else {
-          get_additions.then(additions => render(`added ${additions} to the ${field}`)); // l10n
+          get_additions.then(additions => render(`added ${additions} to ${field}`)); // l10n
         }
       }
 
@@ -464,17 +464,17 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
             }
           });
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          get_additions.then(additions => render(`remvoed the ${additions} flag from ${attachment}`)); // l10n
+          get_removals.then(removals => render(`removed ${removals} flag from ${attachment}`)); // l10n
         } else if (change.field_name === 'keywords') {
           if (change.removed.split(', ').length === 1) {
-            get_removals.then(removals => render(`removed the ${removals} keyword`)); // l10n
+            get_removals.then(removals => render(`removed ${removals} keyword`)); // l10n
           } else {
-            get_removals.then(removals => render(`removed the ${removals} keywords`)); // l10n
+            get_removals.then(removals => render(`removed ${removals} keywords`)); // l10n
           }
         } else if (change.field_name === 'cc' && change.removed === changer.email) {
           render(`unsubscribed from the bug`); // l10n
         } else {
-          get_removals.then(removals => render(`removed ${removals} from the ${field}`)); // l10n
+          get_removals.then(removals => render(`removed ${removals} from ${field}`)); // l10n
         }
       }
 
@@ -482,7 +482,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       if (change.removed && change.added) {
         if ((['priority', 'target_milestone'].includes(change.field_name) || change.field_name.startsWith('cf_')) &&
             change.removed.startsWith('--')) {
-          get_additions.then(additions => render(`set the ${field} to ${additions}`)); // l10n
+          get_additions.then(additions => render(`set ${field} to ${additions}`)); // l10n
         } else if (att_id && change.added === 'review+' && _reviews.removed.size) {
           if (_reviews.removed.size === 1 && _reviews.removed.has(changer.email)) {
             render(`approved ${attachment}`); // l10n
@@ -514,13 +514,13 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           }
         } else if (att_id && change.field_name === 'flagtypes.name') {
           Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} flag: ${changes[0]} →︎ ${changes[1]}`)); // l10n
+              render(`changed ${attachment} flag: ${changes[0]} → ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.description$/)) {
           Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} description: ${changes[0]} →︎ ${changes[1]}`)); // l10n
+              render(`changed ${attachment} description: ${changes[0]} → ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.file_?name$/)) {
           Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} filename: ${changes[0]} →︎ ${changes[1]}`)); // l10n
+              render(`changed ${attachment} filename: ${changes[0]} → ${changes[1]}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.is_?patch$/)) {
           if (change.added === '1') {
             render(`marked ${attachment} as patch`); // l10n
@@ -557,7 +557,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
               render(`changed the dependencies: removed ${changes[0]}, added ${changes[1]}`)); // l10n
         } else {
           Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed the ${field}: ${changes[0]} → ${changes[1]}`)); // l10n
+              render(`changed ${field}: ${changes[0]} → ${changes[1]}`)); // l10n
         }
       }
 
