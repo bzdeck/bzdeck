@@ -640,7 +640,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return;
     }
 
-    let set_tooltops = bug => {
+    let set_tooltops = bugs => bugs.forEach(bug => {
       let title;
 
       if (!bug) {
@@ -662,21 +662,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $element.dataset.status = bug.status;
         $element.dataset.resolution = bug.resolution || '';
       }
-    };
+    });
 
     BzDeck.collections.bugs.get_some(related_ids).then(bugs => {
       let lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
 
-      bugs.forEach(bug => set_tooltops(bug));
+      set_tooltops(bugs);
 
-      // BzDeck.collections.bugs.fetch() fails when one or more bugs in the result are private, so retrieve each bug
-      // individually (Bug 1169040)
-      for (let id of lookup_ids) {
-        BzDeck.collections.bugs.get(id, { id, _unread: true }).then(bug => {
-          return bug.fetch(true, false);
-        }).then(bug => {
-          set_tooltops(bug)
-        });
+      if (lookup_ids.size) {
+        BzDeck.collections.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
       }
     });
   }

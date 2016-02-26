@@ -5,6 +5,7 @@
 /**
  * Define the Bug Collection that represents all downloaded bugs.
  * @extends BzDeck.BaseCollection
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
  */
 BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
@@ -24,18 +25,24 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Retrieve multiple bugs from Bugzilla with specific bug IDs, and return raw bug objects.
-   * @argument {(Array|Set)} ids - List of bug ID to retrieve.
+   * Retrieve multiple bugs from Bugzilla with specific bug IDs, and return bug objects.
+   * @argument {(Array|Set)} _ids - List of bug IDs to retrieve.
    * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
    * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
-   * @return {Promise.<Array.<Object>>} bugs - List of retrieved bug data objects.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
+   * @return {Promise.<Array.<Proxy>>} bugs - Promise to be resolved in proxified BugModel instances.
    */
-  fetch (ids, include_metadata = true, include_details = true) {
+  fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
-    ids = [...ids].sort();
+    let ids = [..._ids].sort(),
+        ids_chunks = [];
 
-    let fetch = (method, param_str = '') => new Promise((resolve, reject) => {
+    // Due to Bug 1169040, the Bugzilla API returns an error even if one of the bugs is not accessible. To work around
+    // the issue, divide the array into chunks to retrieve 10 bugs per request, then divide each chunk again if failed.
+    for (let i = 0; i < ids.length; i = i + 10) {
+      ids_chunks.push(ids.slice(i, i + 10));
+    }
+
+    let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
       let params = new URLSearchParams(param_str);
 
       ids.forEach(id => params.append('ids', id));
@@ -43,13 +50,19 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
           .then(result => resolve(result.bugs), event => reject(new Error()));
     });
 
-    let fetchers = [include_metadata ? fetch() : Promise.resolve()];
+    let get_fetchers = ids => {
+      let fetchers = [include_metadata ? _fetch(ids) : Promise.resolve()];
 
-    if (include_details) {
-      fetchers.push(fetch('comment'), fetch('history'), fetch('attachment', 'exclude_fields=data'));
-    }
+      if (include_details) {
+        fetchers.push(_fetch(ids, 'comment'),
+                      _fetch(ids, 'history'),
+                      _fetch(ids, 'attachment', 'exclude_fields=data'));
+      }
 
-    return Promise.all(fetchers).then(values => ids.map((id, index) => {
+      return fetchers;
+    };
+
+    let get_bug = (values, id, index = 0) => {
       let _bug = include_metadata ? values[0][index] : { id };
 
       if (include_details) {
@@ -63,7 +76,42 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       }
 
       return _bug;
-    })).catch(error => new Error('Failed to fetch bugs from Bugzilla.'));
+    };
+
+    return new Promise(resolve => {
+      Promise.all(ids_chunks.map(ids => {
+        Promise.all(get_fetchers(ids)).then(values => {
+          return ids.map((id, index) => get_bug(values, id, index));
+        }, error => {
+          // Retrieve the bugs one by one if failed
+          return Promise.all(ids.map(id => {
+            return Promise.all(get_fetchers([id])).then(values => {
+              return get_bug(values, id);
+            }, error => {
+              // Return a bug with the error code 102 = unauthorized access
+              return { id, error: { code: 102 }};
+            });
+          }));
+        }).then(_bugs => {
+          // _bugs is an Array of raw bug objects. Convert them to BugModel instances
+          return Promise.all(_bugs.map(_bug => new Promise(resolve => {
+            _bug._unread = true;
+
+            this.get(_bug.id).then(bug => {
+              if (bug) {
+                bug.merge(_bug);
+                resolve(bug);
+              } else {
+                this.get(_bug.id, _bug).then(bug => resolve(bug));
+              }
+            });
+          })));
+        });
+      })).then(bugs_chunks => {
+        // Flatten an array of arrays
+        resolve(bugs_chunks.reduce((a, b) => a.concat(b), []));
+      });
+    });
   }
 
   /**

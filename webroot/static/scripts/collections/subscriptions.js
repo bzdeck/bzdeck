@@ -121,20 +121,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
         return Promise.resolve([]);
       }
 
-      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id)).then(_bugs => {
-        return Promise.all(_bugs.map(_bug => new Promise(resolve => {
-          _bug._unread = true;
-
-          BzDeck.collections.bugs.get(_bug.id).then(bug => {
-            if (bug) {
-              bug.merge(_bug);
-              resolve(bug);
-            } else {
-              BzDeck.collections.bugs.get(_bug.id, _bug).then(bug => resolve(bug));
-            }
-          });
-        })));
-      }).then(bugs => {
+      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id)).then(bugs => {
         this.trigger(':Updated', { bugs });
 
         return bugs;

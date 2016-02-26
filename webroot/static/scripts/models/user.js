@@ -87,13 +87,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       this.data.image_src = URL.createObjectURL(this.data.image_blob);
     }
 
-    let options = {
-      // Refresh profiles if the data is older than 10 days
-      refresh: this.data.updated && this.data.updated < Date.now() - 864000000,
-    };
-
-    if (options.refresh || !this.data.updated) {
-      this.fetch(options).then(profiles => {
+    if (!this.data.updated) {
+      this.fetch().then(profiles => {
         // Notify the change to update the UI when necessary
         this.trigger(':UserInfoUpdated', { name: this.email });
       });
@@ -105,7 +100,6 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
    * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @return {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
    */
   fetch (options = {}) {
@@ -136,21 +130,19 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel. If
-   * the refresh option is not specified, just return it.
+   * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel.
    * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
    * @return {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
   get_bugzilla_profile (options = {}) {
-    if (!options.refresh && this.data.bugzilla && this.data.bugzilla.id) {
+    if (this.data.bugzilla && this.data.bugzilla.id) {
       return Promise.resolve(this.data.bugzilla);
     }
 
-    if (!options.refresh && this.data.error) {
+    if (this.data.error) {
       return Promise.reject(new Error(this.data.error));
     }
 
@@ -170,13 +162,12 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalController.
    * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @return {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
   get_gravatar_profile (options = {}) {
-    if (!options.refresh && this.data.gravatar) {
+    if (this.data.gravatar) {
       if (this.data.gravatar.error) {
         return Promise.reject(new Error('The Gravatar profile cannot be found'));
       }
@@ -214,12 +205,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
    * Because this requires DOM access, delegate the process to GlobalController.
    * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.refresh=false] - Whether the existing cache should be updated.
    * @return {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
   get_gravatar_image (options = {}) {
-    if (!options.refresh && this.data.image_blob) {
+    if (this.data.image_blob) {
       return Promise.resolve(this.data.image_blob);
     }
 

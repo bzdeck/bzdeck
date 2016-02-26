@@ -194,6 +194,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
     return Promise.all([
+      BzDeck.collections.users.refresh(),
       BzDeck.collections.subscriptions.fetch(),
       BzDeck.host.get_config(),
     ]);
