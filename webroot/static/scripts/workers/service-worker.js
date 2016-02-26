@@ -5,7 +5,7 @@
 'use strict';
 
 // Cache version: this has to be updated whenever a file is modified
-const version = '2016-02-24-14-45';
+const version = '2016-02-25-23-27';
 
 // Files need to be cached
 const files = [
