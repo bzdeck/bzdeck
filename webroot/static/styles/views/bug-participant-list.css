@@ -66,7 +66,8 @@
 .bug-participants [itemprop][itemtype$="User"] [itemprop="image"] {
   flex: none;
   margin-right: .8rem;
-  height: 100%;
+  width: 2.4rem;
+  height: 2.4rem;
 }
 
 .bug-participants [itemprop][itemtype$="User"] [itemprop="name"] {
