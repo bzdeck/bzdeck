@@ -47,7 +47,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
       ids.forEach(id => params.append('ids', id));
       BzDeck.host.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
-          .then(result => resolve(result.bugs), event => reject(new Error()));
+          .then(result => result.error ? reject(new Error(result.code)) : resolve(result.bugs))
+          .catch(event => reject(new Error(0)));
     });
 
     let get_fetchers = ids => {
@@ -83,13 +84,17 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
         Promise.all(get_fetchers(ids)).then(values => {
           return ids.map((id, index) => get_bug(values, id, index));
         }, error => {
+          // Immediately return a bug object with an error when a single bug is returned
+          if (ids.length === 1) {
+            return [{ id: ids[0], error: { code: Number(error.message) } }];
+          }
+
           // Retrieve the bugs one by one if failed
           return Promise.all(ids.map(id => {
             return Promise.all(get_fetchers([id])).then(values => {
               return get_bug(values, id);
             }, error => {
-              // Return a bug with the error code 102 = unauthorized access
-              return { id, error: { code: 102 }};
+              return { id, error: { code: Number(error.message) } };
             });
           }));
         }).then(_bugs => {
