@@ -27,7 +27,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
       get: (obj, prop) => {
         if (prop === 'bugs') {
           // Return a sorted bug list
-          return this.view.get_shown_bugs(new Map(obj.bugs.map(bug => [bug.id, bug])));
+          return this.view.get_shown_bugs(obj.bugs);
         }
 
         return obj[prop];
