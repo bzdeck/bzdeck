@@ -79,43 +79,42 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return _bug;
     };
 
-    return new Promise(resolve => {
-      Promise.all(ids_chunks.map(ids => {
-        Promise.all(get_fetchers(ids)).then(values => {
-          return ids.map((id, index) => get_bug(values, id, index));
-        }, error => {
-          // Immediately return a bug object with an error when a single bug is returned
-          if (ids.length === 1) {
-            return [{ id: ids[0], error: { code: Number(error.message) } }];
+    return Promise.all(ids_chunks.map(ids => {
+      return Promise.all(get_fetchers(ids)).then(values => {
+        return ids.map((id, index) => get_bug(values, id, index));
+      }, error => {
+        // Immediately return a bug object with an error when a single bug is returned
+        if (ids.length === 1) {
+          return [{ id: ids[0], error: { code: Number(error.message) } }];
+        }
+
+        // Retrieve the bugs one by one if failed
+        return Promise.all(ids.map(id => {
+          return Promise.all(get_fetchers([id])).then(values => {
+            return get_bug(values, id);
+          }, error => {
+            return { id, error: { code: Number(error.message) } };
+          });
+        }));
+      });
+    })).then(bugs_chunks => {
+      // Flatten an array of arrays
+      return bugs_chunks.reduce((a, b) => a.concat(b), []);
+    }).then(_bugs => {
+      // _bugs is an Array of raw bug objects. Convert them to BugModel instances
+      return Promise.all(_bugs.map(_bug => {
+        _bug._unread = true;
+
+        return this.get(_bug.id).then(bug => {
+          if (bug) {
+            bug.merge(_bug);
+
+            return bug;
           }
 
-          // Retrieve the bugs one by one if failed
-          return Promise.all(ids.map(id => {
-            return Promise.all(get_fetchers([id])).then(values => {
-              return get_bug(values, id);
-            }, error => {
-              return { id, error: { code: Number(error.message) } };
-            });
-          }));
-        }).then(_bugs => {
-          // _bugs is an Array of raw bug objects. Convert them to BugModel instances
-          return Promise.all(_bugs.map(_bug => new Promise(resolve => {
-            _bug._unread = true;
-
-            this.get(_bug.id).then(bug => {
-              if (bug) {
-                bug.merge(_bug);
-                resolve(bug);
-              } else {
-                this.get(_bug.id, _bug).then(bug => resolve(bug));
-              }
-            });
-          })));
+          return this.get(_bug.id, _bug);
         });
-      })).then(bugs_chunks => {
-        // Flatten an array of arrays
-        resolve(bugs_chunks.reduce((a, b) => a.concat(b), []));
-      });
+      }));
     });
   }
 

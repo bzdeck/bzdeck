@@ -109,7 +109,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       this.get_bugzilla_profile(options),
       this.get_gravatar_image(options),
       // Refresh the Gravatar profile if already exists, or fetch later on demand
-      this.data.gravatar ? this.get_gravatar_profile(options, true) : Promise.resolve()
+      this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve()
     ]).then(results => {
       this.save({
         name: this.email, // String
@@ -181,17 +181,18 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
         if (hash === this.hash) {
           if (profile) {
-            this.data.gravatar = profile;
             resolve(profile);
           } else if (options.in_promise_all) {
             // Resolve anyway if this is called in Promise.all()
-            this.data.gravatar = profile = { error: 'Not Found' };
+            profile = { error: 'Not Found' };
             resolve(profile);
           } else {
             reject(new Error('The Gravatar profile cannot be found'));
           }
 
+          // Save the profile when called by UserCollection
           if (!options.in_promise_all) {
+            this.data.gravatar = profile;
             this.save();
           }
         }
@@ -219,6 +220,13 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       this.on('GlobalController:GravatarImageProvided', data => {
         if (data.hash === hash) {
           resolve(data.blob);
+
+          // Save the image when called by UserCollection
+          if (!options.in_promise_all) {
+            this.data.image_blob = data.blob;
+            this.data.image_src = URL.createObjectURL(data.blob);
+            this.save();
+          }
         }
       });
 

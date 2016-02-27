@@ -39,7 +39,11 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
           missing.add(name);
         }
       });
-    })).then(() => this.fetch(missing));
+    })).then(() => {
+      if (missing.size) {
+        this.fetch(missing);
+      }
+    });
   }
 
   /**
@@ -50,11 +54,10 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   refresh () {
     this.get_all().then(users => {
       users = [...users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
-      // Retrieve Bugzilla profiles
-      this.fetch(users.map(user => user.email));
-      // Retrieve Gravatar profiles and images for each user
-      users.forEach(user => user.get_gravatar_profile());
-      users.forEach(user => user.get_gravatar_image());
+
+      if (users.length) {
+        this.fetch(users.map(user => user.email));
+      }
     });
   }
 
@@ -80,39 +83,38 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
       BzDeck.host.request('user', params).then(result => resolve(result.users), event => reject(new Error()));
     });
 
-    return new Promise(resolve => {
-      Promise.all(names_chunks.map(names => {
-        _fetch(names).then(_users => _users).catch(error => {
-          // Retrieve the users one by one if failed
-          return Promise.all(names.map(name => _fetch([name])
-              .then(_users => _users).catch(error => ({ name, error: true }))));
-        }).then(_users => {
-          // _users is an Array of raw user objects. Convert them to UserModel instances
-          return Promise.all(_users.map(_user => new Promise(resolve => {
-            let name = _user.name,
-                updated = Date.now();
-
-            this.get(name).then(user => {
-              if (user) {
-                if (_user.error) {
-                  user.save({ name, error: 'Not Found', updated }).then(user => resolve(user));
-                } else {
-                  user.save(Object.assign(user.data, { bugzilla: _user, updated })).then(user => resolve(user));
-                }
-              } else {
-                if (_user.error) {
-                  this.set(name, { name, error: 'Not Found', updated }).then(user => resolve(user));
-                } else {
-                  this.set(name, { name, bugzilla: _user, updated }).then(user => resolve(user));
-                }
-              }
-            });
-          })));
-        });
-      })).then(users_chunks => {
-        // Flatten an array of arrays
-        resolve(users_chunks.reduce((a, b) => a.concat(b), []));
+    return Promise.all(names_chunks.map(names => {
+      return _fetch(names).catch(error => {
+        // Retrieve the users one by one if failed
+        return Promise.all(names.map(name => _fetch([name]).catch(error => ({ name, error: true }))));
       });
+    })).then(users_chunks => {
+      // Flatten an array of arrays
+      return users_chunks.reduce((a, b) => a.concat(b), []);
+    }).then(_users => {
+      // _users is an Array of raw user objects. Convert them to UserModel instances
+      return Promise.all(_users.map(_user => {
+        let name = _user.name,
+            obj;
+
+        return this.get(name).then(user => {
+          obj = _user.error ? { name, error: 'Not Found' } : Object.assign(user ? user.data : {}, { bugzilla: _user });
+          obj.updated = Date.now();
+
+          return this.set(name, obj);
+        });
+      }));
+    }).then(users => {
+      users.forEach(user => {
+        user.get_gravatar_image();
+
+        // Refresh the Gravatar profile if already exists, or fetch later on demand
+        if (user.gravatar) {
+          user.get_gravatar_profile();
+        }
+      });
+
+      return users;
     });
   }
 
