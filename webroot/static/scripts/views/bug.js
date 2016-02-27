@@ -547,7 +547,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
       for (let field_name of ['version', 'component', 'target_milestone']) {
         this.comboboxes.get(this.$bug.querySelector(`[data-field="${field_name}"] [role="combobox"]`))
-            .build(this.get_field_values(field_name, product_name).map(value => ({ value, selected: false })));
+            .build_dropdown(this.get_field_values(field_name, product_name).map(value => ({ value, selected: false })));
       }
     }
 
