@@ -407,12 +407,12 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       // Addition only
       if (!change.removed && change.added) {
         if (_reviews.added.size && att_id) {
-          added_reviews.then(reviews => render(`requested ${reviews} to review ${attachment}`)); // l10n
+          added_reviews.then(reviews => render(`asked ${reviews} to review ${attachment}`)); // l10n
         } else if (_feedbacks.added.size && att_id) {
           added_feedbacks.then(feedbacks =>
-              render(`requested ${feedbacks} to give feedback on ${attachment}`)); // l10n
+              render(`asked ${feedbacks} for feedback on ${attachment}`)); // l10n
         } else if (_needinfos.added.size) {
-          added_needinfos.then(needinfos => render(`requested information from ${needinfos}`)); // l10n
+          added_needinfos.then(needinfos => render(`asked ${needinfos} for information`)); // l10n
         } else if (att_id && change.added === 'review+') {
           render(`approved ${attachment}`); // l10n
         } else if (att_id && change.added === 'review-') {
@@ -452,7 +452,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           removed_reviews.then(reviews => render(`canceled ${attachment} review by ${reviews}`)); // l10n
         } else if (att_id && _feedbacks.removed.size) {
           removed_feedbacks.then(feedbacks =>
-              render(`canceled feedback of ${attachment} by ${feedbacks}`)); // l10n
+              render(`canceled ${attachment} feedback by ${feedbacks}`)); // l10n
         } else if (_needinfos.removed.size) {
           removed_needinfos.then(needinfos => {
             if (!comment) {
@@ -497,7 +497,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           }
         } else if (att_id && _reviews.removed.size) {
           Promise.all([added_reviews, removed_reviews]).then(reviews =>
-              render(`changed ${attachment} reviewer from ${reviews[0]} to ${reviews[1]}`)); // l10n
+              render(`changed ${attachment} reviewer from ${reviews[0] || 'nobody'} to ${reviews[1] || 'nobody'}`));
         } else if (att_id && change.added === 'feedback+' && _feedbacks.removed.size) {
           if (_feedbacks.removed.size === 1 && _feedbacks.removed.has(changer.email)) {
             render(`gave positive feedback on ${attachment}`); // l10n
@@ -535,7 +535,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           }
         } else if (_needinfos.removed.size) {
           Promise.all([added_needinfos, removed_needinfos]).then(needinfos =>
-              render(`requested information from ${needinfos[0]} instead of ${needinfos[1]}`)); // l10n
+              render(`asked ${needinfos[0]} for information instead of ${needinfos[1]}`)); // l10n
         } else if (change.field_name === 'assigned_to' && change.removed.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
           // TODO: nobody@mozilla.org and *@bugzilla.bugs are the default assignees on BMO. It might be different on
           // other Bugzilla instances. The API should provide the info...
