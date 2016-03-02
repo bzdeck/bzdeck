@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Second call
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['client_api_login'] && $_GET['callback_result']) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['client_api_login']) && isset($_GET['callback_result'])) {
   $id = $_GET['callback_result'];
   $client_api_login = $_GET['client_api_login'];
 
