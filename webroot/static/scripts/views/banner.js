@@ -72,11 +72,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    */
   activate_fullscreen_menuitem () {
     let $menuitem = document.querySelector('#main-menu--app--fullscreen'),
-        $label = $menuitem.querySelector('label');
-
-    let toggle = () => {
-      document.mozFullScreenElement ? document.mozCancelFullScreen() : document.body.mozRequestFullScreen();
-    };
+        $label = $menuitem.querySelector('label'),
+        toggle = () => document.fullscreenElement ? document.exitFullscreen() : document.body.requestFullscreen();
 
     $menuitem.removeAttribute('aria-hidden');
 
@@ -84,8 +81,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     $menuitem.addEventListener('mousedown', event => toggle());
     this.helpers.kbd.assign($menuitem, { Enter: event => toggle() });
 
-    window.addEventListener('mozfullscreenchange', event => {
-      $label.textContent = document.mozFullScreenElement ? 'Exit Full Screen' : 'Enter Full Screen'; // l10n
+    window.addEventListener('fullscreenchange', event => {
+      $label.textContent = document.fullscreenElement ? 'Exit Full Screen' : 'Enter Full Screen'; // l10n
     });
   }
 
