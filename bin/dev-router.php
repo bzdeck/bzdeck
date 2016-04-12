@@ -14,7 +14,7 @@ if (strpos($_SERVER['REQUEST_URI'], '.woff2') !== false) {
   return false;
 }
 
-if (file_exists(__DIR__ . '/../webroot' . $_SERVER['REQUEST_URI'])) {
+if (file_exists(__DIR__ . '/../webroot' . $_SERVER['REQUEST_URI']) && strlen($_SERVER['REQUEST_URI']) > 1) {
   // Serve the requested resource as-is.
   return false;
 }
@@ -27,6 +27,8 @@ $rewrite_map = array(
 if (array_key_exists($_SERVER['REQUEST_URI'], $rewrite_map)) {
   // Rewrite the URL
   include($rewrite_map[$_SERVER['REQUEST_URI']]);
+} else if (strpos($_SERVER['REQUEST_URI'], 'bugzilla-auth-callback') !== false) {
+  include('webroot/integration/bugzilla-auth-callback/index.php');
 } else {
   // Handle everything else
   include('webroot/app/index.php');
