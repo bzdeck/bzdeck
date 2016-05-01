@@ -472,10 +472,9 @@
                   <header>
                     <h3>Notes</h3>
                   </header>
-                  <section role="group" aria-label="Alias" data-field="alias">
-                    <h4>Alias</h4>
-                    <!-- TODO: Support multiple aliases on Bugzilla 5.0 (Bug 1012506) -->
-                    <span class="blurred" contenteditable="true" role="textbox" itemprop="alias"></span>
+                  <section role="group" aria-label="Aliases" data-field="alias">
+                    <h4>Aliases</h4>
+                    <ul><li itemprop="alias" role="button"></li></ul>
                   </section>
                   <section role="group" aria-label="Keywords" data-field="keyword">
                     <h4>Keywords</h4>

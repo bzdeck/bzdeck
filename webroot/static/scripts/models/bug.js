@@ -41,11 +41,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         get: () => this.data._unread || false,
         set: value => this.update_annotation('unread', value),
       },
-      aliases: {
-        enumerable: true,
-        // Support for multiple aliases on Bugzilla 5.0+
-        get: () => this.data.alias ? (Array.isArray(this.data.alias) ? this.data.alias : [this.data.alias]) : [],
-      },
       duplicates: {
         enumerable: true,
         get: () => this.get_duplicates(),

@@ -130,7 +130,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
     return this.get_all().then(bugs => [...bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||
-             words.every(word => bug.aliases.some(alias => match(alias, word))) ||
+             words.every(word => bug.alias.some(alias => match(alias, word))) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
     })).then(bugs => this.get_search_results(bugs));
   }

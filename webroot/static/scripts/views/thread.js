@@ -142,7 +142,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
               Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name }))).then(mentors => {
                 resolve(mentors.map(mentor => mentors.name).join(', '));
               });
-            } else { // Keywords
+            } else { // Keywords & Aliases
               resolve(value.join(', '));
             }
           } else if (typeof value === 'object' && !Array.isArray(value)) { // Person
