@@ -83,7 +83,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
         comment = this.data.get('comment'),
         time = comment.creation_time,
-        text = comment.raw_text,
         $entry = this.get_template('timeline-comment'),
         $header = $entry.querySelector('header'),
         $author = $entry.querySelector('[itemprop="author"]'),
@@ -93,25 +92,24 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         $comment_body = $entry.querySelector('[itemprop="text"]'),
         $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
-    comment.number = this.data.get('comment_number');
     $entry.id = `${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $entry.setAttribute('data-comment-number', comment.number);
-    $entry.querySelector(':not([itemscope]) > [itemprop="name"]').textContent = `Comment ${comment.number}`; // l10n
-    $comment_body.innerHTML = text ? BzDeck.controllers.global.parse_comment(text) : '';
+    $entry.setAttribute('data-comment-count', comment.count);
+    $entry.querySelector(':not([itemscope]) > [itemprop="name"]').textContent = `Comment ${comment.count}`; // l10n
+    $comment_body.innerHTML = comment.text ? BzDeck.controllers.global.parse_comment(comment.text) : '';
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked
       $entry.addEventListener(click_event_type, event => {
         if (!event.target.matches(':-moz-any-link')) {
-          this.trigger('BugView:CommentSelected', { number: Number(comment.number) });
+          this.trigger('BugView:CommentSelected', { number: Number(comment.count) });
         }
       });
 
       let reply = () => {
-        let quote_header = `(In reply to ${author.name} from comment #${comment.number})`,
-            quote_lines = (text.match(/^$|.{1,78}(?:\b|$)/gm) || []).map(line => `> ${line}`),
+        let quote_header = `(In reply to ${author.name} from comment #${comment.count})`,
+            quote_lines = (comment.text.match(/^$|.{1,78}(?:\b|$)/gm) || []).map(line => `> ${line}`),
             quote = `${quote_header}\n${quote_lines.join('\n')}`,
             $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`),
             $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);

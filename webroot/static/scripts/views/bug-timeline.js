@@ -25,7 +25,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
     let get_time = str => (new Date(str)).getTime(),
         entries = new Map([...this.bug.comments.entries()]
-            .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]], ['comment_number', c[0]]])])),
+            .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]]])])),
         click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
         read_comments_num = 0,
         last_comment_time,
@@ -180,8 +180,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
     if (match) {
       let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-          number = Number.parseInt(match[1]),
-          $comment = this.$timeline.querySelector(`[data-comment-number="${number}"]`);
+          count = Number.parseInt(match[1]),
+          $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 
       if ($comment) {
         if (this.$expander) {
