@@ -32,8 +32,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
           $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
 
       // Scroll a tabpanel to top when the tab is selected
-      $tabpanel.querySelector('[role="region"]').scrollTop = 0; // Mobile
-      $tabpanel.querySelector('.scrollable-area-content').scrollTop = 0; // Desktop
+      $tabpanel.querySelector('[role="region"]').scrollTop = 0;
 
       // Desktop: Show the info pane only when the timeline tab is selected
       if (!mql.matches && this.helpers.env.device.desktop) {
@@ -92,8 +91,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   add_mobile_tweaks () {
     let mql = window.matchMedia('(max-width: 1023px)');
 
-    for (let $content of this.$bug.querySelectorAll('.scrollable-area-content')) {
-      let info = $content.parentElement.matches('.bug-info'),
+    for (let $content of this.$bug.querySelectorAll('.scrollable')) {
+      let info = $content.matches('.bug-info'),
           top = 0,
           hidden = false;
 

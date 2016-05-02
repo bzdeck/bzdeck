@@ -40,10 +40,11 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    */
   on_attachment_available (data) {
     let attachment = this.attachment = data.attachment,
+        $attachment = this.$tabpanel.querySelector('article > div'),
         { id, hash, summary } = attachment;
 
-    new this.widgets.ScrollBar(this.$tabpanel.querySelector('article > div'));
-    new BzDeck.AttachmentView(attachment, this.$tabpanel.querySelector('.scrollable-area-content'));
+    new this.widgets.ScrollBar($attachment);
+    new BzDeck.AttachmentView(attachment, $attachment);
 
     if (hash) {
       this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n

@@ -24,6 +24,7 @@
 }
 
 #home-list-pane {
+  position: relative;
   flex: none;
 }
 

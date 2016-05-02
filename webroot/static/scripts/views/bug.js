@@ -346,9 +346,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
         // Add tooltips to the related bugs
         this.set_bug_tooltips();
-
-        // Force updating the scrollbars because sometimes those are not automatically updated
-        this.scrollbars.forEach($$scrollbar => $$scrollbar.set_height());
       });
     }).then(() => {
       BzDeck.views.statusbar.show('');

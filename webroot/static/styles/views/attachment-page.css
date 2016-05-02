@@ -7,10 +7,6 @@
 }
 
 [id|="tabpanel-attachment"][role="tabpanel"] > article > [role="region"] {
-  overflow: hidden;
-}
-
-[id|="tabpanel-attachment"][role="tabpanel"] > article > [role="region"] > .scrollable-area-content {
   display: flex;
   flex-direction: column;
   min-height: 100%;

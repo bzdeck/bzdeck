@@ -46,10 +46,11 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
         return;
       }
 
-      let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
+      let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id)),
+          $attachment = this.$container.querySelector('.content');
 
-      new this.widgets.ScrollBar(this.$container.querySelector('.content'));
-      new BzDeck.AttachmentView(attachment, this.$container.querySelector('.content .scrollable-area-content'));
+      new this.widgets.ScrollBar($attachment);
+      new BzDeck.AttachmentView(attachment, $attachment);
 
       this.trigger('BugView:AttachmentSelected', { attachment });
     });

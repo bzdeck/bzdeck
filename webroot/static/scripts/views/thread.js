@@ -240,7 +240,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
     this.$$scrollbar = new this.widgets.ScrollBar($outer);
-    this.$scrollable_area = mobile ? $outer.querySelector('.scrollable-area-content') : $outer;
 
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
     this.$$listbox.bind('Selected', event => {
@@ -304,7 +303,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.subscribe('BugModel:AnnotationUpdated', true);
 
     // Lazy loading while scrolling
-    this.$scrollable_area.addEventListener('scroll', event => {
+    this.$outer.addEventListener('scroll', event => {
       if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
         this.helpers.event.async(() => this.render());
       }
@@ -327,7 +326,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       this.render();
       this.$listbox.dispatchEvent(new CustomEvent('Updated'));
       this.$outer.removeAttribute('aria-busy');
-      this.$scrollable_area.scrollTop = 0;
+      this.$outer.scrollTop = 0;
     });
   }
 
@@ -360,7 +359,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       this.$listbox.appendChild($fragment);
       this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
       this.$$listbox.update_members();
-      this.$$scrollbar.set_height();
     });
   }
 

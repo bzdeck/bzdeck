@@ -34,7 +34,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       document.querySelector('#tabpanel-home .banner-nav-button').addEventListener('touchstart', event => {
         let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
-        document.querySelector('#sidebar .scrollable-area-content').scrollTop = 0;
+        document.querySelector('#sidebar').scrollTop = 0;
         document.documentElement.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
 

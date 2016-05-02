@@ -43,7 +43,6 @@
 
 .bug-attachments .list [role="region"] {
   flex: auto;
-  overflow: hidden;
 }
 
 .bug-attachments .list [role="option"] {
@@ -188,17 +187,14 @@
 }
 
 .bug-attachments .content {
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
   border-width: 0 0 0 .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
   width: 68%;
-}
-
-.bug-attachments .content > .scrollable-area-content {
-  display: flex;
-  flex-direction: column;
   min-height: 100%;
 }
 

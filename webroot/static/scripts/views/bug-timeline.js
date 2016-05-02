@@ -33,8 +33,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
         $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline'),
         timeline_id = $timeline.id = `${this.id}-timeline`,
         $expander,
-        $comments_wrapper = $timeline.querySelector('.comments-wrapper'),
-        $parent = $timeline.querySelector('.scrollable-area-content');
+        $comments_wrapper = $timeline.querySelector('.comments-wrapper');
 
     for (let attachment of this.bug.attachments) {
       entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
@@ -114,7 +113,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('article'));
     }
 
-    $parent.scrollTop = 0;
+    $timeline.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
     this.subscribe('SettingsPageView:PrefValueChanged', true);

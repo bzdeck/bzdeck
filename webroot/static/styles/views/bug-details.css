@@ -181,7 +181,7 @@
   top: 0;
 }
 
-[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > .scrollable-area-content > :first-child {
+[data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] > [role="region"] > :first-child {
   padding-top: 4rem;
 }
 
