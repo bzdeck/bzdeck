@@ -193,6 +193,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     if (type === 'unread' && value === false) {
       BzDeck.host.request('bug_user_last_visit/' + this.id, null, {
         method: 'POST',
+        data: {},
       }).then(result => {
         if (result[0] && result[0].id === this.id && result[0].last_visit_ts) {
           return Promise.resolve(result[0].last_visit_ts);

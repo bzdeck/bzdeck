@@ -58,6 +58,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       url.search = params.toString();
     }
 
+    headers.set('Content-Type', 'application/json');
     headers.set('Accept', 'application/json');
     headers.set('X-Bugzilla-API-Key', options.api_key || BzDeck.account.data.api_key);
 
