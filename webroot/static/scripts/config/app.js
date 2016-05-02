@@ -35,6 +35,17 @@ BzDeck.config = {
         rest: '/rest/',
         websocket: 'wss://bugzfeed.mozilla.org/dev/',
       }
+    },
+    'mozilla-merge': {
+      label: 'Mozilla Merge',
+      timezone: -8,
+      default_assignee: 'nobody@mozilla.org',
+      origin: 'https://bugzilla-merge.allizom.org',
+      endpoints: {
+        bzapi: 'https://bugzilla.mozilla.org/bzapi/', // Use production until Bug 1269213 is solved
+        rest: '/rest/',
+        websocket: null,
+      }
     }
   },
   // App path

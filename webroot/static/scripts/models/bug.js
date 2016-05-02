@@ -59,6 +59,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       },
     });
 
+    // Hardcode an empty array until Bug 1269212 is solved
+    this.data.mentors = this.data.mentors_detail = [];
+
     return this.proxy();
   }
 

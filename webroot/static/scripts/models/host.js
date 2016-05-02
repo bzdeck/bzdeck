@@ -111,8 +111,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       return Promise.resolve(this.data.config);
     }
 
+    let origin = this.endpoints.bzapi.startsWith('/') ? this.origin : '';
+
     // Fetch the config via BzAPI
-    return this.helpers.network.json(`${this.origin}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
+    return this.helpers.network.json(`${origin}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
       if (config && config.version) {
         let config_retrieved = this.data.config_retrieved = Date.now();
 
