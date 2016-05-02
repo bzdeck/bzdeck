@@ -59,7 +59,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
     // Custom scrollbar
     for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-      new this.widgets.ScrollBar($outer, true);
+      new this.widgets.ScrollBar($outer, { adjusted: true });
     }
 
     let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
