@@ -30,6 +30,7 @@ main {
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] {
+  position: absolute;
   top: 0;
   left: 0;
   background-color: var(--region-background-color);

@@ -177,6 +177,10 @@
   top: 3.2rem; /* A space for the tabs */
 }
 
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] {
+  position: absolute;
+}
+
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] {
   top: 0;
 }

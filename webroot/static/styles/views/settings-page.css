@@ -63,6 +63,7 @@
 }
 
 [id^="settings-tabpanel"] {
+  position: absolute;
   top: 4rem;
   right: 4rem;
   bottom: 4rem;

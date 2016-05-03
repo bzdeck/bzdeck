@@ -318,7 +318,7 @@ col[data-hidden="false"] {
 
 [role="tabpanel"],
 [role="tabpanel"] > :not([role="scrollbar"]) {
-  position: absolute;
+  position: relative;
   overflow: hidden;
   width: 100%;
   height: 100%;
