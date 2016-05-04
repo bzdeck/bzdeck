@@ -43,16 +43,26 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }
 
     let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
-      let params = new URLSearchParams(param_str);
+      let path = `bug/${ids[0]}`,
+          params = new URLSearchParams(param_str);
+
+      if (method === 'last_visit') {
+        path = `bug_user_last_visit/${ids[0]}`;
+      } else if (method) {
+        path += `/${method}`;
+      }
 
       ids.forEach(id => params.append('ids', id));
-      BzDeck.host.request(`bug/${ids[0]}` + (method ? `/${method}` : ''), params)
-          .then(result => result.error ? reject(new Error(result.code)) : resolve(result.bugs))
+      BzDeck.host.request(path, params)
+          .then(result => result.error ? reject(new Error(result.code)) : resolve(result))
           .catch(event => reject(new Error(0)));
     });
 
     let get_fetchers = ids => {
-      let fetchers = [include_metadata ? _fetch(ids) : Promise.resolve()];
+      let fetchers = [];
+
+      fetchers.push(include_metadata ? _fetch(ids) : Promise.resolve());
+      fetchers.push(include_metadata ? _fetch(ids, 'last_visit') : Promise.resolve());
 
       if (include_details) {
         fetchers.push(_fetch(ids, 'comment'),
@@ -64,12 +74,17 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     };
 
     let get_bug = (values, id, index = 0) => {
-      let _bug = include_metadata ? values[0][index] : { id };
+      let _bug = { id };
+
+      if (include_metadata) {
+        _bug = values[0].bugs[index];
+        _bug._last_visit = values[1][index].last_visit_ts;
+      }
 
       if (include_details) {
-        _bug.comments = values[1][id].comments;
-        _bug.history = values[2][index].history || [];
-        _bug.attachments = values[3][id] || [];
+        _bug.comments = values[2].bugs[id].comments;
+        _bug.history = values[3].bugs[index].history || [];
+        _bug.attachments = values[4].bugs[id] || [];
 
         for (let att of _bug.attachments) {
           BzDeck.collections.attachments.set(att.id, att);
@@ -103,8 +118,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }).then(_bugs => {
       // _bugs is an Array of raw bug objects. Convert them to BugModel instances
       return Promise.all(_bugs.map(_bug => {
-        _bug._unread = true;
-
         return this.get(_bug.id).then(bug => {
           if (bug) {
             bug.merge(_bug);
@@ -115,6 +128,46 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
           return this.get(_bug.id, _bug);
         });
       }));
+    });
+  }
+
+  /**
+   * Retrieve the user's last visit timestamp for bugs, then update each bug's read status.
+   * @argument {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to retrieve.
+   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
+   */
+  retrieve_last_visit (_ids) {
+    return this.get_some([..._ids].sort()).then(bugs => {
+      let ids = [...bugs.keys()],
+          ids_chunks = [];
+
+      if (!ids.length) {
+        return Promise.resolve(bugs);
+      }
+
+      // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
+      for (let i = 0; i < ids.length; i = i + 100) {
+        ids_chunks.push(ids.slice(i, i + 100));
+      }
+
+      return Promise.all(ids_chunks.map(ids => new Promise(resolve => {
+        let params = new URLSearchParams();
+
+        ids.forEach(id => params.append('ids', id));
+        BzDeck.host.request(`bug_user_last_visit/${ids[0]}`, params)
+            .then(results => resolve(Array.isArray(results) ? results : []))
+            .catch(event => resolve([]));
+      }))).then(results_chunks => {
+        // Flatten an array of arrays
+        return results_chunks.reduce((a, b) => a.concat(b), []);
+      }).then(results => {
+        for (let { id, last_visit_ts } of results) {
+          bugs.get(Number(id))._last_visit = last_visit_ts; // Bug 1270227: id is a String
+        }
+
+        return Promise.resolve(bugs);
+      });
     });
   }
 
@@ -146,14 +199,11 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     return BzDeck.host.request('bug', params).then(result => {
       _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
     }).then(() => {
-      return this.get_some(_bugs.keys());
+      return this.retrieve_last_visit(_bugs.keys());
     }).then(__bugs => {
       return Promise.all([...__bugs].map(entry => new Promise(resolve => {
         let [id, bug] = entry,
             retrieved = _bugs.get(id); // Raw data object
-
-        // Mark as unread
-        retrieved._unread = true;
 
         if (bug) {
           if (bug.last_change_time < retrieved.last_change_time) {
@@ -180,7 +230,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     // Sort by the last updated time
     bugs.sort((a, b) => new Date(a.last_change_time) < new Date(b.last_change_time));
     // Sort by the last visited time
-    bugs.sort((a, b) => new Date(a._last_viewed || 0) < new Date(b._last_viewed || 0));
+    bugs.sort((a, b) => new Date(a._last_visit || 0) < new Date(b._last_visit || 0));
     // Another possible factors: How often the user visited the bug? How active the bug is?
 
     return Promise.resolve(bugs);
@@ -194,6 +244,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   on_bug_updated (data) {
     let { id } = data;
 
-    this.get(id, { id, _unread: true }).then(bug => bug.fetch());
+    this.get(id, { id }).then(bug => bug.fetch());
   }
 }

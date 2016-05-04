@@ -251,8 +251,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     // Assign keyboard shortcuts
     if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
       this.helpers.kbd.assign($timeline, {
-        // Toggle read
-        M: event => this.bug.unread = !this.bug.unread,
         // Toggle star
         S: event => this.bug.starred = !this.bug.starred,
         // Reply

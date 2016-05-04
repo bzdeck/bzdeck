@@ -58,7 +58,6 @@ BzDeck.config = {
     default_columns: [
       // Custom
       { id: 'starred', label: 'Starred', type: 'boolean' },
-      { id: 'unread', label: 'Unread', type: 'boolean', hidden: true },
       // Name
       { id: 'id', label: 'ID' /* instead of Bug ID */, type: 'integer' },
       { id: 'alias', hidden: true },

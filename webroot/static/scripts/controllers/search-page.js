@@ -92,7 +92,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
     BzDeck.collections.bugs.get(id).then(bug => {
       if (bug) {
-        bug.unread = false;
+        bug.mark_as_read();
         this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
       } else {
         this.trigger(':BugDataUnavailable');

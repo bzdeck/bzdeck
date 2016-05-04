@@ -103,8 +103,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
       // Show next bug, an alias of DOWN
       F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
-      // Toggle read
-      M: event => toggle_prop('unread'),
       // Toggle star
       S: event => toggle_prop('starred'),
     });
@@ -125,7 +123,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
         id: `${this.$$grid.view.$container.id}-row-${bug.id}`,
         data: {},
         dataset: {
-          unread: bug.unread === true,
+          unread: bug.unread,
           severity: bug.severity
         }
       };
@@ -162,16 +160,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
               bug.starred = value;
             }
 
-            if (prop === 'unread') {
-              bug.unread = value;
-
-              let row = this.$$grid.data.rows.find(row => row.data.id === obj.id);
-
-              if (row && row.$element) {
-                row.$element.dataset.unread = value;
-              }
-            }
-
             obj[prop] = value;
 
             return true;
@@ -194,7 +182,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * Called by BugModel whenever a bug annotation is updated. Update the bug row on the thread.
    * @argument {Object} data - Annotation change details.
    * @argument {Proxy} data.bug - Changed bug.
-   * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
+   * @argument {String} data.type - Annotation type such as 'starred'.
    * @argument {Boolean} data.value - New annotation value.
    * @return {undefined}
    */
@@ -278,14 +266,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       B: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
       // Show next bug, an alias of DOWN
       F: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
-      // Toggle read
-      M: event => {
-        for (let $item of this.$$listbox.view.selected) {
-          BzDeck.collections.bugs.get(Number($item.dataset.id)).then(bug => {
-            bug.unread = $item.dataset.unread === 'false';
-          });
-        }
-      },
       // Toggle star
       S: event => {
         for (let $item of this.$$listbox.view.selected) {

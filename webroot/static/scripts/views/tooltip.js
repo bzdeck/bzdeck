@@ -120,7 +120,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
     let bug;
 
     new Promise(resolve => {
-      BzDeck.collections.bugs.get(this.id, { id: this.id, _unread: true }).then(bug => {
+      BzDeck.collections.bugs.get(this.id, { id: this.id }).then(bug => {
         bug.summary ? resolve(bug) : bug.fetch().then(bug => resolve(bug));
       });
     }).then(_bug => {

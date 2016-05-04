@@ -84,7 +84,7 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
 
     BzDeck.collections.bugs.get(id).then(bug => {
       if (bug) {
-        bug.unread = false;
+        bug.mark_as_read();
         this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('home', bug) });
       } else {
         this.trigger(':BugDataUnavailable');

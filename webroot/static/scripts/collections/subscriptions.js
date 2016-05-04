@@ -67,7 +67,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
   /**
    * Retrieve data of bugs the user is participating from the remote Bugzilla instance, and return those as models.
    * @argument {undefined}
-   * @return {Promise.<Array.<Object>>} bugs - Promise to be resolved in an array of BugModel instances.
+   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   fetch () {
@@ -109,12 +109,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       return BzDeck.host.request('bug', params);
     }).then(result => {
       if (firstrun) {
-        return Promise.all(result.bugs.map(_bug => {
-          // Mark all bugs read if the session is firstrun
-          _bug.unread = false;
-
-          return BzDeck.collections.bugs.set(_bug.id, _bug);
-        }));
+        return Promise.all(result.bugs.map(_bug => BzDeck.collections.bugs.set(_bug.id, _bug)));
       }
 
       if (!result.bugs.length) {
@@ -126,7 +121,14 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
 
         return bugs;
       });
-    }).then(bugs => {
+    }).then(bugs => { // Array
+      // Retrieve the last visit timestamp for all bugs, but return the updated bugs only
+      return BzDeck.collections.bugs.get_all().then(_bugs => {
+        return BzDeck.collections.bugs.retrieve_last_visit(_bugs.keys());
+      }).then(_bugs => {
+        return BzDeck.collections.bugs.get_some(bugs.map(bug => bug.id));
+      });
+    }).then(bugs => { // Map
       BzDeck.prefs.set('subscriptions.last_loaded', Date.now());
 
       return Promise.resolve(bugs);

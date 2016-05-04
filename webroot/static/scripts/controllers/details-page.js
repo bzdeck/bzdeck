@@ -92,7 +92,7 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
 
       this.trigger(':LoadingStarted');
 
-      return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id, _unread: true }).then(bug => {
+      return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id }).then(bug => {
         return bug.fetch();
       }).catch(error => this.trigger(':BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
     }).then(bug => new Promise((resolve, reject) => {
@@ -109,7 +109,7 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
         reject(new Error(message));
       }
     })).then(bug => {
-      bug.unread = false;
+      bug.mark_as_read();
       this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('details', bug) });
     });
 

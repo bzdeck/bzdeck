@@ -50,12 +50,12 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
     // Collapse read comments
     // If the fill_bug_details function is called after the bug details are fetched,
-    // the _last_viewed annotation is already true, so check the delayed argument here
+    // the _last_visit annotation is already true, so check the delayed argument here
     for (let [time, data] of this.entries) {
       // Append the time in data for later use
       data.set('time', time);
 
-      if (!delayed && this.bug._last_viewed && time < this.bug._last_viewed) {
+      if (!delayed && this.bug._last_visit && time < this.bug._last_visit) {
         if (data.has('comment')) {
           read_comments_num++;
           last_comment_time = time;
