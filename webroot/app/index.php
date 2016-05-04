@@ -737,7 +737,7 @@
             <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul><!-- end #TID-tablist -->
           <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
-            <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
+            <textarea rows="1" placeholder="Comment (Markdown is supported)" role="textbox" aria-multiline="true"></textarea>
           </div><!-- end #TID-tabpanel-comment -->
           <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">

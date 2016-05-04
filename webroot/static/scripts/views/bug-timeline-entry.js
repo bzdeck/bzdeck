@@ -97,7 +97,12 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-count', comment.count);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]').textContent = `Comment ${comment.count}`; // l10n
-    $comment_body.innerHTML = comment.text ? BzDeck.controllers.global.parse_comment(comment.text) : '';
+
+    if (comment.is_markdown) {
+      $comment_body.innerHTML = (new showdown.Converter()).makeHtml(comment.text);
+    } else if (comment.text) {
+      $comment_body.innerHTML = BzDeck.controllers.global.parse_comment(comment.text);
+    }
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked

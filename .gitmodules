@@ -8,3 +8,6 @@
 [submodule "webroot/vendor/qrcode-decoder"]
 	path = webroot/vendor/qrcode-decoder
 	url = git@github.com:LazarSoft/jsqrcode.git
+[submodule "webroot/vendor/showdown"]
+	path = webroot/vendor/showdown
+	url = git@github.com:showdownjs/showdown.git

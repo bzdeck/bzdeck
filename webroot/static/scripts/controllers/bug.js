@@ -148,7 +148,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     if (comment.match(/\S/)) {
       let added = !this.has_comment;
 
-      this.changes.comment = { body: comment };
+      this.changes.comment = { body: comment, is_markdown: true };
 
       if (added) {
         this.trigger(':CommentEdited', { added: true, has_comment: true, can_submit: this.can_submit });
@@ -696,6 +696,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
       } else if (Object.keys(this.changes).length === 1 && this.has_comment && this.uploads.length === 1) {
         // If the comment is the only change and there's a single attachment, send the comment with the attachment
         this.uploads[0].comment = this.changes.comment.body;
+        this.uploads[0].is_markdown = true;
         resolve();
       } else {
         // Post the changes first

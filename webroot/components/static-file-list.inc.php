@@ -51,6 +51,7 @@ $styles = [
 $scripts = [
   // Vendor
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
+  '/vendor/showdown/dist/showdown.min.js',
   '/vendor/flaretail.js/scripts/helpers.js',
   '/vendor/flaretail.js/scripts/widgets.js',
   '/vendor/flaretail.js/scripts/app.js',

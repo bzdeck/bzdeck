@@ -153,6 +153,35 @@
   line-height: 1.6;
 }
 
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] h1 {
+  font-size: 3.2rem;
+  font-weight: bold;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] h2 {
+  font-size: 2.4rem;
+  font-weight: bold;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] h3 {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] ul,
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] ol {
+  margin: 1em 0;
+  padding-left: 2rem;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] ul li {
+  list-style-type: disc;
+}
+
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] ol li {
+  list-style-type: decimal;
+}
+
 .bug-timeline [itemprop="comment"] [itemprop="text"]:empty {
   display: none;
 }
@@ -190,11 +219,11 @@
   cursor: text;
 }
 
-.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:first-of-type {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:first-child {
   margin-top: 0;
 }
 
-.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:last-of-type {
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] p:last-child {
   margin-bottom: 0;
 }
 
