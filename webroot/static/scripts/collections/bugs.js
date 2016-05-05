@@ -33,14 +33,11 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    */
   fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
-    let ids = [..._ids].sort(),
-        ids_chunks = [];
+    let ids = [..._ids].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the bugs is not accessible. To work around
     // the issue, divide the array into chunks to retrieve 10 bugs per request, then divide each chunk again if failed.
-    for (let i = 0; i < ids.length; i = i + 10) {
-      ids_chunks.push(ids.slice(i, i + 10));
-    }
+    let ids_chunks = FlareTail.helpers.array.chunk(ids, 10);
 
     let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
       let path = `bug/${ids[0]}`,
@@ -139,17 +136,14 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    */
   retrieve_last_visit (_ids) {
     return this.get_some([..._ids].sort()).then(bugs => {
-      let ids = [...bugs.keys()],
-          ids_chunks = [];
+      let ids = [...bugs.keys()];
 
       if (!ids.length) {
         return Promise.resolve(bugs);
       }
 
       // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
-      for (let i = 0; i < ids.length; i = i + 100) {
-        ids_chunks.push(ids.slice(i, i + 100));
-      }
+      let ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
 
       return Promise.all(ids_chunks.map(ids => new Promise(resolve => {
         let params = new URLSearchParams();

@@ -67,14 +67,11 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @return {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
    */
   fetch (_names) {
-    let names = [..._names].sort(),
-        names_chunks = [];
+    let names = [..._names].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
     // issue, divide the array into chunks to retrieve 10 users per request, then divide each chunk again if failed.
-    for (let i = 0; i < names.length; i = i + 10) {
-      names_chunks.push(names.slice(i, i + 10));
-    }
+    let names_chunks = FlareTail.helpers.array.chunk(names, 10);
 
     let _fetch = names => new Promise((resolve, reject) => {
       let params = new URLSearchParams();
