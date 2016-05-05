@@ -727,8 +727,6 @@
       <section role="group" id="TID" class="bug-comment-form" aria-label="Comment Form">
         <header>
           <h4>Reply</h4>
-        </header>
-        <div>
           <ul id="TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
             <li id="TID-tab-comment" role="tab" aria-controls="TID-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
             <li id="TID-tab-preview" role="tab" aria-controls="TID-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
@@ -736,8 +734,26 @@
             <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-hidden="true"><label>Status</label></li>
             <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul><!-- end #TID-tablist -->
+          <div id="TID-text-formatting-toolbar" class="text-formatting-toolbar" role="toolbar" aria-label="Markdown text-formatting toolbar">
+            <ul role="group">
+              <li role="none"><span class="iconic" title="Insert bold text (Cmd+B)" tabindex="0" role="button" data-command="strong"></span></li>
+              <li role="none"><span class="iconic" title="Insert italic text (Cmd+I)" tabindex="0" role="button" data-command="em"></span></li>
+              <li role="none"><span class="iconic" title="Insert a link (Cmd+K)" tabindex="0" role="button" data-command="a"></span></li>
+            </ul>
+            <ul role="group">
+              <li role="none"><span class="iconic" title="Insert a header" tabindex="0" role="button" data-command="h2"></span></li>
+              <li role="none"><span class="iconic" title="Insert a quote" tabindex="0" role="button" data-command="blockquote"></span></li>
+              <li role="none"><span class="iconic" title="Insert code" tabindex="0" role="button" data-command="code"></span></li>
+            </ul>
+            <ul role="group">
+              <li role="none"><span class="iconic" title="Insert a bulleted list" tabindex="0" role="button" data-command="ul"></span></li>
+              <li role="none"><span class="iconic" title="Insert a numbered list" tabindex="0" role="button" data-command="ol"></span></li>
+            </ul>
+          </div><!-- end #TID-text-formatting-toolbar -->
+        </header>
+        <div>
           <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
-            <textarea rows="1" placeholder="Comment (Markdown is supported)" role="textbox" aria-multiline="true"></textarea>
+            <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
           </div><!-- end #TID-tabpanel-comment -->
           <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">

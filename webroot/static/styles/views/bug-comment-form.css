@@ -17,26 +17,28 @@
 }
 
 .bug-comment-form > header {
+  position: relative;
+  margin: 0 1.2rem;
+  height: 4rem;
+  border-bottom: .1rem solid var(--tab-border-color);
+}
+
+.bug-comment-form > header > h4 {
   position: absolute;
   left: -99999px;
 }
 
-.bug-comment-form > div {
-  padding: 1.2rem;
-  color: var(--content-foreground-color);
-}
-
 .bug-comment-form [role="tablist"] {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   overflow: visible;
-  margin-bottom: 1.2rem;
-  border-bottom: .1rem solid var(--tab-border-color);
-  height: 2.4rem;
+  height: 4rem;
 }
 
 .bug-comment-form [role="tab"] {
   border-width: 0;
-  padding: 0 1.2rem .8rem;
+  padding: 1.2rem;
   width: auto;
 }
 
@@ -63,6 +65,38 @@
   position: relative;
   height: auto;
   max-height: 20rem;
+}
+
+.bug-comment-form .text-formatting-toolbar[role="toolbar"] {
+  position: absolute;
+  top: .8rem;
+  right: 0;
+  height: 2.4rem !important;
+  pointer-events: none;
+}
+
+.bug-comment-form .text-formatting-toolbar[role="toolbar"] [role="group"] {
+  margin-right: 1.2rem;
+  height: 2.4rem !important;
+}
+
+.bug-comment-form .text-formatting-toolbar[role="toolbar"] .iconic {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.bug-comment-form .text-formatting-toolbar[role="toolbar"] .iconic::before {
+  top: 0;
+  left: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.2rem;
+  line-height: 2.4rem;
+}
+
+.bug-comment-form > div {
+  margin: 1.2rem;
+  color: var(--content-foreground-color);
 }
 
 .bug-comment-form [role="textbox"][aria-multiline="true"] {
@@ -313,7 +347,7 @@
     width: 100%;
   }
 
-  [data-device|="mobile"]:root .bug-comment-form [role="tablist"] {
+  [data-device|="mobile"]:root .bug-comment-form > header {
     display: none; /* TBD */
   }
 

@@ -25,6 +25,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     this.$form = this.get_template('bug-comment-form', `${this.id}-comment-form`);
     this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
+    this.$formatting_toolbar = this.$form.querySelector('.text-formatting-toolbar');
     this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
     this.$tablist = this.$form.querySelector('[role="tablist"]');
     this.$$tablist = new this.widgets.TabList(this.$tablist);
@@ -44,6 +45,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
       new this.widgets.ScrollBar($tabpanel);
     }
+
+    // Activate Markdown Editor
+    new BzDeck.MarkdownEditor(this.$form);
 
     this.$form.addEventListener('wheel', event => event.stopPropagation());
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
@@ -89,8 +93,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_tab_selected ($tab) {
-    if ($tab.id.endsWith('write')) {
+    if ($tab.id.endsWith('comment')) {
+      this.$formatting_toolbar.setAttribute('aria-hidden', 'false');
       this.$textbox.focus();
+    } else {
+      this.$formatting_toolbar.setAttribute('aria-hidden', 'true');
     }
 
     if ($tab.id.endsWith('preview')) {
