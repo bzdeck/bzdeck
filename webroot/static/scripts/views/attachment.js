@@ -29,7 +29,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       this.$attachment = this.fill(this.get_template('details-attachment-content'), {
         summary: att.summary,
         file_name: att.file_name,
-        size: `${(att.size / 1024).toFixed(2)} KB`, // l10n
+        size: FlareTail.helpers.number.format_file_size(att.size),
         content_type: att.content_type,
         is_patch: !!att.is_patch,
         is_obsolete: !!att.is_obsolete,

@@ -248,7 +248,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         attachment.summary,
         attachment.file_name,
         attachment.is_patch ? 'Patch' : attachment.content_type, // l10n
-        `${(attachment.size / 1024).toFixed(2)} KB` // l10n
+        FlareTail.helpers.number.format_file_size(attachment.size),
       ].join('\n');
 
       if (media_type === 'image') {
