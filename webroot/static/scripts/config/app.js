@@ -158,3 +158,27 @@ BzDeck.config = {
     }
   ],
 };
+
+/**
+ * Compatibility
+ */
+Object.defineProperty(BzDeck, 'compatible', {
+  get: () => {
+    const features = [
+      'Worker' in window, // Firefox 3.5
+      'FileReader' in window, // Firefox 3.6
+      'isInteger' in Number, // Firefox 16
+      'Notification' in window, // Firefox 22
+      'CSS' in window && 'supports' in CSS, // Firefox 23
+      'SharedWorker' in window, // Firefox 29
+      'URLSearchParams' in window, // Firefox 29
+      'ServiceWorker' in window, // Firefox 33
+      'mediaDevices' in navigator, // Firefox 36
+      'BroadcastChannel' in window, // Firefox 38
+      'CacheStorage' in window, // Firefox 41
+      'Permissions' in window, // Firefox 45
+    ];
+
+    return features.every(item => item);
+  },
+});

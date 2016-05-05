@@ -282,7 +282,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 }
 
 window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.compatible) {
+  if (FlareTail.compatible && BzDeck.compatible) {
     BzDeck.router = new FlareTail.app.Router(BzDeck);
     BzDeck.controllers.session = new BzDeck.SessionController();
   }
