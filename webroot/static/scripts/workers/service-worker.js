@@ -5,7 +5,7 @@
 'use strict';
 
 // Cache version: this has to be updated whenever a file is modified
-const version = '2016-02-27-10-51';
+const version = '2016-05-05-13-53';
 
 // Files need to be cached
 const files = [
@@ -43,6 +43,7 @@ const files = [
   '/static/styles/views/home.css',
   '/static/styles/views/login-form.css',
   '/static/styles/views/main.css',
+  '/static/styles/views/markdown-editor.css',
   '/static/styles/views/person-finder.css',
   '/static/styles/views/profile-page.css',
   '/static/styles/views/qrcode-auth-overlay.css',
@@ -57,6 +58,7 @@ const files = [
   '/static/styles/themes/light.css',
   // Scripts (should be the same as the list in static-file-list.inc.php)
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
+  '/vendor/showdown/dist/showdown.min.js',
   '/vendor/flaretail.js/scripts/helpers.js',
   '/vendor/flaretail.js/scripts/widgets.js',
   '/vendor/flaretail.js/scripts/app.js',
@@ -95,6 +97,7 @@ const files = [
   '/static/scripts/views/global.js',
   '/static/scripts/views/home-page.js',
   '/static/scripts/views/login-form.js',
+  '/static/scripts/views/markdown-editor.js',
   '/static/scripts/views/patch-viewer.js',
   '/static/scripts/views/person-finder.js',
   '/static/scripts/views/profile-page.js',
