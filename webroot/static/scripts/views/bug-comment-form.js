@@ -93,12 +93,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_tab_selected ($tab) {
-    if ($tab.id.endsWith('comment')) {
-      this.$formatting_toolbar.setAttribute('aria-hidden', 'false');
-      this.$textbox.focus();
-    } else {
-      this.$formatting_toolbar.setAttribute('aria-hidden', 'true');
-    }
+    this.$formatting_toolbar.setAttribute('aria-hidden', !$tab.id.endsWith('comment'));
 
     if ($tab.id.endsWith('preview')) {
       // Render the new comment for preview
