@@ -40,6 +40,11 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         enumerable: true,
         get: () => this.data._last_visit && new Date(this.data._last_visit) < new Date(this.data.last_change_time),
       },
+      alias: {
+        enumerable: true,
+        // For backward compatibility, check the type that has been changed from String to Array with Bugzilla 5.0
+        get: () => !this.data.alias ? [] : Array.isArray(this.data.alias) ? this.data.alias : [this.data.alias],
+      },
       duplicates: {
         enumerable: true,
         get: () => this.get_duplicates(),
