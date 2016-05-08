@@ -35,7 +35,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     new this.widgets.ScrollBar($sidebar.querySelector('div'));
 
     this.$$folders = new this.widgets.ListBox(document.querySelector('#sidebar-folder-list'), BzDeck.config.folders);
-    this.$$folders.view.members.forEach($option => $option.title = $option.textContent);
+    this.$$folders.view.members.forEach($option => $option.setAttribute('aria-label', $option.textContent));
     this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { id: event.detail.ids[0] }));
 
     this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
