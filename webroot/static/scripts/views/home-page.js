@@ -175,14 +175,14 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     let show_preview = () => {
       let $$listbox = this.thread.$$listbox;
 
-      if ($$listbox.view.members.length && document.querySelector('#home-preview-pane').clientHeight) {
+      if ($$listbox.view.members.length && !this.preview_is_hidden && !this.controller.data.preview_id) {
         $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
       }
     };
 
     if (!this.vertical_thread_initialized) {
-      // Select the first bug on the list automatically when a folder is opened. Wait a sec until the listbox is ready.
-      // TODO: Remember the last selected bug for each folder
+      // Select the first bug on the list automatically when a folder is opened and no bug is previewed yet. Wait a sec
+      // until the listbox is ready. TODO: Remember the last selected bug for each folder
       $listbox.addEventListener('Updated', event => window.setTimeout(() => show_preview(), 100));
       mql.addListener(show_preview);
 
