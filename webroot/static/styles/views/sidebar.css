@@ -164,7 +164,7 @@
 }
 
 #sidebar-folders--qa label::before {
-  content: '\F164';
+  content: '\F0C3'; /* flask */
 }
 
 #sidebar-folders--all label::before {
