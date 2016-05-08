@@ -214,7 +214,9 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       // Finally load the UI modules
       BzDeck.controllers.global.init(),
       BzDeck.controllers.banner = new BzDeck.BannerController(),
-      BzDeck.controllers.sidebar = new BzDeck.SidebarController(),
+      BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
+        BzDeck.controllers.sidebar = new BzDeck.SidebarController(user);
+      }),
       BzDeck.controllers.statusbar = new BzDeck.StatusbarController(),
     ])).then(() => {
       // Connect to the push notification server

@@ -6,21 +6,13 @@
   position: relative;
   flex: none;
   z-index: 100;
-  box-sizing: border-box;
-  margin: 1.2rem;
-  border-radius: .2rem;
-  border-width: .1rem;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
-  width: calc(100% - 2.4rem);
-  background-color: var(--content-background-color);
 }
 
 .bug-comment-form > header {
   position: relative;
   margin: 0 1.2rem;
+  border-top: .1rem solid var(--secondary-grid-border-color);
   height: 4rem;
-  border-bottom: .1rem solid var(--tab-border-color);
 }
 
 .bug-comment-form > header > h4 {
@@ -38,23 +30,13 @@
 
 .bug-comment-form [role="tab"] {
   border-width: 0;
-  padding: 1.2rem;
+  margin-left: 1.2rem;
+  padding: 1.2rem 0;
   width: auto;
 }
 
-.bug-comment-form [role="tab"][aria-selected="true"]::after {
-  display: block;
-  position: absolute;
-  bottom: -.5rem;
-  left: calc(50% - .5rem);
-  border-width: .1rem .1rem 0 0;
-  border-style: solid;
-  border-color: var(--tab-border-color);
-  width: .8rem;
-  height: .8rem;
-  background: var(--content-background-color);
-  transform: rotate(-45deg);
-  content: "";
+.bug-comment-form [role="tab"][aria-selected="true"] {
+  font-weight: 500;
 }
 
 .bug-comment-form [role="tab"] label {
@@ -75,8 +57,12 @@
   pointer-events: none;
 }
 
+[data-device|="mobile"]:root .bug-comment-form .text-formatting-toolbar[role="toolbar"] {
+  display: none;
+}
+
 .bug-comment-form .text-formatting-toolbar[role="toolbar"] [role="group"] {
-  margin-right: 1.2rem;
+  margin-right: .8rem;
   height: 2.4rem !important;
 }
 
@@ -95,7 +81,7 @@
 }
 
 .bug-comment-form > div {
-  margin: 1.2rem;
+  margin: 0 var(--comment-margin);
   color: var(--content-foreground-color);
 }
 
@@ -103,15 +89,17 @@
   display: block;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   margin: 0;
-  border: 0;
-  padding: 0;
+  border: .1rem solid var(--secondary-grid-border-color);
+  border-radius: .2rem;
+  padding: var(--comment-margin);
   width: 100%;
   height: auto;
   min-height: 2rem;
-  background-color: transparent;
+  background-color: var(--content-background-color);
   box-shadow: none !important;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   line-height: 1.6;
   font-family: inherit;
   pointer-events: auto;
@@ -129,8 +117,12 @@
 }
 
 .bug-comment-form [role="article"] {
+  box-sizing: border-box;
   margin: 0 !important;
-  border: 0;
+  border: .1rem solid var(--secondary-grid-border-color);
+  border-radius: .2rem;
+  padding: var(--comment-margin);
+  background-color: var(--content-background-color);
 }
 
 .bug-comment-form [role="article"] [itemprop="text"] {
@@ -184,9 +176,9 @@
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"] {
   overflow: hidden;
   border: 0;
-  padding: 0 0 0 1.6rem;
+  padding: 0 0 0 var(--comment-margin);
   width: 0;
-  height: 1.6rem;
+  height: var(--comment-margin);
   background-color: transparent;
 }
 
@@ -201,9 +193,9 @@
 
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"]::before {
   display: inline-block;
-  margin-left: -1.6rem;
-  width: 1.6rem;
-  height: 1.6rem;
+  margin-left: -var(--comment-margin);
+  width: var(--comment-margin);
+  height: var(--comment-margin);
   font-size: 1.6rem;
   line-height: 1.6rem;
   font-family: FontAwesome;
@@ -230,8 +222,7 @@
   margin: .2rem;
 }
 
-.bug-comment-form [id$="tabpanel-status"] [role="textbox"][contenteditable="true"],
-.bug-comment-form [id$="tabpanel-needinfo"] [role="textbox"][contenteditable="true"] {
+.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]) [role="textbox"][contenteditable="true"] {
   box-sizing: border-box;
   margin: .2rem;
   padding: 0 .4rem;
@@ -249,9 +240,9 @@
   width: 8rem;
 }
 
-.bug-comment-form [id$="tabpanel-status"],
-.bug-comment-form [id$="tabpanel-needinfo"] {
-  overflow: visible; /* Show the Person Finder results */
+.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]),
+.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]) [role="group"] {
+  overflow: visible; /* Show the Status drop down and Person Finder results */
 }
 
 .bug-comment-form [id$="tabpanel-needinfo"] [role="scrollbar"] {
@@ -264,8 +255,8 @@
 
 .bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="User"] [itemprop="image"] {
   margin-right: .4rem;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: var(--comment-margin);
+  height: var(--comment-margin);
   vertical-align: text-bottom;
 }
 
@@ -276,10 +267,8 @@
 .bug-comment-form > footer {
   display: flex;
   overflow: hidden;
-  border-radius: 0 0 .2rem .2rem;
-  height: 4.4rem;
-  color: var(--content-foreground-color);
-  background-color: var(--secondary-region-background-color);
+  margin: var(--comment-margin);
+  height: 3.2rem;
   transition: height .2s ease .1s; /* This delay makes sure <strong> clickable */
 }
 
@@ -291,8 +280,7 @@
 
 .bug-comment-form > footer [role="status"] {
   flex: auto;
-  margin: .8rem 0;
-  padding: .8rem 0;
+  line-height: 3.2rem;
   text-align: right;
 }
 
@@ -301,10 +289,6 @@
   font-weight: normal;
   cursor: pointer;
   pointer-events: auto;
-}
-
-.bug-comment-form > footer [role="toolbar"] {
-  margin: .8rem;
 }
 
 .bug-comment-form > footer [role="toolbar"] ul {
@@ -317,9 +301,14 @@
 }
 
 .bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] {
+  box-sizing: border-box;
+  border: 0;
   border-radius: .2rem;
-  padding: .8rem 2.4rem !important;
-  height: 1rem;
+  padding: 0 2.4rem !important;
+  height: 3.2rem;
+  font-size: 1.4rem;
+  line-height: 3.2rem;
+  font-style: italic;
 }
 
 .bug-comment-form > footer [role="button"][aria-disabled="false"] {
@@ -345,6 +334,7 @@
     border-width: .1rem 0 0;
     border-radius: 0;
     width: 100%;
+    background-color: var(--content-background-color);
   }
 
   [data-device|="mobile"]:root .bug-comment-form > header {
@@ -353,14 +343,16 @@
 
   [data-device|="mobile"]:root .bug-comment-form > div {
     margin: 0 3.8rem -3.8rem; /* 3.8rem = the height of the footer */
-    padding: 1rem 0;
+    padding: 0;
   }
 
   [data-device|="mobile"]:root .bug-comment-form [role="textbox"][aria-multiline="true"] {
+    border: 0;
     min-height: 1.6rem;
   }
 
   [data-device|="mobile"]:root .bug-comment-form > footer {
+    margin: 0;
     height: 3.8rem;
     background-color: transparent;
   }

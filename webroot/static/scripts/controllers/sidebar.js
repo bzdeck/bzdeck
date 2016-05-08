@@ -10,10 +10,10 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Get a SidebarController instance.
    * @constructor
-   * @argument {undefined}
+   * @argument {Proxy} user - UserModel instance of the application user.
    * @return {Object} controller - New SidebarController instance.
    */
-  constructor () {
+  constructor (user) {
     super(); // This does nothing but is required before using `this`
 
     let mobile = this.helpers.env.device.mobile;
@@ -49,9 +49,16 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
       }
     });
 
-    BzDeck.views.sidebar = new BzDeck.SidebarView();
+    BzDeck.views.sidebar = new BzDeck.SidebarView(user);
+
+    user.get_gravatar_profile().then(profile => {
+      this.trigger(':GravatarProfileFound', {
+        style: { 'background-image': user.background_image ? `url(${user.background_image})` : 'none' },
+      });
+    });
 
     this.on('V:FolderSelected', data => this.data.folder_id = data.id);
+    this.subscribe('V:AppMenuItemSelected');
 
     // Update the sidebar Inbox folder at startup and whenever notified
     this.toggle_unread();
@@ -99,5 +106,23 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
         });
       });
     });
+  }
+
+  /**
+   * Called by BannerView whenever an Application menu item is selected.
+   * @argument {Object} data - Passed data.
+   * @argument {String} data.command - Command name of the menu itme.
+   * @return {undefined}
+   */
+  on_app_menu_item_selected (data) {
+    let func = {
+      'show-profile': () => BzDeck.router.navigate('/profile/' + BzDeck.account.data.name),
+      'show-settings': () => BzDeck.router.navigate('/settings'),
+      logout: () => BzDeck.controllers.session.logout(),
+    }[data.command];
+
+    if (func) {
+      func();
+    }
   }
 }

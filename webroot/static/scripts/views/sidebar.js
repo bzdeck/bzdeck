@@ -10,10 +10,10 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   /**
    * Get a SidebarView instance.
    * @constructor
-   * @argument {undefined}
+   * @argument {Proxy} user - UserModel instance of the application user.
    * @return {Object} view - New SidebarView instance.
    */
-  constructor () {
+  constructor (user) {
     super(); // This does nothing but is required before using `this`
 
     let mobile = this.helpers.env.device.mobile,
@@ -35,10 +35,35 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     new this.widgets.ScrollBar($sidebar.querySelector('div'));
 
     this.$$folders = new this.widgets.ListBox(document.querySelector('#sidebar-folder-list'), BzDeck.config.folders);
+    this.$$folders.view.members.forEach($option => $option.title = $option.textContent);
     this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { id: event.detail.ids[0] }));
 
     this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
     this.on('C:UnreadToggled', data => this.toggle_unread(data.number));
+
+    (new this.widgets.Button(document.querySelector('#main-menu--app--account'))).bind('Pressed', event => {
+      this.trigger(':AppMenuItemSelected', { command: 'show-profile' });
+    });
+
+    this.$app_menu = document.querySelector('#main-menu--app-menu');
+    this.$$app_menu = new this.widgets.Menu(this.$app_menu);
+
+    this.$app_menu.addEventListener('MenuItemSelected', event => {
+      this.trigger(':AppMenuItemSelected', { command: event.detail.command });
+    });
+
+    this.$app_menu.addEventListener('MenuClosed', event => {
+      // Keep the menu open. Need a better way to handle this
+      this.$app_menu.removeAttribute('aria-expanded');
+
+      if (this.helpers.env.device.mobile) {
+        // Hide the sidebar
+        document.documentElement.setAttribute('data-sidebar-hidden', 'true');
+        document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    this.setup_account_label(user);
   }
 
   /**
@@ -80,5 +105,21 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     } else if ($num) {
       $num.remove();
     }
+  }
+
+  /**
+   * Set up the account label & avatar.
+   * @argument {Object} user - User info.
+   * @argument {String} user.name - User's full name.
+   * @argument {String} user.email - User's email address.
+   * @argument {String} user.image - User's avatar image URL.
+   * @return {undefined}
+   */
+  setup_account_label (user) {
+    this.fill(document.querySelector('#main-menu--app--account label'), user);
+
+    this.on('C:GravatarProfileFound', data => {
+      document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];
+    });
   }
 }

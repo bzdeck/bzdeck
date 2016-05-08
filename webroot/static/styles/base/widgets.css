@@ -83,6 +83,28 @@ meta[role="checkbox"]::after {
   filter: brightness(1.5) grayscale(100%);
 }
 
+.iconic[role="button"] {
+  position: relative;
+  overflow: hidden;
+  box-sizing: content-box;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  text-indent: -99999px;
+}
+
+.iconic[role="button"]::before {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-family: FontAwesome;
+  text-indent: 0;
+  justify-content: center;
+  align-items: center;
+}
+
 [role="textbox"],
 [role="searchbox"] {
   border-color: var(--textbox-border-color);

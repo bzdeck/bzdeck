@@ -18,7 +18,7 @@
 
 .bug-timeline .bug-summary {
   position: static;
-  margin: 1.2rem 1.2rem 0;
+  margin: 1.6rem 1.6rem 0;
   line-height: 1.4;
   -moz-user-select: text;
 }
@@ -29,6 +29,7 @@
 
 .bug-timeline .comments-wrapper {
   display: flex;
+  margin-bottom: var(--comment-margin);
 }
 
 [data-ui-timeline-sort-order="ascending"]:root .bug-timeline .comments-wrapper {

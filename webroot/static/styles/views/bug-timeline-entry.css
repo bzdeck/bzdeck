@@ -5,12 +5,14 @@
 .bug-timeline [itemprop="comment"] {
   position: relative;
   margin: var(--comment-margin) var(--comment-margin) 0;
-  border-width: .1rem;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
+  border: .1rem solid var(--secondary-grid-border-color);
   border-radius: .2rem;
   color: var(--content-foreground-color);
   background-color: var(--content-background-color);
+}
+
+.bug-timeline [itemprop="comment"]:last-child {
+  margin-bottom: var(--comment-margin);
 }
 
 .bug-timeline [itemprop="comment"][aria-expanded="false"] {
@@ -124,7 +126,7 @@
   border-color: var(--button-border-color);
   border-radius: .4rem;
   padding: .1rem .4rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.5rem;
   color: var(--disabled-button-foreground-color);
 }
@@ -149,7 +151,7 @@
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
   overflow: hidden;
   padding-top: 0 !important;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   line-height: 1.6;
 }
 
@@ -263,10 +265,9 @@
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
-  margin: 0 var(--comment-margin) var(--comment-margin);
-  border-width: .1rem;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
+  margin: 0;
+  border-radius: 0 0 .2rem .2rem;
+  border-top: .1rem solid var(--secondary-grid-border-color);
   padding: 0 !important;
   width: auto;
   color: var(--hyperlink-text-foreground-color); /* Looks like a link */
@@ -379,11 +380,6 @@
 }
 
 @media (min-width: 1024px) {
-  .bug-timeline [itemprop="comment"],
-  .bug-timeline [itemprop="change"] {
-    --comment-margin: 1.2rem;
-  }
-
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
   .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
     margin-top: -2.8rem;
@@ -401,11 +397,6 @@
 }
 
 @media (max-width: 1023px) {
-  .bug-timeline [itemprop="comment"],
-  .bug-timeline [itemprop="change"] {
-    --comment-margin: .8rem;
-  }
-
   [data-device|="mobile"][data-ui-timeline-sort-order="ascending"]:root .comments-wrapper > :last-child,
   [data-device|="mobile"][data-ui-timeline-sort-order="descending"]:root .comments-wrapper > :first-child {
     margin-bottom: var(--comment-margin);

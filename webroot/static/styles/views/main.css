@@ -4,17 +4,29 @@
 
 main {
   position: fixed;
+  z-index: 20;
   top: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
 }
 
 [data-device="desktop"]:root main {
-  top: 4.4rem; /* height of the banner */
+  top: 3.6rem; /* height of the banner */
+  left: 5.6rem;
+  transition: top .2s ease .5s;
+}
+
+[data-device="desktop"]:root:not([data-tab-count]) main,
+[data-device="desktop"][data-tab-count="1"]:root main {
+  top: 0; /* Hide the tablist when there is only one tab */
 }
 
 [data-device|="mobile"]:root main {
-  top: 0;
+  left: 0;
+}
+
+[data-device|="mobile"]:root #sidebar {
+  left: 0;
 }
 
 #tab-home .close {
@@ -26,7 +38,6 @@ main {
   top: 0;
   bottom: 0;
   width: 100%;
-  background-color: var(--region-background-color);
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] {
@@ -71,6 +82,7 @@ main {
   display: flex;
   position: relative;
   flex: 0 0 auto;
+  box-sizing: border-box;
 }
 
 [data-device="desktop"]:root #main-tabpanels > [role="tabpanel"] > * > header {
@@ -78,9 +90,7 @@ main {
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header {
-  height: 4rem;
-  color: var(--application-header-foreground-color);
-  background-color: var(--application-header-background-color);
+  display: none;
 }
 
 [data-device|="mobile"][data-quicksearch]:root #tabpanel-home > * > header > :not([role="toolbar"]) {
@@ -99,20 +109,23 @@ main {
   height: 4rem;
 }
 
-[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button {
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  width: 4rem;
-  color: var(--application-header-foreground-color);
-  background-color: transparent;
+[data-device="desktop"]:root #main-tabpanels .banner-nav-button {
+  display: none;
 }
 
-[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button:active {
+[data-device|="mobile"]:root #main-tabpanels .banner-nav-button {
+  position: absolute;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
+  color: inherit;
+}
+
+#main-tabpanels .banner-nav-button:active {
   opacity: .8;
 }
 
-[data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header .banner-nav-button::before {
+#main-tabpanels .banner-nav-button::before {
   display: block;
   position: absolute;
   top: 0;
@@ -125,11 +138,11 @@ main {
   text-align: center;
 }
 
-[data-device|="mobile"]:root [role="tabpanel"]:not(#tabpanel-home) > * > header .banner-nav-button::before {
+[role="tabpanel"]:not(#tabpanel-home) .banner-nav-button::before {
   content: "\F053"; /* back icon */
 }
 
-[data-device|="mobile"]:root #tabpanel-home > * > header .banner-nav-button::before {
+#tabpanel-home .banner-nav-button::before {
   content: "\F0C9"; /* hamburger menu icon */
 }
 
@@ -156,6 +169,7 @@ main {
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] > * > header > [role="toolbar"] {
   right: 0;
+  margin: 0;
   min-width: 4rem;
 }
 
@@ -179,7 +193,7 @@ main {
 
 #main-tabpanels > [role="tabpanel"] > * > header {
   box-sizing: border-box;
-  height: 3.2rem;
+  height: 4rem;
   border-color: var(--region-header-border-color);
   color: var(--region-header-foreground-color);
   background-color: var(--region-header-background-color);
@@ -190,7 +204,7 @@ main {
   overflow: hidden;
   padding: 0 1.2rem;
   font-size: 1.6rem;
-  line-height: 3.2rem;
+  line-height: 4rem;
   font-weight: 300;
   font-style: italic;
 }

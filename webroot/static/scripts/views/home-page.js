@@ -42,7 +42,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       });
     }
 
-    this.setup_splitter();
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
     this.subscribe('SettingsPageView:PrefValueChanged', true);
@@ -82,31 +81,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Set up the movable splitter widget between the Thread Pane and Preview Pane.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  setup_splitter () {
-    let $$splitter = this.$$preview_splitter
-                   = new this.widgets.Splitter(document.querySelector('#home-preview-splitter')),
-        prefix = 'ui.home.preview.splitter.position.';
-
-    BzDeck.prefs.get(prefix + $$splitter.data.orientation).then(pref => {
-      if (pref) {
-        $$splitter.data.position = pref;
-      }
-    });
-
-    $$splitter.bind('Resized', event => {
-      let position = event.detail.position;
-
-      if (position) {
-        BzDeck.prefs.set(prefix + $$splitter.data.orientation, position);
-      }
-    });
-  }
-
-  /**
    * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
    * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
@@ -140,6 +114,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     // Activate the toolbar buttons
     new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
+        .bind('Pressed', event => $pane.setAttribute('aria-expanded', $pane.matches('[aria-expanded="false"]')));
+    new this.widgets.Button($bug.querySelector('[data-command="open-tab"]'))
         .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
 
     // Assign keyboard shortcuts
@@ -171,8 +147,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   change_layout (pref, sort_grid = false) {
-    let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical',
-        $$splitter = this.$$preview_splitter;
+    let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical';
 
     document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
 
@@ -185,18 +160,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     // Render the thread
     if (BzDeck.controllers.sidebar && BzDeck.controllers.sidebar.data.folder_id) {
       BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
-    }
-
-    if ($$splitter) {
-      let orientation = vertical ? 'vertical' : 'horizontal';
-
-      $$splitter.data.orientation = orientation;
-
-      BzDeck.prefs.get(`ui.home.preview.splitter.position.${orientation}`).then(pref => {
-        if (pref) {
-          $$splitter.data.position = pref;
-        }
-      });
     }
   }
 
@@ -234,6 +197,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         }
       });
 
+      this.init_searchbar();
       this.vertical_thread_initialized = true;
     }
 
@@ -293,6 +257,64 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         });
       }
     });
+  }
+
+  /**
+   * Initialize the searchbar available in the vertical layout.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  init_searchbar () {
+    let listed_bugs,
+        $searchbar = document.querySelector('#home-list-searchbar'),
+        $searchbox = $searchbar.querySelector('[role="searchbox"]'),
+        $search_button = $searchbar.querySelector('[role="button"][data-id="search"]'),
+        $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
+
+    $search_button.addEventListener('mousedown', event => {
+      if ($searchbar.classList.contains('active')) {
+        // TEMP: Use QuickSearchController to open the advanced search page
+        this.trigger('QuickSearchView:AdvancedSearchRequested', { input: $searchbox.value });
+      } else {
+        $searchbar.classList.add('active');
+        this.helpers.event.async(() => $searchbox.focus());
+      }
+    });
+
+    $close_button.addEventListener('mousedown', event => {
+      if (listed_bugs) {
+        // Restore the bugs previously listed
+        this.thread.update(listed_bugs);
+        listed_bugs = undefined;
+      }
+
+      $searchbar.classList.remove('active');
+      document.querySelector('#home-vertical-thread').focus();
+    });
+
+    $searchbox.addEventListener('input', event => {
+      if ($searchbox.value.trim()) {
+        // TEMP: Use QuickSearchController to retrieve search results
+        this.trigger('QuickSearchView:QuickSearchRequested', { input: $searchbox.value });
+      }
+    });
+
+    this.on('QuickSearchController:ResultsAvailable', data => {
+      let { category, input, results } = data;
+
+      // Check if the search terms have not changed since the search is triggered
+      if (category !== 'bugs' || input !== $searchbox.value) {
+        return;
+      }
+
+      if (!listed_bugs) {
+        // Keep the bugs currently listed on the thread
+        listed_bugs = this.thread.bugs;
+      }
+
+      // Render the results
+      BzDeck.collections.bugs.get_some(results.map(result => result.id)).then(bugs => this.thread.update(bugs));
+    }, true);
   }
 
   /**

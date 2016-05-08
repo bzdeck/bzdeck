@@ -298,6 +298,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   update (bugs) {
     let cond = this.options.sort_conditions;
 
+    this.bugs = bugs;
     this.unrendered_bugs = cond ? this.helpers.array.sort([...bugs.values()], cond) : [...bugs.values()];
     this.$outer.setAttribute('aria-busy', 'true');
     this.$listbox.innerHTML = '';

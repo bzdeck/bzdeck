@@ -3,128 +3,25 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Banner View that represents the global application header, containing the Quick Search bar, global tabs
- * and application menu.
+ * Define the Banner View that represents the global application header, containing the Quick Search bar (currently
+ * disabled) and global tabs.
  * @extends BzDeck.BaseView
  */
 BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   /**
    * Get a BannerView instance.
    * @constructor
-   * @argument {Proxy} user - UserModel instance of the application user.
+   * @argument {undefined}
    * @return {Object} view - New BannerView instance.
    */
-  constructor (user) {
+  constructor () {
     super(); // This does nothing but is required before using `this`
 
     this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist'));
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail));
+    this.$$tablist.bind('Opened', event => this.update_tab_count());
+    this.$$tablist.bind('Closed', event => this.update_tab_count());
     this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
-
-    // Make the logo clickable
-    this.$logo = document.querySelector('[role="banner"] h1');
-    this.$logo.addEventListener('mousedown', event => this.trigger(':LogoClicked'));
-
-    this.$$menu = new this.widgets.MenuBar(document.querySelector('#main-menu'));
-    this.$app_menu = document.querySelector('#main-menu--app-menu');
-
-    this.$app_menu.addEventListener('MenuItemSelected', event => {
-      this.trigger(':AppMenuItemSelected', { command: event.detail.command });
-    });
-
-    if (this.helpers.env.device.mobile) {
-      this.apply_mobile_layout();
-    }
-
-    if (this.helpers.app.fullscreen_enabled) {
-      this.activate_fullscreen_menuitem();
-    }
-
-    this.setup_account_label(user);
-    this.setup_reload_button();
-  }
-
-  /**
-   * Switch to the mobile layout.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  apply_mobile_layout () {
-    document.querySelector('#sidebar-account').appendChild(document.querySelector('#main-menu--app--account'));
-    document.querySelector('#sidebar-menu').appendChild(this.$app_menu);
-    document.querySelector('#tabpanel-home [role="toolbar"]').appendChild(document.querySelector('#quicksearch'));
-    document.querySelector('#tabpanel-home [role="toolbar"]').appendChild(document.querySelector('#toolbar-buttons'));
-    this.$app_menu.setAttribute('aria-expanded', 'true');
-
-    this.$app_menu.addEventListener('MenuClosed', event => {
-      // Keep the menu open
-      this.$app_menu.removeAttribute('aria-expanded');
-      // Hide the sidebar
-      document.documentElement.setAttribute('data-sidebar-hidden', 'true');
-      document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  /**
-   * Activate the fullscreen menu item.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  activate_fullscreen_menuitem () {
-    let $menuitem = document.querySelector('#main-menu--app--fullscreen'),
-        $label = $menuitem.querySelector('label'),
-        toggle = () => document.fullscreenElement ? document.exitFullscreen() : document.body.requestFullscreen();
-
-    $menuitem.removeAttribute('aria-hidden');
-
-    // A workaround for Bug 779324
-    $menuitem.addEventListener('mousedown', event => toggle());
-    this.helpers.kbd.assign($menuitem, { Enter: event => toggle() });
-
-    window.addEventListener('fullscreenchange', event => {
-      $label.textContent = document.fullscreenElement ? 'Exit Full Screen' : 'Enter Full Screen'; // l10n
-    });
-  }
-
-  /**
-   * Set up the account label & avatar.
-   * @argument {Object} user - User info.
-   * @argument {String} user.name - User's full name.
-   * @argument {String} user.email - User's email address.
-   * @argument {String} user.image - User's avatar image URL.
-   * @return {undefined}
-   */
-  setup_account_label (user) {
-    document.querySelector('#main-menu--app label').style.setProperty('background-image', `url(${user.image})`);
-    this.fill(document.querySelector('#main-menu--app--account label'), user);
-
-    this.on('C:GravatarProfileFound', data => {
-      document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];
-    });
-  }
-
-  /**
-   * Set up the Reload button which also works as the activity indicator or "throbber" displayed while loading bugs.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  setup_reload_button () {
-    let $button = document.querySelector('#reload-button'),
-        $$button = new this.widgets.Button($button);
-
-    $$button.bind('Pressed', event => this.trigger(':ReloadButtonPressed'));
-
-    this.on('SubscriptionCollection:FetchingSubscriptionsStarted', () => {
-      $button.setAttribute('aria-busy', 'true');
-      $button.setAttribute('aria-disabled', 'true');
-      $button.textContent = $button.title = 'Loading...'; // l10n
-    }, true);
-
-    this.on('SubscriptionCollection:FetchingSubscriptionsComplete', () => {
-      $button.setAttribute('aria-busy', 'false');
-      $button.setAttribute('aria-disabled', 'false');
-      $button.textContent = $button.title = 'Reload'; // l10n
-    }, true);
   }
 
   /**
@@ -210,6 +107,15 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     }
 
     this.trigger(':TabSelected', { path });
+  }
+
+  /**
+   * Called whenever a global tab is opened or closed. Update the data-tab-count attribute on <html>.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  update_tab_count () {
+    document.documentElement.setAttribute('data-tab-count', this.$$tablist.view.members.length);
   }
 
   /**

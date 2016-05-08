@@ -96,7 +96,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-count', comment.count);
-    $entry.querySelector(':not([itemscope]) > [itemprop="name"]').textContent = `Comment ${comment.count}`; // l10n
+    $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
+          .textContent = comment.count > 0 ? `Comment ${comment.count}` : 'Description'; // l10n
 
     if (comment.is_markdown) {
       $comment_body.innerHTML = (new showdown.Converter()).makeHtml(comment.text);

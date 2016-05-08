@@ -268,8 +268,9 @@
           <div role="toolbar">
             <ul role="none">
               <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="home-preview-bug-menu" data-command="show-menu">Menu</span></li>
+              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
+              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
             </ul>
             <ul id="home-preview-bug-menu" role="menu" aria-expanded="false">
               <li role="none">
@@ -301,8 +302,8 @@
           <div role="toolbar">
             <ul role="none">
               <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu">Menu</span></li>
+              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
             </ul>
             <ul role="none">
               <li role="none"><span class="iconic" title="Show the query pane to search again" tabindex="0" role="button" data-command="show-basic-search-pane">Search Again</span></li>
@@ -415,6 +416,18 @@
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
                     </span>
                   </section>
+                  <section role="group" aria-label="Severity" data-field="severity">
+                    <h4>Severity</h4>
+                    <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
+                    </span>
+                  </section>
+                  <section role="group" aria-label="Priority" data-field="priority">
+                    <h4>Priority</h4>
+                    <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
+                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
+                    </span>
+                  </section>
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
                   <header>
@@ -448,23 +461,6 @@
                     <h4>OS</h4>
                     <span role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
-                    </span>
-                  </section>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Importance Fieldset" data-category="importance">
-                  <header>
-                    <h3>Importance</h3>
-                  </header>
-                  <section role="group" aria-label="Severity" data-field="severity">
-                    <h4>Severity</h4>
-                    <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Priority" data-field="priority">
-                    <h4>Priority</h4>
-                    <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
                     </span>
                   </section>
                 </section>
@@ -679,20 +675,38 @@
     </template><!-- end #bug-details-error-template -->
     <template id="preview-bug-info">
       <div class="bug-info" tabindex="0" role="region">
-        <dl>
-          <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
-          <dt>Last Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
-          <dt>Status</dt><dd itemprop="status"></dd>
-          <dt>Resolution</dt><dd itemprop="resolution"></dd>
-          <dt>Target Milestone</dt><dd itemprop="target_milestone"></dd>
-          <dt>Product</dt><dd itemprop="product"></dd>
-          <dt>Component</dt><dd itemprop="component"></dd>
-          <dt>Version</dt><dd itemprop="version"></dd>
-          <dt>Hardware</dt><dd itemprop="platform"></dd>
-          <dt>OS</dt><dd itemprop="op_sys"></dd>
-          <dt>Severity</dt><dd itemprop="severity"></dd>
-          <dt>Priority</dt><dd itemprop="priority"></dd>
-        </dl>
+        <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
+          <header>
+            <h3>Status</h3>
+          </header>
+          <div>
+            <dl>
+              <dt>Status</dt><dd itemprop="status"></dd>
+              <dt>Resolution</dt><dd itemprop="resolution"></dd>
+              <dt>Target Milestone</dt><dd itemprop="target_milestone"></dd>
+            </dl>
+            <dl>
+              <dt>Severity</dt><dd itemprop="severity"></dd>
+              <dt>Priority</dt><dd itemprop="priority"></dd>
+            </dl>
+          </div>
+        </section>
+        <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
+          <header>
+            <h3>Affected</h3>
+          </header>
+          <div>
+            <dl>
+              <dt>Product</dt><dd itemprop="product"></dd>
+              <dt>Component</dt><dd itemprop="component"></dd>
+              <dt>Version</dt><dd itemprop="version"></dd>
+            </dl>
+            <dl>
+              <dt>Hardware</dt><dd itemprop="platform"></dd>
+              <dt>OS</dt><dd itemprop="op_sys"></dd>
+            </dl>
+          </div>
+        </section>
       </div><!-- end .bug-info -->
     </template><!-- end #preview-bug-info -->
     <template id="timeline-comment">
@@ -753,7 +767,7 @@
         </header>
         <div>
           <div id="TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="TID-tab-comment">
-            <textarea rows="1" placeholder="Comment" role="textbox" aria-multiline="true"></textarea>
+            <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
           </div><!-- end #TID-tabpanel-comment -->
           <div id="TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
@@ -810,7 +824,7 @@
           <div role="status"></div>
           <div role="toolbar">
             <ul role="none">
-              <li role="none"><span role="button" aria-disabled="true" data-command="submit">Post</span></li>
+              <li role="none"><span role="button" aria-disabled="true" data-command="submit">Save Changes</span></li>
             </ul>
           </div>
         </footer>
@@ -1037,48 +1051,6 @@
               </section>
             </section><!-- end #quicksearch-results -->
           </div><!-- end #quicksearch -->
-          <ul id="toolbar-buttons">
-            <li role="none"><span id="reload-button" role="button" title="Reload" aria-busy="false" aria-disabled="false"></span></li>
-            <li role="none">
-              <ul id="main-menu" role="menubar">
-                <li role="none">
-                  <span id="main-menu--app" title="Application Menu" role="menuitem" aria-haspopup="true" aria-owns="main-menu--app-menu"><label>App</label></span>
-                  <ul id="main-menu--app-menu" role="menu" aria-expanded="false">
-                    <li role="none">
-                      <span id="main-menu--app--account" role="menuitem" aria-disabled="true">
-                        <label itemscope itemtype="http://bzdeck.com/User">
-                          <img alt="" itemprop="image">
-                          <strong itemprop="name"></strong>
-                          <span itemprop="email"></span>
-                        </label>
-                      </span>
-                    </li>
-                    <li role="separator"></li>
-                    <li role="none">
-                      <span id="main-menu--app--profile" role="menuitem" data-command="show-profile"><label>Profile</label></span>
-                    </li>
-                    <li role="none">
-                      <span id="main-menu--app--settings" role="menuitem" data-command="show-settings"><label>Settings</label></span>
-                    </li>
-                    <li role="none">
-                      <span id="main-menu--app--fullscreen" role="menuitem" aria-hidden="true" data-command="toggle-fullscreen"><label>Enter Full Screen</label></span>
-                    </li>
-                    <li role="separator"></li>
-                    <li role="none">
-                      <a id="main-menu--app--about" href="/about/" role="menuitem" data-command="show-about"><label>About BzDeck</label></a>
-                    </li>
-                    <li role="none">
-                      <a id="main-menu--app--support" href="/support/" role="menuitem" data-command="show-support"><label>Support &amp; Feedback</label></a>
-                    </li>
-                    <li role="separator"></li>
-                    <li role="none">
-                      <span id="main-menu--app--logout" role="menuitem" data-command="logout"><label>Sign Out</label></span>
-                    </li>
-                  </ul><!-- end #main-menu--app-menu -->
-                </li>
-              </ul><!-- end #main-menu -->
-            </li>
-          </ul><!-- end #toolbar-buttons -->
         </div><!-- end [role="toolbar"] -->
         <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
@@ -1088,6 +1060,13 @@
         <div tabindex="0" role="region">
           <section id="sidebar-account">
             <h2>Account</h2>
+            <span id="main-menu--app--account" role="button" tabindex="0">
+              <label itemscope itemtype="http://bzdeck.com/User">
+                <img alt="" itemprop="image">
+                <strong itemprop="name"></strong>
+                <span itemprop="email"></span>
+              </label>
+            </span>
           </section><!-- end #sidebar-account -->
           <section id="sidebar-folders">
             <h2>Bugs</h2>
@@ -1095,6 +1074,10 @@
           </section><!-- end #sidebar-folders -->
           <section id="sidebar-menu">
             <h2>Menu</h2>
+            <ul id="main-menu--app-menu" role="menu">
+              <li role="none"><span id="main-menu--app--settings" title="Settings" role="menuitem" data-command="show-settings"><label>Settings</label></span></li>
+              <li role="none"><a id="main-menu--app--about" href="/about/" title="About BzDeck" role="menuitem" data-command="show-about"><label>About BzDeck</label></a></li>
+            </ul><!-- end #main-menu--app-menu -->
           </section><!-- end #sidebar-menu -->
         </div>
       </aside><!-- end #sidebar -->
@@ -1103,14 +1086,18 @@
           <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
             <section>
               <header>
-                <div class="banner-nav-button" tabindex="0" role="button" aria-label="Menu"></div>
                 <h2>Inbox</h2>
-                <div role="toolbar"></div>
               </header>
               <div>
                 <div id="home-list-pane" tabindex="0" role="region">
                   <header>
+                    <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
                     <h3>Inbox</h3>
+                    <div id="home-list-searchbar" role="search">
+                      <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
+                      <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
+                      <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
+                    </div>
                   </header>
                   <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
                   </section>
@@ -1121,8 +1108,7 @@
                     <div role="status"><span>No bugs found in this folder.</span></div>
                   </footer>
                 </div><!-- end #home-list-pane -->
-                <div id="home-preview-splitter" class="splitter" draggable="true" tabindex="0" role="separator" aria-grabbed="false" aria-orientation="horizontal" aria-controls="home-list-pane home-preview-pane"></div>
-                <div id="home-preview-pane" tabindex="0" role="region" aria-expanded="true"></div>
+                <div id="home-preview-pane" tabindex="0" role="region" aria-expanded="false"></div>
               </div>
             </section>
           </div><!-- end #tabpanel-home -->

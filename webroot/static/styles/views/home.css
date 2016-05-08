@@ -4,6 +4,19 @@
 
 #tabpanel-home > section > div {
   display: flex;
+  background-color: var(--content-background-color);
+}
+
+[data-device|="mobile"]:root #tabpanel-home > section > header h2 {
+  display: none;
+}
+
+[data-device|="mobile"]:root #tabpanel-home > section > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 [data-home-layout="vertical"]:root #tabpanel-home > section > div {
@@ -12,15 +25,6 @@
 
 [data-home-layout="classic"]:root #tabpanel-home > section > div {
   flex-direction: column;
-}
-
-[data-device="desktop"]:root #tabpanel-home > section > div {
-  left: 16rem; /* A space for the sidebar */
-  width: calc(100% - 16rem);
-}
-
-[data-device|="mobile"]:root #tabpanel-home > section > div {
-  left: 0;
 }
 
 #home-list-pane {
@@ -32,32 +36,35 @@
   display: flex;
   overflow: hidden;
   flex-direction: column;
-  width: 40%;
+  width: 30%;
   min-width: 24rem;
 }
 
 [data-home-layout="vertical"]:root #home-list-pane > header {
-  display: flex;
+  position: relative;
   flex: none;
+  overflow: hidden;
   box-sizing: border-box;
-  height: 3.2rem;
-  border-color: var(--region-header-border-color);
-  color: var(--region-header-foreground-color);
-  background-color: var(--region-header-background-color);
+  height: 4rem;
 }
 
 [data-device|="mobile"]:root #home-list-pane > header {
-  display: none;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
 }
 
 [data-home-layout="vertical"]:root #home-list-pane > header h3 {
-  flex: auto;
   overflow: hidden;
-  padding: 0 1.2rem;
+  padding: 0 1.6rem;
   font-size: 1.6rem;
-  line-height: 3.2rem;
+  line-height: 4rem;
   font-weight: 300;
   font-style: italic;
+}
+
+[data-device|="mobile"]:root #home-list-pane > header h3 {
+  font-size: 2rem;
+  text-align: center;
 }
 
 [data-home-layout="vertical"]:root #home-vertical-thread {
@@ -74,18 +81,90 @@
   display: none;
 }
 
+[data-home-layout="vertical"]:root #home-list-searchbar {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: translateX(calc(100% - 4rem));
+}
+
+[data-device="desktop"]:root #home-list-searchbar {
+  background-color: var(--content-background-color);
+  transition: transform .3s ease;
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar.active {
+  transform: translateX(0);
+}
+
+[data-device|="mobile"]:root #home-list-searchbar.active {
+  background-color: var(--content-background-color);
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar [role="button"] {
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.6rem;
+}
+
+[data-device|="mobile"]:root #home-list-searchbar:not(.active) [role="button"] {
+  color: inherit;
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar [role="button"][data-id="search"]::before {
+  content: "\F002";
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar [role="button"][data-id="close"]::before {
+  content: "\F00D";
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar [role="searchbox"] {
+  flex: auto;
+  display: inline-block;
+  border: 0;
+  padding: 0;
+  min-width: 0; /* Make sure flexbox works as expected */
+  height: 4rem;
+  background-color: transparent;
+  box-shadow: none;
+  font-size: 1.6rem;
+  line-height: 4rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
 #home-preview-pane {
   overflow: hidden;
   flex: auto;
   border-width: .1rem 0 0 0;
   border-style: solid;
-  border-color: var(--region-border-color);
+  border-color: var(--secondary-region-border-color);
 }
 
 [data-home-layout="vertical"]:root #home-preview-pane {
-  min-width: 36rem;
-  background-color: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  background-color: var(--application-background-color);
   border-width: 0 0 0 .1rem;
+  transition: transform .4s;
+}
+
+[data-home-layout="vertical"]:root #home-preview-pane[aria-expanded="false"] {
+  display: block;
+  transform: translateX(30%);
+}
+
+[data-home-layout="vertical"]:root #home-preview-pane[aria-expanded="true"] {
+  transform: translateX(0);
 }
 
 [data-home-layout="classic"]:root #home-preview-pane {
@@ -95,10 +174,10 @@
 #home-list-pane > footer {
   position: absolute;
   z-index: 10;
-  top: 3.2rem; /* header */
+  top: 4rem; /* header */
   bottom: 0;
   width: 100%;
-  background-color: var(--region-background-color);
+  background-color: var(--content-background-color);
 }
 
 #home-list-pane > footer [role="status"] {
@@ -114,30 +193,22 @@
   display: none;
 }
 
-[data-home-layout="vertical"]:root #home-preview-bug-info {
-  display: none;
-}
-
 #home-list .grid-body [role="row"]:nth-child(even):not([aria-selected="true"]) {
   background-color: var(--grid-even-row-background-color);
 }
 
 @media (min-width: 1024px) {
-  [data-device|="mobile"]:root #tabpanel-home > * > header,
   [data-device|="mobile"]:root #home-list-pane {
-    width: 40% !important;
+    width: 30% !important;
     min-width: 0 !important;
   }
 
   [data-device|="mobile"]:root #home-preview-bug > header {
     position: fixed;
     top: 0;
-    right: 0;
-    left: auto;
     z-index: 200;
     border-width: 0;
     padding: 0;
-    width: 60%;
     height: 4rem;
     color: var(--application-header-foreground-color);
     background-color: var(--application-header-background-color);
@@ -164,6 +235,7 @@
     position: absolute;
     top: 0;
     right: 0;
+    margin: 0;
     min-width: 4rem;
     height: 4rem;
   }
@@ -178,10 +250,12 @@
   [data-device|="mobile"]:root #home-preview-bug > header > [role="toolbar"] .iconic {
     width: 4rem;
     height: 4rem;
+    color: inherit;
   }
 
-  [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper {
-    top: 4rem;
+  [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper,
+  [data-device|="mobile"]:root #home-preview-bug-info {
+    margin-top: 4rem;
   }
 }
 
@@ -190,8 +264,7 @@
     width: 100% !important;
   }
 
-  [data-home-layout="vertical"]:root #home-preview-splitter,
   [data-home-layout="vertical"]:root #home-preview-pane {
-    display: none;
+    display: none !important;
   }
 }

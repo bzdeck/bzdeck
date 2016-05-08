@@ -16,27 +16,13 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    let name = BzDeck.account.data.name;
-
-    BzDeck.collections.users.get(name, { name }).then(user => {
-      this.user = user;
-      BzDeck.views.banner = new BzDeck.BannerView(this.user);
-
-      this.user.get_gravatar_profile().then(profile => {
-        this.trigger(':GravatarProfileFound', {
-          style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
-        });
-      });
-    });
+    BzDeck.views.banner = new BzDeck.BannerView();
 
     // Subcontrollers
     BzDeck.controllers.quick_search = new BzDeck.QuickSearchController();
 
-    this.on('V:LogoClicked', data => BzDeck.router.navigate('/home/' + BzDeck.controllers.sidebar.data.folder_id));
     this.subscribe('V:BackButtonClicked');
-    this.subscribe('V:ReloadButtonPressed');
     this.subscribe('V:TabSelected');
-    this.subscribe('V:AppMenuItemSelected');
   }
 
   /**
@@ -54,21 +40,6 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BannerView whenever the Reload button is clicked on the mobile view. Fetch the latest data from Bugzilla
-   * instance.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  on_reload_button_pressed () {
-    // Reset the timer
-    window.clearInterval(BzDeck.controllers.global.timers.get('fetch_subscriptions'));
-    BzDeck.controllers.global.timers.set('fetch_subscriptions', window.setInterval(() =>
-        BzDeck.collections.subscriptions.fetch(), 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
-
-    BzDeck.collections.subscriptions.fetch();
-  }
-
-  /**
    * Called by BannerView whenever a tab in the global tablist is selected. Navigate to the specified location.
    * @argument {Object} data - Passed data.
    * @argument {String} data.path - Location pathname that corresponds to the tab.
@@ -77,24 +48,6 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   on_tab_selected (data) {
     if (location.pathname + location.search !== data.path) {
       BzDeck.router.navigate(data.path);
-    }
-  }
-
-  /**
-   * Called by BannerView whenever an Application menu item is selected.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.command - Command name of the menu itme.
-   * @return {undefined}
-   */
-  on_app_menu_item_selected (data) {
-    let func = {
-      'show-profile': () => BzDeck.router.navigate('/profile/' + this.user.email),
-      'show-settings': () => BzDeck.router.navigate('/settings'),
-      logout: () => BzDeck.controllers.session.logout(),
-    }[data.command];
-
-    if (func) {
-      func();
     }
   }
 }
