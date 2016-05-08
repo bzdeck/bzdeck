@@ -132,11 +132,12 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * Parse a bug comment and format as HTML. URLs are automatically converted to links. Bug IDs and attachment IDs are
    * converted to in-app links. Quotes are nested in <blockquote> elements.
    * @argument {String} str - Bug comment in plain text, as provided by Bugzilla.
+   * @argument {Boolean} [is_markdown=true] - Whether the comment is written in Markdown.
    * @return {String} str - HTML-formatted comment.
    * @todo Add more autolinkification support (#68)
    * @todo Improve the performance probably using a worker.
    */
-  parse_comment (str) {
+  parse_comment (str, is_markdown = true) {
     let blockquote = p => {
       let regex = /^&gt;\s?/gm;
 
@@ -175,6 +176,38 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
       return p;
     };
 
+    // Autolinkification of general URLs
+    let linkify_general = () => {
+      str = str.replace(
+        /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
+        '<a href="$1">$1</a>'
+      );
+
+      // Email links
+      // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
+      str = str.replace(
+        /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
+        '<a href="mailto:$1">$1</a>'
+      );
+    };
+
+    // Autolinkification of bug IDs, attachment IDs, etc.
+    let linkify_bugzilla = () => {
+      str = str.replace(/Bug\s*#?(\d+)/igm, '<a href="/bug/$1" data-bug-id="$1">$&</a>');
+      str = str.replace(/Attachment\s*#?(\d+)/igm, '<a href="/attachment/$1" data-att-id="$1">$&</a>');
+    };
+
+    if (!str.trim()) {
+      return '';
+    }
+
+    if (is_markdown) {
+      linkify_bugzilla();
+
+      // Parse the Markdown with a library
+      return (new showdown.Converter()).makeHtml(str);
+    }
+
     str = this.helpers.string.sanitize(str);
 
     // Quotes
@@ -184,30 +217,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
     str = str.replace(/\n{2,}/gm, '').replace(/\n/gm, '<br>');
 
-    // General links
-    str = str.replace(
-      /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
-      '<a href="$1">$1</a>'
-    );
-
-    // Email links
-    // http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
-    str = str.replace(
-      /^([a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)$/,
-      '<a href="mailto:$1">$1</a>'
-    );
-
-    // Bugs
-    str = str.replace(
-      /Bug\s*#?(\d+)/igm,
-      '<a href="/bug/$1" data-bug-id="$1">Bug $1</a>' // l10n
-    );
-
-    // Attachments
-    str = str.replace(
-      /Attachment\s*#?(\d+)/igm,
-      '<a href="/attachment/$1" data-att-id="$1">Attachment $1</a>' // l10n
-    );
+    linkify_general();
+    linkify_bugzilla();
 
     return str;
   }

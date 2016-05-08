@@ -97,7 +97,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     if ($tab.id.endsWith('preview')) {
       // Render the new comment for preview
-      this.$preview.innerHTML = (new showdown.Converter()).makeHtml(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.controllers.global.parse_comment(this.$textbox.value);
     }
   }
 

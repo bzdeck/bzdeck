@@ -98,12 +98,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.setAttribute('data-comment-count', comment.count);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
           .textContent = comment.count > 0 ? `Comment ${comment.count}` : 'Description'; // l10n
-
-    if (comment.is_markdown) {
-      $comment_body.innerHTML = (new showdown.Converter()).makeHtml(comment.text);
-    } else if (comment.text) {
-      $comment_body.innerHTML = BzDeck.controllers.global.parse_comment(comment.text);
-    }
+    $comment_body.innerHTML = BzDeck.controllers.global.parse_comment(comment.text, comment.is_markdown);
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked
@@ -115,8 +110,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
       let reply = () => {
         let quote_header = `(In reply to ${author.name} from comment #${comment.count})`,
-            quote_lines = (comment.text.match(/^$|.{1,78}(?:\b|$)/gm) || []).map(line => `> ${line}`),
-            quote = `${quote_header}\n${quote_lines.join('\n')}`,
+            quote_lines = comment.text.split(/\n/).map(line => `> ${line}`).join('\n'),
+            quote = [quote_header, quote_lines].join('\n'),
             $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`),
             $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
