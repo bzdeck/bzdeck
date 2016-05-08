@@ -9,6 +9,10 @@ article[id$="preview-bug"] {
   flex-direction: row;
 }
 
+#home-preview-bug {
+  display: block;
+}
+
 article[id$="preview-bug"] > header {
   display: flex;
   position: absolute;
@@ -27,18 +31,50 @@ article[id$="preview-bug"] > header {
   -moz-column-count: 2;
 }
 
-#home-preview-pane[aria-expanded="true"] .bug-info .bug-fieldset > div > dl {
+#home-preview-pane[aria-expanded="true"] .bug-info .bug-fieldset > div > section {
   overflow: hidden;
   page-break-inside: avoid;
 }
 
-#home-preview-pane[aria-expanded="false"] .bug-info dt {
-  width: 100%;
+#home-preview-pane .bug-info .bug-fieldset > div > section {
+  padding-left: 8rem;
 }
 
-#home-preview-pane[aria-expanded="false"] .bug-info dd {
-  margin: -.4rem 0 .4rem;
-  width: 100%;
+#home-preview-pane .bug-info .bug-fieldset > div > section h4 {
+  opacity: .6;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+#home-preview-pane[aria-expanded="false"] .bug-info .bug-fieldset > div > section :-moz-any(span, a):only-of-type {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#home-preview-bug-timeline-wrapper,
+#home-preview-bug-info {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+#home-preview-bug-timeline-wrapper {
+  left: 0;
+  width: 50%;
+}
+
+#home-preview-bug-info {
+  left: 50%;
+}
+
+#home-preview-pane[aria-expanded="false"] #home-preview-bug-info {
+  width: 20% !important;
+}
+
+#home-preview-pane[aria-expanded="true"] #home-preview-bug-info {
+  width: 50% !important;
 }
 
 article[id$="preview-bug"] > div {

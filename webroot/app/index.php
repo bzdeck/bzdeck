@@ -680,15 +680,18 @@
             <h3>Status</h3>
           </header>
           <div>
-            <dl>
-              <dt>Status</dt><dd itemprop="status"></dd>
-              <dt>Resolution</dt><dd itemprop="resolution"></dd>
-              <dt>Target Milestone</dt><dd itemprop="target_milestone"></dd>
-            </dl>
-            <dl>
-              <dt>Severity</dt><dd itemprop="severity"></dd>
-              <dt>Priority</dt><dd itemprop="priority"></dd>
-            </dl>
+            <section role="group" aria-label="Status" data-field="status">
+              <h4>Status</h4>
+              <span itemprop="status"></span> <span itemprop="resolution"></span>
+            </section>
+            <section role="group" aria-label="Target Milestone" data-field="target_milestone">
+              <h4>Target</h4>
+              <span itemprop="target_milestone"></span>
+            </section>
+            <section role="group" aria-label="Severity" data-field="severity">
+              <h4>Importance</h4>
+              <span itemprop="severity"></span> / <span itemprop="priority"></span>
+            </section>
           </div>
         </section>
         <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
@@ -696,15 +699,76 @@
             <h3>Affected</h3>
           </header>
           <div>
-            <dl>
-              <dt>Product</dt><dd itemprop="product"></dd>
-              <dt>Component</dt><dd itemprop="component"></dd>
-              <dt>Version</dt><dd itemprop="version"></dd>
-            </dl>
-            <dl>
-              <dt>Hardware</dt><dd itemprop="platform"></dd>
-              <dt>OS</dt><dd itemprop="op_sys"></dd>
-            </dl>
+            <section role="group" aria-label="Product" data-field="product">
+              <h4>Product</h4>
+              <span itemprop="product"></span>
+            </section>
+            <section role="group" aria-label="Component" data-field="component">
+              <h4>Component</h4>
+              <span itemprop="component"></span>
+            </section>
+            <section role="group" aria-label="Version" data-field="version">
+              <h4>Version</h4>
+              <span itemprop="version"></span>
+            </section>
+            <section role="group" aria-label="Hardware" data-field="platform">
+              <h4>Platform</h4>
+              <span itemprop="platform"></span> / <span itemprop="op_sys"></span>
+            </section>
+          </div>
+        </section>
+        <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
+          <header>
+            <h3>Notes</h3>
+          </header>
+          <div>
+            <section role="group" aria-label="Aliases" data-field="alias">
+              <h4>Aliases</h4>
+              <ul><li itemprop="alias" role="button"></li></ul>
+            </section>
+            <section role="group" aria-label="Keywords" data-field="keyword">
+              <h4>Keywords</h4>
+              <ul><li itemprop="keyword" role="button"></li></ul>
+            </section>
+            <section role="group" aria-label="Whiteboard" data-field="whiteboard">
+              <h4>Whiteboard</h4>
+              <span itemprop="whiteboard"></span>
+            </section>
+            <section role="group" aria-label="URL" data-field="url">
+              <h4>URL</h4>
+              <a role="link" itemprop="url"></a>
+            </section>
+            <section role="group" aria-label="See Also" data-field="see_also">
+              <h4>See Also</h4>
+              <ul><li><a role="link" itemprop="see_also"></a></li></ul>
+            </section>
+          </div>
+        </section>
+        <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
+          <header>
+            <h3>Dependencies</h3>
+          </header>
+          <div>
+            <section role="group" aria-label="Depends on" data-field="depends_on">
+              <header>
+                <h4>Depends on</h4>
+              </header>
+              <ul class="list">
+                <li role="button" itemprop="depends_on"></li>
+              </ul>
+            </section>
+            <section role="group" aria-label="Blocks" data-field="blocks">
+              <header>
+                <h4>Blocks</h4>
+              </header>
+              <ul class="list">
+                <li role="button" itemprop="blocks"></li>
+              </ul>
+            </section>
+            <section role="group" aria-label="Duplicates" data-field="duplicate">
+              <h4>Duplicates</h4>
+              <ul><li role="button" itemprop="duplicate"></li></ul>
+            </section>
           </div>
         </section>
       </div><!-- end .bug-info -->
