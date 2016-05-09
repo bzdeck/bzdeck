@@ -16,9 +16,9 @@ const files = [
   '/static/images/themes/light/sprite.png',
   // Fonts
   '/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.206',
+  '/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106',
   '/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.106',
   '/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.106',
-  '/vendor/Fira/fonts/FiraSans-Regular.woff2?v=4.106',
   '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0',
   // Styles (should be the same as the list in static-file-list.inc.php)
   '/vendor/flaretail.js/styles/widgets.css',
