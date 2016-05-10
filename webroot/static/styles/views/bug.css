@@ -182,11 +182,13 @@
 @media (min-width: 1024px) {
   [itemtype$="Bug"] {
     --comment-margin: 1.2rem;
+    --comment-padding: 1.6rem;
   }
 }
 
 @media (max-width: 1023px) {
   [itemtype$="Bug"] {
     --comment-margin: .8rem;
+    --comment-padding: .8rem;
   }
 }

@@ -30,7 +30,7 @@
 }
 
 .bug-timeline [itemprop="comment"] > * {
-  padding: var(--comment-margin);
+  padding: var(--comment-padding);
 }
 
 .bug-timeline [itemprop="comment"] header {
@@ -341,33 +341,21 @@
 }
 
 .bug-timeline [itemprop="change"] {
-  margin: var(--comment-margin) calc(var(--comment-margin) * 2 + .1rem) 0;
+  margin: var(--comment-margin) auto 0;
+  border-radius: 1.6rem;
+  padding: .4rem 1.2rem;
+  max-width: 80%;
+  background-color: var(--button-background-color);
+  line-height: 2rem;
+  text-align: center;
 }
 
 [data-ui-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
   display: none;
 }
 
-.bug-timeline [itemprop="change"] .meta {
-  padding-left: 2.2rem;
-  line-height: 1.6rem;
-}
-
 .bug-timeline [itemprop="change"] [itemprop="image"] {
-  display: inline-block;
-  margin-right: .4rem;
-  width: 1.6rem;
-  height: 1.6rem;
-  color: #FCFCFC;
-  font-size: 1rem;
-  line-height: 1.6rem;
-  text-align: center;
-  vertical-align: top;
-}
-
-.bug-timeline [itemprop="change"] [itemprop="author"] [itemprop="image"] {
-  float: left;
-  margin-left: -2.2rem;
+  display: none;
 }
 
 .bug-timeline [itemprop="change"] [itemprop="givenName"] {
@@ -376,6 +364,7 @@
 }
 
 .bug-timeline [itemprop="change"] time {
+  white-space: nowrap;
   text-transform: lowercase;
 }
 
