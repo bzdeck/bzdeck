@@ -107,8 +107,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   init_comment_tabpanel () {
-    // Workaround a Firefox bug: the placeholder is not displayed in some cases
-    this.$textbox.value = '';
+    // Fill in an auto-saved draft comment if any, or workaround a Firefox bug where the placeholder is not displayed in
+    // some cases
+    this.$textbox.value = sessionStorage.getItem(`bug-${this.bug.id}-comment`) || '';
 
     // Prevent the keyboard shortcuts on the timeline from being fired
     this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
@@ -234,6 +235,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   oninput () {
+    let text = this.$textbox.value,
+        storage_key = `bug-${this.bug.id}-comment`;
+
     this.$textbox.style.removeProperty('height');
     this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
 
@@ -241,7 +245,14 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       this.$status.textContent = '';
     }
 
-    this.trigger('BugView:EditComment', { text: this.$textbox.value });
+    this.trigger('BugView:EditComment', { text });
+
+    // Auto-save the comment in the session storage
+    if (text.match(/\S/)) {
+      sessionStorage.setItem(storage_key, text);
+    } else {
+      sessionStorage.removeItem(storage_key);
+    }
   }
 
   /**
