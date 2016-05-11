@@ -296,7 +296,25 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         changes = history.changes.filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name)),
         changer_name = history.who,
         time = history.when,
+        find_index = field => changes.findIndex(change => change.field_name === field),
         $fragment = new DocumentFragment();
+
+    // Simplify the change labels by combining several fields
+    let combine = (f1, f2, spacer = ' / ') => {
+      let f1i = find_index(f1),
+          f2i = find_index(f2);
+
+      if (f1i > -1 && f2i > -1) {
+        changes[f1i].added = [changes[f1i].added, changes[f2i].added].join(spacer);
+        changes[f1i].removed = [changes[f1i].removed, changes[f2i].removed].join(spacer);
+        changes.splice(f2i, 1);
+      }
+    };
+
+    combine('status', 'resolution', ' ');
+    combine('product', 'component');
+    combine('severity', 'priority');
+    combine('platform', 'op_sys');
 
     return Promise.all(changes.map(change => {
       return this.create_history_entry(changer_name, time, change, comment)
