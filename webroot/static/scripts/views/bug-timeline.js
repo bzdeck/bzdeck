@@ -55,7 +55,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       // Append the time in data for later use
       data.set('time', time);
 
-      if (!delayed && this.bug._last_visit && time < this.bug._last_visit) {
+      if (!delayed && this.bug._last_visit && time < get_time(this.bug._last_visit)) {
         if (data.has('comment')) {
           read_comments_num++;
           last_comment_time = time;
