@@ -161,22 +161,22 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     }
 
     if ($target.matches(':-moz-any-link, [role="link"]')) {
-      // Bug link: open in a new app tab
+      let new_win;
+
       if ($target.hasAttribute('data-bug-id')) {
+        // Bug link: open in a new app tab
         this.trigger('GlobalView:OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
-
-        return this.helpers.event.ignore(event);
-      }
-
-      // Attachment link: open in a new app tab
-      if ($target.hasAttribute('data-att-id')) {
+      } else if ($target.hasAttribute('data-att-id')) {
+        // Attachment link: open in a new app tab
         let $content_type = $target.querySelector('[itemprop="content_type"]'),
             att_id = Number($target.getAttribute('data-att-id')),
             att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
 
         if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
           // Open the link directly in a new browser tab
-          window.open(`${BzDeck.host.origin}/attachment.cgi?id=${att_id}`);
+          new_win = window.open();
+          new_win.opener = null;
+          new_win.location = `${BzDeck.host.origin}/attachment.cgi?id=${att_id}`;
         } else {
           BzDeck.collections.bugs.get_all().then(bugs => {
             return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
@@ -188,14 +188,14 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
             }
           });
         }
-
-        return this.helpers.event.ignore(event);
+      } else {
+        // Normal link: open in a new browser tab
+        new_win = window.open();
+        new_win.opener = null;
+        new_win.location = $target.href;
       }
 
-      // Normal link: open in a new browser tab
-      $target.target = '_blank';
-
-      return false;
+      return this.helpers.event.ignore(event);
     }
 
     return true;
