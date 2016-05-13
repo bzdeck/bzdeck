@@ -221,12 +221,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if (this.bug.comments && !this.bug._update_needed) {
-      this.helpers.event.async(() => this.fill_details(false));
+      window.setTimeout(() => this.fill_details(false), 0);
     } else {
       // Load comments, history, flags and attachments' metadata; Exclude metadata
       this.bug.fetch(false).then(bug => {
         this.bug = bug;
-        this.helpers.event.async(() => this.fill_details(true));
+        window.setTimeout(() => this.fill_details(true), 0);
       });
     }
 
@@ -314,37 +314,36 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         }
       }
 
+      // Prepare the timeline and comment form
+      window.setTimeout(() => this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed), 0);
+      window.setTimeout(() => this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug), 100),
+      window.setTimeout(() => this.activate_widgets(), 100);
+
+      // Add tooltips to the related bugs
+      window.setTimeout(() => this.set_bug_tooltips(), 200);
+
       // Flags, only on the details tabs
       if (this.render_tracking_flags) {
-        new BzDeck.BugFlagsView(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
-
-        this.render_tracking_flags();
+        window.setTimeout(() => {
+          new BzDeck.BugFlagsView(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+          this.render_tracking_flags();
+        }, 200)
       }
 
-      // Prepare the timeline and comment form
-      this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed);
-      this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
-      this.activate_widgets();
-    }).then(() => {
-      this.helpers.event.async(() => {
-        // Number badge on tabs, only on the details tabs
-        if (this.add_tab_badges) {
-          this.add_tab_badges();
-        }
+      // Number badge on tabs, only on the details tabs
+      if (this.add_tab_badges) {
+        window.setTimeout(() => this.add_tab_badges(), 200);
+      }
 
-        // Attachments, only on the details tabs
-        if (this.render_attachments) {
-          this.render_attachments();
-        }
+      // Attachments, only on the details tabs
+      if (this.render_attachments) {
+        window.setTimeout(() => this.render_attachments(), 300);
+      }
 
-        // History, only on the details tabs
-        if (this.render_history) {
-          this.render_history();
-        }
-
-        // Add tooltips to the related bugs
-        this.set_bug_tooltips();
-      });
+      // History, only on the details tabs
+      if (this.render_history) {
+        window.setTimeout(() => this.render_history(), 300);
+      }
     }).then(() => {
       BzDeck.views.statusbar.show('');
     });
