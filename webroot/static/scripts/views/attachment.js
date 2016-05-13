@@ -65,8 +65,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
         continue;
       }
 
-      let prop = $prop.getAttribute('itemprop'),
-          trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
+      let prop = $prop.getAttribute('itemprop');
+      let trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
         let $$textbox = new this.widgets.TextBox($prop);

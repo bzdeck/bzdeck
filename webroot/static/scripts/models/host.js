@@ -47,12 +47,12 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       return Promise.reject(new Error('You have to go online to load data.')); // l10n
     }
 
-    let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
-        url = new URL(this.origin + this.endpoints.rest + path),
-        method = options.method || (options.data ? 'POST' : 'GET'),
-        headers = new Map(),
-        data = options.data ? Object.assign({}, options.data) : undefined, // Avoid DataCloneError by postMessage
-        listeners = options.listeners || {};
+    let worker = new SharedWorker('/static/scripts/workers/tasks.js');
+    let url = new URL(this.origin + this.endpoints.rest + path);
+    let method = options.method || (options.data ? 'POST' : 'GET');
+    let headers = new Map();
+    let data = options.data ? Object.assign({}, options.data) : undefined; // Avoid DataCloneError by postMessage
+    let listeners = options.listeners || {};
 
     if (params) {
       url.search = params.toString();

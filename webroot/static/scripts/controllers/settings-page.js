@@ -17,9 +17,9 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    let tab_id = history.state ? history.state.tab_id : undefined,
-        account = BzDeck.account,
-        prefs = new Map();
+    let tab_id = history.state ? history.state.tab_id : undefined;
+    let account = BzDeck.account;
+    let prefs = new Map();
 
     Promise.all([...Object.entries(BzDeck.config.prefs)].map(entry => {
       let [name, value] = entry;

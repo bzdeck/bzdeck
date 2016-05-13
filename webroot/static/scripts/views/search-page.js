@@ -62,11 +62,11 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       new this.widgets.ScrollBar($outer, { adjusted: true });
     }
 
-    let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]'),
-        $product_list = $pane.querySelector('[id$="-browse-product-list"]'),
-        $component_list = $pane.querySelector('[id$="-browse-component-list"]'),
-        $status_list = $pane.querySelector('[id$="-browse-status-list"]'),
-        $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
+    let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]');
+    let $product_list = $pane.querySelector('[id$="-browse-product-list"]');
+    let $component_list = $pane.querySelector('[id$="-browse-component-list"]');
+    let $status_list = $pane.querySelector('[id$="-browse-status-list"]');
+    let $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
     let classifications = Object.keys(config.classification).sort().map((value, index) => ({
       id: `${$classification_list.id}item-${index}`,
@@ -100,16 +100,16 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       selected: !value // Select '---' to search open bugs
     }));
 
-    let ListBox = this.widgets.ListBox,
-        $$classification_list = new ListBox($classification_list, classifications),
-        $$product_list = new ListBox($product_list, products),
-        $$component_list = new ListBox($component_list, components),
-        $$status_list = new ListBox($status_list, statuses),
-        $$resolution_list = new ListBox($resolution_list, resolutions);
+    let ListBox = this.widgets.ListBox;
+    let $$classification_list = new ListBox($classification_list, classifications);
+    let $$product_list = new ListBox($product_list, products);
+    let $$component_list = new ListBox($component_list, components);
+    let $$status_list = new ListBox($status_list, statuses);
+    let $$resolution_list = new ListBox($resolution_list, resolutions);
 
     $$classification_list.bind('Selected', event => {
-      let products = [],
-          components = [];
+      let products = [];
+      let components = [];
 
       for (let classification of event.detail.labels) {
         products.push(...config.classification[classification].products);
@@ -133,18 +133,19 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       $$component_list.filter(components);
     });
 
-    let $textbox = $pane.querySelector('.text-box [role="searchbox"]'),
-        $$button = new this.widgets.Button($pane.querySelector('.text-box [role="button"]'));
+    let $textbox = $pane.querySelector('.text-box [role="searchbox"]');
+    let $$button = new this.widgets.Button($pane.querySelector('.text-box [role="button"]'));
 
     $$button.bind('Pressed', event => {
-      let params = new URLSearchParams(),
-          map = {
-            classification: $classification_list,
-            product: $product_list,
-            component: $component_list,
-            status: $status_list,
-            resolution: $resolution_list
-          };
+      let params = new URLSearchParams();
+
+      let map = {
+        classification: $classification_list,
+        product: $product_list,
+        component: $component_list,
+        status: $status_list,
+        resolution: $resolution_list
+      };
 
       for (let [name, $element] of Object.entries(map)) {
         for (let $opt of $element.querySelectorAll('[aria-selected="true"]')) {
@@ -167,9 +168,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   setup_result_pane () {
-    let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]'),
-        $$grid,
-        mobile = this.helpers.env.device.mobile;
+    let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]');
+    let $$grid;
+    let mobile = this.helpers.env.device.mobile;
 
     Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
@@ -226,8 +227,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
     $pane.innerHTML = '';
 
-    let $bug = $pane.appendChild(this.get_template('search-preview-bug-template', this.id)),
-        $info = $bug.appendChild(this.get_template('preview-bug-info'));
+    let $bug = $pane.appendChild(this.get_template('search-preview-bug-template', this.id));
+    let $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
     // Activate the toolbar buttons
     new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))

@@ -64,13 +64,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     new this.widgets.Button($button);
 
-    let $timeline = this.$bug.querySelector('.bug-timeline'),
-        $menu = document.getElementById($button.getAttribute('aria-owns')),
-        $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]'),
-        $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]'),
-        $copy_link = $menu.querySelector('[data-command="copy-link"]'),
-        $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]'),
-        $tweet_link = $menu.querySelector('[data-command="tweet"]');
+    let $timeline = this.$bug.querySelector('.bug-timeline');
+    let $menu = document.getElementById($button.getAttribute('aria-owns'));
+    let $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]');
+    let $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]');
+    let $copy_link = $menu.querySelector('[data-command="copy-link"]');
+    let $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]');
+    let $tweet_link = $menu.querySelector('[data-command="tweet"]');
 
     let toggle_cc = value => {
       BzDeck.prefs.set('ui.timeline.show_cc_changes', value);
@@ -130,8 +130,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($tweet_link) {
       // https://dev.twitter.com/web/tweet-button/web-intent
-      let summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : ''),
-          href = 'https://twitter.com/intent/tweet?via=BzDeck'
+      let summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : '');
+      let href = 'https://twitter.com/intent/tweet?via=BzDeck'
                + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
                + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
 
@@ -154,8 +154,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     this.setup_toolbar();
 
-    let _bug = {},
-        get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
+    let _bug = {};
+    let get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
     Promise.all(BzDeck.config.grid.default_columns.map(column => {
       let { id: field, type } = column;
@@ -192,10 +192,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       this.set_product_tooltips();
     });
 
-    let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
-        $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]'),
-        $star_button = this.$bug.querySelector('[role="button"][data-command="star"]'),
-        $timeline = this.$bug.querySelector('.bug-timeline');
+    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
+    let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
+    let $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($edit_button) {
       $edit_button.setAttribute('aria-disabled', !can_editbugs);
@@ -233,8 +233,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     // Focus management
     let set_focus = shift => {
       BzDeck.prefs.get('ui.timeline.sort.order').then(order => {
-        let ascending = order !== 'descending',
-            entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
+        let ascending = order !== 'descending';
+        let entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
         entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
 
@@ -302,8 +302,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // See Also
       for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-        let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.')),
-            match = $link.href.match(re);
+        let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.'));
+        let match = $link.href.match(re);
 
         if (match) {
           $link.text = match[1];
@@ -359,15 +359,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.comboboxes = new WeakMap();
     this.subscribe('BugController:FieldEdited');
 
-    let can_editbugs = BzDeck.account.permissions.includes('editbugs'),
-        is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
+    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
 
     // Iterate over the fields except the Flags secion which is activated by BugFlagsView
     for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
-      let name = $section.dataset.field,
-          $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]'),
-          $textbox = $section.querySelector('.blurred[role="textbox"]'),
-          $next_field = $section.nextElementSibling;
+      let name = $section.dataset.field;
+      let $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
+      let $textbox = $section.querySelector('.blurred[role="textbox"]');
+      let $next_field = $section.nextElementSibling;
 
       // Activate comboboxes
       if ($combobox) {
@@ -441,8 +441,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {Boolean} result - Whether the attachment drop target is found and initialized.
    */
   init_att_drop_target () {
-    let timer,
-        $target = this.$bug.querySelector('.att-drop-target');
+    let timer;
+    let $target = this.$bug.querySelector('.att-drop-target');
 
     if (!$target) {
       return false;
@@ -486,8 +486,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {Array} values - Field values.
    */
   get_field_values (field_name, product_name = this.bug.product) {
-    let { field, product } = BzDeck.host.data.config,
-        { component, version_detail, target_milestone_detail } = product[product_name];
+    let { field, product } = BzDeck.host.data.config;
+    let { component, version_detail, target_milestone_detail } = product[product_name];
 
     let values = {
       product: Object.keys(product).filter(name => product[name].is_active).sort(),
@@ -506,13 +506,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {undefined}
    */
   update_resolution_ui (resolution) {
-    let is_open = resolution === '',
-        is_dupe = resolution === 'DUPLICATE',
-        can_editbugs = BzDeck.account.permissions.includes('editbugs'),
-        $resolution = this.$bug.querySelector('[data-field="resolution"]'),
-        $combobox = $resolution.querySelector('[role="combobox"]'),
-        $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]'),
-        $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
+    let is_open = resolution === '';
+    let is_dupe = resolution === 'DUPLICATE';
+    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    let $resolution = this.$bug.querySelector('[data-field="resolution"]');
+    let $combobox = $resolution.querySelector('[role="combobox"]');
+    let $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]');
+    let $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
 
     $resolution.hidden = is_open;
     $resolution.querySelector('[role="option"][data-value=""]').setAttribute('aria-hidden', !is_open);
@@ -546,9 +546,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
     }
 
-    let $field = this.$bug.querySelector(`[data-field="${name}"]`),
-        $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined,
-        $textbox = $field ? $field.querySelector('.blurred[role="textbox"]') : undefined;
+    let $field = this.$bug.querySelector(`[data-field="${name}"]`);
+    let $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
+    let $textbox = $field ? $field.querySelector('.blurred[role="textbox"]') : undefined;
 
     if ($combobox) {
       this.comboboxes.get($combobox).selected = value;
@@ -593,14 +593,14 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @return {undefined}
    */
   set_product_tooltips () {
-    let config = BzDeck.host.data.config,
-        strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, ''),
-        classification = config.classification[this.bug.classification],
-        product = config.product[this.bug.product],
-        component,
-        $classification = this.$bug.querySelector('[itemprop="classification"]'),
-        $product = this.$bug.querySelector('[itemprop="product"]'),
-        $component;
+    let config = BzDeck.host.data.config;
+    let strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
+    let classification = config.classification[this.bug.classification];
+    let product = config.product[this.bug.product];
+    let component;
+    let $classification = this.$bug.querySelector('[itemprop="classification"]');
+    let $product = this.$bug.querySelector('[itemprop="product"]');
+    let $component;
 
     if ($classification && classification) {
       $classification.title = strip_tags(classification.description);

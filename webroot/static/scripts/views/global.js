@@ -16,8 +16,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    let datetime = this.helpers.datetime,
-        $root = document.documentElement;
+    let datetime = this.helpers.datetime;
+    let $root = document.documentElement;
 
     // Automatically update relative dates on the app
     datetime.options.updater_enabled = true;
@@ -139,8 +139,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @return {Boolean} default - Whether the event should lead to the default action.
    */
   onclick (event) {
-    let $target = event.target,
-        $parent = $target.parentElement;
+    let $target = event.target;
+    let $parent = $target.parentElement;
 
     // Discard clicks on the fullscreen dialog
     if ($target === document) {
@@ -168,9 +168,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         this.trigger('GlobalView:OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
       } else if ($target.hasAttribute('data-att-id')) {
         // Attachment link: open in a new app tab
-        let $content_type = $target.querySelector('[itemprop="content_type"]'),
-            att_id = Number($target.getAttribute('data-att-id')),
-            att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
+        let $content_type = $target.querySelector('[itemprop="content_type"]');
+        let att_id = Number($target.getAttribute('data-att-id'));
+        let att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
 
         if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
           // Open the link directly in a new browser tab
@@ -208,8 +208,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @return {undefined}
    */
   onkeydown (event) {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey,
-        tab = event.key === 'Tab';
+    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
+    let tab = event.key === 'Tab';
 
     if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
       event.preventDefault();
@@ -228,10 +228,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
     BzDeck.collections.users.get(name, { name }).then(user => {
       for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
-        let title = `${user.original_name || user.name}\n${user.email}`,
-            $person = $email.closest('[itemtype$="User"]'),
-            $name = $person.querySelector('[itemprop="name"]'),
-            $image = $person.querySelector('[itemprop="image"]');
+        let title = `${user.original_name || user.name}\n${user.email}`;
+        let $person = $email.closest('[itemtype$="User"]');
+        let $name = $person.querySelector('[itemprop="name"]');
+        let $image = $person.querySelector('[itemprop="image"]');
 
         if ($person.title && $person.title !== title) {
           $person.title = title;

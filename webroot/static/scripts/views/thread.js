@@ -63,8 +63,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   constructor (consumer, name, $grid, columns, options) {
     super(); // This does nothing but is required before using `this`
 
-    let default_cols = BzDeck.config.grid.default_columns,
-        field = BzDeck.host.data.config.field;
+    let default_cols = BzDeck.config.grid.default_columns;
+    let field = BzDeck.host.data.config.field;
 
     let toggle_prop = prop => {
       for (let $item of this.$$grid.view.selected) {
@@ -129,8 +129,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       };
 
       return Promise.all(this.$$grid.data.columns.map(column => {
-        let field = column.id,
-            value = bug[field];
+        let field = column.id;
+        let value = bug[field];
 
         return new Promise(resolve => {
           if (!value) {
@@ -239,12 +239,12 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
       // Create a marquee effect when the bug title is overflowing
       for (let $option of event.detail.items) {
-        let $name = $option.querySelector('[itemprop="summary"]'),
-            width = $name.scrollWidth;
+        let $name = $option.querySelector('[itemprop="summary"]');
+        let width = $name.scrollWidth;
 
         if (width > $name.clientWidth) {
-          let name = `${$option.id}-name-marquee`,
-              sheet = document.styleSheets[1];
+          let name = `${$option.id}-name-marquee`;
+          let sheet = document.styleSheets[1];
 
           // Delete the rule first in case of any width changes
           for (let [index, rule] of Object.entries(sheet.cssRules)) {
@@ -317,8 +317,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @return {undefined}
    */
   render () {
-    let bugs = this.unrendered_bugs.splice(0, 50),
-        $fragment = new DocumentFragment();
+    let bugs = this.unrendered_bugs.splice(0, 50);
+    let $fragment = new DocumentFragment();
 
     Promise.all(bugs.map(bug => {
       // TODO: combine primary participants' avatars/initials (#124)

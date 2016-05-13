@@ -29,8 +29,8 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
     });
 
     // Change the shortcut labels depending on the user's platform
-    let kbd_regex = /\(Cmd\+(\w)\)$/,
-        kbd_suffix = this.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
+    let kbd_regex = /\(Cmd\+(\w)\)$/;
+    let kbd_suffix = this.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
 
     for (let $button of [...this.$toolbar.querySelectorAll('[role="button"]')]) {
       if ($button.title.match(kbd_regex)) {
@@ -51,13 +51,13 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
    * @return {undefined}
    */
   exec_command (tag) {
-    let value = this.$textbox.value,
-        start = this.$textbox.selectionStart,
-        end = this.$textbox.selectionEnd,
-        before = value.substring(0, start),
-        selection = value.substring(start, end),
-        after = value.substring(end),
-        multiline = selection.includes('\n');
+    let value = this.$textbox.value;
+    let start = this.$textbox.selectionStart;
+    let end = this.$textbox.selectionEnd;
+    let before = value.substring(0, start);
+    let selection = value.substring(start, end);
+    let after = value.substring(end);
+    let multiline = selection.includes('\n');
 
     let update = (text, new_start, new_end) => {
       this.$textbox.value = before + text + after;

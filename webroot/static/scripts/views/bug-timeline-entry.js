@@ -32,8 +32,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @return {Promise.<Object>} entry - Promise to be resolved in an object containing the entry fragment and timestamp.
    */
   create () {
-    let comment = this.data.get('comment'),
-        $fragment = new DocumentFragment();
+    let comment = this.data.get('comment');
+    let $fragment = new DocumentFragment();
 
     return new Promise(resolve => {
       if (!comment) {
@@ -80,17 +80,17 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @return {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
    */
   create_comment_entry () {
-    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-        comment = this.data.get('comment'),
-        time = comment.creation_time,
-        $entry = this.get_template('timeline-comment'),
-        $header = $entry.querySelector('header'),
-        $author = $entry.querySelector('[itemprop="author"]'),
-        $roles = $author.querySelector('.roles'),
-        $time = $entry.querySelector('[itemprop="creation_time"]'),
-        $reply_button = $entry.querySelector('[data-command="reply"]'),
-        $comment_body = $entry.querySelector('[itemprop="text"]'),
-        $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
+    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let comment = this.data.get('comment');
+    let time = comment.creation_time;
+    let $entry = this.get_template('timeline-comment');
+    let $header = $entry.querySelector('header');
+    let $author = $entry.querySelector('[itemprop="author"]');
+    let $roles = $author.querySelector('.roles');
+    let $time = $entry.querySelector('[itemprop="creation_time"]');
+    let $reply_button = $entry.querySelector('[data-command="reply"]');
+    let $comment_body = $entry.querySelector('[itemprop="text"]');
+    let $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
     $entry.id = `${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
@@ -109,11 +109,11 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       });
 
       let reply = () => {
-        let quote_header = `(In reply to ${author.name} from comment #${comment.count})`,
-            quote_lines = comment.text.split(/\n/).map(line => `> ${line}`).join('\n'),
-            quote = [quote_header, quote_lines].join('\n'),
-            $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`),
-            $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
+        let quote_header = `(In reply to ${author.name} from comment #${comment.count})`;
+        let quote_lines = comment.text.split(/\n/).map(line => `> ${line}`).join('\n');
+        let quote = [quote_header, quote_lines].join('\n');
+        let $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`);
+        let $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
         $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
         // Move focus on the textbox. Use async to make sure the event always works
@@ -133,8 +133,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       // Focus management
       let move_focus = shift => {
         BzDeck.prefs.get('ui.timeline.sort.order').then(order => {
-          let ascending = order !== 'descending',
-              entries = [...document.querySelectorAll(`#${this.id}-timeline [itemprop="comment"]`)];
+          let ascending = order !== 'descending';
+          let entries = [...document.querySelectorAll(`#${this.id}-timeline [itemprop="comment"]`)];
 
           if (!$entry.matches(':focus')) {
             $entry.focus();
@@ -227,10 +227,10 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    */
   create_attachment_box () {
     return BzDeck.collections.attachments.get(this.data.get('attachment').id).then(attachment => {
-      let media_type = attachment.content_type.split('/')[0],
-          $attachment = this.get_template('timeline-attachment'),
-          $outer = $attachment.querySelector('div'),
-          $media;
+      let media_type = attachment.content_type.split('/')[0];
+      let $attachment = this.get_template('timeline-attachment');
+      let $outer = $attachment.querySelector('div');
+      let $media;
 
       this.fill($attachment, {
         summary: attachment.summary,
@@ -291,18 +291,18 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @return {Promise.<DocumentFragment>} $fragment - Promise to be resolved in generated entries in a fragment.
    */
   create_history_entries () {
-    let comment = this.data.get('comment'),
-        history = this.data.get('history'),
-        changes = history.changes.filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name)),
-        changer_name = history.who,
-        time = history.when,
-        find_index = field => changes.findIndex(change => change.field_name === field),
-        $fragment = new DocumentFragment();
+    let comment = this.data.get('comment');
+    let history = this.data.get('history');
+    let changes = history.changes.filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name));
+    let changer_name = history.who;
+    let time = history.when;
+    let find_index = field => changes.findIndex(change => change.field_name === field);
+    let $fragment = new DocumentFragment();
 
     // Simplify the change labels by combining several fields
     let combine = (f1, f2, spacer = ' / ') => {
-      let f1i = find_index(f1),
-          f2i = find_index(f2);
+      let f1i = find_index(f1);
+      let f2i = find_index(f2);
 
       if (f1i > -1 && f2i > -1) {
         changes[f1i].added = [changes[f1i].added, changes[f2i].added].join(spacer);
@@ -334,12 +334,13 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history}
    */
   create_history_entry (changer_name, time, change, comment) {
-    let $change = this.get_template('timeline-change'),
-        $changer = $change.querySelector('[itemprop="author"]'),
-        $time = $change.querySelector('[itemprop="creation_time"]'),
-        $how = $change.querySelector('[itemprop="how"]'),
-        conf_field = BzDeck.host.data.config.field,
-        _field = conf_field[change.field_name] ||
+    let $change = this.get_template('timeline-change');
+    let $changer = $change.querySelector('[itemprop="author"]');
+    let $time = $change.querySelector('[itemprop="creation_time"]');
+    let $how = $change.querySelector('[itemprop="how"]');
+    let conf_field = BzDeck.host.data.config.field;
+
+    let _field = conf_field[change.field_name] ||
                  // Bug 909055 - Field name mismatch in history: group vs groups
                  conf_field[change.field_name.replace(/s$/, '')] ||
                  // Bug 1078009 - Changes/history now include some wrong field names
@@ -355,14 +356,16 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
                    'dupe_of': 'dupe_of', // for duplication comments
                  }[change.field_name]] ||
                  // If the Bugzilla config is outdated, the field name can be null
-                 change,
-        _field_label = {
-          blocks: 'blockers', // l10n
-          depends_on: 'dependencies', // l10n
-          duplicates: 'duplicates', // for duplication comments, unused
-          dupe_of: 'dupe_of', // for duplication comments, unused
-        }[change.field_name] || _field.description || _field.field_name,
-        field = `<span data-what="${change.field_name}">` + _field_label + '</span>';
+                 change;
+
+    let _field_label = {
+      blocks: 'blockers', // l10n
+      depends_on: 'dependencies', // l10n
+      duplicates: 'duplicates', // for duplication comments, unused
+      dupe_of: 'dupe_of', // for duplication comments, unused
+    }[change.field_name] || _field.description || _field.field_name;
+
+    let field = `<span data-what="${change.field_name}">` + _field_label + '</span>';
 
     if (change.field_name.startsWith('cf_')) {
       field += ' flag'; // l10n
@@ -376,15 +379,15 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       $change.setAttribute('data-change-field', change.field_name);
       this.helpers.datetime.fill_element($time, time);
 
-      let _reviews = { added: new Set(), removed: new Set() },
-          _feedbacks = { added: new Set(), removed: new Set() },
-          _needinfos = { added: new Set(), removed: new Set() };
+      let _reviews = { added: new Set(), removed: new Set() };
+      let _feedbacks = { added: new Set(), removed: new Set() };
+      let _needinfos = { added: new Set(), removed: new Set() };
 
       let find_people = how => {
         for (let item of change[how].split(', ')) {
-          let review = item.match(/^review\?\((.*)\)$/),
-              feedback = item.match(/^feedback\?\((.*)\)$/),
-              needinfo = item.match(/^needinfo\?\((.*)\)$/);
+          let review = item.match(/^review\?\((.*)\)$/);
+          let feedback = item.match(/^feedback\?\((.*)\)$/);
+          let needinfo = item.match(/^needinfo\?\((.*)\)$/);
 
           if (review) {
             _reviews[how].add(review[1]);
@@ -403,22 +406,22 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       find_people('added');
       find_people('removed');
 
-      let reviews,
-          added_reviews = _reviews.added.size ? this.create_people_array(_reviews.added) : undefined,
-          removed_reviews = _reviews.removed.size ? this.create_people_array(_reviews.removed) : undefined,
-          feedbacks,
-          added_feedbacks = _feedbacks.added.size ? this.create_people_array(_feedbacks.added) : undefined,
-          removed_feedbacks = _feedbacks.removed.size ? this.create_people_array(_feedbacks.removed) : undefined,
-          needinfos,
-          added_needinfos = _needinfos.added.size ? this.create_people_array(_needinfos.added) : undefined,
-          removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined,
-          get_removals = change.removed ?
-              this.create_history_change_element(change, 'removed').then($elm => $elm.outerHTML) : undefined,
-          get_additions = change.added ?
-              this.create_history_change_element(change, 'added').then($elm => $elm.outerHTML) : undefined,
-          render = str => $how.innerHTML = str,
-          att_id = change.attachment_id,
-          attachment = att_id ? `<a href="/attachment/${att_id}" data-att-id="${att_id}">Attachment ${att_id}</a>`
+      let reviews;
+      let added_reviews = _reviews.added.size ? this.create_people_array(_reviews.added) : undefined;
+      let removed_reviews = _reviews.removed.size ? this.create_people_array(_reviews.removed) : undefined;
+      let feedbacks;
+      let added_feedbacks = _feedbacks.added.size ? this.create_people_array(_feedbacks.added) : undefined;
+      let removed_feedbacks = _feedbacks.removed.size ? this.create_people_array(_feedbacks.removed) : undefined;
+      let needinfos;
+      let added_needinfos = _needinfos.added.size ? this.create_people_array(_needinfos.added) : undefined;
+      let removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined;
+      let get_removals = change.removed ?
+              this.create_history_change_element(change, 'removed').then($elm => $elm.outerHTML) : undefined;
+      let get_additions = change.added ?
+              this.create_history_change_element(change, 'added').then($elm => $elm.outerHTML) : undefined;
+      let render = str => $how.innerHTML = str;
+      let att_id = change.attachment_id;
+      let attachment = att_id ? `<a href="/attachment/${att_id}" data-att-id="${att_id}">Attachment ${att_id}</a>`
                               : undefined; // l10n
 
       // Addition only
@@ -609,9 +612,9 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @return {Promise.<HTMLElement>} $elm - Promise to be resolved in a rendered element.
    */
   create_history_change_element (change, how) {
-    let $elm = document.createElement('span'),
-        render = str => $elm.innerHTML = str,
-        ids;
+    let $elm = document.createElement('span');
+    let render = str => $elm.innerHTML = str;
+    let ids;
 
     $elm.setAttribute('data-how', how);
 
@@ -629,8 +632,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       render(`<a href="${change[how]}">${change[how]}</a>`);
     } else if (change.field_name === 'see_also') {
       render(change[how].split(', ').map(url => {
-        let prefix = BzDeck.host.origin + '/show_bug.cgi?id=',
-            bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
+        let prefix = BzDeck.host.origin + '/show_bug.cgi?id=';
+        let bug_id = url.startsWith(prefix) ? Number(url.substr(prefix.length)) : undefined;
 
         if (bug_id) {
           return `<a href="/bug/${bug_id}" data-bug-id="${bug_id}">Bug ${bug_id}</a>`;

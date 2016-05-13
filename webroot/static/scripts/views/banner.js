@@ -38,18 +38,18 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @return {undefined}
    */
   open_tab (options, controller) {
-    let page,
-        page_category = options.page_category,
-        page_id = options.page_id,
-        page_constructor = options.page_constructor,
-        page_constructor_args = options.page_constructor_args || [],
-        pages = BzDeck.views.pages[`${page_category}_list`],
-        tab_id = options.page_category + (page_id ? '-' + page_id : ''),
-        tab_label = options.tab_label,
-        tab_desc = options.tab_desc || tab_label,
-        tab_position = options.tab_position || 'last',
-        $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`),
-        $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
+    let page;
+    let page_category = options.page_category;
+    let page_id = options.page_id;
+    let page_constructor = options.page_constructor;
+    let page_constructor_args = options.page_constructor_args || [];
+    let pages = BzDeck.views.pages[`${page_category}_list`];
+    let tab_id = options.page_category + (page_id ? '-' + page_id : '');
+    let tab_label = options.tab_label;
+    let tab_desc = options.tab_desc || tab_label;
+    let tab_position = options.tab_position || 'last';
+    let $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`);
+    let $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
 
     if (!pages) {
       pages = BzDeck.views.pages[`${page_category}_list`] = new Map();
@@ -86,9 +86,9 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_tab_selected (detail) {
-    let { items, oldval } = detail,
-        path = this.tab_path_map.get(items[0].id),
-        prev_tabpanel_id;
+    let { items, oldval } = detail;
+    let path = this.tab_path_map.get(items[0].id);
+    let prev_tabpanel_id;
 
     document.documentElement.setAttribute('data-current-tab', path.match(/^\/(\w+)/)[1]);
 
@@ -125,8 +125,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @return {undefined}
    */
   add_back_button ($parent) {
-    let $header = $parent.querySelector('header'),
-        $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+    let $header = $parent.querySelector('header');
+    let $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
     if (this.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n

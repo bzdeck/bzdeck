@@ -40,8 +40,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     let ids_chunks = FlareTail.helpers.array.chunk(ids, 10);
 
     let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
-      let path = `bug/${ids[0]}`,
-          params = new URLSearchParams(param_str);
+      let path = `bug/${ids[0]}`;
+      let params = new URLSearchParams(param_str);
 
       if (method === 'last_visit') {
         path = `bug_user_last_visit/${ids[0]}`;
@@ -172,8 +172,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   search_local (params) {
-    let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase()),
-        match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+    let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
+    let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
 
     return this.get_all().then(bugs => [...bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||
@@ -196,8 +196,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return this.retrieve_last_visit(_bugs.keys());
     }).then(__bugs => {
       return Promise.all([...__bugs].map(entry => new Promise(resolve => {
-        let [id, bug] = entry,
-            retrieved = _bugs.get(id); // Raw data object
+        let [id, bug] = entry;
+        let retrieved = _bugs.get(id); // Raw data object
 
         if (bug) {
           if (bug.last_change_time < retrieved.last_change_time) {

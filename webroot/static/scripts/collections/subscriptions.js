@@ -25,8 +25,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    */
   get (id) {
-    let email = BzDeck.account.data.name,
-        get_all = ['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
+    let email = BzDeck.account.data.name;
+    let get_all = ['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
 
     return get_all.then(bugs => {
       let _bugs = [...bugs.values()];
@@ -71,9 +71,9 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   fetch () {
-    let firstrun = false,
-        params = new URLSearchParams(),
-        fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
+    let firstrun = false;
+    let params = new URLSearchParams();
+    let fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
     // Fire an event to show the throbber
     this.trigger(':FetchingSubscriptionsStarted');

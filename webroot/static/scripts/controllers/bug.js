@@ -174,8 +174,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {undefined}
    */
   edit_field (name, value) {
-    let { field, product } = BzDeck.host.data.config,
-        is_closed = value => field.status.closed.includes(value);
+    let { field, product } = BzDeck.host.data.config;
+    let is_closed = value => field.status.closed.includes(value);
 
     if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
         typeof value === 'string' && value.match(/^\d+$/)) {
@@ -200,9 +200,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
       // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
       if (name === 'product') {
-        let { version: versions, component, target_milestone_detail } = product[value],
-            components = Object.keys(component),
-            milestones = target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name);
+        let { version: versions, component, target_milestone_detail } = product[value];
+        let components = Object.keys(component);
+        let milestones = target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name);
 
         this.changes.version = versions.find(v => ['unspecified'].includes(v)) || versions[0];
         this.changes.component = components.find(c => ['General'].includes(c)) || components[0];
@@ -247,8 +247,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     if (added) {
       flags.push(flag);
     } else {
-      let { id, name, requestee } = flag,
-          index = flags.findIndex(f => f.id === id || (f.name === name && f.requestee === requestee));
+      let { id, name, requestee } = flag;
+      let index = flags.findIndex(f => f.id === id || (f.name === name && f.requestee === requestee));
 
       if (index > -1) {
         flags.splice(index, 1);
@@ -346,8 +346,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {Promise} request - Can be a rejected Promise if any error is found.
    */
   update_subscription (how) {
-    let subscribe = how === 'add',
-        email = BzDeck.account.data.name;
+    let subscribe = how === 'add';
+    let email = BzDeck.account.data.name;
 
     // Update the view first
     this.trigger(subscribe ? ':ParticipantAdded' : ':ParticipantRemoved', { field: 'cc', email });
@@ -400,13 +400,13 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
-    let oversized_files = new Set(),
-        max_size = BzDeck.host.data.config.max_attachment_size;
+    let oversized_files = new Set();
+    let max_size = BzDeck.host.data.config.max_attachment_size;
 
     for (let _file of files) {
-      let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
-          file = _file, // Redeclare the variable so it can be used in the following load event
-          is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
+      let worker = new SharedWorker('/static/scripts/workers/tasks.js');
+      let file = _file; // Redeclare the variable so it can be used in the following load event
+      let is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
 
       // Check if the file is not exceeding the limit
       if (file.size > max_size) {
@@ -433,9 +433,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
       return;
     }
 
-    let message,
-        num_format = num => num.toLocaleString('en-US'),
-        max = num_format(max_size);
+    let message;
+    let num_format = num => num.toLocaleString('en-US');
+    let max = num_format(max_size);
 
     if (oversized_files.size > 1) {
       message = `These files cannot be attached because they may exceed the maximum attachment size (${max} bytes) \
@@ -459,14 +459,14 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {undefined}
    */
   attach_text (text) {
-    let worker = new SharedWorker('/static/scripts/workers/tasks.js'),
-        blob = new Blob([text], { type: 'text/plain' }),
-        summary = text.substr(0, 25) + (text.length > 25 ? '...' : ''),
-        file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt',
-        content_type = 'text/plain',
-        is_patch = !!text.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/m),
-        is_ghpr = text.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/),
-        is_mrbr = text.match(/^https:\/\/reviewboard\.mozilla\.org\/r\/(\d+)\/$/);
+    let worker = new SharedWorker('/static/scripts/workers/tasks.js');
+    let blob = new Blob([text], { type: 'text/plain' });
+    let summary = text.substr(0, 25) + (text.length > 25 ? '...' : '');
+    let file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt';
+    let content_type = 'text/plain';
+    let is_patch = !!text.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/m);
+    let is_ghpr = text.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/);
+    let is_mrbr = text.match(/^https:\/\/reviewboard\.mozilla\.org\/r\/(\d+)\/$/);
 
     if (is_patch) {
       // TODO: Append a revision to the summary, based on the currently-attached patches if any
@@ -586,8 +586,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
         return;
       }
 
-      let changes = this.att_changes.get(id) || {},
-          edited = true;
+      let changes = this.att_changes.get(id) || {};
+      let edited = true;
 
       // The properties prefixed with 'is_' are supposed to be a boolean but actually 0 or 1, so use the non-strict
       // inequality operator for comparison. This includes 'is_patch' and 'is_obsolete'.
@@ -769,8 +769,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
   post_attachment (attachment) {
-    let size_computable,
-        size = 0;
+    let size_computable;
+    let size = 0;
 
     return BzDeck.host.request(`bug/${this.bug.id}/attachment`, null, {
       method: 'POST',
@@ -816,8 +816,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @return {undefined}
    */
   notify_upload_progress () {
-    let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c),
-        total = this.uploads.total;
+    let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
+    let total = this.uploads.total;
 
     this.trigger(':SubmitProgress', { uploaded, total, percentage: Math.round(uploaded / total * 100) });
   }

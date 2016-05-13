@@ -51,10 +51,10 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   activate_radiogroup (name, _value) {
-    let $root = document.documentElement,
-        $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`),
-        value = _value.user !== undefined ? _value.user : _value.default,
-        attr = 'data-' + name.replace(/[\._]/g, '-');
+    let $root = document.documentElement;
+    let $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`);
+    let value = _value.user !== undefined ? _value.user : _value.default;
+    let attr = 'data-' + name.replace(/[\._]/g, '-');
 
     for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
       $radio.tabIndex = 0;
@@ -79,15 +79,15 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   prepare_qrcode () {
-    let $outer = document.querySelector('#settings-qrcode-outer'),
-        $placeholder = $outer.querySelector('.placeholder'),
-        $iframe = $outer.querySelector('iframe'),
-        $button = $outer.querySelector('[role="button"]');
+    let $outer = document.querySelector('#settings-qrcode-outer');
+    let $placeholder = $outer.querySelector('.placeholder');
+    let $iframe = $outer.querySelector('iframe');
+    let $button = $outer.querySelector('[role="button"]');
 
     // Because the QRCode library doesn't support the strict mode, load the script in an iframe
     let generate = event => {
-      let QRCode = event.target.contentWindow.QRCode,
-          { name, api_key } = BzDeck.account.data;
+      let QRCode = event.target.contentWindow.QRCode;
+      let { name, api_key } = BzDeck.account.data;
 
       new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
 

@@ -86,9 +86,9 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // The event type should be click and window.open should be in this event handler, otherwise the new window will be
     // blocked by the browser's popup blocker
     this.$bzauth_button.addEventListener('click', event => {
-      let new_win = window.open(),
-          callback_url = `${location.origin}/integration/bugzilla-auth-callback/`,
-          auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
+      let new_win = window.open();
+      let callback_url = `${location.origin}/integration/bugzilla-auth-callback/`;
+      let auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
                    + `?callback=${encodeURIComponent(callback_url)}&description=BzDeck`;
 
       new_win.opener = null;
@@ -109,16 +109,16 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
     this.$qrauth_button.addEventListener('mousedown', event => {
-      let $overlay = document.querySelector('#qrcode-auth-overlay'),
-          $scan_button,
-          $video,
-          stream;
+      let $overlay = document.querySelector('#qrcode-auth-overlay');
+      let $scan_button;
+      let $video;
+      let stream;
 
       let decode = () => {
-        let qrcode = $overlay.querySelector('iframe').contentWindow.qrcode,
-            $canvas = document.createElement('canvas'),
-            width = $canvas.width = $video.videoWidth,
-            height = $canvas.height = $video.videoHeight;
+        let qrcode = $overlay.querySelector('iframe').contentWindow.qrcode;
+        let $canvas = document.createElement('canvas');
+        let width = $canvas.width = $video.videoWidth;
+        let height = $canvas.height = $video.videoHeight;
 
         $canvas.getContext('2d').drawImage($video, 0, 0, width, height);
         qrcode.callback = result => this.trigger(':QRCodeDecoded', { host: this.host, result });

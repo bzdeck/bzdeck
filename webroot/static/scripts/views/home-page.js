@@ -16,9 +16,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   constructor (controller) {
     super(); // This does nothing but is required before using `this`
 
-    let mobile = this.helpers.env.device.mobile,
-        $preview_pane = document.querySelector('#home-preview-pane'),
-        $sidebar = document.querySelector('#sidebar');
+    let mobile = this.helpers.env.device.mobile;
+    let $preview_pane = document.querySelector('#home-preview-pane');
+    let $sidebar = document.querySelector('#sidebar');
 
     this.controller = controller;
 
@@ -56,9 +56,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   connect (folder_id) {
-    let $folder = document.querySelector(`#sidebar-folders--${folder_id}`),
-        $tab = document.querySelector('#tab-home'),
-        $$tablist = BzDeck.views.banner.$$tablist;
+    let $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
+    let $tab = document.querySelector('#tab-home');
+    let $$tablist = BzDeck.views.banner.$$tablist;
 
     if (!$folder) {
       // Unknown folder; ignore
@@ -87,9 +87,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    */
   get_shown_bugs (bugs) {
     return BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
-      let mobile = this.helpers.env.device.mobile,
-          vertical = mobile || !layout_pref || layout_pref === 'vertical',
-          items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
+      let mobile = this.helpers.env.device.mobile;
+      let vertical = mobile || !layout_pref || layout_pref === 'vertical';
+      let items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                            : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
       return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
@@ -104,13 +104,13 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   show_preview (data) {
-    let mobile = this.helpers.env.device.mobile,
-        $pane = document.querySelector('#home-preview-pane');
+    let mobile = this.helpers.env.device.mobile;
+    let $pane = document.querySelector('#home-preview-pane');
 
     $pane.innerHTML = '';
 
-    let $bug = $pane.appendChild(this.get_template('home-preview-bug-template')),
-        $info = $bug.appendChild(this.get_template('preview-bug-info'));
+    let $bug = $pane.appendChild(this.get_template('home-preview-bug-template'));
+    let $info = $bug.appendChild(this.get_template('preview-bug-info'));
 
     // Activate the toolbar buttons
     new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
@@ -123,8 +123,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       // [B] previous bug or [F] next bug: handle on the home thread
       'B|F': event => {
         BzDeck.prefs.get('ui.home.layout').then(pref => {
-          let vertical = mobile || !pref || pref === 'vertical',
-              $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
+          let vertical = mobile || !pref || pref === 'vertical';
+          let $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
 
           this.helpers.kbd.dispatch($target, event.key);
         });
@@ -169,8 +169,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   apply_vertical_layout () {
-    let mql = window.matchMedia('(max-width: 1023px)'),
-        $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
+    let mql = window.matchMedia('(max-width: 1023px)');
+    let $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
 
     let show_preview = () => {
       let $$listbox = this.thread.$$listbox;
@@ -265,11 +265,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   init_searchbar () {
-    let listed_bugs,
-        $searchbar = document.querySelector('#home-list-searchbar'),
-        $searchbox = $searchbar.querySelector('[role="searchbox"]'),
-        $search_button = $searchbar.querySelector('[role="button"][data-id="search"]'),
-        $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
+    let listed_bugs;
+    let $searchbar = document.querySelector('#home-list-searchbar');
+    let $searchbox = $searchbar.querySelector('[role="searchbox"]');
+    let $search_button = $searchbar.querySelector('[role="button"][data-id="search"]');
+    let $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
 
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {

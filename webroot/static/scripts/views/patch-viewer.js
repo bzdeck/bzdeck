@@ -24,22 +24,22 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
     str = str.replace(/\r\n?/g, '\n');
 
     for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
-      let lines = file.split(/\n/),
-          [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, '')),
-          removed_ln = 0,
-          added_ln = 0,
-          $details = $fragment.appendChild(document.createElement('details')),
-          $summary = $details.appendChild(document.createElement('summary')),
-          $table = $details.appendChild(document.createElement('table'));
+      let lines = file.split(/\n/);
+      let [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, ''));
+      let removed_ln = 0;
+      let added_ln = 0;
+      let $details = $fragment.appendChild(document.createElement('details'));
+      let $summary = $details.appendChild(document.createElement('summary'));
+      let $table = $details.appendChild(document.createElement('table'));
 
       $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
 
       for (let line of lines) {
-        let $row = $table.insertRow(),
-            $removed_ln = $row.insertCell(),
-            $added_ln = $row.insertCell(),
-            $sign = $row.insertCell(),
-            $line = $row.insertCell();
+        let $row = $table.insertRow();
+        let $removed_ln = $row.insertCell();
+        let $added_ln = $row.insertCell();
+        let $sign = $row.insertCell();
+        let $line = $row.insertCell();
 
         $removed_ln.classList.add('ln', 'removed');
         $added_ln.classList.add('ln', 'removed');

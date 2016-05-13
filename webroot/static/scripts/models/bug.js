@@ -77,8 +77,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   fetch (include_metadata = true, include_details = true) {
     let _fetch = (method, param_str = '') => new Promise((resolve, reject) => {
-      let path = `bug/${this.id}`,
-          params = new URLSearchParams(param_str);
+      let path = `bug/${this.id}`;
+      let params = new URLSearchParams(param_str);
 
       if (method === 'last_visit') {
         path = `bug_user_last_visit/${this.id}`;
@@ -146,14 +146,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     // Deproxify cache and merge data
     data = Object.assign({}, cache, data);
 
-    let cached_time = new Date(data._last_visit || cache.last_change_time),
-        cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time,
-        get_time = str => new Date(str).getTime(), // integer
-        new_comments = new Map((data.comments || []).filter(c => cmp_time(c)).map(c => [get_time(c.creation_time), c])),
-        new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
-                                                          .map(a => [get_time(a.creation_time), a])),
-        new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h])),
-        timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
+    let cached_time = new Date(data._last_visit || cache.last_change_time);
+    let cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time;
+    let get_time = str => new Date(str).getTime(); // integer
+    let new_comments = new Map((data.comments || []).filter(c => cmp_time(c)).map(c => [get_time(c.creation_time), c]));
+    let new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
+                                                          .map(a => [get_time(a.creation_time), a]));
+    let new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h]));
+    let timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
     BzDeck.prefs.get('notifications.ignore_cc_changes').then(ignore_cc => {
       ignore_cc = ignore_cc !== false;
@@ -167,10 +167,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       // Combine all changes into one Map, then notify
       for (let time of timestamps) {
-        let changes = new Map(),
-            comment = new_comments.get(time),
-            attachment = new_attachments.get(time),
-            history = new_history.get(time);
+        let changes = new Map();
+        let comment = new_comments.get(time);
+        let attachment = new_attachments.get(time);
+        let history = new_history.get(time);
 
         if (comment) {
           changes.set('comment', comment);
@@ -267,10 +267,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @return {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
   detect_if_new () {
-    let visited = new Date(this.data._last_visit).getTime(),
-        changed = new Date(this.data.last_change_time).getTime(),
-        time10d = Date.now() - 1000 * 60 * 60 * 24 * 10,
-        is_new = changed > time10d;
+    let visited = new Date(this.data._last_visit).getTime();
+    let changed = new Date(this.data.last_change_time).getTime();
+    let time10d = Date.now() - 1000 * 60 * 60 * 24 * 10;
+    let is_new = changed > time10d;
 
     let has_new = entry => {
       let time = new Date(entry.creation_time);
@@ -291,8 +291,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       // Ignore CC Changes option
       if (visited && ignore_cc !== false) {
         for (let h of this.data.history || []) {
-          let time = new Date(h.when).getTime(), // Should be an integer for the following === comparison
-              non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
+          let time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
+          let non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
           if (time > visited && non_cc_changes) {
             return true;
@@ -371,8 +371,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @return {Set.<String>} contributors - List of all contributor account names (email addresses).
    */
   get_contributors () {
-    let contributors = new Map(), // key: name, value: number of contributions
-        exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
+    let contributors = new Map(); // key: name, value: number of contributions
+    let exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
                               ...(this.data.mentors || [])]);
 
     let add = name => {

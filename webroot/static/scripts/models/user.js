@@ -146,8 +146,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       return Promise.reject(new Error(this.data.error));
     }
 
-    let params = new URLSearchParams(),
-        _options = { api_key: options.api_key || undefined };
+    let params = new URLSearchParams();
+    let _options = { api_key: options.api_key || undefined };
 
     params.append('names', this.email);
 

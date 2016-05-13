@@ -147,8 +147,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   init_status_tab () {
-    let $tab = this.$form.querySelector('[id$="tab-status"]'),
-        $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]');
+    let $tab = this.$form.querySelector('[id$="tab-status"]');
+    let $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]');
 
     // Show the tab only on the previews; the details page has the info pane
     if (this.id.startsWith('details')) {
@@ -164,24 +164,24 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   init_needinfo_tabpanel () {
-    let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [],
-        names = flags.map(flag => flag.requestee),
-        self_assigned = this.bug.creator === this.bug.assigned_to,
-        $tab = this.$form.querySelector('[id$="tab-needinfo"]'),
-        $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]'),
-        $finder_outer = $tabpanel.querySelector('.requestee-finder-outer'),
-        $$finder = new BzDeck.PersonFinderView(`${this.id}-person-finder`, this.bug,
-                                               new Set([this.bug.creator, this.bug.assigned_to])),
-        $finder = $$finder.$combobox;
+    let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
+    let names = flags.map(flag => flag.requestee);
+    let self_assigned = this.bug.creator === this.bug.assigned_to;
+    let $tab = this.$form.querySelector('[id$="tab-needinfo"]');
+    let $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]');
+    let $finder_outer = $tabpanel.querySelector('.requestee-finder-outer');
+    let $$finder = new BzDeck.PersonFinderView(`${this.id}-person-finder`, this.bug,
+                                               new Set([this.bug.creator, this.bug.assigned_to]));
+    let $finder = $$finder.$combobox;
 
     let add_row = (requestee, checked, options = {}) => {
-      let { id, label } = options,
-          type = id ? 'clear' : 'request',
-          flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee },
-          $row = this.get_template(`bug-comment-form-${type}-needinfo-row`),
-          $checkbox = $row.querySelector('[role="checkbox"]'),
-          $$checkbox = new this.widgets.CheckBox($checkbox),
-          $label = $checkbox.querySelector('span');
+      let { id, label } = options;
+      let type = id ? 'clear' : 'request';
+      let flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee };
+      let $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);
+      let $checkbox = $row.querySelector('[role="checkbox"]');
+      let $$checkbox = new this.widgets.CheckBox($checkbox);
+      let $label = $checkbox.querySelector('span');
 
       BzDeck.collections.users.get(requestee, { name: requestee }).then(_requestee => {
         return this.fill(this.get_template('person-with-image'), _requestee.properties);
@@ -235,8 +235,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   oninput () {
-    let text = this.$textbox.value,
-        storage_key = `bug-${this.bug.id}-comment`;
+    let text = this.$textbox.value;
+    let storage_key = `bug-${this.bug.id}-comment`;
 
     this.$textbox.style.removeProperty('height');
     this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
@@ -262,13 +262,13 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_attachment_added (data) {
-    let attachment = data.attachment,
-        hash = attachment.hash,
-        click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-        mobile = this.helpers.env.device.mobile,
-        mql = window.matchMedia('(max-width: 1023px)'),
-        $tbody = this.$attachments_tbody,
-        $row = this.get_template('bug-comment-form-attachments-row');
+    let attachment = data.attachment;
+    let hash = attachment.hash;
+    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let mobile = this.helpers.env.device.mobile;
+    let mql = window.matchMedia('(max-width: 1023px)');
+    let $tbody = this.$attachments_tbody;
+    let $row = this.get_template('bug-comment-form-attachments-row');
 
     $row.dataset.hash = hash;
     $row.querySelector('[itemprop="summary"]').textContent = attachment.summary;

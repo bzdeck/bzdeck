@@ -28,8 +28,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
 
     this.$$tablist.bind('Selected', event => {
-      let $selected = event.detail.items[0],
-          $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
+      let $selected = event.detail.items[0];
+      let $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
 
       // Scroll a tabpanel to top when the tab is selected
       $tabpanel.querySelector('[role="region"]').scrollTop = 0;
@@ -59,11 +59,11 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @return {undefined}
    */
   change_layout (mql) {
-    let $info_tab = this.$bug.querySelector('[id$="-tab-info"]'),
-        $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]'),
-        $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]'),
-        $bug_info = this.$bug.querySelector('.bug-info'),
-        $bug_participants = this.$bug.querySelector('.bug-participants');
+    let $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
+    let $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]');
+    let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
+    let $bug_info = this.$bug.querySelector('.bug-info');
+    let $bug_participants = this.$bug.querySelector('.bug-participants');
 
     if (mql.matches || this.helpers.env.device.mobile) {  // Mobile layout
       $info_tab.setAttribute('aria-hidden', 'false');
@@ -92,7 +92,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     let mql = window.matchMedia('(max-width: 1023px)');
 
     for (let $content of this.$bug.querySelectorAll('.scrollable')) {
-      let info = $content.matches('.bug-info'),
+      let info = $content.matches('.bug-info');
           top = 0,
           hidden = false;
 
@@ -101,8 +101,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
           return;
         }
 
-        let _top = event.target.scrollTop,
-            _hidden = top < _top;
+        let _top = event.target.scrollTop;
+        let _hidden = top < _top;
 
         if (hidden !== _hidden) {
           hidden = _hidden;
@@ -121,8 +121,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    */
   add_tab_badges () {
     for (let prop of ['comments', 'attachments', 'history']) {
-      let tab_name = prop === 'comments' ? 'timeline' : prop,
-          number = (this.bug[prop] || []).length;
+      let tab_name = prop === 'comments' ? 'timeline' : prop;
+      let number = (this.bug[prop] || []).length;
 
       this.$tablist.querySelector(`[id$="tab-${tab_name}"] label`).dataset.badge = number;
     }
@@ -134,14 +134,14 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @return {undefined}
    */
   render_tracking_flags () {
-    let config = BzDeck.host.data.config,
-        $outer = this.$bug.querySelector('[data-category="tracking-flags"]'),
-        $flag = this.get_template('details-tracking-flag'),
-        $fragment = new DocumentFragment();
+    let config = BzDeck.host.data.config;
+    let $outer = this.$bug.querySelector('[data-category="tracking-flags"]');
+    let $flag = this.get_template('details-tracking-flag');
+    let $fragment = new DocumentFragment();
 
     for (let name of Object.keys(this.bug.data).sort()) {
-      let field = config.field[name],
-          value = this.bug.data[name];
+      let field = config.field[name];
+      let value = this.bug.data[name];
 
       // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
       if (!name.startsWith('cf_') || !field || !field.is_active || field.type !== 99) {
@@ -167,9 +167,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @return {undefined}
    */
   render_attachments () {
-    let mobile = this.helpers.env.device.mobile,
-        mql = window.matchMedia('(max-width: 1023px)'),
-        $field = this.$bug.querySelector('[data-field="attachments"]');
+    let mobile = this.helpers.env.device.mobile;
+    let mql = window.matchMedia('(max-width: 1023px)');
+    let $field = this.$bug.querySelector('[data-field="attachments"]');
 
     this.$$attachments = new BzDeck.BugAttachmentsView(this.id, this.bug.id, $field);
 

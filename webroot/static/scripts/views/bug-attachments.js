@@ -19,8 +19,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   constructor (view_id, bug_id, $container) {
     super(); // This does nothing but is required before using `this`
 
-    let mobile = this.helpers.env.device.mobile,
-        mql = window.matchMedia('(max-width: 1023px)');
+    let mobile = this.helpers.env.device.mobile;
+    let mql = window.matchMedia('(max-width: 1023px)');
 
     this.id = view_id;
     this.bug_id = bug_id;
@@ -46,8 +46,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
         return;
       }
 
-      let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id)),
-          $attachment = this.$container.querySelector('.content');
+      let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
+      let $attachment = this.$container.querySelector('.content');
 
       new this.widgets.ScrollBar($attachment);
       new BzDeck.AttachmentView(attachment, $attachment);
@@ -82,8 +82,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   render (attachments) {
-    let $fragment = new DocumentFragment(),
-        $listitem = this.get_template('details-attachment-listitem');
+    let $fragment = new DocumentFragment();
+    let $listitem = this.get_template('details-attachment-listitem');
 
     attachments.reverse(); // The newest attachment should be on the top of the list
 
@@ -124,10 +124,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   listbox_onclick (event) {
-    let $selected = this.$$listbox.view.selected[0],
-        id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined,
-        mobile = this.helpers.env.device.mobile,
-        narrow = window.matchMedia('(max-width: 1023px)').matches;
+    let $selected = this.$$listbox.view.selected[0];
+    let id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
+    let mobile = this.helpers.env.device.mobile;
+    let narrow = window.matchMedia('(max-width: 1023px)').matches;
 
     if (id && ((event.type === 'click' && mobile && narrow) || event.type === 'dblclick')) {
       this.trigger('GlobalView:OpenAttachment', { id });
@@ -170,16 +170,16 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     });
 
     this.$$listbox.bind('Selected', event => {
-      let $selected = this.$$listbox.view.selected[0],
-          hash = $selected ? $selected.dataset.hash : undefined;
+      let $selected = this.$$listbox.view.selected[0];
+      let hash = $selected ? $selected.dataset.hash : undefined;
 
       this.$remove_button.setAttribute('aria-disabled', !hash);
     });
 
     this.$$listbox.assign_key_bindings({
       'Backspace': event => {
-        let $selected = this.$$listbox.view.selected[0],
-            hash = $selected ? $selected.dataset.hash : undefined;
+        let $selected = this.$$listbox.view.selected[0];
+        let hash = $selected ? $selected.dataset.hash : undefined;
 
         if (hash) {
           this.trigger('BugView:RemoveAttachment', { hash });
@@ -247,8 +247,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_attachment_edited (data) {
-    let { id, hash, prop, value } = data.change,
-        $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
+    let { id, hash, prop, value } = data.change;
+    let $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
     if (['summary', 'content_type'].includes(prop)) {
       $item.querySelector(`[itemprop="${prop}"]`).textContent = value;
@@ -275,9 +275,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   update_list_title () {
-    let total = this.attachments.size,
-        uploads = [...this.attachments.values()].filter(att => att.is_unuploaded).length,
-        text = total === 1 ? '1 attachment' : `${total} attachments`; // l10n
+    let total = this.attachments.size;
+    let uploads = [...this.attachments.values()].filter(att => att.is_unuploaded).length;
+    let text = total === 1 ? '1 attachment' : `${total} attachments`; // l10n
 
     if (uploads > 0) {
       text += ' ' + `(${uploads} unuploaded)`; // l10n
@@ -295,8 +295,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_history_updated (data) {
-    let target_id = data.state ? data.state.att_id : undefined,
-        $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
+    let target_id = data.state ? data.state.att_id : undefined;
+    let $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
     if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
       if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {

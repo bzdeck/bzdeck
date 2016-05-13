@@ -47,14 +47,14 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   setup_navigation () {
-    let Button = this.widgets.Button,
-        $toolbar = this.$bug.querySelector('header [role="toolbar"]'),
-        $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]')),
-        $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]')),
-        index = this.bug_ids.indexOf(this.bug_id),
-        prev = this.bug_ids[index - 1],
-        next = this.bug_ids[index + 1],
-        assign_key_binding = (key, command) => this.helpers.kbd.assign(this.$bug, { [key]: command });
+    let Button = this.widgets.Button;
+    let $toolbar = this.$bug.querySelector('header [role="toolbar"]');
+    let $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]'));
+    let $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]'));
+    let index = this.bug_ids.indexOf(this.bug_id);
+    let prev = this.bug_ids[index - 1];
+    let next = this.bug_ids[index + 1];
+    let assign_key_binding = (key, command) => this.helpers.kbd.assign(this.$bug, { [key]: command });
 
     let set_button_tooltip = (id, $$button) => BzDeck.collections.bugs.get(id).then(bug => {
       $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
@@ -88,10 +88,10 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   navigate (new_id) {
-    let old_id = this.bug_id,
-        old_path = `/bug/${old_id}`,
-        new_path = `/bug/${new_id}`,
-        $existing_bug = document.querySelector(`#bug-${new_id}`);
+    let old_id = this.bug_id;
+    let old_path = `/bug/${old_id}`;
+    let new_path = `/bug/${new_id}`;
+    let $existing_bug = document.querySelector(`#bug-${new_id}`);
 
     this.$tabpanel.setAttribute('aria-busy', 'true');
 

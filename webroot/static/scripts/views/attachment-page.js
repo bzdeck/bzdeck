@@ -39,9 +39,9 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_attachment_available (data) {
-    let attachment = this.attachment = data.attachment,
-        $attachment = this.$tabpanel.querySelector('article > div'),
-        { id, hash, summary } = attachment;
+    let attachment = this.attachment = data.attachment;
+    let $attachment = this.$tabpanel.querySelector('article > div');
+    let { id, hash, summary } = attachment;
 
     new this.widgets.ScrollBar($attachment);
     new BzDeck.AttachmentView(attachment, $attachment);
@@ -62,8 +62,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @return {undefined}
    */
   on_attachment_unavailable (data) {
-    let id = this.att_id,
-        error = data.attachment && data.attachment.error ? data.attachment.error : '';
+    let id = this.att_id;
+    let error = data.attachment && data.attachment.error ? data.attachment.error : '';
 
     BzDeck.views.statusbar.show(`The attachment ${id} cannot be retrieved. ${error}`); // l10n
   }

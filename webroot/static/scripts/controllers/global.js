@@ -58,8 +58,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @return {undefined}
    */
   on_gravatar_profile_requested (data) {
-    let { hash } = data,
-        nofity = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
+    let { hash } = data;
+    let nofity = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
 
     this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
         .then(data => data.entry[0]).then(profile => nofity(profile)).catch(error => nofity(undefined));
@@ -75,11 +75,11 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @return {undefined}
    */
   on_gravatar_image_requested (data) {
-    let { hash, color, initial } = data,
-        nofity = blob => this.trigger(':GravatarImageProvided', { hash, blob }),
-        $image = new Image(),
-        $canvas = document.createElement('canvas'),
-        ctx = $canvas.getContext('2d');
+    let { hash, color, initial } = data;
+    let nofity = blob => this.trigger(':GravatarImageProvided', { hash, blob });
+    let $image = new Image();
+    let $canvas = document.createElement('canvas');
+    let ctx = $canvas.getContext('2d');
 
     $canvas.width = 160;
     $canvas.height = 160;
@@ -119,9 +119,9 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
     BzDeck.collections.bugs.get_all().then(bugs => {
       return [...bugs.values()].filter(bug => bug.unread);
     }).then(bugs => {
-      let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug', // l10n
-          extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n'),
-          unread_num = [...BzDeck.controllers.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+      let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
+      let extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
+      let unread_num = [...BzDeck.controllers.homepage.data.bugs.values()].filter(bug => bug.unread).length;
 
       // Update View
       this.view.toggle_unread(bugs, loaded, unread_num);
@@ -145,8 +145,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
         return p;
       }
 
-      let lines = p.split(/\n/),
-          quote = [];
+      let lines = p.split(/\n/);
+      let quote = [];
 
       for (let [i, line] of lines.entries()) {
         if (line.match(regex)) {
@@ -156,8 +156,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
         if ((!line.match(regex) || !lines[i + 1]) && quote.length) {
           // A quote end, the next line is not a part of the quote, or no more lines
-          let quote_str = quote.join('\n'),
-              quote_repl = quote_str.replace(regex, '');
+          let quote_str = quote.join('\n');
+          let quote_repl = quote_str.replace(regex, '');
 
           if (quote_repl.match(regex)) {
             // Nested quote(s) found, do recursive processing

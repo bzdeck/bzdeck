@@ -150,8 +150,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @return {Boolean} displayed - Whether the results are displayed.
    */
   render_results (data) {
-    let { category, input, results } = data,
-        section = this.sections.get(category);
+    let { category, input, results } = data;
+    let section = this.sections.get(category);
 
     // Check if the search terms have not changed since the search is triggered
     if (input !== this.$input.value) {
@@ -232,8 +232,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     if ($target.matches('[data-command="search-all-bugs"]')) {
       this.onsubmit();
     } else {
-      let id = $target.dataset.id,
-          type = $target.getAttribute('itemtype').match(/\w+$/)[0].toLowerCase();
+      let id = $target.dataset.id;
+      let type = $target.getAttribute('itemtype').match(/\w+$/)[0].toLowerCase();
 
       this.trigger(':ResultSelected', { id: isNaN(id) ? id : Number(id), type });
     }

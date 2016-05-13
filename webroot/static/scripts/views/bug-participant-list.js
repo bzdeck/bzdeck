@@ -112,9 +112,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @return {undefined}
    */
   add_subscribe_button () {
-    let listed = this.values.has(this.my_email),
-        label = listed ? 'Unsubscribe' : 'Subscribe',
-        aria_label = listed ? 'Remove myself from the Cc list' : 'Add myself to the Cc list';
+    let listed = this.values.has(this.my_email);
+    let label = listed ? 'Unsubscribe' : 'Subscribe';
+    let aria_label = listed ? 'Remove myself from the Cc list' : 'Add myself to the Cc list';
 
     this.$button = this.create_button('subscribe', label, aria_label);
 
@@ -155,8 +155,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       return;
     }
 
-    let $person = this.$list.querySelector('[itemscope]'),
-        self = data.email === this.my_email;
+    let $person = this.$list.querySelector('[itemscope]');
+    let self = data.email === this.my_email;
 
     if (!this.multiple && $person) {
       let email = $person.querySelector('[itemprop="email"]').content;
@@ -200,9 +200,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       return;
     }
 
-    let $email = this.$list.querySelector(`[itemprop="email"][content="${data.email}"]`),
-        $person = $email ? $email.closest('[itemscope]') : undefined,
-        self = data.email === this.my_email;
+    let $email = this.$list.querySelector(`[itemprop="email"][content="${data.email}"]`);
+    let $person = $email ? $email.closest('[itemscope]') : undefined;
+    let self = data.email === this.my_email;
 
     if (!$person) {
       return;
@@ -251,9 +251,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @return {HTMLElement} $button
    */
   add_remove_button_to_person ($person) {
-    let email = $person.querySelector('[itemprop="email"]').content,
-        name = $person.querySelector('[itemprop="name"]').textContent,
-        $button = $person.querySelector('[role="button"]');
+    let email = $person.querySelector('[itemprop="email"]').content;
+    let name = $person.querySelector('[itemprop="name"]').textContent;
+    let $button = $person.querySelector('[role="button"]');
 
     if ($button) {
       $button.remove();

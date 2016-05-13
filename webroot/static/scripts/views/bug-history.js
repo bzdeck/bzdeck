@@ -34,16 +34,16 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * @return {undefined}
    */
   render (history) {
-    let conf_field = BzDeck.host.data.config.field,
-        $row = this.get_template('details-change');
+    let conf_field = BzDeck.host.data.config.field;
+    let $row = this.get_template('details-change');
 
     for (let hist of history) {
       this.history.push(hist);
 
       for (let [i, change] of hist.changes.entries()) {
-        let { field_name, added, removed } = change,
-            $_row = $row.cloneNode(true),
-            $cell = field => $_row.querySelector(`[itemprop="${field}"]`);
+        let { field_name, added, removed } = change;
+        let $_row = $row.cloneNode(true);
+        let $cell = field => $_row.querySelector(`[itemprop="${field}"]`);
 
         if (i === 0) {
           $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');

@@ -16,9 +16,9 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   constructor (user) {
     super(); // This does nothing but is required before using `this`
 
-    let mobile = this.helpers.env.device.mobile,
-        $root = document.documentElement, // <html>
-        $sidebar = document.querySelector('#sidebar');
+    let mobile = this.helpers.env.device.mobile;
+    let $root = document.documentElement; // <html>
+    let $sidebar = document.querySelector('#sidebar');
 
     $root.setAttribute('data-sidebar-hidden', mobile);
     $sidebar.setAttribute('aria-hidden', mobile);
@@ -73,10 +73,10 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @return {undefined}
    */
   open_folder (folder_id, bugs) {
-    let home = BzDeck.views.pages.home,
-        toolbar = BzDeck.views.banner,
-        folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label,
-        unread = [...bugs.values()].filter(bug => bug.unread).length;
+    let home = BzDeck.views.pages.home;
+    let toolbar = BzDeck.views.banner;
+    let folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
+    let unread = [...bugs.values()].filter(bug => bug.unread).length;
 
     home.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
     home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
@@ -96,8 +96,8 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @return {undefined}
    */
   toggle_unread (num) {
-    let $label = document.querySelector('#sidebar-folders--inbox label'),
-        $num = $label.querySelector('span');
+    let $label = document.querySelector('#sidebar-folders--inbox label');
+    let $num = $label.querySelector('span');
 
     if (num) {
       $num = $num || $label.appendChild(document.createElement('span'));

@@ -28,16 +28,16 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @return {undefined}
    */
   render ($outer, level = 4) {
-    let config = BzDeck.host.data.config,
-        get_person = name => BzDeck.collections.users.get(name, { name }), // Promise
-        _flags = (this.att ? this.att.flags : this.bug.flags) || [],
-        $flag = this.get_template('details-flag'),
-        $fragment = new DocumentFragment();
+    let config = BzDeck.host.data.config;
+    let get_person = name => BzDeck.collections.users.get(name, { name }); // Promise
+    let _flags = (this.att ? this.att.flags : this.bug.flags) || [];
+    let $flag = this.get_template('details-flag');
+    let $fragment = new DocumentFragment();
 
     for (let id of config.product[this.bug.product].component[this.bug.component].flag_type) {
-      let flag = config.flag_type[id],
-          _flag = _flags.find(f => f.name === flag.name),
-          $_flag = $flag.cloneNode(true);
+      let flag = config.flag_type[id];
+      let _flag = _flags.find(f => f.name === flag.name);
+      let $_flag = $flag.cloneNode(true);
 
       if (flag.is_for_bugs === !!this.att) {
         continue;

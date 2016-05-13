@@ -84,8 +84,8 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
   search_remote () {
-    let value = this.value, // Keep this as local a variable for later use
-        params = new URLSearchParams();
+    let value = this.value; // Keep this as local a variable for later use
+    let params = new URLSearchParams();
 
     params.append('match', value);
     params.append('limit', 10);
@@ -106,11 +106,11 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @return {undefined}
    */
   search (users = new Map()) {
-    let has_colon = this.value.startsWith(':'),
-        re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i'),
-        find = str => re.test(str),
-        results = new Map(),
-        $fragment = new DocumentFragment();
+    let has_colon = this.value.startsWith(':');
+    let re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i');
+    let find = str => re.test(str);
+    let results = new Map();
+    let $fragment = new DocumentFragment();
 
     Promise.all([...users.keys()].map(name => {
       return BzDeck.collections.users.get(name, { name });
@@ -140,8 +140,8 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
       }
 
       for (let [name, user] of results) {
-        let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image },
-            attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
+        let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
+        let attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
 
         $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
       }

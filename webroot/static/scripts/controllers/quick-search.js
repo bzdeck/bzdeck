@@ -73,8 +73,8 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
       return;
     }
 
-    let params_bugs = new URLSearchParams(),
-        params_users = new URLSearchParams();
+    let params_bugs = new URLSearchParams();
+    let params_users = new URLSearchParams();
 
     let return_bugs = bugs => Promise.all(bugs.map(bug => this.get_bug_result(bug))).then(results => {
       this.trigger(':ResultsAvailable', { category: 'bugs', input, results });
@@ -159,11 +159,11 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
     let { id, type } = data;
 
     BzDeck.prefs.get('search.quick.history').then(value => {
-      let history = value || [],
-          // Find an existing item
-          index = history.findIndex(item => item.type === type && item.id === id),
-          // If the same item exists, update the timestamp and reorder the history. Otherwise, create a new object
-          item = index > -1 ? history.splice(index, 1)[0] : { type, id };
+      let history = value || [];
+      // Find an existing item
+      let index = history.findIndex(item => item.type === type && item.id === id);
+      // If the same item exists, update the timestamp and reorder the history. Otherwise, create a new object
+      let item = index > -1 ? history.splice(index, 1)[0] : { type, id };
 
       item.timestamp = Date.now();
       history.unshift(item);

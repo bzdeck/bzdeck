@@ -51,8 +51,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
       let worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
       worker.port.addEventListener('message', event => {
-        let { binary, blob } = event.data,
-            text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
+        let { binary, blob } = event.data;
+        let text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
 
         resolve({ blob, text, attachment: this });
       });
@@ -66,8 +66,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     }
 
     return BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data')).then(result => {
-      let attachment = result.attachments[this.id],
-          data = attachment && attachment.data ? attachment.data : undefined;
+      let attachment = result.attachments[this.id];
+      let data = attachment && attachment.data ? attachment.data : undefined;
 
       if (!data) {
         return Promise.reject();

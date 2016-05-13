@@ -91,8 +91,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     }).then(_users => {
       // _users is an Array of raw user objects. Convert them to UserModel instances
       return Promise.all(_users.map(_user => {
-        let name = _user.name,
-            obj;
+        let name = _user.name;
+        let obj;
 
         return this.get(name).then(user => {
           obj = _user.error ? { name, error: 'Not Found' } : Object.assign(user ? user.data : {}, { bugzilla: _user });
@@ -121,8 +121,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   search_local (params) {
-    let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase()),
-        match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+    let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
+    let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
 
     // If the search string starts with a colon, remove it so a nick name may match
     if (words.length === 1 && words[0].startsWith(':')) {
@@ -153,8 +153,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
       return this.get_some(_users.keys());
     }).then(__users => {
       return Promise.all([...__users].map(entry => new Promise(resolve => {
-        let [name, user] = entry,
-            retrieved = _users.get(name); // Raw data object
+        let [name, user] = entry;
+        let retrieved = _users.get(name); // Raw data object
 
         if (user) {
           resolve(user);

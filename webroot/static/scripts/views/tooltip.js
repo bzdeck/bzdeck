@@ -68,8 +68,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
    * @return {undefined}
    */
   hide_any () {
-    let $tooltip = document.querySelector('body > [role="tooltip"]'),
-        $owner;
+    let $tooltip = document.querySelector('body > [role="tooltip"]');
+    let $owner;
 
     if ($tooltip) {
       $owner = document.querySelector(`[aria-describedby="${$tooltip.id}"]`);

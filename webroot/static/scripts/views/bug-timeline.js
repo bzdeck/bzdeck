@@ -23,17 +23,17 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     this.bug = bug;
     this.$bug = $bug;
 
-    let get_time = str => (new Date(str)).getTime(),
-        entries = new Map([...this.bug.comments.entries()]
-            .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]]])])),
-        click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-        read_comments_num = 0,
-        last_comment_time,
-        data_arr = [],
-        $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline'),
-        timeline_id = $timeline.id = `${this.id}-timeline`,
-        $expander,
-        $comments_wrapper = $timeline.querySelector('.comments-wrapper');
+    let get_time = str => (new Date(str)).getTime();
+    let entries = new Map([...this.bug.comments.entries()]
+            .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]]])]));
+    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let read_comments_num = 0;
+    let last_comment_time;
+    let data_arr = [];
+    let $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
+    let timeline_id = $timeline.id = `${this.id}-timeline`;
+    let $expander;
+    let $comments_wrapper = $timeline.querySelector('.comments-wrapper');
 
     for (let attachment of this.bug.attachments) {
       entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
@@ -84,8 +84,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       $expander.tabIndex = 0;
       $expander.setAttribute('role', 'button');
       $expander.addEventListener(click_event_type, event => {
-        let $fragment = new DocumentFragment(),
-            data_arr = [];
+        let $fragment = new DocumentFragment();
+        let data_arr = [];
 
         $expander.textContent = 'Loading...'; // l10n
 
@@ -178,9 +178,9 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     let match = data.hash.match(/^#c(\d+)$/);
 
     if (match) {
-      let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown',
-          count = Number.parseInt(match[1]),
-          $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
+      let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+      let count = Number.parseInt(match[1]);
+      let $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 
       if ($comment) {
         if (this.$expander) {
