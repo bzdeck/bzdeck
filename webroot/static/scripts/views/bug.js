@@ -447,22 +447,39 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return false;
     }
 
-    this.$bug.addEventListener('dragenter', event => {
-      $target.setAttribute('aria-dropeffect', 'copy');
-    });
-
     this.$bug.addEventListener('dragover', event => {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';
+      let dt = event.dataTransfer;
 
-      // Use a timer to hide the drop target, because the dragleave event is not fired for some reason when the mouse
-      // pointer leaves the target by crossing one of the borders shared with the window.
+      event.preventDefault();
+
+      // Use a timer to hide the drop target, because the dragleave event is not fired in Firefox when the mouse pointer
+      // leaves the target by crossing one of the borders shared with the window. (Bug 656164)
       window.clearTimeout(timer);
       timer = window.setTimeout(() => $target.setAttribute('aria-dropeffect', 'none'), 200);
+
+      // Ignore Blob
+      if (dt.getData('text/uri-list').startsWith('blob:')) {
+        return false;
+      }
+
+      if (!$target.getAttribute('aria-dropeffect') !== 'copy') {
+        $target.setAttribute('aria-dropeffect', 'copy');
+      }
+
+      dt.dropEffect = dt.effectAllowed = 'copy';
+
+      return true;
     });
 
     this.$bug.addEventListener('drop', event => {
       let dt = event.dataTransfer;
+
+      event.preventDefault();
+
+      // Ignore Blob
+      if (dt.getData('text/uri-list').startsWith('blob:')) {
+        return false;
+      }
 
       if (dt.types.contains('Files')) {
         this.trigger('BugView:FilesSelected', { input: dt });
@@ -470,7 +487,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
       }
 
-      event.preventDefault();
+      return true;
     });
 
     return true;
