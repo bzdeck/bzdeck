@@ -105,6 +105,7 @@
   display: inline-block;
   overflow: hidden;
   margin-top: .2rem;
+  max-width: 24rem;
   font-size: 1.3rem;
   font-weight: 500;
   white-space: nowrap;
@@ -207,6 +208,10 @@
 .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] * {
   display: inline;
   color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: normal;
   white-space: nowrap;
 }
 

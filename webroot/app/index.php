@@ -907,10 +907,10 @@
     <template id="bug-comment-form-attachments-row">
       <tr itemscope itemtype="http://bzdeck.com/Attachment">
         <th itemprop="summary"></th>
-        <td><span title="Edit" tabindex="0" role="button" data-command="edit">Edit</span></td>
-        <td><span title="Remove" tabindex="0" role="button" data-command="remove">Remove</span></td>
-        <td><span title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span></td>
-        <td><span title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span></td>
+        <td><span class="iconic" title="Edit" tabindex="0" role="button" data-command="edit">Edit</span></td>
+        <td><span class="iconic" title="Remove" tabindex="0" role="button" data-command="remove">Remove</span></td>
+        <td><span class="iconic" title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span></td>
+        <td><span class="iconic" title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span></td>
       </tr>
     </template>
     <template id="timeline-attachment">

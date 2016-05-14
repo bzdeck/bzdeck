@@ -174,12 +174,8 @@
 }
 
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"] {
-  overflow: hidden;
-  border: 0;
-  padding: 0 0 0 var(--comment-margin);
-  width: 0;
-  height: var(--comment-margin);
-  background-color: transparent;
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"][aria-disabled="true"] {
@@ -189,17 +185,6 @@
 .bug-comment-form [id$="tabpanel-attachments"] tr:first-of-type [role="button"][data-command="move-up"],
 .bug-comment-form [id$="tabpanel-attachments"] tr:last-of-type [role="button"][data-command="move-down"] {
   visibility: hidden;
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="button"]::before {
-  display: inline-block;
-  margin-left: -var(--comment-margin);
-  width: var(--comment-margin);
-  height: var(--comment-margin);
-  font-size: 1.6rem;
-  line-height: 1.6rem;
-  font-family: FontAwesome;
-  text-align: center;
 }
 
 .bug-comment-form [id$="tabpanel-attachments"] [role="button"][data-command="edit"]::before {
