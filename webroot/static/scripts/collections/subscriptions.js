@@ -89,14 +89,12 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     return BzDeck.prefs.get('subscriptions.last_loaded').then(last_loaded => {
       firstrun = !last_loaded;
 
-      if (last_loaded) {
-        let date = this.helpers.datetime.get_shifted_date(new Date(last_loaded), BzDeck.host.timezone);
-
-        params.append('include_fields', 'id');
-        params.append('chfieldfrom', date.toLocaleFormat('%Y-%m-%d %T'));
-      } else {
+      if (firstrun) {
         // Fetch only open bugs at initial startup
         params.append('resolution', '---');
+      } else {
+        params.append('include_fields', 'id');
+        params.append('last_change_time', (new Date(last_loaded)).toISOString());
       }
     }).then(() => {
       return BzDeck.collections.bugs.get_all();
