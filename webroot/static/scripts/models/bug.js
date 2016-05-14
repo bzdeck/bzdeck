@@ -262,14 +262,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Check if the bug is unread or has been changed within the last 10 days.
+   * Check if the bug is unread or has been changed within the last 14 days.
    * @argument {undefined}
    * @return {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
   detect_if_new () {
     let visited = new Date(this.data._last_visit).getTime();
     let changed = new Date(this.data.last_change_time).getTime();
-    let time10d = Date.now() - 1000 * 60 * 60 * 24 * 10;
+    let time10d = Date.now() - 1000 * 60 * 60 * 24 * 14;
     let is_new = changed > time10d;
 
     let has_new = entry => {

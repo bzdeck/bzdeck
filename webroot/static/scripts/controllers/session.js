@@ -177,7 +177,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       this.firstrun = !bugs.size;
     }).then(() => {
       // Fetch data for new users before showing the main app window, or defer fetching for returning users
-      return this.firstrun ? this.fetch_data() : Promise.resolve();
+      return this.firstrun ? this.fetch_data(true) : Promise.resolve();
     }).then(() => {
       this.init_components();
     }).catch(error => {
@@ -187,16 +187,32 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
-   * @argument {undefined}
+   * @argument {Boolean} [firstrun=false] - True for the initial session.
    * @return {undefined}
    */
-  fetch_data () {
+  fetch_data (firstrun = false) {
     this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
+    // Fetch only open bugs changed in the last 14 days first to reduce the initial startup time
+    let datetime = (new Date(Date.now() - 1000 * 60 * 60 * 24 * 14)).toISOString();
+    let params = firstrun ? new URLSearchParams(`chfieldfrom=${datetime}`) : undefined;
+
     return Promise.all([
-      BzDeck.collections.users.refresh(),
-      BzDeck.collections.subscriptions.fetch(),
       BzDeck.host.get_config(),
+      BzDeck.collections.users.refresh(),
+      BzDeck.collections.subscriptions.fetch(firstrun, params).then(bugs => {
+        if (firstrun) {
+          // Fetch the remaining bugs
+          let _fetch = BzDeck.collections.subscriptions.fetch(true, new URLSearchParams(`chfieldto=${datetime}`));
+
+          // If the first fetch returned no bugs, wait for the second fetch
+          if (!bugs.size) {
+            return _fetch;
+          }
+        }
+
+        return Promise.resolve();
+      }),
     ]);
   }
 

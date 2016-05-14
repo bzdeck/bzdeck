@@ -66,13 +66,12 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
 
   /**
    * Retrieve data of bugs the user is participating from the remote Bugzilla instance, and return those as models.
-   * @argument {undefined}
+   * @argument {Boolean} [firstrun=false] - True for the initial session.
+   * @argument {URLSearchParams} [params] - Search query.
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
-  fetch () {
-    let firstrun = false;
-    let params = new URLSearchParams();
+  fetch (firstrun = false, params = new URLSearchParams()) {
     let fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
     // Fire an event to show the throbber
@@ -87,8 +86,6 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     }
 
     return BzDeck.prefs.get('subscriptions.last_loaded').then(last_loaded => {
-      firstrun = !last_loaded;
-
       if (firstrun) {
         // Fetch only open bugs at initial startup
         params.append('resolution', '---');
@@ -128,10 +125,13 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       });
     }).then(bugs => { // Map
       BzDeck.prefs.set('subscriptions.last_loaded', Date.now());
+      this.trigger(':FetchingSubscriptionsComplete');
 
       return Promise.resolve(bugs);
     }).catch(error => {
+      this.trigger(':FetchingSubscriptionsComplete');
+
       return Promise.reject(new Error('Failed to load data.')); // l10n
-    }).then(() => this.trigger(':FetchingSubscriptionsComplete'));
+    });
   }
 }
