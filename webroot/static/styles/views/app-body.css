@@ -17,3 +17,39 @@
 #app-body[aria-hidden="true"] * {
   pointer-events: none;
 }
+
+#app-body .statusbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  width: 100%;
+  height: .2rem;
+}
+
+#app-body .statusbar p,
+[data-device|="mobile"]:root #app-body .statusbar [role="progressbar"] {
+  position: absolute;
+  left: -99999px;
+}
+ 
+[data-device="desktop"]:root #app-body .statusbar [role="progressbar"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: var(--base-accent-color-1);
+  box-shadow: 0 0 .4rem var(--base-accent-color-1-a6);
+  opacity: 1;
+  transition: width .5s, opacity 1s;
+}
+
+[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="0"] {
+  transition-duration: 0s;
+}
+
+[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="0"],
+[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="100"] {
+  opacity: 0;
+}

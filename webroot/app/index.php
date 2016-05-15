@@ -1077,7 +1077,9 @@
             <p><span class="cta" role="button" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
             <p><span class="cta" role="button" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
           </div>
-          <p role="status">This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
+          <div class="statusbar" role="status">
+            <p>This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
+          </div>
         </div>
       </div>
     </section><!-- end #app-login -->
@@ -1178,6 +1180,10 @@
           </div><!-- end #tabpanel-home -->
         </div><!-- end #main-tabpanels -->
       </main>
+      <div class="statusbar" role="status">
+        <p></p>
+        <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
     </section><!-- end #app-body -->
     <div itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="BzDeck">

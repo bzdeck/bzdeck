@@ -36,6 +36,7 @@
   --base-background-color-6: #F4F4F4;
   --base-background-color-7: #FCFCFC;
   --base-accent-color-1: #2383C3;
+  --base-accent-color-1-a6: rgba(35, 131, 195, .6);
 
   --application-foreground-color: var(--base-foreground-color-2);
   --application-background-color: var(--base-background-color-6);

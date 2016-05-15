@@ -28,13 +28,13 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @todo Focus handling.
    */
   login () {
-    BzDeck.views.statusbar.$statusbar = document.querySelector('#statusbar');
-
     this.$app_login = document.querySelector('#app-login');
     this.$app_body = document.querySelector('#app-body');
 
     this.$app_login.setAttribute('aria-hidden', 'true');
     this.$app_body.removeAttribute('aria-hidden');
+
+    BzDeck.views.statusbar.$statusbar = this.$app_body.querySelector('.statusbar');
   }
 
   /**
@@ -43,7 +43,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @return {undefined}
    */
   logout () {
-    BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('[role="status"]');
+    BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('.statusbar');
     BzDeck.views.statusbar.show('You have logged out.'); // l10n
 
     this.$app_login.removeAttribute('aria-hidden');
