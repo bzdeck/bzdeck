@@ -84,7 +84,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * Generate the content for a table cell. Bug ID will be converted to a link.
    * @argument {String} field - Changed bug field name, like 'summary' or 'blocks'.
    * @argument {String} content - Old or new value for the field.
-   * @return {undefined}
+   * @return {String} content - Formatted cell content.
    */
   get_cell_content (field, content) {
     if (['blocks', 'depends_on'].includes(field)) {

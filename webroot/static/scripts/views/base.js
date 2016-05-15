@@ -7,6 +7,7 @@ BzDeck.views.pages = {};
 
 /**
  * Define the app's Base View. This constructor is intended to be inherited by each app view.
+ * @abstract
  * @extends FlareTail.app.View
  */
 BzDeck.BaseView = class BaseView extends FlareTail.app.View {}

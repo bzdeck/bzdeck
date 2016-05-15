@@ -6,6 +6,7 @@ BzDeck.datasources = BzDeck.datasources || {};
 
 /**
  * Define the app's Base DataSource. This constructor is intended to be inherited by the app's each datasource.
+ * @abstract
  * @extends FlareTail.app.DataSource.IndexedDB
  */
 BzDeck.BaseDataSource = class BaseDataSource extends FlareTail.app.DataSource.IndexedDB {}

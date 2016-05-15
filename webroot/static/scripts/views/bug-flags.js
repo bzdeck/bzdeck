@@ -12,7 +12,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @constructor
    * @argument {Proxy} bug - Relevant bug with the flags.
    * @argument {Proxy} [att] - Relevant attachment.
-   * @return {undefined}
+   * @return {Object} view - New BugFlagsView instance.
    */
   constructor (bug, att = undefined) {
     super(); // This does nothing but is required before using `this`

@@ -329,7 +329,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @argument {String} changer_name - Account name of the person who made the change.
    * @argument {String} time - Timestamp of the change.
    * @argument {Object} change - Change details.
-   * @argument {undefined} [comment] - Comment posted at the same time as the change, if any.
+   * @argument {Object} [comment] - Comment posted at the same time as the change, if any.
    * @return {Promise.<HTMLElement>} $change - Promise to be resolved in the rendered change item.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history}
    */

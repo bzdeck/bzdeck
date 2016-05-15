@@ -85,6 +85,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
   /**
    * Save this attachment as part of the relevant bug.
+   * @override
    * @argument {undefined}
    * @return {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
    */

@@ -21,6 +21,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
 
   /**
    * Get bugs the user is participating from the local database with a specific key, like inbox, starred or reported.
+   * @override
    * @argument {String} id - Key of the subscription.
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    */
@@ -51,6 +52,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
 
   /**
    * Get all bugs the user is participating from the local database.
+   * @override
    * @argument {undefined}
    * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
    */

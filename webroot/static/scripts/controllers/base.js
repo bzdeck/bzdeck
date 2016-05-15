@@ -6,6 +6,7 @@ BzDeck.controllers = BzDeck.controllers || {};
 
 /**
  * Define the app's Base Controller. This constructor is intended to be inherited by each app controller.
+ * @abstract
  * @extends FlareTail.app.Controller
  */
 BzDeck.BaseController = class BaseController extends FlareTail.app.Controller {}

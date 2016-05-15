@@ -188,7 +188,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   /**
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
    * @argument {Boolean} [firstrun=false] - True for the initial session.
-   * @return {undefined}
+   * @return {Promise.<Array>} - Promise to be resolved in retrieved data.
    */
   fetch_data (firstrun = false) {
     this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
@@ -211,7 +211,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
           }
         }
 
-        return Promise.resolve();
+        return Promise.resolve(bugs);
       }),
     ]);
   }

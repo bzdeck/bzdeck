@@ -23,6 +23,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   /**
    * Load the all attachment data from local bug cache, create a new AttachmentModel instance for each item, cache them
    * in a new Map for faster access, then return a Promise in a way consistent with the super load method.
+   * @override
    * @argument {undefined}
    * @return {Promise.<Map.<Number, Proxy>>} attachments - Promise to be resolved in a map of AttachmentModel instances.
    *  The map key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the cache

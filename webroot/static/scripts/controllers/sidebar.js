@@ -100,7 +100,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
     BzDeck.collections.subscriptions.get_all().then(bugs => {
       let _bugs = [...bugs.values()];
 
-      return Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
+      Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
         this.trigger(':UnreadToggled', {
           number: _bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
         });
