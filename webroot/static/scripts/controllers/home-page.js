@@ -22,6 +22,9 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
       return BzDeck.controllers.homepage;
     }
 
+    this.id = Date.now();
+    this.container = new BzDeck.BugContainerController(this.id);
+
     this.data = new Proxy({
       bugs: new Map(),
       preview_id: null
@@ -49,8 +52,10 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
           }
 
           if (oldval !== newval) {
-            this.prep_preview(newval);
-            BzDeck.controllers.bugzfeed._subscribe([newval]);
+            this.data.sorted_bugs.then(bugs => {
+              this.container.sibling_bug_ids = [...bugs.keys()];
+              this.container.add_bug(newval);
+            });
           }
         }
 
@@ -61,47 +66,12 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
     });
 
     this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
-    this.on('V:OpeningTabRequested', data => this.open_tab());
 
     BzDeck.controllers.homepage = this;
     this.view = BzDeck.views.pages.home = new BzDeck.HomePageView(this);
     this.view.connect(folder_id);
 
     return this;
-  }
-
-  /**
-   * Prepare a bug preview displayed in the Preview Pane by loading the bug data.
-   * @argument {Number} id - Bug ID to show.
-   * @return {undefined}
-   */
-  prep_preview (id) {
-    if (!id) {
-      this.trigger(':BugDataUnavailable');
-
-      return;
-    }
-
-    BzDeck.collections.bugs.get(id).then(bug => {
-      if (bug) {
-        bug.mark_as_read();
-        this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('home', bug) });
-      } else {
-        this.trigger(':BugDataUnavailable');
-      }
-    });
-  }
-
-  /**
-   * Called by HomePageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of
-   * the home page thread so the user can easily navigate through those bugs.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  open_tab () {
-    this.data.sorted_bugs.then(bugs => {
-      BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...bugs.keys()] });
-    });
   }
 }
 

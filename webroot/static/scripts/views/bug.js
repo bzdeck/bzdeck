@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bug View that represents the Preview Pane content on the Home page or Advanced Search page. The Bug
+ * Define the Bug View that represents the Preview Pane content on the Advanced Search page. The Home page and Bug
  * Details page uses BugDetailsView instead.
  * @extends BzDeck.BaseView
  */
@@ -42,7 +42,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.init_att_drop_target();
 
     // Custom scrollbars
-    this.scrollbars = new Set([...this.$bug.querySelectorAll('[role="region"]')]
+    this.scrollbars = new Set([...this.$bug.querySelectorAll('.scrollable')]
                                   .map($area => new this.widgets.ScrollBar($area)));
 
     this.subscribe('BugModel:AnnotationUpdated', true); // Enable the global option
@@ -192,20 +192,34 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       this.set_product_tooltips();
     });
 
+    let init_button = ($button, handler) => (new this.widgets.Button($button)).bind('Pressed', handler);
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
     let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
+    let $show_details_button = this.$bug.querySelector('[data-command="show-details"]');
+    let $open_tab_button = this.$bug.querySelector('[data-command="open-tab"]');
+    let $preview_pane = this.$bug.closest('[id$="preview-pane"]');
     let $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($edit_button) {
       $edit_button.setAttribute('aria-disabled', !can_editbugs);
-      (new this.widgets.Button($edit_button)).bind('Pressed', event =>
-          this.trigger('BugView:EditModeChanged', { enabled: event.detail.pressed }));
+      init_button($edit_button, event => this.trigger('BugView:EditModeChanged', { enabled: event.detail.pressed }));
     }
 
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
-      (new this.widgets.Button($star_button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
+      init_button($star_button, event => this.bug.starred = event.detail.pressed);
+    }
+
+    if ($show_details_button && $preview_pane) {
+      init_button($show_details_button, event => {
+        $preview_pane.setAttribute('aria-expanded', $preview_pane.getAttribute('aria-expanded') === 'false');
+      });
+    }
+
+    if ($open_tab_button) {
+      // TODO: Reuse the bug view/controller
+      init_button($open_tab_button, event => this.trigger('BugView:OpeningTabRequested'));
     }
 
     if (!$timeline) {

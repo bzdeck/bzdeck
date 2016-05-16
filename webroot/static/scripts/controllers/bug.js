@@ -12,18 +12,21 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Get a BugController instance.
    * @constructor
-   * @argument {String} id_prefix - Prefix for the instance ID, such as home, search or details.
    * @argument {Object} bug - BugModel instance.
+   * @argument {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @return {Object} controller - New BugController instance.
    */
-  constructor (id_prefix, bug) {
+  constructor (bug, sibling_bug_ids = []) {
     super(); // This does nothing but is required before using `this`
 
     // Set the Controller (and View) ID. Add a timestamp to avoid multiple submissions (#303) but there would be a
     // better way to solve the issue... The Controller and View should be reused whenever possible.
-    this.id = `${id_prefix}-${Date.now()}-bug-${bug.id}`;
+    this.id = `bug-${bug.id}-${Date.now()}`;
 
     this.bug = bug;
+    this.sibling_bug_ids = sibling_bug_ids;
+
     this.reset_changes();
     this.att_changes = new Map();
 
@@ -65,6 +68,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
     // Form submission
     this.on('V:Submit', () => this.submit());
+
+    // Other actions
+    this.subscribe('V:OpeningTabRequested');
 
     // Add the people involved in the bug to the local user database
     BzDeck.collections.users.add_from_bug(this.bug);
@@ -833,5 +839,15 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     if (!bugzfeed.connected || !bugzfeed.subscriptions.has(this.bug.id)) {
       this.bug.fetch();
     }
+  }
+
+  /**
+   * Called by BugView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the
+   * home page thread so the user can easily navigate through those bugs.
+   * @argument {undefined}
+   * @return {undefined}
+   */
+  on_opening_tab_requested () {
+    BzDeck.router.navigate('/bug/' + this.bug.id, { ids: this.sibling_bug_ids });
   }
 }

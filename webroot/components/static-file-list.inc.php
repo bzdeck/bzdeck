@@ -86,6 +86,7 @@ $scripts = [
   '/static/scripts/views/bug.js',
   '/static/scripts/views/bug-attachments.js',
   '/static/scripts/views/bug-comment-form.js',
+  '/static/scripts/views/bug-container.js',
   '/static/scripts/views/bug-details.js', // extends bug.js
   '/static/scripts/views/bug-flags.js',
   '/static/scripts/views/bug-history.js',
@@ -112,6 +113,7 @@ $scripts = [
   '/static/scripts/controllers/base.js',
   '/static/scripts/controllers/attachment-page.js',
   '/static/scripts/controllers/banner.js',
+  '/static/scripts/controllers/bug-container.js',
   '/static/scripts/controllers/bug.js',
   '/static/scripts/controllers/bugzfeed.js',
   '/static/scripts/controllers/details-page.js',

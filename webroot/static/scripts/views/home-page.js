@@ -17,15 +17,17 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     super(); // This does nothing but is required before using `this`
 
     let mobile = this.helpers.env.device.mobile;
-    let $preview_pane = document.querySelector('#home-preview-pane');
     let $sidebar = document.querySelector('#sidebar');
 
+    this.id = controller.id;
     this.controller = controller;
+    this.$preview_pane = document.querySelector('#home-preview-pane');
+    this.container = new BzDeck.BugContainerView(this.id, this.$preview_pane);
 
     Object.defineProperties(this, {
       preview_is_hidden: {
         enumerable: true,
-        get: () => !$preview_pane.clientHeight
+        get: () => !this.$preview_pane.clientHeight
       },
     });
 
@@ -45,8 +47,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
     this.subscribe('SettingsPageView:PrefValueChanged', true);
-    this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
-    this.on('C:BugDataAvailable', data => this.show_preview(data));
     this.on('SubscriptionCollection:Updated', data => this.on_subscriptions_updated(), true);
   }
 
@@ -94,49 +94,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
       return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
     });
-  }
-
-  /**
-   * Show the preview of a selected bug on the Preview Pane.
-   * @argument {Object} data - Preview data.
-   * @argument {Proxy}  data.bug - Bug to show.
-   * @argument {Object} data.controller - New BugController instance for that bug.
-   * @return {undefined}
-   */
-  show_preview (data) {
-    let mobile = this.helpers.env.device.mobile;
-    let $pane = document.querySelector('#home-preview-pane');
-
-    $pane.innerHTML = '';
-
-    let $bug = $pane.appendChild(this.get_template('home-preview-bug-template'));
-    let $info = $bug.appendChild(this.get_template('preview-bug-info'));
-
-    // Activate the toolbar buttons
-    new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
-        .bind('Pressed', event => $pane.setAttribute('aria-expanded', $pane.matches('[aria-expanded="false"]')));
-    new this.widgets.Button($bug.querySelector('[data-command="open-tab"]'))
-        .bind('Pressed', event => this.trigger(':OpeningTabRequested'));
-
-    // Assign keyboard shortcuts
-    this.helpers.kbd.assign($bug, {
-      // [B] previous bug or [F] next bug: handle on the home thread
-      'B|F': event => {
-        BzDeck.prefs.get('ui.home.layout').then(pref => {
-          let vertical = mobile || !pref || pref === 'vertical';
-          let $target = document.querySelector(vertical ? '#home-vertical-thread [role="listbox"]' : '#home-list');
-
-          this.helpers.kbd.dispatch($target, event.key);
-        });
-      },
-      // Open the bug in a new tab
-      O: event => this.trigger(':OpeningTabRequested'),
-    });
-
-    // Fill the content
-    this.$$bug = new BzDeck.BugView(data.controller.id, data.bug, $bug);
-    $info.id = 'home-preview-bug-info';
-    $bug.removeAttribute('aria-hidden');
   }
 
   /**

@@ -7,7 +7,6 @@
   z-index: 100;
   width: 100%;
   height: 100%;
-  background-color: var(--application-background-color);
 }
 
 #app-body[aria-hidden="true"] {

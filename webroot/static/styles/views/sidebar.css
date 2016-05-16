@@ -354,7 +354,7 @@
   height: 2.4rem;
   border-radius: .2rem;
   padding: 0 1.2rem;
-  color: var(--secondary-region-header-foreground-color);
+  color: var(--application-header-foreground-color);
   background: rgba(0, 0, 0, .8);
   opacity: 1;
   line-height: 2.4rem;

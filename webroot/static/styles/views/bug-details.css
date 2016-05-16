@@ -47,6 +47,10 @@
   height: 3.2rem;
 }
 
+[data-device="desktop"]:root .bug-container[aria-expanded="false"] [itemtype$="Bug"] > div > [role="tablist"] {
+  display: none;
+}
+
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] {
   height: 4rem;
 }
@@ -101,19 +105,11 @@
   padding: 0 .4rem;
   min-width: 1.8rem;
   height: 1.8rem;
-  color: var(--secondary-region-header-foreground-color);
+  opacity: .8;
   font-size: 1.1rem;
   line-height: 1.8rem;
   vertical-align: .1rem;
   content: attr(data-badge);
-}
-
-[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] label[data-badge]::after {
-  background-color: var(--region-header-background-color);
-}
-
-[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] label[data-badge]::after {
-  background-color: var(--secondary-region-header-background-color);
 }
 
 [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label {
@@ -190,18 +186,32 @@
   padding-top: 4rem;
 }
 
+[data-device="desktop"]:root .bug-outline[aria-hidden="false"] {
+  display: flex;
+  flex-direction: row;
+  top: 4rem;
+  right: 0;
+  left: 50%;
+}
+
+[data-device="desktop"]:root .bug-container[aria-expanded="false"] .bug-outline {
+  width: 20%;
+  flex-direction: column;
+}
+
+[data-device="desktop"]:root .bug-outline .bug-info {
+  flex: auto;
+}
+
+[data-device="desktop"]:root .bug-container[aria-expanded="false"] .bug-outline > [role="region"] {
+  flex: none;
+  width: auto;
+}
+
 .bug-info,
 .bug-participants {
   overflow: hidden;
   box-sizing: border-box;
-}
-
-[data-device="desktop"]:root .bug-info {
-  border-right: .1rem solid var(--secondary-region-border-color);
-}
-
-[data-device="desktop"]:root .bug-participants {
-  border-left: .1rem solid var(--secondary-region-border-color);
 }
 
 .bug-fieldset:not(:first-of-type) {
@@ -382,10 +392,9 @@
 }
 
 @media (min-width: 1024px) {
-  [data-device="desktop"]:root .bug-info[id|="bug"],
   [data-device="desktop"]:root .bug-info[id^="search"] {
-    left: 0;
-    width: 32%;
+    left: 50%;
+    width: calc(50% - var(--participant-list-width));
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"]:not([data-error-code]) > div:not([aria-dropeffect]) {
@@ -394,30 +403,32 @@
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
     left: calc(50% - 36rem / 2);
+    margin: .7rem 0;
+    border: .1rem solid var(--secondary-grid-border-color);
+    border-radius: .4rem;
     width: 36rem;
-    background: transparent;
+    height: 2.4rem;
+    background-color: var(--content-background-color);
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] {
-    margin: .4rem .2rem;
-    border-width: 0;
-    border-radius: .4rem;
+    margin: 0;
+    border-color: var(--secondary-grid-border-color);
+    border-width: 0 0 0 .1rem;
     padding: 0;
     height: 2.4rem;
     line-height: 2.4rem;
+    transition: all .2s;
   }
 
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="false"] {
-    color: var(--secondary-application-header-foreground-color);
-  }
-
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"]:hover {
-    color: var(--secondary-region-header-foreground-color);
+  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"]:first-child {
+    border-width: 0;
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"][aria-selected="true"] {
-    color: var(--secondary-region-header-foreground-color);
-    background-color: var(--secondary-region-header-background-color);
+    border-color: var(--secondary-application-header-background-color);
+    color: var(--application-header-foreground-color);
+    background-color: var(--secondary-application-header-background-color);
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
@@ -426,16 +437,12 @@
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] {
     left: 0;
-    right: 20rem;
+    right: 0;
     width: auto;
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [id$="tabpanel-timeline"] {
-    left: 32%;
-  }
-
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ :-moz-any(.bug-info, .bug-participants) {
-    top: 4rem;
+    right: 50%;
   }
 }
 
@@ -470,7 +477,11 @@
 @media (min-width: 640px) {
   .bug-info .bug-fieldset [data-field] {
     position: relative;
-    padding-left: 14rem;
+    padding-left: 12rem;
+  }
+
+  .bug-container[aria-expanded="false"] .bug-info .bug-fieldset [data-field] {
+    padding-left: 8rem;
   }
 
   .bug-info .bug-fieldset[data-category="tracking-flags"] [data-field] {

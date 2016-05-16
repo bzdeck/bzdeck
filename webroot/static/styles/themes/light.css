@@ -54,8 +54,8 @@
   --secondary-region-background-color: var(--base-background-color-6);
   --secondary-region-border-color: var(--base-background-color-4);
   --secondary-region-header-border-color: var(--base-background-color-3);
-  --secondary-region-header-foreground-color: var(--base-foreground-color-5);
-  --secondary-region-header-background-color: var(--base-background-color-3);
+  --secondary-region-header-foreground-color: var(--base-foreground-color-1);
+  --secondary-region-header-background-color: var(--base-background-color-4);
 
   --button-border-color: var(--base-background-color-4);
   --button-foreground-color: var(--base-foreground-color-2);

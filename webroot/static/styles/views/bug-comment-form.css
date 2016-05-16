@@ -203,11 +203,7 @@
   content: "\F078";
 }
 
-.bug-comment-form [id$="tabpanel-status"] [role="combobox"] {
-  margin: .2rem;
-}
-
-.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]) [role="textbox"][contenteditable="true"] {
+.bug-comment-form [id$="tabpanel-needinfo"] [role="textbox"][contenteditable="true"] {
   box-sizing: border-box;
   margin: .2rem;
   padding: 0 .4rem;
@@ -216,17 +212,8 @@
   vertical-align: middle;
 }
 
-.bug-comment-form [id$="tabpanel-status"] [data-field="dupe_of"]:not([hidden]) {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.bug-comment-form [id$="tabpanel-status"] [data-field="dupe_of"] [role="textbox"] {
-  width: 8rem;
-}
-
-.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]),
-.bug-comment-form :-moz-any([id$="tabpanel-status"], [id$="tabpanel-needinfo"]) [role="group"] {
+.bug-comment-form [id$="tabpanel-needinfo"],
+.bug-comment-form [id$="tabpanel-needinfo"] [role="group"] {
   overflow: visible; /* Show the Status drop down and Person Finder results */
 }
 

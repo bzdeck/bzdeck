@@ -2,7 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+[itemtype$="Bug"] {
+  --participant-list-width: 22rem;
+}
+
 [itemtype$="Bug"] [role="toolbar"] {
+  position: relative;
   flex: none;
   height: 3.2rem;
 }
@@ -13,6 +18,11 @@
 
 [itemtype$="Bug"] [role="toolbar"] ul:not([role="menu"]) {
   display: inline-flex;
+}
+
+.bug-container[role="tabpanel"] [itemtype$="Bug"] [role="toolbar"] .open,
+.bug-container[aria-expanded="false"] [itemtype$="Bug"] [role="toolbar"] .nav {
+  display: none;
 }
 
 [itemtype$="Bug"] [role="toolbar"] ul[role="none"] li {
@@ -27,14 +37,13 @@
 }
 
 [itemtype$="Bug"] > header {
+  display: flex;
   box-sizing: border-box;
   height: 4rem;
 }
 
-[itemtype$="Bug"]:not([id$="preview-bug"]) > header {
-  border-color: var(--region-header-border-color);
-  color: var(--region-header-foreground-color);
-  background-color: var(--region-header-background-color);
+.bug-container[aria-expanded="false"] [itemtype$="Bug"] > header {
+  width: 70%;
 }
 
 [itemtype$="Bug"] > header > :-moz-any(h2, h3) {
@@ -45,19 +54,6 @@
   line-height: 4rem;
   font-weight: 300;
   font-style: italic;
-}
-
-[itemtype$="Bug"]:not([id$="preview-bug"]) > header > [role="toolbar"] .iconic {
-  border-color: var(--alternate-button-border-color);
-  color: var(--alternate-button-foreground-color);
-}
-
-[itemtype$="Bug"]:not([id$="preview-bug"]) > header > [role="toolbar"] .iconic[aria-pressed="true"] {
-  color: var(--alternate-pressed-button-foreground-color);
-}
-
-[itemtype$="Bug"]:not([id$="preview-bug"]) > header > [role="toolbar"] .iconic[aria-disabled="true"] {
-  color: var(--alternate-disabled-button-foreground-color);
 }
 
 [itemtype$="Bug"] > header > [role="toolbar"] [data-command="copy-link"],
@@ -85,7 +81,7 @@
   content: '\F191';
 }
 
-#home-preview-pane[aria-expanded="true"] > [itemtype$="Bug"] [role="toolbar"] [data-command="show-details"]::before {
+.bug-container[aria-expanded="true"] > [itemtype$="Bug"] [role="toolbar"] [data-command="show-details"]::before {
   content: '\F152';
 }
 
@@ -111,7 +107,7 @@
 
 [itemtype$="Bug"] [role="toolbar"] > [role="menu"] {
   position: absolute;
-  top: calc(100% - .4rem);
+  top: 100%;
   right: .4rem;
 }
 
@@ -127,11 +123,11 @@
   transition: opacity .2s;
 }
 
-#home-preview-pane[aria-expanded="true"] > [itemtype$="Bug"] .att-drop-target {
+.bug-container[aria-expanded="true"] > [itemtype$="Bug"] .att-drop-target {
   width: 100%;
 }
 
-#home-preview-pane[aria-expanded="false"] > [itemtype$="Bug"] .att-drop-target {
+.bug-container[aria-expanded="false"] > [itemtype$="Bug"] .att-drop-target {
   width: 70%;
 }
 

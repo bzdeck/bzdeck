@@ -65,7 +65,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
     let id = this.att_id;
     let error = data.attachment && data.attachment.error ? data.attachment.error : '';
 
-    BzDeck.views.statusbar.show(`The attachment ${id} cannot be retrieved. ${error}`); // l10n
+    BzDeck.views.statusbar.show(`The attachment ${id} could not be retrieved. ${error}`); // l10n
   }
 
   /**

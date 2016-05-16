@@ -2,6 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+.bug-attachments {
+  border-top: .1rem solid var(--secondary-region-border-color);
+}
+
 .bug-attachments h3 {
   position: absolute;
   left: -9999rem;
@@ -41,7 +45,7 @@
   flex: auto;
 }
 
-.bug-attachments .list [role="region"] {
+.bug-attachments .list .scrollable {
   flex: auto;
 }
 
@@ -194,7 +198,7 @@
   border-width: 0 0 0 .1rem;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
-  width: 68%;
+  width: 70%;
   min-height: 100%;
 }
 

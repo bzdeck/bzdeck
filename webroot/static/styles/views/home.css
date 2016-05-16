@@ -164,6 +164,7 @@
 }
 
 [data-home-layout="vertical"]:root #home-preview-pane[aria-expanded="true"] {
+  border-width: 0;
   transform: translateX(0);
 }
 

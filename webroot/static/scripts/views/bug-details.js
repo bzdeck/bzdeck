@@ -24,6 +24,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     this.$tablist = this.$bug.querySelector('[role="tablist"]');
     this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
     this.$$tablist = new this.widgets.TabList(this.$tablist);
+    this.$outline = this.$bug.querySelector('.bug-outline');
 
     this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
 
@@ -32,11 +33,11 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       let $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
 
       // Scroll a tabpanel to top when the tab is selected
-      $tabpanel.querySelector('[role="region"]').scrollTop = 0;
+      $tabpanel.querySelector('.scrollable').scrollTop = 0;
 
-      // Desktop: Show the info pane only when the timeline tab is selected
+      // Desktop: Show the outline pane only when the timeline tab is selected
       if (!mql.matches && this.helpers.env.device.desktop) {
-        this.$bug.querySelector('.bug-info').setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
+        this.$outline.setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
       }
     });
 
@@ -77,8 +78,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
       $info_tab.setAttribute('aria-hidden', 'true');
       $participants_tab.setAttribute('aria-hidden', 'true');
-      this.$bug.querySelector('article > div').appendChild($bug_info);
-      this.$bug.querySelector('article > div').appendChild($bug_participants);
+      this.$outline.appendChild($bug_info);
+      this.$outline.appendChild($bug_participants);
       this.$tablist.removeAttribute('aria-hidden');
     }
   }

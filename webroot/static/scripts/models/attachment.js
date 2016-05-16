@@ -79,7 +79,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
       return Promise.resolve(decode());
     }).catch(error => {
-      return Promise.reject(new Error(`The attachment ${this.id} cannot be retrieved from Bugzilla.`));
+      return Promise.reject(new Error(`The attachment ${this.id} could not be retrieved from Bugzilla.`));
     });
   }
 

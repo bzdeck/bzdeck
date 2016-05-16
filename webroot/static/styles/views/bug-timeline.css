@@ -18,7 +18,7 @@
 
 .bug-timeline .bug-summary {
   position: static;
-  margin: 1.6rem 1.6rem 0;
+  margin: var(--comment-margin) var(--comment-margin) 0;
   line-height: 1.4;
   -moz-user-select: text;
 }

@@ -59,7 +59,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     // Prepare the content available only to the users who have the "editbugs" permission on Bugzilla
     if (!this.editor_tabpanels_enabled && BzDeck.account.permissions.includes('editbugs')) {
-      this.init_status_tab();
       this.init_needinfo_tabpanel();
       this.editor_tabpanels_enabled = true;
     }
@@ -139,23 +138,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$file_picker.addEventListener('change', event => {
       this.trigger('BugView:FilesSelected', { input: event.target });
     });
-  }
-
-  /**
-   * Show the Status tab when needed.
-   * @argument {undefined}
-   * @return {undefined}
-   */
-  init_status_tab () {
-    let $tab = this.$form.querySelector('[id$="tab-status"]');
-    let $tabpanel = this.$form.querySelector('[id$="tabpanel-status"]');
-
-    // Show the tab only on the previews; the details page has the info pane
-    if (this.id.startsWith('details')) {
-      $tabpanel.remove();
-    } else {
-      $tab.setAttribute('aria-hidden', 'false');
-    }
   }
 
   /**

@@ -169,7 +169,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   get_gravatar_profile (options = {}) {
     if (this.data.gravatar) {
       if (this.data.gravatar.error) {
-        return Promise.reject(new Error('The Gravatar profile cannot be found'));
+        return Promise.reject(new Error('The Gravatar profile could not be found'));
       }
 
       return Promise.resolve(this.data.gravatar);
@@ -187,7 +187,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
             profile = { error: 'Not Found' };
             resolve(profile);
           } else {
-            reject(new Error('The Gravatar profile cannot be found'));
+            reject(new Error('The Gravatar profile could not be found'));
           }
 
           // Save the profile when called by UserCollection

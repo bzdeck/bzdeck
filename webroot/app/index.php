@@ -92,7 +92,7 @@
       </div><!-- end #tabpanel-search-TID -->
     </template><!-- end #tabpanel-search-template -->
     <template id="tabpanel-details-template">
-      <div id="tabpanel-details-TID" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
+      <div id="tabpanel-details-TID" class="bug-container" tabindex="0" role="tabpanel" aria-labelledby="tab-details-TID">
       </div><!-- end #tabpanel-details-TID -->
     </template><!-- end #tabpanel-details-template -->
     <template id="tabpanel-attachment-template">
@@ -101,7 +101,7 @@
           <header>
             <h2>Attachment <span itemprop="id"></span></h2>
           </header>
-          <div role="region"></div>
+          <div class="scrollable"></div>
         </article>
       </div><!-- end #tabpanel-attachment-TID -->
     </template><!-- end #tabpanel-attachment-template -->
@@ -261,40 +261,6 @@
         </section>
       </div><!-- end #tabpanel-profile -->
     </template><!-- end #tabpanel-profile-template -->
-    <template id="home-preview-bug-template">
-      <article id="home-preview-bug" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
-        <header>
-          <h3>Bug <span itemprop="id"></span></h3>
-          <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="home-preview-bug-menu" data-command="show-menu">Menu</span></li>
-              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
-              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
-            </ul>
-            <ul id="home-preview-bug-menu" role="menu" aria-expanded="false">
-              <li role="none">
-                <a id="home-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
-                <a id="home-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
-              </li>
-              <li role="separator"></li>
-              <li role="none">
-                <a id="home-preview-bug-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
-                <a id="home-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
-                <a id="home-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
-              </li>
-            </ul><!-- end #home-preview-bug-menu -->
-          </div><!-- end [role="toolbar"] -->
-        </header>
-        <div id="home-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
-            <h3 class="bug-summary" itemprop="summary"></h3>
-            <div class="comments-wrapper"></div>
-          </div>
-        </div><!-- end #home-preview-bug-timeline-wrapper -->
-        <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
-      </article><!-- end #home-preview-bug -->
-    </template><!-- end #home-preview-bug-template -->
     <template id="search-preview-bug-template">
       <article id="search-TID-preview-bug" role="article" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
@@ -332,7 +298,7 @@
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
-      <article id="bug-TID" role="article form" itemscope itemtype="http://bzdeck.com/Bug">
+      <article id="bug-TID" role="form" itemscope itemtype="http://bzdeck.com/Bug">
         <header>
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
@@ -340,6 +306,10 @@
               <li role="none"><span class="iconic" title="Edit" tabindex="0" role="button" aria-pressed="false" aria-label="Edit the fields of this bug" data-command="edit"></span>
               <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
+            </ul>
+            <ul class="open" role="none">
+              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
+              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
             </ul>
             <ul class="nav" role="none">
               <li role="none"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
@@ -370,7 +340,7 @@
           <div id="bug-TID-tabpanels">
             <div id="bug-TID-tabpanel-timeline" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
-                <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
+                <div class="bug-timeline scrollable" tabindex="0" role="article" aria-live="true" aria-relevant="additions">
                   <section>
                     <header class="bug-summary" data-field="summary">
                       <h3><span class="blurred" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
@@ -381,7 +351,7 @@
               </div>
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
-              <div id="bug-TID-info" class="bug-info" tabindex="0" role="region">
+              <div id="bug-TID-info" class="bug-info scrollable" tabindex="0" role="region">
                 <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
                   <header>
                     <h3>Status</h3>
@@ -391,7 +361,7 @@
                     <time itemprop="creation_time" data-relative="false"></time>
                   </section>
                   <section role="group" aria-label="Last Modified" data-field="last_change_time">
-                    <h4>Last Modified</h4>
+                    <h4>Modified</h4>
                     <time itemprop="last_change_time" data-relative="false"></time>
                   </section>
                   <section role="group" aria-label="Status" data-field="status">
@@ -411,7 +381,7 @@
                     <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
                   </section>
                   <section role="group" aria-label="Target Milestone" data-field="target_milestone">
-                    <h4>Target Milestone</h4>
+                    <h4>Milestone</h4>
                     <span role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
                     </span>
@@ -528,7 +498,7 @@
               </div><!-- end .bug-info -->
             </div><!-- end #bug-TID-tabpanel-info -->
             <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
-              <div id="bug-TID-participants" class="bug-participants" tabindex="0" role="region">
+              <div id="bug-TID-participants" class="bug-participants scrollable" tabindex="0" role="region">
                 <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                   <header>
                     <h3>Participants</h3>
@@ -623,7 +593,7 @@
                       <h4>0 Attachments</h4>
                       <meta tabindex="0" role="checkbox" aria-label="Show Obsolete" aria-checked="false" aria-hidden="true">
                     </header>
-                    <div role="region" aria-dropeffect="none">
+                    <div class="scrollable" aria-dropeffect="none">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals"></ul>
                     </div>
                     <div role="toolbar">
@@ -634,13 +604,13 @@
                       <input type="file" hidden multiple directory>
                     </div>
                   </div>
-                  <div class="content" role="region">
+                  <div class="content scrollable" role="region">
                   </div>
                 </section>
               </div>
             </div><!-- end #bug-TID-tabpanel-attachments -->
             <div id="bug-TID-tabpanel-history" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
-              <div class="bug-history" tabindex="0" role="region">
+              <div class="bug-history scrollable" tabindex="0" role="region">
                 <section role="group" itemscope itemtype="http://bzdeck.com/History" aria-label="History" data-field="history">
                   <h3>History</h3>
                   <table>
@@ -659,6 +629,8 @@
               </div>
             </div><!-- end #bug-TID-tabpanel-history -->
           </div><!-- end #bug-TID-tabpanels -->
+          <div id="bug-TID-outline" class="bug-outline scrollable">
+          </div><!-- end #bug-TID-outline -->
         </div>
         <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #bug-TID -->
@@ -675,102 +647,20 @@
     </template><!-- end #bug-details-error-template -->
     <template id="preview-bug-info">
       <div class="bug-info" tabindex="0" role="region">
-        <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
-          <header>
-            <h3>Status</h3>
-          </header>
-          <div>
-            <section role="group" aria-label="Status" data-field="status">
-              <h4>Status</h4>
-              <span itemprop="status"></span> <span itemprop="resolution"></span>
-            </section>
-            <section role="group" aria-label="Target Milestone" data-field="target_milestone">
-              <h4>Target</h4>
-              <span itemprop="target_milestone"></span>
-            </section>
-            <section role="group" aria-label="Severity" data-field="severity">
-              <h4>Importance</h4>
-              <span itemprop="severity"></span> / <span itemprop="priority"></span>
-            </section>
-          </div>
-        </section>
-        <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
-          <header>
-            <h3>Affected</h3>
-          </header>
-          <div>
-            <section role="group" aria-label="Product" data-field="product">
-              <h4>Product</h4>
-              <span itemprop="product"></span>
-            </section>
-            <section role="group" aria-label="Component" data-field="component">
-              <h4>Component</h4>
-              <span itemprop="component"></span>
-            </section>
-            <section role="group" aria-label="Version" data-field="version">
-              <h4>Version</h4>
-              <span itemprop="version"></span>
-            </section>
-            <section role="group" aria-label="Hardware" data-field="platform">
-              <h4>Platform</h4>
-              <span itemprop="platform"></span> / <span itemprop="op_sys"></span>
-            </section>
-          </div>
-        </section>
-        <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
-          <header>
-            <h3>Notes</h3>
-          </header>
-          <div>
-            <section role="group" aria-label="Aliases" data-field="alias">
-              <h4>Aliases</h4>
-              <ul><li itemprop="alias" role="button"></li></ul>
-            </section>
-            <section role="group" aria-label="Keywords" data-field="keyword">
-              <h4>Keywords</h4>
-              <ul><li itemprop="keyword" role="button"></li></ul>
-            </section>
-            <section role="group" aria-label="Whiteboard" data-field="whiteboard">
-              <h4>Whiteboard</h4>
-              <span itemprop="whiteboard"></span>
-            </section>
-            <section role="group" aria-label="URL" data-field="url">
-              <h4>URL</h4>
-              <a role="link" itemprop="url"></a>
-            </section>
-            <section role="group" aria-label="See Also" data-field="see_also">
-              <h4>See Also</h4>
-              <ul><li><a role="link" itemprop="see_also"></a></li></ul>
-            </section>
-          </div>
-        </section>
-        <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
-          <header>
-            <h3>Dependencies</h3>
-          </header>
-          <div>
-            <section role="group" aria-label="Depends on" data-field="depends_on">
-              <header>
-                <h4>Depends on</h4>
-              </header>
-              <ul class="list">
-                <li role="button" itemprop="depends_on"></li>
-              </ul>
-            </section>
-            <section role="group" aria-label="Blocks" data-field="blocks">
-              <header>
-                <h4>Blocks</h4>
-              </header>
-              <ul class="list">
-                <li role="button" itemprop="blocks"></li>
-              </ul>
-            </section>
-            <section role="group" aria-label="Duplicates" data-field="duplicate">
-              <h4>Duplicates</h4>
-              <ul><li role="button" itemprop="duplicate"></li></ul>
-            </section>
-          </div>
-        </section>
+        <dl>
+          <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
+          <dt>Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
+          <dt>Status</dt><dd itemprop="status"></dd>
+          <dt>Resolution</dt><dd itemprop="resolution"></dd>
+          <dt>Milestone</dt><dd itemprop="target_milestone"></dd>
+          <dt>Product</dt><dd itemprop="product"></dd>
+          <dt>Component</dt><dd itemprop="component"></dd>
+          <dt>Version</dt><dd itemprop="version"></dd>
+          <dt>Hardware</dt><dd itemprop="platform"></dd>
+          <dt>OS</dt><dd itemprop="op_sys"></dd>
+          <dt>Severity</dt><dd itemprop="severity"></dd>
+          <dt>Priority</dt><dd itemprop="priority"></dd>
+        </dl>
       </div><!-- end .bug-info -->
     </template><!-- end #preview-bug-info -->
     <template id="timeline-comment">
@@ -809,7 +699,6 @@
             <li id="TID-tab-comment" role="tab" aria-controls="TID-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
             <li id="TID-tab-preview" role="tab" aria-controls="TID-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
             <li id="TID-tab-attachments" role="tab" aria-controls="TID-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
-            <li id="TID-tab-status" role="tab" aria-controls="TID-tabpanel-status" aria-selected="false" aria-hidden="true"><label>Status</label></li>
             <li id="TID-tab-needinfo" role="tab" aria-controls="TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul><!-- end #TID-tablist -->
           <div id="TID-text-formatting-toolbar" class="text-formatting-toolbar" role="toolbar" aria-label="Markdown text-formatting toolbar">
@@ -853,24 +742,6 @@
               </table>
             </div>
           </div><!-- end #TID-tabpanel-attachments -->
-          <div id="TID-tabpanel-status" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-status">
-            <div role="group">
-              <span data-field="status">
-                <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
-                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
-                </span>
-              </span>
-              <span hidden data-field="resolution">
-                <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
-                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
-                </span>
-              </span>
-              <span hidden data-field="dupe_of">
-                <span>of Bug</span>
-                <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
-              </span>
-            </div>
-          </div><!-- end #TID-tabpanel-status -->
           <div id="TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="TID-tab-needinfo">
             <div role="group">
               <div class="requestee-finder-outer">
@@ -1174,7 +1045,7 @@
                     <div role="status"><span>No bugs found in this folder.</span></div>
                   </footer>
                 </div><!-- end #home-list-pane -->
-                <div id="home-preview-pane" tabindex="0" role="region" aria-expanded="false"></div>
+                <div id="home-preview-pane" class="bug-container" tabindex="0" role="region" aria-expanded="false"></div>
               </div>
             </section>
           </div><!-- end #tabpanel-home -->

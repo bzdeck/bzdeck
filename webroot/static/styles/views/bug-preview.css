@@ -19,21 +19,12 @@ article[id$="preview-bug"] > header {
   left: 0;
 }
 
-#home-preview-pane[aria-expanded="false"] article[id$="preview-bug"] > header {
+.bug-container[aria-expanded="false"] article[id$="preview-bug"] > header {
   width: 70%;
 }
 
-#home-preview-pane[aria-expanded="true"] article[id$="preview-bug"] > header {
+.bug-container[aria-expanded="true"] article[id$="preview-bug"] > header {
   width: 100%;
-}
-
-#home-preview-pane[aria-expanded="true"] .bug-info .bug-fieldset > div {
-  -moz-column-count: 2;
-}
-
-#home-preview-pane[aria-expanded="true"] .bug-info .bug-fieldset > div > section {
-  overflow: hidden;
-  page-break-inside: avoid;
 }
 
 #home-preview-pane .bug-info .bug-fieldset > div > section {
@@ -46,7 +37,7 @@ article[id$="preview-bug"] > header {
   font-weight: 500;
 }
 
-#home-preview-pane[aria-expanded="false"] .bug-info .bug-fieldset > div > section :-moz-any(span, a):only-of-type {
+.bug-container[aria-expanded="false"] .bug-info .bug-fieldset > div > section :-moz-any(span[itemprop], a):only-of-type {
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -69,11 +60,11 @@ article[id$="preview-bug"] > header {
   left: 50%;
 }
 
-#home-preview-pane[aria-expanded="false"] #home-preview-bug-info {
+.bug-container[aria-expanded="false"] #home-preview-bug-info {
   width: 20% !important;
 }
 
-#home-preview-pane[aria-expanded="true"] #home-preview-bug-info {
+.bug-container[aria-expanded="true"] #home-preview-bug-info {
   width: 50% !important;
 }
 
