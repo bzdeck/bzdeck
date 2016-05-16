@@ -17,20 +17,38 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
   constructor (att_id) {
     super(); // This does nothing but is required before using `this`
 
-    let $$tablist = BzDeck.views.banner.$$tablist;
-
     this.id = Date.now(); // The page/tab is not assosiated with an attachment, because it's reused when navigated
     this.att_id = att_id;
+
+    this.connect();
+  }
+
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+   * @returns {undefined}
+   */
+  reconnect (att_id) {
+    let $$tablist = BzDeck.views.banner.$$tablist;
 
     // Find an existing tab
     for (let [page_id, page_view] of BzDeck.views.pages.attachment_list || []) {
       if (page_view.att_id === this.att_id && page_view.$tab.parentElement) {
         $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
 
-        return page_view.controller;
+        return;
       }
     }
 
+    this.connect();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
     BzDeck.views.banner.open_tab({
       page_category: 'attachment',
       page_id: this.id,
@@ -41,8 +59,6 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
     }, this);
 
     this.get_attachment();
-
-    return this;
   }
 
   /**
@@ -101,5 +117,3 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
     });
   }
 }
-
-BzDeck.AttachmentPageController.prototype.route = '/attachment/(\\d+|[a-z0-9]{32})';

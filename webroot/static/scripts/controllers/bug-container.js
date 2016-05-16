@@ -16,11 +16,11 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
    * @returns {Object} view - New BugContainerController instance.
    * @listens BugContainerView:NavigationRequested
    */
-  constructor (instance_id, sibling_bug_ids = []) {
+  constructor (instance_id, sibling_bug_ids) {
     super(); // This does nothing but is required before using `this`
 
     this.id = instance_id;
-    this.sibling_bug_ids = sibling_bug_ids;
+    this.sibling_bug_ids = sibling_bug_ids || [];
 
     this.subscribe('V:NavigationRequested');
   }
@@ -49,14 +49,16 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
    * Prepare bug data for the view. Find it from the local database or remote Bugzilla instance, then notify the result
    * regardless of the availability.
    * @param {undefined} bug_id - Bug ID to show.
-   * @returns {undefined}
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
+   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @fires BugContainerController:LoadingStarted
    * @fires BugContainerController:LoadingFinished
    * @fires BugContainerController:BugDataAvailable
    * @fires BugContainerController:BugDataUnavailable
    */
-  add_bug (bug_id) {
+  add_bug (bug_id, sibling_bug_ids) {
     this.bug_id = bug_id;
+    this.sibling_bug_ids = sibling_bug_ids || this.sibling_bug_ids;
 
     if (!navigator.onLine) {
       this.trigger(':BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });

@@ -318,7 +318,17 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
 window.addEventListener('DOMContentLoaded', event => {
   if (FlareTail.compatible && BzDeck.compatible) {
-    BzDeck.router = new FlareTail.app.Router(BzDeck);
+    // Define the router
+    BzDeck.router = new FlareTail.app.Router(BzDeck.config.app, {
+      '/attachment/(\\d+|[a-z0-9]{32})': { controller: BzDeck.AttachmentPageController },
+      '/bug/(\\d+)': { controller: BzDeck.DetailsPageController },
+      '/home/(\\w+)': { controller: BzDeck.HomePageController, catch_all: true },
+      '/profile/(.+)': { controller: BzDeck.ProfilePageController },
+      '/search/(\\d{13,})': { controller: BzDeck.SearchPageController },
+      '/settings': { controller: BzDeck.SettingsPageController },
+    });
+
+    // Bootstrapper
     BzDeck.controllers.session = new BzDeck.SessionController();
   }
 });

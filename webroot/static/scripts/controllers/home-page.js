@@ -17,12 +17,6 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
   constructor (folder_id) {
     super(); // This does nothing but is required before using `this`
 
-    if (BzDeck.controllers.homepage) {
-      BzDeck.views.pages.home.connect(folder_id);
-
-      return BzDeck.controllers.homepage;
-    }
-
     this.id = Date.now();
     this.container = new BzDeck.BugContainerController(this.id);
 
@@ -53,10 +47,7 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
           }
 
           if (oldval !== newval) {
-            this.data.sorted_bugs.then(bugs => {
-              this.container.sibling_bug_ids = [...bugs.keys()];
-              this.container.add_bug(newval);
-            });
+            this.data.sorted_bugs.then(bugs => this.container.add_bug(newval, [...bugs.keys()]));
           }
         }
 
@@ -71,9 +62,14 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
     BzDeck.controllers.homepage = this;
     this.view = BzDeck.views.pages.home = new BzDeck.HomePageView(this);
     this.view.connect(folder_id);
+  }
 
-    return this;
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @returns {undefined}
+   */
+  reconnect (folder_id) {
+    this.view.connect(folder_id);
   }
 }
-
-BzDeck.HomePageController.prototype.route = '/home/(\\w+)';

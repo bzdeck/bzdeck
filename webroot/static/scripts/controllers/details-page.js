@@ -17,6 +17,19 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
   constructor (bug_id) {
     super(); // This does nothing but is required before using `this`
 
+    this.id = Date.now();
+    this.bug_id = bug_id;
+    this.container = new BzDeck.BugContainerController(this.id);
+
+    this.connect();
+  }
+
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {Number} bug_id - Bug ID to show.
+   * @returns {undefined}
+   */
+  reconnect (bug_id) {
     let $$tablist = BzDeck.views.banner.$$tablist;
 
     // Find an existing tab. To enable navigation within a tab, the bug ID is not included to the tab's id attribute,
@@ -27,13 +40,19 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
         $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
         BzDeck.views.global.update_window_title(page_view.$tab);
 
-        return page_view.controller;
+        return;
       }
     }
 
-    this.id = Date.now();
-    this.bug_id = bug_id;
+    this.connect();
+  }
 
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
     BzDeck.views.banner.open_tab({
       page_category: 'details',
       page_id: this.id,
@@ -43,11 +62,6 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
       tab_position: 'next',
     }, this);
 
-    this.container = new BzDeck.BugContainerController(this.id, history.state ? history.state.ids : []);
-    this.container.add_bug(this.bug_id);
-
-    return this;
+    this.container.add_bug(this.bug_id, history.state ? history.state.ids : []);
   }
 }
-
-BzDeck.DetailsPageController.prototype.route = '/bug/(\\d+)';

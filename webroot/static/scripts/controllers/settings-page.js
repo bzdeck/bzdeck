@@ -18,8 +18,27 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
   constructor () {
     super(); // This does nothing but is required before using `this`
 
+    this.subscribe('V:PrefValueChanged');
+
+    this.connect();
+  }
+
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  reconnect () {
+    this.connect();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
     let tab_id = history.state ? history.state.tab_id : undefined;
-    let account = BzDeck.account;
     let prefs = new Map();
 
     Promise.all([...Object.entries(BzDeck.config.prefs)].map(entry => {
@@ -37,8 +56,6 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
         tab_label: 'Settings',
       }, this);
     });
-
-    this.subscribe('V:PrefValueChanged');
   }
 
   /**
@@ -75,5 +92,3 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
     }
   }
 }
-
-BzDeck.SettingsPageController.prototype.route = '/settings';

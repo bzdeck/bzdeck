@@ -17,20 +17,36 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
   constructor (email) {
     super(); // This does nothing but is required before using `this`
 
-    let self = email === BzDeck.account.data.name;
-
     this.id = email;
 
+    this.connect();
+  }
+
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {String} email - Person's Bugzilla account name.
+   * @returns {undefined}
+   */
+  reconnect (email) {
+    this.connect();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
     BzDeck.views.banner.open_tab({
       page_category: 'profile',
-      page_id: email,
+      page_id: this.id,
       page_constructor: BzDeck.ProfilePageView,
-      page_constructor_args: [email, self],
+      page_constructor_args: [this.id, this.id === BzDeck.account.data.name],
       tab_label: 'Profile', // l10n
       tab_desc: 'User Profile', // l10n
     }, this);
 
-    BzDeck.collections.users.get(email, { name: email }).then(user => this.on_user_retrieved(user));
+    BzDeck.collections.users.get(this.id, { name: this.id }).then(user => this.on_user_retrieved(user));
   }
 
   /**
@@ -77,5 +93,3 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
     });
   }
 }
-
-BzDeck.ProfilePageController.prototype.route = '/profile/(.+)';

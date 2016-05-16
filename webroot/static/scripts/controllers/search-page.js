@@ -11,15 +11,15 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * Called by the app router and initialize the Search Page Controller. Unlike other pages, this controller doesn't
    * check existing tabs, because the user can open multiple search tabs at the same time.
    * @constructor
-   * @param {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @returns {Object} controller - New SearchPageController instance.
    * @listens SearchPageView:SearchRequested
    * @listens SearchPageView:OpeningTabRequested
    */
-  constructor (id) {
+  constructor (instance_id) {
     super(); // This does nothing but is required before using `this`
 
-    this.id = id;
+    this.id = instance_id;
 
     this.data = new Proxy({
       bugs: new Map(),
@@ -61,6 +61,27 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
       }
     });
 
+    this.on('V:SearchRequested', data => this.exec_search(data.params));
+    this.on('V:OpeningTabRequested', data => this.open_tab());
+
+    this.connect();
+  }
+
+  /**
+   * Called by the app router to reuse the controller.
+   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
+   * @returns {undefined}
+   */
+  reconnect (instance_id) {
+    this.connect();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
     let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
     BzDeck.views.banner.open_tab({
@@ -75,9 +96,6 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     if (params.toString()) {
       this.exec_search(params);
     }
-
-    this.on('V:SearchRequested', data => this.exec_search(data.params));
-    this.on('V:OpeningTabRequested', data => this.open_tab());
   }
 
   /**
@@ -143,5 +161,3 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     });
   }
 }
-
-BzDeck.SearchPageController.prototype.route = '/search/(\\d{13,})';
