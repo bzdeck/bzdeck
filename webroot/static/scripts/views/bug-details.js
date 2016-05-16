@@ -10,11 +10,12 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Get a BugDetailsView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Proxy} bug - Proxified BugModel instance.
-   * @argument {HTMLElement} $bug - Outer element to display the content.
-   * @return {Object} view - New BugDetailsView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Proxy} bug - Proxified BugModel instance.
+   * @param {HTMLElement} $bug - Outer element to display the content.
+   * @returns {Object} view - New BugDetailsView instance.
+   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug, $bug) {
     super(view_id, bug, $bug, true);
@@ -56,8 +57,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Change the page layout by moving some elements, depending on the viewport.
-   * @argument {MediaQueryList} mql - Detecting the current viewport.
-   * @return {undefined}
+   * @param {MediaQueryList} mql - Detecting the current viewport.
+   * @returns {undefined}
    */
   change_layout (mql) {
     let $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
@@ -86,8 +87,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Add a UI gimmic for mobile that hides the tabs when scrolled down.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   add_mobile_tweaks () {
     let mql = window.matchMedia('(max-width: 1023px)');
@@ -117,8 +118,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Add the number of the comments, attachments and history entries to the each relevant tab as a small badge.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   add_tab_badges () {
     for (let prop of ['comments', 'attachments', 'history']) {
@@ -131,8 +132,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the Tracking Flags section on the bug info pane.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_tracking_flags () {
     let config = BzDeck.host.data.config;
@@ -164,8 +165,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the Attachments tabpanel content with BugAttachmentsView.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_attachments () {
     let mobile = this.helpers.env.device.mobile;
@@ -197,8 +198,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the History tabpanel content with BugHistoryView.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_history () {
     let $tab = this.$tablist.querySelector('[id$="-tab-history"]');
@@ -214,9 +215,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Called by BugController whenever the location fragment or history state is updated. Switch the tabs when an
    * attachment is selected on the timeline or comment form.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.hash - location.hash.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.hash - location.hash.
+   * @returns {undefined}
    */
   on_history_updated (data) {
     if (data.state && data.state.att_id) {

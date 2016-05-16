@@ -12,10 +12,26 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Get a BugController instance.
    * @constructor
-   * @argument {Object} bug - BugModel instance.
-   * @argument {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   * @param {Object} bug - BugModel instance.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @return {Object} controller - New BugController instance.
+   * @returns {Object} controller - New BugController instance.
+   * @listens BugView:AttachFiles
+   * @listens BugView:AttachText
+   * @listens BugView:RemoveAttachment
+   * @listens BugView:MoveUpAttachment
+   * @listens BugView:MoveDownAttachment
+   * @listens BugView:Subscribe
+   * @listens BugView:Unsubscribe
+   * @listens BugView:EditComment
+   * @listens BugView:EditField
+   * @listens BugView:EditFlag
+   * @listens BugView:AddParticipant
+   * @listens BugView:RemoveParticipant
+   * @listens BugView:CommentSelected
+   * @listens BugView:Submit
+   * @listens BugView:OpeningTabRequested
+   * @listens AttachmentView:EditAttachment
    */
   constructor (bug, sibling_bug_ids = []) {
     super(); // This does nothing but is required before using `this`
@@ -83,9 +99,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Called by BugTimelineEntryView whenever a comment is selected. Update the location hash to include the comment ID.
-   * @argument {Object} data - Passed data.
-   * @argument {Number} data.number - Comment number.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Number} data.number - Comment number.
+   * @returns {undefined}
    */
   on_comment_selected (data) {
     if (location.pathname === `/bug/${this.bug.id}`) {
@@ -96,8 +112,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called in the constructor and whenever the location fragment or history state is updated. If the current bug is
    * still displayed, fire an event so the relevant views can do something.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugController:HistoryUpdated
    */
   check_fragment () {
     if (location.pathname === `/bug/${this.bug.id}`) {
@@ -107,8 +124,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Create and return a Proxy for the bug changes object that fires an event whenever any field value is modified.
-   * @argument {undefined}
-   * @return {Proxy} changes - Changes object.
+   * @param {undefined}
+   * @returns {Proxy} changes - Changes object.
+   * @fires BugController:FieldEdited
    */
   reset_changes () {
     this.changes = new Proxy({}, {
@@ -136,8 +154,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called internally whenever a bug field or an attachment property is edited by the user. Fire an event to notify the
    * views of the change.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugController:BugEdited
    */
   onedit () {
     let { changes, att_changes, uploads, can_submit } = this;
@@ -147,8 +166,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Called by BugView whenever a new comment is edited by the user. Cache the comment and notify changes accordingly.
-   * @argument {String} comment - Comment text.
-   * @return {undefined}
+   * @param {String} comment - Comment text.
+   * @returns {undefined}
+   * @fires BugController:CommentEdited
    */
   edit_comment (comment) {
     if (comment.match(/\S/)) {
@@ -175,9 +195,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called by BugView whenever any field is edited by the user. Cache the value and notify changes accordingly. Only
    * the following fields are supported at this moment: status, resolution, dupe_of.
-   * @argument {String} name - Field name.
-   * @argument {*} value - Field value.
-   * @return {undefined}
+   * @param {String} name - Field name.
+   * @param {*} value - Field value.
+   * @returns {undefined}
    */
   edit_field (name, value) {
     let { field, product } = BzDeck.host.data.config;
@@ -239,12 +259,13 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Called by BugView whenever any flag is edited by the user. Cache the value and notify changes accordingly.
-   * @argument {Object} flag - Flag change object.
-   * @argument {Number} flag.id - Bugzilla-defined numeric ID of the flag.
-   * @argument {String} flag.name - Type of the flag, such as 'review' or 'needinfo'.
-   * @argument {String} flag.requestee - Person created the flag.
-   * @argument {Boolean} added - Whether the flag is newly added.
-   * @return {undefined}
+   * @param {Object} flag - Flag change object.
+   * @param {Number} flag.id - Bugzilla-defined numeric ID of the flag.
+   * @param {String} flag.name - Type of the flag, such as 'review' or 'needinfo'.
+   * @param {String} flag.requestee - Person created the flag.
+   * @param {Boolean} added - Whether the flag is newly added.
+   * @returns {undefined}
+   * @fires BugController:FlagEdited
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
    */
   edit_flag (flag, added) {
@@ -271,9 +292,10 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Called by BugView whenever a participant is added by the user. Cache the value and notify changes accordingly.
-   * @argument {String} field - assigned_to, qa_contact, mentor or cc.
-   * @argument {String} email - Account name of the participant to be added.
-   * @return {Boolean} result - Whether the participant is successfully added to the cache.
+   * @param {String} field - assigned_to, qa_contact, mentor or cc.
+   * @param {String} email - Account name of the participant to be added.
+   * @returns {Boolean} result - Whether the participant is successfully added to the cache.
+   * @fires BugController:ParticipantAdded
    */
   add_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -313,9 +335,10 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Called by BugView whenever a participant is removed by the user. Cache the value and notify changes accordingly.
-   * @argument {String} field - assigned_to, qa_contact, mentor or cc.
-   * @argument {String} email - Account name of the participant to be removed.
-   * @return {Boolean} result - Whether the participant is successfully removed from the cache.
+   * @param {String} field - assigned_to, qa_contact, mentor or cc.
+   * @param {String} email - Account name of the participant to be removed.
+   * @returns {Boolean} result - Whether the participant is successfully removed from the cache.
+   * @fires BugController:ParticipantRemoved
    */
   remove_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -348,8 +371,14 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Subscribe to the bug by adding the user's email to the Cc list, or unsubscribe from the bug by removing the user's
    * email from the Cc list. Notify the result accordingly.
-   * @argument {String} how - add or remove.
-   * @return {Promise} request - Can be a rejected Promise if any error is found.
+   * @param {String} how - add or remove.
+   * @returns {Promise} request - Can be a rejected Promise if any error is found.
+   * @fires BugController:ParticipantAdded
+   * @fires BugController:ParticipantRemoved
+   * @fires BugController:FailedToSubscribe
+   * @fires BugController:FailedToUnsubscribe
+   * @fires BugController:Subscribed
+   * @fires BugController:Unsubscribed
    */
   update_subscription (how) {
     let subscribe = how === 'add';
@@ -371,8 +400,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Clean up a change with both additions and removals, such as mentor or cc. If there are no changes, removed the
    * object from the cache.
-   * @argument {String} field - mentor or cc.
-   * @return {Boolean} result - Whether the change object is updated.
+   * @param {String} field - mentor or cc.
+   * @returns {Boolean} result - Whether the change object is updated.
    */
   cleanup_multiple_item_change (field) {
     let change = this.changes[field];
@@ -401,8 +430,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called by BugView whenever new attachment files are provided by the user through a file input form control or a
    * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
-   * @argument {(FileList|Array)} files - Selected files.
-   * @return {undefined}
+   * @param {(FileList|Array)} files - Selected files.
+   * @returns {undefined}
+   * @fires BugController:AttachmentError
    * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
@@ -461,8 +491,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called whenever a new attachment text is provided by the user through a text input form control or a drag-and-drop
    * action. Read and cache the text.
-   * @argument {String} text - Added plain text or URL string.
-   * @return {undefined}
+   * @param {String} text - Added plain text or URL string.
+   * @returns {undefined}
    */
   attach_text (text) {
     let worker = new SharedWorker('/static/scripts/workers/tasks.js');
@@ -501,8 +531,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Find an attachment index from the cached new attachment list by comparing the hash values.
-   * @argument {String} hash - Hash value of the attachment object to find.
-   * @return {Number} index - 0 or a positive integer if the attachment is found, -1 if not found.
+   * @param {String} hash - Hash value of the attachment object to find.
+   * @returns {Number} index - 0 or a positive integer if the attachment is found, -1 if not found.
    */
   find_att_index (hash) {
     return this.uploads.findIndex(a => a.hash === hash);
@@ -510,8 +540,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Find an attachment object from the cached new attachment list by comparing the hash values.
-   * @argument {String} hash - Hash value of the attachment object to find.
-   * @return {Proxy} attachment - AttachmentModel instance if the attachment is found, undefined if not found
+   * @param {String} hash - Hash value of the attachment object to find.
+   * @returns {Proxy} attachment - AttachmentModel instance if the attachment is found, undefined if not found
    */
   find_attachment (hash) {
     return this.uploads.find(a => a.hash === hash);
@@ -519,9 +549,11 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Add an attachment to the cached new attachment list.
-   * @argument {Object} att - Raw attachment upload object for Bugzilla.
-   * @argument {Number} size - Actual file size.
-   * @return {undefined}
+   * @param {Object} att - Raw attachment upload object for Bugzilla.
+   * @param {Number} size - Actual file size.
+   * @returns {undefined}
+   * @fires BugController:AttachmentAdded
+   * @fires BugController:UploadListUpdated
    */
   add_attachment (att, size) {
     // Cache as an AttachmentModel instance
@@ -541,8 +573,10 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Remove an attachment from the cached new attachment list.
-   * @argument {String} hash - Hash value of the attachment object to remove.
-   * @return {Boolean} result - Whether the attachment is found and removed.
+   * @param {String} hash - Hash value of the attachment object to remove.
+   * @returns {Boolean} result - Whether the attachment is found and removed.
+   * @fires BugController:AttachmentRemoved
+   * @fires BugController:UploadListUpdated
    */
   remove_attachment (hash) {
     let index = this.find_att_index(hash);
@@ -562,12 +596,13 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Edit a property of an unuploaded or existing attachment.
-   * @argument {Object} change - Change details.
-   * @argument {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
-   * @argument {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
-   * @argument {String} change.prop - Edited property name.
-   * @argument {*}      change.value - New value.
-   * @return {undefined}
+   * @param {Object} change - Change details.
+   * @param {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+   * @param {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
+   * @param {String} change.prop - Edited property name.
+   * @param {*}      change.value - New value.
+   * @returns {undefined}
+   * @fires BugController:AttachmentEdited
    */
   edit_attachment (change) {
     let { id, hash, prop, value } = change;
@@ -622,8 +657,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
-   * @argument {String} hash - Hash value of the attachment object to move.
-   * @return {Boolean} result - Whether the attachment is found and reordered.
+   * @param {String} hash - Hash value of the attachment object to move.
+   * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
   move_up_attachment (hash) {
     let index = this.find_att_index(hash);
@@ -639,8 +674,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
-   * @argument {String} hash - Hash value of the attachment object to move.
-   * @return {Boolean} result - Whether the attachment is found and reordered.
+   * @param {String} hash - Hash value of the attachment object to move.
+   * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
   move_down_attachment (hash) {
     let index = this.find_att_index(hash);
@@ -656,8 +691,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Find any errors in the user-modified fields. Only the dupe_of field is supported at this moment.
-   * @argument {undefined}
-   * @return {Array.<String>} errors - List of the detected errors.
+   * @param {undefined}
+   * @returns {Array.<String>} errors - List of the detected errors.
    */
   find_errors () {
     let errors = [];
@@ -677,8 +712,12 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Submit all the changes made on the bug to Bugzilla.
-   * @argument {undefined}
-   * @return {Promise} submission - Can be a rejected Promise if any error is found.
+   * @param {undefined}
+   * @returns {Promise} submission - Can be a rejected Promise if any error is found.
+   * @fires BugController:Submit
+   * @fires BugController:SubmitSuccess
+   * @fires BugController:SubmitError
+   * @fires BugController:SubmitComplete
    */
   submit () {
     if (this.has_errors) {
@@ -749,8 +788,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Post the meta data changes made on the bug to Bugzilla.
-   * @argument {Object} data - Bug change object.
-   * @return {Promise} request - Can be a rejected Promise if any error is found.
+   * @param {Object} data - Bug change object.
+   * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
    */
   post_changes (data) {
@@ -759,9 +798,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Post attachment changes to Bugzilla.
-   * @argument {Number} att_id - Attachment ID.
-   * @argument {Object} data - Attachment change object.
-   * @return {Promise} request - Can be a rejected Promise if any error is found.
+   * @param {Number} att_id - Attachment ID.
+   * @param {Object} data - Attachment change object.
+   * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
    */
   post_att_changes (att_id, data) {
@@ -770,8 +809,10 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Post the new attachments added to the bug to Bugzilla.
-   * @argument {Proxy} attachment - AttachmentModel instance.
-   * @return {Promise} request - Can be a rejected Promise if any error is found.
+   * @param {Proxy} attachment - AttachmentModel instance.
+   * @returns {Promise} request - Can be a rejected Promise if any error is found.
+   * @fires BugController:AttachmentUploaded
+   * @fires BugController:AttachmentUploadError
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
   post_attachment (attachment) {
@@ -818,8 +859,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Notify the upload progress while the new attachent is being uploaded to Bugzilla.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugController:SubmitProgress
    */
   notify_upload_progress () {
     let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
@@ -830,8 +872,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Retrieve the bug to update the timeline, when Bugzfeed is not working.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   fetch () {
     let bugzfeed = BzDeck.controllers.bugzfeed;
@@ -844,8 +886,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called by BugView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the
    * home page thread so the user can easily navigate through those bugs.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_opening_tab_requested () {
     BzDeck.router.navigate('/bug/' + this.bug.id, { ids: this.sibling_bug_ids });

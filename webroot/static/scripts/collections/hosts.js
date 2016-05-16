@@ -9,8 +9,8 @@
 BzDeck.HostCollection = class HostCollection extends BzDeck.BaseCollection {
   /**
    * Get a HostCollection instance.
-   * @argument {undefined}
-   * @return {Object} hosts - New HostCollection instance.
+   * @param {undefined}
+   * @returns {Object} hosts - New HostCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`

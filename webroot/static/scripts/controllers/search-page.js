@@ -11,8 +11,10 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * Called by the app router and initialize the Search Page Controller. Unlike other pages, this controller doesn't
    * check existing tabs, because the user can open multiple search tabs at the same time.
    * @constructor
-   * @argument {Number} id - 13-digit identifier for a new instance, generated with Date.now().
-   * @return {Object} controller - New SearchPageController instance.
+   * @param {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+   * @returns {Object} controller - New SearchPageController instance.
+   * @listens SearchPageView:SearchRequested
+   * @listens SearchPageView:OpeningTabRequested
    */
   constructor (id) {
     super(); // This does nothing but is required before using `this`
@@ -80,8 +82,10 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
   /**
    * Prepare a bug preview displayed in the Preview Pane.
-   * @argument {Number} id - Bug ID to show.
-   * @return {undefined}
+   * @param {Number} id - Bug ID to show.
+   * @returns {undefined}
+   * @fires SearchPageController:BugDataAvailable
+   * @fires SearchPageController:BugDataUnavailable
    */
   prep_preview (id) {
     if (!id) {
@@ -103,8 +107,8 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
   /**
    * Called by SearchPageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of
    * the same search resuts so the user can easily navigate through those bugs.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   open_tab () {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { ids: [...this.data.bugs.keys()] });
@@ -112,8 +116,13 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
   /**
    * Search bugs from the remote Bugzilla instance, and provide the results as event data.
-   * @argument {URLSearchParams} params - Search query.
-   * @return {undefined}
+   * @param {URLSearchParams} params - Search query.
+   * @returns {undefined}
+   * @fires SearchPageController:Offline
+   * @fires SearchPageController:SearchStarted
+   * @fires SearchPageController:SearchResultsAvailable
+   * @fires SearchPageController:SearchError
+   * @fires SearchPageController:SearchComplete
    */
   exec_search (params) {
     if (!navigator.onLine) {

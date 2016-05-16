@@ -9,12 +9,14 @@
 BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Get a BugTimelineView instance.
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Proxy} bug - Proxified BugModel instance.
-   * @argument {HTMLElement} $bug - Outer element to display the content.
-   * @argument {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
-   * @return {Object} view - New BugTimelineView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Proxy} bug - Proxified BugModel instance.
+   * @param {HTMLElement} $bug - Outer element to display the content.
+   * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
+   * @returns {Object} view - New BugTimelineView instance.
+   * @listens SettingsPageView:PrefValueChanged
+   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug, $bug, delayed) {
     super(); // This does nothing but is required before using `this`
@@ -122,8 +124,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Generate timeline entries.
-   * @argument {Array.<Map>} data_arr - List of entry data.
-   * @return {Promise.<HTMLElement>} $fragment - Promise to be resolved in a flagment containing entry nodes.
+   * @param {Array.<Map>} data_arr - List of entry data.
+   * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a flagment containing entry nodes.
    */
   generate_entries (data_arr) {
     return Promise.all(data_arr.map(data => {
@@ -143,8 +145,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Expand all comments on the timeline.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   expand_comments () {
     if (this.$expander) {
@@ -158,8 +160,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Collapse all comments on the timeline.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   collapse_comments () {
     for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
@@ -170,9 +172,9 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
    * comment into view.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.hash - location.hash.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.hash - location.hash.
+   * @returns {undefined}
    */
   on_history_updated (data) {
     let match = data.hash.match(/^#c(\d+)$/);
@@ -196,10 +198,10 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Called by SettingsPageView whenever a preference value is changed by the user. Show media when the pref is enabled.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.name - Preference name.
-   * @argument {*}      data.value - New value.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.name - Preference name.
+   * @param {*}      data.value - New value.
+   * @returns {undefined}
    */
   on_pref_value_changed (data) {
     if (data.name !== 'ui.timeline.display_attachments_inline' || data.value !== true) {

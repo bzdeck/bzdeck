@@ -11,9 +11,9 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Get a AttachmentView instance.
    * @constructor
-   * @argument {Proxy} att - AttachmentModel instance.
-   * @argument {HTMLElement} $placeholder - Node to show the attachment.
-   * @return {Object} view - New AttachmentView instance.
+   * @param {Proxy} att - AttachmentModel instance.
+   * @param {HTMLElement} $placeholder - Node to show the attachment.
+   * @returns {Object} view - New AttachmentView instance.
    */
   constructor (att, $placeholder) {
     super(); // This does nothing but is required before using `this`
@@ -53,8 +53,9 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Activate the editable widgets including textboxes and checkboxes.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires AttachmentView:EditAttachment
    */
   activate () {
     let { id, hash } = this.attachment;
@@ -91,8 +92,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Start rendering the attachment in the placeholder.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render () {
     let media_type = this.attachment.content_type.split('/')[0];
@@ -126,8 +127,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render an image, video or audio.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_media () {
     this.$outer.setAttribute('aria-busy', 'true');
@@ -146,8 +147,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render a patch with the Patch Viewer.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_patch () {
     this.$outer.setAttribute('aria-busy', 'true');
@@ -164,8 +165,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render a link to the binary file, GitHub pull request or Review Board request.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render_link () {
     let $link = document.createElement('a');
@@ -193,8 +194,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render an error message when the attachment data could not be retrieved from the cache nor Bugzilla.
-   * @argument {Error} error - Error object.
-   * @return {undefined}
+   * @param {Error} error - Error object.
+   * @returns {undefined}
    */
   render_error (error) {
     let $error = document.createElement('p');

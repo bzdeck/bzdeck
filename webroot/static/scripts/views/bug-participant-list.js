@@ -11,11 +11,14 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Get a BugParticipantListView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Proxy} bug - BugModel instance.
-   * @argument {HTMLElement} $section - Outer <section> element of the field.
-   * @return {Object} view - New BugParticipantListView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Proxy} bug - BugModel instance.
+   * @param {HTMLElement} $section - Outer <section> element of the field.
+   * @returns {Object} view - New BugParticipantListView instance.
+   * @listens BugView:EditModeChanged
+   * @listens BugController:ParticipantAdded
+   * @listens BugController:ParticipantRemoved
    */
   constructor (view_id, bug, $section) {
     super(); // This does nothing but is required before using `this`
@@ -50,8 +53,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Remove an empty person node on the list. FIXME: This should be handled by the template engine.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   remove_empty_person () {
     let $person = this.$list.querySelector('[itemscope]');
@@ -63,9 +66,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called by BugView whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
-   * @argument {Object} data - Passed data.
-   * @argument {Boolean} data.enabled - Whether the edit mode is enabled.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Boolean} data.enabled - Whether the edit mode is enabled.
+   * @returns {undefined}
    */
   on_edit_mode_changed (data) {
     this.editing = data.enabled;
@@ -86,8 +89,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add the Take button to the <header> in the <section>.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:AddParticipant
    */
   add_take_button () {
     this.$button = this.create_button('take', 'Take', {
@@ -108,8 +112,10 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add the Subscribe button to the <header> in the <section>.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:Unsubscribe
+   * @fires BugView:Subscribe
    */
   add_subscribe_button () {
     let listed = this.values.has(this.my_email);
@@ -127,8 +133,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add a Person Finder under the <header>.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:AddParticipant
    */
   add_person_finder () {
     this.$$finder = new BzDeck.PersonFinderView(`${this.id}-${this.field}-person-finder`, this.bug, this.values);
@@ -145,10 +152,10 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called by BugController whenever a new participant is added by the user. Add the person to the list.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.field - Relevant bug field, like assigned_to or cc.
-   * @argument {String} data.email - Email of the added person.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.field - Relevant bug field, like assigned_to or cc.
+   * @param {String} data.email - Email of the added person.
+   * @returns {undefined}
    */
   on_participant_added (data) {
     if (data.field !== this.field) {
@@ -190,10 +197,10 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called by BugController whenever a new participant is removed by the user. Remove the person from the list.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.field - Relevant bug field, like assigned_to or cc.
-   * @argument {String} data.email - Email of the removed person.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.field - Relevant bug field, like assigned_to or cc.
+   * @param {String} data.email - Email of the removed person.
+   * @returns {undefined}
    */
   on_participant_removed (data) {
     if (data.field !== this.field) {
@@ -227,10 +234,10 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Create a new button widget.
-   * @argument {String} command - Description of the button's action.
-   * @argument {String} text - Text used for the label and tooltip on the button.
-   * @argument {String} label - Text used for the aria-label attribute.
-   * @return {HTMLElement} $button
+   * @param {String} command - Description of the button's action.
+   * @param {String} text - Text used for the label and tooltip on the button.
+   * @param {String} label - Text used for the aria-label attribute.
+   * @returns {HTMLElement} $button
    */
   create_button (command, text, label) {
     let $button = document.createElement('span');
@@ -247,8 +254,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add the Remove button to each person.
-   * @argument {HTMLElement} $person - Person on the list.
-   * @return {HTMLElement} $button
+   * @param {HTMLElement} $person - Person on the list.
+   * @returns {HTMLElement} $button
+   * @fires BugView:RemoveParticipant
    */
   add_remove_button_to_person ($person) {
     let email = $person.querySelector('[itemprop="email"]').content;

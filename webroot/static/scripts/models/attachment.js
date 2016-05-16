@@ -12,8 +12,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Get an AttachmentModel instance.
    * @constructor
-   * @argument {Object} data - Bugzilla's raw attachment object or unuploaded attachment object.
-   * @return {Proxy} attachment - Proxified AttachmentModel instance, so consumers can seamlessly access attachment
+   * @param {Object} data - Bugzilla's raw attachment object or unuploaded attachment object.
+   * @returns {Proxy} attachment - Proxified AttachmentModel instance, so consumers can seamlessly access attachment
    *  properties via attachment.prop instead of attachment.data.prop.
    */
   constructor(data) {
@@ -27,8 +27,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
   /**
    * Retrieve the attachment from Bugzilla.
-   * @argument {undefined}
-   * @return {Promise.<Proxy>} attachment - Promise to be resolved in the AttachmentModel instance.
+   * @param {undefined}
+   * @returns {Promise.<Proxy>} attachment - Promise to be resolved in the AttachmentModel instance.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
    */
   fetch () {
@@ -42,8 +42,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Get the attachment raw file data only. If it's not in the cache, retrieve the data from Bugzilla and save it in the
    * local database.
-   * @argument {undefined}
-   * @return {Promise.<Object>} data - Promise to be resolved in an object containing the Blob and plaintext data, and
+   * @param {undefined}
+   * @returns {Promise.<Object>} data - Promise to be resolved in an object containing the Blob and plaintext data, and
    *  this AttachmentModel.
    */
   get_data () {
@@ -86,8 +86,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Save this attachment as part of the relevant bug.
    * @override
-   * @argument {undefined}
-   * @return {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
+   * @param {undefined}
+   * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
    */
   save () {
     return BzDeck.collections.bugs.get(this.data.bug_id).then(bug => {

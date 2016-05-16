@@ -10,10 +10,11 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
   /**
    * Get a BugContainerController instance.
    * @constructor
-   * @argument {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
-   * @argument {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
-   *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @return {Object} view - New BugContainerController instance.
+   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
+   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @returns {Object} view - New BugContainerController instance.
+   * @listens BugContainerView:NavigationRequested
    */
   constructor (instance_id, sibling_bug_ids = []) {
     super(); // This does nothing but is required before using `this`
@@ -26,13 +27,13 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
 
   /**
    * Called by BugContainerView whenever navigating to other bug within the same tabpanel is requested.
-   * @argument {Object} data - Passed data.
-   * @argument {Number} data.old_id - Old bug ID to be replaced.
-   * @argument {Number} data.new_id - New bug ID to navigate.
-   * @argument {String} data.old_path - Previous location path.
-   * @argument {String} data.new_path - New location path.
-   * @argument {Boolean} data.reinit - Whether there's an existing tabpanel content for the new bug.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Number} data.old_id - Old bug ID to be replaced.
+   * @param {Number} data.new_id - New bug ID to navigate.
+   * @param {String} data.old_path - Previous location path.
+   * @param {String} data.new_path - New location path.
+   * @param {Boolean} data.reinit - Whether there's an existing tabpanel content for the new bug.
+   * @returns {undefined}
    */
   on_navigation_requested (data) {
     let { old_id, new_id, old_path, new_path, reinit } = data;
@@ -47,8 +48,12 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
   /**
    * Prepare bug data for the view. Find it from the local database or remote Bugzilla instance, then notify the result
    * regardless of the availability.
-   * @argument {undefined} bug_id - Bug ID to show.
-   * @return {undefined}
+   * @param {undefined} bug_id - Bug ID to show.
+   * @returns {undefined}
+   * @fires BugContainerController:LoadingStarted
+   * @fires BugContainerController:LoadingFinished
+   * @fires BugContainerController:BugDataAvailable
+   * @fires BugContainerController:BugDataUnavailable
    */
   add_bug (bug_id) {
     this.bug_id = bug_id;

@@ -11,12 +11,12 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   /**
    * Get a BugTimelineEntryView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Proxy} bug - Proxified BugModel instance.
-   * @argument {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change)
-   *  if any.
-   * @return {DocumentFragment} $fragment - Generated entry node in a fragment.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Proxy} bug - Proxified BugModel instance.
+   * @param {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if
+   *  any.
+   * @returns {DocumentFragment} $fragment - Generated entry node in a fragment.
    */
   constructor(view_id, bug, data) {
     super(); // This does nothing but is required before using `this`
@@ -28,8 +28,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create a timeline entry.
-   * @argument {undefined}
-   * @return {Promise.<Object>} entry - Promise to be resolved in an object containing the entry fragment and timestamp.
+   * @param {undefined}
+   * @returns {Promise.<Object>} entry - Promise to be resolved in an object containing the entry fragment and timestamp.
    */
   create () {
     let comment = this.data.get('comment');
@@ -76,8 +76,9 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create a comment entry that contains the author name/image, timestamp, comment body and Reply button.
-   * @argument {undefined}
-   * @return {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
+   * @param {undefined}
+   * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
+   * @fires BugView:CommentSelected
    */
   create_comment_entry () {
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
@@ -222,8 +223,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create an Attachment box that will be added to the entry node.
-   * @argument {undefined}
-   * @return {Promise.<HTMLElement>} $attachment - Promise to be resolved in the rendered attachment item.
+   * @param {undefined}
+   * @returns {Promise.<HTMLElement>} $attachment - Promise to be resolved in the rendered attachment item.
    */
   create_attachment_box () {
     return BzDeck.collections.attachments.get(this.data.get('attachment').id).then(attachment => {
@@ -287,8 +288,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create history entries that show any changes to the bug.
-   * @argument {undefined}
-   * @return {Promise.<DocumentFragment>} $fragment - Promise to be resolved in generated entries in a fragment.
+   * @param {undefined}
+   * @returns {Promise.<DocumentFragment>} $fragment - Promise to be resolved in generated entries in a fragment.
    */
   create_history_entries () {
     let comment = this.data.get('comment');
@@ -326,11 +327,11 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create a history entry that shows a change to the bug.
-   * @argument {String} changer_name - Account name of the person who made the change.
-   * @argument {String} time - Timestamp of the change.
-   * @argument {Object} change - Change details.
-   * @argument {Object} [comment] - Comment posted at the same time as the change, if any.
-   * @return {Promise.<HTMLElement>} $change - Promise to be resolved in the rendered change item.
+   * @param {String} changer_name - Account name of the person who made the change.
+   * @param {String} time - Timestamp of the change.
+   * @param {Object} change - Change details.
+   * @param {Object} [comment] - Comment posted at the same time as the change, if any.
+   * @returns {Promise.<HTMLElement>} $change - Promise to be resolved in the rendered change item.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history}
    */
   create_history_entry (changer_name, time, change, comment) {
@@ -587,8 +588,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Render one or more users in a pretty way, showing the avatar and real name and joining with a comma and "and".
-   * @argument {Set.<String>} set - List of user account names.
-   * @return {Promise.<String>} str - Promise to be resolved in the rendered HTML string.
+   * @param {Set.<String>} set - List of user account names.
+   * @returns {Promise.<String>} str - Promise to be resolved in the rendered HTML string.
    */
   create_people_array (set) {
     return Promise.all([...set].map(name => BzDeck.collections.users.get(name, { name }))).then(people => {
@@ -607,9 +608,9 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Render a history change in a pretty way, converting Bug IDs to in-app links.
-   * @argument {Object} change - Change details.
-   * @argument {String} how - How the change was made: 'added' or 'removed'.
-   * @return {Promise.<HTMLElement>} $elm - Promise to be resolved in a rendered element.
+   * @param {Object} change - Change details.
+   * @param {String} how - How the change was made: 'added' or 'removed'.
+   * @returns {Promise.<HTMLElement>} $elm - Promise to be resolved in a rendered element.
    */
   create_history_change_element (change, how) {
     let $elm = document.createElement('span');

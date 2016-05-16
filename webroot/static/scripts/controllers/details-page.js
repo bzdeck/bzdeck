@@ -11,8 +11,8 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
    * Called by the app router and initialize the Details Page Controller. If the specified bug has an existing tab,
    * switch to it. Otherwise, open a new tab and try to load the bug.
    * @constructor
-   * @argument {Number} bug_id - Bug ID to show.
-   * @return {Object} controller - New DetailsPageController instance.
+   * @param {Number} bug_id - Bug ID to show.
+   * @returns {Object} controller - New DetailsPageController instance.
    */
   constructor (bug_id) {
     super(); // This does nothing but is required before using `this`

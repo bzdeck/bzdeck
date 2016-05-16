@@ -9,8 +9,8 @@
 BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
   /**
    * Get a PrefCollection instance.
-   * @argument {undefined}
-   * @return {Object} prefs - New PrefCollection instance.
+   * @param {undefined}
+   * @returns {Object} prefs - New PrefCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`

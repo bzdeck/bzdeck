@@ -10,8 +10,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Get a GlobalView instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} view - New GlobalView instance.
+   * @param {undefined}
+   * @returns {Object} view - New GlobalView instance.
+   * @listens UserModel:UserInfoUpdated
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -79,10 +80,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
   /**
    * Update the document title and statusbar message when the number of unread bugs is changed.
-   * @argument {Array.<Proxy>} bugs - All unread bugs in the database.
-   * @argument {Boolean} loaded - Whether bug data is loaded at startup.
-   * @argument {Number} unread_num - Number of unread bugs currently displayed on the home page.
-   * @return {undefined}
+   * @param {Array.<Proxy>} bugs - All unread bugs in the database.
+   * @param {Boolean} loaded - Whether bug data is loaded at startup.
+   * @param {Number} unread_num - Number of unread bugs currently displayed on the home page.
+   * @returns {undefined}
    */
   toggle_unread (bugs, loaded, unread_num) {
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
@@ -109,8 +110,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
   /**
    * Update the document title based on the specified tab.
-   * @argument {HTMLElement} $tab - Tab to retrieve the label.
-   * @return {undefined}
+   * @param {HTMLElement} $tab - Tab to retrieve the label.
+   * @returns {undefined}
    */
   update_window_title ($tab) {
     if ($tab.id === 'tab-home') {
@@ -122,8 +123,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
   /**
    * Called whenever the history state is updated. Hide the Sidebar on mobile.
-   * @argument {PopStateEvent} event - The popstate event.
-   * @return {undefined}
+   * @param {PopStateEvent} event - The popstate event.
+   * @returns {undefined}
    */
   onpopstate (event) {
     if (this.helpers.env.device.mobile) {
@@ -135,8 +136,11 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Called whenever any item is clicked or tapped on the page. If the target element is a button or link, open the
    * relevant content in a new in-app tab or browser tab.
-   * @argument {MouseEvent} event - The click event.
-   * @return {Boolean} default - Whether the event should lead to the default action.
+   * @param {MouseEvent} event - The click event.
+   * @returns {Boolean} default - Whether the event should lead to the default action.
+   * @fires GlobalView:OpenBug
+   * @fires GlobalView:OpenAttachment
+   * @fires GlobalView:OpenProfile
    */
   onclick (event) {
     let $target = event.target;
@@ -204,8 +208,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Called whenever any key is pressed on desktop. Prevent the browser's built-in keyboard shortcuts being triggered,
    * like Ctrl+F to find in page or Ctrl+S to save the page.
-   * @argument {KeyboardEvent} event - The keydown event.
-   * @return {undefined}
+   * @param {KeyboardEvent} event - The keydown event.
+   * @returns {undefined}
    */
   onkeydown (event) {
     let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
@@ -219,9 +223,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Called by UserModel whenever any information of a user is updated. This may happen, for example, when the user's
    * Gravatar is retrieved. Find the user's node on the view and update the displayed information accordingly.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.name - Name of the updated person.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.name - Name of the updated person.
+   * @returns {undefined}
    */
   on_user_info_updated (data) {
     let { name } = data;

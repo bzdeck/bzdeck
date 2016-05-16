@@ -10,8 +10,8 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
    * @constructor
-   * @argument {Object} data - Host data.
-   * @return {Proxy} bug - New HostModel instance.
+   * @param {Object} data - Host data.
+   * @returns {Proxy} bug - New HostModel instance.
    */
   constructor (data) {
     super(); // This does nothing but is required before using `this`
@@ -31,15 +31,15 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
 
   /**
    * Send an API request to the remote Bugzilla instance. Use a Worker on a different thread.
-   * @argument {String} path - Location including an API method.
-   * @argument {URLSearchParams} [params] - Search query.
-   * @argument {Object} [options] - Extra options.
-   * @argument {String} [options.method='GET'] - Request method.
-   * @argument {Object} [options.data] - Post data.
-   * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
-   * @argument {Object.<String, Function>} [options.listeners] - Event listeners. The key is an event type like 'load',
-   *  the value is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
-   * @return {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
+   * @param {String} path - Location including an API method.
+   * @param {URLSearchParams} [params] - Search query.
+   * @param {Object} [options] - Extra options.
+   * @param {String} [options.method='GET'] - Request method.
+   * @param {Object} [options.data] - Post data.
+   * @param {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
+   * @param {Object.<String, Function>} [options.listeners] - Event listeners. The key is an event type like 'load', the
+   *  value is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
+   * @returns {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
    */
   request (path, params, options = {}) {
@@ -96,8 +96,8 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current
    * config from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI
    * compat layer instead.
-   * @argument {undefined}
-   * @return {Promise.<Object>} config - Promise to be resolved in the Bugzilla configuration data.
+   * @param {undefined}
+   * @returns {Promise.<Object>} config - Promise to be resolved in the Bugzilla configuration data.
    * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other}
    * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937}
    */

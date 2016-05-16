@@ -11,8 +11,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
    * @constructor
-   * @argument {Object} data - Bugzilla's raw bug object.
-   * @return {Proxy} bug - Proxified BugModel instance, so consumers can seamlessly access bug properties via bug.prop
+   * @param {Object} data - Bugzilla's raw bug object.
+   * @returns {Proxy} bug - Proxified BugModel instance, so consumers can seamlessly access bug properties via bug.prop
    *  instead of bug.data.prop.
    */
   constructor (data) {
@@ -71,9 +71,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Retrieve bug data from Bugzilla.
-   * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
-   * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
-   * @return {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
+   * @param {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
+   * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
+   * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
    */
   fetch (include_metadata = true, include_details = true) {
     let _fetch = (method, param_str = '') => new Promise((resolve, reject) => {
@@ -131,8 +131,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Merge the provided bug data with the locally cached data, parse the changes to update the unread status if needed,
    * then notify any changes detected.
-   * @argument {Object} [data] - Bugzilla's raw bug object.
-   * @return {Boolean} cached - Whether the cache is found.
+   * @param {Object} [data] - Bugzilla's raw bug object.
+   * @returns {Boolean} cached - Whether the cache is found.
+   * @fires BugModel:Updated
    */
   merge (data) {
     let cache = this.data;
@@ -195,9 +196,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Update the bug's annotation and notify the change.
-   * @argument {String} type - Annotation type: star.
-   * @argument {Boolean} value - Whether to add star or not.
-   * @return {Boolean} result - Whether the annotation is updated.
+   * @param {String} type - Annotation type: star.
+   * @param {Boolean} value - Whether to add star or not.
+   * @returns {Boolean} result - Whether the annotation is updated.
+   * @fires BugModel:AnnotationUpdated
    */
   update_annotation (type, value) {
     if (this.data[`_${type}`] === value) {
@@ -217,8 +219,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Update the last-visited timestamp on Bugzilla through the API. Mark the bug as read and notify the change.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugModel:AnnotationUpdated
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html}
    */
   mark_as_read () {
@@ -244,8 +247,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * to generate the list. This list could be empty if the comments are not fetched yet. The list may also contain false
    * info if a duplicated bug has been reopened. This unreliable method won't be necessary once the API offers the
    * duplicates field (Bug 880163, BzDeck #317).
-   * @argument {undefined}
-   * @return {Array.<Number>} duplicates - Duplicate bug IDs.
+   * @param {undefined}
+   * @returns {Array.<Number>} duplicates - Duplicate bug IDs.
    */
   get_duplicates () {
     let duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
@@ -263,8 +266,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Check if the bug is unread or has been changed within the last 14 days.
-   * @argument {undefined}
-   * @return {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
+   * @param {undefined}
+   * @returns {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
   detect_if_new () {
     let visited = new Date(this.data._last_visit).getTime();
@@ -320,8 +323,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Get a list of people involved in the bug.
-   * @argument {undefined}
-   * @return {Map.<String, Object>} participants - List of all participants. The map's key is an account name and the
+   * @param {undefined}
+   * @returns {Map.<String, Object>} participants - List of all participants. The map's key is an account name and the
    *  value is the person's "detail" object in the raw bug object.
    */
   get_participants () {
@@ -367,8 +370,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors. The list may
    * include commenters, attachment creators and flag setters.
-   * @argument {undefined}
-   * @return {Set.<String>} contributors - List of all contributor account names (email addresses).
+   * @param {undefined}
+   * @returns {Set.<String>} contributors - List of all contributor account names (email addresses).
    */
   get_contributors () {
     let contributors = new Map(); // key: name, value: number of contributions

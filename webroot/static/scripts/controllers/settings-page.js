@@ -11,8 +11,9 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
    * Called by the app router and initialize the Settings Page Controller. If the Settings has an existing tab, switch
    * to it. Otherwise, open a new tab and load the content.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New SettingsPageController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New SettingsPageController instance.
+   * @listens SettingsPageView:PrefValueChanged
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -43,10 +44,10 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
   /**
    * Called by SettingsPageView whenever a preference value is changed by the user. Save it to the database and update
    * the UI where necessary.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.name - Preference name.
-   * @argument {*}      data.value - New value.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.name - Preference name.
+   * @param {*}      data.value - New value.
+   * @returns {undefined}
    */
   on_pref_value_changed (data) {
     let { name, value } = data;

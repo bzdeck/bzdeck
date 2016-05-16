@@ -10,9 +10,15 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Get a AttachmentPageView instance.
    * @constructor
-   * @argument {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
-   * @argument {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @return {Object} view - New AttachmentPageView instance.
+   * @param {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
+   * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+   * @returns {Object} view - New AttachmentPageView instance.
+   * @listens AttachmentPageController:AttachmentAvailable
+   * @listens AttachmentPageController:AttachmentUnavailable
+   * @listens AttachmentPageController:Offline
+   * @listens AttachmentPageController:LoadingStarted
+   * @listens AttachmentPageController:LoadingError
+   * @listens AttachmentPageController:LoadingComplete
    */
   constructor (page_id, att_id) {
     super(); // This does nothing but is required before using `this`
@@ -34,9 +40,9 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when the attachment is found. Render it on the page.
-   * @argument {Object} data - Passed data.
-   * @argument {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @returns {undefined}
    */
   on_attachment_available (data) {
     let attachment = this.attachment = data.attachment;
@@ -57,9 +63,9 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when the attachment is not found. Show an error message on the page.
-   * @argument {Object} data - Passed data.
-   * @argument {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @returns {undefined}
    */
   on_attachment_unavailable (data) {
     let id = this.att_id;
@@ -71,8 +77,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called by BugController when the attachment cannot be retrieved because the device or browser is offline. Show a
    * message to ask the user to go online.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    * @todo reload when going online.
    */
   on_offline () {
@@ -81,8 +87,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when loading the attachment started. Show a message accordingly.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_loading_started () {
     BzDeck.views.statusbar.show('Loading...'); // l10n
@@ -90,8 +96,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when loading the attachment failed. Show a message accordingly.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_loading_error () {
     BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
@@ -99,8 +105,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called by BugController when loading the attachment completed. Remove the throbber.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_loading_complete () {
     this.$tabpanel.removeAttribute('aria-busy');

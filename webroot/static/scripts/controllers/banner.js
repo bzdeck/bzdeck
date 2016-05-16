@@ -10,8 +10,10 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   /**
    * Get a BannerController instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New BannerController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New BannerController instance.
+   * @listens BannerView:BackButtonClicked
+   * @listens BannerView:TabSelected
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -28,8 +30,8 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   /**
    * Called by BannerView whenever the Back button is clicked on the mobile view. Navigate backward when possible or
    * just show Inbox.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_back_button_clicked () {
     if (history.state && history.state.previous) {
@@ -41,9 +43,9 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
 
   /**
    * Called by BannerView whenever a tab in the global tablist is selected. Navigate to the specified location.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.path - Location pathname that corresponds to the tab.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.path - Location pathname that corresponds to the tab.
+   * @returns {undefined}
    */
   on_tab_selected (data) {
     if (location.pathname + location.search !== data.path) {

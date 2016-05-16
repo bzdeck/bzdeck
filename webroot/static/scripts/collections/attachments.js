@@ -11,8 +11,8 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   /**
    * Get an AttachmentCollection instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} attachments - New AttachmentCollection instance.
+   * @param {undefined}
+   * @returns {Object} attachments - New AttachmentCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -24,10 +24,10 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * Load the all attachment data from local bug cache, create a new AttachmentModel instance for each item, cache them
    * in a new Map for faster access, then return a Promise in a way consistent with the super load method.
    * @override
-   * @argument {undefined}
-   * @return {Promise.<Map.<Number, Proxy>>} attachments - Promise to be resolved in a map of AttachmentModel instances.
-   *  The map key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the cache
-   *  method below shows.
+   * @param {undefined}
+   * @returns {Promise.<Map.<Number, Proxy>>} attachments - Promise to be resolved in a map of AttachmentModel
+   *  instances. The map key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the
+   *  cache method below shows.
    */
   load () {
     this.map = new Map();
@@ -43,9 +43,9 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * Cache data for an unuploaded attachment temporarily on memory. Add custom properties to make it easier to find the
    * cached attachment, track the upload status and update the view. Those properties are unenumerable so later dropped
    * by Object.assign() before the data is sent through the API.
-   * @argument {Object} att - Raw attachment upload object for Bugzilla.
-   * @argument {Number} size - Actual file size.
-   * @return {Promise.<Proxy>} attachment - Promise to be resolved in AttachmentModel instance.
+   * @param {Object} att - Raw attachment upload object for Bugzilla.
+   * @param {Number} size - Actual file size.
+   * @returns {Promise.<Proxy>} attachment - Promise to be resolved in AttachmentModel instance.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
   cache (att, size) {

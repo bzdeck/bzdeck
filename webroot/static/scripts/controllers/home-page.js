@@ -10,8 +10,9 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
   /**
    * Called by the app router and initialize the Home Page Controller. Select the specified Sidebar folder.
    * @constructor
-   * @argument {String} folder_id - One of the folder identifiers defined in the app config.
-   * @return {Object} controller - New HomePageController instance.
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @returns {Object} controller - New HomePageController instance.
+   * @listens HomePageView:UnknownFolderSelected
    */
   constructor (folder_id) {
     super(); // This does nothing but is required before using `this`

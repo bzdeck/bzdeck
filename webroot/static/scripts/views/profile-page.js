@@ -10,9 +10,13 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Get a ProfilePageView instance.
    * @constructor
-   * @argument {String} email - Person's Bugzilla account name.
-   * @argument {Boolean} self - Whether this profile is the app user's own profile.
-   * @return {Object} view - New ProfilePageView instance.
+   * @param {String} email - Person's Bugzilla account name.
+   * @param {Boolean} self - Whether this profile is the app user's own profile.
+   * @returns {Object} view - New ProfilePageView instance.
+   * @listens ProfilePageController:GravatarProfileFound
+   * @listens ProfilePageController:BugzillaProfileFound
+   * @listens ProfilePageController:BugzillaProfileFetchingError
+   * @listens ProfilePageController:BugzillaProfileFetchingComplete
    */
   constructor (email, self) {
     super(); // This does nothing but is required before using `this`
@@ -41,9 +45,9 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called by ProfilePageController when the User's Gravatar profile is retrieved. Apply the background image.
-   * @argument {Object} data - Data passed.
-   * @argument {Object} data.style - CSS style rules including the background image.
-   * @return {Boolean} result - Whether the view is updated.
+   * @param {Object} data - Data passed.
+   * @param {Object} data.style - CSS style rules including the background image.
+   * @returns {Boolean} result - Whether the view is updated.
    * @todo Add more info such as the location and social accounts.
    */
   on_gravatar_profile_found (data) {
@@ -58,11 +62,11 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called by ProfilePageController when the User's Bugzilla profile is retrieved. Render the profile details.
-   * @argument {Object} data - Data passed.
-   * @argument {Object} data.profile - Profile info.
-   * @argument {Object} data.links - Related links.
-   * @argument {Object} data.style - CSS style rules including the user's generated color.
-   * @return {Boolean} result - Whether the view is updated.
+   * @param {Object} data - Data passed.
+   * @param {Object} data.profile - Profile info.
+   * @param {Object} data.links - Related links.
+   * @param {Object} data.style - CSS style rules including the user's generated color.
+   * @returns {Boolean} result - Whether the view is updated.
    */
   on_bugzilla_profile_found (data) {
     if (!this.$tab || !this.$profile || !this.$header) {
@@ -81,9 +85,9 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called by ProfilePageController when the User's Bugzilla profile could not be retrieved. Show the error message.
-   * @argument {Object} data - Data passed.
-   * @argument {Error}  data.error - Error encountered.
-   * @return {Boolean} result - Whether the view is updated.
+   * @param {Object} data - Data passed.
+   * @param {Error}  data.error - Error encountered.
+   * @returns {Boolean} result - Whether the view is updated.
    */
   on_bugzilla_profile_fetching_error (data) {
     if (!this.$status) {
@@ -97,8 +101,8 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called by ProfilePageController when fetching the User's Bugzilla profile is complete. Remove the throbber.
-   * @argument {undefined}
-   * @return {Boolean} result - Whether the view is updated.
+   * @param {undefined}
+   * @returns {Boolean} result - Whether the view is updated.
    */
   on_bugzilla_profile_fetching_complete () {
     if (!this.$tabpanel || !this.$status) {

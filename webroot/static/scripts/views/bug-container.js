@@ -11,9 +11,13 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Get a BugContainerView instance.
    * @constructor
-   * @argument {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
-   * @argument {HTMLElement} $container - The outer element.
-   * @return {Object} view - New BugContainerView instance.
+   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
+   * @param {HTMLElement} $container - The outer element.
+   * @returns {Object} view - New BugContainerView instance.
+   * @listens BugContainerController:BugDataAvailable
+   * @listens BugContainerController:BugDataUnavailable
+   * @listens BugContainerController:LoadingStarted
+   * @listens BugContainerController:LoadingFinished
    */
   constructor (instance_id, $container) {
     super(); // This does nothing but is required before using `this`
@@ -30,12 +34,12 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Called by DetailsPageController when the bug data is found. Prepare the newly opened tabpanel.
-   * @argument {Object} data - Passed data.
-   * @argument {Proxy}  data.bug - Bug to show.
-   * @argument {Object} data.controller - New BugController instance for that bug.
-   * @argument {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   * @param {Object} data - Passed data.
+   * @param {Proxy}  data.bug - Bug to show.
+   * @param {Object} data.controller - New BugController instance for that bug.
+   * @param {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @return {Boolean} result - Whether the view is updated.
+   * @returns {Boolean} result - Whether the view is updated.
    */
   on_bug_data_available (data) {
     if (!this.$container || !data.bug.summary) {
@@ -49,10 +53,10 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Called by DetailsPageController when an error was encountered while fetching the bug data. Show the error message.
-   * @argument {Object} data - Passed data.
-   * @argument {Number} data.code - Error code usually defined by Bugzilla.
-   * @argument {String} data.message - Error message text.
-   * @return {Boolean} result - Whether the view is updated.
+   * @param {Object} data - Passed data.
+   * @param {Number} data.code - Error code usually defined by Bugzilla.
+   * @param {String} data.message - Error message text.
+   * @returns {Boolean} result - Whether the view is updated.
    */
   on_bug_data_unavailable (data) {
     if (this.$bug || !this.$container) {
@@ -74,12 +78,12 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Show the selected bug in the container.
-   * @argument {Object} data - Preview data.
-   * @argument {Proxy}  data.bug - Bug to show.
-   * @argument {Object} data.controller - New BugController instance for that bug.
-   * @argument {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   * @param {Object} data - Preview data.
+   * @param {Proxy}  data.bug - Bug to show.
+   * @param {Object} data.controller - New BugController instance for that bug.
+   * @param {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @return {undefined}
+   * @returns {undefined}
    */
   add_bug (data) {
     this.bug_id = data.bug.id;
@@ -99,8 +103,8 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Set up the Back and Forward navigation when applicable, including the toolbar buttons and keyboard shortcuts.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   setup_navigation () {
     let Button = this.widgets.Button;
@@ -140,8 +144,9 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Switch to another bug within the same tab through the Back and Forward navigation.
-   * @argument {Number} new_id - ID of the bug to show next.
-   * @return {undefined}
+   * @param {Number} new_id - ID of the bug to show next.
+   * @returns {undefined}
+   * @fires BugContainerView:NavigationRequested
    */
   navigate (new_id) {
     let old_id = this.bug_id;

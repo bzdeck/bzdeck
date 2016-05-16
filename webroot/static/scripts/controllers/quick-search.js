@@ -10,8 +10,12 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   /**
    * Get a QuickSearchController instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New QuickSearchController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New QuickSearchController instance.
+   * @listens QuickSearchView:RecentSearchesRequested
+   * @listens QuickSearchView:QuickSearchRequested
+   * @listens QuickSearchView:AdvancedSearchRequested
+   * @listens QuickSearchView:ResultSelected
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -26,8 +30,9 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Provide recent searches done by the user. Notify the results with an event.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires QuickSearchController:ResultsAvailable
    */
   provide_recent_searches () {
     BzDeck.prefs.get('search.quick.history').then(history => {
@@ -62,8 +67,9 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Execute a quick search and notify the results with an event.
-   * @argument {String} input - Original search terms, may contain spaces.
-   * @return {undefined}
+   * @param {String} input - Original search terms, may contain spaces.
+   * @returns {undefined}
+   * @fires QuickSearchController:ResultsAvailable
    * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {
@@ -106,8 +112,8 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Extract some bug properties for a quick search result.
-   * @argument {Proxy} bug - BugModel instance.
-   * @return {Promise.<Object>} result - Promise to be resolved in bug search result.
+   * @param {Proxy} bug - BugModel instance.
+   * @returns {Promise.<Object>} result - Promise to be resolved in bug search result.
    */
   get_bug_result (bug) {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
@@ -123,8 +129,8 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Extract some user properties for a quick search result.
-   * @argument {Proxy} user - UserModel instance.
-   * @return {Promise.<Object>} result - Promise to be resolved in user search result.
+   * @param {Proxy} user - UserModel instance.
+   * @returns {Promise.<Object>} result - Promise to be resolved in user search result.
    */
   get_user_result (user) {
     return Promise.resolve(Object.assign({ type: 'user', id: user.email }, user.properties));
@@ -132,8 +138,8 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Execute an advanced search by opening a new search page.
-   * @argument {String} input - Original search terms, may contain spaces.
-   * @return {undefined}
+   * @param {String} input - Original search terms, may contain spaces.
+   * @returns {undefined}
    */
   exec_advanced_search (input) {
     let params = new URLSearchParams();
@@ -150,10 +156,10 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   /**
    * Called by QuickSearchView whenever a search result is selected. Show the result in a new tab, and update the search
    * history.
-   * @argument {Object} data - Passed data.
-   * @argument {{String|Number)} data.id - Item name, such as bug ID or user name.
-   * @argument {String} data.type - Item type, such as 'bug' or 'user'.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {{String|Number)} data.id - Item name, such as bug ID or user name.
+   * @param {String} data.type - Item type, such as 'bug' or 'user'.
+   * @returns {undefined}
    */
   on_result_selected (data) {
     let { id, type } = data;

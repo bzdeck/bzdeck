@@ -10,8 +10,8 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
   /**
    * Get a MarkdownEditor instance.
    * @constructor
-   * @argument {HTMLElement} $form - Form container element.
-   * @return {Object} view - New MarkdownEditor instance.
+   * @param {HTMLElement} $form - Form container element.
+   * @returns {Object} view - New MarkdownEditor instance.
    */
   constructor ($form) {
     super(); // This does nothing but is required before using `this`
@@ -47,8 +47,8 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
 
   /**
    * Update the text by adding marks.
-   * @argument {String} tag - One of HTML tag names, such as strong, a, code, ul.
-   * @return {undefined}
+   * @param {String} tag - One of HTML tag names, such as strong, a, code, ul.
+   * @returns {undefined}
    */
   exec_command (tag) {
     let value = this.$textbox.value;

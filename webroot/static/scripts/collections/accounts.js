@@ -10,8 +10,8 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
   /**
    * Get an AccountCollection instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} accounts - New AccountCollection instance.
+   * @param {undefined}
+   * @returns {Object} accounts - New AccountCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -23,8 +23,8 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
 
   /**
    * Get the currently signed-in user account if any.
-   * @argument {undefined}
-   * @return {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
+   * @param {undefined}
+   * @returns {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
    */
   get_current () {
     return this.get_all().then(accounts => [...accounts.values()].find(account => account.data.active));

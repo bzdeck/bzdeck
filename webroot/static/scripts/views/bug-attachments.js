@@ -10,11 +10,17 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Get a BugAttachmentsView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Number} bug_id - Corresponding bug ID.
-   * @argument {HTMLElement} $container - Container node to render the attachments.
-   * @return {Object} view - New BugAttachmentsView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Number} bug_id - Corresponding bug ID.
+   * @param {HTMLElement} $container - Container node to render the attachments.
+   * @returns {Object} view - New BugAttachmentsView instance.
+   * @fires BugView:AttachmentSelected
+   * @listens BugController:AttachmentAdded
+   * @listens BugController:AttachmentRemoved
+   * @listens BugController:AttachmentEdited
+   * @listens BugController:UploadListUpdated
+   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug_id, $container) {
     super(); // This does nothing but is required before using `this`
@@ -78,8 +84,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Render the provided attachments.
-   * @argument {Array.<Proxy>} attachments - Attachment list of the bug.
-   * @return {undefined}
+   * @param {Array.<Proxy>} attachments - Attachment list of the bug.
+   * @returns {undefined}
    */
   render (attachments) {
     let $fragment = new DocumentFragment();
@@ -120,8 +126,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called whenever the attachment list is clicked.
-   * @argument {MouseEvent} event - click or dblclick.
-   * @return {undefined}
+   * @param {MouseEvent} event - click or dblclick.
+   * @returns {undefined}
+   * @fires GlobalView:OpenAttachment
    */
   listbox_onclick (event) {
     let $selected = this.$$listbox.view.selected[0];
@@ -136,8 +143,11 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Initialize the attachment uploading interface. This offers Add/Remove buttons as well as the drag-and-drop support.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:FilesSelected
+   * @fires BugView:AttachText
+   * @fires BugView:RemoveAttachment
    */
   init_uploader () {
     this.$drop_target = this.$container.querySelector('[aria-dropeffect]');
@@ -210,9 +220,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is added by the user. Add the item to the listbox.
-   * @argument {Object} data - Passed data.
-   * @argument {Proxy}  data.attachment - Added attachment data as AttachmentModel instance.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Proxy}  data.attachment - Added attachment data as AttachmentModel instance.
+   * @returns {undefined}
    */
   on_attachment_added (data) {
     let { attachment } = data;
@@ -223,9 +233,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is removed by the user. Remove the item from the listbox.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.hash - Removed attachment's hash value in the cached list.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.hash - Removed attachment's hash value in the cached list.
+   * @returns {undefined}
    */
   on_attachment_removed (data) {
     let { hash } = data;
@@ -238,13 +248,13 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is edited by the user. Update the item on the listbox.
-   * @argument {Object} data - Passed data.
-   * @argument {Object} data.change - Change details.
-   * @argument {Number} data.change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
-   * @argument {String} data.change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
-   * @argument {String} data.change.prop - Edited property name.
-   * @argument {*}      data.change.value - New value.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Object} data.change - Change details.
+   * @param {Number} data.change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+   * @param {String} data.change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
+   * @param {String} data.change.prop - Edited property name.
+   * @param {*}      data.change.value - New value.
+   * @returns {undefined}
    */
   on_attachment_edited (data) {
     let { id, hash, prop, value } = data.change;
@@ -261,9 +271,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is added or removed by the user. Update the list header title.
-   * @argument {Object} data - Passed data.
-   * @argument {Array.<Proxy>} data.uploads - List of the new attachments in Array-like object.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like object.
+   * @returns {undefined}
    */
   on_upload_list_updated (data) {
     this.update_list_title();
@@ -271,8 +281,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Update the list header title, showing the number of the attachments including unuploaded ones.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   update_list_title () {
     let total = this.attachments.size;
@@ -289,10 +299,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
    * the listbox.
-   * @argument {Object} data - Passed data.
-   * @argument {Object} [data.state] - Current history state.
-   * @argument {String} [data.state.att_id] - Attachment ID or hash.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Object} [data.state] - Current history state.
+   * @param {String} [data.state.att_id] - Attachment ID or hash.
+   * @returns {undefined}
    */
   on_history_updated (data) {
     let target_id = data.state ? data.state.att_id : undefined;

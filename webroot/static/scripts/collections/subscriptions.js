@@ -12,8 +12,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * Get a SubscriptionCollection instance. This constructor is required to fire events in the member functions.
    * Otherwise `constructor.name` will be blank and `this.trigger` doesn't work.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} collection - New SubscriptionCollection instance.
+   * @param {undefined}
+   * @returns {Object} collection - New SubscriptionCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -22,8 +22,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
   /**
    * Get bugs the user is participating from the local database with a specific key, like inbox, starred or reported.
    * @override
-   * @argument {String} id - Key of the subscription.
-   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
+   * @param {String} id - Key of the subscription.
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    */
   get (id) {
     let email = BzDeck.account.data.name;
@@ -53,8 +53,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
   /**
    * Get all bugs the user is participating from the local database.
    * @override
-   * @argument {undefined}
-   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
+   * @param {undefined}
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
    */
   get_all () {
     let email = BzDeck.account.data.name;
@@ -68,9 +68,12 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
 
   /**
    * Retrieve data of bugs the user is participating from the remote Bugzilla instance, and return those as models.
-   * @argument {Boolean} [firstrun=false] - True for the initial session.
-   * @argument {URLSearchParams} [params] - Search query.
-   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
+   * @param {Boolean} [firstrun=false] - True for the initial session.
+   * @param {URLSearchParams} [params] - Search query.
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
+   * @fires SubscriptionCollection:FetchingSubscriptionsStarted
+   * @fires SubscriptionCollection:FetchingSubscriptionsComplete
+   * @fires SubscriptionCollection:Updated
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   fetch (firstrun = false, params = new URLSearchParams()) {

@@ -10,11 +10,11 @@
 BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   /**
    * Initialize the Tooltip View.
-   * @argument {HTMLElement} $owner - Element that owns/triggers the tooltip.
-   * @argument {Array.<String>} [showing_events] - Events to show the tooptip. Default: mouseenter/focus
-   * @argument {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/blur
-   * @argument {String} [type] - Type of the target data ID: string or number.
-   * @return {undefined}
+   * @param {HTMLElement} $owner - Element that owns/triggers the tooltip.
+   * @param {Array.<String>} [showing_events] - Events to show the tooptip. Default: mouseenter/focus
+   * @param {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/blur
+   * @param {String} [type] - Type of the target data ID: string or number.
+   * @returns {undefined}
    */
   constructor ($owner, showing_events, hiding_events, type) {
     super(); // This does nothing but is required before using `this`
@@ -30,8 +30,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Set event handlers on the owner element to show the tooltip.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   set_showing_events () {
     for (let type of this.showing_events) {
@@ -53,8 +53,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Set event handlers on the owner element to hide the tooltip.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   set_hiding_events () {
     for (let type of this.hiding_events) {
@@ -64,8 +64,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Remove any existing tooptips from the page.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   hide_any () {
     let $tooltip = document.querySelector('body > [role="tooltip"]');
@@ -84,8 +84,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Remove the current tooptip from the page.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   hide () {
     if (this.$tooltip) {
@@ -104,8 +104,9 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
   /**
    * Initialize the Bug Tooltip View.
    * @constructor
-   * @argument {...arguments} args - See BzDeck.TooltipView.prototype.constructor.
-   * @return {Object} view - New BugTooltipView instance.
+   * @param {...arguments} args - See BzDeck.TooltipView.prototype.constructor.
+   * @returns {Object} view - New BugTooltipView instance.
+   * @fires GlobalView:OpenBug
    */
   constructor (...args) {
     super(...args);
@@ -113,8 +114,8 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
 
   /**
    * Show the bug tooptip on the page.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   show () {
     let bug;

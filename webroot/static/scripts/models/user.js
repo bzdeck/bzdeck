@@ -11,9 +11,10 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get an UserModel instance.
    * @constructor
-   * @argument {Object} data - Profile object including Bugzilla's raw user data.
-   * @return {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via
+   * @param {Object} data - Profile object including Bugzilla's raw user data.
+   * @returns {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via
    *  user.prop instead of user.data.prop.
+   * @fires UserModel:UserInfoUpdated
    */
   constructor (data) {
     super(); // This does nothing but is required before using `this`
@@ -99,8 +100,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
-   * @argument {Object} [options] - Extra options.
-   * @return {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
+   * @param {Object} [options] - Extra options.
+   * @returns {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
    */
   fetch (options = {}) {
     options.in_promise_all = true;
@@ -131,10 +132,10 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel.
-   * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @argument {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
-   * @return {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
+   * @param {Object} [options] - Extra options.
+   * @param {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
+   * @param {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
+   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
   get_bugzilla_profile (options = {}) {
@@ -161,9 +162,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalController.
-   * @argument {Object} [options] - Extra options.
-   * @argument {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @return {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
+   * @param {Object} [options] - Extra options.
+   * @param {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
+   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
+   * @fires UserModel:GravatarProfileRequested
+   * @listens GlobalController:GravatarProfileProvided
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
   get_gravatar_profile (options = {}) {
@@ -205,8 +208,10 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
    * Because this requires DOM access, delegate the process to GlobalController.
-   * @argument {Object} [options] - Extra options.
-   * @return {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
+   * @param {Object} [options] - Extra options.
+   * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
+   * @fires UserModel:GravatarImageRequested
+   * @listens GlobalController:GravatarImageProvided
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
   get_gravatar_image (options = {}) {

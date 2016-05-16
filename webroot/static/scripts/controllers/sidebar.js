@@ -10,8 +10,12 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Get a SidebarController instance.
    * @constructor
-   * @argument {Proxy} user - UserModel instance of the application user.
-   * @return {Object} controller - New SidebarController instance.
+   * @param {Proxy} user - UserModel instance of the application user.
+   * @returns {Object} controller - New SidebarController instance.
+   * @fires SidebarController:GravatarProfileFound
+   * @listens SidebarView:FolderSelected
+   * @listens SidebarView:AppMenuItemSelected
+   * @listens BugModel:AnnotationUpdated
    */
   constructor (user) {
     super(); // This does nothing but is required before using `this`
@@ -67,8 +71,9 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
   /**
    * Open a specific folder by ID.
-   * @argument {String} folder_id - One of the folder identifiers defined in the app config.
-   * @return {undefined}
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @returns {undefined}
+   * @fires SidebarController:FolderOpened
    */
   open_folder (folder_id) {
     BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
@@ -79,11 +84,11 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
   /**
    * Called by BugModel whenever a bug annotation is updated. Notify the change if the type is 'unread'.
-   * @argument {Object} data - Annotation change details.
-   * @argument {Proxy} data.bug - Changed bug.
-   * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @argument {Boolean} data.value - New annotation value.
-   * @return {undefined}
+   * @param {Object} data - Annotation change details.
+   * @param {Proxy} data.bug - Changed bug.
+   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} data.value - New annotation value.
+   * @returns {undefined}
    */
   on_annotation_updated (data) {
     if (data.type === 'unread') {
@@ -93,8 +98,9 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
   /**
    * Notify the number of unread bugs so the view can show it on the Inbox option.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SidebarController:UnreadToggled
    */
   toggle_unread () {
     BzDeck.collections.subscriptions.get_all().then(bugs => {
@@ -110,9 +116,9 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
   /**
    * Called by BannerView whenever an Application menu item is selected.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.command - Command name of the menu itme.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.command - Command name of the menu itme.
+   * @returns {undefined}
    */
   on_app_menu_item_selected (data) {
     let func = {

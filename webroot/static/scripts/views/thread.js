@@ -10,8 +10,8 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
    * Called whenever one or more items are selected on the thread. Show the last-selected bug in the relevant Preview
    * Pane or a new tab.
-   * @argument {CustomEvent} event - Providing an array of seleted item IDs.
-   * @return {undefined}
+   * @param {CustomEvent} event - Providing an array of seleted item IDs.
+   * @returns {undefined}
    */
   onselect (event) {
     let ids = event.detail.ids;
@@ -23,9 +23,9 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
 
   /**
    * Called whenever the thread is double-clicked. Show the selected bug in a new tab.
-   * @argument {MouseEvent} event - Fired dblclick event.
-   * @argument {String} selector - Defining the target element.
-   * @return {undefined}
+   * @param {MouseEvent} event - Fired dblclick event.
+   * @param {String} selector - Defining the target element.
+   * @returns {undefined}
    */
   ondblclick (event, selector) {
     let $target = event.originalTarget;
@@ -37,8 +37,9 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
 
   /**
    * Open a specific bug in a new tab.
-   * @argument {Number} id - Bug ID to show.
-   * @return {undefined}
+   * @param {Number} id - Bug ID to show.
+   * @returns {undefined}
+   * @fires GlobalView:OpenBug
    */
   open_bug (id) {
     this.trigger('GlobalView:OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });
@@ -53,12 +54,13 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Get a ClassicThreadView instance.
    * @constructor
-   * @argument {Object} consumer - View that contains the thread.
-   * @argument {String} name - Identifier for the thread.
-   * @argument {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
-   * @argument {Array} columns - Column list.
-   * @argument {Object} options - Used for the Grid widget.
-   * @return {Object} view - New ClassicThreadView instance.
+   * @param {Object} consumer - View that contains the thread.
+   * @param {String} name - Identifier for the thread.
+   * @param {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
+   * @param {Array} columns - Column list.
+   * @param {Object} options - Used for the Grid widget.
+   * @returns {Object} view - New ClassicThreadView instance.
+   * @listens BugModel:AnnotationUpdated
    */
   constructor (consumer, name, $grid, columns, options) {
     super(); // This does nothing but is required before using `this`
@@ -112,8 +114,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
   /**
    * Update the thread with the specified bugs.
-   * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @return {undefined}
+   * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
+   * @returns {undefined}
    */
   update (bugs) {
     this.bugs = bugs;
@@ -171,8 +173,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
   /**
    * Filter the thread with the specified bugs.
-   * @argument {Map.<Number, Proxy>} bugs - List of bugs to show.
-   * @return {undefined}
+   * @param {Map.<Number, Proxy>} bugs - List of bugs to show.
+   * @returns {undefined}
    */
   filter (bugs) {
     this.$$grid.filter([...bugs.keys()]);
@@ -180,11 +182,11 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
   /**
    * Called by BugModel whenever a bug annotation is updated. Update the bug row on the thread.
-   * @argument {Object} data - Annotation change details.
-   * @argument {Proxy} data.bug - Changed bug.
-   * @argument {String} data.type - Annotation type such as 'starred'.
-   * @argument {Boolean} data.value - New annotation value.
-   * @return {undefined}
+   * @param {Object} data - Annotation change details.
+   * @param {Proxy} data.bug - Changed bug.
+   * @param {String} data.type - Annotation type such as 'starred'.
+   * @param {Boolean} data.value - New annotation value.
+   * @returns {undefined}
    */
   on_annotation_updated (data) {
     let $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
@@ -207,12 +209,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Get a VerticalThreadView instance.
    * @constructor
-   * @argument {Object} consumer - View that contains the thread.
-   * @argument {String} name - Identifier for the thread.
-   * @argument {HTMLElement} $outer - Element that contains a child element with the listbox role.
-   * @argument {Object} options - Extra options for display.
-   * @argument {Object} options.sort_conditions - Thread sorting conditions.
-   * @return {Object} view - New VerticalThreadView instance.
+   * @param {Object} consumer - View that contains the thread.
+   * @param {String} name - Identifier for the thread.
+   * @param {HTMLElement} $outer - Element that contains a child element with the listbox role.
+   * @param {Object} options - Extra options for display.
+   * @param {Object} options.sort_conditions - Thread sorting conditions.
+   * @returns {Object} view - New VerticalThreadView instance.
+   * @listens BugModel:AnnotationUpdated
    */
   constructor (consumer, name, $outer, options) {
     super(); // This does nothing but is required before using `this`
@@ -292,8 +295,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Update the thread with the specified bugs.
-   * @argument {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @return {undefined}
+   * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
+   * @returns {undefined}
    */
   update (bugs) {
     let cond = this.options.sort_conditions;
@@ -313,8 +316,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Render thread items using a custom template.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   render () {
     let bugs = this.unrendered_bugs.splice(0, 50);
@@ -345,11 +348,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Called by BugModel whenever a bug annotation is updated. Update the bug item on the thread.
-   * @argument {Object} data - Annotation change details.
-   * @argument {Proxy} data.bug - Changed bug.
-   * @argument {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @argument {Boolean} data.value - New annotation value.
-   * @return {undefined}
+   * @param {Object} data - Annotation change details.
+   * @param {Proxy} data.bug - Changed bug.
+   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} data.value - New annotation value.
+   * @returns {undefined}
    */
   on_annotation_updated (data) {
     let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);

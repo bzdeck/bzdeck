@@ -11,8 +11,9 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Get a BugCollection instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} bugs - New BugCollection instance.
+   * @param {undefined}
+   * @returns {Object} bugs - New BugCollection instance.
+   * @listens BugzfeedController:BugUpdated
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -26,10 +27,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Retrieve multiple bugs from Bugzilla with specific bug IDs, and return bug objects.
-   * @argument {(Array|Set)} _ids - List of bug IDs to retrieve.
-   * @argument {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
-   * @argument {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
-   * @return {Promise.<Array.<Proxy>>} bugs - Promise to be resolved in proxified BugModel instances.
+   * @param {(Array|Set)} _ids - List of bug IDs to retrieve.
+   * @param {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
+   * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
+   * @returns {Promise.<Array.<Proxy>>} bugs - Promise to be resolved in proxified BugModel instances.
    */
   fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
@@ -130,8 +131,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Retrieve the user's last visit timestamp for bugs, then update each bug's read status.
-   * @argument {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to retrieve.
-   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
+   * @param {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to retrieve.
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
    */
   retrieve_last_visit (_ids) {
@@ -167,8 +168,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Search bugs from the local database and return the results.
-   * @argument {URLSearchParams} params - Search query.
-   * @return {Promise.<Object>} Promise to be resolved in the search results.
+   * @param {URLSearchParams} params - Search query.
+   * @returns {Promise.<Object>} Promise to be resolved in the search results.
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   search_local (params) {
@@ -184,8 +185,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Search bugs from the remote Bugzilla instnace and return the results.
-   * @argument {URLSearchParams} params - Search query.
-   * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @param {URLSearchParams} params - Search query.
+   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   search_remote (params) {
     let _bugs;
@@ -216,8 +217,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Sort descending (new to old) and return search results.
-   * @argument {Array.<Proxy>} bugs - List of found bugs.
-   * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @param {Array.<Proxy>} bugs - List of found bugs.
+   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    * @todo Improve the sorting algorithm.
    */
   get_search_results (bugs) {
@@ -232,8 +233,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
   /**
    * Called by BugzfeedController whenever a bug is updated. Retrieve the latest data from Bugzilla.
-   * @argument {Object} data - Passed data.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @returns {undefined}
    */
   on_bug_updated (data) {
     let { id } = data;

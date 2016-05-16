@@ -10,8 +10,8 @@ BzDeck.StatusbarController = class StatusbarController extends BzDeck.BaseContro
   /**
    * Get a StatusbarController instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New StatusbarController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New StatusbarController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`

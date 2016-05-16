@@ -11,8 +11,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   /**
    * Get a BannerView instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} view - New BannerView instance.
+   * @param {undefined}
+   * @returns {Object} view - New BannerView instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -26,16 +26,16 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Open a new global tab and load the relevant tabpanel content. FIXME: Need refactoring (#232).
-   * @argument {Object} options - Defining tab details.
-   * @argument {String} options.page_category - Category of the tabpanel content, such as 'details' or 'settings'.
-   * @argument {(String|Number)} options.page_id - Unique identifier for the tab. Can be generated with Date.now().
-   * @argument {Object} options.page_constructor - View constructor for the tabpanel content.
-   * @argument {Array} [options.page_constructor_args] - Arguments used to create a new View instance.
-   * @argument {String} options.tab_label - Text displayed on the label
-   * @argument {String} [options.tab_desc] - Optional text displayed as the tooltip of the tab.
-   * @argument {String} [options.tab_position] - Where to show the tab: 'next' or 'last' (default).
-   * @argument {Object} controller - Controller instance that requests the tab.
-   * @return {undefined}
+   * @param {Object} options - Defining tab details.
+   * @param {String} options.page_category - Category of the tabpanel content, such as 'details' or 'settings'.
+   * @param {(String|Number)} options.page_id - Unique identifier for the tab. Can be generated with Date.now().
+   * @param {Object} options.page_constructor - View constructor for the tabpanel content.
+   * @param {Array} [options.page_constructor_args] - Arguments used to create a new View instance.
+   * @param {String} options.tab_label - Text displayed on the label
+   * @param {String} [options.tab_desc] - Optional text displayed as the tooltip of the tab.
+   * @param {String} [options.tab_position] - Where to show the tab: 'next' or 'last' (default).
+   * @param {Object} controller - Controller instance that requests the tab.
+   * @returns {undefined}
    */
   open_tab (options, controller) {
     let page;
@@ -80,10 +80,11 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Called whenever a global tab is selected.
-   * @argument {Object} detail - Event detail.
-   * @argument {Array.<HTMLElement>} detail.items - Newly selected nodes.
-   * @argument {Array.<HTMLElement>} detail.oldval - Previously selected nodes.
-   * @return {undefined}
+   * @param {Object} detail - Event detail.
+   * @param {Array.<HTMLElement>} detail.items - Newly selected nodes.
+   * @param {Array.<HTMLElement>} detail.oldval - Previously selected nodes.
+   * @returns {undefined}
+   * @fires BannerView:TabSelected
    */
   on_tab_selected (detail) {
     let { items, oldval } = detail;
@@ -111,8 +112,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Called whenever a global tab is opened or closed. Update the data-tab-count attribute on <html>.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   update_tab_count () {
     document.documentElement.setAttribute('data-tab-count', this.$$tablist.view.members.length);
@@ -121,8 +122,9 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   /**
    * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global
    * banner.
-   * @argument {HTMLElement} $parent - Tabpanel that contains the header.
-   * @return {undefined}
+   * @param {HTMLElement} $parent - Tabpanel that contains the header.
+   * @returns {undefined}
+   * @fires BannerView:BackButtonClicked
    */
   add_back_button ($parent) {
     let $header = $parent.querySelector('header');

@@ -11,8 +11,8 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
    * Called by the app router and initialize the Attachment Page Controller. If the specified attachment has an existing
    * tab, switch to it. Otherwise, open a new tab and try to load the attachment.
    * @constructor
-   * @argument {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @return {Object} controller - New AttachmentPageController instance.
+   * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+   * @returns {Object} controller - New AttachmentPageController instance.
    */
   constructor (att_id) {
     super(); // This does nothing but is required before using `this`
@@ -48,8 +48,14 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
   /**
    * Prepare attachment data for the view. Find it from the local database or remote Bugzilla instance, then notify the
    * result regardless of the availability.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires AttachmentPageController:Offline
+   * @fires AttachmentPageController:LoadingStarted
+   * @fires AttachmentPageController:LoadingError
+   * @fires AttachmentPageController:LoadingComplete
+   * @fires AttachmentPageController:AttachmentAvailable
+   * @fires AttachmentPageController:AttachmentUnavailable
    */
   get_attachment () {
     // If the ID is hash, it's an unuploaded attachment. And if the cache cound not be found, just raise an error

@@ -11,8 +11,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Get a UserCollection instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} users - New UserCollection instance.
+   * @param {undefined}
+   * @returns {Object} users - New UserCollection instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -25,8 +25,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Add bug participants, including Cc members, assignee, QA and menters, to the user database, and return the models
    * of those users.
-   * @argument {Proxy} bug - BugModel object.
-   * @return {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
+   * @param {Proxy} bug - BugModel object.
+   * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
    */
   add_from_bug (bug) {
     let missing = new Set();
@@ -48,8 +48,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Refresh user profiles if the data is older than 10 days
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   refresh () {
     this.get_all().then(users => {
@@ -63,8 +63,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Retrieve multiple users from Bugzilla with specific user names, and return user objects.
-   * @argument {(Array|Set)} _names - List of user names (email addresses) to retrieve.
-   * @return {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
+   * @param {(Array|Set)} _names - List of user names (email addresses) to retrieve.
+   * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
    */
   fetch (_names) {
     let names = [..._names].sort();
@@ -117,8 +117,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Search users from the local database and return the results.
-   * @argument {URLSearchParams} params - Search query.
-   * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @param {URLSearchParams} params - Search query.
+   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   search_local (params) {
     let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
@@ -137,8 +137,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Search users from the remote Bugzilla instnace and return the results.
-   * @argument {URLSearchParams} params - Search query.
-   * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @param {URLSearchParams} params - Search query.
+   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   search_remote (params) {
     let _users;
@@ -169,8 +169,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Sort descending (new to old) and return search results.
-   * @argument {Array.<Proxy>} users - List of found users.
-   * @return {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @param {Array.<Proxy>} users - List of found users.
+   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    * @todo Improve the sorting algorithm.
    */
   get_search_results (users) {

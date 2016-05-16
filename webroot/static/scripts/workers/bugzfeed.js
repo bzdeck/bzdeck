@@ -17,8 +17,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
   /**
    * Initialize the Bugzfeed background service.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} worker - New BugzfeedWorker instance.
+   * @param {undefined}
+   * @returns {Object} worker - New BugzfeedWorker instance.
    */
   constructor () {
     this.subscriptions = new Set();
@@ -28,8 +28,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Called whenever a message is received from the main thread.
-   * @argument {ServiceWorkerMessageEvent} event - The message event.
-   * @return {undefined}
+   * @param {ServiceWorkerMessageEvent} event - The message event.
+   * @returns {undefined}
    */
   _onmessage (event) {
     let { command, endpoint, ids } = event.data;
@@ -48,8 +48,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Connect to the WebSocket server and specify event handlers.
-   * @argument {String} [endpoint] - WebSocket server URL.
-   * @return {undefined}
+   * @param {String} [endpoint] - WebSocket server URL.
+   * @returns {undefined}
    */
   connect (endpoint) {
     this.endpoint = endpoint || this.endpoint;
@@ -67,8 +67,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Disconnect from the WebSocket server.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   disconnect () {
     if (this.websocket) {
@@ -78,9 +78,9 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Send a message to the WebSocket server.
-   * @argument {String} command - One of supported commands: subscribe, unsubscribe, subscriptions or version.
-   * @argument {Array.<Number>} ids - Bug IDs to subscribe.
-   * @return {undefined}
+   * @param {String} command - One of supported commands: subscribe, unsubscribe, subscriptions or version.
+   * @param {Array.<Number>} ids - Bug IDs to subscribe.
+   * @returns {undefined}
    * @see {@link https://wiki.mozilla.org/BMO/ChangeNotificationSystem#Commands}
    */
   send (command, ids) {
@@ -91,8 +91,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Subscribe to one or more bugs.
-   * @argument {Array.<Number>} ids - Bug IDs to subscribe.
-   * @return {undefined}
+   * @param {Array.<Number>} ids - Bug IDs to subscribe.
+   * @returns {undefined}
    */
   subscribe (ids) {
     ids.forEach(id => this.subscriptions.add(id));
@@ -101,8 +101,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Unsubscribe from one or more bugs.
-   * @argument {Array.<Number>} ids - Bug IDs to unsubscribe.
-   * @return {undefined}
+   * @param {Array.<Number>} ids - Bug IDs to unsubscribe.
+   * @returns {undefined}
    */
   unsubscribe (ids) {
     ids.forEach(id => this.subscriptions.delete(id));
@@ -111,8 +111,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Called when the socket connection is opened. Subscribe to bugs once (re)connected.
-   * @argument {Event} event - The open event.
-   * @return {undefined}
+   * @param {Event} event - The open event.
+   * @returns {undefined}
    */
   onopen (event) {
     if (this.reconnector) {
@@ -129,8 +129,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Called when the socket connection is closed. Try to reconnect every 30 seconds after unexpectedly disconnected.
-   * @argument {CloseEvent} event - The close event.
-   * @return {undefined}
+   * @param {CloseEvent} event - The close event.
+   * @returns {undefined}
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent}
    */
   onclose (event) {
@@ -144,8 +144,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
   /**
    * Called when the socket connection raises an error. Try to reconnect every 30 seconds after unexpectedly
    * disconnected.
-   * @argument {Event} event - The error event.
-   * @return {undefined}
+   * @param {Event} event - The error event.
+   * @returns {undefined}
    */
   onerror (event) {
     if (!this.reconnector) {
@@ -157,8 +157,8 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
 
   /**
    * Called whenever a message is received from the server. When a bug is updated, notify the ID to the main thread.
-   * @argument {MessageEvent} event - The message event.
-   * @return {undefined}
+   * @param {MessageEvent} event - The message event.
+   * @returns {undefined}
    */
   onmessage (event) {
     let { command, bug, bugs, result, when } = JSON.parse(event.data);

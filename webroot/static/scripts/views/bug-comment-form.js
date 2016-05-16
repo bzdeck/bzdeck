@@ -10,11 +10,24 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Get a BugCommentFormView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {Object} bug - BugModel instance.
-   * @argument {HTMLElement} $bug - Bug container element.
-   * @return {Object} view - New BugCommentFormView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {Object} bug - BugModel instance.
+   * @param {HTMLElement} $bug - Bug container element.
+   * @returns {Object} view - New BugCommentFormView instance.
+   * @fires BugView:Submit
+   * @listens BugController:AttachmentAdded
+   * @listens BugController:AttachmentRemoved
+   * @listens BugController:AttachmentEdited
+   * @listens BugController:AttachmentError
+   * @listens BugController:UploadListUpdated
+   * @listens BugController:BugEdited
+   * @listens BugController:CommentEdited
+   * @listens BugController:Submit
+   * @listens BugController:SubmitProgress
+   * @listens BugController:SubmitSuccess
+   * @listens BugController:SubmitError
+   * @listens BugController:SubmitComplete
    */
   constructor (view_id, bug, $bug) {
     super(); // This does nothing but is required before using `this`
@@ -88,8 +101,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
    * the newly selected tab.
-   * @argument {HTMLElement} $tab - Selected tab node.
-   * @return {undefined}
+   * @param {HTMLElement} $tab - Selected tab node.
+   * @returns {undefined}
    */
   on_tab_selected ($tab) {
     this.$formatting_toolbar.setAttribute('aria-hidden', !$tab.id.endsWith('comment'));
@@ -102,8 +115,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the Comment tabpanel.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:Submit
    */
   init_comment_tabpanel () {
     // Fill in an auto-saved draft comment if any, or workaround a Firefox bug where the placeholder is not displayed in
@@ -119,8 +133,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the Attachment tabpanel.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:FilesSelected
    */
   init_attachment_tabpanel () {
     let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
@@ -142,8 +157,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the NeedInfo tabpanel.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:EditFlag
    */
   init_needinfo_tabpanel () {
     let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
@@ -213,8 +229,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by the textbox element whenever the new comment is edited by the user.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugView:EditComment
    */
   oninput () {
     let text = this.$textbox.value;
@@ -239,9 +256,14 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is added by the user. Update the attachment list UI accordingly.
-   * @argument {Object} data - Passed data.
-   * @argument {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @returns {undefined}
+   * @fires GlobalView:OpenAttachment
+   * @fires GlobalView:OpenBug
+   * @fires BugView:RemoveAttachment
+   * @fires BugView:MoveUpAttachment
+   * @fires BugView:MoveDownAttachment
    */
   on_attachment_added (data) {
     let attachment = data.attachment;
@@ -283,9 +305,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever a new attachment is removed by the user. Update the attachment list UI
    * accordingly.
-   * @argument {Object} data - Passed data.
-   * @argument {Number} data.index - Removed attachment's index in the cached list.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Number} data.index - Removed attachment's index in the cached list.
+   * @returns {undefined}
    */
   on_attachment_removed (data) {
     this.$attachments_tbody.rows[data.index].remove();
@@ -293,12 +315,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
-   * @argument {Object} data - Passed data.
-   * @argument {Object} data.change - Change details.
-   * @argument {String} data.change.hash - Attachment hash for unuploaded attachment.
-   * @argument {String} data.change.prop - Changed property name.
-   * @argument {*}      data.change.value - New property value.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Object} data.change - Change details.
+   * @param {String} data.change.hash - Attachment hash for unuploaded attachment.
+   * @param {String} data.change.prop - Changed property name.
+   * @param {*}      data.change.value - New property value.
+   * @returns {undefined}
    */
   on_attachment_edited (data) {
     let { hash, prop, value } = data.change;
@@ -311,9 +333,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever a new attachment is added or removed by the user. If there is any unuploaded
    * attachment, select the Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
-   * @argument {Object} data - Passed data.
-   * @argument {Array.<Proxy>} data.uploads - List of the new attachments in Array-like Object.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like Object.
+   * @returns {undefined}
    */
   on_upload_list_updated (data) {
     let len = data.uploads.length;
@@ -325,9 +347,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever a new attachment added by the user has an error, such as an oversized file. Show
    * an alert dialog to notify the user of the error.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.message - Explanation of the detected error.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.message - Explanation of the detected error.
+   * @returns {undefined}
    */
   on_attachment_error (data) {
     new this.widgets.Dialog({
@@ -340,9 +362,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever the a comment text is added or removed by the user. If the comment form is empty,
    * disable the Preview tab.
-   * @argument {Object} data - Passed data.
-   * @argument {Boolean} data.has_comment - Whether the comment is empty.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Boolean} data.has_comment - Whether the comment is empty.
+   * @returns {undefined}
    */
   on_comment_edited (data) {
     this.$preview_tab.setAttribute('aria-disabled', !data.has_comment);
@@ -351,9 +373,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever any of the fields, comments or attachments are edited by the user. If there is
    * any change, enable the Submit button. Otherwise, disable it.
-   * @argument {Object} data - Passed data.
-   * @argument {Boolean} data.can_submit - Whether the changes can be submitted immediately.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Boolean} data.can_submit - Whether the changes can be submitted immediately.
+   * @returns {undefined}
    */
   on_bug_edited (data) {
     this.$submit.setAttribute('aria-disabled', !data.can_submit);
@@ -362,8 +384,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever the changes are about to be submitted to Bugzilla. Disable the comment form and
    * Submit button and update the statusbar message.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_submit () {
     this.$textbox.setAttribute('aria-readonly', 'true');
@@ -374,11 +396,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever the upload of a new attachment is in progress. Show the current status on the
    * statusbar.
-   * @argument {object} data - Current uploading status.
-   * @argument {Number} data.total - Total size of attachments.
-   * @argument {Number} data.uploaded - Uploaded size of attachments.
-   * @argument {Number} data.percentage - Uploaded percentage.
-   * @return {undefined}
+   * @param {object} data - Current uploading status.
+   * @param {Number} data.total - Total size of attachments.
+   * @param {Number} data.uploaded - Uploaded size of attachments.
+   * @param {Number} data.percentage - Uploaded percentage.
+   * @returns {undefined}
    * @todo Use a progressbar (#159)
    */
   on_submit_progress (data) {
@@ -387,8 +409,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by BugController whenever all the changes are submitted successfully. Reset the form content.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_submit_success () {
     this.$textbox.value = '';
@@ -398,10 +420,10 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by BugController whenever any error is detected while submitting the changes. Show the error message on the
    * statusbar.
-   * @argument {object} data - Error details.
-   * @argument {String} data.error - Error message.
-   * @argument {Boolean} data.button_disabled - Whether the submit button should be disabled.
-   * @return {undefined}
+   * @param {object} data - Error details.
+   * @param {String} data.error - Error message.
+   * @param {Boolean} data.button_disabled - Whether the submit button should be disabled.
+   * @returns {undefined}
    */
   on_submit_error (data) {
     this.$submit.setAttribute('aria-disabled', data.button_disabled);
@@ -410,8 +432,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by BugController once a submission is complete, regardless of errors. Enable and focus on the comment form.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_submit_complete () {
     // The textbox should be focused anyway

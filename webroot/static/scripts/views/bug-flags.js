@@ -10,9 +10,9 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
   /**
    * Get a BugFlagsView instance.
    * @constructor
-   * @argument {Proxy} bug - Relevant bug with the flags.
-   * @argument {Proxy} [att] - Relevant attachment.
-   * @return {Object} view - New BugFlagsView instance.
+   * @param {Proxy} bug - Relevant bug with the flags.
+   * @param {Proxy} [att] - Relevant attachment.
+   * @returns {Object} view - New BugFlagsView instance.
    */
   constructor (bug, att = undefined) {
     super(); // This does nothing but is required before using `this`
@@ -23,9 +23,9 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
 
   /**
    * Render the Flags section on the bug info pane or attachment view. This feature is still a work in progress.
-   * @argument {HTMLElement} $outer - Container element to render.
-   * @argument {Number} level - aria-level for the label.
-   * @return {undefined}
+   * @param {HTMLElement} $outer - Container element to render.
+   * @param {Number} level - aria-level for the label.
+   * @returns {undefined}
    */
   render ($outer, level = 4) {
     let config = BzDeck.host.data.config;

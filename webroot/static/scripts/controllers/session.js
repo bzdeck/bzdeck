@@ -10,8 +10,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   /**
    * Get a SessionController instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New SessionController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New SessionController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -38,8 +38,10 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 1. Find a user account from the local database.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:StatusUpdate
+   * @fires SessionController:Error
    */
   find_account () {
     this.trigger(':StatusUpdate', { message: 'Looking for your account...' }); // l10n
@@ -69,8 +71,13 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 2. Let the user sign in if an active account could not be found.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:StatusUpdate
+   * @fires SessionController:Error
+   * @listens LoginFormView:LoginRequested
+   * @listens LoginFormView:QRCodeDecoded
+   * @listens LoginFormView:QRCodeError
    */
   force_login () {
     this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
@@ -105,10 +112,13 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 3. Once the user's auth info is provided, check if the email and API key are valid.
-   * @argument {String} host_id - Host identifier like 'mozilla'.
-   * @argument {String} email - User's Bugzilla account name.
-   * @argument {String} api_key - User's 40-character Bugzilla API key.
-   * @return {undefined}
+   * @param {String} host_id - Host identifier like 'mozilla'.
+   * @param {String} email - User's Bugzilla account name.
+   * @param {String} api_key - User's 40-character Bugzilla API key.
+   * @returns {undefined}
+   * @fires SessionController:StatusUpdate
+   * @fires SessionController:Error
+   * @fires SessionController:UserFound
    */
   verify_account (host_id, email, api_key) {
     this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
@@ -151,8 +161,10 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 4. Load data from the local database once the user account is set.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:StatusUpdate
+   * @fires SessionController:Error
    */
   load_data () {
     this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
@@ -187,8 +199,9 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
-   * @argument {Boolean} [firstrun=false] - True for the initial session.
-   * @return {Promise.<Array>} - Promise to be resolved in retrieved data.
+   * @param {Boolean} [firstrun=false] - True for the initial session.
+   * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
+   * @fires SessionController:StatusUpdate
    */
   fetch_data (firstrun = false) {
     this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
@@ -218,8 +231,10 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 6. Set up everything including the global controllers and views, then complete bootstrapping.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:StatusUpdate
+   * @fires SessionController:Error
    */
   init_components () {
     this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
@@ -259,8 +274,9 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Notify the view of the user's sign-in once prepared.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:Login
    */
   login () {
     this.trigger(':Login');
@@ -268,8 +284,9 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SessionController:Logout
    */
   logout () {
     this.trigger(':Logout');
@@ -283,8 +300,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Clean up the browsing session by terminating all timers and Bugzfeed subscriptions.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   clean () {
     // Terminate timers

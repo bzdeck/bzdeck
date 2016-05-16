@@ -10,8 +10,8 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
   /**
    * Get a StatusbarView instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} view - New StatusbarView instance.
+   * @param {undefined}
+   * @returns {Object} view - New StatusbarView instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -37,8 +37,8 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
 
   /**
    * Show a message on the statusbar.
-   * @argument {String} message
-   * @return {undefined}
+   * @param {String} message
+   * @returns {undefined}
    */
   show (message) {
     if (this.$statusbar) {
@@ -48,9 +48,9 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
 
   /**
    * Start showing the current loading progress.
-   * @argument {Boolean} [auto_increment=true] - Periodically update the progressbar rather than reflecting the actual
+   * @param {Boolean} [auto_increment=true] - Periodically update the progressbar rather than reflecting the actual
    *  loading state.
-   * @return {undefined}
+   * @returns {undefined}
    */
   start_loading (auto_increment = true) {
     this.$progressbar = this.$statusbar.querySelector('[role="progressbar"]');
@@ -66,8 +66,8 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
 
   /**
    * Stop showing the current loading progress.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   stop_loading () {
     if (this.$progressbar) {
@@ -77,8 +77,8 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
 
   /**
    * Update the progressbar UI.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   update_progressbar () {
     let percentage = this.data.progress;

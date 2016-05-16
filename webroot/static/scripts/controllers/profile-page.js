@@ -11,8 +11,8 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
    * Called by the app router and initialize the Profile Page Controller. If the specified profile has an existing tab,
    * switch to it. Otherwise, open a new tab and try to load the user profile.
    * @constructor
-   * @argument {String} email - Person's Bugzilla account name.
-   * @return {Object} controller - New ProfilePageController instance.
+   * @param {String} email - Person's Bugzilla account name.
+   * @returns {Object} controller - New ProfilePageController instance.
    */
   constructor (email) {
     super(); // This does nothing but is required before using `this`
@@ -35,8 +35,12 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
 
   /**
    * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
-   * @argument {Proxy} user - UserModel instance.
-   * @return {undefined}
+   * @param {Proxy} user - UserModel instance.
+   * @returns {undefined}
+   * @fires ProfilePageController:GravatarProfileFound
+   * @fires ProfilePageController:BugzillaProfileFound
+   * @fires ProfilePageController:BugzillaProfileFetchingError
+   * @fires ProfilePageController:BugzillaProfileFetchingComplete
    */
   on_user_retrieved (user) {
     let email = this.id;

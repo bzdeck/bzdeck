@@ -9,8 +9,8 @@
 BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource {
   /**
    * Preload the account-specific database.
-   * @argument {undefined}
-   * @return {Promise.<IDBDatabase>} database - Target IndexedDB database.
+   * @param {undefined}
+   * @returns {Promise.<IDBDatabase>} database - Target IndexedDB database.
    */
   load () {
     return this.open_database(`${BzDeck.host.name}::${BzDeck.account.data.name}`, 2);
@@ -18,8 +18,8 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
 
   /**
    * Called whenever the database is created or upgraded. Create object stores and handle upgrades.
-   * @argument {IDBVersionChangeEvent} event - The upgradeneeded event.
-   * @return {IDBDatabase} database - Target IndexedDB database.
+   * @param {IDBVersionChangeEvent} event - The upgradeneeded event.
+   * @returns {IDBDatabase} database - Target IndexedDB database.
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
    */
   onupgradeneeded (event) {

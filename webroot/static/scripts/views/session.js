@@ -10,8 +10,10 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Get a SessionView instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} view - New SessionView instance.
+   * @param {undefined}
+   * @returns {Object} view - New SessionView instance.
+   * @listens SessionController:Login
+   * @listens SessionController:Logout
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -23,8 +25,8 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Called once the application is ready and the user is signed in. Hide the sign-in page and show the main application
    * page instead.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    * @todo Focus handling.
    */
   login () {
@@ -39,8 +41,8 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
 
   /**
    * Called once the user is signed out from the app. Hide the main application page and show the sign-in page instead.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   logout () {
     BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('.statusbar');

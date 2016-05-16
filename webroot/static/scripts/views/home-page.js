@@ -10,8 +10,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Get a HomePageView instance.
    * @constructor
-   * @argument {Object} controller - HomePageController instance.
-   * @return {Object} view - New HomePageView instance.
+   * @param {Object} controller - HomePageController instance.
+   * @returns {Object} view - New HomePageView instance.
+   * @listens SettingsPageView:PrefValueChanged
+   * @listens SubscriptionCollection:Updated
    */
   constructor (controller) {
     super(); // This does nothing but is required before using `this`
@@ -52,8 +54,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Select the Home tab and open the specified Sidebar folder.
-   * @argument {String} folder_id - One of the folder identifiers defined in the app config.
-   * @return {undefined}
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @returns {undefined}
+   * @fires HomePageView:UnknownFolderSelected
    */
   connect (folder_id) {
     let $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
@@ -82,8 +85,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
-   * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
-   * @return {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
+   * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
    */
   get_shown_bugs (bugs) {
     return BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
@@ -98,10 +101,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Switch between the Vertical layout and Classic layout.
-   * @argument {String} pref - User preference for the home page layout.
-   * @argument {Boolean} [sort_grid=false] - Whether the thread should be sorted after switching the layout. Currently,
-   *  the Vertical Thread always sorts bugs by date.
-   * @return {undefined}
+   * @param {String} pref - User preference for the home page layout.
+   * @param {Boolean} [sort_grid=false] - Whether the thread should be sorted after switching the layout. Currently, the
+   *  Vertical Thread always sorts bugs by date.
+   * @returns {undefined}
    */
   change_layout (pref, sort_grid = false) {
     let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical';
@@ -122,8 +125,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Apply the Vertical layout to the home page.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   apply_vertical_layout () {
     let mql = window.matchMedia('(max-width: 1023px)');
@@ -165,8 +168,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Apply the Classic layout to the home page.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   apply_classic_layout () {
     Promise.all([
@@ -218,8 +221,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Initialize the searchbar available in the vertical layout.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires QuickSearchView:QuickSearchRequested
+   * @fires QuickSearchView:AdvancedSearchRequested
+   * @listens QuickSearchController:ResultsAvailable
    */
   init_searchbar () {
     let listed_bugs;
@@ -276,8 +282,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Update the document title and tab label.
-   * @argument {String} title - Title to display.
-   * @return {undefined}
+   * @param {String} title - Title to display.
+   * @returns {undefined}
    */
   update_title (title) {
     if (!location.pathname.startsWith('/home/')) {
@@ -292,10 +298,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Called by SettingsPageView whenever a preference value is changed by the user. Toggle the layout where necessary.
-   * @argument {Object} data - Passed data.
-   * @argument {String} data.name - Preference name.
-   * @argument {*}      data.value - New value.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {String} data.name - Preference name.
+   * @param {*}      data.value - New value.
+   * @returns {undefined}
    */
   on_pref_value_changed (data) {
     let { name, value } = data;
@@ -308,8 +314,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Called by SubscriptionCollection whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug
    * when required, instead of refreshing the entire thread unconditionally.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_subscriptions_updated () {
     if (BzDeck.controllers.sidebar) {

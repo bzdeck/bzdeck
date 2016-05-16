@@ -10,10 +10,10 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
   /**
    * Get a BugHistoryView instance.
    * @constructor
-   * @argument {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise
-   *  the relevant notification events won't work.
-   * @argument {HTMLElement} $container - Outer element to display the content.
-   * @return {Object} view - New BugHistoryView instance.
+   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   *  relevant notification events won't work.
+   * @param {HTMLElement} $container - Outer element to display the content.
+   * @returns {Object} view - New BugHistoryView instance.
    */
   constructor (view_id, $container) {
     super(); // This does nothing but is required before using `this`
@@ -30,8 +30,8 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
 
   /**
    * Render the history on the view.
-   * @argument {Array} history - Bug's history property.
-   * @return {undefined}
+   * @param {Array} history - Bug's history property.
+   * @returns {undefined}
    */
   render (history) {
     let conf_field = BzDeck.host.data.config.field;
@@ -82,9 +82,9 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
 
   /**
    * Generate the content for a table cell. Bug ID will be converted to a link.
-   * @argument {String} field - Changed bug field name, like 'summary' or 'blocks'.
-   * @argument {String} content - Old or new value for the field.
-   * @return {String} content - Formatted cell content.
+   * @param {String} field - Changed bug field name, like 'summary' or 'blocks'.
+   * @param {String} content - Old or new value for the field.
+   * @returns {String} content - Formatted cell content.
    */
   get_cell_content (field, content) {
     if (['blocks', 'depends_on'].includes(field)) {

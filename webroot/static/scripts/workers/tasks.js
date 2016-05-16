@@ -12,13 +12,13 @@ const tasks = {};
 
 /**
  * Send a XMLHttpRequest, and post the result events, not only load, but also abort, error and progress.
- * @argument {MessagePort} port - Allow sending messages.
- * @argument {Object}  args - Arguments.
- * @argument {String}  args.url - URL to load.
- * @argument {String} [args.method=GET] - Request method.
- * @argument {Map}    [args.headers] - HTTP headers to be set.
- * @argument {*}      [args.data] - Data to be POSTed.
- * @return {undefined}
+ * @param {MessagePort} port - Allow sending messages.
+ * @param {Object}  args - Arguments.
+ * @param {String}  args.url - URL to load.
+ * @param {String} [args.method=GET] - Request method.
+ * @param {Map}    [args.headers] - HTTP headers to be set.
+ * @param {*}      [args.data] - Data to be POSTed.
+ * @returns {undefined}
  */
 tasks.xhr = (port, args) => {
   let { url, method, headers, data } = args;
@@ -56,11 +56,11 @@ tasks.xhr = (port, args) => {
 
 /**
  * Decode a Base-64 encoded string as a binary, and post it and its Blob.
- * @argument {MessagePort} port - Allow sending messages.
- * @argument {Object} args - Arguments.
- * @argument {String} args.str - Base-64 data.
- * @argument {String} args.type - File type.
- * @return {undefined}
+ * @param {MessagePort} port - Allow sending messages.
+ * @param {Object} args - Arguments.
+ * @param {String} args.str - Base-64 data.
+ * @param {String} args.type - File type.
+ * @returns {undefined}
  */
 tasks.decode = (port, args) => {
   let { str, type } = args;
@@ -72,10 +72,10 @@ tasks.decode = (port, args) => {
 
 /**
  * Read the content of a Blob or File, and post the data URL. Use FileReader instead of btoa() to avoid overflow.
- * @argument {MessagePort} port - Allow sending messages.
- * @argument {Object} args - Arguments.
- * @argument {(Blob|File)} args.file - File to be read.
- * @return {undefined}
+ * @param {MessagePort} port - Allow sending messages.
+ * @param {Object} args - Arguments.
+ * @param {(Blob|File)} args.file - File to be read.
+ * @returns {undefined}
  */
 tasks.readfile = (port, args) => {
   let { file } = args;

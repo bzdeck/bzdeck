@@ -10,9 +10,9 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Get a SettingsPageView instance.
    * @constructor
-   * @argument {Map.<String, Object>} prefs - User preference Map.
-   * @argument {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
-   * @return {Object} view - New SettingsPageView instance.
+   * @param {Map.<String, Object>} prefs - User preference Map.
+   * @param {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
+   * @returns {Object} view - New SettingsPageView instance.
    */
   constructor (prefs, tab_id) {
     super(); // This does nothing but is required before using `this`
@@ -43,12 +43,13 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
   /**
    * Activate each radiogroup on the Settings page.
-   * @argument {String} name - Preference name.
-   * @argument {Object} _value - Preference value.
-   * @argument {*}      _value.user - User-defined value.
-   * @argument {*}      _value.default - Default value.
-   * @argument {String} _value.type - Type of the value: boolean, integer or string.
-   * @return {undefined}
+   * @param {String} name - Preference name.
+   * @param {Object} _value - Preference value.
+   * @param {*}      _value.user - User-defined value.
+   * @param {*}      _value.default - Default value.
+   * @param {String} _value.type - Type of the value: boolean, integer or string.
+   * @returns {undefined}
+   * @fires SettingsPageView:PrefValueChanged
    */
   activate_radiogroup (name, _value) {
     let $root = document.documentElement;
@@ -75,8 +76,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's
    * Bugzilla account name and API key.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   prepare_qrcode () {
     let $outer = document.querySelector('#settings-qrcode-outer');

@@ -10,8 +10,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
   /**
    * Get a BugzfeedController instance.
    * @constructor
-   * @argument {undefined}
-   * @return {Object} controller - New BugzfeedController instance.
+   * @param {undefined}
+   * @returns {Object} controller - New BugzfeedController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -32,8 +32,9 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Called whenever a message is received from the worker.
-   * @argument {Object} data - Posted message.
-   * @return {undefined}
+   * @param {Object} data - Posted message.
+   * @returns {undefined}
+   * @fires BugzfeedController:BugUpdated
    */
   onmessage (data) {
     let { status, id, ids } = data;
@@ -56,8 +57,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Post a message to BugzfeedWorker.
-   * @argument {Object} data
-   * @return {undefined}
+   * @param {Object} data
+   * @returns {undefined}
    */
   notify (data) {
     if (BzDeck.config.debug) {
@@ -69,8 +70,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Connect to the WebSocket server.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   connect () {
     if (BzDeck.host && BzDeck.host.endpoints.websocket) {
@@ -80,8 +81,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Disconnect from the WebSocket server.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   disconnect () {
     this.notify({ command: 'Disconnect' });
@@ -90,8 +91,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
   /**
    * Subscribe to one or more bugs. Because FlareTail.app.Events has the subscribe function, this function begins with
    * an underscore.
-   * @argument {Array.<Number>} ids - Bug IDs to subscribe.
-   * @return {undefined}
+   * @param {Array.<Number>} ids - Bug IDs to subscribe.
+   * @returns {undefined}
    */
   _subscribe (ids) {
     this.notify({ command: 'Subscribe', ids });
@@ -99,8 +100,8 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Unsubscribe from one or more bugs.
-   * @argument {Array.<Number>} ids - Bug IDs to unsubscribe.
-   * @return {undefined}
+   * @param {Array.<Number>} ids - Bug IDs to unsubscribe.
+   * @returns {undefined}
    */
   _unsubscribe (ids) {
     this.notify({ command: 'Unsubscribe', ids });

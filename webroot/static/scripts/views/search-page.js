@@ -10,10 +10,17 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Get a SearchPageView instance.
    * @constructor
-   * @argument {Number} id - 13-digit identifier for a new instance, generated with Date.now().
-   * @argument {URLSearchParams} params - Search query.
-   * @argument {Object} config - Bugzilla server configuration that contains products, components and more.
-   * @return {Object} view - New SearchPageView instance.
+   * @param {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+   * @param {URLSearchParams} params - Search query.
+   * @param {Object} config - Bugzilla server configuration that contains products, components and more.
+   * @returns {Object} view - New SearchPageView instance.
+   * @listens SearchPageController:Offline
+   * @listens SearchPageController:SearchStarted
+   * @listens SearchPageController:SearchResultsAvailable
+   * @listens SearchPageController:SearchError
+   * @listens SearchPageController:SearchComplete
+   * @listens SearchPageController:BugDataUnavailable
+   * @listens SearchPageController:BugDataAvailable
    */
   constructor (id, params, config) {
     super(); // This does nothing but is required before using `this`
@@ -51,8 +58,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Set up the Basic Seach Pane that contains options for classification, product, component, status and resolution, as
    * well as search term textbox.
-   * @argument {Object} config - Bugzilla server configuration that contains products, components and more.
-   * @return {undefined}
+   * @param {Object} config - Bugzilla server configuration that contains products, components and more.
+   * @returns {undefined}
+   * @fires SearchPageView:SearchRequested
    */
   setup_basic_search_pane (config) {
     let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
@@ -164,8 +172,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Set up the Result Pane that shows search results in a classic thread.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   setup_result_pane () {
     let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]');
@@ -207,8 +215,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the controller.
-   * @argument {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
-   * @return {Array.<Number>} ids - IDs of bugs currently showing.
+   * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
+   * @returns {Array.<Number>} ids - IDs of bugs currently showing.
    */
   get_shown_bugs (bugs) {
     return [...this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])')]
@@ -217,10 +225,11 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Show the preview of a selected bug on the Preview Pane.
-   * @argument {Object} data - Preview data.
-   * @argument {Proxy}  data.bug - Bug to show.
-   * @argument {Object} data.controller - New BugController instance for that bug.
-   * @return {undefined}
+   * @param {Object} data - Preview data.
+   * @param {Proxy}  data.bug - Bug to show.
+   * @param {Object} data.controller - New BugController instance for that bug.
+   * @returns {undefined}
+   * @fires SearchPageView:OpeningTabRequested
    */
   show_preview (data) {
     let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
@@ -259,8 +268,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Hide the Preview Pane and show the Basic Seach Pane instead.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   show_basic_search_pane () {
     this.panes['basic-search'].setAttribute('aria-hidden', 'false');
@@ -269,8 +278,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Display a message on the statusbar.
-   * @argument {String} str - Message to show.
-   * @return {undefined}
+   * @param {String} str - Message to show.
+   * @returns {undefined}
    */
   show_status (str) {
     this.$status.firstElementChild.textContent = str;
@@ -280,8 +289,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Remove any message from the statusbar.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   hide_status () {
     this.show_status('');
@@ -290,8 +299,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called by SearchPageController when the search results cannot be retrieved because the device or browser is
    * offline. Show a message to ask the user to go online.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    * @todo Reload when going online.
    */
   on_offline () {
@@ -300,8 +309,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called by SearchPageController when fetching the search results started. Empty the results and show a throbber.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_search_started () {
     this.$grid.removeAttribute('aria-hidden');
@@ -312,9 +321,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called by SearchPageController when the search results is retrieved. Show the results on the thread.
-   * @argument {Object} data - Passed data.
-   * @argument {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
+   * @returns {undefined}
    */
   on_search_results_available (data) {
     if (data.bugs.size > 0) {
@@ -327,9 +336,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called by SearchPageController when fetching the search results failed. Show an error message accordingly.
-   * @argument {Object} data - Passed data.
-   * @argument {Error} data.error - Error encountered.
-   * @return {undefined}
+   * @param {Object} data - Passed data.
+   * @param {Error} data.error - Error encountered.
+   * @returns {undefined}
    */
   on_search_error (data) {
     this.show_status(data.error.message);
@@ -337,8 +346,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called by SearchPageController when fetching the search results completed. Remove the throbber.
-   * @argument {undefined}
-   * @return {undefined}
+   * @param {undefined}
+   * @returns {undefined}
    */
   on_search_complete () {
     this.$grid.removeAttribute('aria-busy');
