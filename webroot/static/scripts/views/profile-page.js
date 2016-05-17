@@ -86,7 +86,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called by ProfilePageController when the User's Bugzilla profile could not be retrieved. Show the error message.
    * @param {Object} data - Data passed.
-   * @param {Error}  data.error - Error encountered.
+   * @param {String} data.message - Error message.
    * @returns {Boolean} result - Whether the view is updated.
    */
   on_bugzilla_profile_fetching_error (data) {
@@ -94,7 +94,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
       return false;
     }
 
-    this.$status.textContent = data.error.message;
+    this.$status.textContent = data.message;
 
     return true;
   }

@@ -22,7 +22,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    this.subscribe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel:AnnotationUpdated', true);
     this.subscribe('UserModel:GravatarProfileRequested', true);
     this.subscribe('UserModel:GravatarImageRequested', true);
 

@@ -48,11 +48,11 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
     this.subscribe('C:Offline');
     this.subscribe('C:SearchStarted');
-    this.subscribe('C:SearchResultsAvailable');
+    this.subscribe_safe('C:SearchResultsAvailable');
     this.subscribe('C:SearchError');
     this.subscribe('C:SearchComplete');
     this.on('C:BugDataUnavailable', data => this.show_preview(undefined));
-    this.on('C:BugDataAvailable', data => this.show_preview(data));
+    this.on_safe('C:BugDataAvailable', data => this.show_preview(data));
   }
 
   /**
@@ -166,7 +166,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
         params.append('short_desc_type', 'allwordssubstr');
       }
 
-      this.trigger(':SearchRequested', { params });
+      this.trigger(':SearchRequested', { params_str: params.toString() });
     });
   }
 
@@ -337,11 +337,11 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called by SearchPageController when fetching the search results failed. Show an error message accordingly.
    * @param {Object} data - Passed data.
-   * @param {Error} data.error - Error encountered.
+   * @param {String} data.message - Error message.
    * @returns {undefined}
    */
   on_search_error (data) {
-    this.show_status(data.error.message);
+    this.show_status(data.message);
   }
 
   /**

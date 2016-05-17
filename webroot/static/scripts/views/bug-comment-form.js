@@ -82,12 +82,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     // Attachments
     this.subscribe('BugController:AttachmentAdded');
     this.subscribe('BugController:AttachmentRemoved');
-    this.subscribe('BugController:AttachmentEdited');
+    this.subscribe_safe('BugController:AttachmentEdited');
     this.subscribe('BugController:AttachmentError');
-    this.subscribe('BugController:UploadListUpdated');
+    this.subscribe_safe('BugController:UploadListUpdated');
 
     // Other changes
-    this.subscribe('BugController:BugEdited');
+    this.subscribe_safe('BugController:BugEdited');
     this.subscribe('BugController:CommentEdited');
 
     // Form submission
@@ -151,7 +151,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     });
 
     this.$file_picker.addEventListener('change', event => {
-      this.trigger('BugView:FilesSelected', { input: event.target });
+      this.trigger_safe('BugView:FilesSelected', { input: event.target });
     });
   }
 

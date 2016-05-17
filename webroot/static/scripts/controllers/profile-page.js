@@ -87,7 +87,7 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
         },
       });
     }).catch(error => {
-      this.trigger(':BugzillaProfileFetchingError', { error });
+      this.trigger(':BugzillaProfileFetchingError', { message: error.message });
     }).then(() => {
       this.trigger(':BugzillaProfileFetchingComplete');
     });

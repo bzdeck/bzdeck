@@ -61,7 +61,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     });
 
     // Attachments
-    this.on('V:AttachFiles', data => this.attach_files(data.files));
+    this.on_safe('V:AttachFiles', data => this.attach_files(data.files));
     this.on('V:AttachText', data => this.attach_text(data.text));
     this.on('V:RemoveAttachment', data => this.remove_attachment(data.hash));
     this.on('V:MoveUpAttachment', data => this.move_up_attachment(data.hash));
@@ -161,7 +161,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   onedit () {
     let { changes, att_changes, uploads, can_submit } = this;
 
-    this.trigger(':BugEdited', { changes, att_changes, uploads, can_submit });
+    this.trigger_safe(':BugEdited', { changes, att_changes, uploads, can_submit });
   }
 
   /**
@@ -565,8 +565,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
       this.uploads.push(attachment);
 
-      this.trigger(':AttachmentAdded', { attachment });
-      this.trigger(':UploadListUpdated', { uploads: this.uploads });
+      this.trigger_safe(':AttachmentAdded', { attachment });
+      this.trigger_safe(':UploadListUpdated', { uploads: this.uploads });
       this.onedit();
     });
   }
@@ -588,7 +588,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
     this.uploads.splice(index, 1);
 
     this.trigger(':AttachmentRemoved', { index, hash });
-    this.trigger(':UploadListUpdated', { uploads: this.uploads });
+    this.trigger_safe(':UploadListUpdated', { uploads: this.uploads });
     this.onedit();
 
     return true;
@@ -614,7 +614,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
       if (attachment && attachment[prop] !== value) {
         attachment[prop] = value;
 
-        this.trigger(':AttachmentEdited', { attachment, change });
+        this.trigger_safe(':AttachmentEdited', { attachment, change });
         this.onedit();
       }
 
@@ -650,7 +650,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
         return;
       }
 
-      this.trigger(':AttachmentEdited', { attachment, change });
+      this.trigger_safe(':AttachmentEdited', { attachment, change });
       this.onedit();
     });
   }
@@ -844,7 +844,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
         this.notify_upload_progress();
       }
 
-      this.trigger(':AttachmentUploaded', { attachment });
+      this.trigger_safe(':AttachmentUploaded', { attachment });
 
       this.uploads.total -= attachment.uploaded;
       this.remove_attachment(attachment.hash);

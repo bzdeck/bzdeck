@@ -83,11 +83,11 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
     let params_users = new URLSearchParams();
 
     let return_bugs = bugs => Promise.all(bugs.map(bug => this.get_bug_result(bug))).then(results => {
-      this.trigger(':ResultsAvailable', { category: 'bugs', input, results });
+      this.trigger_safe(':ResultsAvailable', { category: 'bugs', input, results });
     });
 
     let return_users = users => Promise.all(users.map(user => this.get_user_result(user))).then(results => {
-      this.trigger(':ResultsAvailable', { category: 'users', input, results });
+      this.trigger_safe(':ResultsAvailable', { category: 'users', input, results });
     });
 
     params_bugs.append('short_desc', input);

@@ -25,7 +25,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     this.id = instance_id;
     this.$container = $container;
 
-    this.subscribe('C:BugDataAvailable');
+    this.subscribe_safe('C:BugDataAvailable');
     this.subscribe('C:BugDataUnavailable');
 
     this.on('C:LoadingStarted', () => BzDeck.views.statusbar.start_loading());

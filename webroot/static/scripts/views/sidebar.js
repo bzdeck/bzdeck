@@ -42,7 +42,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     this.$$folders.view.members.forEach($option => $option.setAttribute('aria-label', $option.textContent));
     this.$$folders.bind('Selected', event => this.trigger(':FolderSelected', { id: event.detail.ids[0] }));
 
-    this.on('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
+    this.on_safe('C:FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
     this.on('C:UnreadToggled', data => this.toggle_unread(data.number));
 
     (new this.widgets.Button(document.querySelector('#main-menu--app--account'))).bind('Pressed', event => {

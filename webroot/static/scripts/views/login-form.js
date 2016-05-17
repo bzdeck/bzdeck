@@ -73,7 +73,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   show_status (message) {
-    this.$statusbar.textContent = message;
+    this.$statusbar.querySelector('p').textContent = message;
   }
 
   /**
@@ -163,7 +163,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         $scan_button.setAttribute('aria-disabled', 'false');
       }).catch(error => {
         hide_overlay();
-        this.trigger(':QRCodeError', { error });
+        this.trigger(':QRCodeError', { message: error.message });
       });
     });
   }
@@ -191,16 +191,11 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Called by SessionController whenever an error is detected during the sign-in process. Show the error message.
    * @param {Object} data - Passed data.
-   * @param {Error}  data.error - Error encountered.
    * @param {String} data.message - Message text to display.
    * @returns {undefined}
    */
   on_error (data) {
     this.show_status(data.message);
-
-    if (data.error) {
-      console.error(data.error);
-    }
   }
 
   /**

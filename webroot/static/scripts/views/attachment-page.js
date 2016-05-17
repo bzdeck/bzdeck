@@ -30,8 +30,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
     this.$tabpanel = document.querySelector(`#tabpanel-attachment-${this.id}`);
     this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.att_id;
 
-    this.subscribe('C:AttachmentAvailable');
-    this.subscribe('C:AttachmentUnavailable');
+    this.subscribe_safe('C:AttachmentAvailable');
+    this.subscribe_safe('C:AttachmentUnavailable');
     this.subscribe('C:Offline');
     this.subscribe('C:LoadingStarted');
     this.subscribe('C:LoadingError');

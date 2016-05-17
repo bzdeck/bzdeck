@@ -61,7 +61,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
       }
     });
 
-    this.on('V:SearchRequested', data => this.exec_search(data.params));
+    this.on('V:SearchRequested', data => this.exec_search(new URLSearchParams(data.params_str)));
     this.on('V:OpeningTabRequested', data => this.open_tab());
 
     this.connect();
@@ -115,7 +115,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     BzDeck.collections.bugs.get(id).then(bug => {
       if (bug) {
         bug.mark_as_read();
-        this.trigger(':BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
+        this.trigger_safe(':BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
       } else {
         this.trigger(':BugDataUnavailable');
       }
@@ -153,9 +153,9 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
     BzDeck.collections.bugs.search_remote(params).then(bugs => {
       bugs = this.data.bugs = new Map(bugs.map(bug => [bug.id, bug]));
-      this.trigger(':SearchResultsAvailable', { bugs });
+      this.trigger_safe(':SearchResultsAvailable', { bugs });
     }).catch(error => {
-      this.trigger(':SearchError', { error });
+      this.trigger(':SearchError', { message: error.message });
     }).then(() => {
       this.trigger(':SearchComplete');
     });

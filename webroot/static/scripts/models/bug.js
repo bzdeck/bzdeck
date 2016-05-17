@@ -185,7 +185,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
           changes.set('history', history);
         }
 
-        this.trigger(':Updated', { bug: data, changes });
+        this.trigger_safe(':Updated', { bug: data, changes });
       }
 
       this.save(data);
@@ -212,7 +212,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.data[`_${type}`] = value;
     this.save();
-    this.trigger(':AnnotationUpdated', { bug: this.proxy(), type, value });
+    this.trigger_safe(':AnnotationUpdated', { bug: this.proxy(), type, value });
 
     return true;
   }
@@ -238,7 +238,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }).then(timestamp => {
       this.data._last_visit = timestamp;
       this.save();
-      this.trigger(':AnnotationUpdated', { bug: this.proxy(), type: 'last_visit', value: timestamp });
+      this.trigger_safe(':AnnotationUpdated', { bug: this.proxy(), type: 'last_visit', value: timestamp });
     });
   }
 

@@ -34,7 +34,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
     window.addEventListener('mousedown', event => this.cleanup());
     window.addEventListener('popstate', event => this.cleanup());
-    this.on('C:ResultsAvailable', data => this.render_results(data), true);
+    this.on_safe('C:ResultsAvailable', data => this.render_results(data), true);
 
     this.assign_keyboard_bindings();
     this.activate_results();

@@ -93,7 +93,7 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
       let sibling_bug_ids = this.sibling_bug_ids;
       let controller = new BzDeck.BugController(bug, sibling_bug_ids);
 
-      this.trigger(':BugDataAvailable', { bug, controller, sibling_bug_ids });
+      this.trigger_safe(':BugDataAvailable', { bug, controller, sibling_bug_ids });
       bug.mark_as_read();
       BzDeck.controllers.bugzfeed._subscribe([this.bug_id]);
     }).then(() => {

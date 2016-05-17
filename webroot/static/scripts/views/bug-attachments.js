@@ -58,7 +58,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       new this.widgets.ScrollBar($attachment);
       new BzDeck.AttachmentView(attachment, $attachment);
 
-      this.trigger('BugView:AttachmentSelected', { attachment });
+      this.trigger_safe('BugView:AttachmentSelected', { attachment });
     });
 
     this.$$obsolete_checkbox = new this.widgets.CheckBox(this.$obsolete_checkbox);
@@ -77,8 +77,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
     this.subscribe('BugController:AttachmentAdded');
     this.subscribe('BugController:AttachmentRemoved');
-    this.subscribe('BugController:AttachmentEdited');
-    this.subscribe('BugController:UploadListUpdated');
+    this.subscribe_safe('BugController:AttachmentEdited');
+    this.subscribe_safe('BugController:UploadListUpdated');
     this.subscribe('BugController:HistoryUpdated');
   }
 
@@ -170,7 +170,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       let dt = event.dataTransfer;
 
       if (dt.types.contains('Files')) {
-        this.trigger('BugView:FilesSelected', { input: dt });
+        this.trigger_safe('BugView:FilesSelected', { input: dt });
       } else if (dt.types.contains('text/plain')) {
         this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
       }
@@ -214,7 +214,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     });
 
     this.$file_picker.addEventListener('change', event => {
-      this.trigger('BugView:FilesSelected', { input: event.target });
+      this.trigger_safe('BugView:FilesSelected', { input: event.target });
     });
   }
 

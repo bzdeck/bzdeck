@@ -50,7 +50,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       BzDeck.collections.accounts = new BzDeck.AccountCollection();
       BzDeck.collections.hosts = new BzDeck.HostCollection();
     }, error => {
-      this.trigger(':Error', { error, message: error.message });
+      console.error(error);
+      this.trigger(':Error', { message: error.message });
     }).then(() => Promise.all([
       BzDeck.collections.accounts.load(),
       BzDeck.collections.hosts.load(),
@@ -176,7 +177,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       BzDeck.prefs = new BzDeck.PrefCollection();
       BzDeck.collections.users = new BzDeck.UserCollection();
     }, error => {
-      this.trigger(':Error', { error, message: error.message });
+      console.error(error);
+      this.trigger(':Error', { message: error.message });
     }).then(() => Promise.all([
       BzDeck.collections.bugs.load(),
       BzDeck.prefs.load(),
@@ -193,7 +195,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     }).then(() => {
       this.init_components();
     }).catch(error => {
-      this.trigger(':Error', { error, message: error.message });
+      console.error(error);
+      this.trigger(':Error', { message: error.message });
     });
   }
 
@@ -268,7 +271,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       // Fetch data for returning users
       return this.firstrun ? Promise.resolve() : this.fetch_data();
     }).catch(error => {
-      this.trigger(':Error', { error, message: error.message });
+      console.error(error);
+      this.trigger(':Error', { message: error.message });
     });
   }
 

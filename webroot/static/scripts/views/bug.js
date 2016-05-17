@@ -48,9 +48,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.scrollbars = new Set([...this.$bug.querySelectorAll('.scrollable')]
                                   .map($area => new this.widgets.ScrollBar($area)));
 
-    this.subscribe('BugModel:AnnotationUpdated', true); // Enable the global option
+    this.subscribe_safe('BugModel:AnnotationUpdated', true); // Enable the global option
     this.subscribe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
-    this.subscribe('BugView:FilesSelected');
+    this.subscribe_safe('BugView:FilesSelected');
   }
 
   /**
@@ -506,7 +506,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
 
       if (dt.types.contains('Files')) {
-        this.trigger('BugView:FilesSelected', { input: dt });
+        this.trigger_safe('BugView:FilesSelected', { input: dt });
       } else if (dt.types.contains('text/plain')) {
         this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
       }
@@ -617,14 +617,14 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
         item.getFilesAndDirectories().then(_items => iterate(_items));
       } else {
-        this.trigger('BugView:AttachFiles', { files: [item] });
+        this.trigger_safe('BugView:AttachFiles', { files: [item] });
       }
     };
 
     if (typeof data.input.getFilesAndDirectories === 'function') {
       data.input.getFilesAndDirectories().then(items => iterate(items));
     } else {
-      this.trigger('BugView:AttachFiles', { files: data.input.files });
+      this.trigger_safe('BugView:AttachFiles', { files: data.input.files });
     }
   }
 

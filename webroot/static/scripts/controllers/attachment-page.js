@@ -94,7 +94,7 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
       // If found, show it
       if (attachment) {
         this.attachment = attachment;
-        this.trigger(':AttachmentAvailable', { attachment });
+        this.trigger_safe(':AttachmentAvailable', { attachment });
         this.trigger(':LoadingComplete');
 
         return;
@@ -105,9 +105,9 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
       }).then(attachment => {
         if (attachment) {
           this.attachment = attachment;
-          this.trigger(':AttachmentAvailable', { attachment });
+          this.trigger_safe(':AttachmentAvailable', { attachment });
         } else {
-          this.trigger(':AttachmentUnavailable', { attachment });
+          this.trigger_safe(':AttachmentUnavailable', { attachment });
         }
       }).catch(error => {
         this.trigger(':LoadingError');

@@ -109,7 +109,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       S: event => toggle_prop('starred'),
     });
 
-    this.subscribe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel:AnnotationUpdated', true);
   }
 
   /**
@@ -283,7 +283,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       },
     });
 
-    this.subscribe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel:AnnotationUpdated', true);
 
     // Lazy loading while scrolling
     this.$outer.addEventListener('scroll', event => {

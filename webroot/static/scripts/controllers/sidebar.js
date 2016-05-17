@@ -66,7 +66,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
     // Update the sidebar Inbox folder at startup and whenever notified
     this.toggle_unread();
-    this.subscribe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel:AnnotationUpdated', true);
   }
 
   /**
@@ -78,7 +78,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   open_folder (folder_id) {
     BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
       BzDeck.controllers.homepage.data.bugs = bugs; // Map
-      this.trigger(':FolderOpened', { folder_id, bugs });
+      this.trigger_safe(':FolderOpened', { folder_id, bugs });
     });
   }
 

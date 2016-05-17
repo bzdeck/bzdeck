@@ -49,7 +49,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
     this.subscribe('SettingsPageView:PrefValueChanged', true);
-    this.on('SubscriptionCollection:Updated', data => this.on_subscriptions_updated(), true);
+    this.on_safe('SubscriptionCollection:Updated', data => this.on_subscriptions_updated(), true);
   }
 
   /**
