@@ -114,7 +114,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
         return Promise.resolve([]);
       }
 
-      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id)).then(bugs => {
+      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id), true, false).then(bugs => {
         this.trigger_safe(':Updated', { bugs });
 
         return bugs;

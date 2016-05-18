@@ -706,7 +706,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       set_tooltops(bugs);
 
       if (lookup_ids.size) {
-        BzDeck.collections.bugs.fetch(lookup_ids).then(bugs => set_tooltops(bugs));
+        BzDeck.collections.bugs.fetch(lookup_ids, true, false).then(bugs => set_tooltops(bugs));
       }
     });
   }
