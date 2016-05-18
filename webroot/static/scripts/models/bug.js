@@ -106,7 +106,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       } else {
         if (include_metadata) {
           _bug = values[0].bugs[0];
-          _bug._last_visit = values[1][0].last_visit_ts;
+          // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
+          _bug._last_visit = values[1] && values[1][0] ? values[1][0].last_visit_ts : null;
         } else {
           _bug = { id: this.id };
         }
