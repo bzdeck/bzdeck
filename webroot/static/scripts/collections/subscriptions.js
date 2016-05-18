@@ -82,7 +82,6 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     // Fire an event to show the throbber
     this.trigger(':FetchingSubscriptionsStarted');
 
-    params.append('include_fields', 'id');
     params.append('j_top', 'OR');
 
     for (let [i, name] of fields.entries()) {
@@ -95,6 +94,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       if (!firstrun) {
         // Retrieve bugs changed since the cached date for returning sessions
         params.append('last_change_time', (new Date(last_loaded)).toISOString());
+        params.append('include_fields', 'id');
       }
     }).then(() => {
       return BzDeck.collections.bugs.get_all();
@@ -106,6 +106,10 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     }).then(() => {
       return BzDeck.host.request('bug', params);
     }).then(result => {
+      if (firstrun) {
+        return Promise.all(result.bugs.map(_bug => BzDeck.collections.bugs.set(_bug.id, _bug)));
+      }
+  
       if (!result.bugs.length) {
         return Promise.resolve([]);
       }
