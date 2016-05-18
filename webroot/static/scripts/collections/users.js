@@ -70,8 +70,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     let names = [..._names].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
-    // issue, divide the array into chunks to retrieve 10 users per request, then divide each chunk again if failed.
-    let names_chunks = FlareTail.helpers.array.chunk(names, 10);
+    // issue, divide the array into chunks to retrieve 20 users per request, then divide each chunk again if failed.
+    let names_chunks = FlareTail.helpers.array.chunk(names, 20);
 
     let _fetch = names => new Promise((resolve, reject) => {
       let params = new URLSearchParams();

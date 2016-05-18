@@ -37,8 +37,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     let ids = [..._ids].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the bugs is not accessible. To work around
-    // the issue, divide the array into chunks to retrieve 10 bugs per request, then divide each chunk again if failed.
-    let ids_chunks = FlareTail.helpers.array.chunk(ids, 10);
+    // the issue, divide the array into chunks to retrieve 20 bugs per request, then divide each chunk again if failed.
+    let ids_chunks = FlareTail.helpers.array.chunk(ids, 20);
 
     let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
       let path = `bug/${ids[0]}`;
