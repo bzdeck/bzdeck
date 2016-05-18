@@ -115,7 +115,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
       if (!$root.hasAttribute('data-quicksearch')) {
         $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here
-        this.helpers.event.async(() => this.$input.focus());
+        Promise.resolve().then(() => this.$input.focus());
       } else if (this.$input.value.trim()) {
         this.exec_advanced_search();
       }

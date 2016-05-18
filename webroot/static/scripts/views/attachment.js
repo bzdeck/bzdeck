@@ -154,7 +154,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$outer.setAttribute('aria-busy', 'true');
 
     this.attachment.get_data('text').then(result => {
-      this.helpers.event.async(() => this.$outer.appendChild(new BzDeck.PatchViewerView(result.text)));
+      Promise.resolve().then(() => this.$outer.appendChild(new BzDeck.PatchViewerView(result.text)));
       this.$attachment.classList.add('patch');
     }, error => {
       this.render_error(error);

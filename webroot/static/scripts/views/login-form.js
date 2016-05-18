@@ -152,7 +152,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         $scan_button.addEventListener('mousedown', event => { decode(); hide_overlay(); });
       }
 
-      this.helpers.event.async(() => $overlay.removeAttribute('aria-hidden'));
+      Promise.resolve().then(() => $overlay.removeAttribute('aria-hidden'));
       $video = $overlay.querySelector('video');
       $scan_button.focus();
 

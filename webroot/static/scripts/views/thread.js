@@ -288,7 +288,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     // Lazy loading while scrolling
     this.$outer.addEventListener('scroll', event => {
       if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
-        this.helpers.event.async(() => this.render());
+        Promise.resolve().then(() => this.render());
       }
     });
   }
@@ -306,7 +306,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$outer.setAttribute('aria-busy', 'true');
     this.$listbox.innerHTML = '';
 
-    this.helpers.event.async(() => {
+    Promise.resolve().then(() => {
       this.render();
       this.$listbox.dispatchEvent(new CustomEvent('Updated'));
       this.$outer.removeAttribute('aria-busy');

@@ -240,12 +240,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if (this.bug.comments && !this.bug._update_needed) {
-      window.setTimeout(() => this.fill_details(false), 0);
+      Promise.resolve().then(() => this.fill_details(false));
     } else {
       // Load comments, history, flags and attachments' metadata; Exclude metadata
       this.bug.fetch(false).then(bug => {
         this.bug = bug;
-        window.setTimeout(() => this.fill_details(true), 0);
+        Promise.resolve().then(() => this.fill_details(true));
       });
     }
 

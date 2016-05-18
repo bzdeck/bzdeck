@@ -240,7 +240,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         this.trigger('QuickSearchView:AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
-        this.helpers.event.async(() => $searchbox.focus());
+        Promise.resolve().then(() => $searchbox.focus());
       }
     });
 

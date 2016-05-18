@@ -65,7 +65,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   search_bug () {
-    this.helpers.event.async(() => this.search(this.participants));
+    Promise.resolve().then(() => this.search(this.participants));
   }
 
   /**

@@ -118,7 +118,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
         $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
         // Move focus on the textbox. Use async to make sure the event always works
-        this.helpers.event.async(() => $textbox.focus());
+        Promise.resolve().then(() => $textbox.focus());
         // Trigger an event to do something. Disable async to make sure the following lines work
         this.helpers.event.trigger($textbox, 'input', {}, false);
         // Scroll to make sure the comment is visible
