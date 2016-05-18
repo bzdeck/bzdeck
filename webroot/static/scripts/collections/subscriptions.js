@@ -93,7 +93,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     return BzDeck.prefs.get('subscriptions.last_loaded').then(last_loaded => {
       if (!firstrun) {
         // Retrieve bugs changed since the cached date for returning sessions
-        params.append('last_change_time', (new Date(last_loaded)).toISOString());
+        params.append('chfieldfrom', (new Date(last_loaded)).toISOString());
         params.append('include_fields', 'id');
       }
     }).then(() => {
