@@ -209,17 +209,19 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   fetch_data (firstrun = false) {
     this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
-    // Fetch only open bugs changed in the last 14 days first to reduce the initial startup time
-    let datetime = (new Date(Date.now() - 1000 * 60 * 60 * 24 * 14)).toISOString();
-    let params = firstrun ? new URLSearchParams(`chfieldfrom=${datetime}`) : undefined;
+    let now = Date.now();
+    let get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
+    // Fetch only bugs changed in the last 14 days first to reduce the initial startup time
+    let params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
 
     return Promise.all([
       BzDeck.host.get_config(),
       BzDeck.collections.users.refresh(),
       BzDeck.collections.subscriptions.fetch(firstrun, params).then(bugs => {
         if (firstrun) {
-          // Fetch the remaining bugs
-          let _fetch = BzDeck.collections.subscriptions.fetch(true, new URLSearchParams(`chfieldto=${datetime}`));
+          // Fetch the remaining bugs changed within a year
+          let _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
+          let _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
 
           // If the first fetch returned no bugs, wait for the second fetch
           if (!bugs.size) {
