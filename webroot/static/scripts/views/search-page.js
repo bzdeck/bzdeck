@@ -14,13 +14,6 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @param {URLSearchParams} params - Search query.
    * @param {Object} config - Bugzilla server configuration that contains products, components and more.
    * @returns {Object} view - New SearchPageView instance.
-   * @listens SearchPageController:Offline
-   * @listens SearchPageController:SearchStarted
-   * @listens SearchPageController:SearchResultsAvailable
-   * @listens SearchPageController:SearchError
-   * @listens SearchPageController:SearchComplete
-   * @listens SearchPageController:BugDataUnavailable
-   * @listens SearchPageController:BugDataAvailable
    */
   constructor (id, params, config) {
     super(); // This does nothing but is required before using `this`
@@ -225,6 +218,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Show the preview of a selected bug on the Preview Pane.
+   * @listens SearchPageController:BugDataUnavailable
+   * @listens SearchPageController:BugDataAvailable
    * @param {Object} data - Preview data.
    * @param {Proxy}  data.bug - Bug to show.
    * @param {Object} data.controller - New BugController instance for that bug.
@@ -297,8 +292,9 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SearchPageController when the search results cannot be retrieved because the device or browser is
-   * offline. Show a message to ask the user to go online.
+   * Called when the search results cannot be retrieved because the device or browser is offline. Show a message to ask
+   * the user to go online.
+   * @listens SearchPageController:Offline
    * @param {undefined}
    * @returns {undefined}
    * @todo Reload when going online.
@@ -308,7 +304,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SearchPageController when fetching the search results started. Empty the results and show a throbber.
+   * Called when fetching the search results started. Empty the results and show a throbber.
+   * @listens SearchPageController:SearchStarted
    * @param {undefined}
    * @returns {undefined}
    */
@@ -320,7 +317,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SearchPageController when the search results is retrieved. Show the results on the thread.
+   * Called when the search results is retrieved. Show the results on the thread.
+   * @listens SearchPageController:SearchResultsAvailable
    * @param {Object} data - Passed data.
    * @param {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
    * @returns {undefined}
@@ -335,7 +333,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SearchPageController when fetching the search results failed. Show an error message accordingly.
+   * Called when fetching the search results failed. Show an error message accordingly.
+   * @listens SearchPageController:SearchError
    * @param {Object} data - Passed data.
    * @param {String} data.message - Error message.
    * @returns {undefined}
@@ -345,7 +344,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SearchPageController when fetching the search results completed. Remove the throbber.
+   * Called when fetching the search results completed. Remove the throbber.
+   * @listens SearchPageController:SearchComplete
    * @param {undefined}
    * @returns {undefined}
    */

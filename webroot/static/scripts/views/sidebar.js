@@ -14,8 +14,6 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @returns {Object} view - New SidebarView instance.
    * @fires SidebarView:FolderSelected
    * @fires SidebarView:AppMenuItemSelected
-   * @listens SidebarController:FolderOpened
-   * @listens SidebarController:UnreadToggled
    */
   constructor (user) {
     super(); // This does nothing but is required before using `this`
@@ -72,6 +70,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Open a specified folder by updating the document title and rendering the home page thread.
+   * @listens SidebarController:FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
    * @returns {undefined}
@@ -96,6 +95,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Show the number of unread bugs on the Inbox option.
+   * @listens SidebarController:UnreadToggled
    * @param {Number} num - Number of unread bugs.
    * @returns {undefined}
    */
@@ -113,12 +113,12 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Set up the account label & avatar.
+   * @listens SidebarController:GravatarProfileFound
    * @param {Object} user - User info.
    * @param {String} user.name - User's full name.
    * @param {String} user.email - User's email address.
    * @param {String} user.image - User's avatar image URL.
    * @returns {undefined}
-   * @listens SidebarController:GravatarProfileFound
    */
   setup_account_label (user) {
     this.fill(document.querySelector('#main-menu--app--account label'), user);

@@ -10,14 +10,11 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   /**
    * Get a GlobalController instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} controller - New GlobalController instance.
-   * @listens BugModel:AnnotationUpdated
-   * @listens UserModel:GravatarProfileRequested
-   * @listens UserModel:GravatarImageRequested
    * @listens GlobalView:OpenBug
    * @listens GlobalView:OpenAttachment
    * @listens GlobalView:OpenProfile
+   * @param {undefined}
+   * @returns {Object} controller - New GlobalController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -43,7 +40,8 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugModel whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+   * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+   * @listens BugModel:AnnotationUpdated
    * @param {Object} data - Annotation change details.
    * @param {Proxy} data.bug - Changed bug.
    * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
@@ -57,8 +55,9 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by UserModel whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar
-   * doesn't support CORS. Notify UserModel when the profile is ready.
+   * Called whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar doesn't support
+   * CORS. Notify UserModel when the profile is ready.
+   * @listens UserModel:GravatarProfileRequested
    * @param {Object} data - User details.
    * @param {String} data.hash - Hash value of the user's email.
    * @returns {undefined}
@@ -73,8 +72,9 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by UserModel whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the
-   * Gravatar image could not be found. Notify UserModel when the image is ready.
+   * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
+   * image could not be found. Notify UserModel when the image is ready.
+   * @listens UserModel:GravatarImageRequested
    * @param {Object} data - User details.
    * @param {String} data.hash - Hash value of the user's email.
    * @param {String} data.color - Generated color of the user for the fallback image.

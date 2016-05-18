@@ -10,10 +10,10 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
    * Get a DetailsPageView instance.
    * @constructor
+   * @listens BugContainerController:BugDataAvailable
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {Number} bug_id - ID of the bug to display.
    * @returns {Object} view - New DetailsPageView instance.
-   * @listens BugContainerController:BugDataAvailable
    */
   constructor (instance_id, bug_id) {
     super(); // This does nothing but is required before using `this`

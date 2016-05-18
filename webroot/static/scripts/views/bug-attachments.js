@@ -16,11 +16,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @param {HTMLElement} $container - Container node to render the attachments.
    * @returns {Object} view - New BugAttachmentsView instance.
    * @fires BugView:AttachmentSelected
-   * @listens BugController:AttachmentAdded
-   * @listens BugController:AttachmentRemoved
-   * @listens BugController:AttachmentEdited
-   * @listens BugController:UploadListUpdated
-   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug_id, $container) {
     super(); // This does nothing but is required before using `this`
@@ -219,7 +214,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is added by the user. Add the item to the listbox.
+   * Called whenever a new attachment is added by the user. Add the item to the listbox.
+   * @listens BugController:AttachmentAdded
    * @param {Object} data - Passed data.
    * @param {Proxy}  data.attachment - Added attachment data as AttachmentModel instance.
    * @returns {undefined}
@@ -232,7 +228,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is removed by the user. Remove the item from the listbox.
+   * Called whenever a new attachment is removed by the user. Remove the item from the listbox.
+   * @listens BugController:AttachmentRemoved
    * @param {Object} data - Passed data.
    * @param {String} data.hash - Removed attachment's hash value in the cached list.
    * @returns {undefined}
@@ -247,7 +244,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is edited by the user. Update the item on the listbox.
+   * Called whenever a new attachment is edited by the user. Update the item on the listbox.
+   * @listens BugController:AttachmentEdited
    * @param {Object} data - Passed data.
    * @param {Object} data.change - Change details.
    * @param {Number} data.change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
@@ -270,7 +268,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is added or removed by the user. Update the list header title.
+   * Called whenever a new attachment is added or removed by the user. Update the list header title.
+   * @listens BugController:UploadListUpdated
    * @param {Object} data - Passed data.
    * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like object.
    * @returns {undefined}
@@ -299,6 +298,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
    * the listbox.
+   * @listens BugController:HistoryUpdated
    * @param {Object} data - Passed data.
    * @param {Object} [data.state] - Current history state.
    * @param {String} [data.state.att_id] - Attachment ID or hash.

@@ -12,7 +12,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @constructor
    * @param {undefined}
    * @returns {Object} view - New QuickSearchView instance.
-   * @listens QuickSearchController:ResultsAvailable
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -147,6 +146,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Show search results on the drop down list.
+   * @listens QuickSearchController:ResultsAvailable
    * @param {Object} data - Passed data.
    * @param {String} data.category - Search category, such as 'recent', 'bugs' or 'users'.
    * @param {String} data.input - Original search terms.

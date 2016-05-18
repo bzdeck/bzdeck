@@ -15,8 +15,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @returns {Object} view - New BugTimelineView instance.
-   * @listens SettingsPageView:PrefValueChanged
-   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug, $bug, delayed) {
     super(); // This does nothing but is required before using `this`
@@ -172,6 +170,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
    * comment into view.
+   * @listens BugController:HistoryUpdated
    * @param {Object} data - Passed data.
    * @param {String} data.hash - location.hash.
    * @returns {undefined}
@@ -197,7 +196,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SettingsPageView whenever a preference value is changed by the user. Show media when the pref is enabled.
+   * Called whenever a preference value is changed by the user. Show media when the pref is enabled.
+   * @listens SettingsPageView:PrefValueChanged
    * @param {Object} data - Passed data.
    * @param {String} data.name - Preference name.
    * @param {*}      data.value - New value.

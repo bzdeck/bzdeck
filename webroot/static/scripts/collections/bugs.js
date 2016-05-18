@@ -13,7 +13,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @constructor
    * @param {undefined}
    * @returns {Object} bugs - New BugCollection instance.
-   * @listens BugzfeedController:BugUpdated
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -233,7 +232,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Called by BugzfeedController whenever a bug is updated. Retrieve the latest data from Bugzilla.
+   * Called whenever a bug is updated. Retrieve the latest data from Bugzilla.
+   * @listens BugzfeedController:BugUpdated
    * @param {Object} data - Passed data.
    * @returns {undefined}
    */

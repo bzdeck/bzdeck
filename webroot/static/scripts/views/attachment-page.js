@@ -13,12 +13,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @param {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @returns {Object} view - New AttachmentPageView instance.
-   * @listens AttachmentPageController:AttachmentAvailable
-   * @listens AttachmentPageController:AttachmentUnavailable
-   * @listens AttachmentPageController:Offline
-   * @listens AttachmentPageController:LoadingStarted
-   * @listens AttachmentPageController:LoadingError
-   * @listens AttachmentPageController:LoadingComplete
    */
   constructor (page_id, att_id) {
     super(); // This does nothing but is required before using `this`
@@ -39,7 +33,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when the attachment is found. Render it on the page.
+   * Called when the attachment is found. Render it on the page.
+   * @listens AttachmentPageController:AttachmentAvailable
    * @param {Object} data - Passed data.
    * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
@@ -62,7 +57,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when the attachment is not found. Show an error message on the page.
+   * Called when the attachment is not found. Show an error message on the page.
+   * @listens AttachmentPageController:AttachmentUnavailable
    * @param {Object} data - Passed data.
    * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
@@ -75,8 +71,9 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when the attachment cannot be retrieved because the device or browser is offline. Show a
-   * message to ask the user to go online.
+   * Called when the attachment cannot be retrieved because the device or browser is offline. Show a message to ask the
+   * user to go online.
+   * @listens AttachmentPageController:Offline
    * @param {undefined}
    * @returns {undefined}
    * @todo reload when going online.
@@ -86,7 +83,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when loading the attachment started. Show a message accordingly.
+   * Called when loading the attachment started. Show a message accordingly.
+   * @listens AttachmentPageController:LoadingStarted
    * @param {undefined}
    * @returns {undefined}
    */
@@ -95,7 +93,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when loading the attachment failed. Show a message accordingly.
+   * Called when loading the attachment failed. Show a message accordingly.
+   * @listens AttachmentPageController:LoadingError
    * @param {undefined}
    * @returns {undefined}
    */
@@ -104,7 +103,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController when loading the attachment completed. Remove the throbber.
+   * Called when loading the attachment completed. Remove the throbber.
+   * @listens AttachmentPageController:LoadingComplete
    * @param {undefined}
    * @returns {undefined}
    */

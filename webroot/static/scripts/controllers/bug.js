@@ -16,22 +16,6 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} controller - New BugController instance.
-   * @listens BugView:AttachFiles
-   * @listens BugView:AttachText
-   * @listens BugView:RemoveAttachment
-   * @listens BugView:MoveUpAttachment
-   * @listens BugView:MoveDownAttachment
-   * @listens BugView:Subscribe
-   * @listens BugView:Unsubscribe
-   * @listens BugView:EditComment
-   * @listens BugView:EditField
-   * @listens BugView:EditFlag
-   * @listens BugView:AddParticipant
-   * @listens BugView:RemoveParticipant
-   * @listens BugView:CommentSelected
-   * @listens BugView:Submit
-   * @listens BugView:OpeningTabRequested
-   * @listens AttachmentView:EditAttachment
    */
   constructor (bug, sibling_bug_ids = []) {
     super(); // This does nothing but is required before using `this`
@@ -98,7 +82,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugTimelineEntryView whenever a comment is selected. Update the location hash to include the comment ID.
+   * Called whenever a comment is selected. Update the location hash to include the comment ID.
+   * @listens BugView:CommentSelected
    * @param {Object} data - Passed data.
    * @param {Number} data.number - Comment number.
    * @returns {undefined}
@@ -165,7 +150,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever a new comment is edited by the user. Cache the comment and notify changes accordingly.
+   * Called whenever a new comment is edited by the user. Cache the comment and notify changes accordingly.
+   * @listens BugView:EditComment
    * @param {String} comment - Comment text.
    * @returns {undefined}
    * @fires BugController:CommentEdited
@@ -193,8 +179,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever any field is edited by the user. Cache the value and notify changes accordingly. Only
-   * the following fields are supported at this moment: status, resolution, dupe_of.
+   * Called whenever any field is edited by the user. Cache the value and notify changes accordingly. Only the following
+   * fields are supported at this moment: status, resolution, dupe_of.
+   * @listens BugView:EditField
    * @param {String} name - Field name.
    * @param {*} value - Field value.
    * @returns {undefined}
@@ -258,7 +245,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever any flag is edited by the user. Cache the value and notify changes accordingly.
+   * Called whenever any flag is edited by the user. Cache the value and notify changes accordingly.
+   * @listens BugView:EditFlag
    * @param {Object} flag - Flag change object.
    * @param {Number} flag.id - Bugzilla-defined numeric ID of the flag.
    * @param {String} flag.name - Type of the flag, such as 'review' or 'needinfo'.
@@ -291,7 +279,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever a participant is added by the user. Cache the value and notify changes accordingly.
+   * Called whenever a participant is added by the user. Cache the value and notify changes accordingly.
+   * @listens BugView:AddParticipant
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be added.
    * @returns {Boolean} result - Whether the participant is successfully added to the cache.
@@ -334,7 +323,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever a participant is removed by the user. Cache the value and notify changes accordingly.
+   * Called whenever a participant is removed by the user. Cache the value and notify changes accordingly.
+   * @listens BugView:RemoveParticipant
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be removed.
    * @returns {Boolean} result - Whether the participant is successfully removed from the cache.
@@ -371,6 +361,8 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Subscribe to the bug by adding the user's email to the Cc list, or unsubscribe from the bug by removing the user's
    * email from the Cc list. Notify the result accordingly.
+   * @listens BugView:Subscribe
+   * @listens BugView:Unsubscribe
    * @param {String} how - add or remove.
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @fires BugController:ParticipantAdded
@@ -428,8 +420,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever new attachment files are provided by the user through a file input form control or a
-   * drag-and-drop action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
+   * Called whenever new attachment files are provided by the user through a file input form control or a drag-and-drop
+   * action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
+   * @listens BugView:AttachFiles
    * @param {(FileList|Array)} files - Selected files.
    * @returns {undefined}
    * @fires BugController:AttachmentError
@@ -491,6 +484,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called whenever a new attachment text is provided by the user through a text input form control or a drag-and-drop
    * action. Read and cache the text.
+   * @listens BugView:AttachText
    * @param {String} text - Added plain text or URL string.
    * @returns {undefined}
    */
@@ -573,6 +567,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Remove an attachment from the cached new attachment list.
+   * @listens BugView:RemoveAttachment
    * @param {String} hash - Hash value of the attachment object to remove.
    * @returns {Boolean} result - Whether the attachment is found and removed.
    * @fires BugController:AttachmentRemoved
@@ -596,6 +591,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Edit a property of an unuploaded or existing attachment.
+   * @listens AttachmentView:EditAttachment
    * @param {Object} change - Change details.
    * @param {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
    * @param {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
@@ -657,6 +653,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
+   * @listens BugView:MoveUpAttachment
    * @param {String} hash - Hash value of the attachment object to move.
    * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
@@ -674,6 +671,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
+   * @listens BugView:MoveDownAttachment
    * @param {String} hash - Hash value of the attachment object to move.
    * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
@@ -712,6 +710,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
 
   /**
    * Submit all the changes made on the bug to Bugzilla.
+   * @listens BugView:Submit
    * @param {undefined}
    * @returns {Promise} submission - Can be a rejected Promise if any error is found.
    * @fires BugController:Submit
@@ -884,8 +883,9 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Called by BugView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the
-   * home page thread so the user can easily navigate through those bugs.
+   * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the home page
+   * thread so the user can easily navigate through those bugs.
+   * @listens BugView:OpeningTabRequested
    * @param {undefined}
    * @returns {undefined}
    */

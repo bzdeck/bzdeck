@@ -13,8 +13,6 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * @constructor
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @returns {Object} controller - New SearchPageController instance.
-   * @listens SearchPageView:SearchRequested
-   * @listens SearchPageView:OpeningTabRequested
    */
   constructor (instance_id) {
     super(); // This does nothing but is required before using `this`
@@ -123,8 +121,9 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
   }
 
   /**
-   * Called by SearchPageView whenever a previewed bug is selected for details. Open the bug in a new tab with a list of
-   * the same search resuts so the user can easily navigate through those bugs.
+   * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the same search
+   * resuts so the user can easily navigate through those bugs.
+   * @listens SearchPageView:OpeningTabRequested
    * @param {undefined}
    * @returns {undefined}
    */
@@ -134,6 +133,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
   /**
    * Search bugs from the remote Bugzilla instance, and provide the results as event data.
+   * @listens SearchPageView:SearchRequested
    * @param {URLSearchParams} params - Search query.
    * @returns {undefined}
    * @fires SearchPageController:Offline

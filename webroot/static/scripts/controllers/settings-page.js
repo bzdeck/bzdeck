@@ -13,7 +13,6 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
    * @constructor
    * @param {undefined}
    * @returns {Object} controller - New SettingsPageController instance.
-   * @listens SettingsPageView:PrefValueChanged
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -59,8 +58,9 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
   }
 
   /**
-   * Called by SettingsPageView whenever a preference value is changed by the user. Save it to the database and update
-   * the UI where necessary.
+   * Called whenever a preference value is changed by the user. Save it to the database and update the UI where
+   * necessary.
+   * @listens SettingsPageView:PrefValueChanged
    * @param {Object} data - Passed data.
    * @param {String} data.name - Preference name.
    * @param {*}      data.value - New value.

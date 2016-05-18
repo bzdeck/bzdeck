@@ -15,7 +15,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @returns {Object} view - New BugDetailsView instance.
-   * @listens BugController:HistoryUpdated
    */
   constructor (view_id, bug, $bug) {
     super(view_id, bug, $bug, true);
@@ -213,8 +212,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   }
 
   /**
-   * Called by BugController whenever the location fragment or history state is updated. Switch the tabs when an
-   * attachment is selected on the timeline or comment form.
+   * Called whenever the location fragment or history state is updated. Switch the tabs when an attachment is selected
+   * on the timeline or comment form.
+   * @listens BugController:HistoryUpdated
    * @param {Object} data - Passed data.
    * @param {String} data.hash - location.hash.
    * @returns {undefined}

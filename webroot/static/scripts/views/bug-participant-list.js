@@ -16,9 +16,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.
    * @returns {Object} view - New BugParticipantListView instance.
-   * @listens BugView:EditModeChanged
-   * @listens BugController:ParticipantAdded
-   * @listens BugController:ParticipantRemoved
    */
   constructor (view_id, bug, $section) {
     super(); // This does nothing but is required before using `this`
@@ -65,7 +62,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   }
 
   /**
-   * Called by BugView whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
+   * Called whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
+   * @listens BugView:EditModeChanged
    * @param {Object} data - Passed data.
    * @param {Boolean} data.enabled - Whether the edit mode is enabled.
    * @returns {undefined}
@@ -151,7 +149,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   }
 
   /**
-   * Called by BugController whenever a new participant is added by the user. Add the person to the list.
+   * Called whenever a new participant is added by the user. Add the person to the list.
+   * @listens BugController:ParticipantAdded
    * @param {Object} data - Passed data.
    * @param {String} data.field - Relevant bug field, like assigned_to or cc.
    * @param {String} data.email - Email of the added person.
@@ -196,7 +195,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   }
 
   /**
-   * Called by BugController whenever a new participant is removed by the user. Remove the person from the list.
+   * Called whenever a new participant is removed by the user. Remove the person from the list.
+   * @listens BugController:ParticipantRemoved
    * @param {Object} data - Passed data.
    * @param {String} data.field - Relevant bug field, like assigned_to or cc.
    * @param {String} data.email - Email of the removed person.

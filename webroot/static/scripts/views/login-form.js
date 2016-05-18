@@ -12,9 +12,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * @constructor
    * @param {URLSearchParams} params - Query info in the current URL.
    * @returns {Object} view - New LoginFormView instance.
-   * @listens SessionController:StatusUpdate
-   * @listens SessionController:Error
-   * @listens SessionController:Logout
    */
   constructor (params) {
     super(); // This does nothing but is required before using `this`
@@ -169,7 +166,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SessionController whenever the sign-in status is updated. Update the UI accordingly.
+   * Called whenever the sign-in status is updated. Update the UI accordingly.
+   * @listens SessionController:StatusUpdate
    * @param {Object} data - Passed data.
    * @param {String} data.status - Current status.
    * @param {String} data.message - Message text to display.
@@ -189,7 +187,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SessionController whenever an error is detected during the sign-in process. Show the error message.
+   * Called whenever an error is detected during the sign-in process. Show the error message.
+   * @listens SessionController:Error
    * @param {Object} data - Passed data.
    * @param {String} data.message - Message text to display.
    * @returns {undefined}
@@ -199,7 +198,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SessionController when the user has logged out from the app. Show the sign-in form again.
+   * Called when the user has logged out from the app. Show the sign-in form again.
+   * @listens SessionController:Logout
    * @param {undefined}
    * @returns {undefined}
    */

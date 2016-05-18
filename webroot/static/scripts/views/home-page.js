@@ -12,8 +12,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @constructor
    * @param {Object} controller - HomePageController instance.
    * @returns {Object} view - New HomePageView instance.
-   * @listens SettingsPageView:PrefValueChanged
-   * @listens SubscriptionCollection:Updated
    */
   constructor (controller) {
     super(); // This does nothing but is required before using `this`
@@ -221,11 +219,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Initialize the searchbar available in the vertical layout.
+   * @listens QuickSearchController:ResultsAvailable
    * @param {undefined}
    * @returns {undefined}
    * @fires QuickSearchView:QuickSearchRequested
    * @fires QuickSearchView:AdvancedSearchRequested
-   * @listens QuickSearchController:ResultsAvailable
    */
   init_searchbar () {
     let listed_bugs;
@@ -297,7 +295,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SettingsPageView whenever a preference value is changed by the user. Toggle the layout where necessary.
+   * Called whenever a preference value is changed by the user. Toggle the layout where necessary.
+   * @listens SettingsPageView:PrefValueChanged
    * @param {Object} data - Passed data.
    * @param {String} data.name - Preference name.
    * @param {*}      data.value - New value.
@@ -312,8 +311,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by SubscriptionCollection whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug
-   * when required, instead of refreshing the entire thread unconditionally.
+   * Called whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug when required, instead of
+   * refreshing the entire thread unconditionally.
+   * @listens SubscriptionCollection:Updated
    * @param {undefined}
    * @returns {undefined}
    */

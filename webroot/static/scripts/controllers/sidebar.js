@@ -10,12 +10,10 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Get a SidebarController instance.
    * @constructor
+   * @listens SidebarView:FolderSelected
    * @param {Proxy} user - UserModel instance of the application user.
    * @returns {Object} controller - New SidebarController instance.
    * @fires SidebarController:GravatarProfileFound
-   * @listens SidebarView:FolderSelected
-   * @listens SidebarView:AppMenuItemSelected
-   * @listens BugModel:AnnotationUpdated
    */
   constructor (user) {
     super(); // This does nothing but is required before using `this`
@@ -83,7 +81,8 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   }
 
   /**
-   * Called by BugModel whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+   * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
+   * @listens BugModel:AnnotationUpdated
    * @param {Object} data - Annotation change details.
    * @param {Proxy} data.bug - Changed bug.
    * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
@@ -115,7 +114,8 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   }
 
   /**
-   * Called by BannerView whenever an Application menu item is selected.
+   * Called whenever an Application menu item is selected.
+   * @listens SidebarView:AppMenuItemSelected
    * @param {Object} data - Passed data.
    * @param {String} data.command - Command name of the menu itme.
    * @returns {undefined}

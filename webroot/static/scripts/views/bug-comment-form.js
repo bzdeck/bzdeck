@@ -16,18 +16,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {HTMLElement} $bug - Bug container element.
    * @returns {Object} view - New BugCommentFormView instance.
    * @fires BugView:Submit
-   * @listens BugController:AttachmentAdded
-   * @listens BugController:AttachmentRemoved
-   * @listens BugController:AttachmentEdited
-   * @listens BugController:AttachmentError
-   * @listens BugController:UploadListUpdated
-   * @listens BugController:BugEdited
-   * @listens BugController:CommentEdited
-   * @listens BugController:Submit
-   * @listens BugController:SubmitProgress
-   * @listens BugController:SubmitSuccess
-   * @listens BugController:SubmitError
-   * @listens BugController:SubmitComplete
    */
   constructor (view_id, bug, $bug) {
     super(); // This does nothing but is required before using `this`
@@ -255,7 +243,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is added by the user. Update the attachment list UI accordingly.
+   * Called whenever a new attachment is added by the user. Update the attachment list UI accordingly.
+   * @listens BugController:AttachmentAdded
    * @param {Object} data - Passed data.
    * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
@@ -303,8 +292,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is removed by the user. Update the attachment list UI
-   * accordingly.
+   * Called whenever a new attachment is removed by the user. Update the attachment list UI accordingly.
+   * @listens BugController:AttachmentRemoved
    * @param {Object} data - Passed data.
    * @param {Number} data.index - Removed attachment's index in the cached list.
    * @returns {undefined}
@@ -314,7 +303,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
+   * Called whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
+   * @listens BugController:AttachmentEdited
    * @param {Object} data - Passed data.
    * @param {Object} data.change - Change details.
    * @param {String} data.change.hash - Attachment hash for unuploaded attachment.
@@ -331,8 +321,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment is added or removed by the user. If there is any unuploaded
-   * attachment, select the Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
+   * Called whenever a new attachment is added or removed by the user. If there is any unuploaded attachment, select the
+   * Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
+   * @listens BugController:UploadListUpdated
    * @param {Object} data - Passed data.
    * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like Object.
    * @returns {undefined}
@@ -345,8 +336,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever a new attachment added by the user has an error, such as an oversized file. Show
-   * an alert dialog to notify the user of the error.
+   * Called whenever a new attachment added by the user has an error, such as an oversized file. Show an alert dialog to
+   * notify the user of the error.
+   * @listens BugController:AttachmentError
    * @param {Object} data - Passed data.
    * @param {String} data.message - Explanation of the detected error.
    * @returns {undefined}
@@ -360,8 +352,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever the a comment text is added or removed by the user. If the comment form is empty,
-   * disable the Preview tab.
+   * Called whenever the a comment text is added or removed by the user. If the comment form is empty, disable the
+   * Preview tab.
+   * @listens BugController:CommentEdited
    * @param {Object} data - Passed data.
    * @param {Boolean} data.has_comment - Whether the comment is empty.
    * @returns {undefined}
@@ -371,8 +364,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever any of the fields, comments or attachments are edited by the user. If there is
-   * any change, enable the Submit button. Otherwise, disable it.
+   * Called whenever any of the fields, comments or attachments are edited by the user. If there is any change, enable
+   * the Submit button. Otherwise, disable it.
+   * @listens BugController:BugEdited
    * @param {Object} data - Passed data.
    * @param {Boolean} data.can_submit - Whether the changes can be submitted immediately.
    * @returns {undefined}
@@ -382,8 +376,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever the changes are about to be submitted to Bugzilla. Disable the comment form and
-   * Submit button and update the statusbar message.
+   * Called whenever the changes are about to be submitted to Bugzilla. Disable the comment form and Submit button and
+   * update the statusbar message.
+   * @listens BugController:Submit
    * @param {undefined}
    * @returns {undefined}
    */
@@ -394,8 +389,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever the upload of a new attachment is in progress. Show the current status on the
-   * statusbar.
+   * Called whenever the upload of a new attachment is in progress. Show the current status on the statusbar.
+   * @listens BugController:SubmitProgress
    * @param {object} data - Current uploading status.
    * @param {Number} data.total - Total size of attachments.
    * @param {Number} data.uploaded - Uploaded size of attachments.
@@ -408,7 +403,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever all the changes are submitted successfully. Reset the form content.
+   * Called whenever all the changes are submitted successfully. Reset the form content.
+   * @listens BugController:SubmitSuccess
    * @param {undefined}
    * @returns {undefined}
    */
@@ -418,8 +414,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController whenever any error is detected while submitting the changes. Show the error message on the
-   * statusbar.
+   * Called whenever any error is detected while submitting the changes. Show the error message on the statusbar.
+   * @listens BugController:SubmitError
    * @param {object} data - Error details.
    * @param {String} data.error - Error message.
    * @param {Boolean} data.button_disabled - Whether the submit button should be disabled.
@@ -431,7 +427,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugController once a submission is complete, regardless of errors. Enable and focus on the comment form.
+   * Called once a submission is complete, regardless of errors. Enable and focus on the comment form.
+   * @listens BugController:SubmitComplete
    * @param {undefined}
    * @returns {undefined}
    */

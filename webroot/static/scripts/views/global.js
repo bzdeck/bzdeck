@@ -12,7 +12,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @constructor
    * @param {undefined}
    * @returns {Object} view - New GlobalView instance.
-   * @listens UserModel:UserInfoUpdated
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -221,8 +220,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by UserModel whenever any information of a user is updated. This may happen, for example, when the user's
-   * Gravatar is retrieved. Find the user's node on the view and update the displayed information accordingly.
+   * Called whenever any information of a user is updated. This may happen, for example, when the user's Gravatar is
+   * retrieved. Find the user's node on the view and update the displayed information accordingly.
+   * @listens UserModel:UserInfoUpdated
    * @param {Object} data - Passed data.
    * @param {String} data.name - Name of the updated person.
    * @returns {undefined}

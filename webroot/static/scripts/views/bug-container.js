@@ -11,13 +11,11 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Get a BugContainerView instance.
    * @constructor
+   * @listens BugContainerController:LoadingStarted
+   * @listens BugContainerController:LoadingFinished
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {HTMLElement} $container - The outer element.
    * @returns {Object} view - New BugContainerView instance.
-   * @listens BugContainerController:BugDataAvailable
-   * @listens BugContainerController:BugDataUnavailable
-   * @listens BugContainerController:LoadingStarted
-   * @listens BugContainerController:LoadingFinished
    */
   constructor (instance_id, $container) {
     super(); // This does nothing but is required before using `this`
@@ -33,7 +31,8 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by DetailsPageController when the bug data is found. Prepare the newly opened tabpanel.
+   * Called when the bug data is found. Prepare the newly opened tabpanel.
+   * @listens BugContainerController:BugDataAvailable
    * @param {Object} data - Passed data.
    * @param {Proxy}  data.bug - Bug to show.
    * @param {Object} data.controller - New BugController instance for that bug.
@@ -52,7 +51,8 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by DetailsPageController when an error was encountered while fetching the bug data. Show the error message.
+   * Called when an error was encountered while fetching the bug data. Show the error message.
+   * @listens BugContainerController:BugDataUnavailable
    * @param {Object} data - Passed data.
    * @param {Number} data.code - Error code usually defined by Bugzilla.
    * @param {String} data.message - Error message text.

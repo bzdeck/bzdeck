@@ -13,10 +13,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * @param {String} email - Person's Bugzilla account name.
    * @param {Boolean} self - Whether this profile is the app user's own profile.
    * @returns {Object} view - New ProfilePageView instance.
-   * @listens ProfilePageController:GravatarProfileFound
-   * @listens ProfilePageController:BugzillaProfileFound
-   * @listens ProfilePageController:BugzillaProfileFetchingError
-   * @listens ProfilePageController:BugzillaProfileFetchingComplete
    */
   constructor (email, self) {
     super(); // This does nothing but is required before using `this`
@@ -44,7 +40,8 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by ProfilePageController when the User's Gravatar profile is retrieved. Apply the background image.
+   * Called when the User's Gravatar profile is retrieved. Apply the background image.
+   * @listens ProfilePageController:GravatarProfileFound
    * @param {Object} data - Data passed.
    * @param {Object} data.style - CSS style rules including the background image.
    * @returns {Boolean} result - Whether the view is updated.
@@ -61,7 +58,8 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by ProfilePageController when the User's Bugzilla profile is retrieved. Render the profile details.
+   * Called when the User's Bugzilla profile is retrieved. Render the profile details.
+   * @listens ProfilePageController:BugzillaProfileFound
    * @param {Object} data - Data passed.
    * @param {Object} data.profile - Profile info.
    * @param {Object} data.links - Related links.
@@ -84,7 +82,8 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by ProfilePageController when the User's Bugzilla profile could not be retrieved. Show the error message.
+   * Called when the User's Bugzilla profile could not be retrieved. Show the error message.
+   * @listens ProfilePageController:BugzillaProfileFetchingError
    * @param {Object} data - Data passed.
    * @param {String} data.message - Error message.
    * @returns {Boolean} result - Whether the view is updated.
@@ -100,7 +99,8 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by ProfilePageController when fetching the User's Bugzilla profile is complete. Remove the throbber.
+   * Called when fetching the User's Bugzilla profile is complete. Remove the throbber.
+   * @listens ProfilePageController:BugzillaProfileFetchingComplete
    * @param {undefined}
    * @returns {Boolean} result - Whether the view is updated.
    */

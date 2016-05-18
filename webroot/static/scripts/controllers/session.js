@@ -72,13 +72,13 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 2. Let the user sign in if an active account could not be found.
+   * @listens LoginFormView:LoginRequested
+   * @listens LoginFormView:QRCodeDecoded
+   * @listens LoginFormView:QRCodeError
    * @param {undefined}
    * @returns {undefined}
    * @fires SessionController:StatusUpdate
    * @fires SessionController:Error
-   * @listens LoginFormView:LoginRequested
-   * @listens LoginFormView:QRCodeDecoded
-   * @listens LoginFormView:QRCodeError
    */
   force_login () {
     this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });

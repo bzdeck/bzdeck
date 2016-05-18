@@ -17,9 +17,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @param {Boolean [subclass=false] - Whether the constructor is called from a subclass.
    * @returns {Object} view - New BugView instance.
-   * @listens BugModel:AnnotationUpdated
-   * @listens BugModel:Updated
-   * @listens BugView:FilesSelected
    */
   constructor (view_id, bug, $bug, subclass = false) {
     super(); // This does nothing but is required before using `this`
@@ -371,10 +368,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
+   * @listens BugController:FieldEdited
    * @param {undefined}
    * @returns {undefined}
    * @fires BugView:EditField
-   * @listens BugController:FieldEdited
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
@@ -607,6 +604,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the user selected files to attach through an input form control or drag and drop operation. If the
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
    * traditional File API to identify the files. In any case, notify the selected files to the controller.
+   * @listens BugView:FilesSelected
    * @param {Object} data - Passed data.
    * @param {(HTMLInputElement|DataTransfer)} data.input - Data source.
    * @returns {undefined}
@@ -764,7 +762,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugModel whenever a bug annotation is updated. Update the Star button on the toolbar.
+   * Called whenever a bug annotation is updated. Update the Star button on the toolbar.
+   * @listens BugModel:AnnotationUpdated
    * @param {Object} data - Annotation change details.
    * @param {Proxy} data.bug - Changed bug.
    * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
@@ -778,7 +777,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   }
 
   /**
-   * Called by BugModel whenever any field of a bug is updated. Update the view if the bug ID matches.
+   * Called whenever any field of a bug is updated. Update the view if the bug ID matches.
+   * @listens BugModel:Updated
    * @param {Object} data - Passed data.
    * @param {Proxy} data.bug - Changed bug.
    * @param {Map}   data.changes - Change details.

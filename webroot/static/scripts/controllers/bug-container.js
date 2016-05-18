@@ -14,7 +14,6 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
    *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugContainerController instance.
-   * @listens BugContainerView:NavigationRequested
    */
   constructor (instance_id, sibling_bug_ids) {
     super(); // This does nothing but is required before using `this`
@@ -26,7 +25,8 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
   }
 
   /**
-   * Called by BugContainerView whenever navigating to other bug within the same tabpanel is requested.
+   * Called whenever navigating to other bug within the same tabpanel is requested.
+   * @listens BugContainerView:NavigationRequested
    * @param {Object} data - Passed data.
    * @param {Number} data.old_id - Old bug ID to be replaced.
    * @param {Number} data.new_id - New bug ID to navigate.

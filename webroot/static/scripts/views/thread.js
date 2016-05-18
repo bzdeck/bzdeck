@@ -60,7 +60,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @param {Array} columns - Column list.
    * @param {Object} options - Used for the Grid widget.
    * @returns {Object} view - New ClassicThreadView instance.
-   * @listens BugModel:AnnotationUpdated
    */
   constructor (consumer, name, $grid, columns, options) {
     super(); // This does nothing but is required before using `this`
@@ -181,7 +180,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   }
 
   /**
-   * Called by BugModel whenever a bug annotation is updated. Update the bug row on the thread.
+   * Called whenever a bug annotation is updated. Update the bug row on the thread.
+   * @listens BugModel:AnnotationUpdated
    * @param {Object} data - Annotation change details.
    * @param {Proxy} data.bug - Changed bug.
    * @param {String} data.type - Annotation type such as 'starred'.
@@ -215,7 +215,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @param {Object} options - Extra options for display.
    * @param {Object} options.sort_conditions - Thread sorting conditions.
    * @returns {Object} view - New VerticalThreadView instance.
-   * @listens BugModel:AnnotationUpdated
    */
   constructor (consumer, name, $outer, options) {
     super(); // This does nothing but is required before using `this`
@@ -347,7 +346,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   }
 
   /**
-   * Called by BugModel whenever a bug annotation is updated. Update the bug item on the thread.
+   * Called whenever a bug annotation is updated. Update the bug item on the thread.
+   * @listens BugModel:AnnotationUpdated
    * @param {Object} data - Annotation change details.
    * @param {Proxy} data.bug - Changed bug.
    * @param {String} data.type - Annotation type such as 'starred' or 'unread'.

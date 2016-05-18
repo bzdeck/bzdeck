@@ -12,10 +12,6 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
    * @constructor
    * @param {undefined}
    * @returns {Object} controller - New QuickSearchController instance.
-   * @listens QuickSearchView:RecentSearchesRequested
-   * @listens QuickSearchView:QuickSearchRequested
-   * @listens QuickSearchView:AdvancedSearchRequested
-   * @listens QuickSearchView:ResultSelected
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -30,6 +26,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Provide recent searches done by the user. Notify the results with an event.
+   * @listens QuickSearchView:RecentSearchesRequested
    * @param {undefined}
    * @returns {undefined}
    * @fires QuickSearchController:ResultsAvailable
@@ -67,6 +64,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Execute a quick search and notify the results with an event.
+   * @listens QuickSearchView:QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @returns {undefined}
    * @fires QuickSearchController:ResultsAvailable
@@ -138,6 +136,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Execute an advanced search by opening a new search page.
+   * @listens QuickSearchView:AdvancedSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @returns {undefined}
    */
@@ -154,8 +153,8 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   }
 
   /**
-   * Called by QuickSearchView whenever a search result is selected. Show the result in a new tab, and update the search
-   * history.
+   * Called whenever a search result is selected. Show the result in a new tab, and update the search history.
+   * @listens QuickSearchView:ResultSelected
    * @param {Object} data - Passed data.
    * @param {{String|Number)} data.id - Item name, such as bug ID or user name.
    * @param {String} data.type - Item type, such as 'bug' or 'user'.

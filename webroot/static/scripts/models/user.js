@@ -162,11 +162,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalController.
+   * @listens GlobalController:GravatarProfileProvided
    * @param {Object} [options] - Extra options.
    * @param {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @fires UserModel:GravatarProfileRequested
-   * @listens GlobalController:GravatarProfileProvided
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
   get_gravatar_profile (options = {}) {
@@ -208,10 +208,10 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
    * Because this requires DOM access, delegate the process to GlobalController.
+   * @listens GlobalController:GravatarImageProvided
    * @param {Object} [options] - Extra options.
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @fires UserModel:GravatarImageRequested
-   * @listens GlobalController:GravatarImageProvided
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
   get_gravatar_image (options = {}) {
