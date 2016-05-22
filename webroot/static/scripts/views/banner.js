@@ -73,14 +73,12 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Called whenever a global tab is selected.
-   * @param {Object} detail - Event detail.
-   * @param {Array.<HTMLElement>} detail.items - Newly selected nodes.
-   * @param {Array.<HTMLElement>} detail.oldval - Previously selected nodes.
+   * @param {Array.<HTMLElement>} items - Newly selected nodes.
+   * @param {Array.<HTMLElement>} oldval - Previously selected nodes.
    * @returns {undefined}
    * @fires BannerView#TabSelected
    */
-  on_tab_selected (detail) {
-    let { items, oldval } = detail;
+  on_tab_selected ({ items, oldval } = {}) {
     let path = this.tab_path_map.get(items[0].id);
     let prev_tabpanel_id;
 

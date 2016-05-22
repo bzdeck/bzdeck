@@ -13,15 +13,13 @@ const tasks = {};
 /**
  * Send a XMLHttpRequest, and post the result events, not only load, but also abort, error and progress.
  * @param {MessagePort} port - Allow sending messages.
- * @param {Object}  args - Arguments.
- * @param {String}  args.url - URL to load.
- * @param {String} [args.method=GET] - Request method.
- * @param {Map}    [args.headers] - HTTP headers to be set.
- * @param {*}      [args.data] - Data to be POSTed.
+ * @param {String} url - URL to load.
+ * @param {String} [method=GET] - Request method.
+ * @param {Map} [headers] - HTTP headers to be set.
+ * @param {*} [data] - Data to be POSTed.
  * @returns {undefined}
  */
-tasks.xhr = (port, args) => {
-  let { url, method, headers, data } = args;
+tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
   let xhr = new XMLHttpRequest();
 
   let post = event => {
@@ -41,7 +39,7 @@ tasks.xhr = (port, args) => {
     port.postMessage(message);
   };
 
-  xhr.open(method || 'GET', url, false); // async = false
+  xhr.open(method, url, false); // async = false
 
   if (headers) {
     headers.forEach((value, key) => xhr.setRequestHeader(key, value));
@@ -57,13 +55,11 @@ tasks.xhr = (port, args) => {
 /**
  * Decode a Base-64 encoded string as a binary, and post it and its Blob.
  * @param {MessagePort} port - Allow sending messages.
- * @param {Object} args - Arguments.
- * @param {String} args.str - Base-64 data.
- * @param {String} args.type - File type.
+ * @param {String} str - Base-64 data.
+ * @param {String} type - File type.
  * @returns {undefined}
  */
-tasks.decode = (port, args) => {
-  let { str, type } = args;
+tasks.decode = (port, { str, type } = {}) => {
   let binary = atob(str);
   let blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type });
 
@@ -73,12 +69,10 @@ tasks.decode = (port, args) => {
 /**
  * Read the content of a Blob or File, and post the data URL. Use FileReader instead of btoa() to avoid overflow.
  * @param {MessagePort} port - Allow sending messages.
- * @param {Object} args - Arguments.
- * @param {(Blob|File)} args.file - File to be read.
+ * @param {(Blob|File)} file - File to be read.
  * @returns {undefined}
  */
-tasks.readfile = (port, args) => {
-  let { file } = args;
+tasks.readfile = (port, { file } = {}) => {
   let reader = new FileReader();
 
   reader.addEventListener('load', event => port.postMessage(event.target.result));
