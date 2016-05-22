@@ -10,24 +10,24 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   /**
    * Get a GlobalController instance.
    * @constructor
-   * @listens GlobalView:OpenBug
-   * @listens GlobalView:OpenAttachment
-   * @listens GlobalView:OpenProfile
+   * @listens GlobalView#OpenBug
+   * @listens GlobalView#OpenAttachment
+   * @listens GlobalView#OpenProfile
    * @param {undefined}
    * @returns {Object} controller - New GlobalController instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    this.subscribe_safe('BugModel:AnnotationUpdated', true);
-    this.subscribe('UserModel:GravatarProfileRequested', true);
-    this.subscribe('UserModel:GravatarImageRequested', true);
+    this.subscribe_safe('BugModel#AnnotationUpdated', true);
+    this.subscribe('UserModel#GravatarProfileRequested', true);
+    this.subscribe('UserModel#GravatarImageRequested', true);
 
     // Navigation, can be requested by any view
-    this.on('V:OpenBug',
+    this.on('V#OpenBug',
             data => BzDeck.router.navigate(`/bug/${data.id}`, { ids: data.ids, att_id: data.att_id }), true);
-    this.on('V:OpenAttachment', data => BzDeck.router.navigate(`/attachment/${data.id}`), true);
-    this.on('V:OpenProfile', data => BzDeck.router.navigate(`/profile/${data.email}`), true);
+    this.on('V#OpenAttachment', data => BzDeck.router.navigate(`/attachment/${data.id}`), true);
+    this.on('V#OpenProfile', data => BzDeck.router.navigate(`/profile/${data.email}`), true);
   }
 
   /**
@@ -41,7 +41,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
-   * @listens BugModel:AnnotationUpdated
+   * @listens BugModel#AnnotationUpdated
    * @param {Proxy} bug - Changed bug.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
@@ -56,13 +56,13 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   /**
    * Called whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar doesn't support
    * CORS. Notify UserModel when the profile is ready.
-   * @listens UserModel:GravatarProfileRequested
+   * @listens UserModel#GravatarProfileRequested
    * @param {String} hash - Hash value of the user's email.
    * @returns {undefined}
-   * @fires GlobalController:GravatarProfileProvided
+   * @fires GlobalController#GravatarProfileProvided
    */
   on_gravatar_profile_requested ({ hash } = {}) {
-    let notify = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
+    let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
 
     this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
         .then(data => data.entry[0]).then(profile => notify(profile)).catch(error => notify(undefined));
@@ -71,15 +71,15 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   /**
    * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
    * image could not be found. Notify UserModel when the image is ready.
-   * @listens UserModel:GravatarImageRequested
+   * @listens UserModel#GravatarImageRequested
    * @param {String} hash - Hash value of the user's email.
    * @param {String} color - Generated color of the user for the fallback image.
    * @param {String} initial - Initial of the user for the fallback image.
    * @returns {undefined}
-   * @fires GlobalController:GravatarImageProvided
+   * @fires GlobalController#GravatarImageProvided
    */
   on_gravatar_image_requested ({ hash, color, initial } = {}) {
-    let notify = blob => this.trigger(':GravatarImageProvided', { hash, blob });
+    let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
     let $image = new Image();
     let $canvas = document.createElement('canvas');
     let ctx = $canvas.getContext('2d');

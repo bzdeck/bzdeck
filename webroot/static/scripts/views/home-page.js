@@ -46,15 +46,15 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
-    this.subscribe('SettingsPageView:PrefValueChanged', true);
-    this.on_safe('SubscriptionCollection:Updated', data => this.on_subscriptions_updated(), true);
+    this.subscribe('SettingsPageView#PrefValueChanged', true);
+    this.on_safe('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
   }
 
   /**
    * Select the Home tab and open the specified Sidebar folder.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {undefined}
-   * @fires HomePageView:UnknownFolderSelected
+   * @fires HomePageView#UnknownFolderSelected
    */
   connect (folder_id) {
     let $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
@@ -63,7 +63,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     if (!$folder) {
       // Unknown folder; ignore
-      this.trigger(':UnknownFolderSelected');
+      this.trigger('#UnknownFolderSelected');
 
       return;
     }
@@ -219,11 +219,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Initialize the searchbar available in the vertical layout.
-   * @listens QuickSearchController:ResultsAvailable
+   * @listens QuickSearchController#ResultsAvailable
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchView:QuickSearchRequested
-   * @fires QuickSearchView:AdvancedSearchRequested
+   * @fires QuickSearchView#QuickSearchRequested
+   * @fires QuickSearchView#AdvancedSearchRequested
    */
   init_searchbar () {
     let listed_bugs;
@@ -235,7 +235,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {
         // TEMP: Use QuickSearchController to open the advanced search page
-        this.trigger('QuickSearchView:AdvancedSearchRequested', { input: $searchbox.value });
+        this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
         Promise.resolve().then(() => $searchbox.focus());
@@ -256,11 +256,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     $searchbox.addEventListener('input', event => {
       if ($searchbox.value.trim()) {
         // TEMP: Use QuickSearchController to retrieve search results
-        this.trigger('QuickSearchView:QuickSearchRequested', { input: $searchbox.value });
+        this.trigger('QuickSearchView#QuickSearchRequested', { input: $searchbox.value });
       }
     });
 
-    this.on('QuickSearchController:ResultsAvailable', data => {
+    this.on('QuickSearchController#ResultsAvailable', data => {
       let { category, input, results } = data;
 
       // Check if the search terms have not changed since the search is triggered
@@ -296,7 +296,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Called whenever a preference value is changed by the user. Toggle the layout where necessary.
-   * @listens SettingsPageView:PrefValueChanged
+   * @listens SettingsPageView#PrefValueChanged
    * @param {String} name - Preference name.
    * @param {*} value - New value.
    * @returns {undefined}
@@ -310,7 +310,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Called whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug when required, instead of
    * refreshing the entire thread unconditionally.
-   * @listens SubscriptionCollection:Updated
+   * @listens SubscriptionCollection#Updated
    * @param {undefined}
    * @returns {undefined}
    */

@@ -40,18 +40,18 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 1. Find a user account from the local database.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:StatusUpdate
-   * @fires SessionController:Error
+   * @fires SessionController#StatusUpdate
+   * @fires SessionController#Error
    */
   find_account () {
-    this.trigger(':StatusUpdate', { message: 'Looking for your account...' }); // l10n
+    this.trigger('#StatusUpdate', { message: 'Looking for your account...' }); // l10n
 
     BzDeck.datasources.global.load().then(database => {
       BzDeck.collections.accounts = new BzDeck.AccountCollection();
       BzDeck.collections.hosts = new BzDeck.HostCollection();
     }, error => {
       console.error(error);
-      this.trigger(':Error', { message: error.message });
+      this.trigger('#Error', { message: error.message });
     }).then(() => Promise.all([
       BzDeck.collections.accounts.load(),
       BzDeck.collections.hosts.load(),
@@ -72,42 +72,42 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
   /**
    * Bootstrap Step 2. Let the user sign in if an active account could not be found.
-   * @listens LoginFormView:LoginRequested
-   * @listens LoginFormView:QRCodeDecoded
-   * @listens LoginFormView:QRCodeError
+   * @listens LoginFormView#LoginRequested
+   * @listens LoginFormView#QRCodeDecoded
+   * @listens LoginFormView#QRCodeError
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:StatusUpdate
-   * @fires SessionController:Error
+   * @fires SessionController#StatusUpdate
+   * @fires SessionController#Error
    */
   force_login () {
-    this.trigger(':StatusUpdate', { status: 'ForcingLogin', message: '' });
+    this.trigger('#StatusUpdate', { status: 'ForcingLogin', message: '' });
 
     // User credentials will be passed from a sub window over a BroadcastChannel
     let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
 
-    this.on('LoginFormView:LoginRequested', data => {
+    this.on('LoginFormView#LoginRequested', data => {
       bc.addEventListener('message', event => {
         let { client_api_login: email, client_api_key: key } = event.data;
 
         if (email && key) {
           this.verify_account(data.host, email, key);
         } else {
-          this.trigger(':Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
+          this.trigger('#Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
         }
       });
     }, true);
 
-    this.on('LoginFormView:QRCodeDecoded', data => {
+    this.on('LoginFormView#QRCodeDecoded', data => {
       if (data.result && data.result.match(/^.+@.+\..+\|[A-Za-z0-9]{40}$/)) {
         this.verify_account(data.host, ...data.result.split('|'));
       } else {
-        this.trigger(':Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
+        this.trigger('#Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
       }
     }, true);
 
-    this.on('LoginFormView:QRCodeError', data => {
-      this.trigger(':Error', { message: 'Failed to access a camera on your device. Try again.' });
+    this.on('LoginFormView#QRCodeError', data => {
+      this.trigger('#Error', { message: 'Failed to access a camera on your device. Try again.' });
     }, true);
   }
 
@@ -117,12 +117,12 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * @param {String} email - User's Bugzilla account name.
    * @param {String} api_key - User's 40-character Bugzilla API key.
    * @returns {undefined}
-   * @fires SessionController:StatusUpdate
-   * @fires SessionController:Error
-   * @fires SessionController:UserFound
+   * @fires SessionController#StatusUpdate
+   * @fires SessionController#Error
+   * @fires SessionController#UserFound
    */
   verify_account (host_id, email, api_key) {
-    this.trigger(':StatusUpdate', { message: 'Verifying your account...' }); // l10n
+    this.trigger('#StatusUpdate', { message: 'Verifying your account...' }); // l10n
 
     if (!this.bootstrapping) {
       // User is trying to re-login
@@ -152,11 +152,11 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       });
 
       account.save();
-      this.trigger(':UserFound');
+      this.trigger('#UserFound');
       this.auth_callback_bc.close();
       this.load_data();
     }).catch(error => {
-      this.trigger(':Error', { message: error.message || 'Failed to find your account.' }); // l10n
+      this.trigger('#Error', { message: error.message || 'Failed to find your account.' }); // l10n
     });
   }
 
@@ -164,11 +164,11 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 4. Load data from the local database once the user account is set.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:StatusUpdate
-   * @fires SessionController:Error
+   * @fires SessionController#StatusUpdate
+   * @fires SessionController#Error
    */
   load_data () {
-    this.trigger(':StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
+    this.trigger('#StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
 
     BzDeck.datasources.account.load().then(database => {
       BzDeck.collections.bugs = new BzDeck.BugCollection();
@@ -178,7 +178,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       BzDeck.collections.users = new BzDeck.UserCollection();
     }, error => {
       console.error(error);
-      this.trigger(':Error', { message: error.message });
+      this.trigger('#Error', { message: error.message });
     }).then(() => Promise.all([
       BzDeck.collections.bugs.load(),
       BzDeck.prefs.load(),
@@ -196,7 +196,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       this.init_components();
     }).catch(error => {
       console.error(error);
-      this.trigger(':Error', { message: error.message });
+      this.trigger('#Error', { message: error.message });
     });
   }
 
@@ -204,10 +204,10 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
    * @param {Boolean} [firstrun=false] - True for the initial session.
    * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
-   * @fires SessionController:StatusUpdate
+   * @fires SessionController#StatusUpdate
    */
   fetch_data (firstrun = false) {
-    this.trigger(':StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
+    this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
     let now = Date.now();
     let get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
@@ -238,11 +238,11 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 6. Set up everything including the global controllers and views, then complete bootstrapping.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:StatusUpdate
-   * @fires SessionController:Error
+   * @fires SessionController#StatusUpdate
+   * @fires SessionController#Error
    */
   init_components () {
-    this.trigger(':StatusUpdate', { message: 'Initializing UI...' }); // l10n
+    this.trigger('#StatusUpdate', { message: 'Initializing UI...' }); // l10n
 
     new Promise((resolve, reject) => {
       this.relogin ? resolve() : reject();
@@ -266,7 +266,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
           window.setInterval(() => BzDeck.collections.subscriptions.fetch(),
                              1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
     }).then(() => {
-      this.trigger(':StatusUpdate', { message: 'Loading complete.' }); // l10n
+      this.trigger('#StatusUpdate', { message: 'Loading complete.' }); // l10n
       this.login();
       this.bootstrapping = false;
     }).then(() => {
@@ -274,7 +274,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       return this.firstrun ? Promise.resolve() : this.fetch_data();
     }).catch(error => {
       console.error(error);
-      this.trigger(':Error', { message: error.message });
+      this.trigger('#Error', { message: error.message });
     });
   }
 
@@ -282,20 +282,20 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Notify the view of the user's sign-in once prepared.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:Login
+   * @fires SessionController#Login
    */
   login () {
-    this.trigger(':Login');
+    this.trigger('#Login');
   }
 
   /**
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController:Logout
+   * @fires SessionController#Logout
    */
   logout () {
-    this.trigger(':Logout');
+    this.trigger('#Logout');
     this.clean();
 
     // Delete the account data and refresh the page to ensure the app works properly

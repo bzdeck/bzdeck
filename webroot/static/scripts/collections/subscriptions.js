@@ -71,16 +71,16 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @param {Boolean} [firstrun=false] - True for the initial session.
    * @param {URLSearchParams} [params] - Search query.
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
-   * @fires SubscriptionCollection:FetchingSubscriptionsStarted
-   * @fires SubscriptionCollection:FetchingSubscriptionsComplete
-   * @fires SubscriptionCollection:Updated
+   * @fires SubscriptionCollection#FetchingSubscriptionsStarted
+   * @fires SubscriptionCollection#FetchingSubscriptionsComplete
+   * @fires SubscriptionCollection#Updated
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   fetch (firstrun = false, params = new URLSearchParams()) {
     let fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
     // Fire an event to show the throbber
-    this.trigger(':FetchingSubscriptionsStarted');
+    this.trigger('#FetchingSubscriptionsStarted');
 
     params.append('j_top', 'OR');
 
@@ -115,7 +115,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       }
 
       return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id), true, false).then(bugs => {
-        this.trigger_safe(':Updated', { bugs });
+        this.trigger_safe('#Updated', { bugs });
 
         return bugs;
       });
@@ -128,11 +128,11 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       });
     }).then(bugs => { // Map
       BzDeck.prefs.set('subscriptions.last_loaded', Date.now());
-      this.trigger(':FetchingSubscriptionsComplete');
+      this.trigger('#FetchingSubscriptionsComplete');
 
       return Promise.resolve(bugs);
     }).catch(error => {
-      this.trigger(':FetchingSubscriptionsComplete');
+      this.trigger('#FetchingSubscriptionsComplete');
 
       return Promise.reject(new Error('Failed to load data.')); // l10n
     });

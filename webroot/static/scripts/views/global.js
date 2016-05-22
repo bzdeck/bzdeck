@@ -64,7 +64,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     });
 
     // Update user name & image asynchronously
-    this.subscribe('UserModel:UserInfoUpdated', true);
+    this.subscribe('UserModel#UserInfoUpdated', true);
 
     // General events
     window.addEventListener('contextmenu', event => event.preventDefault());
@@ -137,9 +137,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * relevant content in a new in-app tab or browser tab.
    * @param {MouseEvent} event - The click event.
    * @returns {Boolean} default - Whether the event should lead to the default action.
-   * @fires GlobalView:OpenBug
-   * @fires GlobalView:OpenAttachment
-   * @fires GlobalView:OpenProfile
+   * @fires GlobalView#OpenBug
+   * @fires GlobalView#OpenAttachment
+   * @fires GlobalView#OpenProfile
    */
   onclick (event) {
     let $target = event.target;
@@ -151,14 +151,14 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     }
 
     if ($target.matches('[itemtype$="User"][role="link"]')) {
-      this.trigger('GlobalView:OpenProfile', { email: $target.querySelector('[itemprop="email"]').content });
+      this.trigger('GlobalView#OpenProfile', { email: $target.querySelector('[itemprop="email"]').content });
 
       return this.helpers.event.ignore(event);
     }
 
     // Support clicks on the avatar image in a comment
     if ($parent && $parent.matches('[itemtype$="User"][role="link"]')) {
-      this.trigger('GlobalView:OpenProfile', { email: $parent.querySelector('[itemprop="email"]').content });
+      this.trigger('GlobalView#OpenProfile', { email: $parent.querySelector('[itemprop="email"]').content });
 
       return this.helpers.event.ignore(event);
     }
@@ -168,7 +168,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
       if ($target.hasAttribute('data-bug-id')) {
         // Bug link: open in a new app tab
-        this.trigger('GlobalView:OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
+        this.trigger('GlobalView#OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
       } else if ($target.hasAttribute('data-att-id')) {
         // Attachment link: open in a new app tab
         let $content_type = $target.querySelector('[itemprop="content_type"]');
@@ -185,9 +185,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
             return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
           }).then(bug_id => {
             if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-              this.trigger('GlobalView:OpenAttachment', { id: att_id });
+              this.trigger('GlobalView#OpenAttachment', { id: att_id });
             } else {
-              this.trigger('GlobalView:OpenBug', { id: bug_id, att_id });
+              this.trigger('GlobalView#OpenBug', { id: bug_id, att_id });
             }
           });
         }
@@ -222,7 +222,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Called whenever any information of a user is updated. This may happen, for example, when the user's Gravatar is
    * retrieved. Find the user's node on the view and update the displayed information accordingly.
-   * @listens UserModel:UserInfoUpdated
+   * @listens UserModel#UserInfoUpdated
    * @param {String} name - Name of the updated person.
    * @returns {undefined}
    */

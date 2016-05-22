@@ -33,15 +33,15 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
       this.$profile.classList.add('self');
     }
 
-    this.subscribe('C:GravatarProfileFound');
-    this.subscribe('C:BugzillaProfileFound');
-    this.subscribe('C:BugzillaProfileFetchingError');
-    this.subscribe('C:BugzillaProfileFetchingComplete');
+    this.subscribe('C#GravatarProfileFound');
+    this.subscribe('C#BugzillaProfileFound');
+    this.subscribe('C#BugzillaProfileFetchingError');
+    this.subscribe('C#BugzillaProfileFetchingComplete');
   }
 
   /**
    * Called when the User's Gravatar profile is retrieved. Apply the background image.
-   * @listens ProfilePageController:GravatarProfileFound
+   * @listens ProfilePageController#GravatarProfileFound
    * @param {Object} style - CSS style rules including the background image.
    * @returns {Boolean} result - Whether the view is updated.
    * @todo Add more info such as the location and social accounts.
@@ -58,7 +58,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called when the User's Bugzilla profile is retrieved. Render the profile details.
-   * @listens ProfilePageController:BugzillaProfileFound
+   * @listens ProfilePageController#BugzillaProfileFound
    * @param {Object} profile - Profile info.
    * @param {Object} links - Related links.
    * @param {Object} style - CSS style rules including the user's generated color.
@@ -81,7 +81,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called when the User's Bugzilla profile could not be retrieved. Show the error message.
-   * @listens ProfilePageController:BugzillaProfileFetchingError
+   * @listens ProfilePageController#BugzillaProfileFetchingError
    * @param {String} message - Error message.
    * @returns {Boolean} result - Whether the view is updated.
    */
@@ -97,7 +97,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Called when fetching the User's Bugzilla profile is complete. Remove the throbber.
-   * @listens ProfilePageController:BugzillaProfileFetchingComplete
+   * @listens ProfilePageController#BugzillaProfileFetchingComplete
    * @param {undefined}
    * @returns {Boolean} result - Whether the view is updated.
    */

@@ -41,7 +41,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       }
     });
 
-    this.subscribe('BugController:HistoryUpdated');
+    this.subscribe('BugController#HistoryUpdated');
 
     // Call BzDeck.BugView.prototype.init
     this.init();
@@ -214,7 +214,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Called whenever the location fragment or history state is updated. Switch the tabs when an attachment is selected
    * on the timeline or comment form.
-   * @listens BugController:HistoryUpdated
+   * @listens BugController#HistoryUpdated
    * @param {Object} [state] - Current history state.
    * @param {String} [state.att_id] - Attachment ID or hash.
    * @returns {undefined}

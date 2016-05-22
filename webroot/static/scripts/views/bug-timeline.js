@@ -116,8 +116,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $timeline.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
-    this.subscribe('SettingsPageView:PrefValueChanged', true);
-    this.subscribe('BugController:HistoryUpdated');
+    this.subscribe('SettingsPageView#PrefValueChanged', true);
+    this.subscribe('BugController#HistoryUpdated');
   }
 
   /**
@@ -170,7 +170,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
    * comment into view.
-   * @listens BugController:HistoryUpdated
+   * @listens BugController#HistoryUpdated
    * @param {String} hash - location.hash.
    * @returns {undefined}
    */
@@ -196,7 +196,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Called whenever a preference value is changed by the user. Show media when the pref is enabled.
-   * @listens SettingsPageView:PrefValueChanged
+   * @listens SettingsPageView#PrefValueChanged
    * @param {String} name - Preference name.
    * @param {*} value - New value.
    * @returns {undefined}

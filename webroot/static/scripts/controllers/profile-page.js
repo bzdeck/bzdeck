@@ -55,10 +55,10 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
    * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
    * @param {Proxy} user - UserModel instance.
    * @returns {undefined}
-   * @fires ProfilePageController:GravatarProfileFound
-   * @fires ProfilePageController:BugzillaProfileFound
-   * @fires ProfilePageController:BugzillaProfileFetchingError
-   * @fires ProfilePageController:BugzillaProfileFetchingComplete
+   * @fires ProfilePageController#GravatarProfileFound
+   * @fires ProfilePageController#BugzillaProfileFound
+   * @fires ProfilePageController#BugzillaProfileFetchingError
+   * @fires ProfilePageController#BugzillaProfileFetchingComplete
    */
   on_user_retrieved (user) {
     let email = this.id;
@@ -66,13 +66,13 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
     this.user = user;
 
     this.user.get_gravatar_profile().then(profile => {
-      this.trigger(':GravatarProfileFound', {
+      this.trigger('#GravatarProfileFound', {
         style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
       });
     });
 
     this.user.get_bugzilla_profile().then(profile => {
-      this.trigger(':BugzillaProfileFound', {
+      this.trigger('#BugzillaProfileFound', {
         profile: {
           id: profile.id,
           email: email,
@@ -89,9 +89,9 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
         },
       });
     }).catch(error => {
-      this.trigger(':BugzillaProfileFetchingError', { message: error.message });
+      this.trigger('#BugzillaProfileFetchingError', { message: error.message });
     }).then(() => {
-      this.trigger(':BugzillaProfileFetchingComplete');
+      this.trigger('#BugzillaProfileFetchingComplete');
     });
   }
 }

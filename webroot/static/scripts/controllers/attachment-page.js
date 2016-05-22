@@ -68,36 +68,36 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
    * result regardless of the availability.
    * @param {undefined}
    * @returns {undefined}
-   * @fires AttachmentPageController:Offline
-   * @fires AttachmentPageController:LoadingStarted
-   * @fires AttachmentPageController:LoadingError
-   * @fires AttachmentPageController:LoadingComplete
-   * @fires AttachmentPageController:AttachmentAvailable
-   * @fires AttachmentPageController:AttachmentUnavailable
+   * @fires AttachmentPageController#Offline
+   * @fires AttachmentPageController#LoadingStarted
+   * @fires AttachmentPageController#LoadingError
+   * @fires AttachmentPageController#LoadingComplete
+   * @fires AttachmentPageController#AttachmentAvailable
+   * @fires AttachmentPageController#AttachmentUnavailable
    */
   get_attachment () {
     // If the ID is hash, it's an unuploaded attachment. And if the cache could not be found, just raise an error
     if (isNaN(this.att_id)) {
-      this.trigger(':LoadingError');
+      this.trigger('#LoadingError');
 
       return;
     }
 
     if (!navigator.onLine) {
-      this.trigger(':Offline');
+      this.trigger('#Offline');
 
       return;
     }
 
     // If no cache found, try to retrieve it from Bugzilla
-    this.trigger(':LoadingStarted');
+    this.trigger('#LoadingStarted');
 
     BzDeck.collections.attachments.get(this.att_id).then(attachment => {
       // If found, show it
       if (attachment) {
         this.attachment = attachment;
-        this.trigger_safe(':AttachmentAvailable', { attachment });
-        this.trigger(':LoadingComplete');
+        this.trigger_safe('#AttachmentAvailable', { attachment });
+        this.trigger('#LoadingComplete');
 
         return;
       }
@@ -107,14 +107,14 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
       }).then(attachment => {
         if (attachment) {
           this.attachment = attachment;
-          this.trigger_safe(':AttachmentAvailable', { attachment });
+          this.trigger_safe('#AttachmentAvailable', { attachment });
         } else {
-          this.trigger_safe(':AttachmentUnavailable', { attachment });
+          this.trigger_safe('#AttachmentUnavailable', { attachment });
         }
       }).catch(error => {
-        this.trigger(':LoadingError');
+        this.trigger('#LoadingError');
       }).then(() => {
-        this.trigger(':LoadingComplete');
+        this.trigger('#LoadingComplete');
       });
     });
   }

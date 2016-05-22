@@ -78,7 +78,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * Create a comment entry that contains the author name/image, timestamp, comment body and Reply button.
    * @param {undefined}
    * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
-   * @fires BugView:CommentSelected
+   * @fires BugView#CommentSelected
    */
   create_comment_entry () {
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
@@ -105,7 +105,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       // Append the comment number to the URL when clicked
       $entry.addEventListener(click_event_type, event => {
         if (!event.target.matches(':-moz-any-link')) {
-          this.trigger('BugView:CommentSelected', { number: Number(comment.count) });
+          this.trigger('BugView#CommentSelected', { number: Number(comment.count) });
         }
       });
 

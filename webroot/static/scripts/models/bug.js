@@ -146,7 +146,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * then notify any changes detected.
    * @param {Object} [data] - Bugzilla's raw bug object.
    * @returns {Boolean} cached - Whether the cache is found.
-   * @fires BugModel:Updated
+   * @fires BugModel#Updated
    */
   merge (data) {
     let cache = this.data;
@@ -198,7 +198,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
           changes.set('history', history);
         }
 
-        this.trigger_safe(':Updated', { bug_id: this.id, bug: data, changes });
+        this.trigger_safe('#Updated', { bug_id: this.id, bug: data, changes });
       }
 
       this.save(data);
@@ -212,7 +212,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} type - Annotation type: star.
    * @param {Boolean} value - Whether to add star or not.
    * @returns {Boolean} result - Whether the annotation is updated.
-   * @fires BugModel:AnnotationUpdated
+   * @fires BugModel#AnnotationUpdated
    */
   update_annotation (type, value) {
     if (this.data[`_${type}`] === value) {
@@ -225,7 +225,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.data[`_${type}`] = value;
     this.save();
-    this.trigger_safe(':AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type, value });
+    this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type, value });
 
     return true;
   }
@@ -234,7 +234,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Update the last-visited timestamp on Bugzilla through the API. Mark the bug as read and notify the change.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugModel:AnnotationUpdated
+   * @fires BugModel#AnnotationUpdated
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html}
    */
   mark_as_read () {
@@ -251,7 +251,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }).then(value => {
       this.data._last_visit = value;
       this.save();
-      this.trigger_safe(':AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type: 'last_visit', value });
+      this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type: 'last_visit', value });
     });
   }
 
@@ -416,14 +416,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Create and return a Proxy for the bug changes object that fires an event whenever any field value is modified.
    * @param {undefined}
    * @returns {Proxy} changes - Changes object.
-   * @fires BugModel:FieldEdited
+   * @fires BugModel#FieldEdited
    */
   reset_changes () {
     this.changes = new Proxy({}, {
       set: (obj, name, value) => {
         if (obj[name] !== value) {
           obj[name] = value;
-          this.trigger(':FieldEdited', { bug_id: this.id, name, value });
+          this.trigger('#FieldEdited', { bug_id: this.id, name, value });
         }
 
         return true;
@@ -431,7 +431,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       deleteProperty: (obj, name) => {
         if (name in obj) {
           delete obj[name];
-          this.trigger(':FieldEdited', { bug_id: this.id, name, value: this.data[name] || '' });
+          this.trigger('#FieldEdited', { bug_id: this.id, name, value: this.data[name] || '' });
         }
 
         return true;
@@ -446,19 +446,19 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * views of the change.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugModel:BugEdited
+   * @fires BugModel#BugEdited
    */
   onedit () {
     let { changes, att_changes, uploads, can_submit } = this;
 
-    this.trigger_safe(':BugEdited', { bug_id: this.id, changes, att_changes, uploads, can_submit });
+    this.trigger_safe('#BugEdited', { bug_id: this.id, changes, att_changes, uploads, can_submit });
   }
 
   /**
    * Called whenever a new comment is edited by the user. Cache the comment and notify changes accordingly.
    * @param {String} comment - Comment text.
    * @returns {undefined}
-   * @fires BugModel:CommentEdited
+   * @fires BugModel#CommentEdited
    */
   edit_comment (comment) {
     let bug_id = this.id;
@@ -469,7 +469,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       this.changes.comment = { body: comment, is_markdown: true };
 
       if (added) {
-        this.trigger(':CommentEdited', { bug_id, added: true, has_comment: true, can_submit: this.can_submit });
+        this.trigger('#CommentEdited', { bug_id, added: true, has_comment: true, can_submit: this.can_submit });
         this.onedit();
       }
     } else {
@@ -478,7 +478,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       delete this.changes.comment;
 
       if (removed) {
-        this.trigger(':CommentEdited', { bug_id, removed: true, has_comment: false, can_submit: this.can_submit });
+        this.trigger('#CommentEdited', { bug_id, removed: true, has_comment: false, can_submit: this.can_submit });
         this.onedit();
       }
     }
@@ -557,7 +557,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} flag.requestee - Person created the flag.
    * @param {Boolean} added - Whether the flag is newly added.
    * @returns {undefined}
-   * @fires BugModel:FlagEdited
+   * @fires BugModel#FlagEdited
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
    */
   edit_flag (flag, added) {
@@ -578,7 +578,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
     }
 
-    this.trigger(':FlagEdited', { bug_id: this.id, flags: this.changes.flags, flag, added });
+    this.trigger('#FlagEdited', { bug_id: this.id, flags: this.changes.flags, flag, added });
     this.onedit();
   }
 
@@ -587,7 +587,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be added.
    * @returns {Boolean} result - Whether the participant is successfully added to the cache.
-   * @fires BugModel:ParticipantAdded
+   * @fires BugModel#ParticipantAdded
    */
   add_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -618,7 +618,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
     }
 
-    this.trigger(':ParticipantAdded', { bug_id: this.id, field, email });
+    this.trigger('#ParticipantAdded', { bug_id: this.id, field, email });
     this.onedit();
     this.cleanup_multiple_item_change(field);
 
@@ -630,7 +630,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be removed.
    * @returns {Boolean} result - Whether the participant is successfully removed from the cache.
-   * @fires BugModel:ParticipantRemoved
+   * @fires BugModel#ParticipantRemoved
    */
   remove_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -653,7 +653,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       this.changes[field] = field === 'assigned_to' ? BzDeck.host.default_assignee : '';
     }
 
-    this.trigger(':ParticipantRemoved', { bug_id: this.id, field, email });
+    this.trigger('#ParticipantRemoved', { bug_id: this.id, field, email });
     this.onedit();
     this.cleanup_multiple_item_change(field);
 
@@ -665,25 +665,25 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * email from the Cc list. Notify the result accordingly.
    * @param {String} how - add or remove.
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
-   * @fires BugModel:ParticipantAdded
-   * @fires BugModel:ParticipantRemoved
-   * @fires BugModel:FailedToSubscribe
-   * @fires BugModel:FailedToUnsubscribe
-   * @fires BugModel:Subscribed
-   * @fires BugModel:Unsubscribed
+   * @fires BugModel#ParticipantAdded
+   * @fires BugModel#ParticipantRemoved
+   * @fires BugModel#FailedToSubscribe
+   * @fires BugModel#FailedToUnsubscribe
+   * @fires BugModel#Subscribed
+   * @fires BugModel#Unsubscribed
    */
   update_subscription (how) {
     let subscribe = how === 'add';
     let email = BzDeck.account.data.name;
 
     // Update the view first
-    this.trigger(subscribe ? ':ParticipantAdded' : ':ParticipantRemoved', { bug_id: this.id, field: 'cc', email });
+    this.trigger(subscribe ? '#ParticipantAdded' : '#ParticipantRemoved', { bug_id: this.id, field: 'cc', email });
 
     return this.post_changes({ cc: { [how]: [email] }}).then(result => {
       if (result.error) {
-        this.trigger(subscribe ? ':FailedToSubscribe' : ':FailedToUnsubscribe', { bug_id: this.id });
+        this.trigger(subscribe ? '#FailedToSubscribe' : '#FailedToUnsubscribe', { bug_id: this.id });
       } else {
-        this.trigger(subscribe ? ':Subscribed' : ':Unsubscribed', { bug_id: this.id });
+        this.trigger(subscribe ? '#Subscribed' : '#Unsubscribed', { bug_id: this.id });
         this._fetch();
       }
     });
@@ -724,7 +724,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
    * @param {(FileList|Array)} files - Selected files.
    * @returns {undefined}
-   * @fires BugModel:AttachmentError
+   * @fires BugModel#AttachmentError
    * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
@@ -777,7 +777,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     message += '\n\n' + oversized_files.map(file => `* ${file.name} (${num_format(file.size)} bytes)`).join('\n');
 
-    this.trigger(':AttachmentError', { bug_id: this.id, message });
+    this.trigger('#AttachmentError', { bug_id: this.id, message });
   }
 
   /**
@@ -844,8 +844,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Object} att - Raw attachment upload object for Bugzilla.
    * @param {Number} size - Actual file size.
    * @returns {undefined}
-   * @fires BugModel:AttachmentAdded
-   * @fires BugModel:UploadListUpdated
+   * @fires BugModel#AttachmentAdded
+   * @fires BugModel#UploadListUpdated
    */
   add_attachment (att, size) {
     // Cache as an AttachmentModel instance
@@ -857,8 +857,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       this.uploads.push(attachment);
 
-      this.trigger_safe(':AttachmentAdded', { bug_id: this.id, attachment });
-      this.trigger_safe(':UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+      this.trigger_safe('#AttachmentAdded', { bug_id: this.id, attachment });
+      this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
       this.onedit();
     });
   }
@@ -867,8 +867,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Remove an attachment from the cached new attachment list.
    * @param {String} hash - Hash value of the attachment object to remove.
    * @returns {Boolean} result - Whether the attachment is found and removed.
-   * @fires BugModel:AttachmentRemoved
-   * @fires BugModel:UploadListUpdated
+   * @fires BugModel#AttachmentRemoved
+   * @fires BugModel#UploadListUpdated
    */
   remove_attachment (hash) {
     let index = this.find_att_index(hash);
@@ -879,8 +879,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.uploads.splice(index, 1);
 
-    this.trigger(':AttachmentRemoved', { bug_id: this.id, index, hash });
-    this.trigger_safe(':UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.trigger('#AttachmentRemoved', { bug_id: this.id, index, hash });
+    this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
     this.onedit();
 
     return true;
@@ -893,7 +893,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} prop - Edited property name.
    * @param {*} value - New value.
    * @returns {undefined}
-   * @fires BugModel:AttachmentEdited
+   * @fires BugModel#AttachmentEdited
    */
   edit_attachment ({ id, hash, prop, value } = {}) {
     if (hash) {
@@ -903,7 +903,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       if (attachment && attachment[prop] !== value) {
         attachment[prop] = value;
 
-        this.trigger_safe(':AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
+        this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
         this.onedit();
       }
 
@@ -939,7 +939,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         return;
       }
 
-      this.trigger_safe(':AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
+      this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
       this.onedit();
     });
   }
@@ -1003,14 +1003,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Submit all the changes made on the bug to Bugzilla.
    * @param {undefined}
    * @returns {Promise} submission - Can be a rejected Promise if any error is found.
-   * @fires BugModel:Submit
-   * @fires BugModel:SubmitSuccess
-   * @fires BugModel:SubmitError
-   * @fires BugModel:SubmitComplete
+   * @fires BugModel#Submit
+   * @fires BugModel#SubmitSuccess
+   * @fires BugModel#SubmitError
+   * @fires BugModel#SubmitComplete
    */
   submit () {
     if (this.has_errors) {
-      this.trigger(':SubmitError', { bug_id: this.id, button_disabled: true, error: this.find_errors()[0] });
+      this.trigger('#SubmitError', { bug_id: this.id, button_disabled: true, error: this.find_errors()[0] });
 
       return Promise.reject('The changes cannot be submitted because of errors.');
     }
@@ -1019,7 +1019,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       return Promise.reject('No changes have been made on the bug.');
     }
 
-    this.trigger(':Submit', { bug_id: this.id });
+    this.trigger('#Submit', { bug_id: this.id });
 
     this.uploads.total = 0;
 
@@ -1063,16 +1063,16 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       // The timeline will soon be updated via Bugzfeed. Fetch the bug only if Bugzfeed is not working for some reason
       this._fetch();
 
-      this.trigger(':SubmitSuccess', { bug_id: this.id });
+      this.trigger('#SubmitSuccess', { bug_id: this.id });
     }).catch(error => {
       // Failed to post at least one attachment
-      this.trigger(':SubmitError', {
+      this.trigger('#SubmitError', {
         bug_id: this.id,
         button_disabled: false,
         error: error.message || 'Failed to post your comment or attachment(s). Try again later.',
       });
     }).then(() => {
-      this.trigger(':SubmitComplete', { bug_id: this.id });
+      this.trigger('#SubmitComplete', { bug_id: this.id });
     });
   }
 
@@ -1101,8 +1101,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Post the new attachments added to the bug to Bugzilla.
    * @param {Proxy} attachment - AttachmentModel instance.
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
-   * @fires BugModel:AttachmentUploaded
-   * @fires BugModel:AttachmentUploadError
+   * @fires BugModel#AttachmentUploaded
+   * @fires BugModel#AttachmentUploadError
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
   post_attachment (attachment) {
@@ -1134,13 +1134,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         this.notify_upload_progress();
       }
 
-      this.trigger_safe(':AttachmentUploaded', { bug_id: this.id, attachment });
+      this.trigger_safe('#AttachmentUploaded', { bug_id: this.id, attachment });
 
       this.uploads.total -= attachment.uploaded;
       this.remove_attachment(attachment.hash);
     }).catch(error => {
       // Failed to post at least one attachment
-      this.trigger(':AttachmentUploadError', {
+      this.trigger('#AttachmentUploadError', {
         bug_id: this.id,
         button_disabled: false,
         error: error.message || 'Failed to upload your attachment. Try again later.',
@@ -1152,14 +1152,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Notify the upload progress while the new attachment is being uploaded to Bugzilla.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugModel:SubmitProgress
+   * @fires BugModel#SubmitProgress
    */
   notify_upload_progress () {
     let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
     let total = this.uploads.total;
     let percentage = Math.round(uploaded / total * 100);
 
-    this.trigger(':SubmitProgress', { bug_id: this.id, uploaded, total, percentage });
+    this.trigger('#SubmitProgress', { bug_id: this.id, uploaded, total, percentage });
   }
 
   /**

@@ -45,9 +45,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.scrollbars = new Set([...this.$bug.querySelectorAll('.scrollable')]
                                   .map($area => new this.widgets.ScrollBar($area)));
 
-    this.subscribe_safe('BugModel:AnnotationUpdated', true); // Enable the global option
-    this.subscribe_safe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
-    this.subscribe_safe('BugView:FilesSelected');
+    this.subscribe_safe('BugModel#AnnotationUpdated', true); // Enable the global option
+    this.subscribe_safe('BugModel#Updated', true); // Cannot be 'M#Updated' because it doesn't work in BugDetailsView
+    this.subscribe_safe('BugView#FilesSelected');
   }
 
   /**
@@ -143,8 +143,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugView:EditModeChanged
-   * @fires BugView:OpeningTabRequested
+   * @fires BugView#EditModeChanged
+   * @fires BugView#OpeningTabRequested
    */
   render () {
     this.$bug.dataset.id = this.bug.id;
@@ -205,7 +205,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($edit_button) {
       $edit_button.setAttribute('aria-disabled', !can_editbugs);
-      init_button($edit_button, event => this.trigger('BugView:EditModeChanged', { enabled: event.detail.pressed }));
+      init_button($edit_button, event => this.trigger('BugView#EditModeChanged', { enabled: event.detail.pressed }));
     }
 
     if ($star_button) {
@@ -221,7 +221,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($open_tab_button) {
       // TODO: Reuse the bug view/controller
-      init_button($open_tab_button, event => this.trigger('BugView:OpeningTabRequested'));
+      init_button($open_tab_button, event => this.trigger('BugView#OpeningTabRequested'));
     }
 
     if (!$timeline) {
@@ -284,7 +284,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Render the bug data on the view.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @returns {undefined}
-   * @fires GlobalView:OpenBug
+   * @fires GlobalView#OpenBug
    */
   fill_details (delayed) {
     // When the comments and history are loaded async, the template can be removed
@@ -313,7 +313,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $li.setAttribute('data-bug-id', $li.textContent);
 
         (new this.widgets.Button($li)).bind('Pressed', event => {
-          this.trigger('GlobalView:OpenBug', { id: Number(event.target.textContent) });
+          this.trigger('GlobalView#OpenBug', { id: Number(event.target.textContent) });
         });
       }
 
@@ -370,11 +370,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Activate the UI widgets such as textboxes and comboboxes.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugView:EditField
+   * @fires BugView#EditField
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
-    this.subscribe('BugModel:FieldEdited', true);
+    this.subscribe('BugModel#FieldEdited', true);
 
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
@@ -397,7 +397,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $$combobox.bind('Change', event => {
           let value = event.detail.value;
 
-          this.trigger('BugView:EditField', { name, value });
+          this.trigger('BugView#EditField', { name, value });
 
           if (name === 'status' && is_closed(value) && $next_field.matches('[data-field="resolution"]') ||
               name === 'resolution' && value === 'DUPLICATE' && $next_field.matches('[data-field="dupe_of"]')) {
@@ -416,9 +416,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $textbox.setAttribute('aria-readonly', !can_editbugs);
         $$textbox.bind('focus', event => $textbox.spellcheck = true);
         $$textbox.bind('blur', event => $textbox.spellcheck = false);
-        $$textbox.bind('input', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
-        $$textbox.bind('cut', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
-        $$textbox.bind('paste', event => this.trigger('BugView:EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
       }
 
       if (name === 'dupe_of') {
@@ -456,8 +456,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Initialize the attachment drag & drop support.
    * @param {undefined}
    * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
-   * @fires BugView:FilesSelected
-   * @fires BugView:AttachText
+   * @fires BugView#FilesSelected
+   * @fires BugView#AttachText
    */
   init_att_drop_target () {
     let timer;
@@ -502,9 +502,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
 
       if (dt.types.contains('Files')) {
-        this.trigger_safe('BugView:FilesSelected', { input: dt });
+        this.trigger_safe('BugView#FilesSelected', { input: dt });
       } else if (dt.types.contains('text/plain')) {
-        this.trigger('BugView:AttachText', { text: dt.getData('text/plain') });
+        this.trigger('BugView#AttachText', { text: dt.getData('text/plain') });
       }
 
       return true;
@@ -564,7 +564,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any field is edited by the user. Update the relevante widget accordingly.
-   * @listens BugModel:FieldEdited
+   * @listens BugModel#FieldEdited
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} name - Field name.
    * @param {String} value - Field value.
@@ -606,24 +606,24 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the user selected files to attach through an input form control or drag and drop operation. If the
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
    * traditional File API to identify the files. In any case, notify the selected files to the controller.
-   * @listens BugView:FilesSelected
+   * @listens BugView#FilesSelected
    * @param {(HTMLInputElement|DataTransfer)} input - Data source.
    * @returns {undefined}
-   * @fires BugView:AttachFiles
+   * @fires BugView#AttachFiles
    */
   on_files_selected ({ input } = {}) {
     let iterate = items => {
       for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
         item.getFilesAndDirectories().then(_items => iterate(_items));
       } else {
-        this.trigger_safe('BugView:AttachFiles', { files: [item] });
+        this.trigger_safe('BugView#AttachFiles', { files: [item] });
       }
     };
 
     if (typeof input.getFilesAndDirectories === 'function') {
       input.getFilesAndDirectories().then(items => iterate(items));
     } else {
-      this.trigger_safe('BugView:AttachFiles', { files: input.files });
+      this.trigger_safe('BugView#AttachFiles', { files: input.files });
     }
   }
 
@@ -764,7 +764,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever a bug annotation is updated. Update the Star button on the toolbar.
-   * @listens BugModel:AnnotationUpdated
+   * @listens BugModel#AnnotationUpdated
    * @param {Proxy} bug - Changed bug.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
@@ -778,7 +778,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any field of a bug is updated. Update the view if the bug ID matches.
-   * @listens BugModel:Updated
+   * @listens BugModel#Updated
    * @param {Proxy} bug - Changed bug.
    * @param {Map} changes - Change details.
    * @returns {undefined}

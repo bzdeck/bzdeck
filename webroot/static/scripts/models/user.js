@@ -14,7 +14,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @param {Object} data - Profile object including Bugzilla's raw user data.
    * @returns {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via
    *  user.prop instead of user.data.prop.
-   * @fires UserModel:UserInfoUpdated
+   * @fires UserModel#UserInfoUpdated
    */
   constructor (data) {
     super(); // This does nothing but is required before using `this`
@@ -91,7 +91,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     if (!this.data.updated) {
       this.fetch().then(profiles => {
         // Notify the change to update the UI when necessary
-        this.trigger(':UserInfoUpdated', { name: this.email });
+        this.trigger('#UserInfoUpdated', { name: this.email });
       });
     }
 
@@ -161,10 +161,10 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalController.
-   * @listens GlobalController:GravatarProfileProvided
+   * @listens GlobalController#GravatarProfileProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
-   * @fires UserModel:GravatarProfileRequested
+   * @fires UserModel#GravatarProfileRequested
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
   get_gravatar_profile ({ in_promise_all = false } = {}) {
@@ -177,7 +177,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise((resolve, reject) => {
-      this.on('GlobalController:GravatarProfileProvided', data => {
+      this.on('GlobalController#GravatarProfileProvided', data => {
         let { hash, profile } = data;
 
         if (hash === this.hash) {
@@ -199,17 +199,17 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         }
       });
 
-      this.trigger(':GravatarProfileRequested', { hash: this.hash });
+      this.trigger('#GravatarProfileRequested', { hash: this.hash });
     });
   }
 
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
    * Because this requires DOM access, delegate the process to GlobalController.
-   * @listens GlobalController:GravatarImageProvided
+   * @listens GlobalController#GravatarImageProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
-   * @fires UserModel:GravatarImageRequested
+   * @fires UserModel#GravatarImageRequested
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
   get_gravatar_image ({ in_promise_all = false } = {}) {
@@ -220,7 +220,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     return new Promise(resolve => {
       let { hash, color, initial } = this;
 
-      this.on('GlobalController:GravatarImageProvided', data => {
+      this.on('GlobalController#GravatarImageProvided', data => {
         if (data.hash === hash) {
           resolve(data.blob);
 
@@ -233,7 +233,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         }
       });
 
-      this.trigger(':GravatarImageRequested', { hash, color, initial });
+      this.trigger('#GravatarImageRequested', { hash, color, initial });
     });
   }
 }

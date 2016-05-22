@@ -77,7 +77,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @param {Array.<HTMLElement>} detail.items - Newly selected nodes.
    * @param {Array.<HTMLElement>} detail.oldval - Previously selected nodes.
    * @returns {undefined}
-   * @fires BannerView:TabSelected
+   * @fires BannerView#TabSelected
    */
   on_tab_selected (detail) {
     let { items, oldval } = detail;
@@ -100,7 +100,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
       }
     }
 
-    this.trigger(':TabSelected', { path });
+    this.trigger('#TabSelected', { path });
   }
 
   /**
@@ -117,7 +117,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * banner.
    * @param {HTMLElement} $parent - Tabpanel that contains the header.
    * @returns {undefined}
-   * @fires BannerView:BackButtonClicked
+   * @fires BannerView#BackButtonClicked
    */
   add_back_button ($parent) {
     let $header = $parent.querySelector('header');
@@ -126,7 +126,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     if (this.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n
       $button.addEventListener('touchstart', event => {
-        this.trigger(':BackButtonClicked');
+        this.trigger('#BackButtonClicked');
 
         return this.helpers.event.ignore(event);
       });

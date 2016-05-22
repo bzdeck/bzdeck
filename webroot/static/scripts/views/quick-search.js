@@ -33,7 +33,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
     window.addEventListener('mousedown', event => this.cleanup());
     window.addEventListener('popstate', event => this.cleanup());
-    this.on_safe('C:ResultsAvailable', data => this.render_results(data), true);
+    this.on_safe('C#ResultsAvailable', data => this.render_results(data), true);
 
     this.assign_keyboard_bindings();
     this.activate_results();
@@ -91,13 +91,13 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * search results. Otherwise, show the Recent Searches if any.
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchView:RecentSearchesRequested
+   * @fires QuickSearchView#RecentSearchesRequested
    */
   oninput () {
     if (this.$input.value.trim()) {
       this.exec_quick_search();
     } else {
-      this.trigger(':RecentSearchesRequested');
+      this.trigger('#RecentSearchesRequested');
     }
   }
 
@@ -127,26 +127,26 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * Request quick search results.
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchView:QuickSearchRequested
+   * @fires QuickSearchView#QuickSearchRequested
    */
   exec_quick_search () {
-    this.trigger(':QuickSearchRequested', { input: this.$input.value });
+    this.trigger('#QuickSearchRequested', { input: this.$input.value });
   }
 
   /**
    * Request advanced search results, leading to a new search page.
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchView:AdvancedSearchRequested
+   * @fires QuickSearchView#AdvancedSearchRequested
    */
   exec_advanced_search () {
-    this.trigger(':AdvancedSearchRequested', { input: this.$input.value });
+    this.trigger('#AdvancedSearchRequested', { input: this.$input.value });
     this.cleanup();
   }
 
   /**
    * Show search results on the drop down list.
-   * @listens QuickSearchController:ResultsAvailable
+   * @listens QuickSearchController#ResultsAvailable
    * @param {String} category - Search category, such as 'recent', 'bugs' or 'users'.
    * @param {String} input - Original search terms.
    * @param {Array} results - Search results.
@@ -229,7 +229,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * drop down list.
    * @param {HTMLElement} $target - Selected element.
    * @returns {undefined}
-   * @fires QuickSearchView:ResultSelected
+   * @fires QuickSearchView#ResultSelected
    */
   on_result_selected ($target) {
     if ($target.matches('[data-command="search-all-bugs"]')) {
@@ -238,7 +238,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
       let id = $target.dataset.id;
       let type = $target.getAttribute('itemtype').match(/\w+$/)[0].toLowerCase();
 
-      this.trigger(':ResultSelected', { id: isNaN(id) ? id : Number(id), type });
+      this.trigger('#ResultSelected', { id: isNaN(id) ? id : Number(id), type });
     }
 
     // Add a small delay to make sure the drop down list is closed shortly

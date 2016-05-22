@@ -43,9 +43,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.add_subscribe_button();
     }
 
-    this.subscribe('BugView:EditModeChanged');
-    this.subscribe('BugModel:ParticipantAdded', true);
-    this.subscribe('BugModel:ParticipantRemoved', true);
+    this.subscribe('BugView#EditModeChanged');
+    this.subscribe('BugModel#ParticipantAdded', true);
+    this.subscribe('BugModel#ParticipantRemoved', true);
   }
 
   /**
@@ -63,7 +63,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
-   * @listens BugView:EditModeChanged
+   * @listens BugView#EditModeChanged
    * @param {Boolean} enabled - Whether the edit mode is enabled.
    * @returns {undefined}
    */
@@ -88,7 +88,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * Add the Take button to the <header> in the <section>.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugView:AddParticipant
+   * @fires BugView#AddParticipant
    */
   add_take_button () {
     this.$button = this.create_button('take', 'Take', {
@@ -101,7 +101,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
     this.$button.addEventListener('click', event => {
-      this.trigger('BugView:AddParticipant', { field: this.field, email: this.my_email });
+      this.trigger('BugView#AddParticipant', { field: this.field, email: this.my_email });
     });
 
     this.$header.appendChild(this.$button);
@@ -111,8 +111,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * Add the Subscribe button to the <header> in the <section>.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugView:Unsubscribe
-   * @fires BugView:Subscribe
+   * @fires BugView#Unsubscribe
+   * @fires BugView#Subscribe
    */
   add_subscribe_button () {
     let listed = this.values.has(this.my_email);
@@ -122,7 +122,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.$button = this.create_button('subscribe', label, aria_label);
 
     this.$button.addEventListener('click', event => {
-      this.trigger(this.values.has(this.my_email) ? 'BugView:Unsubscribe' : 'BugView:Subscribe');
+      this.trigger(this.values.has(this.my_email) ? 'BugView#Unsubscribe' : 'BugView#Subscribe');
     });
 
     this.$header.appendChild(this.$button);
@@ -132,7 +132,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * Add a Person Finder under the <header>.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugView:AddParticipant
+   * @fires BugView#AddParticipant
    */
   add_person_finder () {
     this.$$finder = new BzDeck.PersonFinderView(`${this.id}-${this.field}-person-finder`, this.bug, this.values);
@@ -141,7 +141,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
     this.$finder.addEventListener('Change', event => {
       this.$$finder.clear();
-      this.trigger('BugView:AddParticipant', { field: this.field, email: event.detail.$target.dataset.value });
+      this.trigger('BugView#AddParticipant', { field: this.field, email: event.detail.$target.dataset.value });
     });
 
     this.$section.insertBefore(this.$$finder.$combobox, this.$header.nextElementSibling);
@@ -149,7 +149,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called whenever a new participant is added by the user. Add the person to the list.
-   * @listens BugModel:ParticipantAdded
+   * @listens BugModel#ParticipantAdded
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the added person.
@@ -195,7 +195,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called whenever a new participant is removed by the user. Remove the person from the list.
-   * @listens BugModel:ParticipantRemoved
+   * @listens BugModel#ParticipantRemoved
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the removed person.
@@ -255,7 +255,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * Add the Remove button to each person.
    * @param {HTMLElement} $person - Person on the list.
    * @returns {HTMLElement} $button
-   * @fires BugView:RemoveParticipant
+   * @fires BugView#RemoveParticipant
    */
   add_remove_button_to_person ($person) {
     let email = $person.querySelector('[itemprop="email"]').content;
@@ -277,7 +277,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
     $button.addEventListener('click', event => {
       event.stopPropagation();
-      this.trigger('BugView:RemoveParticipant', { field: this.field, email });
+      this.trigger('BugView#RemoveParticipant', { field: this.field, email });
     });
 
     $person.appendChild($button);

@@ -24,17 +24,17 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
     this.$tabpanel = document.querySelector(`#tabpanel-attachment-${this.id}`);
     this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.att_id;
 
-    this.subscribe_safe('C:AttachmentAvailable');
-    this.subscribe_safe('C:AttachmentUnavailable');
-    this.subscribe('C:Offline');
-    this.subscribe('C:LoadingStarted');
-    this.subscribe('C:LoadingError');
-    this.subscribe('C:LoadingComplete');
+    this.subscribe_safe('C#AttachmentAvailable');
+    this.subscribe_safe('C#AttachmentUnavailable');
+    this.subscribe('C#Offline');
+    this.subscribe('C#LoadingStarted');
+    this.subscribe('C#LoadingError');
+    this.subscribe('C#LoadingComplete');
   }
 
   /**
    * Called when the attachment is found. Render it on the page.
-   * @listens AttachmentPageController:AttachmentAvailable
+   * @listens AttachmentPageController#AttachmentAvailable
    * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    */
@@ -58,7 +58,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called when the attachment is not found. Show an error message on the page.
-   * @listens AttachmentPageController:AttachmentUnavailable
+   * @listens AttachmentPageController#AttachmentUnavailable
    * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    */
@@ -72,7 +72,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called when the attachment cannot be retrieved because the device or browser is offline. Show a message to ask the
    * user to go online.
-   * @listens AttachmentPageController:Offline
+   * @listens AttachmentPageController#Offline
    * @param {undefined}
    * @returns {undefined}
    * @todo reload when going online.
@@ -83,7 +83,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called when loading the attachment started. Show a message accordingly.
-   * @listens AttachmentPageController:LoadingStarted
+   * @listens AttachmentPageController#LoadingStarted
    * @param {undefined}
    * @returns {undefined}
    */
@@ -93,7 +93,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called when loading the attachment failed. Show a message accordingly.
-   * @listens AttachmentPageController:LoadingError
+   * @listens AttachmentPageController#LoadingError
    * @param {undefined}
    * @returns {undefined}
    */
@@ -103,7 +103,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Called when loading the attachment completed. Remove the throbber.
-   * @listens AttachmentPageController:LoadingComplete
+   * @listens AttachmentPageController#LoadingComplete
    * @param {undefined}
    * @returns {undefined}
    */

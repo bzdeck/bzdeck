@@ -21,12 +21,12 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
     this.id = instance_id;
     this.sibling_bug_ids = sibling_bug_ids || [];
 
-    this.subscribe('V:NavigationRequested');
+    this.subscribe('V#NavigationRequested');
   }
 
   /**
    * Called whenever navigating to other bug within the same tabpanel is requested.
-   * @listens BugContainerView:NavigationRequested
+   * @listens BugContainerView#NavigationRequested
    * @param {Number} old_id - Old bug ID to be replaced.
    * @param {Number} new_id - New bug ID to navigate.
    * @param {String} old_path - Previous location path.
@@ -50,22 +50,22 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
    * @param {undefined} bug_id - Bug ID to show.
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
    *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @fires BugContainerController:LoadingStarted
-   * @fires BugContainerController:LoadingFinished
-   * @fires BugContainerController:BugDataAvailable
-   * @fires BugContainerController:BugDataUnavailable
+   * @fires BugContainerController#LoadingStarted
+   * @fires BugContainerController#LoadingFinished
+   * @fires BugContainerController#BugDataAvailable
+   * @fires BugContainerController#BugDataUnavailable
    */
   add_bug (bug_id, sibling_bug_ids) {
     this.bug_id = bug_id;
     this.sibling_bug_ids = sibling_bug_ids || this.sibling_bug_ids;
 
     if (!navigator.onLine) {
-      this.trigger(':BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
+      this.trigger('#BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
 
       return;
     }
 
-    this.trigger(':LoadingStarted');
+    this.trigger('#LoadingStarted');
 
     BzDeck.collections.bugs.get(this.bug_id).then(bug => {
       if (bug && !bug.error) {
@@ -74,7 +74,7 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
 
       return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id }).then(bug => {
         return bug.fetch();
-      }).catch(error => this.trigger(':BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
+      }).catch(error => this.trigger('#BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
     }).then(bug => new Promise((resolve, reject) => {
       if (bug.data && bug.data.summary) {
         resolve(bug);
@@ -85,18 +85,18 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
                 unpublished security issues or marketing-related topics. '
         }[code] || 'This bug data is not available.';
 
-        this.trigger(':BugDataUnavailable', { code, message });
+        this.trigger('#BugDataUnavailable', { code, message });
         reject(new Error(message));
       }
     })).then(bug => {
       let sibling_bug_ids = this.sibling_bug_ids;
       let controller = new BzDeck.BugController(bug, sibling_bug_ids);
 
-      this.trigger_safe(':BugDataAvailable', { bug, controller, sibling_bug_ids });
+      this.trigger_safe('#BugDataAvailable', { bug, controller, sibling_bug_ids });
       bug.mark_as_read();
       BzDeck.controllers.bugzfeed._subscribe([this.bug_id]);
     }).then(() => {
-      this.trigger(':LoadingFinished');
+      this.trigger('#LoadingFinished');
     });
   }
 }

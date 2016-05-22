@@ -49,7 +49,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @param {*}      _value.default - Default value.
    * @param {String} _value.type - Type of the value: boolean, integer or string.
    * @returns {undefined}
-   * @fires SettingsPageView:PrefValueChanged
+   * @fires SettingsPageView#PrefValueChanged
    */
   activate_radiogroup (name, _value) {
     let $root = document.documentElement;
@@ -65,7 +65,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
     (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
       value = event.detail.items[0].dataset.value;
       value = _value.type === 'boolean' ? value === 'true' : value;
-      this.trigger(':PrefValueChanged', { name, value });
+      this.trigger('#PrefValueChanged', { name, value });
 
       if ($root.hasAttribute(attr)) {
         $root.setAttribute(attr, String(value));

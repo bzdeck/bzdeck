@@ -25,9 +25,9 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // Hide the incompatible browser message
     this.show_status('');
 
-    this.subscribe('SessionController:StatusUpdate', true);
-    this.subscribe('SessionController:Error', true);
-    this.subscribe('SessionController:Logout', true);
+    this.subscribe('SessionController#StatusUpdate', true);
+    this.subscribe('SessionController#Error', true);
+    this.subscribe('SessionController#Logout', true);
 
     this.activate_bugzilla_auth();
 
@@ -78,7 +78,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * button is clicked, take the user to the Bugzilla authentication page.
    * @param {undefined}
    * @returns {undefined}
-   * @fires LoginFormView:LoginRequested
+   * @fires LoginFormView#LoginRequested
    * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html}
    */
   activate_bugzilla_auth () {
@@ -96,7 +96,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
       new_win.name = 'bugzilla-auth';
       new_win.location = auth_url;
 
-      this.trigger(':LoginRequested', { host: this.host })
+      this.trigger('#LoginRequested', { host: this.host })
     });
   }
 
@@ -106,8 +106,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * a third-party library. This may not work depending on the spec of the device's camera.
    * @param {undefined}
    * @returns {undefined}
-   * @fires LoginFormView:QRCodeDecoded
-   * @fires LoginFormView:QRCodeError
+   * @fires LoginFormView#QRCodeDecoded
+   * @fires LoginFormView#QRCodeError
    */
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
@@ -124,7 +124,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         let height = $canvas.height = $video.videoHeight;
 
         $canvas.getContext('2d').drawImage($video, 0, 0, width, height);
-        qrcode.callback = result => this.trigger(':QRCodeDecoded', { host: this.host, result });
+        qrcode.callback = result => this.trigger('#QRCodeDecoded', { host: this.host, result });
         qrcode.decode($canvas.toDataURL('image/png'));
       }
 
@@ -160,14 +160,14 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         $scan_button.setAttribute('aria-disabled', 'false');
       }).catch(error => {
         hide_overlay();
-        this.trigger(':QRCodeError', { message: error.message });
+        this.trigger('#QRCodeError', { message: error.message });
       });
     });
   }
 
   /**
    * Called whenever the sign-in status is updated. Update the UI accordingly.
-   * @listens SessionController:StatusUpdate
+   * @listens SessionController#StatusUpdate
    * @param {String} status - Current status.
    * @param {String} message - Message text to display.
    * @returns {undefined}
@@ -187,7 +187,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever an error is detected during the sign-in process. Show the error message.
-   * @listens SessionController:Error
+   * @listens SessionController#Error
    * @param {String} message - Message text to display.
    * @returns {undefined}
    */
@@ -197,7 +197,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called when the user has logged out from the app. Show the sign-in form again.
-   * @listens SessionController:Logout
+   * @listens SessionController#Logout
    * @param {undefined}
    * @returns {undefined}
    */

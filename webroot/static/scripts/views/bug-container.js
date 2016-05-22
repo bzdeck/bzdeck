@@ -11,8 +11,8 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Get a BugContainerView instance.
    * @constructor
-   * @listens BugContainerController:LoadingStarted
-   * @listens BugContainerController:LoadingFinished
+   * @listens BugContainerController#LoadingStarted
+   * @listens BugContainerController#LoadingFinished
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {HTMLElement} $container - The outer element.
    * @returns {Object} view - New BugContainerView instance.
@@ -23,16 +23,16 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     this.id = instance_id;
     this.$container = $container;
 
-    this.subscribe_safe('C:BugDataAvailable');
-    this.subscribe('C:BugDataUnavailable');
+    this.subscribe_safe('C#BugDataAvailable');
+    this.subscribe('C#BugDataUnavailable');
 
-    this.on('C:LoadingStarted', () => BzDeck.views.statusbar.start_loading());
-    this.on('C:LoadingFinished', () => BzDeck.views.statusbar.stop_loading());
+    this.on('C#LoadingStarted', () => BzDeck.views.statusbar.start_loading());
+    this.on('C#LoadingFinished', () => BzDeck.views.statusbar.stop_loading());
   }
 
   /**
    * Called when the bug data is found. Prepare the newly opened tabpanel.
-   * @listens BugContainerController:BugDataAvailable
+   * @listens BugContainerController#BugDataAvailable
    * @param {Proxy} bug - Bug to show.
    * @param {Object} controller - New BugController instance for that bug.
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
@@ -51,7 +51,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Called when an error was encountered while fetching the bug data. Show the error message.
-   * @listens BugContainerController:BugDataUnavailable
+   * @listens BugContainerController#BugDataUnavailable
    * @param {Number} code - Error code usually defined by Bugzilla.
    * @param {String} message - Error message text.
    * @returns {Boolean} result - Whether the view is updated.
@@ -143,7 +143,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * Switch to another bug within the same tab through the Back and Forward navigation.
    * @param {Number} new_id - ID of the bug to show next.
    * @returns {undefined}
-   * @fires BugContainerView:NavigationRequested
+   * @fires BugContainerView#NavigationRequested
    */
   navigate (new_id) {
     let old_id = this.bug_id;
@@ -165,6 +165,6 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, new_path);
 
     // Notify the Controller
-    this.trigger(':NavigationRequested', { old_id, new_id, old_path, new_path, reinit: !$existing_bug });
+    this.trigger('#NavigationRequested', { old_id, new_id, old_path, new_path, reinit: !$existing_bug });
   }
 }

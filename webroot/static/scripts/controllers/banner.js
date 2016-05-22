@@ -21,13 +21,13 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
     // Subcontrollers
     BzDeck.controllers.quick_search = new BzDeck.QuickSearchController();
 
-    this.subscribe('V:BackButtonClicked');
-    this.subscribe('V:TabSelected');
+    this.subscribe('V#BackButtonClicked');
+    this.subscribe('V#TabSelected');
   }
 
   /**
    * Called whenever the Back button is clicked on the mobile view. Navigate backward when possible or just show Inbox.
-   * @listens BannerView:BackButtonClicked
+   * @listens BannerView#BackButtonClicked
    * @param {undefined}
    * @returns {undefined}
    */
@@ -41,7 +41,7 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
 
   /**
    * Called whenever a tab in the global tablist is selected. Navigate to the specified location.
-   * @listens BannerView:TabSelected
+   * @listens BannerView#TabSelected
    * @param {String} path - Location pathname that corresponds to the tab.
    * @returns {undefined}
    */

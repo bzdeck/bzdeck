@@ -106,7 +106,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
    * @constructor
    * @param {...arguments} args - See BzDeck.TooltipView.prototype.constructor.
    * @returns {Object} view - New BugTooltipView instance.
-   * @fires GlobalView:OpenBug
+   * @fires GlobalView#OpenBug
    */
   constructor (...args) {
     super(...args);
@@ -144,7 +144,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
       this.$tooltip.id = `bug-${bug.id}-tooltip`;
       this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
       this.$tooltip.style.left = `${Number.parseInt(rect.left)}px`;
-      this.$tooltip.addEventListener('mousedown', event => this.trigger('GlobalView:OpenBug', { id: bug.id }));
+      this.$tooltip.addEventListener('mousedown', event => this.trigger('GlobalView#OpenBug', { id: bug.id }));
       document.body.appendChild(this.$tooltip);
       this.$owner.setAttribute('aria-describedby', this.$tooltip.id);
     });

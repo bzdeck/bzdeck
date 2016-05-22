@@ -10,7 +10,7 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
   /**
    * Called by the app router and initialize the Home Page Controller. Select the specified Sidebar folder.
    * @constructor
-   * @listens HomePageView:UnknownFolderSelected
+   * @listens HomePageView#UnknownFolderSelected
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {Object} controller - New HomePageController instance.
    */
@@ -57,7 +57,7 @@ BzDeck.HomePageController = class HomePageController extends BzDeck.BaseControll
       }
     });
 
-    this.on('V:UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
+    this.on('V#UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
 
     BzDeck.controllers.homepage = this;
     this.view = BzDeck.views.pages.home = new BzDeck.HomePageView(this);

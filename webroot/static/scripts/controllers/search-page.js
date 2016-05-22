@@ -59,8 +59,8 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
       }
     });
 
-    this.on('V:SearchRequested', data => this.exec_search(new URLSearchParams(data.params_str)));
-    this.on('V:OpeningTabRequested', data => this.open_tab());
+    this.on('V#SearchRequested', data => this.exec_search(new URLSearchParams(data.params_str)));
+    this.on('V#OpeningTabRequested', data => this.open_tab());
 
     this.connect();
   }
@@ -102,12 +102,12 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * Prepare a bug preview displayed in the Preview Pane.
    * @param {Number} id - Bug ID to show.
    * @returns {undefined}
-   * @fires SearchPageController:BugDataAvailable
-   * @fires SearchPageController:BugDataUnavailable
+   * @fires SearchPageController#BugDataAvailable
+   * @fires SearchPageController#BugDataUnavailable
    */
   prep_preview (id) {
     if (!id) {
-      this.trigger(':BugDataUnavailable');
+      this.trigger('#BugDataUnavailable');
 
       return;
     }
@@ -115,9 +115,9 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     BzDeck.collections.bugs.get(id).then(bug => {
       if (bug) {
         bug.mark_as_read();
-        this.trigger_safe(':BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
+        this.trigger_safe('#BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
       } else {
-        this.trigger(':BugDataUnavailable');
+        this.trigger('#BugDataUnavailable');
       }
     });
   }
@@ -125,7 +125,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
   /**
    * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the same search
    * results so the user can easily navigate through those bugs.
-   * @listens SearchPageView:OpeningTabRequested
+   * @listens SearchPageView#OpeningTabRequested
    * @param {undefined}
    * @returns {undefined}
    */
@@ -135,31 +135,31 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
   /**
    * Search bugs from the remote Bugzilla instance, and provide the results as event data.
-   * @listens SearchPageView:SearchRequested
+   * @listens SearchPageView#SearchRequested
    * @param {URLSearchParams} params - Search query.
    * @returns {undefined}
-   * @fires SearchPageController:Offline
-   * @fires SearchPageController:SearchStarted
-   * @fires SearchPageController:SearchResultsAvailable
-   * @fires SearchPageController:SearchError
-   * @fires SearchPageController:SearchComplete
+   * @fires SearchPageController#Offline
+   * @fires SearchPageController#SearchStarted
+   * @fires SearchPageController#SearchResultsAvailable
+   * @fires SearchPageController#SearchError
+   * @fires SearchPageController#SearchComplete
    */
   exec_search (params) {
     if (!navigator.onLine) {
-      this.trigger(':Offline');
+      this.trigger('#Offline');
 
       return;
     }
 
-    this.trigger(':SearchStarted');
+    this.trigger('#SearchStarted');
 
     BzDeck.collections.bugs.search_remote(params).then(bugs => {
       bugs = this.data.bugs = new Map(bugs.map(bug => [bug.id, bug]));
-      this.trigger_safe(':SearchResultsAvailable', { bugs });
+      this.trigger_safe('#SearchResultsAvailable', { bugs });
     }).catch(error => {
-      this.trigger(':SearchError', { message: error.message });
+      this.trigger('#SearchError', { message: error.message });
     }).then(() => {
-      this.trigger(':SearchComplete');
+      this.trigger('#SearchComplete');
     });
   }
 }

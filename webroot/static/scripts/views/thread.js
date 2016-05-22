@@ -39,10 +39,10 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * Open a specific bug in a new tab.
    * @param {Number} id - Bug ID to show.
    * @returns {undefined}
-   * @fires GlobalView:OpenBug
+   * @fires GlobalView#OpenBug
    */
   open_bug (id) {
-    this.trigger('GlobalView:OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });
+    this.trigger('GlobalView#OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });
   }
 }
 
@@ -108,7 +108,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       S: event => toggle_prop('starred'),
     });
 
-    this.subscribe_safe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel#AnnotationUpdated', true);
   }
 
   /**
@@ -181,7 +181,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
   /**
    * Called whenever a bug annotation is updated. Update the bug row on the thread.
-   * @listens BugModel:AnnotationUpdated
+   * @listens BugModel#AnnotationUpdated
    * @param {Proxy} bug - Changed bug.
    * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
@@ -281,7 +281,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       },
     });
 
-    this.subscribe_safe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
     // Lazy loading while scrolling
     this.$outer.addEventListener('scroll', event => {
@@ -346,7 +346,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Called whenever a bug annotation is updated. Update the bug item on the thread.
-   * @listens BugModel:AnnotationUpdated
+   * @listens BugModel#AnnotationUpdated
    * @param {Proxy} bug - Changed bug.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.

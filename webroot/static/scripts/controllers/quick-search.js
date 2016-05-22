@@ -18,18 +18,18 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
     BzDeck.views.quick_search = new BzDeck.QuickSearchView();
 
-    this.on('V:RecentSearchesRequested', data => this.provide_recent_searches());
-    this.on('V:QuickSearchRequested', data => this.exec_quick_search(data.input));
-    this.on('V:AdvancedSearchRequested', data => this.exec_advanced_search(data.input));
-    this.subscribe('V:ResultSelected');
+    this.on('V#RecentSearchesRequested', data => this.provide_recent_searches());
+    this.on('V#QuickSearchRequested', data => this.exec_quick_search(data.input));
+    this.on('V#AdvancedSearchRequested', data => this.exec_advanced_search(data.input));
+    this.subscribe('V#ResultSelected');
   }
 
   /**
    * Provide recent searches done by the user. Notify the results with an event.
-   * @listens QuickSearchView:RecentSearchesRequested
+   * @listens QuickSearchView#RecentSearchesRequested
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchController:ResultsAvailable
+   * @fires QuickSearchController#ResultsAvailable
    */
   provide_recent_searches () {
     BzDeck.prefs.get('search.quick.history').then(history => {
@@ -57,17 +57,17 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
       results = [...results];
 
       if (results.length) {
-        this.trigger(':ResultsAvailable', { category: 'recent', input: '', results });
+        this.trigger('#ResultsAvailable', { category: 'recent', input: '', results });
       }
     });
   }
 
   /**
    * Execute a quick search and notify the results with an event.
-   * @listens QuickSearchView:QuickSearchRequested
+   * @listens QuickSearchView#QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @returns {undefined}
-   * @fires QuickSearchController:ResultsAvailable
+   * @fires QuickSearchController#ResultsAvailable
    * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {
@@ -81,11 +81,11 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
     let params_users = new URLSearchParams();
 
     let return_bugs = bugs => Promise.all(bugs.map(bug => this.get_bug_result(bug))).then(results => {
-      this.trigger_safe(':ResultsAvailable', { category: 'bugs', input, results });
+      this.trigger_safe('#ResultsAvailable', { category: 'bugs', input, results });
     });
 
     let return_users = users => Promise.all(users.map(user => this.get_user_result(user))).then(results => {
-      this.trigger_safe(':ResultsAvailable', { category: 'users', input, results });
+      this.trigger_safe('#ResultsAvailable', { category: 'users', input, results });
     });
 
     params_bugs.append('short_desc', input);
@@ -136,7 +136,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Execute an advanced search by opening a new search page.
-   * @listens QuickSearchView:AdvancedSearchRequested
+   * @listens QuickSearchView#AdvancedSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @returns {undefined}
    */
@@ -154,7 +154,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
 
   /**
    * Called whenever a search result is selected. Show the result in a new tab, and update the search history.
-   * @listens QuickSearchView:ResultSelected
+   * @listens QuickSearchView#ResultSelected
    * @param {{String|Number)} id - Item name, such as bug ID or user name.
    * @param {String} type - Item type, such as 'bug' or 'user'.
    * @returns {undefined}

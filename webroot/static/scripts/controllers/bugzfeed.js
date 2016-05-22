@@ -36,13 +36,13 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
    * @param {Number} [id] - Updated bug's ID.
    * @param {Array.<Number>} - [ids] Bug IDs currently subscribed to.
    * @returns {undefined}
-   * @fires BugzfeedController:BugUpdated
+   * @fires BugzfeedController#BugUpdated
    */
   onmessage ({ status, id, ids } = {}) {
     let func = {
       'Connected': () => this.connected = true,
       'Disconnected': () => this.connected = false,
-      'BugUpdated': () => this.trigger(':BugUpdated', { id }),
+      'BugUpdated': () => this.trigger('#BugUpdated', { id }),
       'SubscriptionsUpdated': () => this.subscriptions = new Set(ids),
     }[status];
 

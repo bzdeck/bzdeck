@@ -10,10 +10,10 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Get a SidebarController instance.
    * @constructor
-   * @listens SidebarView:FolderSelected
+   * @listens SidebarView#FolderSelected
    * @param {Proxy} user - UserModel instance of the application user.
    * @returns {Object} controller - New SidebarController instance.
-   * @fires SidebarController:GravatarProfileFound
+   * @fires SidebarController#GravatarProfileFound
    */
   constructor (user) {
     super(); // This does nothing but is required before using `this`
@@ -54,35 +54,35 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
     BzDeck.views.sidebar = new BzDeck.SidebarView(user);
 
     user.get_gravatar_profile().then(profile => {
-      this.trigger(':GravatarProfileFound', {
+      this.trigger('#GravatarProfileFound', {
         style: { 'background-image': user.background_image ? `url(${user.background_image})` : 'none' },
       });
     });
 
-    this.on('V:FolderSelected', data => this.data.folder_id = data.id);
-    this.subscribe('V:AppMenuItemSelected');
+    this.on('V#FolderSelected', data => this.data.folder_id = data.id);
+    this.subscribe('V#AppMenuItemSelected');
 
     // Update the sidebar Inbox folder at startup and whenever notified
     this.toggle_unread();
-    this.subscribe_safe('BugModel:AnnotationUpdated', true);
+    this.subscribe_safe('BugModel#AnnotationUpdated', true);
   }
 
   /**
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {undefined}
-   * @fires SidebarController:FolderOpened
+   * @fires SidebarController#FolderOpened
    */
   open_folder (folder_id) {
     BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
       BzDeck.controllers.homepage.data.bugs = bugs; // Map
-      this.trigger_safe(':FolderOpened', { folder_id, bugs });
+      this.trigger_safe('#FolderOpened', { folder_id, bugs });
     });
   }
 
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
-   * @listens BugModel:AnnotationUpdated
+   * @listens BugModel#AnnotationUpdated
    * @param {Proxy} bug - Changed bug.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
@@ -98,14 +98,14 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
    * Notify the number of unread bugs so the view can show it on the Inbox option.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SidebarController:UnreadToggled
+   * @fires SidebarController#UnreadToggled
    */
   toggle_unread () {
     BzDeck.collections.subscriptions.get_all().then(bugs => {
       let _bugs = [...bugs.values()];
 
       Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
-        this.trigger(':UnreadToggled', {
+        this.trigger('#UnreadToggled', {
           number: _bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
         });
       });
@@ -114,7 +114,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
 
   /**
    * Called whenever an Application menu item is selected.
-   * @listens SidebarView:AppMenuItemSelected
+   * @listens SidebarView#AppMenuItemSelected
    * @param {String} command - Command name of the menu item.
    * @returns {undefined}
    */

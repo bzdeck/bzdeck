@@ -55,7 +55,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * Activate the editable widgets including textboxes and checkboxes.
    * @param {undefined}
    * @returns {undefined}
-   * @fires AttachmentView:EditAttachment
+   * @fires AttachmentView#EditAttachment
    */
   activate () {
     let { id, hash } = this.attachment;
@@ -67,7 +67,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
 
       let prop = $prop.getAttribute('itemprop');
-      let trigger = value => this.trigger('AttachmentView:EditAttachment', { id, hash, prop, value });
+      let trigger = value => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
         let $$textbox = new this.widgets.TextBox($prop);
