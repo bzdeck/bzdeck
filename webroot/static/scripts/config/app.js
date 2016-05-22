@@ -3,16 +3,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the app namespace.
+ * Define the BzDeck app namespace.
  * @namespace
  */
 const BzDeck = {};
 
 /**
- * Config
+ * Define app configurations.
+ * @member {Object}
+ * @property {Object} hosts - List of supported Bugzilla instances.
+ * @property {Object} app - App's path list used by Router.
+ * @property {Object} grid - Columns on classic threads.
+ * @property {Object} prefs - Preferences types and default values.
+ * @property {Array.<Object>} folders - Sidebar folder list.
  */
 BzDeck.config = {
-  // List of supported Bugzilla instances
   hosts: {
     mozilla: {
       label: 'Mozilla',
@@ -48,12 +53,10 @@ BzDeck.config = {
       }
     }
   },
-  // App path
   app: {
     root: '/',
     launch_path: '/home/inbox',
   },
-  // Columns on classic threads
   grid: {
     default_columns: [
       // Custom
@@ -90,7 +93,6 @@ BzDeck.config = {
       { id: 'last_change_time', type: 'time' },
     ]
   },
-  // Preferences types and default values
   prefs: {
     // Theme
     'ui.theme.selected': { type: 'string', default: 'Light' },
@@ -108,7 +110,6 @@ BzDeck.config = {
     'ui.timeline.show_cc_changes': { type: 'boolean', default: false },
     'ui.timeline.display_attachments_inline': { type: 'boolean', default: true },
   },
-  // Sidebar folders
   folders: [
     {
       id: 'sidebar-folders--inbox',
@@ -160,7 +161,9 @@ BzDeck.config = {
 };
 
 /**
- * Compatibility
+ * Detect if the current user agent is compatible with APIs used in BzDeck.
+ * @member {Boolean}
+ * @name BzDeck.compatible
  */
 Object.defineProperty(BzDeck, 'compatible', {
   get: () => {
