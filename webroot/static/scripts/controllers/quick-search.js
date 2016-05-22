@@ -33,9 +33,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
    */
   provide_recent_searches () {
     BzDeck.prefs.get('search.quick.history').then(history => {
-      return Promise.all((history || []).map(item => {
-        let { type, id } = item;
-
+      return Promise.all((history || []).map(({ type, id } = {}) => {
         return new Promise(resolve => {
           if (type === 'bug') {
             BzDeck.collections.bugs.get(id).then(bug => {

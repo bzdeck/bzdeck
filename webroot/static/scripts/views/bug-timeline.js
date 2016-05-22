@@ -25,7 +25,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
     let get_time = str => (new Date(str)).getTime();
     let entries = new Map([...this.bug.comments.entries()]
-            .map(c => [get_time(c[1].creation_time), new Map([['comment', c[1]]])]));
+            .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let read_comments_num = 0;
     let last_comment_time;

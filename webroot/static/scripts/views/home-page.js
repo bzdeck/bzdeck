@@ -173,9 +173,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('home.list.columns'),
-    ]).then(prefs => {
-      let [sort_cond, columns] = prefs;
-
+    ]).then(([sort_cond, columns]) => {
       this.thread = new BzDeck.ClassicThreadView(this, 'home', document.querySelector('#home-list'), columns, {
         date: { simple: false },
         sortable: true,
@@ -260,9 +258,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       }
     });
 
-    this.on('QuickSearchController#ResultsAvailable', data => {
-      let { category, input, results } = data;
-
+    this.on('QuickSearchController#ResultsAvailable', ({ category, input, results } = {}) => {
       // Check if the search terms have not changed since the search is triggered
       if (category !== 'bugs' || input !== $searchbox.value) {
         return;

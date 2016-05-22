@@ -111,8 +111,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
       let reply = () => {
         let quote_header = `(In reply to ${author.name} from comment #${comment.count})`;
-        let quote_lines = comment.text.split(/\n/).map(line => `> ${line}`).join('\n');
-        let quote = [quote_header, quote_lines].join('\n');
+        let quote_lines = comment.text.split(/\n/).map(line => `> ${line}`);
+        let quote = [quote_header, ...quote_lines].join('\n');
         let $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`);
         let $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
 
@@ -517,8 +517,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
             removed_reviews.then(reviews => render(`rejected ${attachment} on behalf of ${reviews}`)); // l10n
           }
         } else if (att_id && _reviews.removed.size) {
-          Promise.all([added_reviews, removed_reviews]).then(reviews =>
-              render(`changed ${attachment} reviewer from ${reviews[0] || 'nobody'} to ${reviews[1] || 'nobody'}`));
+          Promise.all([removed_reviews, added_reviews]).then(([removed, added]) =>
+              render(`changed ${attachment} reviewer from ${added || 'nobody'} to ${removed || 'nobody'}`));
         } else if (att_id && change.added === 'feedback+' && _feedbacks.removed.size) {
           if (_feedbacks.removed.size === 1 && _feedbacks.removed.has(changer.email)) {
             render(`gave positive feedback on ${attachment}`); // l10n
@@ -534,14 +534,14 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
                 render(`gave negative feedback on ${attachment} on behalf of ${feedbacks}`)); // l10n
           }
         } else if (att_id && change.field_name === 'flagtypes.name') {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} flag: ${changes[0]} → ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed ${attachment} flag: ${removed} → ${added}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.description$/)) {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} description: ${changes[0]} → ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed ${attachment} description: ${removed} → ${added}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.file_?name$/)) {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${attachment} filename: ${changes[0]} → ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed ${attachment} filename: ${removed} → ${added}`)); // l10n
         } else if (change.field_name.match(/^attachments?\.is_?patch$/)) {
           if (change.added === '1') {
             render(`marked ${attachment} as patch`); // l10n
@@ -555,8 +555,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
             render(`unmarked ${attachment} as obsolete`); // l10n
           }
         } else if (_needinfos.removed.size) {
-          Promise.all([added_needinfos, removed_needinfos]).then(needinfos =>
-              render(`asked ${needinfos[0]} for information instead of ${needinfos[1]}`)); // l10n
+          Promise.all([removed_needinfos, added_needinfos]).then(([removed, added]) =>
+              render(`asked ${removed} for information instead of ${added}`)); // l10n
         } else if (change.field_name === 'assigned_to' && change.removed.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
           // TODO: nobody@mozilla.org and *@bugzilla.bugs are the default assignees on BMO. It might be different on
           // other Bugzilla instances. The API should provide the info...
@@ -568,17 +568,17 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         } else if (change.field_name === 'assigned_to' && change.added.match(/^(nobody@.+|.+@bugzilla\.bugs)$/)) {
           get_removals.then(removals => render(`removed ${removals} from the assignee`)); // l10n
         } else if (change.field_name === 'keywords') {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed the keywords: removed ${changes[0]}, added ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed the keywords: removed ${removed}, added ${added}`)); // l10n
         } else if (change.field_name === 'blocks') {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed the blockers: removed ${changes[0]}, added ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed the blockers: removed ${removed}, added ${added}`)); // l10n
         } else if (change.field_name === 'depends_on') {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed the dependencies: removed ${changes[0]}, added ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed the dependencies: removed ${removed}, added ${added}`)); // l10n
         } else {
-          Promise.all([get_removals, get_additions]).then(changes =>
-              render(`changed ${field}: ${changes[0]} → ${changes[1]}`)); // l10n
+          Promise.all([get_removals, get_additions]).then(([removed, added]) =>
+              render(`changed ${field}: ${removed} → ${added}`)); // l10n
         }
       }
 

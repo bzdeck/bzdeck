@@ -160,8 +160,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
                                                new Set([this.bug.creator, this.bug.assigned_to]));
     let $finder = $$finder.$combobox;
 
-    let add_row = (requestee, checked, options = {}) => {
-      let { id, label } = options;
+    let add_row = (requestee, checked, { id, label } = {}) => {
       let type = id ? 'clear' : 'request';
       let flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee };
       let $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);

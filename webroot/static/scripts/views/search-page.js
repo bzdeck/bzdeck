@@ -176,9 +176,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('search.list.columns'),
-    ]).then(prefs => {
-      let [sort_cond, columns] = prefs;
-
+    ]).then(([sort_cond, columns]) => {
       this.thread = new BzDeck.ClassicThreadView(this, 'search', this.$grid, columns, {
         sortable: true,
         reorderable: true,

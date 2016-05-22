@@ -111,14 +111,14 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       this.get_gravatar_image(options),
       // Refresh the Gravatar profile if already exists, or fetch later on demand
       this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve()
-    ]).then(results => {
+    ]).then(([bugzilla, image_blob, gravatar]) => {
       this.save({
         name: this.email, // String
-        id: results[0].id, // Number
-        bugzilla: results[0], // Object
-        image_blob: results[1], // Blob
-        image_src: results[1] ? URL.createObjectURL(results[1]) : undefined, // URL
-        gravatar: results[2] || undefined, // Object
+        id: bugzilla.id, // Number
+        bugzilla, // Object
+        image_blob, // Blob
+        image_src: image_blob ? URL.createObjectURL(image_blob) : undefined, // URL
+        gravatar, // Object
         updated: Date.now(), // Number
       });
     }).catch(error => {
@@ -177,9 +177,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise((resolve, reject) => {
-      this.on('GlobalController#GravatarProfileProvided', data => {
-        let { hash, profile } = data;
-
+      this.on('GlobalController#GravatarProfileProvided', ({ hash, profile } = {}) => {
         if (hash === this.hash) {
           if (profile) {
             resolve(profile);

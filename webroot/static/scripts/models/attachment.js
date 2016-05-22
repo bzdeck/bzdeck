@@ -50,8 +50,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     let decode = () => new Promise(resolve => {
       let worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
-      worker.port.addEventListener('message', event => {
-        let { binary, blob } = event.data;
+      worker.port.addEventListener('message', ({ data: { binary, blob }} = {}) => {
         let text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
 
         resolve({ blob, text, attachment: this });

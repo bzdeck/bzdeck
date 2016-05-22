@@ -40,9 +40,7 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
     let tab_id = history.state ? history.state.tab_id : undefined;
     let prefs = new Map();
 
-    Promise.all([...Object.entries(BzDeck.config.prefs)].map(entry => {
-      let [name, value] = entry;
-
+    Promise.all([...Object.entries(BzDeck.config.prefs)].map(([name, value]) => {
       return BzDeck.prefs.get(name).then(_value => {
         value.user = _value;
         prefs.set(name, value);

@@ -70,19 +70,19 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return fetchers;
     };
 
-    let get_bug = (values, id, index = 0) => {
+    let get_bug = ([_meta, _visit, _comments, _history, _attachments], id, index = 0) => {
       let _bug = { id };
 
       if (include_metadata) {
-        _bug = values[0].bugs[index];
+        _bug = _meta.bugs[index];
         // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
-        _bug._last_visit = values[1] && values[1][index] ? values[1][index].last_visit_ts : null;
+        _bug._last_visit = _visit && _visit[index] ? _visit[index].last_visit_ts : null;
       }
 
       if (include_details) {
-        _bug.comments = values[2].bugs[id].comments;
-        _bug.history = values[3].bugs[index].history || [];
-        _bug.attachments = values[4].bugs[id] || [];
+        _bug.comments = _comments.bugs[id].comments;
+        _bug.history = _history.bugs[index].history || [];
+        _bug.attachments = _attachments.bugs[id] || [];
 
         for (let att of _bug.attachments) {
           BzDeck.collections.attachments.set(att.id, att);
@@ -196,8 +196,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }).then(() => {
       return this.retrieve_last_visit(_bugs.keys());
     }).then(__bugs => {
-      return Promise.all([...__bugs].map(entry => new Promise(resolve => {
-        let [id, bug] = entry;
+      return Promise.all([...__bugs].map(([id, bug]) => new Promise(resolve => {
         let retrieved = _bugs.get(id); // Raw data object
 
         if (bug) {

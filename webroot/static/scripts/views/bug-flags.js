@@ -46,12 +46,12 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
       Promise.all([
         _flag && _flag.setter ? get_person(_flag.setter) : Promise.resolve({}),
         _flag && _flag.requestee ? get_person(_flag.requestee) : Promise.resolve({}),
-      ]).then(people => {
+      ]).then(([setter, requestee]) => {
         $fragment.appendChild(this.fill($_flag, {
           name: flag.name,
           status: _flag ? _flag.status : '---',
-          setter: people[0].properties || {},
-          requestee: people[1].properties || {},
+          setter: setter.properties || {},
+          requestee: requestee.properties || {},
         }, {
           'aria-label': flag.name,
           'aria-level': level,

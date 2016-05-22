@@ -110,24 +110,24 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       fetchers.push(_fetch('comment'), _fetch('history'), _fetch('attachment', 'exclude_fields=data'));
     }
 
-    return Promise.all(fetchers).then(values => {
+    return Promise.all(fetchers).then(([_meta, _visit, _comments, _history, _attachments]) => {
       let _bug;
 
-      if (values[include_metadata ? 0 : 2].error) { // values[0] is an empty resolve when include_metadata is false
-        _bug = { id: this.id, error: { code: values[0].code, message: values[0].message }};
+      if (include_metadata ? _meta.error : _comments.error) { // _meta is an empty resolve when include_metadata = false
+        _bug = { id: this.id, error: { code: _meta.code, message: _meta.message }};
       } else {
         if (include_metadata) {
-          _bug = values[0].bugs[0];
+          _bug = _meta.bugs[0];
           // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
-          _bug._last_visit = values[1] && values[1][0] ? values[1][0].last_visit_ts : null;
+          _bug._last_visit = _visit && _visit[0] ? _visit[0].last_visit_ts : null;
         } else {
           _bug = { id: this.id };
         }
 
         if (include_details) {
-          _bug.comments = values[2].bugs[this.id].comments;
-          _bug.history = values[3].bugs[0].history || [];
-          _bug.attachments = values[4].bugs[this.id] || [];
+          _bug.comments = _comments.bugs[this.id].comments;
+          _bug.history = _history.bugs[0].history || [];
+          _bug.attachments = _attachments.bugs[this.id] || [];
 
           for (let att of _bug.attachments) {
             BzDeck.collections.attachments.set(att.id, att);
@@ -1044,7 +1044,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
     }).then(() => {
       // Update existing attachment(s)
-      return Promise.all([...this.att_changes].map(c => this.post_att_changes(c[0], c[1])));
+      return Promise.all([...this.att_changes].map((...args) => this.post_att_changes(...args)));
     }).then(() => {
       if (!this.has_attachments) {
         // There is nothing more to do if no file is attached

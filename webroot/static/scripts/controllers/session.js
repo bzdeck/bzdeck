@@ -87,9 +87,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
 
     this.on('LoginFormView#LoginRequested', data => {
-      bc.addEventListener('message', event => {
-        let { client_api_login: name, client_api_key: key } = event.data;
-
+      bc.addEventListener('message', ({ data: { client_api_login: name, client_api_key: key }} = {}) => {
         if (email && key) {
           this.verify_account(data.host, name, key);
         } else {

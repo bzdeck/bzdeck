@@ -159,9 +159,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let _bug = {};
     let get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
-    Promise.all(BzDeck.config.grid.default_columns.map(column => {
-      let { id: field, type } = column;
-
+    Promise.all(BzDeck.config.grid.default_columns.map(({ id: field, type } = {}) => {
       if (this.bug[field] !== undefined) {
         if (field === 'keywords') {
           _bug.keyword = this.bug.keywords;

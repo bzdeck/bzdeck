@@ -31,9 +31,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   add_from_bug (bug) {
     let missing = new Set();
 
-    Promise.all([...bug.participants.values()].map(person => {
-      let { name } = person;
-
+    Promise.all([...bug.participants.values()].map(({ name } = {}) => {
       return this.get(name).then(user => {
         if (!user) {
           missing.add(name);
@@ -152,8 +150,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     }).then(() => {
       return this.get_some(_users.keys());
     }).then(__users => {
-      return Promise.all([...__users].map(entry => new Promise(resolve => {
-        let [name, user] = entry;
+      return Promise.all([...__users].map(([name, user]) => new Promise(resolve => {
         let retrieved = _users.get(name); // Raw data object
 
         if (user) {
