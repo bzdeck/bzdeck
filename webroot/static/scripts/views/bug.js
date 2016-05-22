@@ -46,7 +46,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
                                   .map($area => new this.widgets.ScrollBar($area)));
 
     this.subscribe_safe('BugModel:AnnotationUpdated', true); // Enable the global option
-    this.subscribe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
+    this.subscribe_safe('BugModel:Updated', true); // Cannot be 'M:Updated' because it doesn't work in BugDetailsView
     this.subscribe_safe('BugView:FilesSelected');
   }
 
@@ -368,14 +368,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
-   * @listens BugController:FieldEdited
    * @param {undefined}
    * @returns {undefined}
    * @fires BugView:EditField
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
-    this.subscribe('BugController:FieldEdited');
+    this.subscribe('BugModel:FieldEdited', true);
 
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
@@ -565,11 +564,17 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any field is edited by the user. Update the relevante widget accordingly.
+   * @listens BugModel:FieldEdited
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} name - Field name.
    * @param {String} value - Field value.
    * @returns {undefined}
    */
-  on_field_edited ({ name, value } = {}) {
+  on_field_edited ({ bug_id, name, value } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     if (name === 'product') {
       let product_name = value;
 

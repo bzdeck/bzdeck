@@ -44,8 +44,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     }
 
     this.subscribe('BugView:EditModeChanged');
-    this.subscribe('BugController:ParticipantAdded');
-    this.subscribe('BugController:ParticipantRemoved');
+    this.subscribe('BugModel:ParticipantAdded', true);
+    this.subscribe('BugModel:ParticipantRemoved', true);
   }
 
   /**
@@ -149,13 +149,14 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called whenever a new participant is added by the user. Add the person to the list.
-   * @listens BugController:ParticipantAdded
+   * @listens BugModel:ParticipantAdded
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the added person.
    * @returns {undefined}
    */
-  on_participant_added ({ field, email } = {}) {
-    if (field !== this.field) {
+  on_participant_added ({ bug_id, field, email } = {}) {
+    if (bug_id !== this.bug.id || field !== this.field) {
       return;
     }
 
@@ -194,13 +195,14 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Called whenever a new participant is removed by the user. Remove the person from the list.
-   * @listens BugController:ParticipantRemoved
+   * @listens BugModel:ParticipantRemoved
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the removed person.
    * @returns {undefined}
    */
-  on_participant_removed ({ field, email } = {}) {
-    if (field !== this.field) {
+  on_participant_removed ({ bug_id, field, email } = {}) {
+    if (bug_id !== this.bug.id || field !== this.field) {
       return;
     }
 

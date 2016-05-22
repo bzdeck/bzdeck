@@ -68,22 +68,22 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$bug.querySelector('.bug-timeline-wrapper').appendChild(this.$form);
 
     // Attachments
-    this.subscribe('BugController:AttachmentAdded');
-    this.subscribe('BugController:AttachmentRemoved');
-    this.subscribe_safe('BugController:AttachmentEdited');
-    this.subscribe('BugController:AttachmentError');
-    this.subscribe_safe('BugController:UploadListUpdated');
+    this.subscribe('BugModel:AttachmentAdded', true);
+    this.subscribe('BugModel:AttachmentRemoved', true);
+    this.subscribe_safe('BugModel:AttachmentEdited', true);
+    this.subscribe('BugModel:AttachmentError', true);
+    this.subscribe_safe('BugModel:UploadListUpdated', true);
 
     // Other changes
-    this.subscribe_safe('BugController:BugEdited');
-    this.subscribe('BugController:CommentEdited');
+    this.subscribe_safe('BugModel:BugEdited', true);
+    this.subscribe('BugModel:CommentEdited', true);
 
     // Form submission
-    this.subscribe('BugController:Submit');
-    this.subscribe('BugController:SubmitProgress');
-    this.subscribe('BugController:SubmitSuccess');
-    this.subscribe('BugController:SubmitError');
-    this.subscribe('BugController:SubmitComplete');
+    this.subscribe('BugModel:Submit', true);
+    this.subscribe('BugModel:SubmitProgress', true);
+    this.subscribe('BugModel:SubmitSuccess', true);
+    this.subscribe('BugModel:SubmitError', true);
+    this.subscribe('BugModel:SubmitComplete', true);
   }
 
   /**
@@ -244,7 +244,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever a new attachment is added by the user. Update the attachment list UI accordingly.
-   * @listens BugController:AttachmentAdded
+   * @listens BugModel:AttachmentAdded
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Proxy} attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    * @fires GlobalView:OpenAttachment
@@ -253,7 +254,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @fires BugView:MoveUpAttachment
    * @fires BugView:MoveDownAttachment
    */
-  on_attachment_added ({ attachment } = {}) {
+  on_attachment_added ({ bug_id, attachment } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     let hash = attachment.hash;
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let mobile = this.helpers.env.device.mobile;
@@ -291,23 +296,33 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever a new attachment is removed by the user. Update the attachment list UI accordingly.
-   * @listens BugController:AttachmentRemoved
+   * @listens BugModel:AttachmentRemoved
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Number} index - Removed attachment's index in the cached list.
    * @returns {undefined}
    */
-  on_attachment_removed ({ index } = {}) {
+  on_attachment_removed ({ bug_id, index } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$attachments_tbody.rows[index].remove();
   }
 
   /**
    * Called whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
-   * @listens BugController:AttachmentEdited
+   * @listens BugModel:AttachmentEdited
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} hash - Attachment hash for unuploaded attachment.
    * @param {String} prop - Changed property name.
    * @param {*} value - New property value.
    * @returns {undefined}
    */
-  on_attachment_edited ({ hash, prop, value } = {}) {
+  on_attachment_edited ({ bug_id, hash, prop, value } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     if (hash && prop === 'summary') {
       this.$attachments_tbody.querySelector(`[data-hash="${hash}"] [itemprop="summary"]`).textContent = value;
     }
@@ -316,11 +331,16 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is added or removed by the user. If there is any unuploaded attachment, select the
    * Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
-   * @listens BugController:UploadListUpdated
+   * @listens BugModel:UploadListUpdated
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like Object.
    * @returns {undefined}
    */
-  on_upload_list_updated ({ uploads } = {}) {
+  on_upload_list_updated ({ bug_id, uploads } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     let len = uploads.length;
 
     this.$attachments_tab.setAttribute('aria-disabled', !len);
@@ -330,11 +350,16 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment added by the user has an error, such as an oversized file. Show an alert dialog to
    * notify the user of the error.
-   * @listens BugController:AttachmentError
+   * @listens BugModel:AttachmentError
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} message - Explanation of the detected error.
    * @returns {undefined}
    */
-  on_attachment_error ({ message } = {}) {
+  on_attachment_error ({ bug_id, message } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     new this.widgets.Dialog({
       type: 'alert',
       title: 'Error on attaching files', // l10n
@@ -345,33 +370,48 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever the a comment text is added or removed by the user. If the comment form is empty, disable the
    * Preview tab.
-   * @listens BugController:CommentEdited
+   * @listens BugModel:CommentEdited
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Boolean} has_comment - Whether the comment is empty.
    * @returns {undefined}
    */
-  on_comment_edited ({ has_comment } = {}) {
+  on_comment_edited ({ bug_id, has_comment } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$preview_tab.setAttribute('aria-disabled', !has_comment);
   }
 
   /**
    * Called whenever any of the fields, comments or attachments are edited by the user. If there is any change, enable
    * the Submit button. Otherwise, disable it.
-   * @listens BugController:BugEdited
+   * @listens BugModel:BugEdited
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Boolean} can_submit - Whether the changes can be submitted immediately.
    * @returns {undefined}
    */
-  on_bug_edited ({ can_submit } = {}) {
+  on_bug_edited ({ bug_id, can_submit } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$submit.setAttribute('aria-disabled', !can_submit);
   }
 
   /**
    * Called whenever the changes are about to be submitted to Bugzilla. Disable the comment form and Submit button and
    * update the statusbar message.
-   * @listens BugController:Submit
+   * @listens BugModel:Submit
+   * @param {Number} bug_id - Changed bug ID.
    * @param {undefined}
    * @returns {undefined}
    */
-  on_submit () {
+  on_submit ({ bug_id } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$textbox.setAttribute('aria-readonly', 'true');
     this.$submit.setAttribute('aria-disabled', 'true');
     this.$status.textContent = 'Submitting...';
@@ -379,47 +419,67 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever the upload of a new attachment is in progress. Show the current status on the statusbar.
-   * @listens BugController:SubmitProgress
+   * @listens BugModel:SubmitProgress
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Number} total - Total size of attachments.
    * @param {Number} uploaded - Uploaded size of attachments.
    * @param {Number} percentage - Uploaded percentage.
    * @returns {undefined}
    * @todo Use a progressbar (#159)
    */
-  on_submit_progress ({ total, uploaded, percentage } = {}) {
+  on_submit_progress ({ bug_id, total, uploaded, percentage } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$status.textContent = `${percentage}% uploaded`;
   }
 
   /**
    * Called whenever all the changes are submitted successfully. Reset the form content.
-   * @listens BugController:SubmitSuccess
+   * @listens BugModel:SubmitSuccess
+   * @param {Number} bug_id - Changed bug ID.
    * @param {undefined}
    * @returns {undefined}
    */
-  on_submit_success () {
+  on_submit_success ({ bug_id } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$textbox.value = '';
     this.oninput();
   }
 
   /**
    * Called whenever any error is detected while submitting the changes. Show the error message on the statusbar.
-   * @listens BugController:SubmitError
+   * @listens BugModel:SubmitError
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} error - Error message.
    * @param {Boolean} button_disabled - Whether the submit button should be disabled.
    * @returns {undefined}
    */
-  on_submit_error ({ error, button_disabled } = {}) {
+  on_submit_error ({ bug_id, error, button_disabled } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     this.$submit.setAttribute('aria-disabled', button_disabled);
     this.$status.textContent = error || 'There was an error while submitting your changes. Please try again.';
   }
 
   /**
    * Called once a submission is complete, regardless of errors. Enable and focus on the comment form.
-   * @listens BugController:SubmitComplete
+   * @listens BugModel:SubmitComplete
+   * @param {Number} bug_id - Changed bug ID.
    * @param {undefined}
    * @returns {undefined}
    */
-  on_submit_complete () {
+  on_submit_complete ({ bug_id } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
     // The textbox should be focused anyway
     this.$textbox.setAttribute('aria-readonly', 'false');
     this.$textbox.focus();

@@ -70,10 +70,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
     this.init_uploader();
 
-    this.subscribe('BugController:AttachmentAdded');
-    this.subscribe('BugController:AttachmentRemoved');
-    this.subscribe_safe('BugController:AttachmentEdited');
-    this.subscribe_safe('BugController:UploadListUpdated');
+    this.subscribe_safe('BugModel:AttachmentAdded', true);
+    this.subscribe('BugModel:AttachmentRemoved', true);
+    this.subscribe('BugModel:AttachmentEdited', true);
+    this.subscribe_safe('BugModel:UploadListUpdated', true);
     this.subscribe('BugController:HistoryUpdated');
   }
 
@@ -215,22 +215,32 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called whenever a new attachment is added by the user. Add the item to the listbox.
-   * @listens BugController:AttachmentAdded
-   * @param {Proxy}  attachment - Added attachment data as AttachmentModel instance.
+   * @listens BugModel:AttachmentAdded
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {Proxy} attachment - Added attachment data as AttachmentModel instance.
    * @returns {undefined}
    */
-  on_attachment_added ({ attachment } = {}) {
+  on_attachment_added ({ bug_id, attachment } = {}) {
+    if (bug_id !== this.bug_id) {
+      return;
+    }
+
     this.attachments.set(attachment.hash, attachment);
     this.render([attachment]);
   }
 
   /**
    * Called whenever a new attachment is removed by the user. Remove the item from the listbox.
-   * @listens BugController:AttachmentRemoved
+   * @listens BugModel:AttachmentRemoved
+   * @param {Number} bug_id - Changed bug ID.
    * @param {String} hash - Removed attachment's hash value in the cached list.
    * @returns {undefined}
    */
-  on_attachment_removed ({ hash } = {}) {
+  on_attachment_removed ({ bug_id, hash } = {}) {
+    if (bug_id !== this.bug_id) {
+      return;
+    }
+
     this.attachments.delete(hash);
     this.$listbox.querySelector(`[data-hash='${hash}']`).remove();
     this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
@@ -239,14 +249,19 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called whenever a new attachment is edited by the user. Update the item on the listbox.
-   * @listens BugController:AttachmentEdited
+   * @listens BugModel:AttachmentEdited
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Number} id - Numeric ID for an existing attachment or undefined for an unuploaded one.
    * @param {String} hash - Hash value for an unuploaded attachment or undefined for an existing one.
    * @param {String} prop - Edited property name.
    * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_attachment_edited ({ id, hash, prop, value } = {}) {
+  on_attachment_edited ({ bug_id, id, hash, prop, value } = {}) {
+    if (bug_id !== this.bug_id) {
+      return;
+    }
+
     let $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
     if (['summary', 'content_type'].includes(prop)) {
@@ -260,11 +275,16 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Called whenever a new attachment is added or removed by the user. Update the list header title.
-   * @listens BugController:UploadListUpdated
+   * @listens BugModel:UploadListUpdated
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
    * @returns {undefined}
    */
-  on_upload_list_updated ({ uploads } = {}) {
+  on_upload_list_updated ({ bug_id, uploads } = {}) {
+    if (bug_id !== this.bug_id) {
+      return;
+    }
+
     this.update_list_title();
   }
 
