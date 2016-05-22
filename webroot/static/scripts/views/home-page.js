@@ -46,7 +46,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
-    this.subscribe('SettingsPageView#PrefValueChanged', true);
+    this.subscribe('PrefCollection#PrefChanged', true);
     this.on_safe('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
   }
 
@@ -296,12 +296,12 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Called whenever a preference value is changed by the user. Toggle the layout where necessary.
-   * @listens SettingsPageView#PrefValueChanged
+   * @listens PrefCollection#PrefChanged
    * @param {String} name - Preference name.
    * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_pref_value_changed ({ name, value } = {}) {
+  on_pref_changed ({ name, value } = {}) {
     if (name === 'ui.home.layout') {
       this.change_layout(value, true);
     }

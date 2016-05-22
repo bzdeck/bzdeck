@@ -116,7 +116,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $timeline.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
-    this.subscribe('SettingsPageView#PrefValueChanged', true);
+    this.subscribe('PrefCollection#PrefChanged', true);
     this.subscribe('BugController#HistoryUpdated');
   }
 
@@ -196,12 +196,12 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Called whenever a preference value is changed by the user. Show media when the pref is enabled.
-   * @listens SettingsPageView#PrefValueChanged
+   * @listens PrefCollection#PrefChanged
    * @param {String} name - Preference name.
    * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_pref_value_changed ({ name, value } = {}) {
+  on_pref_changed ({ name, value } = {}) {
     if (name !== 'ui.timeline.display_attachments_inline' || value !== true) {
       return;
     }

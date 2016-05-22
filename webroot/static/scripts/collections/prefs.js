@@ -19,4 +19,17 @@ BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
     this.store_name = 'prefs';
     this.store_type = 'simple';
   }
+
+  /**
+   * Save a preference key/value pair in the database, then fire an event.
+   * @override
+   * @param {(Number|String)} name - Key of the item.
+   * @param {*} value - Raw data object or any value.
+   * @returns {undefined}
+   * @fires PrefCollection#PrefChanged
+   */
+  set (name, value) {
+    super.set(name, value);
+    this.trigger('#PrefChanged', { name, value });
+  }
 }
