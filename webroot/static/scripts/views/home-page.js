@@ -297,14 +297,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Called whenever a preference value is changed by the user. Toggle the layout where necessary.
    * @listens SettingsPageView:PrefValueChanged
-   * @param {Object} data - Passed data.
-   * @param {String} data.name - Preference name.
-   * @param {*}      data.value - New value.
+   * @param {String} name - Preference name.
+   * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_pref_value_changed (data) {
-    let { name, value } = data;
-
+  on_pref_value_changed ({ name, value } = {}) {
     if (name === 'ui.home.layout') {
       this.change_layout(value, true);
     }

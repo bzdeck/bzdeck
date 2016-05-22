@@ -83,12 +83,14 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
     BzDeck.views.banner.open_tab({
-      page_category: 'search',
-      page_id: this.id,
-      page_constructor: BzDeck.SearchPageView,
-      page_constructor_args: [this.id, params, BzDeck.host.data.config],
-      tab_label: 'Search', // l10n
-      tab_desc: 'Search & Browse Bugs', // l10n
+      label: 'Search', // l10n
+      description: 'Search & Browse Bugs', // l10n
+      page: {
+        category: 'search',
+        id: this.id,
+        constructor: BzDeck.SearchPageView,
+        constructor_args: [this.id, params, BzDeck.host.data.config],
+      },
     }, this);
 
     if (params.toString()) {

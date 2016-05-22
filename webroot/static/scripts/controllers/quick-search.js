@@ -155,14 +155,11 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
   /**
    * Called whenever a search result is selected. Show the result in a new tab, and update the search history.
    * @listens QuickSearchView:ResultSelected
-   * @param {Object} data - Passed data.
-   * @param {{String|Number)} data.id - Item name, such as bug ID or user name.
-   * @param {String} data.type - Item type, such as 'bug' or 'user'.
+   * @param {{String|Number)} id - Item name, such as bug ID or user name.
+   * @param {String} type - Item type, such as 'bug' or 'user'.
    * @returns {undefined}
    */
-  on_result_selected (data) {
-    let { id, type } = data;
-
+  on_result_selected ({ id, type } = {}) {
     BzDeck.prefs.get('search.quick.history').then(value => {
       let history = value || [];
       // Find an existing item

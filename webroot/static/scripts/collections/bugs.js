@@ -234,12 +234,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Called whenever a bug is updated. Retrieve the latest data from Bugzilla.
    * @listens BugzfeedController:BugUpdated
-   * @param {Object} data - Passed data.
+   * @param {Number} id - Bug ID.
    * @returns {undefined}
    */
-  on_bug_updated (data) {
-    let { id } = data;
-
+  on_bug_updated ({ id } = {}) {
     this.get(id, { id }).then(bug => bug.fetch());
   }
 }

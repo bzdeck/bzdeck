@@ -27,16 +27,15 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
   /**
    * Called whenever navigating to other bug within the same tabpanel is requested.
    * @listens BugContainerView:NavigationRequested
-   * @param {Object} data - Passed data.
-   * @param {Number} data.old_id - Old bug ID to be replaced.
-   * @param {Number} data.new_id - New bug ID to navigate.
-   * @param {String} data.old_path - Previous location path.
-   * @param {String} data.new_path - New location path.
-   * @param {Boolean} data.reinit - Whether there's an existing tabpanel content for the new bug.
+   * @param {Number} old_id - Old bug ID to be replaced.
+   * @param {Number} new_id - New bug ID to navigate.
+   * @param {String} old_path - Previous location path.
+   * @param {String} new_path - New location path.
+   * @param {Boolean} reinit - Whether there's an existing tabpanel content for the new bug.
    * @returns {undefined}
    */
-  on_navigation_requested (data) {
-    let { old_id, new_id, old_path, new_path, reinit } = data;
+  on_navigation_requested ({ old_id, new_id, old_path, new_path, reinit } = {}) {
+    let data;
 
     window.history.replaceState({ ids: this.sibling_bug_ids, previous: old_path }, '', new_path);
 

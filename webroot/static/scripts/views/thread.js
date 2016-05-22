@@ -182,20 +182,19 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Called whenever a bug annotation is updated. Update the bug row on the thread.
    * @listens BugModel:AnnotationUpdated
-   * @param {Object} data - Annotation change details.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {String} data.type - Annotation type such as 'starred'.
-   * @param {Boolean} data.value - New annotation value.
+   * @param {Proxy} bug - Changed bug.
+   * @param {String} type - Annotation type such as 'starred'.
+   * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated (data) {
-    let $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${data.bug.id}"]`);
+  on_annotation_updated ({ bug, type, value } = {}) {
+    let $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
     if ($row) {
-      $row.setAttribute(`data-${data.type}`, data.value);
+      $row.setAttribute(`data-${type}`, value);
 
-      if (data.type === 'starred') {
-        $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', data.value);
+      if (type === 'starred') {
+        $row.querySelector('[data-id="starred"] [role="checkbox"]').setAttribute('aria-checked', value);
       }
     }
   }
@@ -348,23 +347,22 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Called whenever a bug annotation is updated. Update the bug item on the thread.
    * @listens BugModel:AnnotationUpdated
-   * @param {Object} data - Annotation change details.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @param {Boolean} data.value - New annotation value.
+   * @param {Proxy} bug - Changed bug.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated (data) {
-    let $option = this.$listbox.querySelector(`[role="option"][data-id="${data.bug.id}"]`);
+  on_annotation_updated ({ bug, type, value } = {}) {
+    let $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
     if ($option) {
-      $option.setAttribute(`data-${data.type}`, data.value);
+      $option.setAttribute(`data-${type}`, value);
 
-      if (data.type === 'starred') {
+      if (type === 'starred') {
         let $checkbox = $option.querySelector('[itemprop="starred"]');
 
-        $checkbox.setAttribute('aria-checked', data.value);
-        $checkbox.setAttribute('content', data.value);
+        $checkbox.setAttribute('aria-checked', value);
+        $checkbox.setAttribute('content', value);
       }
     }
   }

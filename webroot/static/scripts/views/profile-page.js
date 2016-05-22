@@ -42,17 +42,16 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called when the User's Gravatar profile is retrieved. Apply the background image.
    * @listens ProfilePageController:GravatarProfileFound
-   * @param {Object} data - Data passed.
-   * @param {Object} data.style - CSS style rules including the background image.
+   * @param {Object} style - CSS style rules including the background image.
    * @returns {Boolean} result - Whether the view is updated.
    * @todo Add more info such as the location and social accounts.
    */
-  on_gravatar_profile_found (data) {
+  on_gravatar_profile_found ({ style } = {}) {
     if (!this.$header) {
       return false;
     }
 
-    this.$header.style['background-image'] = data.style['background-image'];
+    this.$header.style['background-image'] = style['background-image'];
 
     return true;
   }
@@ -60,23 +59,22 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called when the User's Bugzilla profile is retrieved. Render the profile details.
    * @listens ProfilePageController:BugzillaProfileFound
-   * @param {Object} data - Data passed.
-   * @param {Object} data.profile - Profile info.
-   * @param {Object} data.links - Related links.
-   * @param {Object} data.style - CSS style rules including the user's generated color.
+   * @param {Object} profile - Profile info.
+   * @param {Object} links - Related links.
+   * @param {Object} style - CSS style rules including the user's generated color.
    * @returns {Boolean} result - Whether the view is updated.
    */
-  on_bugzilla_profile_found (data) {
+  on_bugzilla_profile_found ({ profile, links, style } = {}) {
     if (!this.$tab || !this.$profile || !this.$header) {
       return false;
     }
 
-    document.title = this.$tab.title = `User Profile: ${data.profile.name}`;
-    this.fill(this.$profile, data.profile);
-    this.$profile.id = 'profile-' + data.profile.id;
-    this.$profile.querySelector('[data-id="bugzilla-profile"] a').href = data.links['bugzilla-profile'];
-    this.$profile.querySelector('[data-id="bugzilla-activity"] a').href = data.links['bugzilla-activity'];
-    this.$header.style['background-color'] = data.style['background-color'];
+    document.title = this.$tab.title = `User Profile: ${profile.name}`;
+    this.fill(this.$profile, profile);
+    this.$profile.id = 'profile-' + profile.id;
+    this.$profile.querySelector('[data-id="bugzilla-profile"] a').href = links['bugzilla-profile'];
+    this.$profile.querySelector('[data-id="bugzilla-activity"] a').href = links['bugzilla-activity'];
+    this.$header.style['background-color'] = style['background-color'];
 
     return true;
   }
@@ -84,16 +82,15 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called when the User's Bugzilla profile could not be retrieved. Show the error message.
    * @listens ProfilePageController:BugzillaProfileFetchingError
-   * @param {Object} data - Data passed.
-   * @param {String} data.message - Error message.
+   * @param {String} message - Error message.
    * @returns {Boolean} result - Whether the view is updated.
    */
-  on_bugzilla_profile_fetching_error (data) {
+  on_bugzilla_profile_fetching_error ({ message } = {}) {
     if (!this.$status) {
       return false;
     }
 
-    this.$status.textContent = data.message;
+    this.$status.textContent = message;
 
     return true;
   }

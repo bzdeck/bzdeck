@@ -26,45 +26,38 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Open a new global tab and load the relevant tabpanel content. FIXME: Need refactoring (#232).
-   * @param {Object} options - Defining tab details.
-   * @param {String} options.page_category - Category of the tabpanel content, such as 'details' or 'settings'.
-   * @param {(String|Number)} options.page_id - Unique identifier for the tab. Can be generated with Date.now().
-   * @param {Object} options.page_constructor - View constructor for the tabpanel content.
-   * @param {Array} [options.page_constructor_args] - Arguments used to create a new View instance.
-   * @param {String} options.tab_label - Text displayed on the label
-   * @param {String} [options.tab_desc] - Optional text displayed as the tooltip of the tab.
-   * @param {String} [options.tab_position] - Where to show the tab: 'next' or 'last' (default).
+   * @param {String} label - Text displayed on the label
+   * @param {String} [description] - Optional text displayed as the tooltip of the tab.
+   * @param {String} [position] - Where to show the tab: 'next' or 'last' (default).
+   * @param {Object} page - Defining page details.
+   * @param {String} page.category - Category of the tabpanel content, such as 'details' or 'settings'.
+   * @param {(String|Number)} page.id - Unique identifier for the tab. Can be generated with Date.now().
+   * @param {Object} page.constructor - View constructor for the tabpanel content.
+   * @param {Array} [page.constructor_args] - Arguments used to create a new View instance.
    * @param {Object} controller - Controller instance that requests the tab.
    * @returns {undefined}
    */
-  open_tab (options, controller) {
-    let page;
-    let page_category = options.page_category;
-    let page_id = options.page_id;
-    let page_constructor = options.page_constructor;
-    let page_constructor_args = options.page_constructor_args || [];
-    let pages = BzDeck.views.pages[`${page_category}_list`];
-    let tab_id = options.page_category + (page_id ? '-' + page_id : '');
-    let tab_label = options.tab_label;
-    let tab_desc = options.tab_desc || tab_label;
-    let tab_position = options.tab_position || 'last';
-    let $tab = document.querySelector(`#tab-${CSS.escape(tab_id)}`);
-    let $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(tab_id)}`);
+  open_tab ({ label, description, position = 'last', page } = {}, controller) {
+    let view;
+    let pages = BzDeck.views.pages[`${page.category}_list`];
+    let id = page.category + (page.id ? '-' + page.id : '');
+    let $tab = document.querySelector(`#tab-${CSS.escape(id)}`);
+    let $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(id)}`);
 
     if (!pages) {
-      pages = BzDeck.views.pages[`${page_category}_list`] = new Map();
+      pages = BzDeck.views.pages[`${page.category}_list`] = new Map();
     }
 
     // Reuse a tabpanel if possible
     if ($tabpanel) {
-      page = pages.get(page_id || 'default');
-      $tab = $tab || this.$$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
+      view = pages.get(page.id || 'default');
+      $tab = $tab || this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
     } else {
-      $tabpanel = this.get_template(`tabpanel-${page_category}-template`, page_id);
-      $tab = this.$$tablist.add_tab(tab_id, tab_label, tab_desc, $tabpanel, tab_position);
-      page = controller.view = new page_constructor(...page_constructor_args);
-      page.controller = controller;
-      pages.set(page_id || 'default', page);
+      $tabpanel = this.get_template(`tabpanel-${page.category}-template`, page.id);
+      $tab = this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
+      view = controller.view = new page.constructor(...(page.constructor_args || []));
+      view.controller = controller;
+      pages.set(page.id || 'default', view);
 
       // Prepare the Back button on the mobile banner
       this.add_back_button($tabpanel);
@@ -74,7 +67,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     $tabpanel.focus();
 
     BzDeck.views.global.update_window_title($tab);
-    BzDeck.views.pages[page_category] = page;
+    BzDeck.views.pages[page.category] = view;
     this.tab_path_map.set($tab.id, location.pathname + location.search);
   }
 

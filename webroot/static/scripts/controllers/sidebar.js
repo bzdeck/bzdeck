@@ -83,14 +83,13 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel:AnnotationUpdated
-   * @param {Object} data - Annotation change details.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @param {Boolean} data.value - New annotation value.
+   * @param {Proxy} bug - Changed bug.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated (data) {
-    if (data.type === 'unread') {
+  on_annotation_updated ({ bug, type, value } = {}) {
+    if (type === 'unread') {
       this.toggle_unread();
     }
   }
@@ -116,16 +115,15 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
   /**
    * Called whenever an Application menu item is selected.
    * @listens SidebarView:AppMenuItemSelected
-   * @param {Object} data - Passed data.
-   * @param {String} data.command - Command name of the menu item.
+   * @param {String} command - Command name of the menu item.
    * @returns {undefined}
    */
-  on_app_menu_item_selected (data) {
+  on_app_menu_item_selected ({ command } = {}) {
     let func = {
       'show-profile': () => BzDeck.router.navigate('/profile/' + BzDeck.account.data.name),
       'show-settings': () => BzDeck.router.navigate('/settings'),
       logout: () => BzDeck.controllers.session.logout(),
-    }[data.command];
+    }[command];
 
     if (func) {
       func();

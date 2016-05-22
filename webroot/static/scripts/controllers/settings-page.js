@@ -49,10 +49,12 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
       });
     })).then(() => {
       BzDeck.views.banner.open_tab({
-        page_category: 'settings',
-        page_constructor: BzDeck.SettingsPageView,
-        page_constructor_args: [prefs, tab_id],
-        tab_label: 'Settings',
+        label: 'Settings',
+        page: {
+          category: 'settings',
+          constructor: BzDeck.SettingsPageView,
+          constructor_args: [prefs, tab_id],
+        },
       }, this);
     });
   }
@@ -61,14 +63,11 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
    * Called whenever a preference value is changed by the user. Save it to the database and update the UI where
    * necessary.
    * @listens SettingsPageView:PrefValueChanged
-   * @param {Object} data - Passed data.
-   * @param {String} data.name - Preference name.
-   * @param {*}      data.value - New value.
+   * @param {String} name - Preference name.
+   * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_pref_value_changed (data) {
-    let { name, value } = data;
-
+  on_pref_value_changed ({ name, value } = {}) {
     BzDeck.prefs.set(name, value);
 
     if (name === 'ui.theme.selected') {

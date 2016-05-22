@@ -132,13 +132,12 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel.
-   * @param {Object} [options] - Extra options.
-   * @param {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @param {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
+   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
+   * @param {String} [api_key] - API key used to authenticate against the Bugzilla API.
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
-  get_bugzilla_profile (options = {}) {
+  get_bugzilla_profile ({ in_promise_all = false, api_key } = {}) {
     if (this.data.bugzilla && this.data.bugzilla.id) {
       return Promise.resolve(this.data.bugzilla);
     }
@@ -148,7 +147,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     let params = new URLSearchParams();
-    let _options = { api_key: options.api_key || undefined };
+    let _options = { api_key: api_key || undefined };
 
     params.append('names', this.email);
 
@@ -163,13 +162,12 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalController.
    * @listens GlobalController:GravatarProfileProvided
-   * @param {Object} [options] - Extra options.
-   * @param {Boolean} [options.in_promise_all=false] - Whether the function is called as part of Promise.all().
+   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @fires UserModel:GravatarProfileRequested
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
-  get_gravatar_profile (options = {}) {
+  get_gravatar_profile ({ in_promise_all = false } = {}) {
     if (this.data.gravatar) {
       if (this.data.gravatar.error) {
         return Promise.reject(new Error('The Gravatar profile could not be found'));
@@ -185,7 +183,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         if (hash === this.hash) {
           if (profile) {
             resolve(profile);
-          } else if (options.in_promise_all) {
+          } else if (in_promise_all) {
             // Resolve anyway if this is called in Promise.all()
             profile = { error: 'Not Found' };
             resolve(profile);
@@ -194,7 +192,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
           }
 
           // Save the profile when called by UserCollection
-          if (!options.in_promise_all) {
+          if (!in_promise_all) {
             this.data.gravatar = profile;
             this.save();
           }
@@ -209,12 +207,12 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
    * Because this requires DOM access, delegate the process to GlobalController.
    * @listens GlobalController:GravatarImageProvided
-   * @param {Object} [options] - Extra options.
+   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @fires UserModel:GravatarImageRequested
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
-  get_gravatar_image (options = {}) {
+  get_gravatar_image ({ in_promise_all = false } = {}) {
     if (this.data.image_blob) {
       return Promise.resolve(this.data.image_blob);
     }
@@ -227,7 +225,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
           resolve(data.blob);
 
           // Save the image when called by UserCollection
-          if (!options.in_promise_all) {
+          if (!in_promise_all) {
             this.data.image_blob = data.blob;
             this.data.image_src = URL.createObjectURL(data.blob);
             this.save();

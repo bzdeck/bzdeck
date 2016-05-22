@@ -84,13 +84,12 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Called whenever a comment is selected. Update the location hash to include the comment ID.
    * @listens BugView:CommentSelected
-   * @param {Object} data - Passed data.
-   * @param {Number} data.number - Comment number.
+   * @param {Number} number - Comment number.
    * @returns {undefined}
    */
-  on_comment_selected (data) {
+  on_comment_selected ({ number } = {}) {
     if (location.pathname === `/bug/${this.bug.id}`) {
-      window.history.replaceState({}, document.title, `${location.pathname}#c${data.number}`);
+      window.history.replaceState({}, document.title, `${location.pathname}#c${number}`);
     }
   }
 
@@ -592,17 +591,14 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   /**
    * Edit a property of an unuploaded or existing attachment.
    * @listens AttachmentView:EditAttachment
-   * @param {Object} change - Change details.
-   * @param {Number} change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
-   * @param {String} change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
-   * @param {String} change.prop - Edited property name.
-   * @param {*}      change.value - New value.
+   * @param {Number} id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+   * @param {String} hash - Hash value for an unuploaded attachment or undefined for an existing one.
+   * @param {String} prop - Edited property name.
+   * @param {*} value - New value.
    * @returns {undefined}
    * @fires BugController:AttachmentEdited
    */
-  edit_attachment (change) {
-    let { id, hash, prop, value } = change;
-
+  edit_attachment ({ id, hash, prop, value } = {}) {
     if (hash) {
       // Edit a new attachment
       let attachment = this.find_attachment(hash);
@@ -610,7 +606,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
       if (attachment && attachment[prop] !== value) {
         attachment[prop] = value;
 
-        this.trigger_safe(':AttachmentEdited', { attachment, change });
+        this.trigger_safe(':AttachmentEdited', { attachment, id, hash, prop, value });
         this.onedit();
       }
 
@@ -646,7 +642,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
         return;
       }
 
-      this.trigger_safe(':AttachmentEdited', { attachment, change });
+      this.trigger_safe(':AttachmentEdited', { attachment, id, hash, prop, value });
       this.onedit();
     });
   }

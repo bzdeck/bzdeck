@@ -42,14 +42,13 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel:AnnotationUpdated
-   * @param {Object} data - Annotation change details.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @param {Boolean} data.value - New annotation value.
+   * @param {Proxy} bug - Changed bug.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated (data) {
-    if (data.type === 'unread') {
+  on_annotation_updated ({ bug, type, value } = {}) {
+    if (type === 'unread') {
       this.toggle_unread();
     }
   }
@@ -58,13 +57,11 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * Called whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar doesn't support
    * CORS. Notify UserModel when the profile is ready.
    * @listens UserModel:GravatarProfileRequested
-   * @param {Object} data - User details.
-   * @param {String} data.hash - Hash value of the user's email.
+   * @param {String} hash - Hash value of the user's email.
    * @returns {undefined}
    * @fires GlobalController:GravatarProfileProvided
    */
-  on_gravatar_profile_requested (data) {
-    let { hash } = data;
+  on_gravatar_profile_requested ({ hash } = {}) {
     let notify = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
 
     this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
@@ -75,15 +72,13 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
    * image could not be found. Notify UserModel when the image is ready.
    * @listens UserModel:GravatarImageRequested
-   * @param {Object} data - User details.
-   * @param {String} data.hash - Hash value of the user's email.
-   * @param {String} data.color - Generated color of the user for the fallback image.
-   * @param {String} data.initial - Initial of the user for the fallback image.
+   * @param {String} hash - Hash value of the user's email.
+   * @param {String} color - Generated color of the user for the fallback image.
+   * @param {String} initial - Initial of the user for the fallback image.
    * @returns {undefined}
    * @fires GlobalController:GravatarImageProvided
    */
-  on_gravatar_image_requested (data) {
-    let { hash, color, initial } = data;
+  on_gravatar_image_requested ({ hash, color, initial } = {}) {
     let notify = blob => this.trigger(':GravatarImageProvided', { hash, blob });
     let $image = new Image();
     let $canvas = document.createElement('canvas');

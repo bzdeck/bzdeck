@@ -216,13 +216,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is added by the user. Add the item to the listbox.
    * @listens BugController:AttachmentAdded
-   * @param {Object} data - Passed data.
-   * @param {Proxy}  data.attachment - Added attachment data as AttachmentModel instance.
+   * @param {Proxy}  attachment - Added attachment data as AttachmentModel instance.
    * @returns {undefined}
    */
-  on_attachment_added (data) {
-    let { attachment } = data;
-
+  on_attachment_added ({ attachment } = {}) {
     this.attachments.set(attachment.hash, attachment);
     this.render([attachment]);
   }
@@ -230,13 +227,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is removed by the user. Remove the item from the listbox.
    * @listens BugController:AttachmentRemoved
-   * @param {Object} data - Passed data.
-   * @param {String} data.hash - Removed attachment's hash value in the cached list.
+   * @param {String} hash - Removed attachment's hash value in the cached list.
    * @returns {undefined}
    */
-  on_attachment_removed (data) {
-    let { hash } = data;
-
+  on_attachment_removed ({ hash } = {}) {
     this.attachments.delete(hash);
     this.$listbox.querySelector(`[data-hash='${hash}']`).remove();
     this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
@@ -246,16 +240,13 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is edited by the user. Update the item on the listbox.
    * @listens BugController:AttachmentEdited
-   * @param {Object} data - Passed data.
-   * @param {Object} data.change - Change details.
-   * @param {Number} data.change.id - Numeric ID for an existing attachment or undefined for an unuploaded one.
-   * @param {String} data.change.hash - Hash value for an unuploaded attachment or undefined for an existing one.
-   * @param {String} data.change.prop - Edited property name.
-   * @param {*}      data.change.value - New value.
+   * @param {Number} id - Numeric ID for an existing attachment or undefined for an unuploaded one.
+   * @param {String} hash - Hash value for an unuploaded attachment or undefined for an existing one.
+   * @param {String} prop - Edited property name.
+   * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_attachment_edited (data) {
-    let { id, hash, prop, value } = data.change;
+  on_attachment_edited ({ id, hash, prop, value } = {}) {
     let $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
     if (['summary', 'content_type'].includes(prop)) {
@@ -270,11 +261,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is added or removed by the user. Update the list header title.
    * @listens BugController:UploadListUpdated
-   * @param {Object} data - Passed data.
-   * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like object.
+   * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
    * @returns {undefined}
    */
-  on_upload_list_updated (data) {
+  on_upload_list_updated ({ uploads } = {}) {
     this.update_list_title();
   }
 
@@ -299,13 +289,12 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
    * the listbox.
    * @listens BugController:HistoryUpdated
-   * @param {Object} data - Passed data.
-   * @param {Object} [data.state] - Current history state.
-   * @param {String} [data.state.att_id] - Attachment ID or hash.
+   * @param {Object} [state] - Current history state.
+   * @param {String} [state.att_id] - Attachment ID or hash.
    * @returns {undefined}
    */
-  on_history_updated (data) {
-    let target_id = data.state ? data.state.att_id : undefined;
+  on_history_updated ({ state } = {}) {
+    let target_id = state ? state.att_id : undefined;
     let $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
     if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {

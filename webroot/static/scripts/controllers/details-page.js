@@ -54,12 +54,14 @@ BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseCo
    */
   connect () {
     BzDeck.views.banner.open_tab({
-      page_category: 'details',
-      page_id: this.id,
-      page_constructor: BzDeck.DetailsPageView,
-      page_constructor_args: [this.id, this.bug_id],
-      tab_label: `Bug ${this.bug_id}`,
-      tab_position: 'next',
+      label: `Bug ${this.bug_id}`,
+      position: 'next',
+      page: {
+        category: 'details',
+        id: this.id,
+        constructor: BzDeck.DetailsPageView,
+        constructor_args: [this.id, this.bug_id],
+      },
     }, this);
 
     this.container.add_bug(this.bug_id, history.state ? history.state.ids : []);

@@ -42,13 +42,12 @@ BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
   /**
    * Called whenever a tab in the global tablist is selected. Navigate to the specified location.
    * @listens BannerView:TabSelected
-   * @param {Object} data - Passed data.
-   * @param {String} data.path - Location pathname that corresponds to the tab.
+   * @param {String} path - Location pathname that corresponds to the tab.
    * @returns {undefined}
    */
-  on_tab_selected (data) {
-    if (location.pathname + location.search !== data.path) {
-      BzDeck.router.navigate(data.path);
+  on_tab_selected ({ path } = {}) {
+    if (location.pathname + location.search !== path) {
+      BzDeck.router.navigate(path);
     }
   }
 }

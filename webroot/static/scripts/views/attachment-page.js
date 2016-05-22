@@ -35,12 +35,12 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called when the attachment is found. Render it on the page.
    * @listens AttachmentPageController:AttachmentAvailable
-   * @param {Object} data - Passed data.
-   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    */
-  on_attachment_available (data) {
-    let attachment = this.attachment = data.attachment;
+  on_attachment_available ({ attachment } = {}) {
+    this.attachment = attachment;
+
     let $attachment = this.$tabpanel.querySelector('article > div');
     let { id, hash, summary } = attachment;
 
@@ -59,13 +59,12 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called when the attachment is not found. Show an error message on the page.
    * @listens AttachmentPageController:AttachmentUnavailable
-   * @param {Object} data - Passed data.
-   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    */
-  on_attachment_unavailable (data) {
+  on_attachment_unavailable ({ attachment } = {}) {
     let id = this.att_id;
-    let error = data.attachment && data.attachment.error ? data.attachment.error : '';
+    let error = attachment && attachment.error ? attachment.error : '';
 
     BzDeck.views.statusbar.show(`The attachment ${id} could not be retrieved. ${error}`); // l10n
   }

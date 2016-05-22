@@ -161,14 +161,14 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
    * @returns {undefined}
    */
   onmessage (event) {
-    let { command, bug, bugs, result, when } = JSON.parse(event.data);
+    let { command, bug: id, bugs: ids, result, when } = JSON.parse(event.data);
 
     if (command === 'update') {
-      self.postMessage({ status: 'BugUpdated', id: bug });
+      self.postMessage({ status: 'BugUpdated', id });
     }
 
     if (command === 'subscribe' && result === 'ok') {
-      self.postMessage({ status: 'SubscriptionsUpdated', ids: bugs });
+      self.postMessage({ status: 'SubscriptionsUpdated', ids });
     }
   }
 }

@@ -565,14 +565,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any field is edited by the user. Update the relevante widget accordingly.
-   * @param {Object} data - Passed data.
-   * @param {String} data.name - Field name.
-   * @param {String} data.value - Field value.
+   * @param {String} name - Field name.
+   * @param {String} value - Field value.
    * @returns {undefined}
    */
-  on_field_edited (data) {
-    let { name, value } = data;
-
+  on_field_edited ({ name, value } = {}) {
     if (name === 'product') {
       let product_name = value;
 
@@ -605,12 +602,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
    * traditional File API to identify the files. In any case, notify the selected files to the controller.
    * @listens BugView:FilesSelected
-   * @param {Object} data - Passed data.
-   * @param {(HTMLInputElement|DataTransfer)} data.input - Data source.
+   * @param {(HTMLInputElement|DataTransfer)} input - Data source.
    * @returns {undefined}
    * @fires BugView:AttachFiles
    */
-  on_files_selected (data) {
+  on_files_selected ({ input } = {}) {
     let iterate = items => {
       for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
         item.getFilesAndDirectories().then(_items => iterate(_items));
@@ -619,10 +615,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
     };
 
-    if (typeof data.input.getFilesAndDirectories === 'function') {
-      data.input.getFilesAndDirectories().then(items => iterate(items));
+    if (typeof input.getFilesAndDirectories === 'function') {
+      input.getFilesAndDirectories().then(items => iterate(items));
     } else {
-      this.trigger_safe('BugView:AttachFiles', { files: data.input.files });
+      this.trigger_safe('BugView:AttachFiles', { files: input.files });
     }
   }
 
@@ -764,29 +760,27 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Called whenever a bug annotation is updated. Update the Star button on the toolbar.
    * @listens BugModel:AnnotationUpdated
-   * @param {Object} data - Annotation change details.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {String} data.type - Annotation type such as 'starred' or 'unread'.
-   * @param {Boolean} data.value - New annotation value.
+   * @param {Proxy} bug - Changed bug.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated (data) {
-    if (this.$bug && data.bug.id === this.bug.id && data.type === 'starred') {
-      this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', data.value);
+  on_annotation_updated ({ bug, type, value } = {}) {
+    if (this.$bug && bug.id === this.bug.id && type === 'starred') {
+      this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', value);
     }
   }
 
   /**
    * Called whenever any field of a bug is updated. Update the view if the bug ID matches.
    * @listens BugModel:Updated
-   * @param {Object} data - Passed data.
-   * @param {Proxy} data.bug - Changed bug.
-   * @param {Map}   data.changes - Change details.
+   * @param {Proxy} bug - Changed bug.
+   * @param {Map} changes - Change details.
    * @returns {undefined}
    */
-  on_updated (data) {
-    if (data.bug.id === this.bug.id) {
-      this.update(data.bug, data.changes);
+  on_updated ({ bug, changes } = {}) {
+    if (bug.id === this.bug.id) {
+      this.update(bug, changes);
     }
   }
 }

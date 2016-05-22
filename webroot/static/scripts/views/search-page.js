@@ -220,13 +220,12 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * Show the preview of a selected bug on the Preview Pane.
    * @listens SearchPageController:BugDataUnavailable
    * @listens SearchPageController:BugDataAvailable
-   * @param {Object} data - Preview data.
-   * @param {Proxy}  data.bug - Bug to show.
-   * @param {Object} data.controller - New BugController instance for that bug.
+   * @param {Proxy} bug - Bug to show.
+   * @param {Object} controller - New BugController instance for that bug.
    * @returns {undefined}
    * @fires SearchPageView:OpeningTabRequested
    */
-  show_preview (data) {
+  show_preview ({ bug, controller } = {}) {
     let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
 
     $pane.innerHTML = '';
@@ -249,7 +248,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     });
 
     // Fill the content
-    this.$$bug = new BzDeck.BugView(data.controller.id, data.bug, $bug);
+    this.$$bug = new BzDeck.BugView(controller.id, bug, $bug);
     $info.id = `search-${this.id}-preview-bug-info`;
     $bug.removeAttribute('aria-hidden');
 
@@ -319,13 +318,12 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called when the search results is retrieved. Show the results on the thread.
    * @listens SearchPageController:SearchResultsAvailable
-   * @param {Object} data - Passed data.
-   * @param {Map.<Number, Proxy>} data.bugs - Bugs matching the criteria.
+   * @param {Map.<Number, Proxy>} bugs - Bugs matching the criteria.
    * @returns {undefined}
    */
-  on_search_results_available (data) {
-    if (data.bugs.size > 0) {
-      this.thread.update(data.bugs);
+  on_search_results_available ({ bugs } = {}) {
+    if (bugs.size > 0) {
+      this.thread.update(bugs);
       this.hide_status();
     } else {
       this.show_status('Zarro Boogs found.'); // l10n
@@ -335,12 +333,11 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called when fetching the search results failed. Show an error message accordingly.
    * @listens SearchPageController:SearchError
-   * @param {Object} data - Passed data.
-   * @param {String} data.message - Error message.
+   * @param {String} message - Error message.
    * @returns {undefined}
    */
-  on_search_error (data) {
-    this.show_status(data.message);
+  on_search_error ({ message } = {}) {
+    this.show_status(message);
   }
 
   /**

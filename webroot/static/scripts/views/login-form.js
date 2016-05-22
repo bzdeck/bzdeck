@@ -168,19 +168,18 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Called whenever the sign-in status is updated. Update the UI accordingly.
    * @listens SessionController:StatusUpdate
-   * @param {Object} data - Passed data.
-   * @param {String} data.status - Current status.
-   * @param {String} data.message - Message text to display.
+   * @param {String} status - Current status.
+   * @param {String} message - Message text to display.
    * @returns {undefined}
    */
-  on_status_update (data) {
-    this.show_status(data.message);
+  on_status_update ({ status, message } = {}) {
+    this.show_status(message);
 
-    if (data.status === 'ForcingLogin') {
+    if (status === 'ForcingLogin') {
       this.show();
     }
 
-    if (data.status === 'LoadingData') {
+    if (status === 'LoadingData') {
       this.hide();
       this.hide_intro();
     }
@@ -189,12 +188,11 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Called whenever an error is detected during the sign-in process. Show the error message.
    * @listens SessionController:Error
-   * @param {Object} data - Passed data.
-   * @param {String} data.message - Message text to display.
+   * @param {String} message - Message text to display.
    * @returns {undefined}
    */
-  on_error (data) {
-    this.show_status(data.message);
+  on_error ({ message } = {}) {
+    this.show_status(message);
   }
 
   /**

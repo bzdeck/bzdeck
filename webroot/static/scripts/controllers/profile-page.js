@@ -38,12 +38,14 @@ BzDeck.ProfilePageController = class ProfilePageController extends BzDeck.BaseCo
    */
   connect () {
     BzDeck.views.banner.open_tab({
-      page_category: 'profile',
-      page_id: this.id,
-      page_constructor: BzDeck.ProfilePageView,
-      page_constructor_args: [this.id, this.id === BzDeck.account.data.name],
-      tab_label: 'Profile', // l10n
-      tab_desc: 'User Profile', // l10n
+      label: 'Profile', // l10n
+      description: 'User Profile', // l10n
+      page: {
+        category: 'profile',
+        id: this.id,
+        constructor: BzDeck.ProfilePageView,
+        constructor_args: [this.id, this.id === BzDeck.account.data.name],
+      },
     }, this);
 
     BzDeck.collections.users.get(this.id, { name: this.id }).then(user => this.on_user_retrieved(user));

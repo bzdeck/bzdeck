@@ -223,13 +223,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * Called whenever any information of a user is updated. This may happen, for example, when the user's Gravatar is
    * retrieved. Find the user's node on the view and update the displayed information accordingly.
    * @listens UserModel:UserInfoUpdated
-   * @param {Object} data - Passed data.
-   * @param {String} data.name - Name of the updated person.
+   * @param {String} name - Name of the updated person.
    * @returns {undefined}
    */
-  on_user_info_updated (data) {
-    let { name } = data;
-
+  on_user_info_updated ({ name } = {}) {
     BzDeck.collections.users.get(name, { name }).then(user => {
       for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
         let title = `${user.original_name || user.name}\n${user.email}`;

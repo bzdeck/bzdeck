@@ -33,19 +33,18 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Called when the bug data is found. Prepare the newly opened tabpanel.
    * @listens BugContainerController:BugDataAvailable
-   * @param {Object} data - Passed data.
-   * @param {Proxy}  data.bug - Bug to show.
-   * @param {Object} data.controller - New BugController instance for that bug.
-   * @param {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   * @param {Proxy} bug - Bug to show.
+   * @param {Object} controller - New BugController instance for that bug.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Boolean} result - Whether the view is updated.
    */
-  on_bug_data_available (data) {
-    if (!this.$container || !data.bug.summary) {
+  on_bug_data_available ({ bug, controller, sibling_bug_ids } = {}) {
+    if (!this.$container || !bug.summary) {
       return false;
     }
 
-    this.add_bug(data);
+    this.add_bug(bug, controller, sibling_bug_ids);
 
     return true;
   }
@@ -53,21 +52,20 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Called when an error was encountered while fetching the bug data. Show the error message.
    * @listens BugContainerController:BugDataUnavailable
-   * @param {Object} data - Passed data.
-   * @param {Number} data.code - Error code usually defined by Bugzilla.
-   * @param {String} data.message - Error message text.
+   * @param {Number} code - Error code usually defined by Bugzilla.
+   * @param {String} message - Error message text.
    * @returns {Boolean} result - Whether the view is updated.
    */
-  on_bug_data_unavailable (data) {
+  on_bug_data_unavailable ({ code, message } = {}) {
     if (this.$bug || !this.$container) {
       return false;
     }
 
     this.$bug = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
       id: this.bug_id,
-      status: data.message,
+      status: message,
     }, {
-      'data-error-code': data.code,
+      'data-error-code': code,
     });
 
     this.$container.appendChild(this.$bug);
@@ -78,21 +76,20 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
 
   /**
    * Show the selected bug in the container.
-   * @param {Object} data - Preview data.
-   * @param {Proxy}  data.bug - Bug to show.
-   * @param {Object} data.controller - New BugController instance for that bug.
-   * @param {Array.<Number>} [data.sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
+   * @param {Proxy} bug - Bug to show.
+   * @param {Object} controller - New BugController instance for that bug.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
    *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {undefined}
    */
-  add_bug (data) {
-    this.bug_id = data.bug.id;
-    this.sibling_bug_ids = data.sibling_bug_ids || [];
+  add_bug (bug, controller, sibling_bug_ids) {
+    this.bug_id = bug.id;
+    this.sibling_bug_ids = sibling_bug_ids || [];
 
     this.$container.setAttribute('aria-busy', 'true');
     this.$container.innerHTML = '';
-    this.$bug = this.$container.appendChild(this.get_template('bug-details-template', data.bug.id));
-    this.$$bug = new BzDeck.BugDetailsView(data.controller.id, data.bug, this.$bug);
+    this.$bug = this.$container.appendChild(this.get_template('bug-details-template', bug.id));
+    this.$$bug = new BzDeck.BugDetailsView(controller.id, bug, this.$bug);
     this.$container.removeAttribute('aria-busy');
 
     // Set Back & Forward navigation

@@ -245,8 +245,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is added by the user. Update the attachment list UI accordingly.
    * @listens BugController:AttachmentAdded
-   * @param {Object} data - Passed data.
-   * @param {Proxy}  data.attachment - Added attachment data as an AttachmentModel instance.
+   * @param {Proxy} attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
    * @fires GlobalView:OpenAttachment
    * @fires GlobalView:OpenBug
@@ -254,8 +253,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @fires BugView:MoveUpAttachment
    * @fires BugView:MoveDownAttachment
    */
-  on_attachment_added (data) {
-    let attachment = data.attachment;
+  on_attachment_added ({ attachment } = {}) {
     let hash = attachment.hash;
     let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let mobile = this.helpers.env.device.mobile;
@@ -294,27 +292,22 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is removed by the user. Update the attachment list UI accordingly.
    * @listens BugController:AttachmentRemoved
-   * @param {Object} data - Passed data.
-   * @param {Number} data.index - Removed attachment's index in the cached list.
+   * @param {Number} index - Removed attachment's index in the cached list.
    * @returns {undefined}
    */
-  on_attachment_removed (data) {
-    this.$attachments_tbody.rows[data.index].remove();
+  on_attachment_removed ({ index } = {}) {
+    this.$attachments_tbody.rows[index].remove();
   }
 
   /**
    * Called whenever a new attachment is edited by the user. Update the attachment list UI accordingly.
    * @listens BugController:AttachmentEdited
-   * @param {Object} data - Passed data.
-   * @param {Object} data.change - Change details.
-   * @param {String} data.change.hash - Attachment hash for unuploaded attachment.
-   * @param {String} data.change.prop - Changed property name.
-   * @param {*}      data.change.value - New property value.
+   * @param {String} hash - Attachment hash for unuploaded attachment.
+   * @param {String} prop - Changed property name.
+   * @param {*} value - New property value.
    * @returns {undefined}
    */
-  on_attachment_edited (data) {
-    let { hash, prop, value } = data.change;
-
+  on_attachment_edited ({ hash, prop, value } = {}) {
     if (hash && prop === 'summary') {
       this.$attachments_tbody.querySelector(`[data-hash="${hash}"] [itemprop="summary"]`).textContent = value;
     }
@@ -324,12 +317,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called whenever a new attachment is added or removed by the user. If there is any unuploaded attachment, select the
    * Attachments tab. Otherwise, select the Comment tab and disable the Attachments tab.
    * @listens BugController:UploadListUpdated
-   * @param {Object} data - Passed data.
-   * @param {Array.<Proxy>} data.uploads - List of the new attachments in Array-like Object.
+   * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like Object.
    * @returns {undefined}
    */
-  on_upload_list_updated (data) {
-    let len = data.uploads.length;
+  on_upload_list_updated ({ uploads } = {}) {
+    let len = uploads.length;
 
     this.$attachments_tab.setAttribute('aria-disabled', !len);
     this.$$tablist.view.selected = len ? this.$attachments_tab : this.$comment_tab;
@@ -339,15 +331,14 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called whenever a new attachment added by the user has an error, such as an oversized file. Show an alert dialog to
    * notify the user of the error.
    * @listens BugController:AttachmentError
-   * @param {Object} data - Passed data.
-   * @param {String} data.message - Explanation of the detected error.
+   * @param {String} message - Explanation of the detected error.
    * @returns {undefined}
    */
-  on_attachment_error (data) {
+  on_attachment_error ({ message } = {}) {
     new this.widgets.Dialog({
       type: 'alert',
       title: 'Error on attaching files', // l10n
-      message: data.message.replace('\n', '<br>'),
+      message: message.replace('\n', '<br>'),
     }).show();
   }
 
@@ -355,24 +346,22 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called whenever the a comment text is added or removed by the user. If the comment form is empty, disable the
    * Preview tab.
    * @listens BugController:CommentEdited
-   * @param {Object} data - Passed data.
-   * @param {Boolean} data.has_comment - Whether the comment is empty.
+   * @param {Boolean} has_comment - Whether the comment is empty.
    * @returns {undefined}
    */
-  on_comment_edited (data) {
-    this.$preview_tab.setAttribute('aria-disabled', !data.has_comment);
+  on_comment_edited ({ has_comment } = {}) {
+    this.$preview_tab.setAttribute('aria-disabled', !has_comment);
   }
 
   /**
    * Called whenever any of the fields, comments or attachments are edited by the user. If there is any change, enable
    * the Submit button. Otherwise, disable it.
    * @listens BugController:BugEdited
-   * @param {Object} data - Passed data.
-   * @param {Boolean} data.can_submit - Whether the changes can be submitted immediately.
+   * @param {Boolean} can_submit - Whether the changes can be submitted immediately.
    * @returns {undefined}
    */
-  on_bug_edited (data) {
-    this.$submit.setAttribute('aria-disabled', !data.can_submit);
+  on_bug_edited ({ can_submit } = {}) {
+    this.$submit.setAttribute('aria-disabled', !can_submit);
   }
 
   /**
@@ -391,15 +380,14 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever the upload of a new attachment is in progress. Show the current status on the statusbar.
    * @listens BugController:SubmitProgress
-   * @param {object} data - Current uploading status.
-   * @param {Number} data.total - Total size of attachments.
-   * @param {Number} data.uploaded - Uploaded size of attachments.
-   * @param {Number} data.percentage - Uploaded percentage.
+   * @param {Number} total - Total size of attachments.
+   * @param {Number} uploaded - Uploaded size of attachments.
+   * @param {Number} percentage - Uploaded percentage.
    * @returns {undefined}
    * @todo Use a progressbar (#159)
    */
-  on_submit_progress (data) {
-    this.$status.textContent = `${data.percentage}% uploaded`;
+  on_submit_progress ({ total, uploaded, percentage } = {}) {
+    this.$status.textContent = `${percentage}% uploaded`;
   }
 
   /**
@@ -416,14 +404,13 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever any error is detected while submitting the changes. Show the error message on the statusbar.
    * @listens BugController:SubmitError
-   * @param {object} data - Error details.
-   * @param {String} data.error - Error message.
-   * @param {Boolean} data.button_disabled - Whether the submit button should be disabled.
+   * @param {String} error - Error message.
+   * @param {Boolean} button_disabled - Whether the submit button should be disabled.
    * @returns {undefined}
    */
-  on_submit_error (data) {
-    this.$submit.setAttribute('aria-disabled', data.button_disabled);
-    this.$status.textContent = data.error || 'There was an error while submitting your changes. Please try again.';
+  on_submit_error ({ error, button_disabled } = {}) {
+    this.$submit.setAttribute('aria-disabled', button_disabled);
+    this.$status.textContent = error || 'There was an error while submitting your changes. Please try again.';
   }
 
   /**

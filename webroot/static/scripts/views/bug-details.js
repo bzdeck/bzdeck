@@ -215,11 +215,11 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * Called whenever the location fragment or history state is updated. Switch the tabs when an attachment is selected
    * on the timeline or comment form.
    * @listens BugController:HistoryUpdated
-   * @param {Object} data - Passed data.
-   * @param {String} data.hash - location.hash.
+   * @param {Object} [state] - Current history state.
+   * @param {String} [state.att_id] - Attachment ID or hash.
    * @returns {undefined}
    */
-  on_history_updated (data) {
+  on_history_updated ({ state } = {}) {
     if (data.state && data.state.att_id) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
     }

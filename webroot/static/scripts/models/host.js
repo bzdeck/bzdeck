@@ -33,26 +33,25 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * Send an API request to the remote Bugzilla instance. Use a Worker on a different thread.
    * @param {String} path - Location including an API method.
    * @param {URLSearchParams} [params] - Search query.
-   * @param {Object} [options] - Extra options.
-   * @param {String} [options.method='GET'] - Request method.
-   * @param {Object} [options.data] - Post data.
-   * @param {String} [options.api_key] - API key used to authenticate against the Bugzilla API.
-   * @param {Object.<String, Function>} [options.listeners] - Event listeners. The key is an event type like 'load', the
+   * @param {String} [method='GET'] - Request method.
+   * @param {Object} [data] - Post data.
+   * @param {String} [api_key] - API key used to authenticate against the Bugzilla API.
+   * @param {Object.<String, Function>} [listeners] - Event listeners. The key is an event type like 'load', the
    *  value is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
    * @returns {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
    */
-  request (path, params, options = {}) {
+  request (path, params, { method, data, api_key, listeners = {} } = {}) {
     if (!navigator.onLine) {
       return Promise.reject(new Error('You have to go online to load data.')); // l10n
     }
 
     let worker = new SharedWorker('/static/scripts/workers/tasks.js');
     let url = new URL(this.origin + this.endpoints.rest + path);
-    let method = options.method || (options.data ? 'POST' : 'GET');
     let headers = new Map();
-    let data = options.data ? Object.assign({}, options.data) : undefined; // Avoid DataCloneError by postMessage
-    let listeners = options.listeners || {};
+
+    method = method || (data ? 'POST' : 'GET');
+    data = data ? Object.assign({}, data) : undefined; // Avoid DataCloneError by postMessage
 
     if (params) {
       url.search = params.toString();
@@ -60,7 +59,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
 
     headers.set('Content-Type', 'application/json');
     headers.set('Accept', 'application/json');
-    headers.set('X-Bugzilla-API-Key', options.api_key || BzDeck.account.data.api_key);
+    headers.set('X-Bugzilla-API-Key', api_key || BzDeck.account.data.api_key);
 
     return new Promise((resolve, reject) => {
       worker.port.addEventListener('message', event => {

@@ -32,13 +32,13 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
   /**
    * Called whenever a message is received from the worker.
-   * @param {Object} data - Posted message.
+   * @param {String} status - Status ID.
+   * @param {Number} [id] - Updated bug's ID.
+   * @param {Array.<Number>} - [ids] Bug IDs currently subscribed to.
    * @returns {undefined}
    * @fires BugzfeedController:BugUpdated
    */
-  onmessage (data) {
-    let { status, id, ids } = data;
-
+  onmessage ({ status, id, ids } = {}) {
     let func = {
       'Connected': () => this.connected = true,
       'Disconnected': () => this.connected = false,

@@ -147,14 +147,12 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Show search results on the drop down list.
    * @listens QuickSearchController:ResultsAvailable
-   * @param {Object} data - Passed data.
-   * @param {String} data.category - Search category, such as 'recent', 'bugs' or 'users'.
-   * @param {String} data.input - Original search terms.
-   * @param {Array}  data.results - Search results.
+   * @param {String} category - Search category, such as 'recent', 'bugs' or 'users'.
+   * @param {String} input - Original search terms.
+   * @param {Array} results - Search results.
    * @returns {Boolean} displayed - Whether the results are displayed.
    */
-  render_results (data) {
-    let { category, input, results } = data;
+  render_results ({ category, input, results } = {}) {
     let section = this.sections.get(category);
 
     // Check if the search terms have not changed since the search is triggered

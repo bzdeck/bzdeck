@@ -171,12 +171,11 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
    * comment into view.
    * @listens BugController:HistoryUpdated
-   * @param {Object} data - Passed data.
-   * @param {String} data.hash - location.hash.
+   * @param {String} hash - location.hash.
    * @returns {undefined}
    */
-  on_history_updated (data) {
-    let match = data.hash.match(/^#c(\d+)$/);
+  on_history_updated ({ hash } = {}) {
+    let match = hash.match(/^#c(\d+)$/);
 
     if (match) {
       let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
@@ -198,13 +197,12 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Called whenever a preference value is changed by the user. Show media when the pref is enabled.
    * @listens SettingsPageView:PrefValueChanged
-   * @param {Object} data - Passed data.
-   * @param {String} data.name - Preference name.
-   * @param {*}      data.value - New value.
+   * @param {String} name - Preference name.
+   * @param {*} value - New value.
    * @returns {undefined}
    */
-  on_pref_value_changed (data) {
-    if (data.name !== 'ui.timeline.display_attachments_inline' || data.value !== true) {
+  on_pref_value_changed ({ name, value } = {}) {
+    if (name !== 'ui.timeline.display_attachments_inline' || value !== true) {
       return;
     }
 
