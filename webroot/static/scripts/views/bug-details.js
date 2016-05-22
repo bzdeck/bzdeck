@@ -220,7 +220,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   on_history_updated ({ state } = {}) {
-    if (data.state && data.state.att_id) {
+    if (state && state.att_id) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = this.$att_tab;
     }
   }
