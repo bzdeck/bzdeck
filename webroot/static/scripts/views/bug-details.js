@@ -10,7 +10,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Get a BugDetailsView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
@@ -41,7 +41,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       }
     });
 
-    this.subscribe('BugController#HistoryUpdated');
+    this.subscribe('BugPresenter#HistoryUpdated');
 
     // Call BzDeck.BugView.prototype.init
     this.init();
@@ -214,7 +214,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Called whenever the location fragment or history state is updated. Switch the tabs when an attachment is selected
    * on the timeline or comment form.
-   * @listens BugController#HistoryUpdated
+   * @listens BugPresenter#HistoryUpdated
    * @param {Object} [state] - Current history state.
    * @param {String} [state.att_id] - Attachment ID or hash.
    * @returns {undefined}

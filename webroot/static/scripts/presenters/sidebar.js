@@ -3,17 +3,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Sidebar Controller that controls everything on the global application sidebar.
- * @extends BzDeck.BaseController
+ * Define the Sidebar Presenter that controls everything on the global application sidebar.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController {
+BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a SidebarController instance.
+   * Get a SidebarPresenter instance.
    * @constructor
    * @listens SidebarView#FolderSelected
    * @param {Proxy} user - UserModel instance of the application user.
-   * @returns {Object} controller - New SidebarController instance.
-   * @fires SidebarController#GravatarProfileFound
+   * @returns {Object} presenter - New SidebarPresenter instance.
+   * @fires SidebarPresenter#GravatarProfileFound
    */
   constructor (user) {
     super(); // This does nothing but is required before using `this`
@@ -71,11 +71,11 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {undefined}
-   * @fires SidebarController#FolderOpened
+   * @fires SidebarPresenter#FolderOpened
    */
   open_folder (folder_id) {
     BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
-      BzDeck.controllers.homepage.data.bugs = bugs; // Map
+      BzDeck.presenters.homepage.data.bugs = bugs; // Map
       this.trigger_safe('#FolderOpened', { folder_id, bugs });
     });
   }
@@ -98,7 +98,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
    * Notify the number of unread bugs so the view can show it on the Inbox option.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SidebarController#UnreadToggled
+   * @fires SidebarPresenter#UnreadToggled
    */
   toggle_unread () {
     BzDeck.collections.subscriptions.get_all().then(bugs => {
@@ -122,7 +122,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
     let func = {
       'show-profile': () => BzDeck.router.navigate('/profile/' + BzDeck.account.data.name),
       'show-settings': () => BzDeck.router.navigate('/settings'),
-      logout: () => BzDeck.controllers.session.logout(),
+      logout: () => BzDeck.presenters.session.logout(),
     }[command];
 
     if (func) {

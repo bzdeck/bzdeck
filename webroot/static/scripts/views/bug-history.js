@@ -10,7 +10,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
   /**
    * Get a BugHistoryView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {HTMLElement} $container - Outer element to display the content.
    * @returns {Object} view - New BugHistoryView instance.

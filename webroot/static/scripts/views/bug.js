@@ -11,7 +11,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Get a BugView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
@@ -218,7 +218,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if ($open_tab_button) {
-      // TODO: Reuse the bug view/controller
+      // TODO: Reuse the bug view/presenter
       init_button($open_tab_button, event => this.trigger('BugView#OpeningTabRequested'));
     }
 
@@ -603,7 +603,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Called when the user selected files to attach through an input form control or drag and drop operation. If the
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
-   * traditional File API to identify the files. In any case, notify the selected files to the controller.
+   * traditional File API to identify the files. In any case, notify the selected files to the presenter.
    * @listens BugView#FilesSelected
    * @param {(HTMLInputElement|DataTransfer)} input - Data source.
    * @returns {undefined}

@@ -39,18 +39,18 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       this.panes['basic-search'].querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
     }
 
-    this.subscribe('C#Offline');
-    this.subscribe('C#SearchStarted');
-    this.subscribe_safe('C#SearchResultsAvailable');
-    this.subscribe('C#SearchError');
-    this.subscribe('C#SearchComplete');
-    this.on('C#BugDataUnavailable', data => this.show_preview(undefined));
-    this.on_safe('C#BugDataAvailable', data => this.show_preview(data));
+    this.subscribe('P#Offline');
+    this.subscribe('P#SearchStarted');
+    this.subscribe_safe('P#SearchResultsAvailable');
+    this.subscribe('P#SearchError');
+    this.subscribe('P#SearchComplete');
+    this.on('P#BugDataUnavailable', data => this.show_preview(undefined));
+    this.on_safe('P#BugDataAvailable', data => this.show_preview(data));
   }
 
   /**
-   * Set up the Basic Search Pane that contains options for classification, product, component, status and resolution, as
-   * well as search term textbox.
+   * Set up the Basic Search Pane that contains options for classification, product, component, status and resolution,
+   * as well as search term textbox.
    * @param {Object} config - Bugzilla server configuration that contains products, components and more.
    * @returns {undefined}
    * @fires SearchPageView#SearchRequested
@@ -205,7 +205,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the controller.
+   * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the presenter.
    * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
    * @returns {Array.<Number>} ids - IDs of bugs currently showing.
    */
@@ -216,14 +216,14 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Show the preview of a selected bug on the Preview Pane.
-   * @listens SearchPageController#BugDataUnavailable
-   * @listens SearchPageController#BugDataAvailable
+   * @listens SearchPagePresenter#BugDataUnavailable
+   * @listens SearchPagePresenter#BugDataAvailable
    * @param {Proxy} bug - Bug to show.
-   * @param {Object} controller - New BugController instance for that bug.
+   * @param {Object} presenter - New BugPresenter instance for that bug.
    * @returns {undefined}
    * @fires SearchPageView#OpeningTabRequested
    */
-  show_preview ({ bug, controller } = {}) {
+  show_preview ({ bug, presenter } = {}) {
     let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
 
     $pane.innerHTML = '';
@@ -246,7 +246,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     });
 
     // Fill the content
-    this.$$bug = new BzDeck.BugView(controller.id, bug, $bug);
+    this.$$bug = new BzDeck.BugView(presenter.id, bug, $bug);
     $info.id = `search-${this.id}-preview-bug-info`;
     $bug.removeAttribute('aria-hidden');
 
@@ -291,7 +291,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called when the search results cannot be retrieved because the device or browser is offline. Show a message to ask
    * the user to go online.
-   * @listens SearchPageController#Offline
+   * @listens SearchPagePresenter#Offline
    * @param {undefined}
    * @returns {undefined}
    * @todo Reload when going online.
@@ -302,7 +302,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called when fetching the search results started. Empty the results and show a throbber.
-   * @listens SearchPageController#SearchStarted
+   * @listens SearchPagePresenter#SearchStarted
    * @param {undefined}
    * @returns {undefined}
    */
@@ -315,7 +315,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called when the search results is retrieved. Show the results on the thread.
-   * @listens SearchPageController#SearchResultsAvailable
+   * @listens SearchPagePresenter#SearchResultsAvailable
    * @param {Map.<Number, Proxy>} bugs - Bugs matching the criteria.
    * @returns {undefined}
    */
@@ -330,7 +330,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called when fetching the search results failed. Show an error message accordingly.
-   * @listens SearchPageController#SearchError
+   * @listens SearchPagePresenter#SearchError
    * @param {String} message - Error message.
    * @returns {undefined}
    */
@@ -340,7 +340,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Called when fetching the search results completed. Remove the throbber.
-   * @listens SearchPageController#SearchComplete
+   * @listens SearchPagePresenter#SearchComplete
    * @param {undefined}
    * @returns {undefined}
    */

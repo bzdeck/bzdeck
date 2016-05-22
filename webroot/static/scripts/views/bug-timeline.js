@@ -9,7 +9,7 @@
 BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Get a BugTimelineView instance.
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
@@ -117,7 +117,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $timeline.removeAttribute('aria-busy', 'false');
 
     this.subscribe('PrefCollection#PrefChanged', true);
-    this.subscribe('BugController#HistoryUpdated');
+    this.subscribe('BugPresenter#HistoryUpdated');
   }
 
   /**
@@ -170,7 +170,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If the URL fragment has a valid comment number, scroll the
    * comment into view.
-   * @listens BugController#HistoryUpdated
+   * @listens BugPresenter#HistoryUpdated
    * @param {String} hash - location.hash.
    * @returns {undefined}
    */

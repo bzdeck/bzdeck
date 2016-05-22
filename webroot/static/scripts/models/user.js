@@ -160,8 +160,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
-   * access, delegate the process to GlobalController.
-   * @listens GlobalController#GravatarProfileProvided
+   * access, delegate the process to GlobalPresenter.
+   * @listens GlobalPresenter#GravatarProfileProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @fires UserModel#GravatarProfileRequested
@@ -177,7 +177,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise((resolve, reject) => {
-      this.on('GlobalController#GravatarProfileProvided', ({ hash, profile } = {}) => {
+      this.on('GlobalPresenter#GravatarProfileProvided', ({ hash, profile } = {}) => {
         if (hash === this.hash) {
           if (profile) {
             resolve(profile);
@@ -203,8 +203,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
-   * Because this requires DOM access, delegate the process to GlobalController.
-   * @listens GlobalController#GravatarImageProvided
+   * Because this requires DOM access, delegate the process to GlobalPresenter.
+   * @listens GlobalPresenter#GravatarImageProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @fires UserModel#GravatarImageRequested
@@ -218,7 +218,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     return new Promise(resolve => {
       let { hash, color, initial } = this;
 
-      this.on('GlobalController#GravatarImageProvided', data => {
+      this.on('GlobalPresenter#GravatarImageProvided', data => {
         if (data.hash === hash) {
           resolve(data.blob);
 

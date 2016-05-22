@@ -33,7 +33,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
     window.addEventListener('mousedown', event => this.cleanup());
     window.addEventListener('popstate', event => this.cleanup());
-    this.on_safe('C#ResultsAvailable', data => this.render_results(data), true);
+    this.on_safe('P#ResultsAvailable', data => this.render_results(data), true);
 
     this.assign_keyboard_bindings();
     this.activate_results();
@@ -146,7 +146,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Show search results on the drop down list.
-   * @listens QuickSearchController#ResultsAvailable
+   * @listens QuickSearchPresenter#ResultsAvailable
    * @param {String} category - Search category, such as 'recent', 'bugs' or 'users'.
    * @param {String} input - Original search terms.
    * @param {Array} results - Search results.

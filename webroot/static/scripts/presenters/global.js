@@ -3,18 +3,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Global Controller that provides some utility functions for controllers.
- * @extends BzDeck.BaseController
+ * Define the Global Presenter that provides some utility functions for presenters.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
+BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a GlobalController instance.
+   * Get a GlobalPresenter instance.
    * @constructor
    * @listens GlobalView#OpenBug
    * @listens GlobalView#OpenAttachment
    * @listens GlobalView#OpenProfile
    * @param {undefined}
-   * @returns {Object} controller - New GlobalController instance.
+   * @returns {Object} presenter - New GlobalPresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -59,7 +59,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @listens UserModel#GravatarProfileRequested
    * @param {String} hash - Hash value of the user's email.
    * @returns {undefined}
-   * @fires GlobalController#GravatarProfileProvided
+   * @fires GlobalPresenter#GravatarProfileProvided
    */
   on_gravatar_profile_requested ({ hash } = {}) {
     let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
@@ -76,7 +76,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @param {String} color - Generated color of the user for the fallback image.
    * @param {String} initial - Initial of the user for the fallback image.
    * @returns {undefined}
-   * @fires GlobalController#GravatarImageProvided
+   * @fires GlobalPresenter#GravatarImageProvided
    */
   on_gravatar_image_requested ({ hash, color, initial } = {}) {
     let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
@@ -115,7 +115,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    * @returns {undefined}
    */
   toggle_unread (loaded = false) {
-    if (!BzDeck.controllers.homepage) {
+    if (!BzDeck.presenters.homepage) {
       return;
     }
 
@@ -124,7 +124,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
     }).then(bugs => {
       let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
       let extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
-      let unread_num = [...BzDeck.controllers.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+      let unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
 
       // Update View
       this.view.toggle_unread(bugs, loaded, unread_num);
@@ -232,4 +232,4 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
   }
 }
 
-BzDeck.GlobalController.prototype.timers = new Map();
+BzDeck.GlobalPresenter.prototype.timers = new Map();

@@ -40,8 +40,8 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     this.$$folders.view.members.forEach($option => $option.setAttribute('aria-label', $option.textContent));
     this.$$folders.bind('Selected', event => this.trigger('#FolderSelected', { id: event.detail.ids[0] }));
 
-    this.on_safe('C#FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
-    this.on('C#UnreadToggled', data => this.toggle_unread(data.number));
+    this.on_safe('P#FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
+    this.on('P#UnreadToggled', data => this.toggle_unread(data.number));
 
     (new this.widgets.Button(document.querySelector('#main-menu--app--account'))).bind('Pressed', event => {
       this.trigger('#AppMenuItemSelected', { command: 'show-profile' });
@@ -70,7 +70,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Open a specified folder by updating the document title and rendering the home page thread.
-   * @listens SidebarController#FolderOpened
+   * @listens SidebarPresenter#FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
    * @returns {undefined}
@@ -95,7 +95,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Show the number of unread bugs on the Inbox option.
-   * @listens SidebarController#UnreadToggled
+   * @listens SidebarPresenter#UnreadToggled
    * @param {Number} num - Number of unread bugs.
    * @returns {undefined}
    */
@@ -113,7 +113,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Set up the account label & avatar.
-   * @listens SidebarController#GravatarProfileFound
+   * @listens SidebarPresenter#GravatarProfileFound
    * @param {Object} user - User info.
    * @param {String} user.name - User's full name.
    * @param {String} user.email - User's email address.
@@ -123,7 +123,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   setup_account_label (user) {
     this.fill(document.querySelector('#main-menu--app--account label'), user);
 
-    this.on('C#GravatarProfileFound', data => {
+    this.on('P#GravatarProfileFound', data => {
       document.querySelector('#sidebar-account').style['background-image'] = data.style['background-image'];
     });
   }

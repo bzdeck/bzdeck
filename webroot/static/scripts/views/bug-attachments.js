@@ -10,7 +10,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Get a BugAttachmentsView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {HTMLElement} $container - Container node to render the attachments.
@@ -74,7 +74,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.subscribe('BugModel#AttachmentRemoved', true);
     this.subscribe('BugModel#AttachmentEdited', true);
     this.subscribe_safe('BugModel#UploadListUpdated', true);
-    this.subscribe('BugController#HistoryUpdated');
+    this.subscribe('BugPresenter#HistoryUpdated');
   }
 
   /**
@@ -308,7 +308,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever the navigation history state is updated. If a valid attachment ID is specified, select that item on
    * the listbox.
-   * @listens BugController#HistoryUpdated
+   * @listens BugPresenter#HistoryUpdated
    * @param {Object} [state] - Current history state.
    * @param {String} [state.att_id] - Attachment ID or hash.
    * @returns {undefined}

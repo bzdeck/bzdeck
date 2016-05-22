@@ -10,17 +10,17 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Get a HomePageView instance.
    * @constructor
-   * @param {Object} controller - HomePageController instance.
+   * @param {Object} presenter - HomePagePresenter instance.
    * @returns {Object} view - New HomePageView instance.
    */
-  constructor (controller) {
+  constructor (presenter) {
     super(); // This does nothing but is required before using `this`
 
     let mobile = this.helpers.env.device.mobile;
     let $sidebar = document.querySelector('#sidebar');
 
-    this.id = controller.id;
-    this.controller = controller;
+    this.id = presenter.id;
+    this.presenter = presenter;
     this.$preview_pane = document.querySelector('#home-preview-pane');
     this.container = new BzDeck.BugContainerView(this.id, this.$preview_pane);
 
@@ -72,9 +72,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       $$tablist.view.selected = $$tablist.view.$focused = $tab;
     }
 
-    if (BzDeck.controllers.sidebar.data.folder_id !== folder_id) {
+    if (BzDeck.presenters.sidebar.data.folder_id !== folder_id) {
       BzDeck.views.sidebar.$$folders.view.selected = $folder;
-      BzDeck.controllers.sidebar.open_folder(folder_id);
+      BzDeck.presenters.sidebar.open_folder(folder_id);
     }
 
     BzDeck.views.banner.tab_path_map.set('tab-home', location.pathname);
@@ -82,7 +82,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the controller.
+   * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the presenter.
    * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
    */
@@ -116,8 +116,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     }
 
     // Render the thread
-    if (BzDeck.controllers.sidebar && BzDeck.controllers.sidebar.data.folder_id) {
-      BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
+    if (BzDeck.presenters.sidebar && BzDeck.presenters.sidebar.data.folder_id) {
+      BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
     }
   }
 
@@ -133,7 +133,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     let show_preview = () => {
       let $$listbox = this.thread.$$listbox;
 
-      if ($$listbox.view.members.length && !this.preview_is_hidden && !this.controller.data.preview_id) {
+      if ($$listbox.view.members.length && !this.preview_is_hidden && !this.presenter.data.preview_id) {
         $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
       }
     };
@@ -217,7 +217,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
   /**
    * Initialize the searchbar available in the vertical layout.
-   * @listens QuickSearchController#ResultsAvailable
+   * @listens QuickSearchPresenter#ResultsAvailable
    * @param {undefined}
    * @returns {undefined}
    * @fires QuickSearchView#QuickSearchRequested
@@ -232,7 +232,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {
-        // TEMP: Use QuickSearchController to open the advanced search page
+        // TEMP: Use QuickSearchPresenter to open the advanced search page
         this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
@@ -253,12 +253,12 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     $searchbox.addEventListener('input', event => {
       if ($searchbox.value.trim()) {
-        // TEMP: Use QuickSearchController to retrieve search results
+        // TEMP: Use QuickSearchPresenter to retrieve search results
         this.trigger('QuickSearchView#QuickSearchRequested', { input: $searchbox.value });
       }
     });
 
-    this.on('QuickSearchController#ResultsAvailable', ({ category, input, results } = {}) => {
+    this.on('QuickSearchPresenter#ResultsAvailable', ({ category, input, results } = {}) => {
       // Check if the search terms have not changed since the search is triggered
       if (category !== 'bugs' || input !== $searchbox.value) {
         return;
@@ -311,8 +311,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_subscriptions_updated () {
-    if (BzDeck.controllers.sidebar) {
-      BzDeck.controllers.sidebar.open_folder(BzDeck.controllers.sidebar.data.folder_id);
+    if (BzDeck.presenters.sidebar) {
+      BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
     }
   }
 }

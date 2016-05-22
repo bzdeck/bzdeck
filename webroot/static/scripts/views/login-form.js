@@ -25,9 +25,9 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // Hide the incompatible browser message
     this.show_status('');
 
-    this.subscribe('SessionController#StatusUpdate', true);
-    this.subscribe('SessionController#Error', true);
-    this.subscribe('SessionController#Logout', true);
+    this.subscribe('SessionPresenter#StatusUpdate', true);
+    this.subscribe('SessionPresenter#Error', true);
+    this.subscribe('SessionPresenter#Logout', true);
 
     this.activate_bugzilla_auth();
 
@@ -167,7 +167,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever the sign-in status is updated. Update the UI accordingly.
-   * @listens SessionController#StatusUpdate
+   * @listens SessionPresenter#StatusUpdate
    * @param {String} status - Current status.
    * @param {String} message - Message text to display.
    * @returns {undefined}
@@ -187,7 +187,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called whenever an error is detected during the sign-in process. Show the error message.
-   * @listens SessionController#Error
+   * @listens SessionPresenter#Error
    * @param {String} message - Message text to display.
    * @returns {undefined}
    */
@@ -197,7 +197,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Called when the user has logged out from the app. Show the sign-in form again.
-   * @listens SessionController#Logout
+   * @listens SessionPresenter#Logout
    * @param {undefined}
    * @returns {undefined}
    */

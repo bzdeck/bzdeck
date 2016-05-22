@@ -3,23 +3,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bug Controller.
- * @extends BzDeck.BaseController
+ * Define the Bug Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.BugController = class BugController extends BzDeck.BaseController {
+BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a BugController instance.
+   * Get a BugPresenter instance.
    * @constructor
    * @param {Object} bug - BugModel instance.
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
-   *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Object} controller - New BugController instance.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
+   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @returns {Object} presenter - New BugPresenter instance.
    */
   constructor (bug, sibling_bug_ids = []) {
     super(); // This does nothing but is required before using `this`
 
-    // Set the Controller (and View) ID. Add a timestamp to avoid multiple submissions (#303) but there would be a
-    // better way to solve the issue... The Controller and View should be reused whenever possible.
+    // Set the Presenter (and View) ID. Add a timestamp to avoid multiple submissions (#303) but there would be a better
+    // way to solve the issue... The Presenter and View should be reused whenever possible.
     this.id = `bug-${bug.id}-${Date.now()}`;
 
     this.bug = bug;
@@ -79,7 +79,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
    * still displayed, fire an event so the relevant views can do something.
    * @param {undefined}
    * @returns {undefined}
-   * @fires BugController#HistoryUpdated
+   * @fires BugPresenter#HistoryUpdated
    */
   check_fragment () {
     if (location.pathname === `/bug/${this.bug.id}`) {

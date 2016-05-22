@@ -34,10 +34,10 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @param {(String|Number)} page.id - Unique identifier for the tab. Can be generated with Date.now().
    * @param {Object} page.constructor - View constructor for the tabpanel content.
    * @param {Array} [page.constructor_args] - Arguments used to create a new View instance.
-   * @param {Object} controller - Controller instance that requests the tab.
+   * @param {Object} presenter - Presenter instance that requests the tab.
    * @returns {undefined}
    */
-  open_tab ({ label, description, position = 'last', page } = {}, controller) {
+  open_tab ({ label, description, position = 'last', page } = {}, presenter) {
     let view;
     let pages = BzDeck.views.pages[`${page.category}_list`];
     let id = page.category + (page.id ? '-' + page.id : '');
@@ -55,8 +55,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     } else {
       $tabpanel = this.get_template(`tabpanel-${page.category}-template`, page.id);
       $tab = this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
-      view = controller.view = new page.constructor(...(page.constructor_args || []));
-      view.controller = controller;
+      view = presenter.view = new page.constructor(...(page.constructor_args || []));
+      view.presenter = presenter;
       pages.set(page.id || 'default', view);
 
       // Prepare the Back button on the mobile banner

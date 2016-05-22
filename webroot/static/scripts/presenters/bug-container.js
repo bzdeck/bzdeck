@@ -3,17 +3,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bug Container Controller.
- * @extends BzDeck.BaseController
+ * Define the Bug Container Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.BugContainerController = class BugContainerController extends BzDeck.BaseController {
+BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a BugContainerController instance.
+   * Get a BugContainerPresenter instance.
    * @constructor
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
    *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Object} view - New BugContainerController instance.
+   * @returns {Object} view - New BugContainerPresenter instance.
    */
   constructor (instance_id, sibling_bug_ids) {
     super(); // This does nothing but is required before using `this`
@@ -50,10 +50,10 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
    * @param {undefined} bug_id - Bug ID to show.
    * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
    *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @fires BugContainerController#LoadingStarted
-   * @fires BugContainerController#LoadingFinished
-   * @fires BugContainerController#BugDataAvailable
-   * @fires BugContainerController#BugDataUnavailable
+   * @fires BugContainerPresenter#LoadingStarted
+   * @fires BugContainerPresenter#LoadingFinished
+   * @fires BugContainerPresenter#BugDataAvailable
+   * @fires BugContainerPresenter#BugDataUnavailable
    */
   add_bug (bug_id, sibling_bug_ids) {
     this.bug_id = bug_id;
@@ -90,9 +90,9 @@ BzDeck.BugContainerController = class BugContainerController extends BzDeck.Base
       }
     })).then(bug => {
       let sibling_bug_ids = this.sibling_bug_ids;
-      let controller = new BzDeck.BugController(bug, sibling_bug_ids);
+      let presenter = new BzDeck.BugPresenter(bug, sibling_bug_ids);
 
-      this.trigger_safe('#BugDataAvailable', { bug, controller, sibling_bug_ids });
+      this.trigger_safe('#BugDataAvailable', { bug, presenter, sibling_bug_ids });
       bug.mark_as_read();
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);
     }).then(() => {

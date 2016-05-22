@@ -3,16 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Search Page Controller.
- * @extends BzDeck.BaseController
+ * Define the Search Page Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseController {
+BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Search Page Controller. Unlike other pages, this controller doesn't
+   * Called by the app router and initialize the Search Page Presenter. Unlike other pages, this presenter doesn't
    * check existing tabs, because the user can open multiple search tabs at the same time.
    * @constructor
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
-   * @returns {Object} controller - New SearchPageController instance.
+   * @returns {Object} presenter - New SearchPagePresenter instance.
    */
   constructor (instance_id) {
     super(); // This does nothing but is required before using `this`
@@ -66,7 +66,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
   }
 
   /**
-   * Called by the app router to reuse the controller.
+   * Called by the app router to reuse the presenter.
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @returns {undefined}
    */
@@ -102,8 +102,8 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * Prepare a bug preview displayed in the Preview Pane.
    * @param {Number} id - Bug ID to show.
    * @returns {undefined}
-   * @fires SearchPageController#BugDataAvailable
-   * @fires SearchPageController#BugDataUnavailable
+   * @fires SearchPagePresenter#BugDataAvailable
+   * @fires SearchPagePresenter#BugDataUnavailable
    */
   prep_preview (id) {
     if (!id) {
@@ -115,7 +115,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
     BzDeck.collections.bugs.get(id).then(bug => {
       if (bug) {
         bug.mark_as_read();
-        this.trigger_safe('#BugDataAvailable', { bug, controller: new BzDeck.BugController('search', bug) });
+        this.trigger_safe('#BugDataAvailable', { bug, presenter: new BzDeck.BugPresenter('search', bug) });
       } else {
         this.trigger('#BugDataUnavailable');
       }
@@ -138,11 +138,11 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
    * @listens SearchPageView#SearchRequested
    * @param {URLSearchParams} params - Search query.
    * @returns {undefined}
-   * @fires SearchPageController#Offline
-   * @fires SearchPageController#SearchStarted
-   * @fires SearchPageController#SearchResultsAvailable
-   * @fires SearchPageController#SearchError
-   * @fires SearchPageController#SearchComplete
+   * @fires SearchPagePresenter#Offline
+   * @fires SearchPagePresenter#SearchStarted
+   * @fires SearchPagePresenter#SearchResultsAvailable
+   * @fires SearchPagePresenter#SearchError
+   * @fires SearchPagePresenter#SearchComplete
    */
   exec_search (params) {
     if (!navigator.onLine) {

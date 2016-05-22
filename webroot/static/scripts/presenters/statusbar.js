@@ -3,15 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Statusbar Controller that controls everything on the global application statusbar.
- * @extends BzDeck.BaseController
+ * Define the Statusbar Presenter that controls everything on the global application statusbar.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.StatusbarController = class StatusbarController extends BzDeck.BaseController {
+BzDeck.StatusbarPresenter = class StatusbarPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a StatusbarController instance.
+   * Get a StatusbarPresenter instance.
    * @constructor
    * @param {undefined}
-   * @returns {Object} controller - New StatusbarController instance.
+   * @returns {Object} presenter - New StatusbarPresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`

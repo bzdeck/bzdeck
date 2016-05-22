@@ -3,16 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Attachment Page Controller.
- * @extends BzDeck.BaseController
+ * Define the Attachment Page Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.BaseController {
+BzDeck.AttachmentPagePresenter = class AttachmentPagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Attachment Page Controller. If the specified attachment has an existing
+   * Called by the app router and initialize the Attachment Page Presenter. If the specified attachment has an existing
    * tab, switch to it. Otherwise, open a new tab and try to load the attachment.
    * @constructor
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @returns {Object} controller - New AttachmentPageController instance.
+   * @returns {Object} presenter - New AttachmentPagePresenter instance.
    */
   constructor (att_id) {
     super(); // This does nothing but is required before using `this`
@@ -24,7 +24,7 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
   }
 
   /**
-   * Called by the app router to reuse the controller.
+   * Called by the app router to reuse the presenter.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @returns {undefined}
    */
@@ -68,12 +68,12 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
    * result regardless of the availability.
    * @param {undefined}
    * @returns {undefined}
-   * @fires AttachmentPageController#Offline
-   * @fires AttachmentPageController#LoadingStarted
-   * @fires AttachmentPageController#LoadingError
-   * @fires AttachmentPageController#LoadingComplete
-   * @fires AttachmentPageController#AttachmentAvailable
-   * @fires AttachmentPageController#AttachmentUnavailable
+   * @fires AttachmentPagePresenter#Offline
+   * @fires AttachmentPagePresenter#LoadingStarted
+   * @fires AttachmentPagePresenter#LoadingError
+   * @fires AttachmentPagePresenter#LoadingComplete
+   * @fires AttachmentPagePresenter#AttachmentAvailable
+   * @fires AttachmentPagePresenter#AttachmentUnavailable
    */
   get_attachment () {
     // If the ID is hash, it's an unuploaded attachment. And if the cache could not be found, just raise an error

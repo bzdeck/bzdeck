@@ -3,15 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Session Controller serving as the application bootstrapper. The member functions require refactoring.
- * @extends BzDeck.BaseController
+ * Define the Session Presenter serving as the application bootstrapper. The member functions require refactoring.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.SessionController = class SessionController extends BzDeck.BaseController {
+BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a SessionController instance.
+   * Get a SessionPresenter instance.
    * @constructor
    * @param {undefined}
-   * @returns {Object} controller - New SessionController instance.
+   * @returns {Object} presenter - New SessionPresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -24,7 +24,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
 
     BzDeck.datasources.global = new BzDeck.GlobalDataSource();
     BzDeck.datasources.account = new BzDeck.AccountDataSource();
-    BzDeck.controllers.global = new BzDeck.GlobalController();
+    BzDeck.presenters.global = new BzDeck.GlobalPresenter();
     BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
 
     new BzDeck.SessionView();
@@ -40,8 +40,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 1. Find a user account from the local database.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#StatusUpdate
-   * @fires SessionController#Error
+   * @fires SessionPresenter#StatusUpdate
+   * @fires SessionPresenter#Error
    */
   find_account () {
     this.trigger('#StatusUpdate', { message: 'Looking for your account...' }); // l10n
@@ -77,8 +77,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * @listens LoginFormView#QRCodeError
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#StatusUpdate
-   * @fires SessionController#Error
+   * @fires SessionPresenter#StatusUpdate
+   * @fires SessionPresenter#Error
    */
   force_login () {
     this.trigger('#StatusUpdate', { status: 'ForcingLogin', message: '' });
@@ -115,9 +115,9 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * @param {String} name - User's Bugzilla account name. Usually email address.
    * @param {String} api_key - User's 40-character Bugzilla API key.
    * @returns {undefined}
-   * @fires SessionController#StatusUpdate
-   * @fires SessionController#Error
-   * @fires SessionController#UserFound
+   * @fires SessionPresenter#StatusUpdate
+   * @fires SessionPresenter#Error
+   * @fires SessionPresenter#UserFound
    */
   verify_account (host_id, name, api_key) {
     this.trigger('#StatusUpdate', { message: 'Verifying your account...' }); // l10n
@@ -149,8 +149,8 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 4. Load data from the local database once the user account is set.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#StatusUpdate
-   * @fires SessionController#Error
+   * @fires SessionPresenter#StatusUpdate
+   * @fires SessionPresenter#Error
    */
   load_data () {
     this.trigger('#StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
@@ -189,7 +189,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
    * @param {Boolean} [firstrun=false] - True for the initial session.
    * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
-   * @fires SessionController#StatusUpdate
+   * @fires SessionPresenter#StatusUpdate
    */
   fetch_data (firstrun = false) {
     this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
@@ -220,11 +220,11 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
   }
 
   /**
-   * Bootstrap Step 6. Set up everything including the global controllers and views, then complete bootstrapping.
+   * Bootstrap Step 6. Set up everything including the global presenters and views, then complete bootstrapping.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#StatusUpdate
-   * @fires SessionController#Error
+   * @fires SessionPresenter#StatusUpdate
+   * @fires SessionPresenter#Error
    */
   init_components () {
     this.trigger('#StatusUpdate', { message: 'Initializing UI...' }); // l10n
@@ -233,12 +233,12 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       this.relogin ? resolve() : reject();
     }).catch(error => Promise.all([
       // Finally load the UI modules
-      BzDeck.controllers.global.init(),
-      BzDeck.controllers.banner = new BzDeck.BannerController(),
+      BzDeck.presenters.global.init(),
+      BzDeck.presenters.banner = new BzDeck.BannerPresenter(),
       BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
-        BzDeck.controllers.sidebar = new BzDeck.SidebarController(user);
+        BzDeck.presenters.sidebar = new BzDeck.SidebarPresenter(user);
       }),
-      BzDeck.controllers.statusbar = new BzDeck.StatusbarController(),
+      BzDeck.presenters.statusbar = new BzDeck.StatusbarPresenter(),
     ])).then(() => {
       let endpoint = BzDeck.host.endpoints.websocket;
 
@@ -251,7 +251,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       BzDeck.router.locate();
     }).then(() => {
       // Timer to check for updates, call every 5 minutes or per minute if debugging is enabled
-      BzDeck.controllers.global.timers.set('fetch_subscriptions',
+      BzDeck.presenters.global.timers.set('fetch_subscriptions',
           window.setInterval(() => BzDeck.collections.subscriptions.fetch(),
                              1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
     }).then(() => {
@@ -271,7 +271,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Notify the view of the user's sign-in once prepared.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#Login
+   * @fires SessionPresenter#Login
    */
   login () {
     this.trigger('#Login');
@@ -281,7 +281,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
    * @param {undefined}
    * @returns {undefined}
-   * @fires SessionController#Logout
+   * @fires SessionPresenter#Logout
    */
   logout () {
     this.trigger('#Logout');
@@ -300,11 +300,11 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
    */
   clean () {
     // Terminate timers
-    for (let timer of BzDeck.controllers.global.timers.values()) {
+    for (let timer of BzDeck.presenters.global.timers.values()) {
       window.clearInterval(timer);
     }
 
-    BzDeck.controllers.global.timers.clear();
+    BzDeck.presenters.global.timers.clear();
 
     // Disconnect from the Bugzfeed server
     BzDeck.models.bugzfeed.disconnect();
@@ -315,19 +315,19 @@ window.addEventListener('DOMContentLoaded', event => {
   if (FlareTail.compatible && BzDeck.compatible) {
     // Define the router
     BzDeck.router = new FlareTail.app.Router(BzDeck.config.app, {
-      '/attachment/(\\d+|[a-z0-9]{32})': { controller: BzDeck.AttachmentPageController },
-      '/bug/(\\d+)': { controller: BzDeck.DetailsPageController },
-      '/home/(\\w+)': { controller: BzDeck.HomePageController, catch_all: true },
-      '/profile/(.+)': { controller: BzDeck.ProfilePageController },
-      '/search/(\\d{13,})': { controller: BzDeck.SearchPageController },
-      '/settings': { controller: BzDeck.SettingsPageController },
+      '/attachment/(\\d+|[a-z0-9]{32})': { presenter: BzDeck.AttachmentPagePresenter },
+      '/bug/(\\d+)': { presenter: BzDeck.DetailsPagePresenter },
+      '/home/(\\w+)': { presenter: BzDeck.HomePagePresenter, catch_all: true },
+      '/profile/(.+)': { presenter: BzDeck.ProfilePagePresenter },
+      '/search/(\\d{13,})': { presenter: BzDeck.SearchPagePresenter },
+      '/settings': { presenter: BzDeck.SettingsPagePresenter },
     });
 
     // Bootstrapper
-    BzDeck.controllers.session = new BzDeck.SessionController();
+    BzDeck.presenters.session = new BzDeck.SessionPresenter();
   }
 });
 
 window.addEventListener('beforeunload', event => {
-  BzDeck.controllers.session.clean();
+  BzDeck.presenters.session.clean();
 });

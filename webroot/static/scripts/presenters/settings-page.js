@@ -3,16 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Settings Page Controller.
- * @extends BzDeck.BaseController
+ * Define the Settings Page Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.BaseController {
+BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Settings Page Controller. If the Settings has an existing tab, switch
-   * to it. Otherwise, open a new tab and load the content.
+   * Called by the app router and initialize the Settings Page Presenter. If the Settings has an existing tab, switch to
+   * it. Otherwise, open a new tab and load the content.
    * @constructor
    * @param {undefined}
-   * @returns {Object} controller - New SettingsPageController instance.
+   * @returns {Object} presenter - New SettingsPagePresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -23,7 +23,7 @@ BzDeck.SettingsPageController = class SettingsPageController extends BzDeck.Base
   }
 
   /**
-   * Called by the app router to reuse the controller.
+   * Called by the app router to reuse the presenter.
    * @param {undefined}
    * @returns {undefined}
    */

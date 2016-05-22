@@ -3,15 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Quick Search Controller that controls the Quick Search functionality on the application header.
- * @extends BzDeck.BaseController
+ * Define the Quick Search Presenter that controls the Quick Search functionality on the application header.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseController {
+BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a QuickSearchController instance.
+   * Get a QuickSearchPresenter instance.
    * @constructor
    * @param {undefined}
-   * @returns {Object} controller - New QuickSearchController instance.
+   * @returns {Object} presenter - New QuickSearchPresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
@@ -29,7 +29,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
    * @listens QuickSearchView#RecentSearchesRequested
    * @param {undefined}
    * @returns {undefined}
-   * @fires QuickSearchController#ResultsAvailable
+   * @fires QuickSearchPresenter#ResultsAvailable
    */
   provide_recent_searches () {
     BzDeck.prefs.get('search.quick.history').then(history => {
@@ -65,7 +65,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
    * @listens QuickSearchView#QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @returns {undefined}
-   * @fires QuickSearchController#ResultsAvailable
+   * @fires QuickSearchPresenter#ResultsAvailable
    * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {

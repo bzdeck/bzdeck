@@ -11,7 +11,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Get a BugParticipantListView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.

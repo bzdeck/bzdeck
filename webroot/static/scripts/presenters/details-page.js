@@ -3,29 +3,29 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Details Page Controller.
- * @extends BzDeck.BaseController
+ * Define the Details Page Presenter.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.DetailsPageController = class DetailsPageController extends BzDeck.BaseController {
+BzDeck.DetailsPagePresenter = class DetailsPagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Details Page Controller. If the specified bug has an existing tab,
+   * Called by the app router and initialize the Details Page Presenter. If the specified bug has an existing tab,
    * switch to it. Otherwise, open a new tab and try to load the bug.
    * @constructor
    * @param {Number} bug_id - Bug ID to show.
-   * @returns {Object} controller - New DetailsPageController instance.
+   * @returns {Object} presenter - New DetailsPagePresenter instance.
    */
   constructor (bug_id) {
     super(); // This does nothing but is required before using `this`
 
     this.id = Date.now();
     this.bug_id = bug_id;
-    this.container = new BzDeck.BugContainerController(this.id);
+    this.container = new BzDeck.BugContainerPresenter(this.id);
 
     this.connect();
   }
 
   /**
-   * Called by the app router to reuse the controller.
+   * Called by the app router to reuse the presenter.
    * @param {Number} bug_id - Bug ID to show.
    * @returns {undefined}
    */

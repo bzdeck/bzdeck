@@ -11,7 +11,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   /**
    * Get a BugTimelineEntryView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if
@@ -99,7 +99,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.setAttribute('data-comment-count', comment.count);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
           .textContent = comment.count > 0 ? `Comment ${comment.count}` : 'Description'; // l10n
-    $comment_body.innerHTML = BzDeck.controllers.global.parse_comment(comment.text, comment.is_markdown);
+    $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, comment.is_markdown);
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked

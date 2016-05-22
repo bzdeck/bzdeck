@@ -16,14 +16,14 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   constructor () {
     super(); // This does nothing but is required before using `this`
 
-    this.on('C#Login', () => this.login());
-    this.on('C#Logout', () => this.logout());
+    this.on('P#Login', () => this.login());
+    this.on('P#Logout', () => this.logout());
   }
 
   /**
    * Called once the application is ready and the user is signed in. Hide the sign-in page and show the main application
    * page instead.
-   * @listens SessionController#Login
+   * @listens SessionPresenter#Login
    * @param {undefined}
    * @returns {undefined}
    * @todo Focus handling.
@@ -40,7 +40,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
 
   /**
    * Called once the user is signed out from the app. Hide the main application page and show the sign-in page instead.
-   * @listens SessionController#Logout
+   * @listens SessionPresenter#Logout
    * @param {undefined}
    * @returns {undefined}
    */

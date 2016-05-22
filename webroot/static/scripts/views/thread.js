@@ -17,7 +17,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
     let ids = event.detail.ids;
 
     if (ids.length) {
-      this.consumer.controller.data.preview_id = Number.parseInt(ids[ids.length - 1]);
+      this.consumer.presenter.data.preview_id = Number.parseInt(ids[ids.length - 1]);
     }
   }
 
@@ -42,7 +42,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * @fires GlobalView#OpenBug
    */
   open_bug (id) {
-    this.trigger('GlobalView#OpenBug', { id, ids: [...this.consumer.controller.data.bugs.keys()] });
+    this.trigger('GlobalView#OpenBug', { id, ids: [...this.consumer.presenter.data.bugs.keys()] });
   }
 }
 
@@ -277,7 +277,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       },
       // Open the bug in a new tab
       'O|Enter': event => {
-        this.open_bug(this.consumer.controller.data.preview_id);
+        this.open_bug(this.consumer.presenter.data.preview_id);
       },
     });
 

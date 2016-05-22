@@ -3,23 +3,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Banner Controller that controls everything on the global application header.
- * @extends BzDeck.BaseController
+ * Define the Banner Presenter that controls everything on the global application header.
+ * @extends BzDeck.BasePresenter
  */
-BzDeck.BannerController = class BannerController extends BzDeck.BaseController {
+BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a BannerController instance.
+   * Get a BannerPresenter instance.
    * @constructor
    * @param {undefined}
-   * @returns {Object} controller - New BannerController instance.
+   * @returns {Object} presenter - New BannerPresenter instance.
    */
   constructor () {
     super(); // This does nothing but is required before using `this`
 
     BzDeck.views.banner = new BzDeck.BannerView();
 
-    // Subcontrollers
-    BzDeck.controllers.quick_search = new BzDeck.QuickSearchController();
+    // Sub-presenters
+    BzDeck.presenters.quick_search = new BzDeck.QuickSearchPresenter();
 
     this.subscribe('V#BackButtonClicked');
     this.subscribe('V#TabSelected');

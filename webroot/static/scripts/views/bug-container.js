@@ -11,8 +11,8 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Get a BugContainerView instance.
    * @constructor
-   * @listens BugContainerController#LoadingStarted
-   * @listens BugContainerController#LoadingFinished
+   * @listens BugContainerPresenter#LoadingStarted
+   * @listens BugContainerPresenter#LoadingFinished
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {HTMLElement} $container - The outer element.
    * @returns {Object} view - New BugContainerView instance.
@@ -23,35 +23,35 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     this.id = instance_id;
     this.$container = $container;
 
-    this.subscribe_safe('C#BugDataAvailable');
-    this.subscribe('C#BugDataUnavailable');
+    this.subscribe_safe('P#BugDataAvailable');
+    this.subscribe('P#BugDataUnavailable');
 
-    this.on('C#LoadingStarted', () => BzDeck.views.statusbar.start_loading());
-    this.on('C#LoadingFinished', () => BzDeck.views.statusbar.stop_loading());
+    this.on('P#LoadingStarted', () => BzDeck.views.statusbar.start_loading());
+    this.on('P#LoadingFinished', () => BzDeck.views.statusbar.stop_loading());
   }
 
   /**
    * Called when the bug data is found. Prepare the newly opened tabpanel.
-   * @listens BugContainerController#BugDataAvailable
+   * @listens BugContainerPresenter#BugDataAvailable
    * @param {Proxy} bug - Bug to show.
-   * @param {Object} controller - New BugController instance for that bug.
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
-   *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @param {Object} presenter - New BugPresenter instance for that bug.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
+   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Boolean} result - Whether the view is updated.
    */
-  on_bug_data_available ({ bug, controller, sibling_bug_ids } = {}) {
+  on_bug_data_available ({ bug, presenter, sibling_bug_ids } = {}) {
     if (!this.$container || !bug.summary) {
       return false;
     }
 
-    this.add_bug(bug, controller, sibling_bug_ids);
+    this.add_bug(bug, presenter, sibling_bug_ids);
 
     return true;
   }
 
   /**
    * Called when an error was encountered while fetching the bug data. Show the error message.
-   * @listens BugContainerController#BugDataUnavailable
+   * @listens BugContainerPresenter#BugDataUnavailable
    * @param {Number} code - Error code usually defined by Bugzilla.
    * @param {String} message - Error message text.
    * @returns {Boolean} result - Whether the view is updated.
@@ -77,19 +77,19 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Show the selected bug in the container.
    * @param {Proxy} bug - Bug to show.
-   * @param {Object} controller - New BugController instance for that bug.
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and
-   *  Forward buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @param {Object} presenter - New BugPresenter instance for that bug.
+   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
+   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {undefined}
    */
-  add_bug (bug, controller, sibling_bug_ids) {
+  add_bug (bug, presenter, sibling_bug_ids) {
     this.bug_id = bug.id;
     this.sibling_bug_ids = sibling_bug_ids || [];
 
     this.$container.setAttribute('aria-busy', 'true');
     this.$container.innerHTML = '';
     this.$bug = this.$container.appendChild(this.get_template('bug-details-template', bug.id));
-    this.$$bug = new BzDeck.BugDetailsView(controller.id, bug, this.$bug);
+    this.$$bug = new BzDeck.BugDetailsView(presenter.id, bug, this.$bug);
     this.$container.removeAttribute('aria-busy');
 
     // Set Back & Forward navigation
@@ -164,7 +164,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     this.bug_id = new_id;
     BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, new_path);
 
-    // Notify the Controller
+    // Notify the Presenter
     this.trigger('#NavigationRequested', { old_id, new_id, old_path, new_path, reinit: !$existing_bug });
   }
 }

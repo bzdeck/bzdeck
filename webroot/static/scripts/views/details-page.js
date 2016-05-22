@@ -10,7 +10,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
    * Get a DetailsPageView instance.
    * @constructor
-   * @listens BugContainerController#BugDataAvailable
+   * @listens BugContainerPresenter#BugDataAvailable
    * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {Number} bug_id - ID of the bug to display.
    * @returns {Object} view - New DetailsPageView instance.
@@ -24,7 +24,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
     this.$tabpanel = document.querySelector(`#tabpanel-details-${this.id}`);
     this.container = new BzDeck.BugContainerView(this.id, this.$tabpanel);
 
-    this.on('BugContainerController#BugDataAvailable', data => {
+    this.on('BugContainerPresenter#BugDataAvailable', data => {
       if (data.bug.id === this.bug_id) {
         this.$tab.title = `Bug ${data.bug.id}\n${data.bug.summary || 'Loading...'}`; // l10n
         BzDeck.views.global.update_window_title(this.$tab);

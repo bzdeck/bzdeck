@@ -10,7 +10,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Get a BugCommentFormView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugController instance, otherwise the
+   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
    *  relevant notification events won't work.
    * @param {Object} bug - BugModel instance.
    * @param {HTMLElement} $bug - Bug container element.
@@ -97,7 +97,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     if ($tab.id.endsWith('preview')) {
       // Render the new comment for preview
-      this.$preview.innerHTML = BzDeck.controllers.global.parse_comment(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.presenters.global.parse_comment(this.$textbox.value);
     }
   }
 
