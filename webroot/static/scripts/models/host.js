@@ -129,4 +129,25 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       return Promise.reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.'));
     });
   }
+
+  /**
+   * Verify the combination of the provided user name and API key.
+   * @param {String} name - User name. Usually email address.
+   * @param {String} api_key - API key to authenticate.
+   * @returns {Promise.<Object>} user - Promise to be resolved in the verified user's info.
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user}
+   */
+  verify_account (name, api_key) {
+    this.request('user', new URLSearchParams(`names=${name}`), { api_key }).then(result => {
+      if (!result.users || !result.users[0]) {
+        return Promise.reject(new Error(result.message || 'User Not Found')); // l10n
+      } else if (result.users[0].error) {
+        return Promise.reject(new Error(result.users[0].error));
+      } else {
+        return Promise.resolve(result.users[0]);
+      }
+    }, error => {
+      return Promise.reject(new Error('Failed to find your account.')); // l10n
+    });
+  }
 }
