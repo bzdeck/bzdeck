@@ -857,7 +857,7 @@ BzDeck.BugController = class BugController extends BzDeck.BaseController {
   }
 
   /**
-   * Notify the upload progress while the new attachent is being uploaded to Bugzilla.
+   * Notify the upload progress while the new attachment is being uploaded to Bugzilla.
    * @param {undefined}
    * @returns {undefined}
    * @fires BugController:SubmitProgress

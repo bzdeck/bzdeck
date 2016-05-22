@@ -23,7 +23,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Add bug participants, including Cc members, assignee, QA and menters, to the user database, and return the models
+   * Add bug participants, including Cc members, assignee, QA and mentors, to the user database, and return the models
    * of those users.
    * @param {Proxy} bug - BugModel object.
    * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
@@ -136,7 +136,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Search users from the remote Bugzilla instnace and return the results.
+   * Search users from the remote Bugzilla instance and return the results.
    * @param {URLSearchParams} params - Search query.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */

@@ -41,7 +41,7 @@ BzDeck.BugzfeedController = class BugzfeedController extends BzDeck.BaseControll
 
     let func = {
       'Connected': () => this.connected = true,
-      'Disonnected': () => this.connected = false,
+      'Disconnected': () => this.connected = false,
       'BugUpdated': () => this.trigger(':BugUpdated', { id }),
       'SubscriptionsUpdated': () => this.subscriptions = new Set(ids),
     }[status];

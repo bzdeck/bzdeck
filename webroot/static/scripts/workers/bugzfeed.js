@@ -138,7 +138,7 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    self.postMessage({ status: 'Disonnected' });
+    self.postMessage({ status: 'Disconnected' });
   }
 
   /**
@@ -152,7 +152,7 @@ BzDeck.BugzfeedWorker = class BugzfeedWorker {
       this.reconnector = self.setInterval(() => this.connect(), 30000);
     }
 
-    self.postMessage({ status: 'Disonnected' });
+    self.postMessage({ status: 'Disconnected' });
   }
 
   /**

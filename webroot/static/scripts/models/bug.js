@@ -161,7 +161,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       ignore_cc = ignore_cc !== false;
       data._update_needed = false;
 
-      // Mark the bug as read when the Ignore CC Changes option is enabled and threre are only CC changes
+      // Mark the bug as read when the Ignore CC Changes option is enabled and there are only CC changes
       if (ignore_cc && !new_comments.size && !new_attachments.size &&
           ![...new_history.values()].some(h => h.changes.some(c => c.field_name !== 'cc'))) {
         this.mark_as_read();

@@ -65,10 +65,10 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    */
   on_gravatar_profile_requested (data) {
     let { hash } = data;
-    let nofity = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
+    let notify = profile => this.trigger(':GravatarProfileProvided', { hash, profile });
 
     this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
-        .then(data => data.entry[0]).then(profile => nofity(profile)).catch(error => nofity(undefined));
+        .then(data => data.entry[0]).then(profile => notify(profile)).catch(error => notify(undefined));
   }
 
   /**
@@ -84,7 +84,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
    */
   on_gravatar_image_requested (data) {
     let { hash, color, initial } = data;
-    let nofity = blob => this.trigger(':GravatarImageProvided', { hash, blob });
+    let notify = blob => this.trigger(':GravatarImageProvided', { hash, blob });
     let $image = new Image();
     let $canvas = document.createElement('canvas');
     let ctx = $canvas.getContext('2d');
@@ -94,7 +94,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
 
     $image.addEventListener('load', event => {
       ctx.drawImage($image, 0, 0);
-      $canvas.toBlob(nofity);
+      $canvas.toBlob(notify);
     });
 
     $image.addEventListener('error', event => {
@@ -107,7 +107,7 @@ BzDeck.GlobalController = class GlobalController extends BzDeck.BaseController {
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#FFF';
       ctx.fillText(initial, 80, 85); // Adjust the baseline by 5px
-      $canvas.toBlob(nofity);
+      $canvas.toBlob(notify);
     });
 
     $image.crossOrigin = 'anonymous';

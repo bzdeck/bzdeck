@@ -123,7 +123,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Generate timeline entries.
    * @param {Array.<Map>} data_arr - List of entry data.
-   * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a flagment containing entry nodes.
+   * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a fragment containing entry nodes.
    */
   generate_entries (data_arr) {
     return Promise.all(data_arr.map(data => {

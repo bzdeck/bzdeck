@@ -10,7 +10,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
    * Called whenever one or more items are selected on the thread. Show the last-selected bug in the relevant Preview
    * Pane or a new tab.
-   * @param {CustomEvent} event - Providing an array of seleted item IDs.
+   * @param {CustomEvent} event - Providing an array of selected item IDs.
    * @returns {undefined}
    */
   onselect (event) {

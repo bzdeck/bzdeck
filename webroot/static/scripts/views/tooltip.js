@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Tooltip View. This constructor is intended to be inherited by each specific tooptip view.
+ * Define the Tooltip View. This constructor is intended to be inherited by each specific tooltip view.
  * @extends BzDeck.BaseView
  * @todo Add more controls, like position, delay, duration, etc.
  */
@@ -11,7 +11,7 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   /**
    * Initialize the Tooltip View.
    * @param {HTMLElement} $owner - Element that owns/triggers the tooltip.
-   * @param {Array.<String>} [showing_events] - Events to show the tooptip. Default: mouseenter/focus
+   * @param {Array.<String>} [showing_events] - Events to show the tooltip. Default: mouseenter/focus
    * @param {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/blur
    * @param {String} [type] - Type of the target data ID: string or number.
    * @returns {undefined}
@@ -63,7 +63,7 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   }
 
   /**
-   * Remove any existing tooptips from the page.
+   * Remove any existing tooltips from the page.
    * @param {undefined}
    * @returns {undefined}
    */
@@ -83,7 +83,7 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   }
 
   /**
-   * Remove the current tooptip from the page.
+   * Remove the current tooltip from the page.
    * @param {undefined}
    * @returns {undefined}
    */
@@ -113,7 +113,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
   }
 
   /**
-   * Show the bug tooptip on the page.
+   * Show the bug tooltip on the page.
    * @param {undefined}
    * @returns {undefined}
    */

@@ -184,7 +184,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   }
 
   /**
-   * Search bugs from the remote Bugzilla instnace and return the results.
+   * Search bugs from the remote Bugzilla instance and return the results.
    * @param {URLSearchParams} params - Search query.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */

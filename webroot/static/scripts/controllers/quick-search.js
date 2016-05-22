@@ -97,7 +97,7 @@ BzDeck.QuickSearchController = class QuickSearchController extends BzDeck.BaseCo
     params_users.append('limit', 10);
     BzDeck.collections.users.search_local(params_users).then(users => return_users(users));
 
-    // Remote searches require at learst 3 characters
+    // Remote searches require at least 3 characters
     if (input.length >= 3) {
       // Use a .5 second timer not to send requests so frequently while the user is typing
       window.clearTimeout(this.searchers);

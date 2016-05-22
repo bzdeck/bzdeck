@@ -380,7 +380,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
 
-    // Iterate over the fields except the Flags secion which is activated by BugFlagsView
+    // Iterate over the fields except the Flags section which is activated by BugFlagsView
     for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
       let name = $section.dataset.field;
       let $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');

@@ -122,7 +122,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
   /**
    * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the same search
-   * resuts so the user can easily navigate through those bugs.
+   * results so the user can easily navigate through those bugs.
    * @listens SearchPageView:OpeningTabRequested
    * @param {undefined}
    * @returns {undefined}

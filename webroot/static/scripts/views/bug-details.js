@@ -85,7 +85,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   }
 
   /**
-   * Add a UI gimmic for mobile that hides the tabs when scrolled down.
+   * Add a UI gimmick for mobile that hides the tabs when scrolled down.
    * @param {undefined}
    * @returns {undefined}
    */

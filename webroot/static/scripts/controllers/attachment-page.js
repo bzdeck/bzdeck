@@ -17,7 +17,7 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
   constructor (att_id) {
     super(); // This does nothing but is required before using `this`
 
-    this.id = Date.now(); // The page/tab is not assosiated with an attachment, because it's reused when navigated
+    this.id = Date.now(); // The page/tab is not associated with an attachment, because it's reused when navigated
     this.att_id = att_id;
 
     this.connect();
@@ -74,7 +74,7 @@ BzDeck.AttachmentPageController = class AttachmentPageController extends BzDeck.
    * @fires AttachmentPageController:AttachmentUnavailable
    */
   get_attachment () {
-    // If the ID is hash, it's an unuploaded attachment. And if the cache cound not be found, just raise an error
+    // If the ID is hash, it's an unuploaded attachment. And if the cache could not be found, just raise an error
     if (isNaN(this.att_id)) {
       this.trigger(':LoadingError');
 

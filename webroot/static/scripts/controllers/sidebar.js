@@ -117,7 +117,7 @@ BzDeck.SidebarController = class SidebarController extends BzDeck.BaseController
    * Called whenever an Application menu item is selected.
    * @listens SidebarView:AppMenuItemSelected
    * @param {Object} data - Passed data.
-   * @param {String} data.command - Command name of the menu itme.
+   * @param {String} data.command - Command name of the menu item.
    * @returns {undefined}
    */
   on_app_menu_item_selected (data) {

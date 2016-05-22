@@ -49,7 +49,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Set up the Basic Seach Pane that contains options for classification, product, component, status and resolution, as
+   * Set up the Basic Search Pane that contains options for classification, product, component, status and resolution, as
    * well as search term textbox.
    * @param {Object} config - Bugzilla server configuration that contains products, components and more.
    * @returns {undefined}
@@ -262,7 +262,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Hide the Preview Pane and show the Basic Seach Pane instead.
+   * Hide the Preview Pane and show the Basic Search Pane instead.
    * @param {undefined}
    * @returns {undefined}
    */
