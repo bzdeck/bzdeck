@@ -25,7 +25,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     BzDeck.datasources.global = new BzDeck.GlobalDataSource();
     BzDeck.datasources.account = new BzDeck.AccountDataSource();
     BzDeck.controllers.global = new BzDeck.GlobalController();
-    BzDeck.controllers.bugzfeed = new BzDeck.BugzfeedController();
+    BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
 
     new BzDeck.SessionView();
     new BzDeck.LoginFormView(params);
@@ -255,8 +255,12 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
       }),
       BzDeck.controllers.statusbar = new BzDeck.StatusbarController(),
     ])).then(() => {
-      // Connect to the push notification server
-      BzDeck.controllers.bugzfeed.connect();
+      let endpoint = BzDeck.host.endpoints.websocket;
+
+      // Connect to the push notification server if available
+      if (endpoint) {
+        BzDeck.models.bugzfeed.connect(endpoint);
+      }
     }).then(() => {
       // Activate the router
       BzDeck.router.locate();
@@ -318,7 +322,7 @@ BzDeck.SessionController = class SessionController extends BzDeck.BaseController
     BzDeck.controllers.global.timers.clear();
 
     // Disconnect from the Bugzfeed server
-    BzDeck.controllers.bugzfeed.disconnect();
+    BzDeck.models.bugzfeed.disconnect();
   }
 }
 

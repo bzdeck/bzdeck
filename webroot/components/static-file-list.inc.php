@@ -67,6 +67,7 @@ $scripts = [
   '/static/scripts/models/account.js',
   '/static/scripts/models/attachment.js',
   '/static/scripts/models/bug.js',
+  '/static/scripts/models/bugzfeed.js',
   '/static/scripts/models/host.js',
   '/static/scripts/models/user.js',
   // Collections
@@ -115,7 +116,6 @@ $scripts = [
   '/static/scripts/controllers/banner.js',
   '/static/scripts/controllers/bug-container.js',
   '/static/scripts/controllers/bug.js',
-  '/static/scripts/controllers/bugzfeed.js',
   '/static/scripts/controllers/details-page.js',
   '/static/scripts/controllers/global.js',
   '/static/scripts/controllers/home-page.js',

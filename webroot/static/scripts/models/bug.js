@@ -1168,7 +1168,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   _fetch () {
-    let bugzfeed = BzDeck.controllers.bugzfeed;
+    let bugzfeed = BzDeck.models.bugzfeed;
 
     if (!bugzfeed.connected || !bugzfeed.subscriptions.has(this.data.id)) {
       this.fetch();

@@ -70,6 +70,7 @@ const files = [
   '/static/scripts/models/account.js',
   '/static/scripts/models/attachment.js',
   '/static/scripts/models/bug.js',
+  '/static/scripts/models/bugzfeed.js',
   '/static/scripts/models/host.js',
   '/static/scripts/models/user.js',
   '/static/scripts/collections/base.js',
@@ -115,7 +116,6 @@ const files = [
   '/static/scripts/controllers/banner.js',
   '/static/scripts/controllers/bug-container.js',
   '/static/scripts/controllers/bug.js',
-  '/static/scripts/controllers/bugzfeed.js',
   '/static/scripts/controllers/details-page.js',
   '/static/scripts/controllers/global.js',
   '/static/scripts/controllers/home-page.js',
@@ -127,7 +127,6 @@ const files = [
   '/static/scripts/controllers/sidebar.js',
   '/static/scripts/controllers/statusbar.js',
   // Worker scripts
-  '/static/scripts/workers/bugzfeed.js',
   '/static/scripts/workers/tasks.js',
 ];
 

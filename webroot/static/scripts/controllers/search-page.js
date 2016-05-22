@@ -49,7 +49,7 @@ BzDeck.SearchPageController = class SearchPageController extends BzDeck.BaseCont
 
           if (oldval !== newval) {
             this.prep_preview(newval);
-            BzDeck.controllers.bugzfeed._subscribe([newval]);
+            BzDeck.models.bugzfeed._subscribe([newval]);
           }
         }
 
