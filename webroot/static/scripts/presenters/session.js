@@ -240,7 +240,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       }),
       BzDeck.presenters.statusbar = new BzDeck.StatusbarPresenter(),
     ])).then(() => {
-      let endpoint = BzDeck.host.endpoints.websocket;
+      let endpoint = BzDeck.host.websocket_endpoint;
 
       // Connect to the push notification server if available
       if (endpoint) {

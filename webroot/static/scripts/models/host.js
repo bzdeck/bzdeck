@@ -47,7 +47,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     }
 
     let worker = new SharedWorker('/static/scripts/workers/tasks.js');
-    let url = new URL(this.origin + this.endpoints.rest + path);
+    let url = new URL(this.origin + '/rest/' + path);
     let headers = new Map();
 
     method = method || (data ? 'POST' : 'GET');
@@ -112,7 +112,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     }
 
     // Fetch the config via BzAPI
-    return this.helpers.network.json(`${this.origin}${this.endpoints.bzapi}configuration?cached_ok=1`).then(config => {
+    return this.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1').then(config => {
       if (config && config.version) {
         let config_retrieved = this.data.config_retrieved = Date.now();
 

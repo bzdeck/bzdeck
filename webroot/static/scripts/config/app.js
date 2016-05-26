@@ -24,33 +24,21 @@ BzDeck.config = {
       timezone: -8,
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla.mozilla.org',
-      endpoints: {
-        bzapi: '/bzapi/',
-        rest: '/rest/',
-        websocket: 'wss://bugzfeed.mozilla.org/',
-      }
+      websocket_endpoint: 'wss://bugzfeed.mozilla.org/',
     },
     'mozilla-dev': {
       label: 'Mozilla Dev',
       timezone: -8,
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-dev.allizom.org',
-      endpoints: {
-        bzapi: '/bzapi/',
-        rest: '/rest/',
-        websocket: 'wss://bugzfeed.mozilla.org/dev/',
-      }
+      websocket_endpoint: 'wss://bugzfeed.mozilla.org/dev/',
     },
     'mozilla-merge': {
       label: 'Mozilla Merge',
       timezone: -8,
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-merge.allizom.org',
-      endpoints: {
-        bzapi: '/bzapi/',
-        rest: '/rest/',
-        websocket: null,
-      }
+      websocket_endpoint: null,
     }
   },
   app: {
