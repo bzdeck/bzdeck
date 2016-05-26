@@ -47,7 +47,7 @@ BzDeck.config = {
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-merge.allizom.org',
       endpoints: {
-        bzapi: 'https://bugzilla-dev.allizom.org/bzapi/', // Use dev until Bug 1269213 is solved
+        bzapi: '/bzapi/',
         rest: '/rest/',
         websocket: null,
       }

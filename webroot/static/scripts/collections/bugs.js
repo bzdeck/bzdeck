@@ -75,8 +75,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
       if (include_metadata) {
         _bug = _meta.bugs[index];
-        // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
-        _bug._last_visit = _visit && _visit[index] ? _visit[index].last_visit_ts : null;
+        _bug._last_visit = _visit[index].last_visit_ts;
       }
 
       if (include_details) {
@@ -158,7 +157,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
         return results_chunks.reduce((a, b) => a.concat(b), []);
       }).then(results => {
         for (let { id, last_visit_ts } of results) {
-          bugs.get(Number(id))._last_visit = last_visit_ts; // Bug 1270227: id is a String
+          bugs.get(id)._last_visit = last_visit_ts;
         }
 
         return Promise.resolve(bugs);

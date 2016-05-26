@@ -75,9 +75,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
                                       (this.has_changes || this.has_att_changes || this.has_attachments) },
     });
 
-    // Hardcode an empty array until Bug 1269212 is solved
-    this.data.mentors = this.data.mentors_detail = [];
-
     return this.proxy();
   }
 
@@ -118,8 +115,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       } else {
         if (include_metadata) {
           _bug = _meta.bugs[0];
-          // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
-          _bug._last_visit = _visit && _visit[0] ? _visit[0].last_visit_ts : null;
+          _bug._last_visit = _visit[0].last_visit_ts;
         } else {
           _bug = { id: this.id };
         }
