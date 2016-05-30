@@ -110,6 +110,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     // some cases
     this.$textbox.value = sessionStorage.getItem(`bug-${this.bug.id}-comment`) || '';
 
+    // Show the browser's native context menu to allow using the spellchecker
+    this.$textbox.addEventListener('contextmenu', event => event.stopPropagation());
+
     // Prevent the keyboard shortcuts on the timeline from being fired
     this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
 
