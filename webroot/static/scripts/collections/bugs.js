@@ -75,7 +75,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
       if (include_metadata) {
         _bug = _meta.bugs[index];
-        _bug._last_visit = _visit[index].last_visit_ts;
+        // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
+        _bug._last_visit = _visit && _visit[index] ? _visit[index].last_visit_ts : null;
       }
 
       if (include_details) {
