@@ -11,16 +11,14 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Get a BugParticipantListView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.
    * @returns {Object} view - New BugParticipantListView instance.
    */
-  constructor (view_id, bug, $section) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug, $section) {
+    super(id); // Assign this.id
 
-    this.id = view_id;
     this.bug = bug;
     this.field = $section.dataset.field;
 
@@ -43,6 +41,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.add_subscribe_button();
     }
 
+    // Subscribe to events
     this.subscribe('BugView#EditModeChanged');
     this.subscribe('BugModel#ParticipantAdded', true);
     this.subscribe('BugModel#ParticipantRemoved', true);
@@ -135,7 +134,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @fires BugView#AddParticipant
    */
   add_person_finder () {
-    this.$$finder = new BzDeck.PersonFinderView(`${this.id}-${this.field}-person-finder`, this.bug, this.values);
+    this.$$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-${this.field}-person-finder`,
+                                                this.bug, this.values);
     this.$finder = this.$$finder.$combobox;
     this.$finder.setAttribute('aria-hidden', 'true');
 

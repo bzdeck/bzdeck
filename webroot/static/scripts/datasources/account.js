@@ -5,8 +5,19 @@
 /**
  * Initialize the Account DataSource that contains the bugs, users, and prefs of each user account.
  * @extends BzDeck.BaseDataSource
+ * @todo Move this to the worker thread.
  */
 BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource {
+  /**
+   * Get an AccountDataSource instance. This is necessary to call the constructor of the base Event class.
+   * @constructor
+   * @param {undefined}
+   * @returns {Object} accounts - New AccountDataSource instance.
+   */
+  constructor () {
+    super(); // Assign this.id
+  }
+
   /**
    * Preload the account-specific database.
    * @param {undefined}

@@ -10,20 +10,18 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Get a BugAttachmentsView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {HTMLElement} $container - Container node to render the attachments.
    * @returns {Object} view - New BugAttachmentsView instance.
    * @fires BugView#AttachmentSelected
    */
-  constructor (view_id, bug_id, $container) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug_id, $container) {
+    super(id); // Assign this.id
 
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
     let mql = window.matchMedia('(max-width: 1023px)');
 
-    this.id = view_id;
     this.bug_id = bug_id;
     this.attachments = new Map();
 
@@ -36,7 +34,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       $attachment.remove();
     }
 
-    this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
+    this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$$listbox.bind('click', event => this.listbox_onclick(event));
     this.$$listbox.bind('dblclick', event => this.listbox_onclick(event));
 
@@ -50,13 +48,13 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
       let $attachment = this.$container.querySelector('.content');
 
-      new this.widgets.ScrollBar($attachment);
-      new BzDeck.AttachmentView(attachment, $attachment);
+      new FlareTail.widgets.ScrollBar($attachment);
+      new BzDeck.AttachmentView(this.id, attachment, $attachment);
 
       this.trigger_safe('BugView#AttachmentSelected', { attachment });
     });
 
-    this.$$obsolete_checkbox = new this.widgets.CheckBox(this.$obsolete_checkbox);
+    this.$$obsolete_checkbox = new FlareTail.widgets.CheckBox(this.$obsolete_checkbox);
 
     this.$$obsolete_checkbox.bind('Toggled', event => {
       let checked = event.detail.checked;
@@ -70,6 +68,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
     this.init_uploader();
 
+    // Subscribe to events
     this.subscribe_safe('BugModel#AttachmentAdded', true);
     this.subscribe('BugModel#AttachmentRemoved', true);
     this.subscribe('BugModel#AttachmentEdited', true);
@@ -123,16 +122,16 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * Called whenever the attachment list is clicked.
    * @param {MouseEvent} event - click or dblclick.
    * @returns {undefined}
-   * @fires GlobalView#OpenAttachment
+   * @fires AnyView#OpeningAttachmentRequested
    */
   listbox_onclick (event) {
     let $selected = this.$$listbox.view.selected[0];
     let id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
     let narrow = window.matchMedia('(max-width: 1023px)').matches;
 
     if (id && ((event.type === 'click' && mobile && narrow) || event.type === 'dblclick')) {
-      this.trigger('GlobalView#OpenAttachment', { id });
+      this.trigger('AnyView#OpeningAttachmentRequested', { id });
     }
   }
 
@@ -317,7 +316,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     let target_id = state ? state.att_id : undefined;
     let $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
-    if ($target && !this.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
+    if ($target && !FlareTail.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
       if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {
         this.$obsolete_checkbox.click();
       }

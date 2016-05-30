@@ -8,21 +8,18 @@
  */
 BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
-   * Get a HomePageView instance.
+   * Called by the app router and initialize the Home Page View. Select the specified Sidebar folder.
    * @constructor
-   * @param {Object} presenter - HomePagePresenter instance.
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {Object} view - New HomePageView instance.
    */
-  constructor (presenter) {
-    super(); // This does nothing but is required before using `this`
+  constructor (folder_id) {
+    super(); // Assign this.id
 
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
     let $sidebar = document.querySelector('#sidebar');
 
-    this.id = presenter.id;
-    this.presenter = presenter;
     this.$preview_pane = document.querySelector('#home-preview-pane');
-    this.container = new BzDeck.BugContainerView(this.id, this.$preview_pane);
 
     Object.defineProperties(this, {
       preview_is_hidden: {
@@ -40,14 +37,32 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         document.documentElement.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
 
-        return this.helpers.event.ignore(event);
+        return FlareTail.helpers.event.ignore(event);
       });
     }
 
     BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
 
+    // Subscribe to events
     this.subscribe('PrefCollection#PrefChanged', true);
     this.on_safe('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
+    window.addEventListener('popstate', event => this.onpopstate());
+
+    // Initiate the corresponding presenter and sub-view
+    this.presenter =  new BzDeck.HomePagePresenter(this.id);
+    this.container_view = new BzDeck.BugContainerView(this.id, this.$preview_pane);
+
+    BzDeck.views.pages.home = this;
+    this.connect(folder_id);
+  }
+
+  /**
+   * Called by the app router to reuse the view.
+   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @returns {undefined}
+   */
+  reactivate (folder_id) {
+    this.connect(folder_id);
   }
 
   /**
@@ -82,19 +97,18 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Get a list of bugs currently showing on the thread. FIXME: This should be smartly done in the presenter.
-   * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in bugs currently showing.
+   * Get a list of bugs currently showing on the thread.
+   * @param {undefined}
+   * @returns {Array.<Number>} ids - Bug IDs currently showing.
+   * @todo FIXME: This should be smartly done in the presenter.
    */
-  get_shown_bugs (bugs) {
-    return BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
-      let mobile = this.helpers.env.device.mobile;
-      let vertical = mobile || !layout_pref || layout_pref === 'vertical';
-      let items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
-                           : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+  get_shown_bugs () {
+    let mobile = FlareTail.helpers.env.device.mobile;
+    let vertical = mobile || document.documentElement.getAttribute('data-home-layout') === 'vertical';
+    let items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
+                         : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
-      return new Map([...items].map($item => [Number($item.dataset.id), bugs.get(Number($item.dataset.id))]));
-    });
+    return [...items].map($item => Number($item.dataset.id));
   }
 
   /**
@@ -105,7 +119,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   change_layout (pref, sort_grid = false) {
-    let vertical = this.helpers.env.device.mobile || !pref || pref === 'vertical';
+    let vertical = FlareTail.helpers.env.device.mobile || !pref || pref === 'vertical';
 
     document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
 
@@ -184,14 +198,14 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       let $$grid = this.thread.$$grid;
 
       BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
-        let vertical = this.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
+        let vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
 
         $$grid.options.adjust_scrollbar = !vertical;
         $$grid.options.date.simple = vertical;
 
         // Change the date format on the thread pane
         for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-          $time.textContent = this.helpers.datetime.format($time.dateTime, { simple: vertical });
+          $time.textContent = FlareTail.helpers.datetime.format($time.dateTime, { simple: vertical });
           $time.dataset.simple = vertical;
         }
       });
@@ -313,6 +327,28 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   on_subscriptions_updated () {
     if (BzDeck.presenters.sidebar) {
       BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
+    }
+  }
+
+  /**
+   * Called whenever the history state is updated.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  onpopstate () {
+    if (location.pathname !== `/home/${BzDeck.presenters.sidebar.data.folder_id}` || !history.state) {
+      return;
+    }
+
+    let { preview_id } = history.state;
+    let siblings = this.get_shown_bugs();
+
+    // Show the bug preview only when the preview pane is visible (on desktop and tablet)
+    if (this.preview_is_hidden) {
+      BzDeck.router.navigate('/bug/' + preview_id, { siblings });
+    } else if (preview_id !== this.preview_id) {
+      this.preview_id = preview_id;
+      this.container_view.on_adding_bug_requested({ bug_id: preview_id, siblings });
     }
   }
 }

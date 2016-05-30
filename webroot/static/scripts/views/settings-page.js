@@ -8,37 +8,79 @@
  */
 BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
-   * Get a SettingsPageView instance.
+   * Called by the app router and initialize the Settings Page View. If the Settings has an existing tab, switch to it.
+   * Otherwise, open a new tab and load the content.
    * @constructor
-   * @param {Map.<String, Object>} prefs - User preference Map.
-   * @param {String} [tab_id] - Optional tab ID to select. If not specified, the first tab will be selected.
+   * @param {undefined}
    * @returns {Object} view - New SettingsPageView instance.
    */
-  constructor (prefs, tab_id) {
-    super(); // This does nothing but is required before using `this`
+  constructor () {
+    super(); // Assign this.id
 
-    if (this.helpers.env.device.mobile) {
-      document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
-      document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
-      document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
-      document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
-      document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
-    } else {
-      this.prepare_qrcode();
-    }
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.SettingsPagePresenter(this.id);
 
-    // Activate tabs
-    this.$$tablist = new this.widgets.TabList(document.querySelector('#settings-tablist'));
+    this.activate();
+  }
 
-    if (tab_id) {
-      this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
-    }
+  /**
+   * Called by the app router to reuse the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  reactivate () {
+    this.activate();
+  }
 
-    // Currently the radiogroup/radio widget is not data driven.
-    // A modern preference system is needed.
-    for (let [name, value] of prefs) {
-      this.activate_radiogroup(name, value);
-    }
+  /**
+   * Activate the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  activate () {
+    let tab_id = history.state ? history.state.tab_id : undefined;
+    let prefs = new Map();
+
+    Promise.all([...Object.entries(BzDeck.config.prefs)].map(([name, value]) => {
+      return BzDeck.prefs.get(name).then(_value => {
+        value.user = _value;
+        prefs.set(name, value);
+      });
+    })).then(() => {
+      BzDeck.views.banner.open_tab({
+        label: 'Settings', // l10n
+        category: 'settings',
+      }, this);
+
+      if (this.ui_ready) {
+        return;
+      }
+
+      // Activate tabs
+      this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#settings-tablist'));
+
+      if (tab_id) {
+        this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
+      }
+
+      // Currently the radiogroup/radio widget is not data driven.
+      // A modern preference system is needed.
+      for (let [name, value] of prefs) {
+        this.activate_radiogroup(name, value);
+      }
+
+      if (FlareTail.helpers.env.device.mobile) {
+        document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
+        document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
+        document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
+        document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
+        document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
+      } else {
+        this.prepare_qrcode();
+      }
+
+      this.ui_ready = true;
+    });
   }
 
   /**
@@ -53,7 +95,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    */
   activate_radiogroup (name, _value) {
     let $root = document.documentElement;
-    let $rgroup = document.querySelector(`#tabpanel-settings [data-pref="${name}"]`);
+    let $rgroup = document.querySelector(`[id^="tabpanel-settings"] [data-pref="${name}"]`);
     let value = _value.user !== undefined ? _value.user : _value.default;
     let attr = 'data-' + name.replace(/[\._]/g, '-');
 
@@ -62,7 +104,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
     }
 
-    (new this.widgets.RadioGroup($rgroup)).bind('Selected', event => {
+    (new FlareTail.widgets.RadioGroup($rgroup)).bind('Selected', event => {
       value = event.detail.items[0].dataset.value;
       value = _value.type === 'boolean' ? value === 'true' : value;
       this.trigger('#PrefChangeRequested', { name, value });

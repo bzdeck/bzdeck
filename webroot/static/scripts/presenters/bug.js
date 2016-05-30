@@ -5,25 +5,25 @@
 /**
  * Define the Bug Presenter.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
   /**
    * Get a BugPresenter instance.
    * @constructor
-   * @param {Object} bug - BugModel instance.
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
-   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
+   * @param {String} container_id - Unique instance identifier of the parent container view.
+   * @param {Number} bug_id - Bug ID to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} presenter - New BugPresenter instance.
    */
-  constructor (bug, sibling_bug_ids = []) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, container_id, bug_id, siblings = []) {
+    super(id); // Assign this.id
 
-    // Set the Presenter (and View) ID. Add a timestamp to avoid multiple submissions (#303) but there would be a better
-    // way to solve the issue... The Presenter and View should be reused whenever possible.
-    this.id = `bug-${bug.id}-${Date.now()}`;
-
-    this.bug = bug;
-    this.sibling_bug_ids = sibling_bug_ids;
+    this.container_id = container_id;
+    this.bug_id = bug_id;
+    this.siblings = siblings;
 
     // Attachments
     this.on_safe('V#AttachFiles', data => this.bug.attach_files(data.files));
@@ -51,15 +51,69 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
     this.on('V#Submit', () => this.bug.submit());
 
     // Other actions
+    this.on('V#Initialized', () => this.load_bug());
     this.subscribe('V#OpeningTabRequested');
-
-    // Add the people involved in the bug to the local user database
-    BzDeck.collections.users.add_from_bug(this.bug);
 
     // Check the fragment; use a timer to wait for the timeline rendering
     window.setTimeout(window => this.check_fragment(), 150);
     window.addEventListener('popstate', event => this.check_fragment());
     window.addEventListener('hashchange', event => this.check_fragment());
+  }
+
+  /**
+   * Load the bug from the local database or remote Bugzilla instance.
+   * @listens BugView#Initialized
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires BugPresenter#LoadingStarted
+   * @fires BugPresenter#LoadingFinished
+   * @fires BugPresenter#BugDataAvailable
+   * @fires BugPresenter#BugDataUnavailable
+   */
+  load_bug () {
+    let container_id = this.container_id;
+    let bug_id = this.bug_id;
+
+    if (!navigator.onLine) {
+      this.trigger('#BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
+
+      return;
+    }
+
+    this.trigger('#LoadingStarted', { container_id, bug_id });
+
+    BzDeck.collections.bugs.get(this.bug_id).then(bug => {
+      if (bug && !bug.error) {
+        return bug;
+      }
+
+      return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id }).then(bug => {
+        return bug.fetch();
+      }).catch(error => {
+        this.trigger('#BugDataUnavailable', { container_id, bug_id, code: 0, message: 'Failed to load data.' });
+      });
+    }).then(bug => new Promise((resolve, reject) => {
+      if (bug.data && bug.data.summary) {
+        resolve(bug);
+      } else {
+        let code = bug.error ? bug.error.code : 0;
+        let message = {
+          102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
+                unpublished security issues or marketing-related topics. '
+        }[code] || 'This bug data is not available.';
+
+        this.trigger('#BugDataUnavailable', { container_id, bug_id, code, message });
+        reject(new Error(message));
+      }
+    })).then(bug => {
+      this.bug = bug;
+      this.trigger_safe('#BugDataAvailable', { container_id, bug, siblings: this.siblings });
+      bug.mark_as_read();
+      BzDeck.collections.users.add_from_bug(bug);
+      BzDeck.models.bugzfeed._subscribe([this.bug_id]);
+    }).then(() => {
+      this.trigger('#LoadingFinished', { container_id, bug_id });
+    });
   }
 
   /**
@@ -82,7 +136,7 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * @fires BugPresenter#HistoryUpdated
    */
   check_fragment () {
-    if (location.pathname === `/bug/${this.bug.id}`) {
+    if (this.bug && location.pathname === `/bug/${this.bug.id}`) {
       this.trigger('#HistoryUpdated', { hash: location.hash, state: history.state });
     }
   }
@@ -95,6 +149,6 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * @returns {undefined}
    */
   on_opening_tab_requested () {
-    BzDeck.router.navigate('/bug/' + this.bug.id, { ids: this.sibling_bug_ids });
+    BzDeck.router.navigate('/bug/' + this.bug.id, { siblings: this.siblings });
   }
 }

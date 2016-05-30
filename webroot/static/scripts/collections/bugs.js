@@ -5,6 +5,7 @@
 /**
  * Define the Bug Collection that represents all downloaded bugs.
  * @extends BzDeck.BaseCollection
+ * @todo Move this to the worker thread.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
  */
 BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
@@ -15,7 +16,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @returns {Object} bugs - New BugCollection instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'bugs';
@@ -174,7 +175,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    */
   search_local (params) {
     let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
-    let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+    let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
 
     return this.get_all().then(bugs => [...bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||

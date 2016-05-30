@@ -6,6 +6,7 @@
  * Implement a client of the Bugzfeed push notification service offered by bugzilla.mozilla.org, enabling live update of
  * bug timelines.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  * @see {@link https://wiki.mozilla.org/BMO/ChangeNotificationSystem}
  */
 BzDeck.BugzfeedModel = class BugzfeedModel extends BzDeck.BaseModel {
@@ -16,7 +17,7 @@ BzDeck.BugzfeedModel = class BugzfeedModel extends BzDeck.BaseModel {
    * @returns {Object} model - New BugzfeedModel instance.
    */
   constructor () {
-    super();
+    super(); // Assign this.id
 
     this.connected = false;
     this.subscriptions = new Set();

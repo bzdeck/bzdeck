@@ -5,93 +5,70 @@
 /**
  * Define the Profile Page Presenter.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Profile Page Presenter. If the specified profile has an existing tab,
-   * switch to it. Otherwise, open a new tab and try to load the user profile.
+   * Get a ProfilePagePresenter instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {String} email - Person's Bugzilla account name.
    * @returns {Object} presenter - New ProfilePagePresenter instance.
    */
-  constructor (email) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, email) {
+    super(id); // Assign this.id
 
-    this.id = email;
+    this.email = email;
 
-    this.connect();
-  }
-
-  /**
-   * Called by the app router to reuse the presenter.
-   * @param {String} email - Person's Bugzilla account name.
-   * @returns {undefined}
-   */
-  reconnect (email) {
-    this.connect();
-  }
-
-  /**
-   * Connect to the view.
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  connect () {
-    BzDeck.views.banner.open_tab({
-      label: 'Profile', // l10n
-      description: 'User Profile', // l10n
-      page: {
-        category: 'profile',
-        id: this.id,
-        constructor: BzDeck.ProfilePageView,
-        constructor_args: [this.id, this.id === BzDeck.account.data.name],
-      },
-    }, this);
-
-    BzDeck.collections.users.get(this.id, { name: this.id }).then(user => this.on_user_retrieved(user));
+    // Subscribe to events
+    this.subscribe('V#ProfileRequested');
   }
 
   /**
    * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
-   * @param {Proxy} user - UserModel instance.
+   * @listens ProfilePageView#ProfileRequested
+   * @param {undefined}
    * @returns {undefined}
    * @fires ProfilePagePresenter#GravatarProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFetchingError
    * @fires ProfilePagePresenter#BugzillaProfileFetchingComplete
    */
-  on_user_retrieved (user) {
-    let email = this.id;
+  on_profile_requested (user) {
+    let origin = BzDeck.host.origin;
+    let email = encodeURI(this.email);
 
-    this.user = user;
+    BzDeck.collections.users.get(this.email, { name: this.email }).then(user => {
+      this.user = user;
 
-    this.user.get_gravatar_profile().then(profile => {
-      this.trigger('#GravatarProfileFound', {
-        style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
+      this.user.get_gravatar_profile().then(profile => {
+        this.trigger('#GravatarProfileFound', {
+          style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
+        });
       });
-    });
 
-    this.user.get_bugzilla_profile().then(profile => {
-      this.trigger('#BugzillaProfileFound', {
-        profile: {
-          id: profile.id,
-          email: email,
-          emailLink: 'mailto:' + email,
-          name: this.user.original_name || this.user.name,
-          image: this.user.image,
-        },
-        links: {
-          'bugzilla-profile': BzDeck.host.origin + '/user_profile?login=' + encodeURI(email),
-          'bugzilla-activity': BzDeck.host.origin + '/page.cgi?id=user_activity.html&action=run&who=' + encodeURI(email),
-        },
-        style: {
-          'background-color': this.user.color,
-        },
+      this.user.get_bugzilla_profile().then(profile => {
+        this.trigger('#BugzillaProfileFound', {
+          profile: {
+            id: profile.id,
+            email: this.email,
+            emailLink: 'mailto:' + this.email,
+            name: this.user.original_name || this.user.name,
+            image: this.user.image,
+          },
+          links: {
+            'bugzilla-profile': `${origin}/user_profile?login=${email}`,
+            'bugzilla-activity': `${origin}/page.cgi?id=user_activity.html&action=run&who=${email}`,
+          },
+          style: {
+            'background-color': this.user.color,
+          },
+        });
+      }).catch(error => {
+        this.trigger('#BugzillaProfileFetchingError', { message: error.message });
+      }).then(() => {
+        this.trigger('#BugzillaProfileFetchingComplete');
       });
-    }).catch(error => {
-      this.trigger('#BugzillaProfileFetchingError', { message: error.message });
-    }).then(() => {
-      this.trigger('#BugzillaProfileFetchingComplete');
     });
   }
 }

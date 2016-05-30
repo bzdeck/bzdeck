@@ -10,11 +10,12 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
   /**
    * Get a MarkdownEditor instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $form - Form container element.
    * @returns {Object} view - New MarkdownEditor instance.
    */
-  constructor ($form) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, $form) {
+    super(id); // Assign this.id
 
     this.$toolbar = $form.querySelector('.text-formatting-toolbar');
     this.$textbox = $form.querySelector('textarea');
@@ -25,12 +26,12 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
         this.$textbox.focus();
       }
 
-      return this.helpers.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     });
 
     // Change the shortcut labels depending on the user's platform
     let kbd_regex = /\(Cmd\+(\w)\)$/;
-    let kbd_suffix = this.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
+    let kbd_suffix = FlareTail.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
 
     for (let $button of [...this.$toolbar.querySelectorAll('[role="button"]')]) {
       if ($button.title.match(kbd_regex)) {
@@ -38,7 +39,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
     }
 
-    this.helpers.kbd.assign(this.$textbox, {
+    FlareTail.helpers.kbd.assign(this.$textbox, {
       'Accel+B': event => this.exec_command('strong'),
       'Accel+I': event => this.exec_command('em'),
       'Accel+K': event => this.exec_command('a'),
@@ -67,7 +68,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
 
       // Fire an event to resize the textbox if needed
-      this.helpers.event.trigger(this.$textbox, 'input', {}, false);
+      FlareTail.helpers.event.trigger(this.$textbox, 'input', {}, false);
     };
 
     let bracket = (mark, mark2 = '') => {

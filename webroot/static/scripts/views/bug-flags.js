@@ -10,12 +10,13 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
   /**
    * Get a BugFlagsView instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Relevant bug with the flags.
    * @param {Proxy} [att] - Relevant attachment.
    * @returns {Object} view - New BugFlagsView instance.
    */
-  constructor (bug, att = undefined) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug, att = undefined) {
+    super(id); // Assign this.id
 
     this.bug = bug;
     this.att = att;
@@ -64,7 +65,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
         $_flag.querySelector(`[itemprop="${prop}"]`).setAttribute('aria-hidden', !_flag || !_flag[prop]);
       }
 
-      // let $$combobox = new this.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
+      // let $$combobox = new FlareTail.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
 
       // $$combobox.build_dropdown(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
       // $$combobox.bind('Change', event => {});

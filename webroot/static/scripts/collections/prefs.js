@@ -5,6 +5,7 @@
 /**
  * Define the Pref Collection that represents the user's application settings.
  * @extends BzDeck.BaseCollection
+ * @todo Move this to the worker thread.
  */
 BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
   /**
@@ -13,7 +14,7 @@ BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
    * @returns {Object} prefs - New PrefCollection instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'prefs';

@@ -11,17 +11,15 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   /**
    * Get a BugTimelineEntryView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if
    *  any.
    * @returns {DocumentFragment} $fragment - Generated entry node in a fragment.
    */
-  constructor(view_id, bug, data) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug, data) {
+    super(id); // Assign this.id
 
-    this.id = view_id;
     this.bug = bug;
     this.data = data;
   }
@@ -81,7 +79,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @fires BugView#CommentSelected
    */
   create_comment_entry () {
-    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let comment = this.data.get('comment');
     let time = comment.creation_time;
     let $entry = this.get_template('timeline-comment');
@@ -91,7 +89,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     let $time = $entry.querySelector('[itemprop="creation_time"]');
     let $reply_button = $entry.querySelector('[data-command="reply"]');
     let $comment_body = $entry.querySelector('[itemprop="text"]');
-    let $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
+    let $textbox = document.querySelector(`#bug-comment-form-${this.id} [role="textbox"]`);
 
     $entry.id = `${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
@@ -113,14 +111,14 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         let quote_header = `(In reply to ${author.name} from comment #${comment.count})`;
         let quote_lines = comment.text.split(/\n/).map(line => `> ${line}`);
         let quote = [quote_header, ...quote_lines].join('\n');
-        let $tabpanel = document.querySelector(`#${this.id}-comment-form-tabpanel-comment`);
-        let $textbox = document.querySelector(`#${this.id}-comment-form [role="textbox"]`);
+        let $tabpanel = document.querySelector(`#bug-comment-form-${this.id}-tabpanel-comment`);
+        let $textbox = document.querySelector(`#bug-comment-form-${this.id} [role="textbox"]`);
 
         $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
         // Move focus on the textbox. Use async to make sure the event always works
         Promise.resolve().then(() => $textbox.focus());
         // Trigger an event to do something. Disable async to make sure the following lines work
-        this.helpers.event.trigger($textbox, 'input', {}, false);
+        FlareTail.helpers.event.trigger($textbox, 'input', {}, false);
         // Scroll to make sure the comment is visible
         $tabpanel.scrollTop = $tabpanel.scrollHeight;
         $entry.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -161,7 +159,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
 
       // Assign keyboard shortcuts
-      this.helpers.kbd.assign($entry, {
+      FlareTail.helpers.kbd.assign($entry, {
         R: event => reply(),
         // Collapse/expand the comment
         C: event => collapse_comment(),
@@ -203,7 +201,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       $author.querySelector('[itemprop="name"]').textContent = author.name;
       $author.querySelector('[itemprop="email"]').content = author.email;
       $author.querySelector('[itemprop="image"]').src = author.image;
-      this.helpers.datetime.fill_element($time, time);
+      FlareTail.helpers.datetime.fill_element($time, time);
 
       // Mark unread
       $entry.setAttribute('data-unread', 'true');
@@ -378,7 +376,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       });
 
       $change.setAttribute('data-change-field', change.field_name);
-      this.helpers.datetime.fill_element($time, time);
+      FlareTail.helpers.datetime.fill_element($time, time);
 
       let _reviews = { added: new Set(), removed: new Set() };
       let _feedbacks = { added: new Set(), removed: new Set() };
@@ -615,7 +613,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   create_history_change_element (change, how) {
     let $elm = document.createElement('span');
     let render = str => $elm.innerHTML = str;
-    let ids;
 
     $elm.setAttribute('data-how', how);
 
@@ -643,7 +640,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         return `<a href="${url}">${url}</a>`;
       }).join(', '));
     } else {
-      render(this.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span'));
+      render(FlareTail.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span'));
     }
 
     return Promise.resolve($elm);

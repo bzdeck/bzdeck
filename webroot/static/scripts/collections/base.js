@@ -8,5 +8,6 @@ BzDeck.collections = BzDeck.collections || {};
  * Define the app's Base Collection. This constructor is intended to be inherited by the app's each collection.
  * @abstract
  * @extends FlareTail.app.Collection
+ * @todo Move this to the worker thread.
  */
 BzDeck.BaseCollection = class BaseCollection extends FlareTail.app.Collection {}

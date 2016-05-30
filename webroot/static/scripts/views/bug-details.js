@@ -10,23 +10,21 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Get a BugDetailsView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
-   * @param {Proxy} bug - Proxified BugModel instance.
-   * @param {HTMLElement} $bug - Outer element to display the content.
+   * @param {String} container_id - Unique instance identifier of the parent container view.
+   * @param {Number} bug_id - Bug ID to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugDetailsView instance.
    */
-  constructor (view_id, bug, $bug) {
-    super(view_id, bug, $bug, true);
+  constructor (container_id, bug_id, siblings, $bug) {
+    super(container_id, bug_id, siblings); // Assign this.id
 
     let mql = window.matchMedia('(max-width: 1023px)');
 
     this.$tablist = this.$bug.querySelector('[role="tablist"]');
     this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
-    this.$$tablist = new this.widgets.TabList(this.$tablist);
+    this.$$tablist = new FlareTail.widgets.TabList(this.$tablist);
     this.$outline = this.$bug.querySelector('.bug-outline');
-
-    this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
 
     this.$$tablist.bind('Selected', event => {
       let $selected = event.detail.items[0];
@@ -36,22 +34,20 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       $tabpanel.querySelector('.scrollable').scrollTop = 0;
 
       // Desktop: Show the outline pane only when the timeline tab is selected
-      if (!mql.matches && this.helpers.env.device.desktop) {
+      if (!mql.matches && FlareTail.helpers.env.device.desktop) {
         this.$outline.setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
       }
     });
 
-    this.subscribe('BugPresenter#HistoryUpdated');
-
-    // Call BzDeck.BugView.prototype.init
-    this.init();
-
     mql.addListener(mql => this.change_layout(mql));
     this.change_layout(mql);
 
-    if (this.helpers.env.device.mobile) {
+    if (FlareTail.helpers.env.device.mobile) {
       this.add_mobile_tweaks();
     }
+
+    // Subscribe to events
+    this.subscribe('BugPresenter#HistoryUpdated');
   }
 
   /**
@@ -66,7 +62,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     let $bug_info = this.$bug.querySelector('.bug-info');
     let $bug_participants = this.$bug.querySelector('.bug-participants');
 
-    if (mql.matches || this.helpers.env.device.mobile) {  // Mobile layout
+    if (mql.matches || FlareTail.helpers.env.device.mobile) {  // Mobile layout
       $info_tab.setAttribute('aria-hidden', 'false');
       $participants_tab.setAttribute('aria-hidden', 'false');
       this.$bug.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
@@ -168,7 +164,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   render_attachments () {
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
     let mql = window.matchMedia('(max-width: 1023px)');
     let $field = this.$bug.querySelector('[data-field="attachments"]');
 

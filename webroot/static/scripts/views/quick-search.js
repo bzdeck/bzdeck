@@ -10,16 +10,16 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Get a QuickSearchView instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @returns {Object} view - New QuickSearchView instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
     this.$input = document.querySelector('#quicksearch [role="searchbox"]');
     this.$button = document.querySelector('#quicksearch [role="button"]');
     this.$results = document.querySelector('#quicksearch-results');
-    this.$$results = new this.widgets.Menu(this.$results);
+    this.$$results = new FlareTail.widgets.Menu(this.$results);
 
     this.$input.addEventListener('input', event => this.oninput());
     this.$input.addEventListener('focus', event => this.oninput());
@@ -27,7 +27,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$input.addEventListener('mousedown', event => event.stopPropagation());
 
     // Suppress context menu
-    this.$input.addEventListener('contextmenu', event => this.helpers.event.ignore(event), true);
+    this.$input.addEventListener('contextmenu', event => FlareTail.helpers.event.ignore(event), true);
 
     this.$button.addEventListener('mousedown', event => { event.stopPropagation(); this.onsubmit() });
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
@@ -37,6 +37,9 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
     this.assign_keyboard_bindings();
     this.activate_results();
+
+    // Initiate the corresponding presenter
+    this.presenter = BzDeck.presenters.quick_search = new BzDeck.QuickSearchPresenter(this.id);
   }
 
   /**
@@ -45,14 +48,14 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   assign_keyboard_bindings () {
-    this.helpers.kbd.assign(window, {
+    FlareTail.helpers.kbd.assign(window, {
       'Accel+K': event => {
         this.$input.focus();
         event.preventDefault();
       },
     });
 
-    this.helpers.kbd.assign(this.$input, {
+    FlareTail.helpers.kbd.assign(this.$input, {
       'ArrowUp|ArrowDown': event => {
         if (this.$input.value.trim() && this.$results.matches('[aria-expanded="false"]')) {
           this.exec_quick_search();
@@ -64,7 +67,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
       },
     });
 
-    this.helpers.kbd.assign(this.$button, {
+    FlareTail.helpers.kbd.assign(this.$button, {
       'Enter|Space': event => {
         this.exec_advanced_search();
       },
@@ -110,7 +113,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   onsubmit () {
     let $root = document.documentElement; // <html>
 
-    if (this.helpers.env.device.mobile) {
+    if (FlareTail.helpers.env.device.mobile) {
       if (!$root.hasAttribute('data-quicksearch')) {
         $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here
@@ -262,7 +265,7 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
    * @returns {Object} view - New QuickSearchResultsView instance.
    */
   constructor (category, $outer) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.category = category;
     this.results = [];

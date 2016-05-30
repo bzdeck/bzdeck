@@ -5,17 +5,16 @@
 /**
  * Define the Statusbar Presenter that controls everything on the global application statusbar.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.StatusbarPresenter = class StatusbarPresenter extends BzDeck.BasePresenter {
   /**
    * Get a StatusbarPresenter instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New StatusbarPresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
-
-    BzDeck.views.statusbar = new BzDeck.StatusbarView();
+  constructor (id) {
+    super(id); // Assign this.id
   }
 }

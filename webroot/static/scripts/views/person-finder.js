@@ -10,14 +10,15 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
   /**
    * Get a PersonFinderView instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {String} combobox_id - ID of an element with the combobox role.
    * @param {Proxy} [bug] - Specific bug to search against.
    * @param {Set.<String>} [exclude] - List of Bugzilla user accounts that should be excluded from search results. For
    *  example, if the Person Finder is for Cc, the current Cc members should not be displayed on the results.
    * @returns {Object} view - New PersonFinderView instance.
    */
-  constructor (combobox_id, bug = undefined, exclude = new Set()) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, combobox_id, bug = undefined, exclude = new Set()) {
+    super(id); // Assign this.id
 
     this.bug = bug;
     this.participants = bug ? bug.participants : new Map();
@@ -28,7 +29,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
     this.$input = this.$combobox.querySelector('[role="searchbox"]');
     this.$option = this.get_template('person-finder-item');
 
-    this.$$combobox = new this.widgets.ComboBox(this.$combobox);
+    this.$$combobox = new FlareTail.widgets.ComboBox(this.$combobox);
     this.$$combobox.$container.id = this.combobox_id = combobox_id;
     this.$$combobox.on('Input', event => this.oninput(event));
   }
@@ -107,7 +108,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    */
   search (users = new Map()) {
     let has_colon = this.value.startsWith(':');
-    let re = new RegExp((has_colon ? '' : '\\b') + this.helpers.regexp.escape(this.value), 'i');
+    let re = new RegExp((has_colon ? '' : '\\b') + FlareTail.helpers.regexp.escape(this.value), 'i');
     let find = str => re.test(str);
     let results = new Map();
     let $fragment = new DocumentFragment();

@@ -10,17 +10,15 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Get a BugCommentFormView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Object} bug - BugModel instance.
    * @param {HTMLElement} $bug - Bug container element.
    * @returns {Object} view - New BugCommentFormView instance.
    * @fires BugView#Submit
    */
-  constructor (view_id, bug, $bug) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug, $bug) {
+    super(id); // Assign this.id
 
-    this.id = view_id;
     this.bug = bug;
     this.$bug = $bug;
 
@@ -29,7 +27,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$formatting_toolbar = this.$form.querySelector('.text-formatting-toolbar');
     this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
     this.$tablist = this.$form.querySelector('[role="tablist"]');
-    this.$$tablist = new this.widgets.TabList(this.$tablist);
+    this.$$tablist = new FlareTail.widgets.TabList(this.$tablist);
     this.$comment_tab = this.$form.querySelector('[id$="tab-comment"]');
     this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
     this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
@@ -41,14 +39,14 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
     this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
 
     for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
-      new this.widgets.ScrollBar($tabpanel);
+      new FlareTail.widgets.ScrollBar($tabpanel);
     }
 
     // Activate Markdown Editor
-    new BzDeck.MarkdownEditor(this.$form);
+    new BzDeck.MarkdownEditor(this.id, this.$form);
 
     this.$form.addEventListener('wheel', event => event.stopPropagation());
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
@@ -116,7 +114,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
 
     this.$textbox.addEventListener('input', event => this.oninput());
-    this.helpers.kbd.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView#Submit') });
+    FlareTail.helpers.kbd.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView#Submit') });
   }
 
   /**
@@ -156,7 +154,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     let $tab = this.$form.querySelector('[id$="tab-needinfo"]');
     let $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]');
     let $finder_outer = $tabpanel.querySelector('.requestee-finder-outer');
-    let $$finder = new BzDeck.PersonFinderView(`${this.id}-person-finder`, this.bug,
+    let $$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-person-finder`, this.bug,
                                                new Set([this.bug.creator, this.bug.assigned_to]));
     let $finder = $$finder.$combobox;
 
@@ -165,7 +163,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       let flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee };
       let $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);
       let $checkbox = $row.querySelector('[role="checkbox"]');
-      let $$checkbox = new this.widgets.CheckBox($checkbox);
+      let $$checkbox = new FlareTail.widgets.CheckBox($checkbox);
       let $label = $checkbox.querySelector('span');
 
       BzDeck.collections.users.get(requestee, { name: requestee }).then(_requestee => {
@@ -247,8 +245,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {Number} bug_id - Changed bug ID.
    * @param {Proxy} attachment - Added attachment data as an AttachmentModel instance.
    * @returns {undefined}
-   * @fires GlobalView#OpenAttachment
-   * @fires GlobalView#OpenBug
+   * @fires AnyView#OpeningAttachmentRequested
+   * @fires AnyView#OpeningBugRequested
    * @fires BugView#RemoveAttachment
    * @fires BugView#MoveUpAttachment
    * @fires BugView#MoveDownAttachment
@@ -259,8 +257,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     }
 
     let hash = attachment.hash;
-    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
-    let mobile = this.helpers.env.device.mobile;
+    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let mobile = FlareTail.helpers.env.device.mobile;
     let mql = window.matchMedia('(max-width: 1023px)');
     let $tbody = this.$attachments_tbody;
     let $row = this.get_template('bug-comment-form-attachments-row');
@@ -270,9 +268,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
       if (!this.id.startsWith('details-bug-') || mobile && mql.matches) {
-        this.trigger('GlobalView#OpenAttachment', { id: hash });
+        this.trigger('AnyView#OpeningAttachmentRequested', { id: hash });
       } else {
-        this.trigger('GlobalView#OpenBug', { id: this.bug.id, att_id: hash.substr(0, 7) });
+        this.trigger('AnyView#OpeningBugRequested', { id: this.bug.id, att_id: hash.substr(0, 7) });
       }
     });
 
@@ -359,7 +357,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       return;
     }
 
-    new this.widgets.Dialog({
+    new FlareTail.widgets.Dialog({
       type: 'alert',
       title: 'Error on attaching files', // l10n
       message: message.replace('\n', '<br>'),

@@ -70,8 +70,8 @@
 
   [id|="tabpanel-profile"] article > header [itemprop="image"] {
     left: 4rem;
-    width: 16rem;
-    height: 16rem;
+    width: 16rem !important;
+    height: 16rem !important;
   }
 
   [id|="tabpanel-profile"] article > header h3 {
@@ -99,8 +99,8 @@
 
   [id|="tabpanel-profile"] article > header [itemprop="image"] {
     left: 2rem;
-    width: 8rem;
-    height: 8rem;
+    width: 8rem !important;
+    height: 8rem !important;
   }
 
   [id|="tabpanel-profile"] article > header h3 {

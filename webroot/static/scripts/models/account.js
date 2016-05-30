@@ -5,6 +5,7 @@
 /**
  * Initialize the Account Model that represents the user's Bugzilla account. Available through the AccountCollection.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  */
 BzDeck.AccountModel = class AccountModel extends BzDeck.BaseModel {
   /**
@@ -14,7 +15,7 @@ BzDeck.AccountModel = class AccountModel extends BzDeck.BaseModel {
    * @returns {Proxy} account - New AccountModel instance.
    */
   constructor (data) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.global;
     this.store_name = 'accounts';

@@ -5,8 +5,19 @@
 /**
  * Define the Global DataSource that stores Bugzilla instances and user accounts.
  * @extends BzDeck.BaseDataSource
+ * @todo Move this to the worker thread.
  */
 BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
+  /**
+   * Get an GlobalDataSource instance. This is necessary to call the constructor of the base Event class.
+   * @constructor
+   * @param {undefined}
+   * @returns {Object} accounts - New GlobalDataSource instance.
+   */
+  constructor () {
+    super(); // Assign this.id
+  }
+
   /**
    * Preload the app-wide database.
    * @param {undefined}

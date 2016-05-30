@@ -8,27 +8,83 @@
  */
 BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
-   * Get a DetailsPageView instance.
+   * Called by the app router and initialize the Details Page View. If the specified bug has an existing tab, switch to
+   * it. Otherwise, open a new tab and try to load the bug.
    * @constructor
-   * @listens BugContainerPresenter#BugDataAvailable
-   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {Number} bug_id - ID of the bug to display.
    * @returns {Object} view - New DetailsPageView instance.
    */
-  constructor (instance_id, bug_id) {
-    super(); // This does nothing but is required before using `this`
+  constructor (bug_id) {
+    super(); // Assign this.id
 
-    this.id = instance_id;
     this.bug_id = bug_id;
-    this.$tab = document.querySelector(`#tab-details-${this.id}`);
-    this.$tabpanel = document.querySelector(`#tabpanel-details-${this.id}`);
-    this.container = new BzDeck.BugContainerView(this.id, this.$tabpanel);
 
-    this.on('BugContainerPresenter#BugDataAvailable', data => {
-      if (data.bug.id === this.bug_id) {
-        this.$tab.title = `Bug ${data.bug.id}\n${data.bug.summary || 'Loading...'}`; // l10n
-        BzDeck.views.global.update_window_title(this.$tab);
+    // Subscribe to events
+    this.on_safe('BugPresenter#BugDataAvailable');
+
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.DetailsPagePresenter(this.id);
+
+    this.activate();
+  }
+
+  /**
+   * Called by the app router to reuse the presenter.
+   * @param {Number} bug_id - Bug ID to show.
+   * @returns {undefined}
+   */
+  reactivate (bug_id) {
+    let $$tablist = BzDeck.views.banner.$$tablist;
+
+    // Find an existing tab. To enable navigation within a tab, the bug ID is not included to the tab's id attribute,
+    // that's why the tab look-up in BzDeck.views.banner.open_tab() is not working and we are doing it here instead.
+    // TODO: Refactor tabs and router relationship (#232)
+    for (let [page_id, page_view] of BzDeck.views.pages.details_list || []) {
+      if (page_view.bug_id === bug_id && page_view.$tab.parentElement) {
+        $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
+        BzDeck.views.global.update_window_title(page_view.$tab);
+
+        return;
       }
-    });
+    }
+
+    this.activate();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  activate () {
+    let siblings = history.state ? history.state.siblings : [];
+
+    BzDeck.views.banner.open_tab({
+      label: `Bug ${this.bug_id}`, // l10n
+      category: 'details',
+    }, this);
+
+    if (!this.container_view) {
+      this.$tab = document.querySelector(`#tab-details-${this.id}`);
+      this.$tabpanel = document.querySelector(`#tabpanel-details-${this.id}`);
+      this.container_view = new BzDeck.BugContainerView(this.id, this.$tabpanel);
+    }
+
+    this.container_view.on_adding_bug_requested({ bug_id: this.bug_id, siblings });
+  }
+
+  /**
+   * Called when the bug data is found.
+   * @listens BugPresenter#BugDataAvailable
+   * @param {Proxy} bug - Bug to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @returns {undefined}
+   */
+  on_bug_data_available ({ bug, siblings } = {}) {
+    if (bug.id === this.bug_id) {
+      this.$tab.title = `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
+      BzDeck.views.global.update_window_title(this.$tab);
+    }
   }
 }

@@ -9,24 +9,22 @@
 BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Get a BugTimelineView instance.
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @returns {Object} view - New BugTimelineView instance.
    */
-  constructor (view_id, bug, $bug, delayed) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, bug, $bug, delayed) {
+    super(id); // Assign this.id
 
-    this.id = view_id;
     this.bug = bug;
     this.$bug = $bug;
 
     let get_time = str => (new Date(str)).getTime();
     let entries = new Map([...this.bug.comments.entries()]
             .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
-    let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let read_comments_num = 0;
     let last_comment_time;
     let data_arr = [];
@@ -107,7 +105,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           delete this.$expander;
         });
 
-        return this.helpers.event.ignore(event);
+        return FlareTail.helpers.event.ignore(event);
       });
 
       $comments_wrapper.insertBefore($expander, $comments_wrapper.querySelector('article'));
@@ -116,6 +114,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $timeline.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
+    // Subscribe to events
     this.subscribe('PrefCollection#PrefChanged', true);
     this.subscribe('BugPresenter#HistoryUpdated');
   }
@@ -148,7 +147,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    */
   expand_comments () {
     if (this.$expander) {
-      this.$expander.dispatchEvent(new CustomEvent(this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
+      this.$expander.dispatchEvent(new CustomEvent(FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
     }
 
     for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
@@ -178,7 +177,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     let match = hash.match(/^#c(\d+)$/);
 
     if (match) {
-      let click_event_type = this.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+      let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
       let count = Number.parseInt(match[1]);
       let $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 

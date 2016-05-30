@@ -5,18 +5,18 @@
 /**
  * Define the Session Presenter serving as the application bootstrapper. The member functions require refactoring.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Get a SessionPresenter instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
+   * @param {URLSearchParams} params - Search parameters.
    * @returns {Object} presenter - New SessionPresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
-
-    let params = new URLSearchParams(location.search.substr(1));
+  constructor (id, params) {
+    super(id); // Assign this.id
 
     BzDeck.config.debug = params.get('debug') === 'true';
 
@@ -24,11 +24,6 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
     BzDeck.datasources.global = new BzDeck.GlobalDataSource();
     BzDeck.datasources.account = new BzDeck.AccountDataSource();
-    BzDeck.presenters.global = new BzDeck.GlobalPresenter();
-    BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
-
-    new BzDeck.SessionView();
-    new BzDeck.LoginFormView(params);
 
     // Register service workers. Due to the scope limitation, those files should be on the root directory
     navigator.serviceWorker.register('/service-worker.js');
@@ -94,7 +89,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
           this.trigger('#Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
         }
       });
-    }, true);
+    });
 
     this.on('LoginFormView#QRCodeDecoded', data => {
       if (data.result && data.result.match(/^.+@.+\..+\|[A-Za-z0-9]{40}$/)) {
@@ -102,11 +97,11 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       } else {
         this.trigger('#Error', { message: 'Your QR code could not be detected nor decoded. Try again.' });
       }
-    }, true);
+    });
 
     this.on('LoginFormView#QRCodeError', data => {
       this.trigger('#Error', { message: 'Failed to access a camera on your device. Try again.' });
-    }, true);
+    });
   }
 
   /**
@@ -231,29 +226,18 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
     new Promise((resolve, reject) => {
       this.relogin ? resolve() : reject();
-    }).catch(error => Promise.all([
+    }).catch(error => {
       // Finally load the UI modules
-      BzDeck.presenters.global.init(),
-      BzDeck.presenters.banner = new BzDeck.BannerPresenter(),
-      BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
-        BzDeck.presenters.sidebar = new BzDeck.SidebarPresenter(user);
-      }),
-      BzDeck.presenters.statusbar = new BzDeck.StatusbarPresenter(),
-    ])).then(() => {
+      this.trigger('#DataLoaded');
+    }).then(() => {
       let endpoint = BzDeck.host.websocket_endpoint;
+
+      BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
 
       // Connect to the push notification server if available
       if (endpoint) {
         BzDeck.models.bugzfeed.connect(endpoint);
       }
-    }).then(() => {
-      // Activate the router
-      BzDeck.router.locate();
-    }).then(() => {
-      // Timer to check for updates, call every 5 minutes or per minute if debugging is enabled
-      BzDeck.presenters.global.timers.set('fetch_subscriptions',
-          window.setInterval(() => BzDeck.collections.subscriptions.fetch(),
-                             1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
     }).then(() => {
       this.trigger('#StatusUpdate', { message: 'Loading complete.' }); // l10n
       this.login();
@@ -310,24 +294,3 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     BzDeck.models.bugzfeed.disconnect();
   }
 }
-
-window.addEventListener('DOMContentLoaded', event => {
-  if (FlareTail.compatible && BzDeck.compatible) {
-    // Define the router
-    BzDeck.router = new FlareTail.app.Router(BzDeck.config.app, {
-      '/attachment/(\\d+|[a-z0-9]{32})': { presenter: BzDeck.AttachmentPagePresenter },
-      '/bug/(\\d+)': { presenter: BzDeck.DetailsPagePresenter },
-      '/home/(\\w+)': { presenter: BzDeck.HomePagePresenter, catch_all: true },
-      '/profile/(.+)': { presenter: BzDeck.ProfilePagePresenter },
-      '/search/(\\d{13,})': { presenter: BzDeck.SearchPagePresenter },
-      '/settings': { presenter: BzDeck.SettingsPagePresenter },
-    });
-
-    // Bootstrapper
-    BzDeck.presenters.session = new BzDeck.SessionPresenter();
-  }
-});
-
-window.addEventListener('beforeunload', event => {
-  BzDeck.presenters.session.clean();
-});

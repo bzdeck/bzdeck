@@ -14,7 +14,7 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
    * @returns {Object} view - New StatusbarView instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.$statusbar = document.querySelector('#app-login [role="status"]');
 
@@ -33,6 +33,9 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
         return true;
       },
     });
+
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.StatusbarPresenter(this.id);
   }
 
   /**

@@ -5,6 +5,7 @@
 /**
  * Initialize the Host Model that represents a remote Bugzilla instance. Available through the HostCollection.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  */
 BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
   /**
@@ -14,7 +15,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @returns {Proxy} bug - New HostModel instance.
    */
   constructor (data) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.global;
     this.store_name = 'bugzilla';
@@ -112,7 +113,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     }
 
     // Fetch the config via BzAPI
-    return this.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1').then(config => {
+    return FlareTail.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1').then(config => {
       if (config && config.version) {
         let config_retrieved = this.data.config_retrieved = Date.now();
 

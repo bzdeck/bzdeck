@@ -2,6 +2,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+.bug-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.bug-container[role="tabpanel"][aria-hidden="true"] {
+  display: none;
+}
+
+.bug-container > [itemtype$="Bug"] {
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: 100%;
+}
+
 article[id$="preview-bug"] {
   display: flex;
   position: relative;

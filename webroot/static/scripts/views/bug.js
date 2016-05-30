@@ -11,43 +11,72 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Get a BugView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
-   * @param {Proxy} bug - Proxified BugModel instance.
-   * @param {HTMLElement} $bug - Outer element to display the content.
-   * @param {Boolean [subclass=false] - Whether the constructor is called from a subclass.
+   * @param {String} container_id - Unique instance identifier of the parent container view.
+   * @param {Number} bug_id - Bug ID to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugView instance.
    */
-  constructor (view_id, bug, $bug, subclass = false) {
-    super(); // This does nothing but is required before using `this`
+  constructor (container_id, bug_id, siblings) {
+    super(); // Assign this.id
 
-    this.id = view_id;
-    this.bug = bug;
-    this.$bug = $bug;
+    this.container_id = container_id;
+    this.bug_id = bug_id;
+    this.siblings = siblings;
+    this.$bug = this.get_template('bug-details-template', this.id);
 
-    if (subclass) {
-      return;
-    }
+    this.$bug.setAttribute('data-bug-id', this.bug_id);
+    this.$bug.setAttribute('aria-busy', 'true');
 
-    this.init();
+    // Subscribe to events
+    this.subscribe_safe('BugPresenter#BugDataAvailable');
+    this.subscribe('BugPresenter#BugDataUnavailable');
+
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.BugPresenter(this.id, this.container_id, this.bug_id, this.siblings);
+
+    // Load the bug
+    Promise.resolve().then(() => this.trigger('BugView#Initialized'));
   }
 
   /**
-   * Start rendering the content, activate the widgets and event listeners.
-   * @param {undefined}
-   * @returns {undefined}
+   * Called when the bug data is found. Prepare the newly opened tabpanel.
+   * @listens BugPresenter#BugDataAvailable
+   * @param {Proxy} bug - Bug to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @returns {Boolean} result - Whether the view is updated.
    */
-  init () {
+  on_bug_data_available ({ bug, siblings } = {}) {
+    this.bug = bug;
     this.render();
     this.init_att_drop_target();
 
     // Custom scrollbars
     this.scrollbars = new Set([...this.$bug.querySelectorAll('.scrollable')]
-                                  .map($area => new this.widgets.ScrollBar($area)));
+                                  .map($area => new FlareTail.widgets.ScrollBar($area)));
 
     this.subscribe_safe('BugModel#AnnotationUpdated', true); // Enable the global option
     this.subscribe_safe('BugModel#Updated', true); // Cannot be 'M#Updated' because it doesn't work in BugDetailsView
     this.subscribe_safe('BugView#FilesSelected');
+  }
+
+  /**
+   * Called when an error was encountered while fetching the bug data. Show the error message.
+   * @listens BugContainerPresenter#BugDataUnavailable
+   * @param {Number} code - Error code usually defined by Bugzilla.
+   * @param {String} message - Error message text.
+   * @returns {Boolean} result - Whether the view is updated.
+   */
+  on_bug_data_unavailable ({ code, message } = {}) {
+    let $error = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
+      id: this.bug_id,
+      status: message,
+    }, {
+      'data-error-code': code,
+    });
+
+    this.$bug.parentElement.replaceChild($error, this.$bug);
   }
 
   /**
@@ -62,7 +91,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return;
     }
 
-    new this.widgets.Button($button);
+    new FlareTail.widgets.Button($button);
 
     let $timeline = this.$bug.querySelector('.bug-timeline');
     let $menu = document.getElementById($button.getAttribute('aria-owns'));
@@ -137,6 +166,62 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       $tweet_link.href = href;
     }
+
+    // Set Back & Forward navigation
+    if (this.siblings.length) {
+      this.setup_navigation();
+    }
+  }
+
+  /**
+   * Set up the Back and Forward navigation when applicable, including the toolbar buttons and keyboard shortcuts.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  setup_navigation () {
+    let Button = FlareTail.widgets.Button;
+    let $toolbar = this.$bug.querySelector('[role="toolbar"]');
+    let $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]'));
+    let $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]'));
+    let index = this.siblings.indexOf(this.bug_id);
+    let prev = this.siblings[index - 1];
+    let next = this.siblings[index + 1];
+    let assign_key_binding = (key, command) => FlareTail.helpers.kbd.assign(this.$bug, { [key]: command });
+
+    let set_button_tooltip = (id, $$button) => BzDeck.collections.bugs.get(id).then(bug => {
+      $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
+    });
+
+    if (prev) {
+      set_button_tooltip(prev, $$btn_back);
+      $$btn_back.data.disabled = false;
+      $$btn_back.bind('Pressed', event => this.navigate(prev));
+      assign_key_binding('B', event => this.navigate(prev));
+    } else {
+      $$btn_back.data.disabled = true;
+    }
+
+    if (next) {
+      set_button_tooltip(next, $$btn_forward);
+      $$btn_forward.data.disabled = false;
+      $$btn_forward.bind('Pressed', event => this.navigate(next));
+      assign_key_binding('F', event => this.navigate(next));
+    } else {
+      $$btn_forward.data.disabled = true;
+    }
+
+    // Prepare the Back button on the mobile banner
+    BzDeck.views.banner.add_back_button(this.$bug);
+  }
+
+  /**
+   * Switch to another bug within the same tab through the Back and Forward navigation.
+   * @param {Number} new_id - ID of the bug to show next.
+   * @returns {undefined}
+   * @fires BugContainerView#NavigationRequested
+   */
+  navigate (new_id) {
+    this.trigger('BugView#NavigationRequested', { old_id: this.bug_id, new_id });
   }
 
   /**
@@ -147,8 +232,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @fires BugView#OpeningTabRequested
    */
   render () {
-    this.$bug.dataset.id = this.bug.id;
-
     if (!this.bug.summary && !this.bug._update_needed) {
       // The bug is being loaded
       return;
@@ -192,7 +275,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       this.set_product_tooltips();
     });
 
-    let init_button = ($button, handler) => (new this.widgets.Button($button)).bind('Pressed', handler);
+    let init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
     let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
@@ -227,7 +310,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     $timeline.setAttribute('aria-busy', 'true');
-    BzDeck.views.statusbar.show('Loading...'); // l10n
 
     // Empty timeline while keeping the scrollbar
     for (let $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
@@ -264,7 +346,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     // Assign keyboard shortcuts
     if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
-      this.helpers.kbd.assign($timeline, {
+      FlareTail.helpers.kbd.assign($timeline, {
         // Toggle star
         S: event => this.bug.starred = !this.bug.starred,
         // Reply
@@ -276,18 +358,23 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       $timeline.setAttribute('keyboard-shortcuts-enabled', 'true');
     }
+
+    if (this.$tablist && this.$tablist.querySelector('[id$="history"]')) {
+      this.$tablist.querySelector('[id$="history"]').setAttribute('aria-disabled', !(this.bug.history || []).length);
+    }
   }
 
   /**
    * Render the bug data on the view.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @returns {undefined}
-   * @fires GlobalView#OpenBug
+   * @fires AnyView#OpeningBugRequested
+   * @fires BugView#RenderingComplete
    */
   fill_details (delayed) {
     // When the comments and history are loaded async, the template can be removed
     // or replaced at the time of call, if other bug is selected by user
-    if (!this.$bug || Number.parseInt(this.$bug.dataset.id) !== this.bug.id) {
+    if (!this.$bug) {
       return;
     }
 
@@ -310,8 +397,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
                                                   [itemprop="duplicate"]')) {
         $li.setAttribute('data-bug-id', $li.textContent);
 
-        (new this.widgets.Button($li)).bind('Pressed', event => {
-          this.trigger('GlobalView#OpenBug', { id: Number(event.target.textContent) });
+        (new FlareTail.widgets.Button($li)).bind('Pressed', event => {
+          this.trigger('AnyView#OpeningBugRequested', { id: Number(event.target.textContent) });
         });
       }
 
@@ -340,7 +427,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       // Flags, only on the details tabs
       if (this.render_tracking_flags) {
         window.setTimeout(() => {
-          new BzDeck.BugFlagsView(this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+          new BzDeck.BugFlagsView(this.id, this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
           this.render_tracking_flags();
         }, 200)
       }
@@ -360,7 +447,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         window.setTimeout(() => this.render_history(), 300);
       }
     }).then(() => {
-      BzDeck.views.statusbar.show('');
+      this.$bug.removeAttribute('aria-busy');
+      this.trigger('BugView#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id });
     });
   }
 
@@ -386,7 +474,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Activate comboboxes
       if ($combobox) {
-        let $$combobox = new this.widgets.ComboBox($combobox);
+        let $$combobox = new FlareTail.widgets.ComboBox($combobox);
 
         this.comboboxes.set($combobox, $$combobox);
         $combobox.setAttribute('aria-disabled', !can_editbugs);
@@ -406,7 +494,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Activate textboxes
       if ($textbox) {
-        let $$textbox = new this.widgets.TextBox($textbox);
+        let $$textbox = new FlareTail.widgets.TextBox($textbox);
 
         $textbox.tabIndex = 0;
         $textbox.spellcheck = false;
@@ -632,7 +720,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    */
   set_product_tooltips () {
     let config = BzDeck.host.data.config;
-    let strip_tags = str => this.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
+    let strip_tags = str => FlareTail.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
     let classification = config.classification[this.bug.classification];
     let product = config.product[this.bug.product];
     let component;

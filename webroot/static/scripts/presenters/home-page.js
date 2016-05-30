@@ -5,50 +5,28 @@
 /**
  * Define the Home Page Presenter.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Home Page Presenter. Select the specified Sidebar folder.
+   * Get a HomePagePresenter instance.
    * @constructor
-   * @listens HomePageView#UnknownFolderSelected
-   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New HomePagePresenter instance.
    */
-  constructor (folder_id) {
-    super(); // This does nothing but is required before using `this`
-
-    this.id = Date.now();
-    this.container = new BzDeck.BugContainerPresenter(this.id);
+  constructor (id) {
+    super(id); // Assign this.id
 
     this.data = new Proxy({
       bugs: new Map(),
       preview_id: null
     },
     {
-      get: (obj, prop) => {
-        if (prop === 'sorted_bugs') {
-          // Return a sorted bug list (Promise)
-          return this.view.get_shown_bugs(obj.bugs);
-        }
-
-        return obj[prop];
-      },
       set: (obj, prop, newval) => {
         let oldval = obj[prop];
 
         if (prop === 'preview_id') {
-          // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-          if (this.view.preview_is_hidden) {
-            this.data.sorted_bugs.then(bugs => {
-              BzDeck.router.navigate('/bug/' + newval, { ids: [...bugs.keys()] });
-            });
-
-            return true; // Do not save the value
-          }
-
-          if (oldval !== newval) {
-            this.data.sorted_bugs.then(bugs => this.container.add_bug(newval, [...bugs.keys()]));
-          }
+          BzDeck.router.navigate(location.pathname, { preview_id: newval }, true);
         }
 
         obj[prop] = newval;
@@ -57,19 +35,19 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
       }
     });
 
-    this.on('V#UnknownFolderSelected', data => BzDeck.router.navigate('/home/inbox'));
+    // Subscribe to events
+    this.subscribe('V#UnknownFolderSelected');
 
     BzDeck.presenters.homepage = this;
-    this.view = BzDeck.views.pages.home = new BzDeck.HomePageView(this);
-    this.view.connect(folder_id);
   }
 
   /**
-   * Called by the app router to reuse the presenter.
-   * @param {String} folder_id - One of the folder identifiers defined in the app config.
+   * Called whenever an unknown folder is selected in the sidebar.
+   * @listens HomePageView#UnknownFolderSelected
+   * @param {undefined}
    * @returns {undefined}
    */
-  reconnect (folder_id) {
-    this.view.connect(folder_id);
+  on_unknown_folder_selected () {
+    BzDeck.router.navigate('/home/inbox');
   }
 }

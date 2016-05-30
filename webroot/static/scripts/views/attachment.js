@@ -11,44 +11,68 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Get a AttachmentView instance.
    * @constructor
-   * @param {Proxy} att - AttachmentModel instance.
+   * @param {String} id - Unique instance identifier shared with the parent view.
+   * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @param {HTMLElement} $placeholder - Node to show the attachment.
    * @returns {Object} view - New AttachmentView instance.
    */
-  constructor (att, $placeholder) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, att_id, $placeholder) {
+    super(id); // Assign this.id
 
-    this.attachment = att;
+    this.att_id = att_id;
     this.$placeholder = $placeholder;
 
-    BzDeck.collections.bugs.get(att.bug_id).then(bug => {
-      this.bug = bug;
-    }).then(() => {
-      return BzDeck.collections.users.get(att.creator, { name: att.creator });
-    }).then(_creator => {
-      this.$attachment = this.fill(this.get_template('details-attachment-content'), {
-        summary: att.summary,
-        file_name: att.file_name,
-        size: FlareTail.helpers.number.format_file_size(att.size),
-        content_type: att.content_type,
-        is_patch: !!att.is_patch,
-        is_obsolete: !!att.is_obsolete,
-        creation_time: att.creation_time,
-        last_change_time: att.last_change_time,
-        creator: _creator.properties,
-      }, {
-        'data-att-id': att.id, // existing attachment
-        'data-att-hash': att.hash, // unuploaded attachment
-        'data-content-type': att.content_type,
-      });
-    }).then(() => {
-      this.$outer = this.$attachment.querySelector('.body');
+    // Subscribe to events
+    this.subscribe_safe('P#AttachmentAvailable');
+    this.subscribe_safe('P#AttachmentUnavailable');
+    this.subscribe('P#LoadingStarted');
+    this.subscribe('P#LoadingError');
 
-      new BzDeck.BugFlagsView(this.bug, att).render(this.$attachment.querySelector('.flags'), 6);
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.AttachmentPresenter(this.id, this.att_id);
 
-      this.activate();
-      this.render();
+    this.presenter.get_attachment();
+  }
+
+  /**
+   * Called when the attachment is found. Render it on the page.
+   * @listens AttachmentPresenter#AttachmentAvailable
+   * @param {Proxy} attachment - Prepared attachment data.
+   * @returns {undefined}
+   */
+  on_attachment_available ({ attachment } = {}) {
+    this.attachment = attachment;
+
+    this.$attachment = this.fill(this.get_template('details-attachment-content'), attachment, {
+      'data-att-id': attachment.id, // existing attachment
+      'data-att-hash': attachment.hash, // unuploaded attachment
+      'data-content-type': attachment.content_type,
     });
+
+    this.activate_widgets();
+    this.render();
+  }
+
+  /**
+   * Called when the attachment is not found. Show an error message on the page.
+   * @listens AttachmentPresenter#AttachmentUnavailable
+   * @param {String} message - Error message.
+   * @returns {undefined}
+   */
+  on_attachment_unavailable ({ message } = {}) {
+    let id = this.att_id;
+
+    BzDeck.views.statusbar.show(`The attachment ${id} could not be retrieved. ${message}`); // l10n
+  }
+
+  /**
+   * Called when loading the attachment started. Show a message accordingly.
+   * @listens AttachmentPresenter#LoadingStarted
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  on_loading_started () {
+    BzDeck.views.statusbar.show('Loading...'); // l10n
   }
 
   /**
@@ -57,7 +81,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    * @fires AttachmentView#EditAttachment
    */
-  activate () {
+  activate_widgets () {
     let { id, hash } = this.attachment;
 
     for (let $prop of this.$attachment.querySelectorAll('[itemprop]')) {
@@ -70,7 +94,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       let trigger = value => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
-        let $$textbox = new this.widgets.TextBox($prop);
+        let $$textbox = new FlareTail.widgets.TextBox($prop);
 
         $$textbox.bind('Edited', event => {
           let value = event.detail.value;
@@ -85,9 +109,13 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
 
       if ($prop.matches('[role="checkbox"]')) {
-        (new this.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
+        (new FlareTail.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
       }
     }
+
+    new FlareTail.widgets.ScrollBar($attachment);
+    new BzDeck.BugFlagsView(this.id, this.attachment.bug, this.attachment)
+        .render(this.$attachment.querySelector('.flags'), 6);
   }
 
   /**
@@ -101,6 +129,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$attachment.setAttribute('itemprop', 'attachment');
     this.$placeholder.innerHTML = '';
     this.$placeholder.appendChild(this.$attachment);
+
+    this.$outer = this.$attachment.querySelector('.body');
 
     if (media_type === 'image') {
       this.$media = new Image();
@@ -154,7 +184,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$outer.setAttribute('aria-busy', 'true');
 
     this.attachment.get_data('text').then(result => {
-      Promise.resolve().then(() => this.$outer.appendChild(new BzDeck.PatchViewerView(result.text)));
+      Promise.resolve().then(() => this.$outer.appendChild(new BzDeck.PatchViewerView(this.id, result.text)));
       this.$attachment.classList.add('patch');
     }, error => {
       this.render_error(error);

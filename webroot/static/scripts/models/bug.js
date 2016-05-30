@@ -5,6 +5,7 @@
 /**
  * Define the Bug Model that represents a downloaded bug. Available through the BugCollection.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
  */
 BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
@@ -16,11 +17,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    *  instead of bug.data.prop.
    */
   constructor (data) {
-    super(); // This does nothing but is required before using `this`
+    super(data.id); // Assign this.id
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'bugs';
-    this.id = data.id;
 
     // [2015-08-10] Remove unnecessary attachment data introduced by a bug on AttachmentModel
     for (let key of Object.keys(data)) if (!isNaN(key)) {

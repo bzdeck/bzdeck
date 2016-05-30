@@ -10,11 +10,12 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Get a LoginFormView instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {URLSearchParams} params - Query info in the current URL.
    * @returns {Object} view - New LoginFormView instance.
    */
-  constructor (params) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, params) {
+    super(id); // Assign this.id
 
     // TODO: Users will be able to choose an instance on the sign-in form; Hardcode the host for now
     this.host = params.get('server') === 'dev' ? 'mozilla-dev' : 'mozilla';
@@ -25,13 +26,14 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // Hide the incompatible browser message
     this.show_status('');
 
+    // Subscribe to events
     this.subscribe('SessionPresenter#StatusUpdate', true);
     this.subscribe('SessionPresenter#Error', true);
     this.subscribe('SessionPresenter#Logout', true);
 
     this.activate_bugzilla_auth();
 
-    if (this.helpers.env.device.mobile) {
+    if (FlareTail.helpers.env.device.mobile) {
       this.activate_qrcode_auth();
     }
   }

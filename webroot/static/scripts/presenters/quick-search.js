@@ -5,19 +5,19 @@
 /**
  * Define the Quick Search Presenter that controls the Quick Search functionality on the application header.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePresenter {
   /**
    * Get a QuickSearchPresenter instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New QuickSearchPresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
-    BzDeck.views.quick_search = new BzDeck.QuickSearchView();
-
+    // Subscribe to events
     this.on('V#RecentSearchesRequested', data => this.provide_recent_searches());
     this.on('V#QuickSearchRequested', data => this.exec_quick_search(data.input));
     this.on('V#AdvancedSearchRequested', data => this.exec_advanced_search(data.input));
@@ -147,7 +147,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       params.append('resolution', '---'); // Search only open bugs
     }
 
-    BzDeck.router.navigate(`/search/${Date.now()}`, { 'params' : params.toString() });
+    BzDeck.router.navigate('/search/' + FlareTail.helpers.misc.hash(), { 'params' : params.toString() });
   }
 
   /**

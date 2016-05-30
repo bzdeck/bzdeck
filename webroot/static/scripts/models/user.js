@@ -5,6 +5,7 @@
 /**
  * Define the User Model that represents a Bugzilla user. Available through the UserCollection.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
 BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
@@ -17,7 +18,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @fires UserModel#UserInfoUpdated
    */
   constructor (data) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'users';
@@ -160,8 +161,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
-   * access, delegate the process to GlobalPresenter.
-   * @listens GlobalPresenter#GravatarProfileProvided
+   * access, delegate the process to GlobalView.
+   * @listens GlobalView#GravatarProfileProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @fires UserModel#GravatarProfileRequested
@@ -177,7 +178,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise((resolve, reject) => {
-      this.on('GlobalPresenter#GravatarProfileProvided', ({ hash, profile } = {}) => {
+      this.on('GlobalView#GravatarProfileProvided', ({ hash, profile } = {}) => {
         if (hash === this.hash) {
           if (profile) {
             resolve(profile);
@@ -195,7 +196,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
             this.save();
           }
         }
-      });
+      }, true);
 
       this.trigger('#GravatarProfileRequested', { hash: this.hash });
     });
@@ -203,8 +204,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
 
   /**
    * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
-   * Because this requires DOM access, delegate the process to GlobalPresenter.
-   * @listens GlobalPresenter#GravatarImageProvided
+   * Because this requires DOM access, delegate the process to GlobalView.
+   * @listens GlobalView#GravatarImageProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @fires UserModel#GravatarImageRequested
@@ -218,7 +219,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     return new Promise(resolve => {
       let { hash, color, initial } = this;
 
-      this.on('GlobalPresenter#GravatarImageProvided', data => {
+      this.on('GlobalView#GravatarImageProvided', data => {
         if (data.hash === hash) {
           resolve(data.blob);
 
@@ -229,7 +230,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
             this.save();
           }
         }
-      });
+      }, true);
 
       this.trigger('#GravatarImageRequested', { hash, color, initial });
     });

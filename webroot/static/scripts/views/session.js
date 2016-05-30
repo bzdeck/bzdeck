@@ -14,10 +14,34 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @returns {Object} view - New SessionView instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
-    this.on('P#Login', () => this.login());
-    this.on('P#Logout', () => this.logout());
+    let params = new URLSearchParams(location.search.substr(1));
+
+    // Subscribe to events
+    this.subscribe('P#DataLoaded');
+    this.subscribe('P#Login');
+    this.subscribe('P#Logout');
+
+    // Initiate the corresponding presenter and sub-view
+    this.presenter = BzDeck.presenters.session = new BzDeck.SessionPresenter(this.id, params);
+    this.login_form_view = new BzDeck.LoginFormView(this.id, params);
+  }
+
+  /**
+   * Called once the user data is loaded. Set up global UI modules.
+   * @listens SessionPresenter#DataLoaded
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  on_data_loaded () {
+    BzDeck.views.global = new BzDeck.GlobalView();
+    BzDeck.views.banner = new BzDeck.BannerView();
+    BzDeck.views.sidebar = new BzDeck.SidebarView();
+    BzDeck.views.statusbar = new BzDeck.StatusbarView();
+
+    // Activate the router once everything is ready
+    BzDeck.router.locate();
   }
 
   /**
@@ -28,7 +52,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @returns {undefined}
    * @todo Focus handling.
    */
-  login () {
+  on_login () {
     this.$app_login = document.querySelector('#app-login');
     this.$app_body = document.querySelector('#app-body');
 
@@ -44,7 +68,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @param {undefined}
    * @returns {undefined}
    */
-  logout () {
+  on_logout () {
     BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('.statusbar');
     BzDeck.views.statusbar.show('You have logged out.'); // l10n
 
@@ -52,3 +76,20 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
     this.$app_body.setAttribute('aria-hidden', 'true');
   }
 }
+
+window.addEventListener('DOMContentLoaded', event => {
+  if (FlareTail.compatible && BzDeck.compatible) {
+    // Define the router
+    BzDeck.router = new FlareTail.app.Router(BzDeck.config.app, {
+      '/attachment/(\\d+|[a-z0-9]{7})': { view: BzDeck.AttachmentPageView },
+      '/bug/(\\d+)': { view: BzDeck.DetailsPageView },
+      '/home/(\\w+)': { view: BzDeck.HomePageView, catch_all: true },
+      '/profile/(.+)': { view: BzDeck.ProfilePageView },
+      '/search/([a-z0-9]{7})': { view: BzDeck.SearchPageView },
+      '/settings': { view: BzDeck.SettingsPageView },
+    });
+
+    // Bootstrapper
+    BzDeck.views.session = new BzDeck.SessionView();
+  }
+});

@@ -8,44 +8,73 @@
  */
 BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
-   * Get a AttachmentPageView instance.
+   * Called by the app router and initialize the Attachment Page View. If the specified attachment has an existing tab,
+   * switch to it. Otherwise, open a new tab and try to load the attachment.
    * @constructor
-   * @param {Number} page_id - 13-digit identifier for a new instance, generated with Date.now().
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @returns {Object} view - New AttachmentPageView instance.
    */
-  constructor (page_id, att_id) {
-    super(); // This does nothing but is required before using `this`
+  constructor (att_id) {
+    super(); // Assign this.id
 
-    this.id = page_id;
     this.att_id = att_id;
+
+    // Subscribe to events
+    this.subscribe_safe('P#AttachmentAvailable');
+    this.subscribe('P#LoadingComplete');
+
+    this.activate();
+  }
+
+  /**
+   * Called by the app router to reuse the view.
+   * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
+   * @returns {undefined}
+   */
+  reactivate (att_id) {
+    let $$tablist = BzDeck.views.banner.$$tablist;
+
+    // Find an existing tab
+    for (let [page_id, page_view] of BzDeck.views.pages.attachment_list || []) {
+      if (page_view.att_id === this.att_id && page_view.$tab.parentElement) {
+        $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
+
+        return;
+      }
+    }
+
+    this.activate();
+  }
+
+  /**
+   * Activate the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  activate () {
+    BzDeck.views.banner.open_tab({
+      label: isNaN(this.att_id) ? 'New Attachment' : `Attachment ${this.att_id}`, // l10n
+      category: 'attachment',
+    }, this);
 
     this.$tab = document.querySelector(`#tab-attachment-${this.id}`);
     this.$tabpanel = document.querySelector(`#tabpanel-attachment-${this.id}`);
     this.$tabpanel.querySelector('h2 [itemprop="id"]').textContent = this.att_id;
+    this.$placeholder = this.$tabpanel.querySelector('article > div');
 
-    this.subscribe_safe('P#AttachmentAvailable');
-    this.subscribe_safe('P#AttachmentUnavailable');
-    this.subscribe('P#Offline');
-    this.subscribe('P#LoadingStarted');
-    this.subscribe('P#LoadingError');
-    this.subscribe('P#LoadingComplete');
+    // Initiate the corresponding presenter and sub-view
+    this.presenter = new BzDeck.AttachmentPagePresenter(this.id, this.att_id);
+    this.attachment_view = new BzDeck.BzDeck.AttachmentView(this.id, this.att_id, this.$placeholder);
   }
 
   /**
    * Called when the attachment is found. Render it on the page.
-   * @listens AttachmentPagePresenter#AttachmentAvailable
-   * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
+   * @listens AttachmentPresenter#AttachmentAvailable
+   * @param {Proxy} attachment - Prepared attachment data.
    * @returns {undefined}
    */
   on_attachment_available ({ attachment } = {}) {
-    this.attachment = attachment;
-
-    let $attachment = this.$tabpanel.querySelector('article > div');
     let { id, hash, summary } = attachment;
-
-    new this.widgets.ScrollBar($attachment);
-    new BzDeck.AttachmentView(attachment, $attachment);
 
     if (hash) {
       this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n
@@ -57,53 +86,8 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Called when the attachment is not found. Show an error message on the page.
-   * @listens AttachmentPagePresenter#AttachmentUnavailable
-   * @param {Proxy}  attachment - Added attachment data as an AttachmentModel instance.
-   * @returns {undefined}
-   */
-  on_attachment_unavailable ({ attachment } = {}) {
-    let id = this.att_id;
-    let error = attachment && attachment.error ? attachment.error : '';
-
-    BzDeck.views.statusbar.show(`The attachment ${id} could not be retrieved. ${error}`); // l10n
-  }
-
-  /**
-   * Called when the attachment cannot be retrieved because the device or browser is offline. Show a message to ask the
-   * user to go online.
-   * @listens AttachmentPagePresenter#Offline
-   * @param {undefined}
-   * @returns {undefined}
-   * @todo reload when going online.
-   */
-  on_offline () {
-    BzDeck.views.statusbar.show('You have to go online to load the bug.'); // l10n
-  }
-
-  /**
-   * Called when loading the attachment started. Show a message accordingly.
-   * @listens AttachmentPagePresenter#LoadingStarted
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  on_loading_started () {
-    BzDeck.views.statusbar.show('Loading...'); // l10n
-  }
-
-  /**
-   * Called when loading the attachment failed. Show a message accordingly.
-   * @listens AttachmentPagePresenter#LoadingError
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  on_loading_error () {
-    BzDeck.views.statusbar.show('ERROR: Failed to load data.'); // l10n
-  }
-
-  /**
    * Called when loading the attachment completed. Remove the throbber.
-   * @listens AttachmentPagePresenter#LoadingComplete
+   * @listens AttachmentPresenter#LoadingComplete
    * @param {undefined}
    * @returns {undefined}
    */

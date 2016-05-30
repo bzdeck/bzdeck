@@ -5,22 +5,19 @@
 /**
  * Define the Banner Presenter that controls everything on the global application header.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
   /**
    * Get a BannerPresenter instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New BannerPresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
-    BzDeck.views.banner = new BzDeck.BannerView();
-
-    // Sub-presenters
-    BzDeck.presenters.quick_search = new BzDeck.QuickSearchPresenter();
-
+    // Subscribe to events
     this.subscribe('V#BackButtonClicked');
     this.subscribe('V#TabSelected');
   }

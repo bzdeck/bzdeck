@@ -8,6 +8,16 @@
  */
 BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
+   * Get a ThreadView instance. This is necessary to call the constructor of the base Event class.
+   * @constructor
+   * @param {undefined}
+   * @returns {Object} view - New ThreadView instance.
+   */
+  constructor () {
+    super(); // Assign this.id
+  }
+
+  /**
    * Called whenever one or more items are selected on the thread. Show the last-selected bug in the relevant Preview
    * Pane or a new tab.
    * @param {CustomEvent} event - Providing an array of selected item IDs.
@@ -39,10 +49,10 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * Open a specific bug in a new tab.
    * @param {Number} id - Bug ID to show.
    * @returns {undefined}
-   * @fires GlobalView#OpenBug
+   * @fires AnyView#OpeningBugRequested
    */
   open_bug (id) {
-    this.trigger('GlobalView#OpenBug', { id, ids: [...this.consumer.presenter.data.bugs.keys()] });
+    this.trigger('AnyView#OpeningBugRequested', { id, siblings: [...this.consumer.presenter.data.bugs.keys()] });
   }
 }
 
@@ -62,7 +72,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @returns {Object} view - New ClassicThreadView instance.
    */
   constructor (consumer, name, $grid, columns, options) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     let default_cols = BzDeck.config.grid.default_columns;
     let field = BzDeck.host.data.config.field;
@@ -78,7 +88,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
     this.consumer = consumer;
     this.bugs = [];
 
-    this.$$grid = new this.widgets.Grid($grid, {
+    this.$$grid = new FlareTail.widgets.Grid($grid, {
       rows: [],
       columns: (columns || default_cols).map(col => {
         col.label = (default_cols.find(__col => __col.id === col.id) || {}).label || field[col.id].description;
@@ -101,9 +111,9 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
     this.$$grid.assign_key_bindings({
       // Show previous bug, an alias of UP
-      B: event => this.helpers.kbd.dispatch($grid, 'ArrowUp'),
+      B: event => FlareTail.helpers.kbd.dispatch($grid, 'ArrowUp'),
       // Show next bug, an alias of DOWN
-      F: event => this.helpers.kbd.dispatch($grid, 'ArrowDown'),
+      F: event => FlareTail.helpers.kbd.dispatch($grid, 'ArrowDown'),
       // Toggle star
       S: event => toggle_prop('starred'),
     });
@@ -216,9 +226,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {Object} view - New VerticalThreadView instance.
    */
   constructor (consumer, name, $outer, options) {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
 
     this.consumer = consumer;
     this.name = name;
@@ -226,9 +236,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$outer = $outer;
     this.$listbox = $outer.querySelector('[role="listbox"]');
-    this.$$listbox = new this.widgets.ListBox(this.$listbox, []);
+    this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
-    this.$$scrollbar = new this.widgets.ScrollBar($outer);
+    this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer);
 
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
     this.$$listbox.bind('Selected', event => {
@@ -264,9 +274,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$$listbox.assign_key_bindings({
       // Show previous bug, an alias of UP
-      B: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
+      B: event => FlareTail.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
       // Show next bug, an alias of DOWN
-      F: event => this.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
+      F: event => FlareTail.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
       // Toggle star
       S: event => {
         for (let $item of this.$$listbox.view.selected) {
@@ -300,7 +310,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     let cond = this.options.sort_conditions;
 
     this.bugs = bugs;
-    this.unrendered_bugs = cond ? this.helpers.array.sort([...bugs.values()], cond) : [...bugs.values()];
+    this.unrendered_bugs = cond ? FlareTail.helpers.array.sort([...bugs.values()], cond) : [...bugs.values()];
     this.$outer.setAttribute('aria-busy', 'true');
     this.$listbox.innerHTML = '';
 

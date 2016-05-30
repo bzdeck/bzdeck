@@ -5,56 +5,20 @@
 /**
  * Define the Settings Page Presenter.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePresenter {
   /**
-   * Called by the app router and initialize the Settings Page Presenter. If the Settings has an existing tab, switch to
-   * it. Otherwise, open a new tab and load the content.
+   * Get a SettingsPagePresenter instance.
    * @constructor
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New SettingsPagePresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
+    // Subscribe to events
     this.subscribe('V#PrefChangeRequested');
-
-    this.connect();
-  }
-
-  /**
-   * Called by the app router to reuse the presenter.
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  reconnect () {
-    this.connect();
-  }
-
-  /**
-   * Connect to the view.
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  connect () {
-    let tab_id = history.state ? history.state.tab_id : undefined;
-    let prefs = new Map();
-
-    Promise.all([...Object.entries(BzDeck.config.prefs)].map(([name, value]) => {
-      return BzDeck.prefs.get(name).then(_value => {
-        value.user = _value;
-        prefs.set(name, value);
-      });
-    })).then(() => {
-      BzDeck.views.banner.open_tab({
-        label: 'Settings',
-        page: {
-          category: 'settings',
-          constructor: BzDeck.SettingsPageView,
-          constructor_args: [prefs, tab_id],
-        },
-      }, this);
-    });
   }
 
   /**
@@ -69,15 +33,15 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
     BzDeck.prefs.set(name, value);
 
     if (name === 'ui.theme.selected') {
-      this.helpers.theme.selected = value;
+      FlareTail.helpers.theme.selected = value;
     }
 
     if (name === 'ui.date.timezone') {
-      this.helpers.datetime.options.timezone = value;
+      FlareTail.helpers.datetime.options.timezone = value;
     }
 
     if (name === 'ui.date.relative') {
-      this.helpers.datetime.options.relative = value
+      FlareTail.helpers.datetime.options.relative = value
     }
 
     if (name === 'notifications.show_desktop_notifications' && value === true) {

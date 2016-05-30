@@ -8,19 +8,31 @@
  */
 BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
-   * Get a ProfilePageView instance.
+   * Called by the app router and initialize the Profile Page View. If the specified profile has an existing tab, switch
+   * to it. Otherwise, open a new tab and try to load the user profile.
    * @constructor
    * @param {String} email - Person's Bugzilla account name.
-   * @param {Boolean} self - Whether this profile is the app user's own profile.
    * @returns {Object} view - New ProfilePageView instance.
    */
-  constructor (email, self) {
-    super(); // This does nothing but is required before using `this`
+  constructor (email) {
+    super(); // Assign this.id
 
-    this.id = email;
+    this.email = email;
 
-    this.$tab = document.querySelector(`#tab-profile-${CSS.escape(email)}`),
-    this.$tabpanel = document.querySelector(`#tabpanel-profile-${CSS.escape(email)}`),
+    // Subscribe to events
+    this.subscribe('P#GravatarProfileFound');
+    this.subscribe('P#BugzillaProfileFound');
+    this.subscribe('P#BugzillaProfileFetchingError');
+    this.subscribe('P#BugzillaProfileFetchingComplete');
+
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.ProfilePagePresenter(this.id, this.email);
+
+    this.activate();
+    this.trigger('#ProfileRequested');
+
+    this.$tab = document.querySelector(`#tab-profile-${this.id}`),
+    this.$tabpanel = document.querySelector(`#tabpanel-profile-${this.id}`),
     this.$profile = this.$tabpanel.querySelector('article'),
     this.$header = this.$profile.querySelector('header'),
     this.$status = this.$tabpanel.querySelector('footer [role="status"]');
@@ -29,31 +41,46 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
     this.$status.textContent = 'Loading...'; // l10n
 
     // Display the links to Gravatar if this is the user's self profile
-    if (self) {
+    if (this.email === BzDeck.account.data.name) {
       this.$profile.classList.add('self');
     }
+  }
 
-    this.subscribe('P#GravatarProfileFound');
-    this.subscribe('P#BugzillaProfileFound');
-    this.subscribe('P#BugzillaProfileFetchingError');
-    this.subscribe('P#BugzillaProfileFetchingComplete');
+  /**
+   * Called by the app router to reuse the view.
+   * @param {String} email - Person's Bugzilla account name.
+   * @returns {undefined}
+   */
+  reactivate (email) {
+    this.activate();
+  }
+
+  /**
+   * Activate to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  activate () {
+    BzDeck.views.banner.open_tab({
+      label: 'Profile', // l10n
+      description: 'User Profile', // l10n
+      category: 'profile',
+    }, this);
   }
 
   /**
    * Called when the User's Gravatar profile is retrieved. Apply the background image.
    * @listens ProfilePagePresenter#GravatarProfileFound
    * @param {Object} style - CSS style rules including the background image.
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {undefined}
    * @todo Add more info such as the location and social accounts.
    */
   on_gravatar_profile_found ({ style } = {}) {
     if (!this.$header) {
-      return false;
+      return;
     }
 
     this.$header.style['background-image'] = style['background-image'];
-
-    return true;
   }
 
   /**
@@ -62,11 +89,11 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * @param {Object} profile - Profile info.
    * @param {Object} links - Related links.
    * @param {Object} style - CSS style rules including the user's generated color.
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {undefined}
    */
   on_bugzilla_profile_found ({ profile, links, style } = {}) {
     if (!this.$tab || !this.$profile || !this.$header) {
-      return false;
+      return;
     }
 
     document.title = this.$tab.title = `User Profile: ${profile.name}`;
@@ -75,40 +102,34 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
     this.$profile.querySelector('[data-id="bugzilla-profile"] a').href = links['bugzilla-profile'];
     this.$profile.querySelector('[data-id="bugzilla-activity"] a').href = links['bugzilla-activity'];
     this.$header.style['background-color'] = style['background-color'];
-
-    return true;
   }
 
   /**
    * Called when the User's Bugzilla profile could not be retrieved. Show the error message.
    * @listens ProfilePagePresenter#BugzillaProfileFetchingError
    * @param {String} message - Error message.
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {undefined}
    */
   on_bugzilla_profile_fetching_error ({ message } = {}) {
     if (!this.$status) {
-      return false;
+      return;
     }
 
     this.$status.textContent = message;
-
-    return true;
   }
 
   /**
    * Called when fetching the User's Bugzilla profile is complete. Remove the throbber.
    * @listens ProfilePagePresenter#BugzillaProfileFetchingComplete
    * @param {undefined}
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {undefined}
    */
   on_bugzilla_profile_fetching_complete () {
     if (!this.$tabpanel || !this.$status) {
-      return false;
+      return;
     }
 
     this.$tabpanel.removeAttribute('aria-busy');
     this.$status.textContent = '';
-
-    return true;
   }
 }

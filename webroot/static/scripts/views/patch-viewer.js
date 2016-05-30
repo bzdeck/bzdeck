@@ -13,11 +13,12 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
   /**
    * Get a PatchViewerView instance.
    * @constructor
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {String} str - Raw patch content.
    * @returns {DocumentFragment} $fragment - formatted HTML fragment
    */
-  constructor (str) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, str) {
+    super(id); // Assign this.id
 
     let $fragment = new DocumentFragment();
 

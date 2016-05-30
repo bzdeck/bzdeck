@@ -8,29 +8,27 @@
  */
 BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
-   * Get a SearchPageView instance.
+   * Called by the app router and initialize the Search Page View. Unlike other pages, this presenter doesn't check
+   * existing tabs, because the user can open multiple search tabs at the same time.
    * @constructor
-   * @param {Number} id - 13-digit identifier for a new instance, generated with Date.now().
-   * @param {URLSearchParams} params - Search query.
-   * @param {Object} config - Bugzilla server configuration that contains products, components and more.
+   * @param {Number} id - 7-digit random identifier for the new instance.
    * @returns {Object} view - New SearchPageView instance.
    */
-  constructor (id, params, config) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id);
 
-    this.id = id;
     this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
     this.$grid = this.$tabpanel.querySelector('[id$="-result-pane"] [role="grid"]');
     this.$status = this.$tabpanel.querySelector('[role="status"]');
     this.panes = {};
 
-    this.setup_basic_search_pane(config);
+    this.setup_basic_search_pane(this.id, config);
     this.setup_result_pane();
 
     Object.defineProperties(this, {
       preview_is_hidden: {
         enumerable: true,
-        get: () => this.helpers.env.device.mobile
+        get: () => FlareTail.helpers.env.device.mobile
       },
     });
 
@@ -39,13 +37,47 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       this.panes['basic-search'].querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
     }
 
+    // Subscribe to events
     this.subscribe('P#Offline');
     this.subscribe('P#SearchStarted');
     this.subscribe_safe('P#SearchResultsAvailable');
     this.subscribe('P#SearchError');
     this.subscribe('P#SearchComplete');
-    this.on('P#BugDataUnavailable', data => this.show_preview(undefined));
-    this.on_safe('P#BugDataAvailable', data => this.show_preview(data));
+    window.addEventListener('popstate', event => this.onpopstate());
+
+    // Initiate the corresponding presenter
+    this.presenter = new BzDeck.SearchPagePresenter(BzDeck.host.data.config);
+    this.container_view = new BzDeck.BugContainerView(this.id, this.$tabpanel.querySelector('[id$="-preview-pane"]'));
+
+    this.connect();
+
+    if (params.toString()) {
+      this.trigger('#SearchRequested', { params_str: params.toString() });
+    }
+  }
+
+  /**
+   * Called by the app router to reuse the view.
+   * @param {Number} id - 13-digit identifier for a new instance, generated with Date.now().
+   * @returns {undefined}
+   */
+  reconnect (id) {
+    this.connect();
+  }
+
+  /**
+   * Connect to the view.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  connect () {
+    let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
+
+    BzDeck.views.banner.open_tab({
+      label: 'Search', // l10n
+      description: 'Search & Browse Bugs', // l10n
+      category: 'search',
+    }, this);
   }
 
   /**
@@ -60,7 +92,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
     // Custom scrollbar
     for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
-      new this.widgets.ScrollBar($outer, { adjusted: true });
+      new FlareTail.widgets.ScrollBar($outer, { adjusted: true });
     }
 
     let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]');
@@ -101,7 +133,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       selected: !value // Select '---' to search open bugs
     }));
 
-    let ListBox = this.widgets.ListBox;
+    let ListBox = FlareTail.widgets.ListBox;
     let $$classification_list = new ListBox($classification_list, classifications);
     let $$product_list = new ListBox($product_list, products);
     let $$component_list = new ListBox($component_list, components);
@@ -135,7 +167,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     });
 
     let $textbox = $pane.querySelector('.text-box [role="searchbox"]');
-    let $$button = new this.widgets.Button($pane.querySelector('.text-box [role="button"]'));
+    let $$button = new FlareTail.widgets.Button($pane.querySelector('.text-box [role="button"]'));
 
     $$button.bind('Pressed', event => {
       let params = new URLSearchParams();
@@ -171,7 +203,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   setup_result_pane () {
     let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]');
     let $$grid;
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
 
     Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
@@ -212,50 +244,6 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   get_shown_bugs (bugs) {
     return [...this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])')]
                                   .map($row => bugs.get(Number($row.dataset.id)));
-  }
-
-  /**
-   * Show the preview of a selected bug on the Preview Pane.
-   * @listens SearchPagePresenter#BugDataUnavailable
-   * @listens SearchPagePresenter#BugDataAvailable
-   * @param {Proxy} bug - Bug to show.
-   * @param {Object} presenter - New BugPresenter instance for that bug.
-   * @returns {undefined}
-   * @fires SearchPageView#OpeningTabRequested
-   */
-  show_preview ({ bug, presenter } = {}) {
-    let $pane = this.panes['preview'] = this.$tabpanel.querySelector('[id$="-preview-pane"]');
-
-    $pane.innerHTML = '';
-
-    let $bug = $pane.appendChild(this.get_template('search-preview-bug-template', this.id));
-    let $info = $bug.appendChild(this.get_template('preview-bug-info'));
-
-    // Activate the toolbar buttons
-    new this.widgets.Button($bug.querySelector('[data-command="show-details"]'))
-        .bind('Pressed', event => this.trigger('#OpeningTabRequested'));
-    new this.widgets.Button($bug.querySelector('[data-command="show-basic-search-pane"]'))
-        .bind('Pressed', event => this.show_basic_search_pane());
-
-    // Assign keyboard shortcuts
-    this.helpers.kbd.assign($bug, {
-      // [B] previous bug or [F] next bug: handle on the search thread
-      'B|F': event => this.helpers.kbd.dispatch(this.$grid, event.key),
-      // Open the bug in a new tab
-      O: event => this.trigger('#OpeningTabRequested'),
-    });
-
-    // Fill the content
-    this.$$bug = new BzDeck.BugView(presenter.id, bug, $bug);
-    $info.id = `search-${this.id}-preview-bug-info`;
-    $bug.removeAttribute('aria-hidden');
-
-    // Show the preview pane
-    if ($pane.matches('[aria-hidden="true"]')) {
-      this.hide_status();
-      this.panes['basic-search'].setAttribute('aria-hidden', 'true');
-      $pane.setAttribute('aria-hidden', 'false');
-    }
   }
 
   /**
@@ -346,5 +334,16 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    */
   on_search_complete () {
     this.$grid.removeAttribute('aria-busy');
+  }
+
+  /**
+   * Called whenever the history state is updated.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  onpopstate () {
+    if (location.pathname === `/search/${this.id}`) {
+      this.container_view.add_bug(history.state.bug_id, history.state.siblings);
+    }
   }
 }

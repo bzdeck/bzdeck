@@ -6,6 +6,7 @@
  * Define the Attachment Collection that represents all downloaded bug attachments. Each attachment is an
  * AttachmentModel.
  * @extends BzDeck.BaseCollection
+ * @todo Move this to the worker thread.
  */
 BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseCollection {
   /**
@@ -15,7 +16,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * @returns {Object} attachments - New AttachmentCollection instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.model = BzDeck.AttachmentModel;
   }
@@ -54,7 +55,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
     Object.defineProperties(att, {
       // Add custom properties
       uploaded: { writable: true, value: 0 },
-      hash: { value: md5([att.file_name, att.content_type, String(size)].join()) },
+      hash: { value: FlareTail.helpers.misc.hash() },
       is_unuploaded: { value: true },
       // Emulate properties on the existing attachment objects
       creator: { value: BzDeck.account.data.name },

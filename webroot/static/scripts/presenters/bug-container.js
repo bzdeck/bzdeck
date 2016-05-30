@@ -5,22 +5,23 @@
 /**
  * Define the Bug Container Presenter.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePresenter {
   /**
    * Get a BugContainerPresenter instance.
    * @constructor
-   * @param {Number} instance_id - 13-digit identifier for a new instance, generated with Date.now().
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
-   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugContainerPresenter instance.
    */
-  constructor (instance_id, sibling_bug_ids) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, siblings) {
+    super(id); // Assign this.id
 
-    this.id = instance_id;
-    this.sibling_bug_ids = sibling_bug_ids || [];
+    this.siblings = siblings || [];
 
+    // Subscribe to events
     this.subscribe('V#NavigationRequested');
   }
 
@@ -29,74 +30,22 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
    * @listens BugContainerView#NavigationRequested
    * @param {Number} old_id - Old bug ID to be replaced.
    * @param {Number} new_id - New bug ID to navigate.
-   * @param {String} old_path - Previous location path.
-   * @param {String} new_path - New location path.
-   * @param {Boolean} reinit - Whether there's an existing tabpanel content for the new bug.
    * @returns {undefined}
    */
-  on_navigation_requested ({ old_id, new_id, old_path, new_path, reinit } = {}) {
-    let data;
-
-    window.history.replaceState({ ids: this.sibling_bug_ids, previous: old_path }, '', new_path);
-
-    if (reinit) {
-      this.add_bug(new_id);
-    }
+  on_navigation_requested ({ old_id, new_id } = {}) {
+    window.history.replaceState({ siblings: this.siblings, previous: `/bug/${old_id}` }, '', `/bug/${new_id}`);
+    this.add_bug(new_id);
   }
 
   /**
-   * Prepare bug data for the view. Find it from the local database or remote Bugzilla instance, then notify the result
-   * regardless of the availability.
-   * @param {undefined} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [sibling_bug_ids] - Optional bug ID list that can be navigated with the Back and Forward
-   *  buttons or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @fires BugContainerPresenter#LoadingStarted
-   * @fires BugContainerPresenter#LoadingFinished
-   * @fires BugContainerPresenter#BugDataAvailable
-   * @fires BugContainerPresenter#BugDataUnavailable
+   * Notify the view of a new bug ID to be added.
+   * @param {Number} bug_id - Bug ID to show.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @returns {undefined}
+   * @fires BugContainerPresenter#AddingBugRequested
    */
-  add_bug (bug_id, sibling_bug_ids) {
-    this.bug_id = bug_id;
-    this.sibling_bug_ids = sibling_bug_ids || this.sibling_bug_ids;
-
-    if (!navigator.onLine) {
-      this.trigger('#BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
-
-      return;
-    }
-
-    this.trigger('#LoadingStarted');
-
-    BzDeck.collections.bugs.get(this.bug_id).then(bug => {
-      if (bug && !bug.error) {
-        return bug;
-      }
-
-      return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id }).then(bug => {
-        return bug.fetch();
-      }).catch(error => this.trigger('#BugDataUnavailable', { code: 0, message: 'Failed to load data.' }));
-    }).then(bug => new Promise((resolve, reject) => {
-      if (bug.data && bug.data.summary) {
-        resolve(bug);
-      } else {
-        let code = bug.error ? bug.error.code : 0;
-        let message = {
-          102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
-                unpublished security issues or marketing-related topics. '
-        }[code] || 'This bug data is not available.';
-
-        this.trigger('#BugDataUnavailable', { code, message });
-        reject(new Error(message));
-      }
-    })).then(bug => {
-      let sibling_bug_ids = this.sibling_bug_ids;
-      let presenter = new BzDeck.BugPresenter(bug, sibling_bug_ids);
-
-      this.trigger_safe('#BugDataAvailable', { bug, presenter, sibling_bug_ids });
-      bug.mark_as_read();
-      BzDeck.models.bugzfeed._subscribe([this.bug_id]);
-    }).then(() => {
-      this.trigger('#LoadingFinished');
-    });
+  add_bug (bug_id, siblings = []) {
+    this.trigger('#AddingBugRequested', { bug_id, siblings });
   }
 }

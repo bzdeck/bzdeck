@@ -6,6 +6,7 @@
  * Define the Subscription Collection, which is a labelled bug list. The visual presentation of each subscription is a
  * Sidebar folder, like Inbox, Starred or Reported.
  * @extends BzDeck.BaseCollection
+ * @todo Move this to the worker thread.
  */
 BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.BaseCollection {
   /**
@@ -16,7 +17,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @returns {Object} collection - New SubscriptionCollection instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
   }
 
   /**

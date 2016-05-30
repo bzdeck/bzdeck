@@ -15,59 +15,60 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @returns {Object} view - New BannerView instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
-    this.$$tablist = new this.widgets.TabList(document.querySelector('#main-tablist'));
+    this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#main-tablist'));
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail));
     this.$$tablist.bind('Opened', event => this.update_tab_count());
     this.$$tablist.bind('Closed', event => this.update_tab_count());
     this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
+
+    // Initiate the corresponding presenter and sub-view
+    BzDeck.presenters.banner = new BzDeck.BannerPresenter(this.id),
+    BzDeck.views.quick_search = new BzDeck.QuickSearchView(this.id);
   }
 
   /**
-   * Open a new global tab and load the relevant tabpanel content. FIXME: Need refactoring (#232).
+   * Open a new global tab and load the relevant tabpanel content.
    * @param {String} label - Text displayed on the label
    * @param {String} [description] - Optional text displayed as the tooltip of the tab.
-   * @param {String} [position] - Where to show the tab: 'next' or 'last' (default).
-   * @param {Object} page - Defining page details.
-   * @param {String} page.category - Category of the tabpanel content, such as 'details' or 'settings'.
-   * @param {(String|Number)} page.id - Unique identifier for the tab. Can be generated with Date.now().
-   * @param {Object} page.constructor - View constructor for the tabpanel content.
-   * @param {Array} [page.constructor_args] - Arguments used to create a new View instance.
-   * @param {Object} presenter - Presenter instance that requests the tab.
+   * @param {String} category - Category of the tabpanel content, such as 'details' or 'settings'.
+   * @param {String} [position] - Where to show the tab: 'next' (default) or 'last'.
+   * @param {Object} view - View instance that requests the tab.
    * @returns {undefined}
+   * @todo Need refactoring (#232)
    */
-  open_tab ({ label, description, position = 'last', page } = {}, presenter) {
-    let view;
-    let pages = BzDeck.views.pages[`${page.category}_list`];
-    let id = page.category + (page.id ? '-' + page.id : '');
+  open_tab ({ label, description, category, position = 'next' } = {}, view) {
+    let page;
+    let pages = BzDeck.views.pages[`${category}_list`];
+    let id = `${category}-${view.id}`;
     let $tab = document.querySelector(`#tab-${CSS.escape(id)}`);
     let $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(id)}`);
+    let add_tab = () => this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
 
     if (!pages) {
-      pages = BzDeck.views.pages[`${page.category}_list`] = new Map();
+      pages = BzDeck.views.pages[`${category}_list`] = new Map();
     }
 
     // Reuse a tabpanel if possible
     if ($tabpanel) {
-      view = pages.get(page.id || 'default');
-      $tab = $tab || this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
+      page = pages.get(view.id);
+      $tab = $tab || add_tab();
     } else {
-      $tabpanel = this.get_template(`tabpanel-${page.category}-template`, page.id);
-      $tab = this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
-      view = presenter.view = new page.constructor(...(page.constructor_args || []));
-      view.presenter = presenter;
-      pages.set(page.id || 'default', view);
+      page = view;
+      pages.set(view.id, page);
+      $tabpanel = this.get_template(`tabpanel-${category}-template`, view.id);
+      $tab = add_tab();
 
       // Prepare the Back button on the mobile banner
       this.add_back_button($tabpanel);
     }
 
-    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab;
     $tabpanel.focus();
 
     BzDeck.views.global.update_window_title($tab);
-    BzDeck.views.pages[page.category] = view;
+    BzDeck.views.pages[category] = page;
     this.tab_path_map.set($tab.id, location.pathname + location.search);
   }
 
@@ -121,12 +122,12 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     let $header = $parent.querySelector('header');
     let $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
-    if (this.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
+    if (FlareTail.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n
       $button.addEventListener('touchstart', event => {
         this.trigger('#BackButtonClicked');
 
-        return this.helpers.event.ignore(event);
+        return FlareTail.helpers.event.ignore(event);
       });
 
       $header.insertBefore($button, $header.firstElementChild);

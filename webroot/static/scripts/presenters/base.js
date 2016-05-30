@@ -8,5 +8,6 @@ BzDeck.presenters = BzDeck.presenters || {};
  * Define the app's Base Presenter. This constructor is intended to be inherited by each app presenter.
  * @abstract
  * @extends FlareTail.app.Presenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.BasePresenter = class BasePresenter extends FlareTail.app.Presenter {}

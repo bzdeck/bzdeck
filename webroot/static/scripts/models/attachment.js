@@ -6,6 +6,7 @@
  * Initialize the Attachment Model that represents a downloaded or unuploaded bug attachment. Available through the
  * AttachmentCollection.
  * @extends BzDeck.BaseModel
+ * @todo Move this to the worker thread.
  * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html}
  */
 BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
@@ -16,10 +17,9 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @returns {Proxy} attachment - Proxified AttachmentModel instance, so consumers can seamlessly access attachment
    *  properties via attachment.prop instead of attachment.data.prop.
    */
-  constructor(data) {
-    super(); // This does nothing but is required before using `this`
+  constructor (data) {
+    super(data.id || data.hash); // Assign this.id; use the hash for unuploaded attachments
 
-    this.id = data.id || data.hash; // Use the hash for unuploaded attachments
     this.data = data;
 
     return this.proxy();

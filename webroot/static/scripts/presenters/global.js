@@ -5,38 +5,30 @@
 /**
  * Define the Global Presenter that provides some utility functions for presenters.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
    * Get a GlobalPresenter instance.
    * @constructor
-   * @listens GlobalView#OpenBug
-   * @listens GlobalView#OpenAttachment
-   * @listens GlobalView#OpenProfile
-   * @param {undefined}
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New GlobalPresenter instance.
    */
-  constructor () {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
+    this.timers = new Map();
+
+    // Timer to check for updates, call every 5 minutes or per minute if debugging is enabled
+    this.timers.set('fetch_subscriptions', window.setInterval(() => {
+      BzDeck.collections.subscriptions.fetch();
+    }, 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
+
+    // Subscribe to events
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
-    this.subscribe('UserModel#GravatarProfileRequested', true);
-    this.subscribe('UserModel#GravatarImageRequested', true);
-
-    // Navigation, can be requested by any view
-    this.on('V#OpenBug',
-            data => BzDeck.router.navigate(`/bug/${data.id}`, { ids: data.ids, att_id: data.att_id }), true);
-    this.on('V#OpenAttachment', data => BzDeck.router.navigate(`/attachment/${data.id}`), true);
-    this.on('V#OpenProfile', data => BzDeck.router.navigate(`/profile/${data.email}`), true);
-  }
-
-  /**
-   * Prepare the corresponding view. This should be called after the prefs are retrieved.
-   * @param {undefined}
-   * @returns {undefined}
-   */
-  init () {
-    this.view = BzDeck.views.global = new BzDeck.GlobalView();
+    this.subscribe('AnyView#OpeningBugRequested', true);
+    this.subscribe('AnyView#OpeningAttachmentRequested', true);
+    this.subscribe('AnyView#OpeningProfileRequested', true);
   }
 
   /**
@@ -54,59 +46,35 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   }
 
   /**
-   * Called whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar doesn't support
-   * CORS. Notify UserModel when the profile is ready.
-   * @listens UserModel#GravatarProfileRequested
-   * @param {String} hash - Hash value of the user's email.
+   * Called whenever opening a bug is requested.
+   * @listens AnyView#OpeningBugRequested
+   * @param {Number} id - Bug ID.
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Number} [att_id] - Attachment ID.
    * @returns {undefined}
-   * @fires GlobalPresenter#GravatarProfileProvided
    */
-  on_gravatar_profile_requested ({ hash } = {}) {
-    let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
-
-    this.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
-        .then(data => data.entry[0]).then(profile => notify(profile)).catch(error => notify(undefined));
+  on_opening_bug_requested ({ id, siblings, att_id } = {}) {
+    BzDeck.router.navigate(`/bug/${id}`, { siblings, att_id })
   }
 
   /**
-   * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
-   * image could not be found. Notify UserModel when the image is ready.
-   * @listens UserModel#GravatarImageRequested
-   * @param {String} hash - Hash value of the user's email.
-   * @param {String} color - Generated color of the user for the fallback image.
-   * @param {String} initial - Initial of the user for the fallback image.
+   * Called whenever opening an attachment is requested.
+   * @listens AnyView#OpeningAttachmentRequested
+   * @param {Number} id - Attachment ID.
    * @returns {undefined}
-   * @fires GlobalPresenter#GravatarImageProvided
    */
-  on_gravatar_image_requested ({ hash, color, initial } = {}) {
-    let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
-    let $image = new Image();
-    let $canvas = document.createElement('canvas');
-    let ctx = $canvas.getContext('2d');
+  on_opening_attachment_requested ({ id } = {}) {
+    BzDeck.router.navigate(`/attachment/${id}`);
+  }
 
-    $canvas.width = 160;
-    $canvas.height = 160;
-
-    $image.addEventListener('load', event => {
-      ctx.drawImage($image, 0, 0);
-      $canvas.toBlob(notify);
-    });
-
-    $image.addEventListener('error', event => {
-      // Plain background of the user's color
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 160, 160);
-      // Initial at the center of the canvas
-      ctx.font = '110px FiraSans';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#FFF';
-      ctx.fillText(initial, 80, 85); // Adjust the baseline by 5px
-      $canvas.toBlob(notify);
-    });
-
-    $image.crossOrigin = 'anonymous';
-    $image.src = `https://secure.gravatar.com/avatar/${hash}?s=160&d=404`;
+  /**
+   * Called whenever opening a user profile is requested.
+   * @listens AnyView#OpeningProfileRequested
+   * @param {String} email - Person's Bugzilla account name.
+   * @returns {undefined}
+   */
+  on_opening_profile_requested ({ email } = {}) {
+    BzDeck.router.navigate(`/profile/${email}`);
   }
 
   /**
@@ -216,7 +184,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
       return (new showdown.Converter()).makeHtml(str);
     }
 
-    str = this.helpers.string.sanitize(str);
+    str = FlareTail.helpers.string.sanitize(str);
 
     // Quotes
     for (let p of str.split(/\n{2,}/)) {
@@ -231,5 +199,3 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     return str;
   }
 }
-
-BzDeck.GlobalPresenter.prototype.timers = new Map();

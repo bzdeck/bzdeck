@@ -5,20 +5,19 @@
 /**
  * Define the Sidebar Presenter that controls everything on the global application sidebar.
  * @extends BzDeck.BasePresenter
+ * @todo Move this to the worker thread.
  */
 BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
    * Get a SidebarPresenter instance.
    * @constructor
-   * @listens SidebarView#FolderSelected
-   * @param {Proxy} user - UserModel instance of the application user.
+   * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {Object} presenter - New SidebarPresenter instance.
-   * @fires SidebarPresenter#GravatarProfileFound
    */
-  constructor (user) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id) {
+    super(id); // Assign this.id
 
-    let mobile = this.helpers.env.device.mobile;
+    let mobile = FlareTail.helpers.env.device.mobile;
 
     this.data = new Proxy({
       folder_id: null
@@ -51,20 +50,27 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
       }
     });
 
-    BzDeck.views.sidebar = new BzDeck.SidebarView(user);
-
-    user.get_gravatar_profile().then(profile => {
-      this.trigger('#GravatarProfileFound', {
-        style: { 'background-image': user.background_image ? `url(${user.background_image})` : 'none' },
-      });
-    });
-
-    this.on('V#FolderSelected', data => this.data.folder_id = data.id);
+    // Subscribe to events
+    this.subscribe('V#FolderSelected');
     this.subscribe('V#AppMenuItemSelected');
+
+    this.load_user_gravatar();
 
     // Update the sidebar Inbox folder at startup and whenever notified
     this.toggle_unread();
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
+  }
+
+  /**
+   * Load the user's Gravatar profile.
+   * @param {undefined}
+   * @returns {undefined}
+   * @fires SidebarPresenter#GravatarProfileFound
+   */
+  load_user_gravatar (folder_id) {
+    BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
+      user.get_gravatar_profile().then(profile => this.trigger_safe('#GravatarProfileFound', { user }));
+    });
   }
 
   /**
@@ -110,6 +116,16 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
         });
       });
     });
+  }
+
+  /**
+   * Called whenever a folder is selected.
+   * @listens SidebarView#FolderSelected
+   * @param {String} id - Folder id.
+   * @returns {undefined}
+   */
+  on_folder_selected ({ id } = {}) {
+    this.data.folder_id = id;
   }
 
   /**

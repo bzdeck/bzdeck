@@ -5,6 +5,7 @@
 /**
  * Define the User Collection that represents Bugzilla users. Each user is a UserModel.
  * @extends BzDeck.BaseCollection
+ * @todo Move this to the worker thread.
  * @see {@link https://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
  */
 BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
@@ -15,7 +16,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Object} users - New UserCollection instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'users';
@@ -120,7 +121,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    */
   search_local (params) {
     let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
-    let match = (str, word) => !!str.match(new RegExp(`\\b${this.helpers.regexp.escape(word)}`, 'i'));
+    let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
 
     // If the search string starts with a colon, remove it so a nick name may match
     if (words.length === 1 && words[0].startsWith(':')) {

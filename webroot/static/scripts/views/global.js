@@ -8,15 +8,15 @@
  */
 BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
-   * Get a GlobalView instance.
+   * Get a GlobalView instance. This should be called after user prefs are loaded.
    * @constructor
    * @param {undefined}
    * @returns {Object} view - New GlobalView instance.
    */
   constructor () {
-    super(); // This does nothing but is required before using `this`
+    super(); // Assign this.id
 
-    let datetime = this.helpers.datetime;
+    let datetime = FlareTail.helpers.datetime;
     let $root = document.documentElement;
 
     // Automatically update relative dates on the app
@@ -25,12 +25,12 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     // Theme
     BzDeck.prefs.get('ui.theme.selected').then(theme => {
       // Change the theme
-      if (theme && this.helpers.theme.list.contains(theme)) {
-        this.helpers.theme.selected = theme;
+      if (theme && FlareTail.helpers.theme.list.contains(theme)) {
+        FlareTail.helpers.theme.selected = theme;
       }
 
       // Preload images from CSS
-      this.helpers.theme.preload_images();
+      FlareTail.helpers.theme.preload_images();
     });
 
     // Date format
@@ -64,6 +64,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     });
 
     // Update user name & image asynchronously
+    this.subscribe('UserModel#GravatarProfileRequested', true);
+    this.subscribe('UserModel#GravatarImageRequested', true);
     this.subscribe('UserModel#UserInfoUpdated', true);
 
     // General events
@@ -75,6 +77,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     window.addEventListener('popstate', event => this.onpopstate(event));
     window.addEventListener('click', event => this.onclick(event));
     window.addEventListener('keydown', event => this.onkeydown(event));
+
+    // Initiate the corresponding presenter
+    this.presenter = BzDeck.presenters.global = new BzDeck.GlobalPresenter(this.id);
   }
 
   /**
@@ -126,7 +131,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   onpopstate (event) {
-    if (this.helpers.env.device.mobile) {
+    if (FlareTail.helpers.env.device.mobile) {
       document.documentElement.setAttribute('data-sidebar-hidden', 'true');
       document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
     }
@@ -137,9 +142,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * relevant content in a new in-app tab or browser tab.
    * @param {MouseEvent} event - The click event.
    * @returns {Boolean} default - Whether the event should lead to the default action.
-   * @fires GlobalView#OpenBug
-   * @fires GlobalView#OpenAttachment
-   * @fires GlobalView#OpenProfile
+   * @fires AnyView#OpeningBugRequested
+   * @fires AnyView#OpeningAttachmentRequested
+   * @fires AnyView#OpeningProfileRequested
    */
   onclick (event) {
     let $target = event.target;
@@ -151,16 +156,16 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     }
 
     if ($target.matches('[itemtype$="User"][role="link"]')) {
-      this.trigger('GlobalView#OpenProfile', { email: $target.querySelector('[itemprop="email"]').content });
+      this.trigger('AnyView#OpeningProfileRequested', { email: $target.querySelector('[itemprop="email"]').content });
 
-      return this.helpers.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     }
 
     // Support clicks on the avatar image in a comment
     if ($parent && $parent.matches('[itemtype$="User"][role="link"]')) {
-      this.trigger('GlobalView#OpenProfile', { email: $parent.querySelector('[itemprop="email"]').content });
+      this.trigger('AnyView#OpeningProfileRequested', { email: $parent.querySelector('[itemprop="email"]').content });
 
-      return this.helpers.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     }
 
     if ($target.matches(':-moz-any-link, [role="link"]')) {
@@ -168,7 +173,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
       if ($target.hasAttribute('data-bug-id')) {
         // Bug link: open in a new app tab
-        this.trigger('GlobalView#OpenBug', { id: Number($target.getAttribute('data-bug-id')) });
+        this.trigger('AnyView#OpeningBugRequested', { id: Number($target.getAttribute('data-bug-id')) });
       } else if ($target.hasAttribute('data-att-id')) {
         // Attachment link: open in a new app tab
         let $content_type = $target.querySelector('[itemprop="content_type"]');
@@ -184,10 +189,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
           BzDeck.collections.bugs.get_all().then(bugs => {
             return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
           }).then(bug_id => {
-            if (!bug_id || (this.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
-              this.trigger('GlobalView#OpenAttachment', { id: att_id });
+            if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+              this.trigger('AnyView#OpeningAttachmentRequested', { id: att_id });
             } else {
-              this.trigger('GlobalView#OpenBug', { id: bug_id, att_id });
+              this.trigger('AnyView#OpeningBugRequested', { id: bug_id, att_id });
             }
           });
         }
@@ -198,7 +203,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         new_win.location = $target.href;
       }
 
-      return this.helpers.event.ignore(event);
+      return FlareTail.helpers.event.ignore(event);
     }
 
     return true;
@@ -217,6 +222,62 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
       event.preventDefault();
     }
+  }
+
+  /**
+   * Called whenever a Gravatar profile is required. Retrieve the profile using JSONP because Gravatar doesn't support
+   * CORS. Notify UserModel when the profile is ready.
+   * @listens UserModel#GravatarProfileRequested
+   * @param {String} hash - Hash value of the user's email.
+   * @returns {undefined}
+   * @fires GlobalView#GravatarProfileProvided
+   */
+  on_gravatar_profile_requested ({ hash } = {}) {
+    let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
+
+    FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
+        .then(data => data.entry[0]).then(profile => notify(profile)).catch(error => notify(undefined));
+  }
+
+  /**
+   * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
+   * image could not be found. Notify UserModel when the image is ready.
+   * @listens UserModel#GravatarImageRequested
+   * @param {String} hash - Hash value of the user's email.
+   * @param {String} color - Generated color of the user for the fallback image.
+   * @param {String} initial - Initial of the user for the fallback image.
+   * @returns {undefined}
+   * @fires GlobalView#GravatarImageProvided
+   */
+  on_gravatar_image_requested ({ hash, color, initial } = {}) {
+    let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
+    let $image = new Image();
+    let $canvas = document.createElement('canvas');
+    let ctx = $canvas.getContext('2d');
+
+    $canvas.width = 160;
+    $canvas.height = 160;
+
+    $image.addEventListener('load', event => {
+      ctx.drawImage($image, 0, 0);
+      $canvas.toBlob(notify);
+    });
+
+    $image.addEventListener('error', event => {
+      // Plain background of the user's color
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 160, 160);
+      // Initial at the center of the canvas
+      ctx.font = '110px FiraSans';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#FFF';
+      ctx.fillText(initial, 80, 85); // Adjust the baseline by 5px
+      $canvas.toBlob(notify);
+    });
+
+    $image.crossOrigin = 'anonymous';
+    $image.src = `https://secure.gravatar.com/avatar/${hash}?s=160&d=404`;
   }
 
   /**

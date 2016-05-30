@@ -10,15 +10,13 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
   /**
    * Get a BugHistoryView instance.
    * @constructor
-   * @param {String} view_id - Instance identifier. It should be the same as the BugPresenter instance, otherwise the
-   *  relevant notification events won't work.
+   * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $container - Outer element to display the content.
    * @returns {Object} view - New BugHistoryView instance.
    */
-  constructor (view_id, $container) {
-    super(); // This does nothing but is required before using `this`
+  constructor (id, $container) {
+    super(id); // Assign this.id
 
-    this.id = view_id;
     this.history = [];
 
     this.$container = $container;
@@ -48,7 +46,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
         if (i === 0) {
           $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
           $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
-          this.helpers.datetime.fill_element($cell('when').appendChild(document.createElement('time')),
+          FlareTail.helpers.datetime.fill_element($cell('when').appendChild(document.createElement('time')),
                                              hist.when, { relative: false });
         } else {
           $cell('when').remove();
@@ -91,6 +89,6 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
       return content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');
     }
 
-    return this.helpers.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+    return FlareTail.helpers.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
   }
 }
