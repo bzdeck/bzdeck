@@ -46,6 +46,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     // Subscribe to events
     this.subscribe('PrefCollection#PrefChanged', true);
     this.on_safe('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
+    this.on('BugContainerPresenter#navigated', data => this.on_container_navigated(data));
+    this.on('ThreadView#OpeningBugRequested', () => this.request_expanding_bug_container(true), true);
+    this.on('SidebarView#FolderSelected', () => this.request_expanding_bug_container(false), true);
     window.addEventListener('popstate', event => this.onpopstate());
 
     // Initiate the corresponding presenter and sub-view
@@ -155,7 +158,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     if (!this.vertical_thread_initialized) {
       // Select the first bug on the list automatically when a folder is opened and no bug is previewed yet. Wait a sec
       // until the listbox is ready. TODO: Remember the last selected bug for each folder
-      $listbox.addEventListener('Updated', event => window.setTimeout(() => show_preview(), 100));
+      $listbox.addEventListener('Updated', event => window.setTimeout(() => show_preview(), 500));
       mql.addListener(show_preview);
 
       // Star button
@@ -318,6 +321,25 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
+   * Called whenever navigation occurred in the bug container. Update the selection on the vertical thread if possible.
+   * @listens BugContainerPresenter#navigated
+   * @param {Number} new_id - ID of bug currently displayed in the container.
+   * @returns {undefined}
+   */
+  on_container_navigated ({ new_id } = {}) {
+    let vertical = document.documentElement.getAttribute('data-home-layout') === 'vertical';
+    let $$listbox = this.thread.$$listbox;
+
+    if (vertical) {
+      let index = $$listbox.view.members.findIndex($member => Number($member.dataset.id) === new_id);
+
+      if (index) {
+        $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.members[index];
+      }
+    }
+  }
+
+  /**
    * Called whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug when required, instead of
    * refreshing the entire thread unconditionally.
    * @listens SubscriptionCollection#Updated
@@ -328,6 +350,19 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     if (BzDeck.presenters.sidebar) {
       BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
     }
+  }
+
+  /**
+   * Called whenever expanding or collapsing the bug container is requested via other general views. Transfer the event
+   * while appending the container ID so that BugContainerView can handle it properly.
+   * @listens ThreadView#OpeningBugRequested
+   * @listens SidebarView#FolderSelected
+   * @param {Boolean} expanded - Whether the preview should be expanded.
+   * @returns {undefined}
+   * @fires AnyView#ExpandingBugContainerRequested
+   */
+  request_expanding_bug_container (expanded) {
+    this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.id, expanded });
   }
 
   /**

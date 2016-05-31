@@ -27,6 +27,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     this.$bug.setAttribute('data-bug-id', this.bug_id);
     this.$bug.setAttribute('aria-busy', 'true');
+    this.$bug.setAttribute('aria-hidden', 'true');
 
     // Subscribe to events
     this.subscribe_safe('BugPresenter#BugDataAvailable');
@@ -111,6 +112,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       'hide-cc': () => toggle_cc(false),
       'expand-comments': () => this.timeline.expand_comments(),
       'collapse-comments': () => this.timeline.collapse_comments(),
+      'open-tab': () => this.trigger('BugView#OpeningTabRequested'),
     };
 
     $menu.addEventListener('MenuOpened', event => {
@@ -221,7 +223,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @fires BugContainerView#NavigationRequested
    */
   navigate (new_id) {
-    this.trigger('BugView#NavigationRequested', { old_id: this.bug_id, new_id });
+    this.trigger('BugView#NavigationRequested', { container_id: this.container_id, old_id: this.bug_id, new_id });
   }
 
   /**
@@ -230,6 +232,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    * @fires BugView#EditModeChanged
    * @fires BugView#OpeningTabRequested
+   * @fires AnyView#TogglingPreviewRequested
    */
   render () {
     if (!this.bug.summary && !this.bug._update_needed) {
@@ -280,8 +283,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
     let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
     let $show_details_button = this.$bug.querySelector('[data-command="show-details"]');
-    let $open_tab_button = this.$bug.querySelector('[data-command="open-tab"]');
-    let $preview_pane = this.$bug.closest('[id$="preview-pane"]');
     let $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($edit_button) {
@@ -294,15 +295,19 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       init_button($star_button, event => this.bug.starred = event.detail.pressed);
     }
 
-    if ($show_details_button && $preview_pane) {
+    if ($show_details_button) {
       init_button($show_details_button, event => {
-        $preview_pane.setAttribute('aria-expanded', $preview_pane.getAttribute('aria-expanded') === 'false');
-      });
-    }
+        let $preview_pane = this.$bug.closest('[id$="preview-pane"]');
+        let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
 
-    if ($open_tab_button) {
-      // TODO: Reuse the bug view/presenter
-      init_button($open_tab_button, event => this.trigger('BugView#OpeningTabRequested'));
+        // Select the Timeline tab when the bug container is collapsed
+        if (this.$$tablist && $preview_pane.matches('[aria-expanded="true"]')) {
+          this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
+        }
+
+        // Toggle the bug container
+        this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.container_id });
+      });
     }
 
     if (!$timeline) {
@@ -417,34 +422,32 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
 
       // Prepare the timeline and comment form
-      window.setTimeout(() => this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed), 0);
-      window.setTimeout(() => this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug), 100),
-      window.setTimeout(() => this.activate_widgets(), 100);
+      this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed);
+      this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
+      this.activate_widgets();
 
       // Add tooltips to the related bugs
-      window.setTimeout(() => this.set_bug_tooltips(), 200);
+      this.set_bug_tooltips();
 
       // Flags, only on the details tabs
       if (this.render_tracking_flags) {
-        window.setTimeout(() => {
-          new BzDeck.BugFlagsView(this.id, this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
-          this.render_tracking_flags();
-        }, 200)
+        new BzDeck.BugFlagsView(this.id, this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+        this.render_tracking_flags();
       }
 
       // Number badge on tabs, only on the details tabs
       if (this.add_tab_badges) {
-        window.setTimeout(() => this.add_tab_badges(), 200);
+        this.add_tab_badges();
       }
 
       // Attachments, only on the details tabs
       if (this.render_attachments) {
-        window.setTimeout(() => this.render_attachments(), 300);
+        this.render_attachments();
       }
 
       // History, only on the details tabs
       if (this.render_history) {
-        window.setTimeout(() => this.render_history(), 300);
+        this.render_history();
       }
     }).then(() => {
       this.$bug.removeAttribute('aria-busy');

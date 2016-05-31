@@ -25,11 +25,6 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
       set: (obj, prop, newval) => {
         let oldval = obj[prop];
 
-        // On mobile, the same folder can be selected
-        if (!mobile && oldval === newval) {
-          return true;
-        }
-
         if (prop === 'folder_id' && oldval) {
           // On mobile, wait until the sidebar is closed so that the transition effects work smoother
           if (mobile) {

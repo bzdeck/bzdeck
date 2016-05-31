@@ -85,10 +85,6 @@
   content: '\F152';
 }
 
-[itemtype$="Bug"] [role="toolbar"] [data-command="open-tab"]::before {
-  content: '\F08E';
-}
-
 [itemtype$="Bug"] [role="toolbar"] [data-command="show-menu"]::before {
   content: '\F142';
 }

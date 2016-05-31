@@ -307,13 +307,12 @@
               <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
               <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
             </ul>
-            <ul class="open" role="none">
-              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
-              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
-            </ul>
             <ul class="nav" role="none">
               <li role="none"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
               <li role="none"><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
+            </ul>
+            <ul class="open" role="none">
+              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
             </ul>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
               <li role="none">
@@ -322,8 +321,9 @@
               </li>
               <li role="separator"></li>
               <li role="none">
-                <a id="bug-TID-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
+                <a id="bug-TID-menu--open-tab" role="menuitem" data-command="open-tab"><label>Open in Tab</label></a>
                 <a id="bug-TID-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
+                <a id="bug-TID-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
                 <a id="bug-TID-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
             </ul>
