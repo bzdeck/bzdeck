@@ -45,8 +45,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       new FlareTail.widgets.ScrollBar($tabpanel);
     }
 
-    // Activate Markdown Editor
-    new BzDeck.MarkdownEditor(this.id, this.$form);
+    // Activate Markdown Editor for Bugzilla 5.0+
+    if (BzDeck.host.markdown_supported) {
+      new BzDeck.MarkdownEditor(this.id, this.$form);
+    } else {
+      this.$formatting_toolbar.setAttribute('aria-hidden', 'true');
+    }
 
     this.$form.addEventListener('wheel', event => event.stopPropagation());
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
@@ -91,11 +95,13 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_tab_selected ($tab) {
-    this.$formatting_toolbar.setAttribute('aria-hidden', !$tab.id.endsWith('comment'));
+    if (BzDeck.host.markdown_supported) {
+      this.$formatting_toolbar.setAttribute('aria-hidden', !$tab.id.endsWith('comment'));
+    }
 
     if ($tab.id.endsWith('preview')) {
       // Render the new comment for preview
-      this.$preview.innerHTML = BzDeck.presenters.global.parse_comment(this.$textbox.value);
+      this.$preview.innerHTML = BzDeck.presenters.global.parse_comment(this.$textbox.value, BzDeck.host.markdown_supported);
     }
   }
 

@@ -25,6 +25,7 @@ BzDeck.config = {
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla.mozilla.org',
       websocket_endpoint: 'wss://bugzfeed.mozilla.org/',
+      markdown_supported: false,
     },
     'mozilla-dev': {
       label: 'Mozilla Dev',
@@ -32,6 +33,7 @@ BzDeck.config = {
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-dev.allizom.org',
       websocket_endpoint: 'wss://bugzfeed.mozilla.org/dev/',
+      markdown_supported: false,
     },
     'mozilla-merge': {
       label: 'Mozilla Merge',
@@ -39,6 +41,7 @@ BzDeck.config = {
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-merge.allizom.org',
       websocket_endpoint: null,
+      markdown_supported: true,
     }
   },
   app: {

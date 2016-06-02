@@ -91,24 +91,27 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     let $comment_body = $entry.querySelector('[itemprop="text"]');
     let $textbox = document.querySelector(`#bug-comment-form-${this.id} [role="textbox"]`);
 
+    // The comment.count property is available on Bugzilla 5.0 and later
+    let count = isNaN(comment.count) ? this.bug.comments.findIndex(c => c.creation_time === time) : comment.count;
+
     $entry.id = `${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
-    $entry.setAttribute('data-comment-count', comment.count);
+    $entry.setAttribute('data-comment-count', count);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
-          .textContent = comment.count > 0 ? `Comment ${comment.count}` : 'Description'; // l10n
+          .textContent = count > 0 ? `Comment ${count}` : 'Description'; // l10n
     $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, comment.is_markdown);
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked
       $entry.addEventListener(click_event_type, event => {
         if (!event.target.matches(':-moz-any-link')) {
-          this.trigger('BugView#CommentSelected', { number: Number(comment.count) });
+          this.trigger('BugView#CommentSelected', { number: Number(count) });
         }
       });
 
       let reply = () => {
-        let quote_header = `(In reply to ${author.name} from comment #${comment.count})`;
+        let quote_header = `(In reply to ${author.name} from comment #${count})`;
         let quote_lines = comment.text.split(/\n/).map(line => `> ${line}`);
         let quote = [quote_header, ...quote_lines].join('\n');
         let $tabpanel = document.querySelector(`#bug-comment-form-${this.id}-tabpanel-comment`);
