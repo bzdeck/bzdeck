@@ -28,11 +28,11 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
    * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
    * @listens ProfilePageView#ProfileRequested
    * @param {undefined}
-   * @returns {undefined}
    * @fires ProfilePagePresenter#GravatarProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFetchingError
    * @fires ProfilePagePresenter#BugzillaProfileFetchingComplete
+   * @returns {undefined}
    */
   on_profile_requested (user) {
     let origin = BzDeck.host.origin;

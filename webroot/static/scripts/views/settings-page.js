@@ -90,8 +90,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @param {*}      _value.user - User-defined value.
    * @param {*}      _value.default - Default value.
    * @param {String} _value.type - Type of the value: boolean, integer or string.
-   * @returns {undefined}
    * @fires SettingsPageView#PrefChangeRequested
+   * @returns {undefined}
    */
   activate_radiogroup (name, _value) {
     let $root = document.documentElement;

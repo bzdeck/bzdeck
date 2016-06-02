@@ -80,12 +80,12 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * Search bugs from the remote Bugzilla instance, and provide the results as event data.
    * @listens SearchPageView#SearchRequested
    * @param {URLSearchParams} params - Search query.
-   * @returns {undefined}
    * @fires SearchPagePresenter#Offline
    * @fires SearchPagePresenter#SearchStarted
    * @fires SearchPagePresenter#SearchResultsAvailable
    * @fires SearchPagePresenter#SearchError
    * @fires SearchPagePresenter#SearchComplete
+   * @returns {undefined}
    */
   exec_search (params) {
     if (!navigator.onLine) {

@@ -26,8 +26,8 @@ BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
    * @override
    * @param {(Number|String)} name - Key of the item.
    * @param {*} value - Raw data object or any value.
-   * @returns {undefined}
    * @fires PrefCollection#PrefChanged
+   * @returns {undefined}
    */
   set (name, value) {
     super.set(name, value);

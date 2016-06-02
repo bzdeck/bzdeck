@@ -31,8 +31,8 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
    * @param {String} container_id - Container ID to be checked.
    * @param {Number} old_id - Old bug ID to be replaced.
    * @param {Number} new_id - New bug ID to navigate.
-   * @returns {undefined}
    * @fires BugContainerPresenter#navigated
+   * @returns {undefined}
    */
   on_navigation_requested ({ container_id, old_id, new_id } = {}) {
     if (container_id !== this.id) {
@@ -47,8 +47,8 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
   /**
    * Notify the view of a new bug ID to be added.
    * @param {Number} bug_id - Bug ID to show.
-   * @returns {undefined}
    * @fires BugContainerPresenter#AddingBugRequested
+   * @returns {undefined}
    */
   add_bug (bug_id) {
     this.trigger('#AddingBugRequested', { bug_id, siblings: this.siblings });

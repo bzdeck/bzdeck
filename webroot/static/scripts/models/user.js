@@ -13,9 +13,9 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get an UserModel instance.
    * @constructor
    * @param {Object} data - Profile object including Bugzilla's raw user data.
+   * @fires UserModel#UserInfoUpdated
    * @returns {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via
    *  user.prop instead of user.data.prop.
-   * @fires UserModel#UserInfoUpdated
    */
   constructor (data) {
     super(); // Assign this.id
@@ -164,8 +164,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * access, delegate the process to GlobalView.
    * @listens GlobalView#GravatarProfileProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @fires UserModel#GravatarProfileRequested
+   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
   get_gravatar_profile ({ in_promise_all = false } = {}) {
@@ -207,8 +207,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Because this requires DOM access, delegate the process to GlobalView.
    * @listens GlobalView#GravatarImageProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @fires UserModel#GravatarImageRequested
+   * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
   get_gravatar_image ({ in_promise_all = false } = {}) {

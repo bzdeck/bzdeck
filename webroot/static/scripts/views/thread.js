@@ -35,8 +35,8 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * Called whenever the thread is double-clicked. Expand the bug container.
    * @param {MouseEvent} event - Fired dblclick event.
    * @param {String} selector - Defining the target element.
-   * @returns {undefined}
    * @fires ThreadView#OpeningBugRequested
+   * @returns {undefined}
    */
   ondblclick (event, selector) {
     let $target = event.originalTarget;
@@ -49,8 +49,8 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
    * Open a specific bug in a new tab.
    * @param {Number} id - Bug ID to show.
-   * @returns {undefined}
    * @fires AnyView#OpeningBugRequested
+   * @returns {undefined}
    */
   open_bug (id) {
     this.trigger('AnyView#OpeningBugRequested', { id, siblings: [...this.consumer.presenter.data.bugs.keys()] });

@@ -141,10 +141,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * Called whenever any item is clicked or tapped on the page. If the target element is a button or link, open the
    * relevant content in a new in-app tab or browser tab.
    * @param {MouseEvent} event - The click event.
-   * @returns {Boolean} default - Whether the event should lead to the default action.
    * @fires AnyView#OpeningBugRequested
    * @fires AnyView#OpeningAttachmentRequested
    * @fires AnyView#OpeningProfileRequested
+   * @returns {Boolean} default - Whether the event should lead to the default action.
    */
   onclick (event) {
     let $target = event.target;
@@ -229,8 +229,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * CORS. Notify UserModel when the profile is ready.
    * @listens UserModel#GravatarProfileRequested
    * @param {String} hash - Hash value of the user's email.
-   * @returns {undefined}
    * @fires GlobalView#GravatarProfileProvided
+   * @returns {undefined}
    */
   on_gravatar_profile_requested ({ hash } = {}) {
     let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
@@ -246,8 +246,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @param {String} hash - Hash value of the user's email.
    * @param {String} color - Generated color of the user for the fallback image.
    * @param {String} initial - Initial of the user for the fallback image.
-   * @returns {undefined}
    * @fires GlobalView#GravatarImageProvided
+   * @returns {undefined}
    */
   on_gravatar_image_requested ({ hash, color, initial } = {}) {
     let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });

@@ -75,8 +75,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   /**
    * Create a comment entry that contains the author name/image, timestamp, comment body and Reply button.
    * @param {undefined}
-   * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
    * @fires BugView#CommentSelected
+   * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
    */
   create_comment_entry () {
     let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';

@@ -28,8 +28,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * Provide recent searches done by the user. Notify the results with an event.
    * @listens QuickSearchView#RecentSearchesRequested
    * @param {undefined}
-   * @returns {undefined}
    * @fires QuickSearchPresenter#ResultsAvailable
+   * @returns {undefined}
    */
   provide_recent_searches () {
     BzDeck.prefs.get('search.quick.history').then(history => {
@@ -64,8 +64,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * Execute a quick search and notify the results with an event.
    * @listens QuickSearchView#QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
-   * @returns {undefined}
    * @fires QuickSearchPresenter#ResultsAvailable
+   * @returns {undefined}
    * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {

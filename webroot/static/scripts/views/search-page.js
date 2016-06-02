@@ -84,8 +84,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * Set up the Basic Search Pane that contains options for classification, product, component, status and resolution,
    * as well as search term textbox.
    * @param {Object} config - Bugzilla server configuration that contains products, components and more.
-   * @returns {undefined}
    * @fires SearchPageView#SearchRequested
+   * @returns {undefined}
    */
   setup_basic_search_pane (config) {
     let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');

@@ -25,11 +25,11 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
    * Prepare attachment data for the view. Find it from the local database or remote Bugzilla instance, then notify the
    * result regardless of the availability.
    * @param {undefined}
-   * @returns {undefined}
    * @fires AttachmentPresenter#LoadingStarted
    * @fires AttachmentPresenter#LoadingComplete
    * @fires AttachmentPresenter#AttachmentAvailable
    * @fires AttachmentPresenter#AttachmentUnavailable
+   * @returns {undefined}
    */
   get_attachment () {
     let att;

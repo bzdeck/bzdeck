@@ -13,8 +13,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {HTMLElement} $container - Container node to render the attachments.
-   * @returns {Object} view - New BugAttachmentsView instance.
    * @fires BugView#AttachmentSelected
+   * @returns {Object} view - New BugAttachmentsView instance.
    */
   constructor (id, bug_id, $container) {
     super(id); // Assign this.id
@@ -121,8 +121,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Called whenever the attachment list is clicked.
    * @param {MouseEvent} event - click or dblclick.
-   * @returns {undefined}
    * @fires AnyView#OpeningAttachmentRequested
+   * @returns {undefined}
    */
   listbox_onclick (event) {
     let $selected = this.$$listbox.view.selected[0];
@@ -138,10 +138,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Initialize the attachment uploading interface. This offers Add/Remove buttons as well as the drag-and-drop support.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#FilesSelected
    * @fires BugView#AttachText
    * @fires BugView#RemoveAttachment
+   * @returns {undefined}
    */
   init_uploader () {
     this.$drop_target = this.$container.querySelector('[aria-dropeffect]');

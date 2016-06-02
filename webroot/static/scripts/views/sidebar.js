@@ -11,9 +11,9 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * Get a SidebarView instance.
    * @constructor
    * @param {undefined}
-   * @returns {Object} view - New SidebarView instance.
    * @fires SidebarView#FolderSelected
    * @fires SidebarView#AppMenuItemSelected
+   * @returns {Object} view - New SidebarView instance.
    */
   constructor () {
     super(); // Assign this.id

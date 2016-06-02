@@ -86,8 +86,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Add the Take button to the <header> in the <section>.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#AddParticipant
+   * @returns {undefined}
    */
   add_take_button () {
     this.$button = this.create_button('take', 'Take', {
@@ -109,9 +109,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Add the Subscribe button to the <header> in the <section>.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#Unsubscribe
    * @fires BugView#Subscribe
+   * @returns {undefined}
    */
   add_subscribe_button () {
     let listed = this.values.has(this.my_email);
@@ -130,8 +130,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Add a Person Finder under the <header>.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#AddParticipant
+   * @returns {undefined}
    */
   add_person_finder () {
     this.$$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-${this.field}-person-finder`,
@@ -254,8 +254,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   /**
    * Add the Remove button to each person.
    * @param {HTMLElement} $person - Person on the list.
-   * @returns {HTMLElement} $button
    * @fires BugView#RemoveParticipant
+   * @returns {HTMLElement} $button
    */
   add_remove_button_to_person ($person) {
     let email = $person.querySelector('[itemprop="email"]').content;

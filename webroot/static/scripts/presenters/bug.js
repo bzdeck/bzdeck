@@ -64,11 +64,11 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * Load the bug from the local database or remote Bugzilla instance.
    * @listens BugView#Initialized
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugPresenter#LoadingStarted
    * @fires BugPresenter#LoadingFinished
    * @fires BugPresenter#BugDataAvailable
    * @fires BugPresenter#BugDataUnavailable
+   * @returns {undefined}
    */
   load_bug () {
     let container_id = this.container_id;
@@ -132,8 +132,8 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * Called in the constructor and whenever the location fragment or history state is updated. If the current bug is
    * still displayed, fire an event so the relevant views can do something.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugPresenter#HistoryUpdated
+   * @returns {undefined}
    */
   check_fragment () {
     if (this.bug && location.pathname === `/bug/${this.bug.id}`) {

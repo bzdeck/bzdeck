@@ -13,8 +13,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Object} bug - BugModel instance.
    * @param {HTMLElement} $bug - Bug container element.
-   * @returns {Object} view - New BugCommentFormView instance.
    * @fires BugView#Submit
+   * @returns {Object} view - New BugCommentFormView instance.
    */
   constructor (id, bug, $bug) {
     super(id); // Assign this.id
@@ -102,8 +102,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Prepare the content on the Comment tabpanel.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#Submit
+   * @returns {undefined}
    */
   init_comment_tabpanel () {
     // Fill in an auto-saved draft comment if any, or workaround a Firefox bug where the placeholder is not displayed in
@@ -123,8 +123,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Prepare the content on the Attachment tabpanel.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#FilesSelected
+   * @returns {undefined}
    */
   init_attachment_tabpanel () {
     let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
@@ -147,8 +147,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Prepare the content on the NeedInfo tabpanel.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#EditFlag
+   * @returns {undefined}
    */
   init_needinfo_tabpanel () {
     let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
@@ -218,8 +218,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called by the textbox element whenever the new comment is edited by the user.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#EditComment
+   * @returns {undefined}
    */
   oninput () {
     let text = this.$textbox.value;
@@ -247,12 +247,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#AttachmentAdded
    * @param {Number} bug_id - Changed bug ID.
    * @param {Proxy} attachment - Added attachment data as an AttachmentModel instance.
-   * @returns {undefined}
    * @fires AnyView#OpeningAttachmentRequested
    * @fires AnyView#OpeningBugRequested
    * @fires BugView#RemoveAttachment
    * @fires BugView#MoveUpAttachment
    * @fires BugView#MoveDownAttachment
+   * @returns {undefined}
    */
   on_attachment_added ({ bug_id, attachment } = {}) {
     if (bug_id !== this.bug.id) {

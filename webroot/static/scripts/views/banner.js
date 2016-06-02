@@ -76,8 +76,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * Called whenever a global tab is selected.
    * @param {Array.<HTMLElement>} items - Newly selected nodes.
    * @param {Array.<HTMLElement>} oldval - Previously selected nodes.
-   * @returns {undefined}
    * @fires BannerView#TabSelected
+   * @returns {undefined}
    */
   on_tab_selected ({ items, oldval } = {}) {
     let path = this.tab_path_map.get(items[0].id);
@@ -115,8 +115,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global
    * banner.
    * @param {HTMLElement} $parent - Tabpanel that contains the header.
-   * @returns {undefined}
    * @fires BannerView#BackButtonClicked
+   * @returns {undefined}
    */
   add_back_button ($parent) {
     let $header = $parent.querySelector('header');

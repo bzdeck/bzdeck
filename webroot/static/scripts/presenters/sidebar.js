@@ -59,8 +59,8 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
    * Load the user's Gravatar profile.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SidebarPresenter#GravatarProfileFound
+   * @returns {undefined}
    */
   load_user_gravatar (folder_id) {
     BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
@@ -71,8 +71,8 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
-   * @returns {undefined}
    * @fires SidebarPresenter#FolderOpened
+   * @returns {undefined}
    */
   open_folder (folder_id) {
     BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
@@ -98,8 +98,8 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
    * Notify the number of unread bugs so the view can show it on the Inbox option.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SidebarPresenter#UnreadToggled
+   * @returns {undefined}
    */
   toggle_unread () {
     BzDeck.collections.subscriptions.get_all().then(bugs => {

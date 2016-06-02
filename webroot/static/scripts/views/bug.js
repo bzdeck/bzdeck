@@ -219,8 +219,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Switch to another bug within the same tab through the Back and Forward navigation.
    * @param {Number} new_id - ID of the bug to show next.
-   * @returns {undefined}
    * @fires BugContainerView#NavigationRequested
+   * @returns {undefined}
    */
   navigate (new_id) {
     this.trigger('BugView#NavigationRequested', { container_id: this.container_id, old_id: this.bug_id, new_id });
@@ -229,10 +229,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#EditModeChanged
    * @fires BugView#OpeningTabRequested
    * @fires AnyView#TogglingPreviewRequested
+   * @returns {undefined}
    */
   render () {
     if (!this.bug.summary && !this.bug._update_needed) {
@@ -372,9 +372,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Render the bug data on the view.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
-   * @returns {undefined}
    * @fires AnyView#OpeningBugRequested
    * @fires BugView#RenderingComplete
+   * @returns {undefined}
    */
   fill_details (delayed) {
     // When the comments and history are loaded async, the template can be removed
@@ -458,8 +458,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
    * @param {undefined}
-   * @returns {undefined}
    * @fires BugView#EditField
+   * @returns {undefined}
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
@@ -544,9 +544,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Initialize the attachment drag & drop support.
    * @param {undefined}
-   * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
    * @fires BugView#FilesSelected
    * @fires BugView#AttachText
+   * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
    */
   init_att_drop_target () {
     let timer;
@@ -697,8 +697,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * traditional File API to identify the files. In any case, notify the selected files to the presenter.
    * @listens BugView#FilesSelected
    * @param {(HTMLInputElement|DataTransfer)} input - Data source.
-   * @returns {undefined}
    * @fires BugView#AttachFiles
+   * @returns {undefined}
    */
   on_files_selected ({ input } = {}) {
     let iterate = items => {

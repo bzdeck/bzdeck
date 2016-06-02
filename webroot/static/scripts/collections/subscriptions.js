@@ -71,10 +71,10 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * Retrieve data of bugs the user is participating from the remote Bugzilla instance, and return those as models.
    * @param {Boolean} [firstrun=false] - True for the initial session.
    * @param {URLSearchParams} [params] - Search query.
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    * @fires SubscriptionCollection#FetchingSubscriptionsStarted
    * @fires SubscriptionCollection#FetchingSubscriptionsComplete
    * @fires SubscriptionCollection#Updated
+   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   fetch (firstrun = false, params = new URLSearchParams()) {

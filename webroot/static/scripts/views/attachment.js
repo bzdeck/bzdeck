@@ -78,8 +78,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Activate the editable widgets including textboxes and checkboxes.
    * @param {undefined}
-   * @returns {undefined}
    * @fires AttachmentView#EditAttachment
+   * @returns {undefined}
    */
   activate_widgets () {
     let { id, hash } = this.attachment;

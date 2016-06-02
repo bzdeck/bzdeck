@@ -79,8 +79,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * Display the "Sign in with Bugzilla" button that triggers Bugzilla's Authentication Delegation process. When the
    * button is clicked, take the user to the Bugzilla authentication page.
    * @param {undefined}
-   * @returns {undefined}
    * @fires LoginFormView#LoginRequested
+   * @returns {undefined}
    * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html}
    */
   activate_bugzilla_auth () {
@@ -107,9 +107,9 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * displayed on BzDeck for desktop, that encodes the user's Bugzilla account name and API key. The decoding is done by
    * a third-party library. This may not work depending on the spec of the device's camera.
    * @param {undefined}
-   * @returns {undefined}
    * @fires LoginFormView#QRCodeDecoded
    * @fires LoginFormView#QRCodeError
+   * @returns {undefined}
    */
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');

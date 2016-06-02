@@ -34,9 +34,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Bootstrap Step 1. Find a user account from the local database.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
+   * @returns {undefined}
    */
   find_account () {
     this.trigger('#StatusUpdate', { message: 'Looking for your account...' }); // l10n
@@ -71,9 +71,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @listens LoginFormView#QRCodeDecoded
    * @listens LoginFormView#QRCodeError
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
+   * @returns {undefined}
    */
   force_login () {
     this.trigger('#StatusUpdate', { status: 'ForcingLogin', message: '' });
@@ -109,10 +109,10 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @param {String} host_id - Host identifier like 'mozilla'.
    * @param {String} name - User's Bugzilla account name. Usually email address.
    * @param {String} api_key - User's 40-character Bugzilla API key.
-   * @returns {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
    * @fires SessionPresenter#UserFound
+   * @returns {undefined}
    */
   verify_account (host_id, name, api_key) {
     this.trigger('#StatusUpdate', { message: 'Verifying your account...' }); // l10n
@@ -143,9 +143,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Bootstrap Step 4. Load data from the local database once the user account is set.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
+   * @returns {undefined}
    */
   load_data () {
     this.trigger('#StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
@@ -183,8 +183,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
    * @param {Boolean} [firstrun=false] - True for the initial session.
-   * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
    * @fires SessionPresenter#StatusUpdate
+   * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
    */
   fetch_data (firstrun = false) {
     this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
@@ -217,9 +217,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Bootstrap Step 6. Set up everything including the global presenters and views, then complete bootstrapping.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
+   * @returns {undefined}
    */
   init_components () {
     this.trigger('#StatusUpdate', { message: 'Initializing UI...' }); // l10n
@@ -254,8 +254,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Notify the view of the user's sign-in once prepared.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#Login
+   * @returns {undefined}
    */
   login () {
     this.trigger('#Login');
@@ -264,8 +264,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
    * @param {undefined}
-   * @returns {undefined}
    * @fires SessionPresenter#Logout
+   * @returns {undefined}
    */
   logout () {
     this.trigger('#Logout');

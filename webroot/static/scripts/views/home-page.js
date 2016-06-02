@@ -71,8 +71,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Select the Home tab and open the specified Sidebar folder.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
-   * @returns {undefined}
    * @fires HomePageView#UnknownFolderSelected
+   * @returns {undefined}
    */
   connect (folder_id) {
     let $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
@@ -236,9 +236,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * Initialize the searchbar available in the vertical layout.
    * @listens QuickSearchPresenter#ResultsAvailable
    * @param {undefined}
-   * @returns {undefined}
    * @fires QuickSearchView#QuickSearchRequested
    * @fires QuickSearchView#AdvancedSearchRequested
+   * @returns {undefined}
    */
   init_searchbar () {
     let listed_bugs;
@@ -358,8 +358,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @listens ThreadView#OpeningBugRequested
    * @listens SidebarView#FolderSelected
    * @param {Boolean} expanded - Whether the preview should be expanded.
-   * @returns {undefined}
    * @fires AnyView#ExpandingBugContainerRequested
+   * @returns {undefined}
    */
   request_expanding_bug_container (expanded) {
     this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.id, expanded });

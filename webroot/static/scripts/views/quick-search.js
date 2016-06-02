@@ -93,8 +93,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * Called whenever the user is typing or focusing on the search box. If the box is has some characters, show the
    * search results. Otherwise, show the Recent Searches if any.
    * @param {undefined}
-   * @returns {undefined}
    * @fires QuickSearchView#RecentSearchesRequested
+   * @returns {undefined}
    */
   oninput () {
     if (this.$input.value.trim()) {
@@ -129,8 +129,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Request quick search results.
    * @param {undefined}
-   * @returns {undefined}
    * @fires QuickSearchView#QuickSearchRequested
+   * @returns {undefined}
    */
   exec_quick_search () {
     this.trigger('#QuickSearchRequested', { input: this.$input.value });
@@ -139,8 +139,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Request advanced search results, leading to a new search page.
    * @param {undefined}
-   * @returns {undefined}
    * @fires QuickSearchView#AdvancedSearchRequested
+   * @returns {undefined}
    */
   exec_advanced_search () {
     this.trigger('#AdvancedSearchRequested', { input: this.$input.value });
@@ -231,8 +231,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * Called whenever a search result is selected. Open the object or Advanced Search page in a new tab, and close the
    * drop down list.
    * @param {HTMLElement} $target - Selected element.
-   * @returns {undefined}
    * @fires QuickSearchView#ResultSelected
+   * @returns {undefined}
    */
   on_result_selected ($target) {
     if ($target.matches('[data-command="search-all-bugs"]')) {
