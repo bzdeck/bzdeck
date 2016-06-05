@@ -82,7 +82,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render (attachments) {
-    let $fragment = new DocumentFragment();
     let $listitem = this.get_template('details-attachment-listitem');
 
     attachments.reverse(); // The newest attachment should be on the top of the list
@@ -92,7 +91,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     })).then(creators => attachments.forEach((att, index) => {
       this.attachments.set(att.id || att.hash, att);
 
-      this.fill($fragment.appendChild($listitem.cloneNode(true)), {
+      this.$listbox.insertAdjacentElement('afterbegin', this.fill($listitem.cloneNode(true), {
         id: att.hash ? att.hash.substr(0, 7) : att.id,
         summary: att.summary,
         last_change_time: att.last_change_time,
@@ -106,13 +105,12 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
         'aria-hidden': !!att.is_obsolete,
         'data-id': att.id,
         'data-hash': att.hash,
-      });
+      }));
     })).then(() => {
       let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
 
       this.update_list_title();
       this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
-      this.$listbox.insertBefore($fragment, this.$listbox.firstElementChild);
       this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
       this.$$listbox.update_members();
     });

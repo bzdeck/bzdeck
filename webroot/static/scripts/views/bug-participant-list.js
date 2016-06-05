@@ -144,7 +144,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.trigger('BugView#AddParticipant', { field: this.field, email: event.detail.$target.dataset.value });
     });
 
-    this.$section.insertBefore(this.$$finder.$combobox, this.$header.nextElementSibling);
+    this.$header.insertAdjacentElement('afterend', this.$$finder.$combobox);
   }
 
   /**
@@ -185,7 +185,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     BzDeck.collections.users.get(email, { name: email }).then(participant => {
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
-      this.$list.insertBefore($person, this.$list.firstElementChild);
+      this.$list.insertAdjacentElement('afterbegin', $person);
 
       if (this.editing) {
         this.add_remove_button_to_person($person);

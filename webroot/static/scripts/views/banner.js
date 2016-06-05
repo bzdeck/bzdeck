@@ -130,7 +130,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
         return FlareTail.helpers.event.ignore(event);
       });
 
-      $header.insertBefore($button, $header.firstElementChild);
+      $header.insertAdjacentElement('afterbegin', $button);
     }
   }
 }
