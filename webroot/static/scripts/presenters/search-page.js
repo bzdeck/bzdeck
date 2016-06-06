@@ -12,10 +12,9 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * Get a SearchPagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @param {Object} config - Bugzilla server configuration that contains products, components and more.
    * @returns {Object} presenter - New SearchPagePresenter instance.
    */
-  constructor (id, config) {
+  constructor (id) {
     super(id); // Assign this.id
 
     this.data = new Proxy({
@@ -23,35 +22,11 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
       preview_id: null
     },
     {
-      get: (obj, prop) => {
-        if (prop === 'bugs') {
-          // Return a sorted bug list
-          return this.view.get_shown_bugs(obj.bugs);
-        }
-
-        return obj[prop];
-      },
       set: (obj, prop, newval) => {
         let oldval = obj[prop];
 
-        if (oldval === newval && !this.view.preview_is_hidden) {
-          return true;
-        }
-
         if (prop === 'preview_id') {
-          let siblings = [...this.data.bugs.keys()];
-
-          // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-          if (this.view.preview_is_hidden) {
-            BzDeck.router.navigate('/bug/' + newval, { siblings });
-
-            return true; // Do not save the value
-          }
-
-          if (oldval !== newval && newval) {
-            BzDeck.router.navigate(location.pathname, { bug_id: newval, siblings }, true);
-            BzDeck.models.bugzfeed._subscribe([newval]);
-          }
+          BzDeck.router.navigate(location.pathname, { preview_id: newval }, true);
         }
 
         obj[prop] = newval;

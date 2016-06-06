@@ -12,30 +12,22 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * existing tabs, because the user can open multiple search tabs at the same time.
    * @constructor
    * @param {Number} id - 7-digit random identifier for the new instance.
+   * @fires SearchPageView#SearchRequested
    * @returns {Object} view - New SearchPageView instance.
    */
   constructor (id) {
     super(id);
 
+    // Open a tab first
+    this.connect();
+
     this.$tabpanel = document.querySelector(`#tabpanel-search-${id}`);
     this.$grid = this.$tabpanel.querySelector('[id$="-result-pane"] [role="grid"]');
     this.$status = this.$tabpanel.querySelector('[role="status"]');
-    this.panes = {};
+    this.$preview_pane = this.$tabpanel.querySelector('[id$="-preview-pane"]');
 
-    this.setup_basic_search_pane(this.id, config);
+    this.setup_basic_search_pane();
     this.setup_result_pane();
-
-    Object.defineProperties(this, {
-      preview_is_hidden: {
-        enumerable: true,
-        get: () => FlareTail.helpers.env.device.mobile
-      },
-    });
-
-    if (params) {
-      // TODO: support other params
-      this.panes['basic-search'].querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
-    }
 
     // Subscribe to events
     this.subscribe('P#Offline');
@@ -46,12 +38,14 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     window.addEventListener('popstate', event => this.onpopstate());
 
     // Initiate the corresponding presenter
-    this.presenter = new BzDeck.SearchPagePresenter(BzDeck.host.data.config);
-    this.container_view = new BzDeck.BugContainerView(this.id, this.$tabpanel.querySelector('[id$="-preview-pane"]'));
+    this.presenter = new BzDeck.SearchPagePresenter(this.id);
+    this.container_view = new BzDeck.BugContainerView(this.id, this.$preview_pane);
 
-    this.connect();
+    let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
     if (params.toString()) {
+      // TODO: support other params
+      this.$basic_search_pane.querySelector('.text-box [role="searchbox"]').value = params.get('short_desc') || '';
       this.trigger('#SearchRequested', { params_str: params.toString() });
     }
   }
@@ -71,8 +65,6 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   connect () {
-    let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
-
     BzDeck.views.banner.open_tab({
       label: 'Search', // l10n
       description: 'Search & Browse Bugs', // l10n
@@ -83,12 +75,13 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Set up the Basic Search Pane that contains options for classification, product, component, status and resolution,
    * as well as search term textbox.
-   * @param {Object} config - Bugzilla server configuration that contains products, components and more.
+   * @param {undefined}
    * @fires SearchPageView#SearchRequested
    * @returns {undefined}
    */
-  setup_basic_search_pane (config) {
-    let $pane = this.panes['basic-search'] = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
+  setup_basic_search_pane () {
+    let config = BzDeck.host.data.config;
+    let $pane = this.$basic_search_pane = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
 
     // Custom scrollbar
     for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
@@ -201,7 +194,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   setup_result_pane () {
-    let $pane = this.panes['result'] = this.$tabpanel.querySelector('[id$="-result-pane"]');
+    let $pane = this.$result_pane = this.$tabpanel.querySelector('[id$="-result-pane"]');
     let $$grid;
     let mobile = FlareTail.helpers.env.device.mobile;
 
@@ -238,12 +231,12 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
 
   /**
    * Get a list of bugs currently showing on the result thread. FIXME: This should be smartly done in the presenter.
-   * @param {Map.<Number, Proxy>} bugs - All bugs prepared for the thread.
+   * @param {undefined}
    * @returns {Array.<Number>} ids - IDs of bugs currently showing.
    */
-  get_shown_bugs (bugs) {
+  get_shown_bugs () {
     return [...this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])')]
-                                  .map($row => bugs.get(Number($row.dataset.id)));
+                                  .map($row => Number($row.dataset.id));
   }
 
   /**
@@ -252,8 +245,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   show_basic_search_pane () {
-    this.panes['basic-search'].setAttribute('aria-hidden', 'false');
-    this.panes['preview'].setAttribute('aria-hidden', 'true');
+    this.$basic_search_pane.setAttribute('aria-hidden', 'false');
+    this.$preview_pane.setAttribute('aria-hidden', 'true');
   }
 
   /**
@@ -342,8 +335,24 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   onpopstate () {
-    if (location.pathname === `/search/${this.id}`) {
-      this.container_view.add_bug(history.state.bug_id, history.state.siblings);
+    if (location.pathname !== `/search/${this.id}` || !history.state) {
+      return;
+    }
+
+    let { preview_id } = history.state;
+    let siblings = this.get_shown_bugs();
+
+    // Show the bug preview only when the preview pane is visible (on desktop and tablet)
+    if (FlareTail.helpers.env.device.mobile) {
+      BzDeck.router.navigate('/bug/' + preview_id, { siblings });
+    } else if (preview_id !== this.preview_id) {
+      this.preview_id = preview_id;
+      this.container_view.on_adding_bug_requested({ bug_id: preview_id, siblings });
+
+      if (this.$preview_pane.matches('[aria-hidden="true"]')) {
+        this.$basic_search_pane.setAttribute('aria-hidden', 'true');
+        this.$preview_pane.setAttribute('aria-hidden', 'false');
+      }
     }
   }
 }

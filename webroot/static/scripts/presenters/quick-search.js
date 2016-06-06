@@ -17,10 +17,10 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
   constructor (id) {
     super(id); // Assign this.id
 
-    // Subscribe to events
+    // Subscribe to events. TEMP: Use the global option to hear from HomePageView.
     this.on('V#RecentSearchesRequested', data => this.provide_recent_searches());
-    this.on('V#QuickSearchRequested', data => this.exec_quick_search(data.input));
-    this.on('V#AdvancedSearchRequested', data => this.exec_advanced_search(data.input));
+    this.on('V#QuickSearchRequested', data => this.exec_quick_search(data.input), true);
+    this.on('V#AdvancedSearchRequested', data => this.exec_advanced_search(data.input), true);
     this.subscribe('V#ResultSelected');
   }
 
@@ -55,7 +55,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       results = [...results];
 
       if (results.length) {
-        this.trigger('#ResultsAvailable', { category: 'recent', input: '', results });
+        this.trigger_safe('#ResultsAvailable', { category: 'recent', input: '', results });
       }
     });
   }

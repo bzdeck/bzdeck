@@ -250,7 +250,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {
         // TEMP: Use QuickSearchPresenter to open the advanced search page
-        this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
+        // TEMP: Disable the advanced search until further development takes place (#12)
+        // this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
         Promise.resolve().then(() => $searchbox.focus());
@@ -275,7 +276,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       }
     });
 
-    this.on('QuickSearchPresenter#ResultsAvailable', ({ category, input, results } = {}) => {
+    this.on_safe('QuickSearchPresenter#ResultsAvailable', ({ category, input, results } = {}) => {
       // Check if the search terms have not changed since the search is triggered
       if (category !== 'bugs' || input !== $searchbox.value) {
         return;
