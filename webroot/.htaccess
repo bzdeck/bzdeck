@@ -3,16 +3,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 # Charset
-AddDefaultCharset UTF-8
-AddCharset UTF-8 appcache css js webapp
+AddCharset UTF-8 html css js
 
 # MIME types
 AddType application/x-httpd-php html php
 AddType image/x-icon ico
-AddType text/cache-manifest appcache
 AddType application/javascript js
-AddType application/x-web-app-manifest+json webapp
-AddType application/font-sfnt ttf
 AddType application/font-woff2 woff2
 
 # Options
@@ -51,10 +47,9 @@ Header always append Cache-Control private
 # Performance: set Expires
 ExpiresActive On
 ExpiresDefault "access plus 1 day"
-ExpiresByType text/cache-manifest "access plus 0 seconds"
 
 # Performance: use gzip (Apache 2.x)
-AddOutputFilterByType DEFLATE text/html text/cache-manifest text/css application/javascript application/x-web-app-manifest+json
+AddOutputFilterByType DEFLATE text/html text/css application/javascript
 
 # Security
 Header always append Content-Security-Policy "\
