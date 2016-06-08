@@ -137,7 +137,11 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user}
    */
   verify_account (name, api_key) {
-    this.request('user', new URLSearchParams(`names=${name}`), { api_key }).then(result => {
+    let params = new URLSearchParams();
+
+    params.append('names', name);
+
+    this.request('user', params, { api_key }).then(result => {
       if (!result.users || !result.users[0]) {
         return Promise.reject(new Error(result.message || 'User Not Found')); // l10n
       } else if (result.users[0].error) {
