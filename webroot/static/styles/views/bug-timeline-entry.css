@@ -359,6 +359,10 @@
   display: none;
 }
 
+.bug-timeline [itemprop="change"] * {
+  -moz-user-select: text;
+}
+
 .bug-timeline [itemprop="change"] [itemprop="image"] {
   display: none;
 }
