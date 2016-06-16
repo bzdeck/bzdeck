@@ -361,7 +361,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
                  change;
 
     let _field_label = {
-      blocks: 'blockers', // l10n
+      blocks: 'blocked bugs', // l10n
       depends_on: 'dependencies', // l10n
       duplicates: 'duplicates', // for duplication comments, unused
       dupe_of: 'dupe_of', // for duplication comments, unused
@@ -573,7 +573,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
               render(`changed the keywords: removed ${removed}, added ${added}`)); // l10n
         } else if (change.field_name === 'blocks') {
           Promise.all([get_removals, get_additions]).then(([removed, added]) =>
-              render(`changed the blockers: removed ${removed}, added ${added}`)); // l10n
+              render(`changed the blocked bugs: removed ${removed}, added ${added}`)); // l10n
         } else if (change.field_name === 'depends_on') {
           Promise.all([get_removals, get_additions]).then(([removed, added]) =>
               render(`changed the dependencies: removed ${removed}, added ${added}`)); // l10n
