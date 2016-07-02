@@ -724,7 +724,7 @@
           </div><!-- end #TID-tabpanel-comment -->
           <div id="bug-comment-form-TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-comment-form-TID-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
-              <div role="text" itemprop="text"></div>
+              <div itemprop="text"></div>
             </article>
           </div><!-- end #TID-tabpanel-preview -->
           <div id="bug-comment-form-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-comment-form-TID-tab-attachments">
