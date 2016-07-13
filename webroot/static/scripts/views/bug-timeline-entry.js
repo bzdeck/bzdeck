@@ -100,7 +100,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.setAttribute('data-comment-count', count);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
           .textContent = count > 0 ? `Comment ${count}` : 'Description'; // l10n
-    $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, comment.is_markdown);
+    $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, !!comment.is_markdown);
 
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked
