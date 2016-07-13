@@ -39,7 +39,7 @@ tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
     port.postMessage(message);
   };
 
-  xhr.open(method, url, false); // async = false
+  xhr.open(method, url);
 
   if (headers) {
     headers.forEach((value, key) => xhr.setRequestHeader(key, value));
