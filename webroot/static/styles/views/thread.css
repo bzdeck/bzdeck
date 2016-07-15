@@ -3,10 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 [id$="vertical-thread"] {
-  position: absolute;
+  position: relative;
   overflow: hidden;
-  width: 100%;
-  height: 100%;
 }
 
 [id$="vertical-thread"][aria-busy="true"] > * {
