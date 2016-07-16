@@ -280,33 +280,32 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     let init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
-    let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
     let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
-    let $show_details_button = this.$bug.querySelector('[data-command="show-details"]');
+    let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
+    let $container = this.$bug.closest('.bug-container');
+    let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
     let $timeline = this.$bug.querySelector('.bug-timeline');
-
-    if ($edit_button) {
-      $edit_button.setAttribute('aria-disabled', !can_editbugs);
-      init_button($edit_button, event => this.trigger('BugView#EditModeChanged', { enabled: event.detail.pressed }));
-    }
 
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
       init_button($star_button, event => this.bug.starred = event.detail.pressed);
     }
 
-    if ($show_details_button) {
-      init_button($show_details_button, event => {
-        let $preview_pane = this.$bug.closest('[id$="preview-pane"]');
-        let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
+    if ($edit_button) {
+      $edit_button.setAttribute('aria-disabled', !can_editbugs);
 
-        // Select the Timeline tab when the bug container is collapsed
-        if (this.$$tablist && $preview_pane.matches('[aria-expanded="true"]')) {
-          this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
+      init_button($edit_button, event => {
+        this.trigger('BugView#EditModeChanged', { enabled: event.detail.pressed });
+
+        if ($container.matches('[aria-expanded]')) {
+          // Toggle the bug container
+          this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.container_id });
+
+          // Select the Timeline tab when the bug container is collapsed
+          if (this.$$tablist && $container.matches('[aria-expanded="true"]')) {
+            this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
+          }
         }
-
-        // Toggle the bug container
-        this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.container_id });
       });
     }
 

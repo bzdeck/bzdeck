@@ -302,17 +302,14 @@
         <header>
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Edit" tabindex="0" role="button" aria-pressed="false" aria-label="Edit the fields of this bug" data-command="edit"></span>
-              <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
-            </ul>
             <ul class="nav" role="none">
               <li role="none"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
               <li role="none"><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
             </ul>
-            <ul class="open" role="none">
-              <li role="none"><span class="iconic" title="Show the bug details" tabindex="0" role="button" data-command="show-details">Show Details</span></li>
+            <ul role="none">
+              <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
+              <li role="none"><span class="iconic" title="Edit" tabindex="0" role="button" aria-pressed="false" aria-label="Edit the fields of this bug" data-command="edit"></span>
+              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
             </ul>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
               <li role="none">

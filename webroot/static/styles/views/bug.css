@@ -20,7 +20,6 @@
   display: inline-flex;
 }
 
-.bug-container[role="tabpanel"] [itemtype$="Bug"] [role="toolbar"] .open,
 .bug-container[aria-expanded="false"] [itemtype$="Bug"] [role="toolbar"] .nav {
   display: none;
 }
@@ -61,10 +60,6 @@
   -moz-user-select: text; /* Enable click-to-copy */
 }
 
-[itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
-  content: '\F040'; /* pencil */
-}
-
 [itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="false"]::before {
   content: '\F006';
 }
@@ -77,12 +72,16 @@
   content: '\F112';
 }
 
-[itemtype$="Bug"] [role="toolbar"] [data-command="show-details"]::before {
-  content: '\F191';
+[itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
+  content: '\F040'; /* pencil */
 }
 
-.bug-container[aria-expanded="true"] > [itemtype$="Bug"] [role="toolbar"] [data-command="show-details"]::before {
-  content: '\F152';
+.bug-container[aria-expanded="false"] > [itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
+  content: '\F191'; /* expand */
+}
+
+.bug-container[aria-expanded="true"] > [itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
+  content: '\F152'; /* collapse */
 }
 
 [itemtype$="Bug"] [role="toolbar"] [data-command="show-menu"]::before {
