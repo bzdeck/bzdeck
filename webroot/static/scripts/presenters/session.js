@@ -83,7 +83,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
     this.on('LoginFormView#LoginRequested', data => {
       bc.addEventListener('message', ({ data: { client_api_login: name, client_api_key: key }} = {}) => {
-        if (email && key) {
+        if (name && key) {
           this.verify_account(data.host, name, key);
         } else {
           this.trigger('#Error', { message: 'Your Bugzilla user name and API key could not be retrieved. Try again.' });
