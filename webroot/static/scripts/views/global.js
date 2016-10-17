@@ -168,7 +168,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
       return FlareTail.helpers.event.ignore(event);
     }
 
-    if ($target.matches(':-moz-any-link, [role="link"]')) {
+    if ($target.matches(':any-link, [role="link"]')) {
       let new_win;
 
       if ($target.hasAttribute('data-bug-id')) {

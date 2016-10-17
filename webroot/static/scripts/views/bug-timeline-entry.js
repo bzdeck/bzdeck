@@ -105,7 +105,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     return BzDeck.collections.users.get(comment.creator, { name: comment.creator }).then(author => {
       // Append the comment number to the URL when clicked
       $entry.addEventListener(click_event_type, event => {
-        if (!event.target.matches(':-moz-any-link')) {
+        if (!event.target.matches(':any-link')) {
           this.trigger('BugView#CommentSelected', { number: Number(count) });
         }
       });

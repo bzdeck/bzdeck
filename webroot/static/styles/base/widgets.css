@@ -111,8 +111,8 @@ meta[role="checkbox"]::after {
   background-color: var(--textbox-background-color);
 }
 
-[role="textbox"]::-moz-placeholder,
-[role="searchbox"]::-moz-placeholder {
+[role="textbox"]::placeholder,
+[role="searchbox"]::placeholder {
   color: var(--textbox-foreground-color);
 }
 

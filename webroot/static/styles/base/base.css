@@ -83,11 +83,11 @@ code, kbd {
   outline-color: var(--focused-control-outline-color);
 }
 
-[role="link"], :-moz-any-link, button {
+[role="link"], :any-link, button {
   pointer-events: auto;
 }
 
-[role="link"] *, :-moz-any-link *, button * {
+[role="link"] *, :any-link *, button * {
   pointer-events: none;
 }
 

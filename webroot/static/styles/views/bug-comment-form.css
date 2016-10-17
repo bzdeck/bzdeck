@@ -107,7 +107,7 @@
   resize: none;
 }
 
-.bug-comment-form [role="textbox"][aria-multiline="true"]::-moz-placeholder {
+.bug-comment-form [role="textbox"][aria-multiline="true"]::placeholder {
   font-weight: 300;
   font-style: italic;
 }
