@@ -53,7 +53,6 @@ meta[role="checkbox"]::after {
   background-clip: padding-box;
   line-height: 1;
   text-decoration: none;
-  cursor: default;
 }
 
 .cta[role="button"] {
