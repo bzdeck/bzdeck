@@ -79,7 +79,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
    */
   create_comment_entry () {
-    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
     let comment = this.data.get('comment');
     let time = comment.creation_time;
     let $entry = this.get_template('timeline-comment');

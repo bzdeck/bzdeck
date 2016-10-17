@@ -39,7 +39,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
     this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
 
     for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
       new FlareTail.widgets.ScrollBar($tabpanel);
@@ -266,8 +266,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     }
 
     let hash = attachment.hash;
-    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
     let mobile = FlareTail.helpers.env.device.mobile;
+    let click_event_type = mobile ? 'touchstart' : 'mousedown';
     let mql = window.matchMedia('(max-width: 1023px)');
     let $tbody = this.$attachments_tbody;
     let $row = this.get_template('bug-comment-form-attachments-row');

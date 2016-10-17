@@ -24,7 +24,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     let get_time = str => (new Date(str)).getTime();
     let entries = new Map([...this.bug.comments.entries()]
             .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
-    let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+    let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
     let read_comments_num = 0;
     let last_comment_time;
     let data_arr = [];
@@ -147,7 +147,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    */
   expand_comments () {
     if (this.$expander) {
-      this.$expander.dispatchEvent(new CustomEvent(FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown'));
+      this.$expander.dispatchEvent(new CustomEvent(FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown'));
     }
 
     for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
@@ -177,7 +177,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     let match = hash.match(/^#c(\d+)$/);
 
     if (match) {
-      let click_event_type = FlareTail.helpers.env.touch.enabled ? 'touchstart' : 'mousedown';
+      let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
       let count = Number.parseInt(match[1]);
       let $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 
