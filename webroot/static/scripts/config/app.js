@@ -171,6 +171,7 @@ Object.defineProperty(BzDeck, 'compatible', {
       'BroadcastChannel' in window, // Firefox 38
       'CacheStorage' in window, // Firefox 41
       'Permissions' in window, // Firefox 45
+      'animate' in Element.prototype, // Firefox 48
     ];
 
     return features.every(item => item);

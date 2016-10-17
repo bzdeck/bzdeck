@@ -230,6 +230,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     super(); // Assign this.id
 
     let mobile = FlareTail.helpers.env.device.mobile;
+    let animations = new Set();
 
     this.consumer = consumer;
     this.name = name;
@@ -241,37 +242,29 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$option = this.get_template('vertical-thread-item');
     this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer);
 
+    this.$$listbox.bind('Selected', event => this.onselect(event));
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
-    this.$$listbox.bind('Selected', event => {
-      if (!event.detail.ids.length) {
-        return;
-      }
 
-      this.onselect(event);
-
+    this.$$listbox.bind('focus', event => {
       // Create a marquee effect when the bug title is overflowing
-      for (let $option of event.detail.items) {
-        let $name = $option.querySelector('[itemprop="summary"]');
-        let width = $name.scrollWidth;
+      for (let $option of this.$$listbox.view.selected) {
+        let $summary = $option.querySelector('[itemprop="summary"]');
+        let width = $summary.scrollWidth;
 
-        if (width > $name.clientWidth) {
-          let name = `${$option.id}-name-marquee`;
-          let sheet = document.styleSheets[1];
-
-          // Delete the rule first in case of any width changes
-          for (let [index, rule] of Object.entries(sheet.cssRules)) {
-            if (rule.type === 7 && rule.name === name) {
-              sheet.deleteRule(index);
-              break;
-            }
-          }
-
-          sheet.insertRule(`@keyframes ${name} { 0%, 10% { text-indent: 0 } 100% { text-indent: -${width+10}px } }`, 0);
-          $name.style.setProperty('animation-name', name);
-          $name.style.setProperty('animation-duration', `${width/25}s`);
+        if (width > $summary.clientWidth) {
+          animations.add($summary.animate([
+            { textIndent: 0 },
+            { textIndent: 0, offset: .1 },
+            { textIndent: `-${width+10}px` },
+          ], { duration: width * 40, iterations: Infinity }));
         }
       }
-    });
+    }, true);
+
+    this.$$listbox.bind('blur', event => {
+      animations.forEach(animation => animation.cancel());
+      animations.clear();
+    }, true);
 
     this.$$listbox.assign_key_bindings({
       // Show previous bug, an alias of UP
