@@ -62,6 +62,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     headers.set('Accept', 'application/json');
     headers.set('X-Bugzilla-API-Key', api_key || BzDeck.account.data.api_key);
 
+    if (this.user_agent_accepted) {
+      headers.set('User-Agent', 'BzDeck/0.1 (https://www.bzdeck.com/)');
+    }
+
     return new Promise((resolve, reject) => {
       worker.port.addEventListener('message', event => {
         let type = event.data.type;
