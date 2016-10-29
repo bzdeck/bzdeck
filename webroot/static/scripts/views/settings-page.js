@@ -63,6 +63,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
         this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
       }
 
+      this.fill_timezone_options();
+
       // Currently the radiogroup/radio widget is not data driven.
       // A modern preference system is needed.
       for (let [name, value] of prefs) {
@@ -81,6 +83,24 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
       this.ui_ready = true;
     });
+  }
+
+  /**
+   * Fill the timezone radio options. Each Bugzilla instance's timezone is hardcoded in our config file because the
+   * Bugzilla API doesn't provide the info.
+   * @param {undefined}
+   * @returns {undefined}
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bugzilla.html#timezone}
+   */
+  fill_timezone_options () {
+    let $radio_local = document.querySelector('#pref-timezone-local');
+    let $radio_host = document.querySelector('#pref-timezone-host');
+    let timezone_local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let timezone_host = BzDeck.host.timezone;
+
+    $radio_local.textContent = `Your local timezone (${timezone_local})`;
+    $radio_host.textContent = `Bugzilla default (${timezone_host})`;
+    $radio_host.dataset.value = timezone_host;
   }
 
   /**

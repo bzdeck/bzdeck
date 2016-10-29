@@ -40,7 +40,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
     // Date timezone
     BzDeck.prefs.get('ui.date.timezone').then(value => {
-      datetime.options.timezone = value || 'local';
+      // Map legacy value for backward compatibility
+      value = value === 'PST' ? 'America/Los_Angeles' : value;
+
+      datetime.options.timezone = value === 'local' ? undefined : value;
     });
 
     // Timeline: Font

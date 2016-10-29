@@ -154,9 +154,9 @@
                 <section>
                   <h4>Timezone</h4>
                   <ul role="radiogroup" data-pref="ui.date.timezone">
-                    <li role="none"><span role="radio" data-value="local">Your local time</span></li>
+                    <li role="none"><span role="radio" data-value="local" id="pref-timezone-local">Your local timezone</span></li>
+                    <li role="none"><span role="radio" data-value="UTC" id="pref-timezone-host">Bugzilla default</span></li>
                     <li role="none"><span role="radio" data-value="UTC">UTC</span></li>
-                    <li role="none"><span role="radio" data-value="PST">PST/PDT</span></li>
                   </ul>
                 </section>
                 <section>

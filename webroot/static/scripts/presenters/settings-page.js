@@ -37,7 +37,7 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
     }
 
     if (name === 'ui.date.timezone') {
-      FlareTail.helpers.datetime.options.timezone = value;
+      FlareTail.helpers.datetime.options.timezone = value === 'local' ? undefined : value;
     }
 
     if (name === 'ui.date.relative') {
