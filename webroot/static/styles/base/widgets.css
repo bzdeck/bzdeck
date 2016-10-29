@@ -44,12 +44,12 @@ meta[role="checkbox"]::after {
 [role="button"],
 [role="textbox"],
 [role="searchbox"] {
-  box-sizing: content-box;
   border-width: .1rem;
   border-style: solid;
   border-radius: .4rem;
-  padding: .4rem;
-  height: 1.6rem;
+  padding: .4rem .6rem;
+  max-width: 100%;
+  min-height: 1em;
   background-clip: padding-box;
   line-height: 1;
   text-decoration: none;
@@ -128,39 +128,6 @@ meta[role="checkbox"]::after {
   background-color: var(--active-textbox-background-color);
 }
 
-.blurred[role="textbox"] {
-  display: block;
-  outline: 0 !important;
-  box-sizing: border-box;
-  border-color: transparent;
-  padding: .2rem .8rem;
-  width: 100%;
-  height: auto;
-  min-height: 1.25em; /* relative em unit */
-  background-color: transparent;
-  box-shadow: none !important;
-  line-height: 1.25em;
-  transition: all .2s;
-}
-
-.blurred[role="textbox"]:not([aria-readonly="true"])::after {
-  font-family: FontAwesome;
-  font-size: 75%;
-  opacity: .5;
-  content: '\00A0\00A0\f040'; /* nbsp + nbsp + pencil */
-  transition: all .2s;
-}
-
-.blurred[role="textbox"]:-moz-any(:focus, :active) {
-  border-color: var(--textbox-border-color);
-  color: var(--content-foreground-color);
-  background-color: var(--active-textbox-background-color);
-}
-
-.blurred[role="textbox"]:-moz-any(:focus, :active)::after {
-  opacity: 0;
-}
-
 [role="combobox"] [role="searchbox"] {
   box-shadow: none;
 }
@@ -181,6 +148,32 @@ meta[role="checkbox"]::after {
 
 [data-device|="mobile"]:root [role="combobox"] [role="option"] {
   padding: .4rem .8rem;
+}
+
+.distinct[role="textbox"],
+.distinct[role="combobox"] [role="searchbox"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(1em + .8rem);
+  color: var(--active-textbox-foreground-color);
+  background-color: var(--active-textbox-background-color);
+}
+
+.distinct[role="textbox"][aria-disabled="true"],
+.distinct[role="combobox"][aria-disabled="true"] [role="searchbox"] {
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--textbox-foreground-color);
+  background-color: var(--textbox-background-color);
+}
+
+.distinct[role="combobox"][aria-disabled="true"] [role="searchbox"] {
+  padding: 0 .8rem;
+  opacity: 1;
+}
+
+.distinct[role="combobox"][aria-disabled="true"] [role="button"] {
+  display: none;
 }
 
 [role="grid"] {

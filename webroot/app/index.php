@@ -340,7 +340,7 @@
                 <div class="bug-timeline scrollable" tabindex="0" role="article" aria-live="true" aria-relevant="additions">
                   <section>
                     <header class="bug-summary" data-field="summary">
-                      <h3><span class="blurred" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h3>
+                      <h3><span class="distinct" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></h3>
                     </header>
                     <div class="comments-wrapper"></div>
                   </section>
@@ -363,35 +363,35 @@
                   </section>
                   <section role="group" aria-label="Status" data-field="status">
                     <h4>Status</h4>
-                    <span role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
                     </span>
                   </section>
                   <section hidden role="group" aria-label="Resolution" data-field="resolution">
                     <h4>Resolution</h4>
-                    <span role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
                     </span>
                   </section>
                   <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
                     <h4>Duplicate of</h4>
-                    <span class="blurred" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                    <span class="distinct" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
                   </section>
                   <section role="group" aria-label="Target Milestone" data-field="target_milestone">
                     <h4>Milestone</h4>
-                    <span role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Severity" data-field="severity">
                     <h4>Severity</h4>
-                    <span role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Priority" data-field="priority">
                     <h4>Priority</h4>
-                    <span role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
                     </span>
                   </section>
@@ -402,31 +402,31 @@
                   </header>
                   <section role="group" aria-label="Product" data-field="product">
                     <h4>Product</h4>
-                    <span role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Component" data-field="component">
                     <h4>Component</h4>
-                    <span role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Version" data-field="version">
                     <h4>Version</h4>
-                    <span role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="Hardware" data-field="platform">
                     <h4>Hardware</h4>
-                    <span role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
                     </span>
                   </section>
                   <section role="group" aria-label="OS" data-field="op_sys">
                     <h4>OS</h4>
-                    <span role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
+                    <span class="distinct" role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
                       <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
                     </span>
                   </section>
@@ -445,7 +445,7 @@
                   </section>
                   <section role="group" aria-label="Whiteboard" data-field="whiteboard">
                     <h4>Whiteboard</h4>
-                    <span class="blurred" contenteditable="true" role="textbox" itemprop="whiteboard"></span>
+                    <span class="distinct" contenteditable="true" role="textbox" itemprop="whiteboard"></span>
                   </section>
                   <section role="group" aria-label="URL" data-field="url">
                     <h4>URL</h4>
@@ -807,14 +807,14 @@
     <template id="details-attachment-content">
       <section itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
         <header>
-          <h4><span class="blurred" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true" aria-multiline="true" data-nobreak="true"></span></h4>
+          <h4><span class="distinct" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></h4>
         </header>
         <div class="fields">
           <section class="properties">
             <h5>Properties</h5>
             <ul>
-              <li>Name: <span class="blurred" contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true" aria-multiline="true" data-nobreak="true"></span></li>
-              <li>Type: <span class="blurred" contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true" aria-multiline="true" data-nobreak="true"></span></li>
+              <li>Name: <span class="distinct" contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
+              <li>Type: <span class="distinct" contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
               <li>Size: <span itemprop="size"></span> <meta tabindex="0" role="checkbox" itemprop="is_patch" aria-label="Patch"> <meta tabindex="0" role="checkbox" itemprop="is_obsolete" aria-label="Obsolete"></li>
               <li>Created on <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
               <li>Modified on <time itemprop="last_change_time" data-relative="false"></time></li>

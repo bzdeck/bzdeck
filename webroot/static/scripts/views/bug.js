@@ -466,12 +466,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
     let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
+    let editing = this.$bug.closest('.bug-container').matches('[aria-expanded="true"]');
 
     // Iterate over the fields except the Flags section which is activated by BugFlagsView
     for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
       let name = $section.dataset.field;
+      let is_status_field = ['status', 'resolution', 'dupe_of'].includes(name);
+      let toggle;
       let $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
-      let $textbox = $section.querySelector('.blurred[role="textbox"]');
+      let $textbox = $section.querySelector('[role="textbox"]');
       let $next_field = $section.nextElementSibling;
 
       // Activate comboboxes
@@ -479,7 +482,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         let $$combobox = new FlareTail.widgets.ComboBox($combobox);
 
         this.comboboxes.set($combobox, $$combobox);
-        $combobox.setAttribute('aria-disabled', !can_editbugs);
+
+        $combobox.setAttribute('aria-readonly', !can_editbugs);
+
+        toggle = disabled => $combobox.setAttribute('aria-disabled', disabled && !is_status_field);
+        toggle(!editing);
+        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
+
         $$combobox.build_dropdown(this.get_field_values(name)
             .map(value => ({ value, selected: value === this.bug[name] })));
         $$combobox.bind('Change', event => {
@@ -507,6 +516,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
+
+        toggle = disabled => $textbox.setAttribute('aria-disabled', disabled);
+        toggle(!editing);
+        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
       }
 
       if (name === 'dupe_of') {
@@ -675,7 +688,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     let $field = this.$bug.querySelector(`[data-field="${name}"]`);
     let $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
-    let $textbox = $field ? $field.querySelector('.blurred[role="textbox"]') : undefined;
+    let $textbox = $field ? $field.querySelector('[role="textbox"]') : undefined;
 
     if ($combobox) {
       this.comboboxes.get($combobox).selected = value;

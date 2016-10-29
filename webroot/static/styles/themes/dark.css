@@ -168,11 +168,6 @@ ins, del {
               inset 0 0 .4rem rgba(28, 28, 28, .2); /* --control-shadow-color */
 }
 
-.blurred[role="textbox"]:not(:focus):hover {
-  border-color: rgba(48, 48, 48, .5); /* --textbox-border-color */
-  background-color: rgba(40, 40, 40, .5); /* --textbox-background-color */
-}
-
 /* ----------------------------------------------------------------------------------------------
  * Global Header
  * ---------------------------------------------------------------------------------------------- */

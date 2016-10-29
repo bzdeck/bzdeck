@@ -72,13 +72,6 @@
   white-space: nowrap;
 }
 
-[itemtype$="Attachment"][data-content-type] .properties li .blurred[role="textbox"] {
-  display: inline-block;
-  overflow: hidden;
-  width: 80%;
-  vertical-align: middle;
-}
-
 [itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {
   display: none;
 }

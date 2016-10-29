@@ -167,11 +167,6 @@ ins, del {
               inset 0 0 .2rem rgba(84, 84, 84, .2); /* --control-shadow-color */
 }
 
-.blurred[role="textbox"]:not(:focus):hover {
-  border-color: rgba(204, 204, 204, .5); /* --textbox-border-color */
-  background-color: rgba(244, 244, 244, .5); /* --textbox-background-color */
-}
-
 /* ----------------------------------------------------------------------------------------------
  * App Log-in
  * ---------------------------------------------------------------------------------------------- */
