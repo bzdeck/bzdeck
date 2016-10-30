@@ -456,6 +456,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
+   * @listens BugView#EditModeChanged
    * @param {undefined}
    * @fires BugView#EditField
    * @returns {undefined}
@@ -522,6 +523,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
       }
 
+      // URL
+      if (name === 'url') {
+        this.activate_url_widget($section, editing);
+      }
+
       if (name === 'dupe_of') {
         // Activate bug finder
       }
@@ -551,6 +557,47 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     this.update_resolution_ui(this.bug.resolution);
+  }
+
+  /**
+   * Activate the URL widget.
+   * @listens BugView#EditModeChanged
+   * @param {HTMLElement} $section - Outer element.
+   * @param {Boolean} editing - Whether the bug is in the edit mode.
+   * @fires BugView#EditField
+   * @returns {undefined}
+   */
+  activate_url_widget ($section, editing) {
+    let toggle = disabled => {
+      let $link = $section.querySelector('a');
+      let $textbox = $section.querySelector('input');
+
+      if (!disabled) {
+        let orignal_value = $link.getAttribute('href');
+
+        $textbox = document.createElement('input');
+        $textbox.className = 'distinct';
+        $textbox.type = 'url';
+        $textbox.value = orignal_value;
+        $textbox.setAttribute('role', 'textbox');
+        $textbox.setAttribute('itemprop', 'url');
+        $section.replaceChild($textbox, $link);
+
+        $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
+          name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
+        }));
+      } else if (!$link) {
+        $link = document.createElement('a');
+        $link.href = $link.title = $textbox.value;
+        $link.text = $textbox.value.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        $link.setAttribute('role', 'link');
+        $link.setAttribute('itemprop', 'url');
+        $section.replaceChild($link, $textbox);
+      }
+    };
+
+    toggle(!editing);
+    this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
   }
 
   /**

@@ -278,9 +278,12 @@
 }
 
 .bug-fieldset [data-field] > :-moz-any(time, a) {
-  display: inline-block;
-  margin: 0 .8rem;
+  display: block;
+  overflow: hidden;
+  padding: 0 .4rem;
   line-height: 2rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .bug-info dt,
