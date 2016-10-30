@@ -97,8 +97,12 @@
 [id$="vertical-thread"] [itemprop="starred"]::before {
   display: inline-block;
   margin: 0;
+  border: 0;
   width: 100%;
   height: 100%;
+  color: inherit;
+  background-color: transparent;
+  box-shadow: none;
   font-size: 2rem;
   line-height: 3.2rem;
   text-align: center;
@@ -109,7 +113,6 @@
 }
 
 [id$="vertical-thread"] [itemprop="starred"][aria-checked="true"]::before {
-  color: inherit;
   content: "\F005";
 }
 

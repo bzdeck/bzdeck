@@ -26,7 +26,7 @@
   border-color: transparent;
   padding: .4rem 1.2rem;
   width: auto;
-  height: 2rem;
+  height: auto;
   font-size: 1.25rem;
   line-height: 2rem;
   background-clip: border-box; /* initial value */
@@ -37,19 +37,50 @@
   border-left-width: .4rem;
   border-color: var(--highlighted-button-border-color);
   color: var(--region-header-foreground-color);
+  background: rgba(0, 0, 0, .2);
 }
 
 #settings-tablist [role="tab"][aria-selected="false"] {
   color: var(--secondary-application-header-foreground-color);
 }
 
-#settings-tablist [role="tab"][aria-selected="false"]:hover,
-#settings-tablist [role="tab"][aria-selected="true"] {
-  background-color: var(--region-header-background-color);
+#settings-tablist [role="tab"] label {
+  display: block;
+  position: static;
+  padding: .4rem 0;
+  height: auto;
+  font-size: 1.4rem;
+  line-height: 2rem;
 }
 
-#settings-tablist [role="tab"] label {
-  position: static;
+#settings-tablist [role="tab"] label::before {
+  display: inline-block;
+  margin: -.4rem 1rem 0 0;
+  width: 2rem;
+  font-family: FontAwesome;
+  font-size: 1.8rem;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+#settings-tab-account label::before {
+  content: "\F007";
+}
+
+#settings-tab-design label::before {
+  content: "\F1FC";
+}
+
+#settings-tab-datetime label::before {
+  content: "\F017";
+}
+
+#settings-tab-notifications label::before {
+  content: "\F0F3";
+}
+
+#settings-tab-timeline label::before {
+  content: "\F00B";
 }
 
 [data-device="desktop"]:root #tabpanel-settings > section > div {
@@ -82,36 +113,27 @@
   margin-bottom: .8rem;
   border-width: 0 0 .1rem;
   border-style: solid;
-  border-color: var(--region-border-color);
+  border-color: var(--secondary-region-border-color);
   padding-bottom: 1.6rem;
-  font-size: 2.8rem;
+  font-size: 2.4rem;
 }
 
 [id^="settings-tabpanel"] > section > section {
-  border-width: 0 0 .1rem;
-  border-style: solid;
-  border-color: var(--secondary-region-border-color);
-  padding: 1.6rem 1.2rem;
-}
-
-[id^="settings-tabpanel"] > section > section:last-of-type {
-  border-width: 0;
+  margin: 2.4rem 0;
+  font-size: 1.4rem;
 }
 
 [data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section[data-platform="desktop"] {
   display: none !important;
 }
 
-[data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section > h4 {
-  font-size: 1.25rem;
+[id^="settings-tabpanel"] > section > section > h4 {
+  margin-bottom: 1.2rem;
+  font-weight: 500;
 }
 
 [id^="settings-tabpanel"] > section > section > ul li {
-  margin: .4rem 0;
-}
-
-[data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section > ul li {
-  font-size: 1.4rem;
+  margin: .8rem 0;
 }
 
 [id^="settings-tabpanel"] > section > section > h4 ~ :-moz-any(p, ol) {
@@ -127,18 +149,6 @@
   list-style-type: decimal;
 }
 
-[id^="settings-tabpanel"] > section > section li [role="radio"] {
-  line-height: 1.8rem;
-}
-
-[id^="settings-tabpanel"] > section > section li [role="radio"]::before {
-  width: 1.8rem;
-  height: 1.8rem;
-  background-position: center;
-  background-size: 80%;
-  background-repeat: no-repeat;
-}
-
 [data-device|="mobile"]:root #settings-tab-account,
 [data-device|="mobile"]:root #settings-tabpanel-account {
   display: none; /* The Account tabpanel only has the QR code for now, so it should be hidden on mobile */
@@ -149,9 +159,7 @@
 }
 
 #settings-qrcode-outer .placeholder {
-  display: inline-block;
-  float: right;
-  margin-left: 2rem;
+  margin: 2rem 0;
   padding: 2rem;
   width: 192px; /* same as the inner <canvas> */
   height: 192px; /* same as the inner <canvas> */
@@ -164,22 +172,13 @@
 
 #settings-qrcode-outer [role="button"] {
   margin: .8rem 0;
-  padding: .4rem 1.2rem;
+  padding: .8rem 1.6rem;
   color: var(--highlighted-button-foreground-color);
   background-color: var(--highlighted-button-background-color);
   line-height: 1.6rem;
 }
 
 @media (min-width: 1024px) {
-  [id^="settings-tabpanel"] > section > section > h4 {
-    float: left;
-    width: calc(50% - 1rem);
-  }
-
-  [id^="settings-tabpanel"] > section > section > h4 ~ * {
-    margin-left: 50%;
-  }
-
   [data-device|="mobile"]:root #settings-tablist [role="tab"] label {
     font-size: 1.25rem;
   }
@@ -209,10 +208,6 @@
     background-color: var(--secondary-region-header-background-color);
     font-size: 1.25rem;
     line-height: 1.4rem;
-  }
-
-  [id^="settings-tabpanel"] > section > section > h4 {
-    margin-bottom: 1.2rem;
   }
 }
 
