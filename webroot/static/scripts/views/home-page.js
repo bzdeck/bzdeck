@@ -247,6 +247,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     let $search_button = $searchbar.querySelector('[role="button"][data-id="search"]');
     let $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
 
+    $searchbar.addEventListener('transitionend', event => {
+      $searchbar.classList.contains('active') ? $searchbox.focus() : $search_button.focus();
+    });
+
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {
         // TEMP: Use QuickSearchPresenter to open the advanced search page
@@ -254,7 +258,6 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         // this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
-        Promise.resolve().then(() => $searchbox.focus());
       }
     });
 

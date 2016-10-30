@@ -93,7 +93,7 @@
 
 [data-device="desktop"]:root #home-list-searchbar {
   background-color: var(--content-background-color);
-  transition: transform .3s ease;
+  transition: transform .3s ease-in;
 }
 
 [data-home-layout="vertical"]:root #home-list-searchbar.active {
@@ -109,6 +109,10 @@
   width: 4rem;
   height: 4rem;
   font-size: 1.6rem;
+}
+
+[data-home-layout="vertical"]:root #home-list-searchbar [role="button"]:active {
+  background-color: transparent;
 }
 
 [data-device|="mobile"]:root #home-list-searchbar:not(.active) [role="button"] {
