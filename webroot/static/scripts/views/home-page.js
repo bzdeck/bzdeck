@@ -382,6 +382,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     let { preview_id } = history.state;
     let siblings = this.get_shown_bugs();
 
+    if (!preview_id) {
+      return;
+    }
+
     // Show the bug preview only when the preview pane is visible (on desktop and tablet)
     if (this.preview_is_hidden) {
       BzDeck.router.navigate('/bug/' + preview_id, { siblings });
