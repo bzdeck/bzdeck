@@ -509,8 +509,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         let $$textbox = new FlareTail.widgets.TextBox($textbox);
 
         $textbox.tabIndex = 0;
-        $textbox.spellcheck = false;
-        $textbox.contentEditable = can_editbugs;
         $textbox.setAttribute('aria-readonly', !can_editbugs);
         $$textbox.bind('focus', event => $textbox.spellcheck = true);
         $$textbox.bind('blur', event => $textbox.spellcheck = false);
@@ -518,9 +516,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
 
-        toggle = disabled => $textbox.setAttribute('aria-disabled', disabled);
-        toggle(!editing);
-        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
+        toggle = enabled => {
+          $textbox.contentEditable = $textbox.spellcheck = enabled && can_editbugs;
+          $textbox.setAttribute('aria-disabled', !enabled);
+        };
+
+        toggle(editing);
+        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(enabled));
       }
 
       // URL
