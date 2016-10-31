@@ -123,6 +123,10 @@
   font-size: 1.4rem;
 }
 
+[id^="settings-tabpanel"] > section > section[data-platform="desktop"] {
+  display: none !important; /* TEMP: Hide the option because the Classic View is currently broken */
+}
+
 [data-device|="mobile"]:root [id^="settings-tabpanel"] > section > section[data-platform="desktop"] {
   display: none !important;
 }
