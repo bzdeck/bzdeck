@@ -38,14 +38,14 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
       if (!navigator.onLine) {
         throw new Error('You have to go online to load the bug.');
       }
-      
+
       this.trigger('#LoadingStarted');
 
       let att = await collection.get(this.att_id);
 
       if (!att) {
         att = await collection.get(this.att_id, { id: this.att_id });
-        att = await attachment.fetch();
+        att = await att.fetch();
       }
 
       if (!att || att.error) {

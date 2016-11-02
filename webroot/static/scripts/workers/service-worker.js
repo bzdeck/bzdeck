@@ -135,23 +135,23 @@ const files = [
 const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
 self.addEventListener('install', event => {
-  event.waitUntil(async () => {
-    let cache = await caches.open(version);
-    // Cache the files
-    await cache.addAll(files);
-    // Activate the worker immediately
-    return self.skipWaiting();
-  });
+  event.waitUntil(
+    caches.open(version)
+        // Cache the files
+        .then(cache => cache.addAll(files))
+        // Activate the worker immediately
+        .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(async () => {
-    let keys = await caches.keys();
-    // Delete old caches
-    await Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key)));
-    // Activate the worker for the main thread
-    return self.clients.claim();
-  });
+  event.waitUntil(
+    caches.keys()
+        // Delete old caches
+        .then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))
+        // Activate the worker for the main thread
+        .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', event => {
@@ -162,25 +162,22 @@ self.addEventListener('fetch', event => {
     request = new Request('/app/');
   }
 
-  event.respondWith(async () => {
+  event.respondWith(
     // Proxy requests and cache files when needed
     // TODO: Provide custom 404 page
-    let _response = await caches.match(request);
+    caches.match(request).then(response => {
+      // Return cache if found
+      if (response) {
+        return response;
+      }
 
-    // Return cache if found
-    if (_response) {
-      return _response;
-    }
-
-    try {
       // Request remote resource
-      let [cache, response] = await Promise.all([caches.open(version), fetch(request)]);
+      return fetch(request).then(response => {
+        caches.open(version).then(cache => cache.put(request, response));
 
-      cache.put(request, response);
-
-      return response.clone();
-    } catch (error) {
-      return new Response('404 Not Found', { status: 404 });
-    }
-  });
+        return response.clone();
+      });
+    })
+    .catch(error => new Response('404 Not Found', { status: 404 }))
+  );
 });

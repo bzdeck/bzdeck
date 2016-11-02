@@ -238,7 +238,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     bugs.sort((a, b) => new Date(a.last_change_time) < new Date(b.last_change_time));
     // Sort by the last visited time
     bugs.sort((a, b) => new Date(a._last_visit || 0) < new Date(b._last_visit || 0));
-    //
 
     return bugs;
   }
