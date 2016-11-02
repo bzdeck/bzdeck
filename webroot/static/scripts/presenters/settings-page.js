@@ -45,11 +45,13 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
     }
 
     if (name === 'notifications.show_desktop_notifications' && value === true) {
-      navigator.permissions.query({ name: 'notifications' }).then(result => {
+      (async () => {
+        let result = await navigator.permissions.query({ name: 'notifications' });
+
         if (result.state !== 'granted') {
           Notification.requestPermission(); // Permissions.prototype.request() is not implemented yet
         }
-      });
+      })();
     }
   }
 }

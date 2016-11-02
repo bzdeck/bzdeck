@@ -23,7 +23,7 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
    * @param {undefined}
    * @returns {Promise.<IDBDatabase>} database - Target IndexedDB database.
    */
-  load () {
+  async load () {
     return this.open_database('global', 1);
   }
 

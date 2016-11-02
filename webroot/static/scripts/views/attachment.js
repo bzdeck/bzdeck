@@ -158,39 +158,43 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Render an image, video or audio.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  render_media () {
+  async render_media () {
     this.$outer.setAttribute('aria-busy', 'true');
 
-    this.attachment.get_data().then(result => {
+    try {
+      let result = await this.attachment.get_data();
+
       this.$media.src = URL.createObjectURL(result.blob);
       this.$media.setAttribute('itemprop', 'url');
       this.$outer.appendChild(this.$media);
       this.$attachment.classList.add('media');
-    }, error => {
+    } catch (error) {
       this.render_error(error);
-    }).then(() => {
-      this.$outer.removeAttribute('aria-busy');
-    });
+    }
+
+    this.$outer.removeAttribute('aria-busy');
   }
 
   /**
    * Render a patch with the Patch Viewer.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  render_patch () {
+  async render_patch () {
     this.$outer.setAttribute('aria-busy', 'true');
 
-    this.attachment.get_data('text').then(result => {
-      Promise.resolve().then(() => this.$outer.appendChild(new BzDeck.PatchViewerView(this.id, result.text)));
+    try {
+      let result = await this.attachment.get_data('text');
+
+      (async () => this.$outer.appendChild(new BzDeck.PatchViewerView(this.id, result.text)))();
       this.$attachment.classList.add('patch');
-    }, error => {
+    } catch (error) {
       this.render_error(error);
-    }).then(() => {
-      this.$outer.removeAttribute('aria-busy');
-    });
+    }
+
+    this.$outer.removeAttribute('aria-busy');
   }
 
   /**

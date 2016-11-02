@@ -31,12 +31,12 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @returns {Promise.<Proxy>} attachment - Promise to be resolved in the AttachmentModel instance.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
    */
-  fetch () {
-    return BzDeck.host.request(`bug/attachment/${this.id}`).then(result => {
-      this.data = result.attachments[this.id];
+  async fetch () {
+    let result = await BzDeck.host.request(`bug/attachment/${this.id}`);
 
-      return Promise.resolve(this.proxy());
-    });
+    this.data = result.attachments[this.id];
+
+    return this.proxy();
   }
 
   /**
@@ -46,7 +46,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} data - Promise to be resolved in an object containing the Blob and plaintext data, and
    *  this AttachmentModel.
    */
-  get_data () {
+  async get_data () {
     let decode = () => new Promise(resolve => {
       let worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
@@ -61,25 +61,26 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     });
 
     if (this.data.data) {
-      return Promise.resolve(decode());
+      return decode();
     }
 
-    return BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data')).then(result => {
+    try {
+      let result = await BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data'));
       let attachment = result.attachments[this.id];
       let data = attachment && attachment.data ? attachment.data : undefined;
 
       if (!data) {
-        return Promise.reject();
+        throw new Error();
       }
 
       this.data.data = data;
       BzDeck.collections.attachments.set(this.id, this.data);
       this.save();
 
-      return Promise.resolve(decode());
-    }).catch(error => {
-      return Promise.reject(new Error(`The attachment ${this.id} could not be retrieved from Bugzilla.`));
-    });
+      return decode();
+    } catch (error) {
+      throw new Error(`The attachment ${this.id} could not be retrieved from Bugzilla.`);
+    }
   }
 
   /**
@@ -88,15 +89,17 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @param {undefined}
    * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
    */
-  save () {
-    return BzDeck.collections.bugs.get(this.data.bug_id).then(bug => {
-      if (bug && bug.attachments && bug.attachments.length) {
-        for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
-          bug.attachments[index].data = this.data.data;
-        }
+  async save () {
+    let bug = await BzDeck.collections.bugs.get(this.data.bug_id);
 
-        bug.save(bug.data);
+    if (bug && bug.attachments && bug.attachments.length) {
+      for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
+        bug.attachments[index].data = this.data.data;
       }
-    }).then(() => this.proxy());
+
+      bug.save(bug.data);
+    }
+
+    return this.proxy();
   }
 }

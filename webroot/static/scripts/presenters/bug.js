@@ -68,9 +68,9 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * @fires BugPresenter#LoadingFinished
    * @fires BugPresenter#BugDataAvailable
    * @fires BugPresenter#BugDataUnavailable
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  load_bug () {
+  async load_bug () {
     let container_id = this.container_id;
     let bug_id = this.bug_id;
 
@@ -82,38 +82,35 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
 
     this.trigger('#LoadingStarted', { container_id, bug_id });
 
-    BzDeck.collections.bugs.get(this.bug_id).then(bug => {
-      if (bug && !bug.error) {
-        return bug;
-      }
+    let bug = await BzDeck.collections.bugs.get(this.bug_id);
 
-      return BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id }).then(bug => {
-        return bug.fetch();
-      }).catch(error => {
+    if (!bug || bug.error) {
+      try {
+        bug = await BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id });
+        bug = await bug.fetch();
+      } catch (error) {
+        bug = {};
         this.trigger('#BugDataUnavailable', { container_id, bug_id, code: 0, message: 'Failed to load data.' });
-      });
-    }).then(bug => new Promise((resolve, reject) => {
-      if (bug.data && bug.data.summary) {
-        resolve(bug);
-      } else {
-        let code = bug.error ? bug.error.code : 0;
-        let message = {
-          102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
-                unpublished security issues or marketing-related topics. '
-        }[code] || 'This bug data is not available.';
-
-        this.trigger('#BugDataUnavailable', { container_id, bug_id, code, message });
-        reject(new Error(message));
       }
-    })).then(bug => {
+    }
+
+    if (bug.data && bug.data.summary) {
       this.bug = bug;
       this.trigger_safe('#BugDataAvailable', { container_id, bug, siblings: this.siblings });
       bug.mark_as_read();
       BzDeck.collections.users.add_from_bug(bug);
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);
-    }).then(() => {
-      this.trigger('#LoadingFinished', { container_id, bug_id });
-    });
+    } else {
+      let code = bug.error ? bug.error.code : 0;
+      let message = {
+        102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
+              unpublished security issues or marketing-related topics. '
+      }[code] || 'This bug data is not available.';
+
+      this.trigger('#BugDataUnavailable', { container_id, bug_id, code, message });
+    }
+
+    this.trigger('#LoadingFinished', { container_id, bug_id });
   }
 
   /**

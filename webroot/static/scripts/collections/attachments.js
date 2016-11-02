@@ -30,14 +30,16 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    *  instances. The map key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the
    *  cache method below shows.
    */
-  load () {
+  async load () {
     this.map = new Map();
 
-    return BzDeck.collections.bugs.get_all().then(bugs => {
-      for (let [id, bug] of bugs) for (let att of bug.attachments || []) {
-        this.map.set(att.id, new this.model(att));
-      }
-    }).then(() => this.map);
+    let bugs = await BzDeck.collections.bugs.get_all();
+
+    for (let [id, bug] of bugs) for (let att of bug.attachments || []) {
+      this.map.set(att.id, new this.model(att));
+    }
+
+    return this.map;
   }
 
   /**
@@ -49,7 +51,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * @returns {Promise.<Proxy>} attachment - Promise to be resolved in AttachmentModel instance.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
-  cache (att, size) {
+  async cache (att, size) {
     let current_time = (new Date()).toISOString();
 
     Object.defineProperties(att, {
@@ -68,6 +70,6 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
     att = new this.model(att);
     this.map.set(att.hash, att);
 
-    return Promise.resolve(att);
+    return att;
   }
 }

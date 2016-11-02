@@ -32,22 +32,26 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
    * @fires ProfilePagePresenter#BugzillaProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFetchingError
    * @fires ProfilePagePresenter#BugzillaProfileFetchingComplete
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_profile_requested (user) {
+  async on_profile_requested () {
     let origin = BzDeck.host.origin;
     let email = encodeURI(this.email);
 
-    BzDeck.collections.users.get(this.email, { name: this.email }).then(user => {
-      this.user = user;
+    this.user = await BzDeck.collections.users.get(this.email, { name: this.email });
 
-      this.user.get_gravatar_profile().then(profile => {
-        this.trigger('#GravatarProfileFound', {
-          style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
-        });
+    (async () => {
+      let profile = await this.user.get_gravatar_profile();
+
+      this.trigger('#GravatarProfileFound', {
+        style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
       });
+    })();
 
-      this.user.get_bugzilla_profile().then(profile => {
+    (async () => {
+      try {
+        let profile = await this.user.get_bugzilla_profile();
+
         this.trigger('#BugzillaProfileFound', {
           profile: {
             id: profile.id,
@@ -64,11 +68,11 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
             'background-color': this.user.color,
           },
         });
-      }).catch(error => {
+      } catch (error) {
         this.trigger('#BugzillaProfileFetchingError', { message: error.message });
-      }).then(() => {
-        this.trigger('#BugzillaProfileFetchingComplete');
-      });
-    });
+      }
+
+      this.trigger('#BugzillaProfileFetchingComplete');
+    })();
   }
 }

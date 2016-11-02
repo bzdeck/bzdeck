@@ -182,7 +182,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.$button.setAttribute('aria-label', 'Remove myself from the Cc list');
     }
 
-    BzDeck.collections.users.get(email, { name: email }).then(participant => {
+    (async () => {
+      let participant = await BzDeck.collections.users.get(email, { name: email });
+
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
       this.$list.insertAdjacentElement('afterbegin', $person);
@@ -190,7 +192,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       if (this.editing) {
         this.add_remove_button_to_person($person);
       }
-    });
+    })();
   }
 
   /**

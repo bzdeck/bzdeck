@@ -63,19 +63,19 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
   /**
    * Start searching from the specified bug.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  search_bug () {
-    Promise.resolve().then(() => this.search(this.participants));
+  async search_bug () {
+    this.search(this.participants);
   }
 
   /**
    * Start searching from the local database.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  search_local () {
-    BzDeck.collections.users.get_all().then(users => this.search(users));
+  async search_local () {
+    this.search(await BzDeck.collections.users.get_all());
   }
 
   /**
@@ -91,65 +91,61 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
     params.append('match', value);
     params.append('limit', 10);
 
-    this.timer = window.setTimeout(() => {
-      BzDeck.collections.users.search_remote(params).then(users => {
-        // Check if the search term is not updated
-        if (this.value === value && users.length) {
-          this.search(new Map(users.map(user => [user.name, user])));
-        }
-      });
+    this.timer = window.setTimeout(async () => {
+      let users = await BzDeck.collections.users.search_remote(params);
+
+      // Check if the search term is not updated
+      if (this.value === value && users.length) {
+        this.search(new Map(users.map(user => [user.name, user])));
+      }
     }, 1000);
   }
 
   /**
    * Find matching people from the provided user list, and show the results on the drop down list.
    * @param {Map.<String, Proxy>} users - User list.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  search (users = new Map()) {
+  async search (users = new Map()) {
     let has_colon = this.value.startsWith(':');
     let re = new RegExp((has_colon ? '' : '\\b') + FlareTail.helpers.regexp.escape(this.value), 'i');
     let find = str => re.test(str);
+    let _people = await Promise.all([...users.keys()].map(name => BzDeck.collections.users.get(name, { name })));
+    let people = new Map(_people.map(person => [person.email, person]));
     let results = new Map();
     let $fragment = new DocumentFragment();
 
-    Promise.all([...users.keys()].map(name => {
-      return BzDeck.collections.users.get(name, { name });
-    })).then(people => {
-      return new Map(people.map(person => [person.email, person]));
-    }).then(people => {
-      for (let [name, user] of users) {
-        if (this.exclude.has(name) || this.results.has(name)) {
-          continue;
-        }
-
-        let person = people.get(name); // name = email
-
-        if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
-            find(person.name) || find(person.email)) {
-          results.set(name, person);
-          this.results.set(name, person); // Save all results as well
-        }
-
-        if (results.size === 10) {
-          break;
-        }
-      }
-    }).then(() => {
-      if (!results.size) {
-        return;
+    for (let [name, user] of users) {
+      if (this.exclude.has(name) || this.results.has(name)) {
+        continue;
       }
 
-      for (let [name, user] of results) {
-        let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
-        let attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
+      let person = people.get(name); // name = email
 
-        $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
+      if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
+          find(person.name) || find(person.email)) {
+        results.set(name, person);
+        this.results.set(name, person); // Save all results as well
       }
 
-      this.$$combobox.fill_dropdown($fragment);
-      this.$$combobox.show_dropdown();
-    });
+      if (results.size === 10) {
+        break;
+      }
+    }
+
+    if (!results.size) {
+      return;
+    }
+
+    for (let [name, user] of results) {
+      let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
+      let attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
+
+      $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
+    }
+
+    this.$$combobox.fill_dropdown($fragment);
+    this.$$combobox.show_dropdown();
   }
 
   /**

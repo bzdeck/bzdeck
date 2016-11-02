@@ -60,25 +60,26 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Load the user's Gravatar profile.
    * @param {undefined}
    * @fires SidebarPresenter#GravatarProfileFound
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  load_user_gravatar (folder_id) {
-    BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name }).then(user => {
-      user.get_gravatar_profile().then(profile => this.trigger_safe('#GravatarProfileFound', { user }));
-    });
+  async load_user_gravatar (folder_id) {
+    let user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
+    let profile = await user.get_gravatar_profile()
+
+    this.trigger_safe('#GravatarProfileFound', { user });
   }
 
   /**
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @fires SidebarPresenter#FolderOpened
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  open_folder (folder_id) {
-    BzDeck.collections.subscriptions.get(folder_id).then(bugs => {
-      BzDeck.presenters.homepage.data.bugs = bugs; // Map
-      this.trigger_safe('#FolderOpened', { folder_id, bugs });
-    });
+  async open_folder (folder_id) {
+    let bugs = await BzDeck.collections.subscriptions.get(folder_id);
+
+    BzDeck.presenters.homepage.data.bugs = bugs; // Map
+    this.trigger_safe('#FolderOpened', { folder_id, bugs });
   }
 
   /**
@@ -99,17 +100,15 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Notify the number of unread bugs so the view can show it on the Inbox option.
    * @param {undefined}
    * @fires SidebarPresenter#UnreadToggled
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  toggle_unread () {
-    BzDeck.collections.subscriptions.get_all().then(bugs => {
-      let _bugs = [...bugs.values()];
+  async toggle_unread () {
+    let all_bugs = await BzDeck.collections.subscriptions.get_all();
+    let bugs = [...all_bugs.values()];
+    let is_new_results = bugs.map(bug => bug.is_new);
 
-      Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
-        this.trigger('#UnreadToggled', {
-          number: _bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
-        });
-      });
+    this.trigger('#UnreadToggled', {
+      number: bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
     });
   }
 

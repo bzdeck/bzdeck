@@ -29,29 +29,36 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
    * @fires AttachmentPresenter#LoadingComplete
    * @fires AttachmentPresenter#AttachmentAvailable
    * @fires AttachmentPresenter#AttachmentUnavailable
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  get_attachment () {
-    let att;
+  async get_attachment () {
     let collection = BzDeck.collections.attachments;
 
-    new Promise((resolve, reject) => {
-      navigator.onLine ? resolve() : reject(new Error('You have to go online to load the bug.'));
-    }).then(() => {
+    try {
+      if (!navigator.onLine) {
+        throw new Error('You have to go online to load the bug.');
+      }
+      
       this.trigger('#LoadingStarted');
-    }).then(() => {
-      return collection.get(this.att_id);
-    }).then(attachment => {
-      return attachment || collection.get(this.att_id, { id: this.att_id }).then(attachment => attachment.fetch());
-    }).then(attachment => {
-      return (!attachment || attachment.error) ? Promise.reject(new Error(attachment.error || 'Unknown Error'))
-                                               : Promise.resolve(attachment);
-    }).then(attachment => {
-      att = this.attachment = attachment;
-    }).then(() => new Promise.all([
-      BzDeck.collections.bugs.get(att.bug_id),
-      BzDeck.collections.users.get(att.creator, { name: att.creator }),
-    ])).then(([bug, creator]) => {
+
+      let att = await collection.get(this.att_id);
+
+      if (!att) {
+        att = await collection.get(this.att_id, { id: this.att_id });
+        att = await attachment.fetch();
+      }
+
+      if (!att || att.error) {
+        throw new Error(att.error || 'Unknown Error');
+      }
+
+      this.attachment = att;
+
+      let [bug, creator] = await Promise.all([
+        BzDeck.collections.bugs.get(att.bug_id),
+        BzDeck.collections.users.get(att.creator, { name: att.creator }),
+      ]);
+
       this.trigger_safe('#AttachmentAvailable', {
         id: att.id,
         hash: att.hash,
@@ -66,10 +73,10 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
         creator: creator.properties,
         bug,
       });
-    }).catch(error => {
+    } catch (error) {
       this.trigger('#AttachmentUnavailable', { message: error.message });
-    }).then(() => {
-      this.trigger('#LoadingComplete');
-    });
+    }
+
+    this.trigger('#LoadingComplete');
   }
 }

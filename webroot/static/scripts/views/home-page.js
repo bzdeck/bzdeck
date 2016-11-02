@@ -41,7 +41,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       });
     }
 
-    BzDeck.prefs.get('ui.home.layout').then(pref => this.change_layout(pref));
+    (async () => this.change_layout(await BzDeck.prefs.get('ui.home.layout')))();
 
     // Subscribe to events
     this.subscribe('PrefCollection#PrefChanged', true);
@@ -162,12 +162,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       mql.addListener(show_preview);
 
       // Star button
-      $listbox.addEventListener('mousedown', event => {
+      $listbox.addEventListener('mousedown', async event => {
         if (event.target.matches('[itemprop="starred"]')) {
-          BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id)).then(bug => {
-            bug.starred = event.target.matches('[aria-checked="false"]');
-          });
+          let bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
 
+          bug.starred = event.target.matches('[aria-checked="false"]');
           event.stopPropagation();
         }
       });
@@ -184,52 +183,53 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Apply the Classic layout to the home page.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  apply_classic_layout () {
-    Promise.all([
+  async apply_classic_layout () {
+    let [sort_cond, columns] = await Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('home.list.columns'),
-    ]).then(([sort_cond, columns]) => {
-      this.thread = new BzDeck.ClassicThreadView(this, 'home', document.querySelector('#home-list'), columns, {
-        date: { simple: false },
-        sortable: true,
-        reorderable: true,
-        sort_conditions: sort_cond || { key: 'id', order: 'ascending' }
-      });
+    ]);
 
-      let $$grid = this.thread.$$grid;
+    this.thread = new BzDeck.ClassicThreadView(this, 'home', document.querySelector('#home-list'), columns, {
+      date: { simple: false },
+      sortable: true,
+      reorderable: true,
+      sort_conditions: sort_cond || { key: 'id', order: 'ascending' }
+    });
 
-      BzDeck.prefs.get('ui.home.layout').then(layout_pref => {
-        let vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
+    let $$grid = this.thread.$$grid;
 
-        $$grid.options.adjust_scrollbar = !vertical;
-        $$grid.options.date.simple = vertical;
+    (async () => {
+      let layout_pref = await BzDeck.prefs.get('ui.home.layout');
+      let vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
 
-        // Change the date format on the thread pane
-        for (let $time of $$grid.view.$container.querySelectorAll('time')) {
-          $time.textContent = FlareTail.helpers.datetime.format($time.dateTime, { simple: vertical });
-          $time.dataset.simple = vertical;
+      $$grid.options.adjust_scrollbar = !vertical;
+      $$grid.options.date.simple = vertical;
+
+      // Change the date format on the thread pane
+      for (let $time of $$grid.view.$container.querySelectorAll('time')) {
+        $time.textContent = FlareTail.helpers.datetime.format($time.dateTime, { simple: vertical });
+        $time.dataset.simple = vertical;
+      }
+    })();
+
+    if (!this.classic_thread_initialized) {
+      let bugs = await BzDeck.collections.bugs.get_all();
+
+      // Fill the thread with all saved bugs, and filter the rows later
+      this.thread.update(bugs);
+
+      // Select the first bug on the list automatically when a folder is opened
+      // TODO: Remember the last selected bug for each folder
+      $$grid.bind('Filtered', event => {
+        if ($$grid.view.members.length) {
+          $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
         }
       });
 
-      if (!this.classic_thread_initialized) {
-        BzDeck.collections.bugs.get_all().then(bugs => {
-          // Fill the thread with all saved bugs, and filter the rows later
-          this.thread.update(bugs);
-
-          // Select the first bug on the list automatically when a folder is opened
-          // TODO: Remember the last selected bug for each folder
-          $$grid.bind('Filtered', event => {
-            if ($$grid.view.members.length) {
-              $$grid.view.selected = $$grid.view.focused = $$grid.view.members[0];
-            }
-          });
-
-          this.classic_thread_initialized = true;
-        });
-      }
-    });
+      this.classic_thread_initialized = true;
+    }
   }
 
   /**
@@ -279,7 +279,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       }
     });
 
-    this.on_safe('QuickSearchPresenter#ResultsAvailable', ({ category, input, results } = {}) => {
+    this.on_safe('QuickSearchPresenter#ResultsAvailable', async ({ category, input, results } = {}) => {
       // Check if the search terms have not changed since the search is triggered
       if (category !== 'bugs' || input !== $searchbox.value) {
         return;
@@ -291,7 +291,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       }
 
       // Render the results
-      BzDeck.collections.bugs.get_some(results.map(result => result.id)).then(bugs => this.thread.update(bugs));
+      this.thread.update(await BzDeck.collections.bugs.get_some(results.map(result => result.id)));
     }, true);
   }
 

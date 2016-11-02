@@ -115,38 +115,34 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
   /**
    * Show the bug tooltip on the page.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  show () {
-    let bug;
+  async show () {
+    let bug = await BzDeck.collections.bugs.get(this.id, { id: this.id });
 
-    new Promise(resolve => {
-      BzDeck.collections.bugs.get(this.id, { id: this.id }).then(bug => {
-        bug.summary ? resolve(bug) : bug.fetch().then(bug => resolve(bug));
-      });
-    }).then(_bug => {
-      bug = _bug;
-    }).then(() => {
-      let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-      return BzDeck.collections.users.get(contributor, { name: contributor });
-    }).then(_contributor => {
-      this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
-        id: bug.id,
-        summary: bug.summary,
-        last_change_time: bug.last_change_time,
-        contributor: _contributor.properties,
-      }, {
-        'data-id': bug.id,
-      });
-    }).then(() => {
-      let rect = this.$owner.getBoundingClientRect();
+    if (!bug.summary) {
+      bug = await bug.fetch();
+    }
 
-      this.$tooltip.id = `bug-${bug.id}-tooltip`;
-      this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
-      this.$tooltip.style.left = `${Number.parseInt(rect.left)}px`;
-      this.$tooltip.addEventListener('mousedown', event => this.trigger('AnyView#OpeningBugRequested', { id: bug.id }));
-      document.body.appendChild(this.$tooltip);
-      this.$owner.setAttribute('aria-describedby', this.$tooltip.id);
+    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    let _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
+
+    this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
+      id: bug.id,
+      summary: bug.summary,
+      last_change_time: bug.last_change_time,
+      contributor: _contributor.properties,
+    }, {
+      'data-id': bug.id,
     });
+
+    let rect = this.$owner.getBoundingClientRect();
+
+    this.$tooltip.id = `bug-${bug.id}-tooltip`;
+    this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
+    this.$tooltip.style.left = `${Number.parseInt(rect.left)}px`;
+    this.$tooltip.addEventListener('mousedown', event => this.trigger('AnyView#OpeningBugRequested', { id: bug.id }));
+    document.body.appendChild(this.$tooltip);
+    this.$owner.setAttribute('aria-describedby', this.$tooltip.id);
   }
 }

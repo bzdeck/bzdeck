@@ -79,16 +79,18 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Render the provided attachments.
    * @param {Array.<Proxy>} attachments - Attachment list of the bug.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  render (attachments) {
+  async render (attachments) {
     let $listitem = this.get_template('details-attachment-listitem');
 
     attachments.reverse(); // The newest attachment should be on the top of the list
 
-    Promise.all(attachments.map(att => {
+    let creators = await Promise.all(attachments.map(att => {
       return BzDeck.collections.users.get(att.creator, { name: att.creator });
-    })).then(creators => attachments.forEach((att, index) => {
+    }));
+
+    attachments.forEach((att, index) => {
       this.attachments.set(att.id || att.hash, att);
 
       this.$listbox.insertAdjacentElement('afterbegin', this.fill($listitem.cloneNode(true), {
@@ -106,14 +108,14 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
         'data-id': att.id,
         'data-hash': att.hash,
       }));
-    })).then(() => {
-      let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
-
-      this.update_list_title();
-      this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
-      this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
-      this.$$listbox.update_members();
     });
+
+    let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
+
+    this.update_list_title();
+    this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
+    this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
+    this.$$listbox.update_members();
   }
 
   /**

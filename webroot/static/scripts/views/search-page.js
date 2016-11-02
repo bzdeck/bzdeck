@@ -191,34 +191,34 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Set up the Result Pane that shows search results in a classic thread.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  setup_result_pane () {
+  async setup_result_pane () {
     let $pane = this.$result_pane = this.$tabpanel.querySelector('[id$="-result-pane"]');
     let $$grid;
     let mobile = FlareTail.helpers.env.device.mobile;
 
-    Promise.all([
+    let [sort_cond, columns] = await Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('search.list.columns'),
-    ]).then(([sort_cond, columns]) => {
-      this.thread = new BzDeck.ClassicThreadView(this, 'search', this.$grid, columns, {
-        sortable: true,
-        reorderable: true,
-        sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
-                                  : sort_cond || { key: 'id', order: 'ascending' }
-      });
+    ]);
 
-      $$grid = this.thread.$$grid;
-
-      // Force to change the sort condition when switched to the mobile layout
-      if (mobile) {
-        let cond = $$grid.options.sort_conditions;
-
-        cond.key = 'last_change_time';
-        cond.order = 'descending';
-      }
+    this.thread = new BzDeck.ClassicThreadView(this, 'search', this.$grid, columns, {
+      sortable: true,
+      reorderable: true,
+      sort_conditions: mobile ? { key: 'last_change_time', order: 'descending' }
+                                : sort_cond || { key: 'id', order: 'ascending' }
     });
+
+    $$grid = this.thread.$$grid;
+
+    // Force to change the sort condition when switched to the mobile layout
+    if (mobile) {
+      let cond = $$grid.options.sort_conditions;
+
+      cond.key = 'last_change_time';
+      cond.order = 'descending';
+    }
 
     $pane.addEventListener('transitionend', event => {
       let selected = $$grid.view.selected;

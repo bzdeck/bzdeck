@@ -175,11 +175,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       let $$checkbox = new FlareTail.widgets.CheckBox($checkbox);
       let $label = $checkbox.querySelector('span');
 
-      BzDeck.collections.users.get(requestee, { name: requestee }).then(_requestee => {
-        return this.fill(this.get_template('person-with-image'), _requestee.properties);
-      }).then($person => {
+      (async () => {
+        let _requestee = await BzDeck.collections.users.get(requestee, { name: requestee });
+        let $person = this.fill(this.get_template('person-with-image'), _requestee.properties);
+
         $row.replaceChild($person, $row.querySelector('strong'));
-      });
+      })();
 
       $$checkbox.bind('Toggled', event => this.trigger('BugView#EditFlag', { flag, added: event.detail.checked }));
       $$checkbox.checked = checked;

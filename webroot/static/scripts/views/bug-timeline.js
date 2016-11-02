@@ -68,7 +68,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     }
 
     // Append entries to the timeline
-    this.generate_entries(data_arr).then($f => $comments_wrapper.appendChild($f));
+    (async () => $comments_wrapper.appendChild(await this.generate_entries(data_arr)))();
 
     // Show an expander if there are read comments
     if (read_comments_num > 1) {
@@ -91,8 +91,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           data_arr.push(data);
         }
 
-        this.generate_entries(data_arr).then($f => {
-          $fragment.appendChild($f);
+        (async () => {
+          $fragment.appendChild(await this.generate_entries(data_arr));
 
           // Collapse comments by default
           for (let $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
@@ -103,7 +103,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           $comments_wrapper.replaceChild($fragment, $expander);
 
           delete this.$expander;
-        });
+        })();
 
         return FlareTail.helpers.event.ignore(event);
       });
@@ -124,20 +124,20 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @param {Array.<Map>} data_arr - List of entry data.
    * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a fragment containing entry nodes.
    */
-  generate_entries (data_arr) {
-    return Promise.all(data_arr.map(data => {
+  async generate_entries (data_arr) {
+    let $fragment = new DocumentFragment();
+
+    let _entries = await Promise.all(data_arr.map(data => {
       return (new BzDeck.BugTimelineEntryView(this.id, this.bug, data)).create();
-    })).then(_entries => {
-      let $fragment = new DocumentFragment();
+    }));
 
-      for (let entry of _entries) {
-        $fragment.appendChild(entry.$outer);
-        this.entries.get(entry.time).delete('rendering');
-        this.entries.get(entry.time).set('rendered', true);
-      }
+    for (let entry of _entries) {
+      $fragment.appendChild(entry.$outer);
+      this.entries.get(entry.time).delete('rendering');
+      this.entries.get(entry.time).set('rendered', true);
+    }
 
-      return $fragment;
-    });
+    return $fragment;
   }
 
   /**
@@ -213,12 +213,14 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
         $media.parentElement.setAttribute('aria-busy', 'true');
 
-        BzDeck.collections.attachments.get(att_id).then(attachment => attachment.get_data()).then(result => {
+        (async () => {
+          let attachment = await BzDeck.collections.attachments.get(att_id);
+          let result = await attachment.get_data();
+
           $media.src = URL.createObjectURL(result.blob);
           attachment.data = result.attachment.data;
-        }).then(() => {
           $media.parentElement.removeAttribute('aria-busy');
-        });
+        })();
       }
     }
   }

@@ -27,37 +27,36 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * Add bug participants, including Cc members, assignee, QA and mentors, to the user database, and return the models
    * of those users.
    * @param {Proxy} bug - BugModel object.
-   * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
+   * @returns {Promise.<undefined>}
    */
-  add_from_bug (bug) {
+  async add_from_bug (bug) {
     let missing = new Set();
 
-    Promise.all([...bug.participants.values()].map(({ name } = {}) => {
-      return this.get(name).then(user => {
-        if (!user) {
-          missing.add(name);
-        }
-      });
-    })).then(() => {
-      if (missing.size) {
-        this.fetch(missing);
+    await Promise.all([...bug.participants.values()].map(async ({ name } = {}) => {
+      let user = await this.get(name);
+
+      if (!user) {
+        missing.add(name);
       }
-    });
+    }));
+
+    if (missing.size) {
+      this.fetch(missing);
+    }
   }
 
   /**
    * Refresh user profiles if the data is older than 10 days
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  refresh () {
-    this.get_all().then(users => {
-      users = [...users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
+  async refresh () {
+    let all_users = await this.get_all();
+    let users = [...all_users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
 
-      if (users.length) {
-        this.fetch(users.map(user => user.email));
-      }
-    });
+    if (users.length) {
+      this.fetch(users.map(user => user.email));
+    }
   }
 
   /**
@@ -65,53 +64,58 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @param {(Array|Set)} _names - List of user names (email addresses) to retrieve.
    * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
    */
-  fetch (_names) {
+  async fetch (_names) {
     let names = [..._names].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
     // issue, divide the array into chunks to retrieve 20 users per request, then divide each chunk again if failed.
     let names_chunks = FlareTail.helpers.array.chunk(names, 20);
 
-    let _fetch = names => new Promise((resolve, reject) => {
+    let _fetch = async names => {
       let params = new URLSearchParams();
 
       names.forEach(name => params.append('names', name));
-      BzDeck.host.request('user', params).then(result => resolve(result.users), event => reject(new Error()));
-    });
 
-    return Promise.all(names_chunks.map(names => {
-      return _fetch(names).catch(error => {
+      let result = await BzDeck.host.request('user', params);
+      return result.users;
+    };
+
+    let users_chunks = await Promise.all(names_chunks.map(names => {
+      try {
+        return _fetch(names);
+      } catch (error) {
         // Retrieve the users one by one if failed
-        return Promise.all(names.map(name => _fetch([name]).catch(error => ({ name, error: true }))));
-      });
-    })).then(users_chunks => {
-      // Flatten an array of arrays
-      return users_chunks.reduce((a, b) => a.concat(b), []);
-    }).then(_users => {
-      // _users is an Array of raw user objects. Convert them to UserModel instances
-      return Promise.all(_users.map(_user => {
-        let name = _user.name;
-        let obj;
-
-        return this.get(name).then(user => {
-          obj = _user.error ? { name, error: 'Not Found' } : Object.assign(user ? user.data : {}, { bugzilla: _user });
-          obj.updated = Date.now();
-
-          return this.set(name, obj);
-        });
-      }));
-    }).then(users => {
-      users.forEach(user => {
-        user.get_gravatar_image();
-
-        // Refresh the Gravatar profile if already exists, or fetch later on demand
-        if (user.gravatar) {
-          user.get_gravatar_profile();
+        try {
+          return Promise.all(names.map(name => _fetch([name])));
+        } catch (error) {
+          return { name, error: true };
         }
-      });
+      }
+    }));
 
-      return users;
+    // Flatten an array of arrays
+    let _users = users_chunks.reduce((a, b) => a.concat(b), []) 
+
+    let users = await Promise.all(_users.map(async _user => {
+      let name = _user.name;
+      let user = await this.get(name);
+      let obj = _user.error ? { name, error: 'Not Found' } : Object.assign(user ? user.data : {}, { bugzilla: _user });
+
+      obj.updated = Date.now();
+
+      return this.set(name, obj);
+    }));
+
+    users.forEach(user => {
+      user.get_gravatar_image();
+
+      // Refresh the Gravatar profile if already exists, or fetch later on demand
+      if (user.gravatar) {
+        user.get_gravatar_profile();
+      }
     });
+
+    return users;
   }
 
   /**
@@ -119,7 +123,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @param {URLSearchParams} params - Search query.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
-  search_local (params) {
+  async search_local (params) {
     let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
     let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
 
@@ -128,10 +132,13 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
       words[0] = words[0].substr(1);
     }
 
-    return this.get_all().then(users => [...users.values()].filter(user => {
+    let all_users = await this.get_all();
+    let users = [...all_users.values()].filter(user => {
       return words.every(word => match(user.name, word)) ||
              words.every(word => user.nick_names.some(nick => match(nick, word)));
-    })).then(users => this.get_search_results(users));
+    });
+
+    return this.get_search_results(users);
   }
 
   /**
@@ -139,43 +146,31 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @param {URLSearchParams} params - Search query.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
-  search_remote (params) {
-    let _users;
+  async search_remote (params) {
+    let result = await BzDeck.host.request('user', params);
+    // Raw data objects
+    let _users = new Map(result.users && result.users.length ? result.users.map(user => [user.name, user]) : []);
+    // Custom data objects
+    let some_users = await this.get_some(_users.keys());
 
-    return BzDeck.host.request('user', params).then(result => {
-      if (!result.users || !result.users.length) {
-        return Promise.resolve([]);
-      }
+    let users = await Promise.all([...some_users].map(async ([name, user]) => {
+      return user || await this.set(name, { name, bugzilla: _users.get(name) });
+    }));
 
-      _users = new Map(result.users.map(user => [user.name, user])); // Raw data objects
-    }).then(() => {
-      return this.get_some(_users.keys());
-    }).then(__users => {
-      return Promise.all([...__users].map(([name, user]) => new Promise(resolve => {
-        let retrieved = _users.get(name); // Raw data object
-
-        if (user) {
-          resolve(user);
-        } else {
-          this.set(name, { name, bugzilla: retrieved }).then(user => resolve(user));
-        }
-      })));
-    }).then(users => {
-      return this.get_search_results(users);
-    });
+    return this.get_search_results(users);
   }
 
   /**
    * Sort descending (new to old) and return search results.
    * @param {Array.<Proxy>} users - List of found users.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
-   * @todo Improve the sorting algorithm.
+   * @todo Improve the sorting algorithm. Another possible factors: How active the person is? How often the person has
+   *  interacted with the user?
    */
-  get_search_results (users) {
+  async get_search_results (users) {
     // Sort by the last active time
     users.sort((a, b) => new Date(a.last_activity) < new Date(b.last_activity));
-    // Another possible factors: How active the person is? How often the person has interacted with the user?
 
-    return Promise.resolve(users);
+    return users;
   }
 }

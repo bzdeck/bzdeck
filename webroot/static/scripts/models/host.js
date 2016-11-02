@@ -42,9 +42,9 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
    */
-  request (path, params, { method, data, api_key, listeners = {} } = {}) {
+  async request (path, params, { method, data, api_key, listeners = {} } = {}) {
     if (!navigator.onLine) {
-      return Promise.reject(new Error('You have to go online to load data.')); // l10n
+      throw new Error('You have to go online to load data.'); // l10n
     }
 
     let worker = new SharedWorker('/static/scripts/workers/tasks.js');
@@ -105,32 +105,36 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other}
    * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937}
    */
-  get_config () {
+  async get_config () {
     if (!navigator.onLine) {
       // Offline; give up
-      return Promise.reject(new Error('You have to go online to load data.')); // l10n
+      throw new Error('You have to go online to load data.'); // l10n
     }
 
     if (this.data.config && new Date(this.data.config_retrieved || 0) > Date.now() - 1000 * 60 * 60 * 24) {
       // The config data is still fresh, retrieved within 24 hours
-      return Promise.resolve(this.data.config);
+      return this.data.config;
     }
 
+    let config;
+
     // Fetch the config via BzAPI
-    return FlareTail.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1').then(config => {
-      if (config && config.version) {
-        let config_retrieved = this.data.config_retrieved = Date.now();
+    try {
+      config = await FlareTail.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1');
+    } catch (error) {
+      throw new Error('Bugzilla configuration could not be loaded. The instance might be offline.');
+    }
 
-        this.data.config = config;
-        this.datasource.get_store(this.store_name).save({ host: this.name, config, config_retrieved });
+    if (!config || !config.version) {
+      throw new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.');
+    }
 
-        return Promise.resolve(config);
-      }
+    let config_retrieved = this.data.config_retrieved = Date.now();
 
-      return Promise.reject(new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.'));
-    }).catch(error => {
-      return Promise.reject(new Error('Bugzilla configuration could not be loaded. The instance might be offline.'));
-    });
+    this.data.config = config;
+    this.datasource.get_store(this.store_name).save({ host: this.name, config, config_retrieved });
+
+    return config;
   }
 
   /**
@@ -140,21 +144,26 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} user - Promise to be resolved in the verified user's info.
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user}
    */
-  verify_account (name, api_key) {
+  async verify_account (name, api_key) {
     let params = new URLSearchParams();
+    let result;
 
     params.append('names', name);
 
-    return this.request('user', params, { api_key }).then(result => {
-      if (!result.users || !result.users[0]) {
-        return Promise.reject(new Error(result.message || 'User Not Found')); // l10n
-      } else if (result.users[0].error) {
-        return Promise.reject(new Error(result.users[0].error));
-      } else {
-        return Promise.resolve(result.users[0]);
-      }
-    }, error => {
-      return Promise.reject(new Error('Failed to find your account.')); // l10n
-    });
+    try {
+      result = await this.request('user', params, { api_key });
+    } catch (error) {
+      throw new Error('Failed to find your account.'); // l10n
+    }
+
+    if (!result.users || !result.users[0]) {
+      throw new Error(result.message || 'User Not Found'); // l10n
+    }
+
+    if (result.users[0].error) {
+      throw new Error(result.users[0].error);
+    }
+
+    return result.users[0];
   }
 }

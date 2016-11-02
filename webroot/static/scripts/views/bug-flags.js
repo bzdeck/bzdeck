@@ -35,31 +35,31 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
     let $flag = this.get_template('details-flag');
     let $fragment = new DocumentFragment();
 
-    for (let id of config.product[this.bug.product].component[this.bug.component].flag_type) {
+    config.product[this.bug.product].component[this.bug.component].flag_type.forEach(async id => {
       let flag = config.flag_type[id];
       let _flag = _flags.find(f => f.name === flag.name);
       let $_flag = $flag.cloneNode(true);
 
       if (flag.is_for_bugs === !!this.att) {
-        continue;
+        return; // continue the loop
       }
 
-      Promise.all([
+      let [setter, requestee] = await Promise.all([
         _flag && _flag.setter ? get_person(_flag.setter) : Promise.resolve({}),
         _flag && _flag.requestee ? get_person(_flag.requestee) : Promise.resolve({}),
-      ]).then(([setter, requestee]) => {
-        $fragment.appendChild(this.fill($_flag, {
-          name: flag.name,
-          status: _flag ? _flag.status : '---',
-          setter: setter.properties || {},
-          requestee: requestee.properties || {},
-        }, {
-          'aria-label': flag.name,
-          'aria-level': level,
-          'data-field': flag.name,
-          'data-has-value': _flag && !!_flag.status,
-        }));
-      });
+      ]);
+
+      $fragment.appendChild(this.fill($_flag, {
+        name: flag.name,
+        status: _flag ? _flag.status : '---',
+        setter: setter.properties || {},
+        requestee: requestee.properties || {},
+      }, {
+        'aria-label': flag.name,
+        'aria-level': level,
+        'data-field': flag.name,
+        'data-has-value': _flag && !!_flag.status,
+      }));
 
       for (let prop of ['setter', 'requestee']) {
         $_flag.querySelector(`[itemprop="${prop}"]`).setAttribute('aria-hidden', !_flag || !_flag[prop]);
@@ -69,7 +69,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
 
       // $$combobox.build_dropdown(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
       // $$combobox.bind('Change', event => {});
-    }
+    });
 
     $outer.appendChild($fragment);
   }

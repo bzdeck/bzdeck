@@ -36,33 +36,31 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  find_account () {
+  async find_account () {
     this.trigger('#StatusUpdate', { message: 'Looking for your account...' }); // l10n
 
-    BzDeck.datasources.global.load().then(database => {
+    try {
+      await BzDeck.datasources.global.load();
       BzDeck.collections.accounts = new BzDeck.AccountCollection();
       BzDeck.collections.hosts = new BzDeck.HostCollection();
-    }, error => {
-      console.error(error);
+    } catch (error) {
       this.trigger('#Error', { message: error.message });
-    }).then(() => Promise.all([
-      BzDeck.collections.accounts.load(),
-      BzDeck.collections.hosts.load(),
-    ])).then(() => {
-      return BzDeck.collections.accounts.get_current();
-    }).then(account => {
-      BzDeck.account = account;
-    }).then(() => {
-      return BzDeck.collections.hosts.get(BzDeck.account.data.host);
-    }).then(host => {
-      BzDeck.host = host;
-    }).then(() => {
+    }
+
+    try {
+      await Promise.all([
+        BzDeck.collections.accounts.load(),
+        BzDeck.collections.hosts.load(),
+      ]);
+
+      BzDeck.account = await BzDeck.collections.accounts.get_current();
+      BzDeck.host = await BzDeck.collections.hosts.get(BzDeck.account.data.host);
       this.load_data();
-    }).catch(error => {
+    } catch (error) {
       this.force_login();
-    });
+    }
   }
 
   /**
@@ -112,9 +110,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
    * @fires SessionPresenter#UserFound
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  verify_account (host_id, name, api_key) {
+  async verify_account (host_id, name, api_key) {
     this.trigger('#StatusUpdate', { message: 'Verifying your account...' }); // l10n
 
     if (!this.bootstrapping) {
@@ -123,11 +121,10 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       this.bootstrapping = true;
     }
 
-    BzDeck.collections.hosts.get(host_id, { host: host_id }).then(host => {
-      BzDeck.host = host;
-    }).then(() => {
-      return BzDeck.host.verify_account(name, api_key);
-    }).then(user => {
+    BzDeck.host = await BzDeck.collections.hosts.get(host_id, { host: host_id });
+
+    try {
+      let user = await BzDeck.host.verify_account(name, api_key);
       let _account = { host: BzDeck.host.name, name, api_key, loaded: Date.now(), active: true, bugzilla: user };
       let account = BzDeck.account = new BzDeck.AccountModel(_account);
 
@@ -135,9 +132,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       this.trigger('#UserFound');
       this.auth_callback_bc.close();
       this.load_data();
-    }).catch(error => {
+    } catch (error) {
       this.trigger('#Error', { message: error.message || 'Failed to find your account.' }); // l10n
-    });
+    }
   }
 
   /**
@@ -145,39 +142,45 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  load_data () {
+  async load_data () {
     this.trigger('#StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
 
-    BzDeck.datasources.account.load().then(database => {
+    try {
+      await BzDeck.datasources.account.load();
       BzDeck.collections.bugs = new BzDeck.BugCollection();
       BzDeck.collections.attachments = new BzDeck.AttachmentCollection();
       BzDeck.collections.subscriptions = new BzDeck.SubscriptionCollection();
       BzDeck.prefs = new BzDeck.PrefCollection();
       BzDeck.collections.users = new BzDeck.UserCollection();
-    }, error => {
-      console.error(error);
+    } catch (error) {
       this.trigger('#Error', { message: error.message });
-    }).then(() => Promise.all([
-      BzDeck.collections.bugs.load(),
-      BzDeck.prefs.load(),
-      BzDeck.collections.users.load(),
-    ])).then(() => Promise.all([
-      BzDeck.collections.attachments.load(), // Depends on BzDeck.collections.bugs
-    ])).then(() => {
-      return BzDeck.collections.bugs.get_all();
-    }).then(bugs => {
+    }
+
+    try {
+      await Promise.all([
+        BzDeck.collections.bugs.load(),
+        BzDeck.prefs.load(),
+        BzDeck.collections.users.load(),
+      ]);
+
+      // Depends on BzDeck.collections.bugs
+      await BzDeck.collections.attachments.load();
+
+      let bugs = await BzDeck.collections.bugs.get_all();
+
       this.firstrun = !bugs.size;
-    }).then(() => {
+
       // Fetch data for new users before showing the main app window, or defer fetching for returning users
-      return this.firstrun ? this.fetch_data(true) : Promise.resolve();
-    }).then(() => {
+      if (this.firstrun) {
+        await this.fetch_data(true);
+      }
+
       this.init_components();
-    }).catch(error => {
-      console.error(error);
+    } catch (error) {
       this.trigger('#Error', { message: error.message });
-    });
+    }
   }
 
   /**
@@ -186,31 +189,34 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @fires SessionPresenter#StatusUpdate
    * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
    */
-  fetch_data (firstrun = false) {
+  async fetch_data (firstrun = false) {
     this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
-    let now = Date.now();
-    let get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
-    // Fetch only bugs changed in the last 14 days first to reduce the initial startup time
-    let params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
+    let fetch_bugs = async () => {
+      let now = Date.now();
+      let get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
+      // Fetch only bugs changed in the last 14 days first to reduce the initial startup time
+      let params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
+      let bugs = await BzDeck.collections.subscriptions.fetch(firstrun, params);
+
+      if (firstrun) {
+        // Fetch the remaining bugs changed within a year
+        let _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
+        let _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
+
+        // If the first fetch returned no bugs, wait for the second fetch
+        if (!bugs.size) {
+          return _fetch;
+        }
+      }
+
+      return bugs;
+    };
 
     return Promise.all([
       BzDeck.host.get_config(),
       BzDeck.collections.users.refresh(),
-      BzDeck.collections.subscriptions.fetch(firstrun, params).then(bugs => {
-        if (firstrun) {
-          // Fetch the remaining bugs changed within a year
-          let _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
-          let _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
-
-          // If the first fetch returned no bugs, wait for the second fetch
-          if (!bugs.size) {
-            return _fetch;
-          }
-        }
-
-        return Promise.resolve(bugs);
-      }),
+      fetch_bugs(),
     ]);
   }
 
@@ -219,17 +225,17 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  init_components () {
+  async init_components () {
     this.trigger('#StatusUpdate', { message: 'Initializing UI...' }); // l10n
 
-    new Promise((resolve, reject) => {
-      this.relogin ? resolve() : reject();
-    }).catch(error => {
+    if (!this.relogin) {
       // Finally load the UI modules
       this.trigger('#DataLoaded');
-    }).then(() => {
+    }
+
+    try {
       let endpoint = BzDeck.host.websocket_endpoint;
 
       BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
@@ -238,17 +244,18 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       if (endpoint) {
         BzDeck.models.bugzfeed.connect(endpoint);
       }
-    }).then(() => {
+
       this.trigger('#StatusUpdate', { message: 'Loading complete.' }); // l10n
       this.login();
       this.bootstrapping = false;
-    }).then(() => {
+
       // Fetch data for returning users
-      return this.firstrun ? Promise.resolve() : this.fetch_data();
-    }).catch(error => {
-      console.error(error);
+      if (!this.firstrun) {
+        this.fetch_data();
+      }
+    } catch (error) {
       this.trigger('#Error', { message: error.message });
-    });
+    }
   }
 
   /**
@@ -265,16 +272,16 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
    * @param {undefined}
    * @fires SessionPresenter#Logout
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  logout () {
+  async logout () {
     this.trigger('#Logout');
     this.clean();
 
     // Delete the account data and refresh the page to ensure the app works properly
     // TODO: Support multiple account by removing only the current account
-    BzDeck.collections.accounts.delete(BzDeck.account.data.loaded)
-      .then(() => location.replace(BzDeck.config.app.root));
+    await BzDeck.collections.accounts.delete(BzDeck.account.data.loaded);
+    location.replace(BzDeck.config.app.root);
   }
 
   /**

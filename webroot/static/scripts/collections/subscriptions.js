@@ -26,29 +26,27 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @param {String} id - Key of the subscription.
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    */
-  get (id) {
+  async get (id) {
     let email = BzDeck.account.data.name;
-    let get_all = ['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all();
+    let all_bugs = await (['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all());
+    let _bugs = [...all_bugs.values()];
+    let is_new_results = _bugs.map(bug => bug.is_new);
 
-    return get_all.then(bugs => {
-      let _bugs = [...bugs.values()];
+    let bugs = _bugs.filter((bug, index) => {
+      switch (id) {
+        case 'inbox':     return is_new_results[index];
+        case 'watching':  return bug.cc && bug.cc.includes(email);
+        case 'reported':  return bug.creator === email;
+        case 'assigned':  return bug.assigned_to === email;
+        case 'mentor':    return bug.mentors && bug.mentors.includes(email);
+        case 'qa':        return bug.qa_contact === email;
+        case 'requests':  return bug.flags && bug.flags.some(flag => flag.requestee === email);
+        case 'starred':   return bug.starred;
+        default:          return !!bug;
+      };
+    });
 
-      return Promise.all(_bugs.map(bug => bug.is_new)).then(is_new_results => {
-        return _bugs.filter((bug, index) => {
-          switch (id) {
-            case 'inbox':     return is_new_results[index];
-            case 'watching':  return bug.cc && bug.cc.includes(email);
-            case 'reported':  return bug.creator === email;
-            case 'assigned':  return bug.assigned_to === email;
-            case 'mentor':    return bug.mentors && bug.mentors.includes(email);
-            case 'qa':        return bug.qa_contact === email;
-            case 'requests':  return bug.flags && bug.flags.some(flag => flag.requestee === email);
-            case 'starred':   return bug.starred;
-            default:          return !!bug;
-          };
-        });
-      });
-    }).then(bugs => new Map(bugs.map(bug => [bug.id, bug])));
+    return new Map(bugs.map(bug => [bug.id, bug]));
   }
 
   /**
@@ -57,14 +55,15 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @param {undefined}
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
    */
-  get_all () {
+  async get_all () {
     let email = BzDeck.account.data.name;
+    let all_bugs = await BzDeck.collections.bugs.get_all();
 
-    return BzDeck.collections.bugs.get_all().then(bugs => [...bugs.values()].filter(bug => {
+    return new Map([...all_bugs.values()].filter(bug => {
       return (bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
              bug.qa_contact === email || (bug.mentors && bug.mentors.includes(email)) ||
              (bug.flags && bug.flags.some(flag => flag.requestee === email));
-    })).then(bugs => new Map(bugs.map(bug => [bug.id, bug])));
+    }).map(bug => [bug.id, bug]));
   }
 
   /**
@@ -77,7 +76,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
-  fetch (firstrun = false, params = new URLSearchParams()) {
+  async fetch (firstrun = false, params = new URLSearchParams()) {
     let fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
     // Fire an event to show the throbber
@@ -91,51 +90,47 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       params.append(`v${i}`, BzDeck.account.data.name);
     }
 
-    return BzDeck.prefs.get('subscriptions.last_loaded').then(last_loaded => {
-      if (!firstrun) {
-        // Retrieve bugs changed since the cached date for returning sessions
-        params.append('chfieldfrom', (new Date(last_loaded)).toISOString());
-        params.append('include_fields', 'id');
-      }
-    }).then(() => {
-      return BzDeck.collections.bugs.get_all();
-    }).then(cached_bugs => {
-      // Append starred bugs to the query, that may include bugs the user is currently not involved in
-      params.append('f9', 'bug_id');
-      params.append('o9', 'anywords');
-      params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
-    }).then(() => {
-      return BzDeck.host.request('bug', params);
-    }).then(result => {
+    let [last_loaded, cached_bugs] = await Promise.all([
+      BzDeck.prefs.get('subscriptions.last_loaded'),
+      BzDeck.collections.bugs.get_all(),
+    ]);
+
+    if (!firstrun) {
+      // Retrieve bugs changed since the cached date for returning sessions
+      params.append('chfieldfrom', (new Date(last_loaded)).toISOString());
+      params.append('include_fields', 'id');
+    }
+
+    // Append starred bugs to the query, that may include bugs the user is currently not involved in
+    params.append('f9', 'bug_id');
+    params.append('o9', 'anywords');
+    params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
+
+    try {
+      let result = await BzDeck.host.request('bug', params);
+      let _bugs = [];
+
       if (firstrun) {
-        return Promise.all(result.bugs.map(_bug => BzDeck.collections.bugs.set(_bug.id, _bug)));
-      }
-  
-      if (!result.bugs.length) {
-        return Promise.resolve([]);
+        _bugs = await Promise.all(result.bugs.map(_bug => BzDeck.collections.bugs.set(_bug.id, _bug)));
+      } else if (result.bugs.length) {
+        _bugs = await BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id), true, false);
+        this.trigger_safe('#Updated', { bugs: _bugs });
       }
 
-      return BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id), true, false).then(bugs => {
-        this.trigger_safe('#Updated', { bugs });
+      // Retrieve the last visit timestamp for all bugs
+      cached_bugs = await BzDeck.collections.bugs.get_all();
+      await BzDeck.collections.bugs.retrieve_last_visit(cached_bugs.keys());
 
-        return bugs;
-      });
-    }).then(bugs => { // Array
-      // Retrieve the last visit timestamp for all bugs, but return the updated bugs only
-      return BzDeck.collections.bugs.get_all().then(_bugs => {
-        return BzDeck.collections.bugs.retrieve_last_visit(_bugs.keys());
-      }).then(_bugs => {
-        return BzDeck.collections.bugs.get_some(bugs.map(bug => bug.id));
-      });
-    }).then(bugs => { // Map
+      let bugs = await BzDeck.collections.bugs.get_some(_bugs.map(bug => bug.id)); // Map
+
       BzDeck.prefs.set('subscriptions.last_loaded', Date.now());
       this.trigger('#FetchingSubscriptionsComplete');
 
-      return Promise.resolve(bugs);
-    }).catch(error => {
+      return bugs;
+    } catch (error) {
       this.trigger('#FetchingSubscriptionsComplete');
 
-      return Promise.reject(new Error('Failed to load data.')); // l10n
-    });
+      throw new Error('Failed to load data.'); // l10n
+    }
   }
 }

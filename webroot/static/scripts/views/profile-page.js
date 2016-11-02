@@ -12,6 +12,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * to it. Otherwise, open a new tab and try to load the user profile.
    * @constructor
    * @param {String} email - Person's Bugzilla account name.
+   * @fires ProfilePageView#ProfileRequested
    * @returns {Object} view - New ProfilePageView instance.
    */
   constructor (email) {

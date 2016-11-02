@@ -37,7 +37,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.presenter = new BzDeck.BugPresenter(this.id, this.container_id, this.bug_id, this.siblings);
 
     // Load the bug
-    Promise.resolve().then(() => this.trigger('BugView#Initialized'));
+    (async () => this.trigger('BugView#Initialized'))();
   }
 
   /**
@@ -115,20 +115,19 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       'open-tab': () => this.trigger('BugView#OpeningTabRequested'),
     };
 
-    $menu.addEventListener('MenuOpened', event => {
+    $menu.addEventListener('MenuOpened', async event => {
       let collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \
                                                     [itemprop="comment"][aria-expanded="false"]').length;
 
-      BzDeck.prefs.get('ui.timeline.show_cc_changes').then(show_cc_changes => {
-        let cc_shown = !!show_cc_changes;
+      let show_cc_changes = await BzDeck.prefs.get('ui.timeline.show_cc_changes');
+      let cc_shown = !!show_cc_changes;
 
-        $toggle_comments.setAttribute('aria-disabled', !this.timeline);
-        $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
-        $toggle_comments.firstElementChild.textContent = collapsed ? 'Expand All Comments' : 'Collapse All Comments';
-        $toggle_cc.setAttribute('aria-disabled', !this.timeline);
-        $toggle_cc.setAttribute('data-command', cc_shown ? 'hide-cc': 'show-cc');
-        $toggle_cc.firstElementChild.textContent = cc_shown ? 'Hide CC Changes' : 'Show CC Changes';
-      });
+      $toggle_comments.setAttribute('aria-disabled', !this.timeline);
+      $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
+      $toggle_comments.firstElementChild.textContent = collapsed ? 'Expand All Comments' : 'Collapse All Comments';
+      $toggle_cc.setAttribute('aria-disabled', !this.timeline);
+      $toggle_cc.setAttribute('data-command', cc_shown ? 'hide-cc': 'show-cc');
+      $toggle_cc.firstElementChild.textContent = cc_shown ? 'Hide CC Changes' : 'Show CC Changes';
     });
 
     $menu.addEventListener('MenuItemSelected', event => (handlers[event.detail.command] || (() => {}))());
@@ -190,9 +189,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let next = this.siblings[index + 1];
     let assign_key_binding = (key, command) => FlareTail.helpers.kbd.assign(this.$bug, { [key]: command });
 
-    let set_button_tooltip = (id, $$button) => BzDeck.collections.bugs.get(id).then(bug => {
+    let set_button_tooltip = async (id, $$button) => {
+      let bug = await BzDeck.collections.bugs.get(id);
+
       $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
-    });
+    };
 
     if (prev) {
       set_button_tooltip(prev, $$btn_back);
@@ -245,38 +246,36 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let _bug = {};
     let get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
-    Promise.all(BzDeck.config.grid.default_columns.map(({ id: field, type } = {}) => {
-      if (this.bug[field] !== undefined) {
-        if (field === 'keywords') {
-          _bug.keyword = this.bug.keywords;
-        } else if (field === 'mentors') {
-          return Promise.all(this.bug.mentors.map(name => get_user(name))).then(mentors => {
-            _bug.mentor = mentors.map(mentor => mentor.properties);
-          });
-        } else if (type === 'person') {
-          if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
-            return get_user(this.bug[field]).then(user => {
-              _bug[field] = user.properties;
-            });
-          }
-        } else {
-          _bug[field] = this.bug[field] || '';
-        }
-      }
+    (async () => {
+      await Promise.all(BzDeck.config.grid.default_columns.map(async ({ id: field, type } = {}) => {
+        if (this.bug[field] !== undefined) {
+          if (field === 'keywords') {
+            _bug.keyword = this.bug.keywords;
+          } else if (field === 'mentors') {
+            let mentors = await Promise.all(this.bug.mentors.map(name => get_user(name)));
 
-      return Promise.resolve();
-    })).then(() => {
+            _bug.mentor = mentors.map(mentor => mentor.properties);
+          } else if (type === 'person') {
+            if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
+              let user = await get_user(this.bug[field]);
+
+              _bug[field] = user.properties;
+            }
+          } else {
+            _bug[field] = this.bug[field] || '';
+          }
+        }
+      }));
+
       // Other Contributors, excluding Cc
-      return Promise.all([...this.bug.contributors].filter(name => !this.bug.cc.includes(name)).map(name => {
-        return get_user(name);
-      })).then(contributors => {
-        _bug.contributor = contributors.map(contributor => contributor.properties);
-      });
-    }).then(() => {
+      let contributors = await Promise.all([...this.bug.contributors]
+          .filter(name => !this.bug.cc.includes(name)).map(name => get_user(name)));
+
+      _bug.contributor = contributors.map(contributor => contributor.properties);
+
       this.fill(this.$bug, _bug);
-    }).then(() => {
       this.set_product_tooltips();
-    });
+    })();
 
     let init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
     let can_editbugs = BzDeck.account.permissions.includes('editbugs');
@@ -320,32 +319,31 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       $comment.remove();
     }
 
-    if (this.bug.comments && !this.bug._update_needed) {
-      Promise.resolve().then(() => this.fill_details(false));
-    } else {
-      // Load comments, history, flags and attachments' metadata; Exclude metadata
-      this.bug.fetch(false).then(bug => {
-        this.bug = bug;
-        Promise.resolve().then(() => this.fill_details(true));
-      });
-    }
+    (async () => {
+      if (this.bug.comments && !this.bug._update_needed) {
+        this.fill_details(false);
+      } else {
+        // Load comments, history, flags and attachments' metadata; Exclude metadata
+        this.bug = await this.bug.fetch(false);
+        this.fill_details(true);
+      }
+    })();
 
     // Focus management
-    let set_focus = shift => {
-      BzDeck.prefs.get('ui.timeline.sort.order').then(order => {
-        let ascending = order !== 'descending';
-        let entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
+    let set_focus = async shift => {
+      let order = await BzDeck.prefs.get('ui.timeline.sort.order');
+      let ascending = order !== 'descending';
+      let entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
-        entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+      entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
 
-        // Focus the first (or last) visible entry
-        for (let $_entry of entries) if ($_entry.clientHeight) {
-          $_entry.focus();
-          $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
+      // Focus the first (or last) visible entry
+      for (let $_entry of entries) if ($_entry.clientHeight) {
+        $_entry.focus();
+        $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
-          break;
-        }
-      });
+        break;
+      }
     };
 
     // Assign keyboard shortcuts
@@ -373,85 +371,83 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @fires AnyView#OpeningBugRequested
    * @fires BugView#RenderingComplete
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  fill_details (delayed) {
+  async fill_details (delayed) {
     // When the comments and history are loaded async, the template can be removed
     // or replaced at the time of call, if other bug is selected by user
     if (!this.$bug) {
       return;
     }
 
-    let _bug = {};
+    let _cc = await Promise.all(this.bug.cc.map(name => BzDeck.collections.users.get(name, { name })));
 
-    Promise.all(this.bug.cc.map(name => BzDeck.collections.users.get(name, { name }))).then(_cc => {
-      _bug = {
-        cc: _cc.map(person => person.properties),
-        depends_on: this.bug.depends_on,
-        blocks: this.bug.blocks,
-        see_also: this.bug.see_also,
-        dupe_of: this.bug.dupe_of || undefined,
-        duplicate: this.bug.duplicates,
-      };
-    }).then(() => {
-      this.fill(this.$bug, _bug);
-    }).then(() => {
-      // Depends on, Blocks and Duplicates
-      for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
-                                                  [itemprop="duplicate"]')) {
-        $li.setAttribute('data-bug-id', $li.textContent);
+    let _bug = {
+      cc: _cc.map(person => person.properties),
+      depends_on: this.bug.depends_on,
+      blocks: this.bug.blocks,
+      see_also: this.bug.see_also,
+      dupe_of: this.bug.dupe_of || undefined,
+      duplicate: this.bug.duplicates,
+    };
 
-        (new FlareTail.widgets.Button($li)).bind('Pressed', event => {
-          this.trigger('AnyView#OpeningBugRequested', { id: Number(event.target.textContent) });
-        });
+    this.fill(this.$bug, _bug);
+
+    // Depends on, Blocks and Duplicates
+    for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
+                                                [itemprop="duplicate"]')) {
+      $li.setAttribute('data-bug-id', $li.textContent);
+
+      (new FlareTail.widgets.Button($li)).bind('Pressed', event => {
+        this.trigger('AnyView#OpeningBugRequested', { id: Number(event.target.textContent) });
+      });
+    }
+
+    // See Also
+    for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
+      let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.'));
+      let match = $link.href.match(re);
+
+      if (match) {
+        $link.text = match[1];
+        $link.setAttribute('data-bug-id', match[1]);
+        $link.setAttribute('role', 'button');
+      } else {
+        $link.text = $link.href;
       }
+    }
 
-      // See Also
-      for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-        let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.'));
-        let match = $link.href.match(re);
+    // Prepare the timeline and comment form
+    this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed);
+    this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
+    this.activate_widgets();
 
-        if (match) {
-          $link.text = match[1];
-          $link.setAttribute('data-bug-id', match[1]);
-          $link.setAttribute('role', 'button');
-        } else {
-          $link.text = $link.href;
-        }
-      }
+    // Add tooltips to the related bugs
+    this.set_bug_tooltips();
 
-      // Prepare the timeline and comment form
-      this.timeline = new BzDeck.BugTimelineView(this.id, this.bug, this.$bug, delayed);
-      this.comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
-      this.activate_widgets();
+    // Flags, only on the details tabs
+    if (this.render_tracking_flags) {
+      new BzDeck.BugFlagsView(this.id, this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
+      this.render_tracking_flags();
+    }
 
-      // Add tooltips to the related bugs
-      this.set_bug_tooltips();
+    // Number badge on tabs, only on the details tabs
+    if (this.add_tab_badges) {
+      this.add_tab_badges();
+    }
 
-      // Flags, only on the details tabs
-      if (this.render_tracking_flags) {
-        new BzDeck.BugFlagsView(this.id, this.bug).render(this.$bug.querySelector('[data-category="flags"]'));
-        this.render_tracking_flags();
-      }
+    // Attachments, only on the details tabs
+    if (this.render_attachments) {
+      this.render_attachments();
+    }
 
-      // Number badge on tabs, only on the details tabs
-      if (this.add_tab_badges) {
-        this.add_tab_badges();
-      }
+    // History, only on the details tabs
+    if (this.render_history) {
+      this.render_history();
+    }
 
-      // Attachments, only on the details tabs
-      if (this.render_attachments) {
-        this.render_attachments();
-      }
-
-      // History, only on the details tabs
-      if (this.render_history) {
-        this.render_history();
-      }
-    }).then(() => {
-      this.$bug.removeAttribute('aria-busy');
-      this.trigger('BugView#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id });
-    });
+    this.$bug.removeAttribute('aria-busy');
+    this.trigger('BugView#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id });
   }
 
   /**
@@ -764,14 +760,14 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   on_files_selected ({ input } = {}) {
     let iterate = items => {
       for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
-        item.getFilesAndDirectories().then(_items => iterate(_items));
+        (async () => iterate(await item.getFilesAndDirectories()))();
       } else {
         this.trigger_safe('BugView#AttachFiles', { files: [item] });
       }
     };
 
     if (typeof input.getFilesAndDirectories === 'function') {
-      input.getFilesAndDirectories().then(items => iterate(items));
+      (async () => iterate(await input.getFilesAndDirectories()))();
     } else {
       this.trigger_safe('BugView#AttachFiles', { files: input.files });
     }
@@ -815,9 +811,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Set a tooptip on each bug ID that shows the summary and status of that bug.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  set_bug_tooltips () {
+  async set_bug_tooltips () {
     let related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
                                   .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
 
@@ -849,15 +845,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }
     });
 
-    BzDeck.collections.bugs.get_some(related_ids).then(bugs => {
-      let lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
+    let bugs = await BzDeck.collections.bugs.get_some(related_ids);
+    let lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
 
+    set_tooltops(bugs);
+
+    if (lookup_ids.size) {
+      bugs = await BzDeck.collections.bugs.fetch(lookup_ids, true, false);
       set_tooltops(bugs);
-
-      if (lookup_ids.size) {
-        BzDeck.collections.bugs.fetch(lookup_ids, true, false).then(bugs => set_tooltops(bugs));
-      }
-    });
+    }
   }
 
   /**
@@ -873,11 +869,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     let $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($timeline) {
-      (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create().then(entry => {
+      (async () => {
+        let entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
+
         $timeline.querySelector('.comments-wrapper').appendChild(entry.$outer);
         $timeline.querySelector('.comments-wrapper > article:last-of-type')
                  .scrollIntoView({ block: 'start', behavior: 'smooth' });
-      });
+      })();
     }
 
     // Update the tab badges

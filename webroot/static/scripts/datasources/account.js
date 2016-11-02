@@ -23,7 +23,7 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
    * @param {undefined}
    * @returns {Promise.<IDBDatabase>} database - Target IndexedDB database.
    */
-  load () {
+  async load () {
     return this.open_database(`${BzDeck.host.name}::${BzDeck.account.data.name}`, 2);
   }
 

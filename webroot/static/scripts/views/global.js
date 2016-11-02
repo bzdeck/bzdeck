@@ -189,15 +189,16 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
           new_win.opener = null;
           new_win.location = `${BzDeck.host.origin}/attachment.cgi?id=${att_id}`;
         } else {
-          BzDeck.collections.bugs.get_all().then(bugs => {
-            return [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
-          }).then(bug_id => {
+          (async () => {
+            let bugs = await BzDeck.collections.bugs.get_all();
+            let bug_id = [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
+
             if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
               this.trigger('AnyView#OpeningAttachmentRequested', { id: att_id });
             } else {
               this.trigger('AnyView#OpeningBugRequested', { id: bug_id, att_id });
             }
-          });
+          })();
         }
       } else {
         // Normal link: open in a new browser tab
@@ -233,13 +234,18 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @listens UserModel#GravatarProfileRequested
    * @param {String} hash - Hash value of the user's email.
    * @fires GlobalView#GravatarProfileProvided
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_gravatar_profile_requested ({ hash } = {}) {
+  async on_gravatar_profile_requested ({ hash } = {}) {
     let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
 
-    FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`)
-        .then(data => data.entry[0]).then(profile => notify(profile)).catch(error => notify(undefined));
+    try {
+      let data = await FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`);
+
+      notify(data.entry[0]);
+    } catch (error) {
+      notify(undefined);
+    }
   }
 
   /**
@@ -288,28 +294,28 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * retrieved. Find the user's node on the view and update the displayed information accordingly.
    * @listens UserModel#UserInfoUpdated
    * @param {String} name - Name of the updated person.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_user_info_updated ({ name } = {}) {
-    BzDeck.collections.users.get(name, { name }).then(user => {
-      for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
-        let title = `${user.original_name || user.name}\n${user.email}`;
-        let $person = $email.closest('[itemtype$="User"]');
-        let $name = $person.querySelector('[itemprop="name"]');
-        let $image = $person.querySelector('[itemprop="image"]');
+  async on_user_info_updated ({ name } = {}) {
+    let user = await BzDeck.collections.users.get(name, { name });
 
-        if ($person.title && $person.title !== title) {
-          $person.title = title;
-        }
+    for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
+      let title = `${user.original_name || user.name}\n${user.email}`;
+      let $person = $email.closest('[itemtype$="User"]');
+      let $name = $person.querySelector('[itemprop="name"]');
+      let $image = $person.querySelector('[itemprop="image"]');
 
-        if ($name && $name.textContent !== user.name) {
-          $name.textContent = user.name;
-        }
-
-        if ($image && $image.src !== user.image) {
-          $image.src = user.image; // Blob URL
-        }
+      if ($person.title && $person.title !== title) {
+        $person.title = title;
       }
-    });
+
+      if ($name && $name.textContent !== user.name) {
+        $name.textContent = user.name;
+      }
+
+      if ($image && $image.src !== user.image) {
+        $image.src = user.image; // Blob URL
+      }
+    }
   }
 }

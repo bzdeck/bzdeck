@@ -60,9 +60,9 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * @fires SearchPagePresenter#SearchResultsAvailable
    * @fires SearchPagePresenter#SearchError
    * @fires SearchPagePresenter#SearchComplete
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  exec_search (params) {
+  async exec_search (params) {
     if (!navigator.onLine) {
       this.trigger('#Offline');
 
@@ -71,13 +71,15 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
 
     this.trigger('#SearchStarted');
 
-    BzDeck.collections.bugs.search_remote(params).then(bugs => {
+    try {
+      let bugs = await BzDeck.collections.bugs.search_remote(params);
+
       bugs = this.data.bugs = new Map(bugs.map(bug => [bug.id, bug]));
       this.trigger_safe('#SearchResultsAvailable', { bugs });
-    }).catch(error => {
+    } catch (error) {
       this.trigger('#SearchError', { message: error.message });
-    }).then(() => {
-      this.trigger('#SearchComplete');
-    });
+    }
+
+    this.trigger('#SearchComplete');
   }
 }

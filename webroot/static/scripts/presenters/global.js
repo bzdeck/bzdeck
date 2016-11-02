@@ -80,23 +80,21 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
    * Determine the number of unread bugs and notify the view.
    * @param {Boolean} [loaded=false] - Whether bug data is loaded at startup.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  toggle_unread (loaded = false) {
+  async toggle_unread (loaded = false) {
     if (!BzDeck.presenters.homepage) {
       return;
     }
 
-    BzDeck.collections.bugs.get_all().then(bugs => {
-      return [...bugs.values()].filter(bug => bug.unread);
-    }).then(bugs => {
-      let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
-      let extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
-      let unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+    let all_bugs = await BzDeck.collections.bugs.get_all();
+    let bugs = [...all_bugs.values()].filter(bug => bug.unread);
+    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
+    let extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
+    let unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
 
-      // Update View
-      this.view.toggle_unread(bugs, loaded, unread_num);
-    });
+    // Update View
+    this.view.toggle_unread(bugs, loaded, unread_num);
   }
 
   /**

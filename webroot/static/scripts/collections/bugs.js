@@ -32,7 +32,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
    * @returns {Promise.<Array.<Proxy>>} bugs - Promise to be resolved in proxified BugModel instances.
    */
-  fetch (_ids, include_metadata = true, include_details = true) {
+  async fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
     let ids = [..._ids].sort();
 
@@ -40,9 +40,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     // the issue, divide the array into chunks to retrieve 20 bugs per request, then divide each chunk again if failed.
     let ids_chunks = FlareTail.helpers.array.chunk(ids, 20);
 
-    let _fetch = (ids, method, param_str = '') => new Promise((resolve, reject) => {
+    let _fetch = async (ids, method, param_str = '') => {
       let path = `bug/${ids[0]}`;
       let params = new URLSearchParams(param_str);
+      let result;
 
       if (method === 'last_visit') {
         path = `bug_user_last_visit/${ids[0]}`;
@@ -51,10 +52,19 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       }
 
       ids.forEach(id => params.append('ids', id));
-      BzDeck.host.request(path, params)
-          .then(result => result.error ? reject(new Error(result.code)) : resolve(result))
-          .catch(event => reject(new Error(0)));
-    });
+
+      try {
+        result = await BzDeck.host.request(path, params);
+      } catch (error) {
+        throw new Error(0);
+      }
+
+      if (result.error) {
+        throw new Error(result.code);
+      }
+
+      return result;
+    };
 
     let get_fetchers = ids => {
       let fetchers = [];
@@ -93,41 +103,42 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return _bug;
     };
 
-    return Promise.all(ids_chunks.map(ids => {
-      return Promise.all(get_fetchers(ids)).then(values => {
+    let bugs_chunks = await Promise.all(ids_chunks.map(async ids => {
+      try {
+        let values = await Promise.all(get_fetchers(ids));
         return ids.map((id, index) => get_bug(values, id, index));
-      }, error => {
+      } catch (error) {
         // Immediately return a bug object with an error when a single bug is returned
         if (ids.length === 1) {
           return [{ id: ids[0], error: { code: Number(error.message) } }];
         }
 
         // Retrieve the bugs one by one if failed
-        return Promise.all(ids.map(id => {
-          return Promise.all(get_fetchers([id])).then(values => {
-            return get_bug(values, id);
-          }, error => {
+        return Promise.all(ids.map(async id => {
+          try {
+            return get_bug(await Promise.all(get_fetchers([id])), id);
+          } catch (error) {
             return { id, error: { code: Number(error.message) } };
-          });
-        }));
-      });
-    })).then(bugs_chunks => {
-      // Flatten an array of arrays
-      return bugs_chunks.reduce((a, b) => a.concat(b), []);
-    }).then(_bugs => {
-      // _bugs is an Array of raw bug objects. Convert them to BugModel instances
-      return Promise.all(_bugs.map(_bug => {
-        return this.get(_bug.id).then(bug => {
-          if (bug) {
-            bug.merge(_bug);
-
-            return bug;
           }
+        }));
+      }
+    }));
 
-          return this.get(_bug.id, _bug);
-        });
-      }));
-    });
+    // Flatten an array of arrays
+    let _bugs = bugs_chunks.reduce((a, b) => a.concat(b), []);
+
+    // _bugs is an Array of raw bug objects. Convert them to BugModel instances
+    return Promise.all(_bugs.map(async _bug => {
+      let bug = await this.get(_bug.id);
+
+      if (bug) {
+        bug.merge(_bug);
+
+        return bug;
+      }
+
+      return this.get(_bug.id, _bug);
+    }));
   }
 
   /**
@@ -136,35 +147,40 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
    */
-  retrieve_last_visit (_ids) {
-    return this.get_some([..._ids].sort()).then(bugs => {
-      let ids = [...bugs.keys()];
+  async retrieve_last_visit (_ids) {
+    let bugs = await this.get_some([..._ids].sort());
+    let ids = [...bugs.keys()];
 
-      if (!ids.length) {
-        return Promise.resolve(bugs);
+    if (!ids.length) {
+      return bugs;
+    }
+
+    // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
+    let ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
+
+    let results_chunks = await Promise.all(ids_chunks.map(async ids => {
+      let params = new URLSearchParams();
+      let results;
+
+      ids.forEach(id => params.append('ids', id));
+
+      try {
+        results = await BzDeck.host.request(`bug_user_last_visit/${ids[0]}`, params);
+      } catch (error) {
+        results = [];
       }
 
-      // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
-      let ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
+      return Array.isArray(results) ? results : [];
+    }));
 
-      return Promise.all(ids_chunks.map(ids => new Promise(resolve => {
-        let params = new URLSearchParams();
+    // Flatten an array of arrays
+    let results = results_chunks.reduce((a, b) => a.concat(b), []);
 
-        ids.forEach(id => params.append('ids', id));
-        BzDeck.host.request(`bug_user_last_visit/${ids[0]}`, params)
-            .then(results => resolve(Array.isArray(results) ? results : []))
-            .catch(event => resolve([]));
-      }))).then(results_chunks => {
-        // Flatten an array of arrays
-        return results_chunks.reduce((a, b) => a.concat(b), []);
-      }).then(results => {
-        for (let { id, last_visit_ts } of results) {
-          bugs.get(id)._last_visit = last_visit_ts;
-        }
+    for (let { id, last_visit_ts } of results) {
+      bugs.get(id)._last_visit = last_visit_ts;
+    }
 
-        return Promise.resolve(bugs);
-      });
-    });
+    return bugs;
   }
 
   /**
@@ -173,15 +189,17 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Object>} Promise to be resolved in the search results.
    * @todo Add support for Bugzilla quick search queries (#327).
    */
-  search_local (params) {
+  async search_local (params) {
     let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
     let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
-
-    return this.get_all().then(bugs => [...bugs.values()].filter(bug => {
+    let all_bugs = await this.get_all();
+    let bugs = [...all_bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||
              words.every(word => bug.alias.some(alias => match(alias, word))) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
-    })).then(bugs => this.get_search_results(bugs));
+    });
+
+    return this.get_search_results(bugs);
   }
 
   /**
@@ -189,55 +207,50 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @param {URLSearchParams} params - Search query.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
-  search_remote (params) {
-    let _bugs;
+  async search_remote (params) {
+    let result = await BzDeck.host.request('bug', params);
+    let _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
+    let __bugs = await this.retrieve_last_visit(_bugs.keys());
+    let bugs = await Promise.all([...__bugs].map(async ([id, bug]) => {
+      let retrieved = _bugs.get(id); // Raw data object
 
-    return BzDeck.host.request('bug', params).then(result => {
-      _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
-    }).then(() => {
-      return this.retrieve_last_visit(_bugs.keys());
-    }).then(__bugs => {
-      return Promise.all([...__bugs].map(([id, bug]) => new Promise(resolve => {
-        let retrieved = _bugs.get(id); // Raw data object
+      if (!bug) {
+        bug = await this.set(id, retrieved);
+      } else if (bug.last_change_time < retrieved.last_change_time) {
+        bug.merge(retrieved);
+      }
 
-        if (bug) {
-          if (bug.last_change_time < retrieved.last_change_time) {
-            bug.merge(retrieved);
-          }
+      return bug;
+    }));
 
-          resolve(bug);
-        } else {
-          this.set(id, retrieved).then(bug => resolve(bug));
-        }
-      })));
-    }).then(bugs => {
-      return this.get_search_results(bugs);
-    });
+    return this.get_search_results(bugs);
   }
 
   /**
    * Sort descending (new to old) and return search results.
    * @param {Array.<Proxy>} bugs - List of found bugs.
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
-   * @todo Improve the sorting algorithm.
+   * @todo Improve the sorting algorithm. Another possible factors: How often the user visited the bug? How active the
+   *  bug is?
    */
-  get_search_results (bugs) {
+  async get_search_results (bugs) {
     // Sort by the last updated time
     bugs.sort((a, b) => new Date(a.last_change_time) < new Date(b.last_change_time));
     // Sort by the last visited time
     bugs.sort((a, b) => new Date(a._last_visit || 0) < new Date(b._last_visit || 0));
-    // Another possible factors: How often the user visited the bug? How active the bug is?
+    //
 
-    return Promise.resolve(bugs);
+    return bugs;
   }
 
   /**
    * Called whenever a bug is updated. Retrieve the latest data from Bugzilla.
    * @listens BugzfeedModel#BugUpdated
    * @param {Number} id - Bug ID.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_bug_updated ({ id } = {}) {
-    this.get(id, { id }).then(bug => bug.fetch());
+  async on_bug_updated ({ id } = {}) {
+    let bug = await this.get(id, { id });
+    bug.fetch();
   }
 }

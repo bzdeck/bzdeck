@@ -113,7 +113,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    */
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
-    this.$qrauth_button.addEventListener('mousedown', event => {
+    this.$qrauth_button.addEventListener('mousedown', async event => {
       let $overlay = document.querySelector('#qrcode-auth-overlay');
       let $scan_button;
       let $video;
@@ -151,19 +151,19 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         $scan_button.addEventListener('mousedown', event => { decode(); hide_overlay(); });
       }
 
-      Promise.resolve().then(() => $overlay.removeAttribute('aria-hidden'));
+      (async () => $overlay.removeAttribute('aria-hidden'))();
       $video = $overlay.querySelector('video');
       $scan_button.focus();
 
-      navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(input => {
-        stream = input;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
         $video.src = URL.createObjectURL(stream);
         $video.play();
         $scan_button.setAttribute('aria-disabled', 'false');
-      }).catch(error => {
+      } catch (error) {
         hide_overlay();
         this.trigger('#QRCodeError', { message: error.message });
-      });
+      }
     });
   }
 

@@ -90,10 +90,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     if (!this.data.updated) {
-      this.fetch().then(profiles => {
+      (async () => {
+        await this.fetch();
         // Notify the change to update the UI when necessary
         this.trigger('#UserInfoUpdated', { name: this.email });
-      });
+      })();
     }
 
     return this.proxy();
@@ -104,15 +105,17 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @param {Object} [options] - Extra options.
    * @returns {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
    */
-  fetch (options = {}) {
+  async fetch (options = {}) {
     options.in_promise_all = true;
 
-    return Promise.all([
-      this.get_bugzilla_profile(options),
-      this.get_gravatar_image(options),
-      // Refresh the Gravatar profile if already exists, or fetch later on demand
-      this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve()
-    ]).then(([bugzilla, image_blob, gravatar]) => {
+    try {
+      let [bugzilla, image_blob, gravatar] = await Promise.all([
+        this.get_bugzilla_profile(options),
+        this.get_gravatar_image(options),
+        // Refresh the Gravatar profile if already exists, or fetch later on demand
+        this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve(),
+      ]);
+
       this.save({
         name: this.email, // String
         id: bugzilla.id, // Number
@@ -122,13 +125,15 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         gravatar, // Object
         updated: Date.now(), // Number
       });
-    }).catch(error => {
+    } catch (error) {
       this.save({
         name: this.email,
         error: error.message,
         updated: Date.now(),
       });
-    }).then(() => Promise.resolve(this.data));
+    }
+
+    return this.data;
   }
 
   /**
@@ -138,25 +143,26 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
-  get_bugzilla_profile ({ in_promise_all = false, api_key } = {}) {
+  async get_bugzilla_profile ({ in_promise_all = false, api_key } = {}) {
     if (this.data.bugzilla && this.data.bugzilla.id) {
-      return Promise.resolve(this.data.bugzilla);
+      return this.data.bugzilla;
     }
 
     if (this.data.error) {
-      return Promise.reject(new Error(this.data.error));
+      throw new Error(this.data.error);
     }
 
     let params = new URLSearchParams();
-    let _options = { api_key: api_key || undefined };
 
     params.append('names', this.email);
 
-    return new Promise((resolve, reject) => {
-      BzDeck.host.request('user', params, _options).then(result => {
-        result.users ? resolve(result.users[0]) : reject(new Error(result.message || 'User Not Found'));
-      }).catch(error => reject(error));
-    });
+    let result = await BzDeck.host.request('user', params, { api_key: api_key || undefined });
+
+    if (!result.users) {
+      throw new Error(result.message || 'User Not Found');
+    }
+
+    return result.users[0];
   }
 
   /**
@@ -168,13 +174,13 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
    */
-  get_gravatar_profile ({ in_promise_all = false } = {}) {
+  async get_gravatar_profile ({ in_promise_all = false } = {}) {
     if (this.data.gravatar) {
       if (this.data.gravatar.error) {
-        return Promise.reject(new Error('The Gravatar profile could not be found'));
+        throw new Error('The Gravatar profile could not be found');
       }
 
-      return Promise.resolve(this.data.gravatar);
+      return this.data.gravatar;
     }
 
     return new Promise((resolve, reject) => {
@@ -211,9 +217,9 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
    * @see {@link https://en.gravatar.com/site/implement/images/}
    */
-  get_gravatar_image ({ in_promise_all = false } = {}) {
+  async get_gravatar_image ({ in_promise_all = false } = {}) {
     if (this.data.image_blob) {
-      return Promise.resolve(this.data.image_blob);
+      return this.data.image_blob;
     }
 
     return new Promise(resolve => {

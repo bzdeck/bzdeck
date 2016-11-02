@@ -29,35 +29,33 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @listens QuickSearchView#RecentSearchesRequested
    * @param {undefined}
    * @fires QuickSearchPresenter#ResultsAvailable
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  provide_recent_searches () {
-    BzDeck.prefs.get('search.quick.history').then(history => {
-      return Promise.all((history || []).map(({ type, id } = {}) => {
-        return new Promise(resolve => {
-          if (type === 'bug') {
-            BzDeck.collections.bugs.get(id).then(bug => {
-              bug ? this.get_bug_result(bug).then(result => resolve(result)) : resolve(undefined);
-            });
-          }
+  async provide_recent_searches () {
+    let history = await BzDeck.prefs.get('search.quick.history');
 
-          if (type === 'user') {
-            BzDeck.collections.users.get(id).then(user => {
-              user ? this.get_user_result(user).then(result => resolve(result)) : resolve(undefined);
-            });
-          }
-        });
-      }));
-    }).then(results => {
-      // Remove any `undefined` from the list
-      results = new Set(results);
-      results.delete(undefined);
-      results = [...results];
-
-      if (results.length) {
-        this.trigger_safe('#ResultsAvailable', { category: 'recent', input: '', results });
+    let results = await Promise.all((history || []).map(async ({ type, id } = {}) => {
+      if (type === 'bug') {
+        let bug = await BzDeck.collections.bugs.get(id);
+        let result = bug ? await this.get_bug_result(bug) : undefined
+        return result;
       }
-    });
+
+      if (type === 'user') {
+        let user = await BzDeck.collections.users.get(id);
+        let result = user ? await this.get_user_result(user) : undefined;
+        return result;
+      }
+    }));
+
+    // Remove any `undefined` from the list
+    results = new Set(results);
+    results.delete(undefined);
+    results = [...results];
+
+    if (results.length) {
+      this.trigger_safe('#ResultsAvailable', { category: 'recent', input: '', results });
+    }
   }
 
   /**
@@ -78,30 +76,34 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     let params_bugs = new URLSearchParams();
     let params_users = new URLSearchParams();
 
-    let return_bugs = bugs => Promise.all(bugs.map(bug => this.get_bug_result(bug))).then(results => {
-      this.trigger_safe('#ResultsAvailable', { category: 'bugs', input, results });
-    });
+    let return_bugs = async bugs => {
+      let results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
 
-    let return_users = users => Promise.all(users.map(user => this.get_user_result(user))).then(results => {
+      this.trigger_safe('#ResultsAvailable', { category: 'bugs', input, results });
+    };
+
+    let return_users = async users => {
+      let results = await Promise.all(users.map(user => this.get_user_result(user)));
+
       this.trigger_safe('#ResultsAvailable', { category: 'users', input, results });
-    });
+    };
 
     params_bugs.append('short_desc', input);
     params_bugs.append('short_desc_type', 'allwordssubstr');
     params_bugs.append('resolution', '---'); // Search only open bugs
-    BzDeck.collections.bugs.search_local(params_bugs).then(bugs => return_bugs(bugs));
+    (async () => return_bugs(await BzDeck.collections.bugs.search_local(params_bugs)))();
 
     params_users.append('match', input);
     params_users.append('limit', 10);
-    BzDeck.collections.users.search_local(params_users).then(users => return_users(users));
+    (async () => return_users(await BzDeck.collections.users.search_local(params_users)))();
 
     // Remote searches require at least 3 characters
     if (input.length >= 3) {
       // Use a .5 second timer not to send requests so frequently while the user is typing
       window.clearTimeout(this.searchers);
-      this.searchers = window.setTimeout(() => {
-        BzDeck.collections.bugs.search_remote(params_bugs).then(bugs => return_bugs(bugs));
-        BzDeck.collections.users.search_remote(params_users).then(users => return_users(users));
+      this.searchers = window.setTimeout(async () => {
+        return_bugs(await BzDeck.collections.bugs.search_remote(params_bugs));
+        return_users(await BzDeck.collections.users.search_remote(params_users));
       }, 500);
     }
   }
@@ -111,16 +113,17 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @param {Proxy} bug - BugModel instance.
    * @returns {Promise.<Object>} result - Promise to be resolved in bug search result.
    */
-  get_bug_result (bug) {
+  async get_bug_result (bug) {
     let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    let _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
 
-    return BzDeck.collections.users.get(contributor, { name: contributor }).then(_contributor => ({
+    return {
       type: 'bug',
       id: bug.id,
       summary: bug.summary,
       last_change_time: bug.last_change_time,
       contributor: _contributor.properties,
-    }));
+    };
   }
 
   /**
@@ -128,8 +131,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @param {Proxy} user - UserModel instance.
    * @returns {Promise.<Object>} result - Promise to be resolved in user search result.
    */
-  get_user_result (user) {
-    return Promise.resolve(Object.assign({ type: 'user', id: user.email }, user.properties));
+  async get_user_result (user) {
+    return Object.assign({ type: 'user', id: user.email }, user.properties);
   }
 
   /**
@@ -158,7 +161,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {undefined}
    */
   on_result_selected ({ id, type } = {}) {
-    BzDeck.prefs.get('search.quick.history').then(value => {
+    (async () => {
+      let value = await BzDeck.prefs.get('search.quick.history');
       let history = value || [];
       // Find an existing item
       let index = history.findIndex(item => item.type === type && item.id === id);
@@ -169,7 +173,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       history.unshift(item);
       history.length = 25; // Max quick history items
       BzDeck.prefs.set('search.quick.history', history);
-    });
+    })();
 
     BzDeck.router.navigate(`/${type.replace('user', 'profile')}/${id}`);
   }

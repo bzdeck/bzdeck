@@ -125,12 +125,12 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Update the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  update (bugs) {
+  async update (bugs) {
     this.bugs = bugs;
 
-    Promise.all([...bugs.values()].map(bug => {
+    let rows = await Promise.all([...bugs.values()].map(async bug => {
       let row = {
         id: `${this.$$grid.view.$container.id}-row-${bug.id}`,
         data: {},
@@ -140,45 +140,51 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
         }
       };
 
-      return Promise.all(this.$$grid.data.columns.map(column => {
+      await Promise.all(this.$$grid.data.columns.map(async column => {
         let field = column.id;
         let value = bug[field];
 
-        return new Promise(resolve => {
-          if (!value) {
-            resolve('');
-          } else if (Array.isArray(value)) {
-            if (field === 'mentors') { // Array of Person
-              Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name }))).then(mentors => {
-                resolve(mentors.map(mentor => mentors.name).join(', '));
-              });
-            } else { // Keywords & Aliases
-              resolve(value.join(', '));
-            }
-          } else if (typeof value === 'object' && !Array.isArray(value)) { // Person
-            BzDeck.collections.users.get(value.name, { name: value.name }).then(user => resolve(user.name));
-          } else if (field === 'starred') {
-            resolve(bug.starred);
-          } else if (field === 'unread') {
-            resolve(value === true);
-          } else {
-            resolve(value); // Simply return the value in String or Number
-          }
-        }).then(value => row.data[field] = value);
-      })).then(() => {
-        row.data = new Proxy(row.data, {
-          set: (obj, prop, value) => {
-            if (prop === 'starred') {
-              bug.starred = value;
-            }
+        if (!value) {
+          value = '';
+        } else if (Array.isArray(value)) {
+          if (field === 'mentors') { // Array of Person
+            let mentors = await Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name })));
 
-            obj[prop] = value;
-
-            return true;
+            value = mentors.map(mentor => mentors.name).join(', ');
+          } else { // Keywords & Aliases
+            value = value.join(', ');
           }
-        });
-      }).then(() => row);
-    })).then(rows => this.$$grid.build_body(rows));
+        } else if (typeof value === 'object' && !Array.isArray(value)) { // Person
+          let user = await BzDeck.collections.users.get(value.name, { name: value.name });
+
+          value = user.name;
+        } else if (field === 'starred') {
+          value = bug.starred;
+        } else if (field === 'unread') {
+          value = value === true;
+        } else {
+          // Simply use the value in String or Number as-is
+        }
+
+        row.data[field] = value;
+      }));
+
+      row.data = new Proxy(row.data, {
+        set: (obj, prop, value) => {
+          if (prop === 'starred') {
+            bug.starred = value;
+          }
+
+          obj[prop] = value;
+
+          return true;
+        }
+      });
+
+      return row;
+    }));
+
+    this.$$grid.build_body(rows);
   }
 
   /**
@@ -274,9 +280,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       // Toggle star
       S: event => {
         for (let $item of this.$$listbox.view.selected) {
-          BzDeck.collections.bugs.get(Number($item.dataset.id)).then(bug => {
+          (async () => {
+            let bug = await BzDeck.collections.bugs.get(Number($item.dataset.id));
+
             bug.starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
-          });
+          })();
         }
       },
       // Open the bug in a new tab
@@ -290,7 +298,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     // Lazy loading while scrolling
     this.$outer.addEventListener('scroll', event => {
       if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
-        Promise.resolve().then(() => this.render());
+        (async () => this.render())();
       }
     });
   }
@@ -308,28 +316,30 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$outer.setAttribute('aria-busy', 'true');
     this.$listbox.innerHTML = '';
 
-    Promise.resolve().then(() => {
+    (async () => {
       this.render();
       this.$listbox.dispatchEvent(new CustomEvent('Updated'));
       this.$outer.removeAttribute('aria-busy');
       this.$outer.scrollTop = 0;
-    });
+    })();
   }
 
   /**
    * Render thread items using a custom template.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  render () {
+  async render () {
     let bugs = this.unrendered_bugs.splice(0, 50);
     let $fragment = new DocumentFragment();
 
-    Promise.all(bugs.map(bug => {
+    let contributors = await Promise.all(bugs.map(bug => {
       // TODO: combine primary participants' avatars/initials (#124)
       let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
       return BzDeck.collections.users.get(contributor, { name: contributor });
-    })).then(contributors => bugs.forEach((bug, index) => {
+    }));
+
+    bugs.forEach((bug, index) => {
       $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
         id: bug.id,
         summary: bug.summary,
@@ -341,11 +351,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
         'data-id': bug.id,
         'data-unread': !!bug.unread,
       }));
-    })).then(() => {
-      this.$listbox.appendChild($fragment);
-      this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
-      this.$$listbox.update_members();
     });
+
+    this.$listbox.appendChild($fragment);
+    this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
+    this.$$listbox.update_members();
   }
 
   /**

@@ -35,54 +35,52 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Activate the view.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  activate () {
+  async activate () {
     let tab_id = history.state ? history.state.tab_id : undefined;
     let prefs = new Map();
 
-    Promise.all([...Object.entries(BzDeck.config.prefs)].map(([name, value]) => {
-      return BzDeck.prefs.get(name).then(_value => {
-        value.user = _value;
-        prefs.set(name, value);
-      });
-    })).then(() => {
-      BzDeck.views.banner.open_tab({
-        label: 'Settings', // l10n
-        category: 'settings',
-      }, this);
+    await Promise.all([...Object.entries(BzDeck.config.prefs)].map(async ([name, value]) => {
+      value.user = await BzDeck.prefs.get(name);
+      prefs.set(name, value);
+    }));
 
-      if (this.ui_ready) {
-        return;
-      }
+    BzDeck.views.banner.open_tab({
+      label: 'Settings', // l10n
+      category: 'settings',
+    }, this);
 
-      // Activate tabs
-      this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#settings-tablist'));
+    if (this.ui_ready) {
+      return;
+    }
 
-      if (tab_id) {
-        this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
-      }
+    // Activate tabs
+    this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#settings-tablist'));
 
-      this.fill_timezone_options();
+    if (tab_id) {
+      this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
+    }
 
-      // Currently the radiogroup/radio widget is not data driven.
-      // A modern preference system is needed.
-      for (let [name, value] of prefs) {
-        this.activate_radiogroup(name, value);
-      }
+    this.fill_timezone_options();
 
-      if (FlareTail.helpers.env.device.mobile) {
-        document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
-        document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
-        document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
-        document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
-        document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
-      } else {
-        this.prepare_qrcode();
-      }
+    // Currently the radiogroup/radio widget is not data driven.
+    // A modern preference system is needed.
+    for (let [name, value] of prefs) {
+      this.activate_radiogroup(name, value);
+    }
 
-      this.ui_ready = true;
-    });
+    if (FlareTail.helpers.env.device.mobile) {
+      document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
+      document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
+      document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');
+      document.querySelector('#settings-tab-design').setAttribute('aria-selected', 'true');
+      document.querySelector('#settings-tabpanel-design').setAttribute('aria-hidden', 'false');
+    } else {
+      this.prepare_qrcode();
+    }
+
+    this.ui_ready = true;
   }
 
   /**

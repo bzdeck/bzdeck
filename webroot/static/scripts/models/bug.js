@@ -84,8 +84,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
    * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
    */
-  fetch (include_metadata = true, include_details = true) {
-    let _fetch = (method, param_str = '') => new Promise((resolve, reject) => {
+  async fetch (include_metadata = true, include_details = true) {
+    let _fetch = async (method, param_str = '') => {
       let path = `bug/${this.id}`;
       let params = new URLSearchParams(param_str);
 
@@ -95,10 +95,11 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         path += `/${method}`;
       }
 
-      BzDeck.host.request(path, params).then(result => resolve(result), event => reject(new Error()));
-    });
+      return BzDeck.host.request(path, params);
+    };
 
     let fetchers = [];
+    let result;
 
     fetchers.push(include_metadata ? _fetch() : Promise.resolve());
     fetchers.push(include_metadata ? _fetch('last_visit') : Promise.resolve());
@@ -107,35 +108,40 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       fetchers.push(_fetch('comment'), _fetch('history'), _fetch('attachment', 'exclude_fields=data'));
     }
 
-    return Promise.all(fetchers).then(([_meta, _visit, _comments, _history, _attachments]) => {
-      let _bug;
+    try {
+      result = await Promise.all(fetchers);
+    } catch (error) {
+      throw new Error('Failed to fetch bugs from Bugzilla.');
+    }
 
-      if (include_metadata ? _meta.error : _comments.error) { // _meta is an empty resolve when include_metadata = false
-        _bug = { id: this.id, error: { code: _meta.code, message: _meta.message }};
+    let _bug;
+    let [_meta, _visit, _comments, _history, _attachments] = result;
+
+    if (include_metadata ? _meta.error : _comments.error) { // _meta is an empty resolve when include_metadata = false
+      _bug = { id: this.id, error: { code: _meta.code, message: _meta.message }};
+    } else {
+      if (include_metadata) {
+        _bug = _meta.bugs[0];
+        // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
+        _bug._last_visit = _visit && _visit[0] ? _visit[0].last_visit_ts : null;
       } else {
-        if (include_metadata) {
-          _bug = _meta.bugs[0];
-          // Check the bug_user_last_visit results carefully. Bugzilla 5.0 has solved the issue. (Bug 1169181)
-          _bug._last_visit = _visit && _visit[0] ? _visit[0].last_visit_ts : null;
-        } else {
-          _bug = { id: this.id };
-        }
-
-        if (include_details) {
-          _bug.comments = _comments.bugs[this.id].comments;
-          _bug.history = _history.bugs[0].history || [];
-          _bug.attachments = _attachments.bugs[this.id] || [];
-
-          for (let att of _bug.attachments) {
-            BzDeck.collections.attachments.set(att.id, att);
-          }
-        }
+        _bug = { id: this.id };
       }
 
-      this.merge(_bug);
+      if (include_details) {
+        _bug.comments = _comments.bugs[this.id].comments;
+        _bug.history = _history.bugs[0].history || [];
+        _bug.attachments = _attachments.bugs[this.id] || [];
 
-      return Promise.resolve(this.proxy());
-    }, error => Promise.reject(new Error('Failed to fetch bugs from Bugzilla.')));
+        for (let att of _bug.attachments) {
+          BzDeck.collections.attachments.set(att.id, att);
+        }
+      }
+    }
+
+    this.merge(_bug);
+
+    return this.proxy();
   }
 
   /**
@@ -166,7 +172,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     let new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h]));
     let timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
-    BzDeck.prefs.get('notifications.ignore_cc_changes').then(ignore_cc => {
+    (async () => {
+      let ignore_cc = await BzDeck.prefs.get('notifications.ignore_cc_changes');
+
       ignore_cc = ignore_cc !== false;
       data._update_needed = false;
 
@@ -199,7 +207,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
 
       this.save(data);
-    });
+    })();
 
     return true;
   }
@@ -231,25 +239,28 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Update the last-visited timestamp on Bugzilla through the API. Mark the bug as read and notify the change.
    * @param {undefined}
    * @fires BugModel#AnnotationUpdated
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
+   * @todo For a better offline experience, synchronize the timestamp once going online.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html}
    */
-  mark_as_read () {
-    BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}}).then(result => {
-      if (Array.isArray(result)) {
-        return Promise.resolve(result[0].last_visit_ts);
-      } else {
-        return Promise.reject(new Error('The last-visited timestamp could not be retrieved'));
+  async mark_as_read () {
+    let value;
+
+    try {
+      let result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
+
+      if (!Array.isArray(result)) {
+        throw new Error('The last-visited timestamp could not be retrieved');
       }
-    }).catch(error => {
-      // Fallback
-      // TODO: for a better offline experience, synchronize the timestamp once going online
-      return (new Date()).toISOString();
-    }).then(value => {
-      this.data._last_visit = value;
-      this.save();
-      this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type: 'last_visit', value });
-    });
+
+      value = result[0].last_visit_ts;
+    } catch (error) {
+      value = (new Date()).toISOString();
+    }
+
+    this.data._last_visit = value;
+    this.save();
+    this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type: 'last_visit', value });
   }
 
   /**
@@ -279,7 +290,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {undefined}
    * @returns {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
-  detect_if_new () {
+  async detect_if_new () {
     let visited = new Date(this.data._last_visit).getTime();
     let changed = new Date(this.data.last_change_time).getTime();
     let time10d = Date.now() - 1000 * 60 * 60 * 24 * 14;
@@ -292,43 +303,43 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     // Check for new comments
     if (this.data.comments && this.data.comments.some(has_new)) {
-      return Promise.resolve(true);
+      return true;
     }
 
     // Check for new attachments
     if (this.data.attachments && this.data.attachments.some(has_new)) {
-      return Promise.resolve(true);
+      return true;
     }
 
-    return BzDeck.prefs.get('notifications.ignore_cc_changes').then(ignore_cc => {
-      // Ignore CC Changes option
-      if (visited && ignore_cc !== false) {
-        for (let h of this.data.history || []) {
-          let time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
-          let non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
+    let ignore_cc = await BzDeck.prefs.get('notifications.ignore_cc_changes');
 
-          if (time > visited && non_cc_changes) {
-            return true;
-          }
+    // Ignore CC Changes option
+    if (visited && ignore_cc !== false) {
+      for (let h of this.data.history || []) {
+        let time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
+        let non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
-          if (time === changed && !non_cc_changes) {
-            return false;
-          }
+        if (time > visited && non_cc_changes) {
+          return true;
+        }
+
+        if (time === changed && !non_cc_changes) {
+          return false;
         }
       }
+    }
 
-      // Check the unread status
-      if (is_new && this.unread) {
-        return true;
-      }
+    // Check the unread status
+    if (is_new && this.unread) {
+      return true;
+    }
 
-      // Check the date
-      if (is_new) {
-        return true;
-      }
+    // Check the date
+    if (is_new) {
+      return true;
+    }
 
-      return false;
-    });
+    return false;
   }
 
   /**
@@ -667,23 +678,23 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @fires BugModel#FailedToUnsubscribe
    * @fires BugModel#Subscribed
    * @fires BugModel#Unsubscribed
-   * @returns {Promise} request - Can be a rejected Promise if any error is found.
+   * @returns {Promise.<undefined>}
    */
-  update_subscription (how) {
+  async update_subscription (how) {
     let subscribe = how === 'add';
     let email = BzDeck.account.data.name;
 
     // Update the view first
     this.trigger(subscribe ? '#ParticipantAdded' : '#ParticipantRemoved', { bug_id: this.id, field: 'cc', email });
 
-    return this.post_changes({ cc: { [how]: [email] }}).then(result => {
-      if (result.error) {
-        this.trigger(subscribe ? '#FailedToSubscribe' : '#FailedToUnsubscribe', { bug_id: this.id });
-      } else {
-        this.trigger(subscribe ? '#Subscribed' : '#Unsubscribed', { bug_id: this.id });
-        this._fetch();
-      }
-    });
+    let result = await this.post_changes({ cc: { [how]: [email] }});
+
+    if (result.error) {
+      this.trigger(subscribe ? '#FailedToSubscribe' : '#FailedToUnsubscribe', { bug_id: this.id });
+    } else {
+      this.trigger(subscribe ? '#Subscribed' : '#Unsubscribed', { bug_id: this.id });
+      this._fetch();
+    }
   }
 
   /**
@@ -842,22 +853,22 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Number} size - Actual file size.
    * @fires BugModel#AttachmentAdded
    * @fires BugModel#UploadListUpdated
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  add_attachment (att, size) {
+  async add_attachment (att, size) {
     // Cache as an AttachmentModel instance
-    BzDeck.collections.attachments.cache(att, size).then(attachment => {
-      // Check if the file has already been attached
-      if (this.find_attachment(attachment.hash)) {
-        return;
-      }
+    let attachment = await BzDeck.collections.attachments.cache(att, size);
 
-      this.uploads.push(attachment);
+    // Check if the file has already been attached
+    if (this.find_attachment(attachment.hash)) {
+      return;
+    }
 
-      this.trigger_safe('#AttachmentAdded', { bug_id: this.id, attachment });
-      this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
-      this.onedit();
-    });
+    this.uploads.push(attachment);
+
+    this.trigger_safe('#AttachmentAdded', { bug_id: this.id, attachment });
+    this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.onedit();
   }
 
   /**
@@ -890,9 +901,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} prop - Edited property name.
    * @param {*} value - New value.
    * @fires BugModel#AttachmentEdited
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  edit_attachment ({ id, hash, prop, value } = {}) {
+  async edit_attachment ({ id, hash, prop, value } = {}) {
     if (hash) {
       // Edit a new attachment
       let attachment = this.find_attachment(hash);
@@ -908,37 +919,37 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     // Edit an existing attachment
-    BzDeck.collections.attachments.get(id).then(attachment => {
-      if (!attachment || attachment.bug_id !== this.data.id) {
-        return;
-      }
+    let attachment = await BzDeck.collections.attachments.get(id);
 
-      let changes = this.att_changes.get(id) || {};
-      let edited = true;
+    if (!attachment || attachment.bug_id !== this.data.id) {
+      return;
+    }
 
-      // The properties prefixed with 'is_' are supposed to be a boolean but actually 0 or 1, so use the non-strict
-      // inequality operator for comparison. This includes 'is_patch' and 'is_obsolete'.
-      if (attachment[prop] != value) {
-        changes[prop] = value;
-      } else if (prop in changes) {
-        delete changes[prop];
-      } else {
-        edited = false;
-      }
+    let changes = this.att_changes.get(id) || {};
+    let edited = true;
 
-      if (Object.keys(changes).length) {
-        this.att_changes.set(id, changes);
-      } else {
-        this.att_changes.delete(id);
-      }
+    // The properties prefixed with 'is_' are supposed to be a boolean but actually 0 or 1, so use the non-strict
+    // inequality operator for comparison. This includes 'is_patch' and 'is_obsolete'.
+    if (attachment[prop] != value) {
+      changes[prop] = value;
+    } else if (prop in changes) {
+      delete changes[prop];
+    } else {
+      edited = false;
+    }
 
-      if (!edited) {
-        return;
-      }
+    if (Object.keys(changes).length) {
+      this.att_changes.set(id, changes);
+    } else {
+      this.att_changes.delete(id);
+    }
 
-      this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
-      this.onedit();
-    });
+    if (!edited) {
+      return;
+    }
+
+    this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
+    this.onedit();
   }
 
   /**
@@ -1005,52 +1016,48 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @fires BugModel#SubmitComplete
    * @returns {Promise} submission - Can be a rejected Promise if any error is found.
    */
-  submit () {
+  async submit () {
     if (this.has_errors) {
       this.trigger('#SubmitError', { bug_id: this.id, button_disabled: true, error: this.find_errors()[0] });
 
-      return Promise.reject('The changes cannot be submitted because of errors.');
+      throw new Error('The changes cannot be submitted because of errors.');
     }
 
     if (!this.can_submit) {
-      return Promise.reject('No changes have been made on the bug.');
+      throw new Error('No changes have been made on the bug.');
     }
 
     this.trigger('#Submit', { bug_id: this.id });
 
     this.uploads.total = 0;
 
-    return new Promise((resolve, reject) => {
+    try {
       if (!this.has_changes) {
         // Jump into the attachment(s)
-        resolve();
       } else if (Object.keys(this.changes).length === 1 && this.has_comment && this.uploads.length === 1) {
         // If the comment is the only change and there's a single attachment, send the comment with the attachment
         this.uploads[0].comment = this.changes.comment.body;
         this.uploads[0].is_markdown = BzDeck.host.markdown_supported;
-        resolve();
       } else {
         // Post the changes first
-        this.post_changes(this.changes).then(result => {
-          if (result.error) {
-            reject(new Error(result.message));
-          } else {
-            resolve();
-          }
-        }).catch(error => reject(new Error(error.message)));
-      }
-    }).then(() => {
-      // Update existing attachment(s)
-      return Promise.all([...this.att_changes].map((...args) => this.post_att_changes(...args)));
-    }).then(() => {
-      if (!this.has_attachments) {
-        // There is nothing more to do if no file is attached
-        return Promise.resolve();
+        let result = await this.post_changes(this.changes);
+
+        if (result.error) {
+          throw new Error(result.message);
+        }
       }
 
+      // Update existing attachment(s)
+      await Promise.all([...this.att_changes].map((...args) => this.post_att_changes(...args)));
+
       // Upload files in series
-      return this.uploads.reduce((sequence, att) => sequence.then(() => this.post_attachment(att)), Promise.resolve());
-    }).then(() => {
+      if (this.has_attachments) {
+        await this.uploads.reduce(async (sequence, att) => {
+          await sequence;
+          return this.post_attachment(att);
+        }, Promise.resolve());
+      }
+
       // All done! Clear the cached changes and uploads data
       this.reset_changes();
       this.att_changes.clear();
@@ -1061,16 +1068,16 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       this._fetch();
 
       this.trigger('#SubmitSuccess', { bug_id: this.id });
-    }).catch(error => {
+    } catch (error) {
       // Failed to post at least one attachment
       this.trigger('#SubmitError', {
         bug_id: this.id,
         button_disabled: false,
         error: error.message || 'Failed to post your comment or attachment(s). Try again later.',
       });
-    }).then(() => {
-      this.trigger('#SubmitComplete', { bug_id: this.id });
-    });
+    }
+
+    this.trigger('#SubmitComplete', { bug_id: this.id });
   }
 
   /**
@@ -1079,7 +1086,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
    */
-  post_changes (data) {
+  async post_changes (data) {
     return BzDeck.host.request(`bug/${this.data.id}`, null, { method: 'PUT', data });
   }
 
@@ -1090,7 +1097,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
    */
-  post_att_changes (att_id, data) {
+  async post_att_changes (att_id, data) {
     return BzDeck.host.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
   }
 
@@ -1102,30 +1109,34 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise} request - Can be a rejected Promise if any error is found.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
-  post_attachment (attachment) {
+  async post_attachment (attachment) {
     let size_computable;
     let size = 0;
 
-    return BzDeck.host.request(`bug/${this.data.id}/attachment`, null, {
-      method: 'POST',
-      data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
-      listeners: {
-        progress: data => {
-          if (!size) {
-            size_computable = data.lengthComputable;
-            size = data.total;
-            this.uploads.total += size;
-          }
+    try {
+      let result = await BzDeck.host.request(`bug/${this.data.id}/attachment`, null, {
+        method: 'POST',
+        data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
+        listeners: {
+          progress: data => {
+            if (!size) {
+              size_computable = data.lengthComputable;
+              size = data.total;
+              this.uploads.total += size;
+            }
 
-          if (size_computable) {
-            attachment.uploaded = data.loaded;
-            this.notify_upload_progress();
+            if (size_computable) {
+              attachment.uploaded = data.loaded;
+              this.notify_upload_progress();
+            }
           }
         }
+      });
+
+      if (!result.error) {
+        throw new Error(result.message);
       }
-    }).then(result => {
-      return result.error ? Promise.reject(new Error(result.message)) : Promise.resolve(result);
-    }).then(result => {
+
       if (!size_computable) {
         attachment.uploaded = size;
         this.notify_upload_progress();
@@ -1135,14 +1146,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       this.uploads.total -= attachment.uploaded;
       this.remove_attachment(attachment.hash);
-    }).catch(error => {
+    } catch (error) {
       // Failed to post at least one attachment
       this.trigger('#AttachmentUploadError', {
         bug_id: this.id,
         button_disabled: false,
         error: error.message || 'Failed to upload your attachment. Try again later.',
       });
-    });
+    }
   }
 
   /**
