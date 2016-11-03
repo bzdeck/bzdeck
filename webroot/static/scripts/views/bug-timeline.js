@@ -205,7 +205,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       return;
     }
 
-    for (let $attachment of $timeline.querySelectorAll('[itemprop="attachment"]')) {
+    for (let $attachment of this.$timeline.querySelectorAll('[itemprop="attachment"]')) {
       let $media = $attachment.querySelector('img, audio, video');
 
       if ($media && !$media.src) {

@@ -161,9 +161,8 @@
                 </section>
                 <section>
                   <h4>Date Format</h4>
-                  <ul role="radiogroup" data-pref="ui.date.relative">
-                    <li role="none"><span role="radio" data-value="true">Relative</span></li>
-                    <li role="none"><span role="radio" data-value="false">Absolute</span></li>
+                  <ul role="none">
+                    <li role="none"><span role="checkbox" data-pref="ui.date.relative">Use relative date</span></li>
                   </ul>
                 </section>
               </section>
@@ -172,17 +171,10 @@
               <section>
                 <h3>Notifications</h3>
                 <section>
-                  <h4>Desktop Notifications</h4>
-                  <ul role="radiogroup" data-pref="notifications.show_desktop_notifications">
-                    <li role="none"><span role="radio" data-value="true">Show if possible</span></li>
-                    <li role="none"><span role="radio" data-value="false">Don't show</span></li>
-                  </ul>
-                </section>
-                <section>
-                  <h4>CC Changes</h4>
-                  <ul role="radiogroup" data-pref="notifications.ignore_cc_changes">
-                    <li role="none"><span role="radio" data-value="true">Ignore</span></li>
-                    <li role="none"><span role="radio" data-value="false">Include</span></li>
+                  <h4>General</h4>
+                  <ul role="none">
+                    <li role="none"><span role="checkbox" data-pref="notifications.show_desktop_notifications">Show desktop notifications if possible</span></li>
+                    <li role="none"><span role="checkbox" data-pref="notifications.ignore_cc_changes">Ignore CC changes</span></li>
                   </ul>
                 </section>
               </section>
@@ -206,16 +198,14 @@
                 </section>
                 <section>
                   <h4>CC Changes</h4>
-                  <ul role="radiogroup" data-pref="ui.timeline.show_cc_changes">
-                    <li role="none"><span role="radio" data-value="true">Show</span></li>
-                    <li role="none"><span role="radio" data-value="false">Hide</span></li>
+                  <ul role="none">
+                    <li role="none"><span role="checkbox" data-pref="ui.timeline.show_cc_changes">Show CC changes</span></li>
                   </ul>
                 </section>
                 <section>
                   <h4>Media Attachments</h4>
-                  <ul role="radiogroup" data-pref="ui.timeline.display_attachments_inline">
-                    <li role="none"><span role="radio" data-value="true">Show inline</span></li>
-                    <li role="none"><span role="radio" data-value="false">Hide</span></li>
+                  <ul role="none">
+                    <li role="none"><span role="checkbox" data-pref="ui.timeline.display_attachments_inline">Show attachments inline</span></li>
                   </ul>
                 </section>
               </section>

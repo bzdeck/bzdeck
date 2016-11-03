@@ -64,10 +64,10 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
     this.fill_timezone_options();
 
-    // Currently the radiogroup/radio widget is not data driven.
+    // Currently those widgets are not data driven.
     // A modern preference system is needed.
     for (let [name, value] of prefs) {
-      this.activate_radiogroup(name, value);
+      this.activate_widget(name, value);
     }
 
     if (FlareTail.helpers.env.device.mobile) {
@@ -102,7 +102,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   }
 
   /**
-   * Activate each radiogroup on the Settings page.
+   * Activate checkboxes and radio buttons on the Settings page.
    * @param {String} name - Preference name.
    * @param {Object} _value - Preference value.
    * @param {*}      _value.user - User-defined value.
@@ -111,26 +111,36 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @fires SettingsPageView#PrefChangeRequested
    * @returns {undefined}
    */
-  activate_radiogroup (name, _value) {
+  activate_widget (name, _value) {
     let $root = document.documentElement;
-    let $rgroup = document.querySelector(`[id^="tabpanel-settings"] [data-pref="${name}"]`);
+    let $widget = document.querySelector(`[id^="tabpanel-settings"] [data-pref="${name}"]`);
     let value = _value.user !== undefined ? _value.user : _value.default;
     let attr = 'data-' + name.replace(/[\._]/g, '-');
 
-    for (let $radio of $rgroup.querySelectorAll('[role="radio"]')) {
-      $radio.tabIndex = 0;
-      $radio.setAttribute('aria-checked', $radio.dataset.value === String(value));
-    }
+    let set_attrs = ($item, checked) => {
+      $item.tabIndex = 0;
+      $item.setAttribute('aria-checked', checked);
+    };
 
-    (new FlareTail.widgets.RadioGroup($rgroup)).bind('Selected', event => {
-      value = event.detail.items[0].dataset.value;
-      value = _value.type === 'boolean' ? value === 'true' : value;
+    let on_change = value => {
       this.trigger('#PrefChangeRequested', { name, value });
 
       if ($root.hasAttribute(attr)) {
-        $root.setAttribute(attr, String(value));
+        $root.setAttribute(attr, value);
       }
-    });
+    };
+
+    if (_value.type === 'boolean') {
+      set_attrs($widget, value);
+      (new FlareTail.widgets.CheckBox($widget)).bind('Toggled', event => on_change(event.detail.checked));
+    } else {
+      for (let $radio of $widget.querySelectorAll('[role="radio"]')) {
+        set_attrs($radio, $radio.dataset.value === String(value));
+      }
+
+      (new FlareTail.widgets.RadioGroup($widget))
+          .bind('Selected', event => on_change(event.detail.items[0].dataset.value));
+    }
   }
 
   /**
