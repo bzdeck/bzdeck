@@ -22,7 +22,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.bug = bug;
     this.$bug = $bug;
 
-    this.$form = this.get_template('bug-comment-form', `${this.id}-comment-form`);
+    this.$form = this.get_template('bug-comment-form', this.id);
     this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
     this.$formatting_toolbar = this.$form.querySelector('.text-formatting-toolbar');
     this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');

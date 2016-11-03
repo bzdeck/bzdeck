@@ -691,16 +691,16 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="bug-comment-form">
-      <section role="group" id="bug-comment-form-TID" class="bug-comment-form" aria-label="Comment Form">
+      <section role="group" id="bug-TID-comment-form" class="bug-comment-form" aria-label="Comment Form">
         <header>
           <h4>Reply</h4>
-          <ul id="bug-comment-form-TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
-            <li id="bug-comment-form-TID-tab-comment" role="tab" aria-controls="bug-comment-form-TID-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
-            <li id="bug-comment-form-TID-tab-preview" role="tab" aria-controls="bug-comment-form-TID-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
-            <li id="bug-comment-form-TID-tab-attachments" role="tab" aria-controls="bug-comment-form-TID-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
-            <li id="bug-comment-form-TID-tab-needinfo" role="tab" aria-controls="bug-comment-form-TID-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
+          <ul id="bug-TID-comment-form-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
+            <li id="bug-TID-comment-form-tab-comment" role="tab" aria-controls="bug-TID-comment-form-tabpanel-comment" aria-selected="true"><label>Comment</label></li>
+            <li id="bug-TID-comment-form-tab-preview" role="tab" aria-controls="bug-TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></li>
+            <li id="bug-TID-comment-form-tab-attachments" role="tab" aria-controls="bug-TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
+            <li id="bug-TID-comment-form-tab-needinfo" role="tab" aria-controls="bug-TID-comment-form-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul><!-- end #TID-tablist -->
-          <div id="bug-comment-form-TID-text-formatting-toolbar" class="text-formatting-toolbar" role="toolbar" aria-label="Markdown text-formatting toolbar">
+          <div id="bug-TID-comment-form-text-formatting-toolbar" class="text-formatting-toolbar" role="toolbar" aria-label="Markdown text-formatting toolbar">
             <ul role="group">
               <li role="none"><span class="iconic" title="Insert bold text (Cmd+B)" tabindex="0" role="button" data-command="strong"></span></li>
               <li role="none"><span class="iconic" title="Insert italic text (Cmd+I)" tabindex="0" role="button" data-command="em"></span></li>
@@ -718,15 +718,15 @@
           </div><!-- end #TID-text-formatting-toolbar -->
         </header>
         <div>
-          <div id="bug-comment-form-TID-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-comment-form-TID-tab-comment">
+          <div id="bug-TID-comment-form-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-comment-form-tab-comment">
             <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
           </div><!-- end #TID-tabpanel-comment -->
-          <div id="bug-comment-form-TID-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-comment-form-TID-tab-preview">
+          <div id="bug-TID-comment-form-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
               <div itemprop="text"></div>
             </article>
           </div><!-- end #TID-tabpanel-preview -->
-          <div id="bug-comment-form-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-comment-form-TID-tab-attachments">
+          <div id="bug-TID-comment-form-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-attachments">
             <div role="group">
               <input type="file" hidden multiple directory>
               <table>
@@ -741,7 +741,7 @@
               </table>
             </div>
           </div><!-- end #TID-tabpanel-attachments -->
-          <div id="bug-comment-form-TID-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-comment-form-TID-tab-needinfo">
+          <div id="bug-TID-comment-form-tabpanel-needinfo" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-needinfo">
             <div role="group">
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>
