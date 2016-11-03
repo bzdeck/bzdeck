@@ -118,6 +118,7 @@
               <li id="settings-tab-datetime" role="tab" aria-controls="settings-tabpanel-datetime" aria-selected="false"><label>Date &amp; Time</label></li>
               <li id="settings-tab-notifications" role="tab" aria-controls="settings-tabpanel-notifications" aria-selected="false"><label>Notifications</label></li>
               <li id="settings-tab-timeline" role="tab" aria-controls="settings-tabpanel-timeline" aria-selected="false"><label>Timeline</label></li>
+              <li id="settings-tab-editing" role="tab" aria-controls="settings-tabpanel-editing" aria-selected="false"><label>Editing</label></li>
             </ul><!-- end #settings-tablist -->
             <div id="settings-tabpanel-account" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="settings-tab-account">
               <section>
@@ -210,6 +211,17 @@
                 </section>
               </section>
             </div><!-- end #settings-tabpanel-timeline -->
+            <div id="settings-tabpanel-editing" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-editing">
+              <section>
+                <h3>Editing</h3>
+                <section>
+                  <h4>Navigation</h4>
+                  <ul>
+                    <li role="none"><span role="checkbox" data-pref="editing.move_next_once_submitted">Move to the next bug after saving changes</span></li>
+                  </ul>
+                </section>
+              </section>
+            </div><!-- end #settings-tabpanel-editing -->
           </div>
           <footer>
           </footer>

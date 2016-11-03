@@ -83,6 +83,10 @@
   content: "\F00B";
 }
 
+#settings-tab-editing label::before {
+  content: "\F044";
+}
+
 [data-device="desktop"]:root #tabpanel-settings > section > div {
   overflow: hidden;
   padding: 0 4rem;

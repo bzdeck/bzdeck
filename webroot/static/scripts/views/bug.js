@@ -32,6 +32,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     // Subscribe to events
     this.subscribe_safe('BugPresenter#BugDataAvailable');
     this.subscribe('BugPresenter#BugDataUnavailable');
+    this.subscribe('BugModel#SubmitComplete', true);
 
     // Initiate the corresponding presenter
     this.presenter = new BzDeck.BugPresenter(this.id, this.container_id, this.bug_id, this.siblings);
@@ -934,6 +935,26 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   on_updated ({ bug, changes } = {}) {
     if (bug.id === this.bug.id) {
       this.update(bug, changes);
+    }
+  }
+
+  /**
+   * Called once a submission is complete, regardless of errors. Move to the next bug if possible.
+   * @listens BugModel#SubmitComplete
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {undefined}
+   * @returns {Promise.<undefined>}
+   */
+  async on_submit_complete ({ bug_id } = {}) {
+    if (bug_id !== this.bug_id) {
+      return;
+    }
+
+    let pref = await BzDeck.prefs.get('editing.move_next_once_submitted');
+    let next = this.siblings[this.siblings.indexOf(this.bug_id) + 1];
+
+    if (pref === true && next) {
+      this.navigate(next);
     }
   }
 }

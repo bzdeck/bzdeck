@@ -103,6 +103,8 @@ BzDeck.config = {
     'ui.timeline.font.family': { type: 'string', default: 'proportional' },
     'ui.timeline.show_cc_changes': { type: 'boolean', default: false },
     'ui.timeline.display_attachments_inline': { type: 'boolean', default: true },
+    // Editing
+    'editing.move_next_once_submitted': { type: 'boolean', default: false },
   },
   folders: [
     {
