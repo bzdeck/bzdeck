@@ -1046,6 +1046,7 @@
                         <li role="radio" data-value="closed">Closed</li>
                         <li role="radio" data-value="all">All</li>
                       </ul>
+                      <div class="iconic" tabindex="0" role="button" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
                     </header>
                     <div class="scrollable">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>

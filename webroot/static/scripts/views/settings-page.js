@@ -130,6 +130,10 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       }
     };
 
+    if (!$widget) {
+      return;
+    }
+
     if (_value.type === 'boolean') {
       set_attrs($widget, value);
       (new FlareTail.widgets.CheckBox($widget)).bind('Toggled', event => on_change(event.detail.checked));

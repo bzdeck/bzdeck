@@ -244,6 +244,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.bugs = [];
 
     this.$outer = $outer;
+    this.$header = $outer.querySelector('header');
     this.$listbox = $outer.querySelector('[role="listbox"]');
     this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
@@ -295,6 +296,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     });
 
     this.init_filter();
+    this.init_sorter();
 
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
@@ -309,13 +311,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Initialize the filter function.
    * @param {undefined}
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
   async init_filter () {
     let pref_name = 'ui.home.filter';
     let pref_value = this.options.filter_condition = await BzDeck.prefs.get(pref_name) || 'open';
 
-    this.$filter = this.$outer.querySelector('.filter');
+    this.$filter = this.$header.querySelector('.filter');
     this.$filter.querySelector(`[data-value="${pref_value}"]`).setAttribute('aria-checked', 'true');
     this.$$filter = new FlareTail.widgets.RadioGroup(this.$filter);
     this.filter_radio = {};
@@ -326,6 +328,28 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$$filter.bind('Selected', event => {
       pref_value = this.options.filter_condition = event.detail.items[0].dataset.value;
+      this.update(this.bugs);
+      BzDeck.prefs.set(pref_name, pref_value);
+    });
+  }
+
+  /**
+   * Initialize the sorting function.
+   * @param {undefined}
+   * @returns {Promise.<undefined>}
+   */
+  async init_sorter () {
+    let pref_name = 'home.list.sort_conditions';
+    let pref_value = this.options.sort_conditions = await BzDeck.prefs.get(pref_name) || {};
+
+    this.$sorter = this.$header.querySelector('[data-command="sort"]');
+    this.$sorter.setAttribute('aria-pressed', pref_value.order === 'ascending');
+    this.$$sorter = new FlareTail.widgets.Button(this.$sorter);
+
+    this.$$sorter.bind('Pressed', event => {
+      let order = event.detail.pressed ? 'ascending' : 'descending';
+
+      pref_value = this.options.sort_conditions = { key: 'last_change_time', type: 'time', order };
       this.update(this.bugs);
       BzDeck.prefs.set(pref_name, pref_value);
     });

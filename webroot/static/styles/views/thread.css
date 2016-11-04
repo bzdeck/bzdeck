@@ -17,7 +17,7 @@
   display: flex;
   margin: 0 1.2rem;
   border-top: 1px solid var(--secondary-grid-border-color);
-  padding: .8rem;
+  padding: .8rem 0;
   flex: none;
   justify-content: center;
 }
@@ -44,6 +44,25 @@
 
 [id$="vertical-thread"] header [role="radio"]::before {
   display: none;
+}
+
+[id$="vertical-thread"] header [role="button"] {
+  width: 2.4rem;
+  height: 2.4rem;
+  flex: none;
+}
+
+[id$="vertical-thread"] header [role="button"][data-command="sort"]::before {
+  font-size: 1.6rem;
+  font-family: FiraSans;
+}
+
+[id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="false"]::before {
+  content: "\2193"; /* descending, new to old, default */
+}
+
+[id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="true"]::before {
+  content: "\2191"; /* ascending, old to new */
 }
 
 [id$="vertical-thread"] .scrollable {
