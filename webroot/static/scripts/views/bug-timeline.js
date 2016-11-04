@@ -151,7 +151,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     }
 
     for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
-      $comment.setAttribute('aria-expanded', 'true')
+      $comment.dispatchEvent(new CustomEvent('ToggleExpanded', { detail: { expanded: true }}));
     }
   }
 
@@ -162,7 +162,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    */
   collapse_comments () {
     for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
-      $comment.setAttribute('aria-expanded', 'false')
+      $comment.dispatchEvent(new CustomEvent('ToggleExpanded', { detail: { expanded: false }}));
     }
   }
 

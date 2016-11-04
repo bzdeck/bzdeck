@@ -118,11 +118,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       $entry.scrollIntoView({ block: 'start', behavior: 'smooth' });
     };
 
-    // Collapse/expand the comment
-    let collapse_comment = () => {
-      $entry.setAttribute('aria-expanded', $entry.getAttribute('aria-expanded') === 'false');
-    };
-
     // Focus management
     let move_focus = async shift => {
       let order = await BzDeck.prefs.get('ui.timeline.sort.order');
@@ -155,7 +150,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     FlareTail.helpers.kbd.assign($entry, {
       R: event => reply(),
       // Collapse/expand the comment
-      C: event => collapse_comment(),
+      C: event => this.toggle_expanded($entry),
       // Focus management
       'ArrowUp|PageUp|Shift+Space': event => move_focus(true),
       'ArrowDown|PageDown|Space': event => move_focus(false),
@@ -199,16 +194,38 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     // Mark unread
     $entry.setAttribute('data-unread', 'true');
 
+    // Expand the comment first
+    this.toggle_expanded($entry, true);
+
+    // Accept custom events to collapse/expand the comment
+    $entry.addEventListener('ToggleExpanded', event => this.toggle_expanded($entry, event.detail.expanded));
+
     // Click the header to collapse/expand the comment
-    // TODO: Save the state in DB
-    $entry.setAttribute('aria-expanded', 'true');
     $header.addEventListener(click_event_type, event => {
       if (event.target === $header) {
-        collapse_comment();
+        this.toggle_expanded($entry);
       }
     });
 
     return $entry;
+  }
+
+  /**
+   * Expand or collapse a comment entry.
+   * @param {HTMLElement} $entry - Comment node of interest.
+   * @param {Boolean} [expanded] - Whether the comment should be expanded.
+   * @returns {undefined}
+   */
+  toggle_expanded ($entry, expanded) {
+    expanded = expanded !== undefined ? expanded : $entry.getAttribute('aria-expanded') === 'false';
+    $entry.setAttribute('aria-expanded', expanded);
+
+    // Disable focus on links and buttons when the comment is collapsed
+    let tabindex = expanded ? 0 : -1;
+
+    for (let $link of $entry.querySelectorAll('a, [role="link"], [role="button"]')) {
+      $link.tabIndex = tabindex;
+    }
   }
 
   /**
