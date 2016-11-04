@@ -110,7 +110,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
       $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
       // Move focus on the textbox. Use async to make sure the event always works
-      (async () => $textbox.focus())();
+      window.setTimeout(() => $textbox.focus(), 100);
       // Trigger an event to do something. Disable async to make sure the following lines work
       FlareTail.helpers.event.trigger($textbox, 'input', {}, false);
       // Scroll to make sure the comment is visible
