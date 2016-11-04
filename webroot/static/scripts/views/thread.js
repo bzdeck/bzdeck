@@ -227,12 +227,12 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @constructor
    * @param {Object} consumer - View that contains the thread.
    * @param {String} name - Identifier for the thread.
-   * @param {HTMLElement} $outer - Element that contains a child element with the listbox role.
+   * @param {HTMLElement} $container - Element that contains a child element with the listbox role.
    * @param {Object} options - Extra options for display.
    * @param {Object} options.sort_conditions - Thread sorting conditions.
    * @returns {Object} view - New VerticalThreadView instance.
    */
-  constructor (consumer, name, $outer, options) {
+  constructor (consumer, name, $container, options) {
     super(); // Assign this.id
 
     let mobile = FlareTail.helpers.env.device.mobile;
@@ -243,12 +243,14 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.options = options;
     this.bugs = [];
 
-    this.$outer = $outer;
-    this.$header = $outer.querySelector('header');
-    this.$listbox = $outer.querySelector('[role="listbox"]');
+    this.$container = $container;
+    this.$header = this.$container.querySelector('header');
+    this.$listbox_outer = this.$container.querySelector('.scrollable');
+    this.$listbox = this.$container.querySelector('[role="listbox"]');
     this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
-    this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer.querySelector('.scrollable'));
+
+    new FlareTail.widgets.ScrollBar(this.$listbox_outer);
 
     this.$$listbox.bind('Selected', event => this.onselect(event));
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
@@ -301,9 +303,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
     // Lazy loading while scrolling
-    this.$outer.addEventListener('scroll', event => {
+    this.$listbox_outer.addEventListener('scroll', event => {
       if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
-        (async () => this.render())();
+        (async () => this.render(true))();
       }
     });
   }
@@ -380,23 +382,20 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.bugs = bugs;
     this.unrendered_bugs = _bugs;
-    this.$outer.setAttribute('aria-busy', 'true');
-    this.$listbox.innerHTML = '';
 
     (async () => {
-      this.render();
+      await this.render();
       this.$listbox.dispatchEvent(new CustomEvent('Updated'));
-      this.$outer.removeAttribute('aria-busy');
-      this.$outer.scrollTop = 0;
+      this.$listbox_outer.scrollTop = 0;
     })();
   }
 
   /**
    * Render thread items using a custom template.
-   * @param {undefined}
+   * @param {Boolean} [addition=false] - Whether the bugs will be appended to the thread.
    * @returns {Promise.<undefined>}
    */
-  async render () {
+  async render (addition = false) {
     let bugs = this.unrendered_bugs.splice(0, 50);
     let $fragment = new DocumentFragment();
 
@@ -406,21 +405,36 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       return BzDeck.collections.users.get(contributor, { name: contributor });
     }));
 
+    this.$listbox.setAttribute('aria-busy', 'true');
+
     bugs.forEach((bug, index) => {
-      $fragment.appendChild(this.fill(this.$option.cloneNode(true), {
-        id: bug.id,
-        summary: bug.summary,
-        last_change_time: bug.last_change_time,
-        contributor: contributors[index].properties,
-        starred: bug.starred,
-      }, {
-        id: `${this.name}-vertical-thread-bug-${bug.id}`,
-        'data-id': bug.id,
-        'data-unread': !!bug.unread,
-      }));
+      // Reuse items whenever possible
+      let option_id = `${this.name}-vertical-thread-bug-${bug.id}`;
+      let $option = document.getElementById(option_id);
+
+      if (!$option) {
+        $option = this.fill(this.$option.cloneNode(true), {
+          id: bug.id,
+          summary: bug.summary,
+          last_change_time: bug.last_change_time,
+          contributor: contributors[index].properties,
+          starred: bug.starred,
+        }, {
+          id: option_id,
+          'data-id': bug.id,
+          'data-unread': !!bug.unread,
+        });
+      }
+
+      $fragment.appendChild($option);
     });
 
+    if (!addition) {
+      this.$listbox.innerHTML = '';
+    }
+
     this.$listbox.appendChild($fragment);
+    this.$listbox.removeAttribute('aria-busy');
     this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
     this.$$listbox.update_members();
   }
