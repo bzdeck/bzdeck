@@ -1040,7 +1040,16 @@
                   <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
                   </section>
                   <section id="home-vertical-thread" tabindex="0" role="region">
-                    <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
+                    <header role="toolbar">
+                      <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
+                        <li role="radio" data-value="open">Open</li>
+                        <li role="radio" data-value="closed">Closed</li>
+                        <li role="radio" data-value="all">All</li>
+                      </ul>
+                    </header>
+                    <div class="scrollable">
+                      <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
+                    </div>
                   </section>
                   <footer aria-hidden="true">
                     <div role="status"><span>No bugs found in this folder.</span></div>

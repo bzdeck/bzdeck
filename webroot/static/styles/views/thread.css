@@ -3,18 +3,56 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 [id$="vertical-thread"] {
+  display: flex;
   position: relative;
   overflow: hidden;
+  flex-direction: column;
 }
 
 [id$="vertical-thread"][aria-busy="true"] > * {
   display: none;
 }
 
+[id$="vertical-thread"] header {
+  display: flex;
+  margin: 0 1.2rem;
+  border-top: 1px solid var(--secondary-grid-border-color);
+  padding: .8rem;
+  flex: none;
+  justify-content: center;
+}
+
+[id$="vertical-thread"] header [role="radiogroup"] {
+  display: flex;
+  justify-content: center;
+  flex: auto;
+}
+
+[id$="vertical-thread"] header [role="radio"] {
+  margin: 0 .4rem;
+  border-radius: .4rem;
+  padding: .4rem 1.6rem;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all .2s;
+}
+
+[id$="vertical-thread"] header [role="radio"][aria-checked="true"] {
+  color: var(--alternate-pressed-button-foreground-color);
+  background-color: var(--alternate-pressed-button-background-color);
+}
+
+[id$="vertical-thread"] header [role="radio"]::before {
+  display: none;
+}
+
+[id$="vertical-thread"] .scrollable {
+  display: flex;
+  flex: auto;
+}
+
 [id$="vertical-thread"] [role="listbox"] {
-  position: absolute;
-  width: 100%;
-  height: auto;
+  flex: auto;
 }
 
 [id$="vertical-thread"] [role="option"] {

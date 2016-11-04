@@ -241,12 +241,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.consumer = consumer;
     this.name = name;
     this.options = options;
+    this.bugs = [];
 
     this.$outer = $outer;
     this.$listbox = $outer.querySelector('[role="listbox"]');
     this.$$listbox = new FlareTail.widgets.ListBox(this.$listbox, []);
     this.$option = this.get_template('vertical-thread-item');
-    this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer);
+    this.$$scrollbar = new FlareTail.widgets.ScrollBar($outer.querySelector('.scrollable'));
 
     this.$$listbox.bind('Selected', event => this.onselect(event));
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
@@ -293,6 +294,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       },
     });
 
+    this.init_filter();
+
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
     // Lazy loading while scrolling
@@ -304,15 +307,55 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   }
 
   /**
+   * Initialize the filter function.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  async init_filter () {
+    let pref_name = 'ui.home.filter';
+    let pref_value = this.options.filter_condition = await BzDeck.prefs.get(pref_name) || 'open';
+
+    this.$filter = this.$outer.querySelector('.filter');
+    this.$filter.querySelector(`[data-value="${pref_value}"]`).setAttribute('aria-checked', 'true');
+    this.$$filter = new FlareTail.widgets.RadioGroup(this.$filter);
+    this.filter_radio = {};
+
+    for (let value of ['open', 'closed', 'all']) {
+      this.filter_radio[value] = this.$filter.querySelector(`[data-value="${value}"`);
+    }
+
+    this.$$filter.bind('Selected', event => {
+      pref_value = this.options.filter_condition = event.detail.items[0].dataset.value;
+      this.update(this.bugs);
+      BzDeck.prefs.set(pref_name, pref_value);
+    });
+  }
+
+  /**
    * Update the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
    * @returns {undefined}
    */
   update (bugs) {
-    let cond = this.options.sort_conditions;
+    let _bugs = [...bugs.values()];
+    let filter_condition = this.options.filter_condition || 'open';
+    let sort_conditions = this.options.sort_conditions;
+    let statuses = BzDeck.host.data.config.field.status;
+    let filtered_bugs = {
+      open: _bugs.filter(bug => statuses.open.includes(bug.status)),
+      closed: _bugs.filter(bug => statuses.closed.includes(bug.status)),
+    };
+
+    // Update the filter radio button labels
+    this.filter_radio.open.textContent = `Open (${filtered_bugs.open.length})`;
+    this.filter_radio.closed.textContent = `Closed (${filtered_bugs.closed.length})`;
+
+    // Filter & sort bugs
+    _bugs = filter_condition === 'all' ? _bugs : filtered_bugs[filter_condition];
+    _bugs = sort_conditions ? FlareTail.helpers.array.sort(_bugs, sort_conditions) : _bugs;
 
     this.bugs = bugs;
-    this.unrendered_bugs = cond ? FlareTail.helpers.array.sort([...bugs.values()], cond) : [...bugs.values()];
+    this.unrendered_bugs = _bugs;
     this.$outer.setAttribute('aria-busy', 'true');
     this.$listbox.innerHTML = '';
 

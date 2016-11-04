@@ -98,6 +98,7 @@ BzDeck.config = {
     'notifications.ignore_cc_changes': { type: 'boolean', default: true },
     // Home
     'ui.home.layout': { type: 'string', default: 'vertical' },
+    'ui.home.filter': { type: 'string', default: 'open' },
     // Timeline
     'ui.timeline.sort.order': { type: 'string', default: 'ascending' },
     'ui.timeline.font.family': { type: 'string', default: 'proportional' },
