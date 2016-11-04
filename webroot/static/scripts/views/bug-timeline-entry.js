@@ -38,9 +38,10 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
       if (!dup || !dup[1]) {
         let $comment = $fragment.appendChild(await this.create_comment_entry());
+        let $comment_body = $comment.querySelector('[itemprop="text"]');
 
         if (this.data.get('attachment')) {
-          $comment.appendChild(await this.create_attachment_box());
+          $comment_body.insertAdjacentElement('afterend', await this.create_attachment_box());
         }
       }
 

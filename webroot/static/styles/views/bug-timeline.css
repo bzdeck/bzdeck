@@ -46,7 +46,7 @@
   margin: 1.2rem 1.2rem 0;
   border-width: .1rem;
   border-style: solid;
-  border-color: var(--secondary-region-border-color);
+  border-color: var(--secondary-grid-border-color);
   border-radius: .2rem;
   padding: 1.2rem;
   height: auto;

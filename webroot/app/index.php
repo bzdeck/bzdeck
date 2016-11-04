@@ -670,13 +670,15 @@
             <span itemprop="name"></span>
             <time itemprop="creation_time"></time>
           </div>
-          <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
-            </ul>
-          </div>
         </header>
         <div itemprop="text"></div>
+        <footer>
+          <div role="toolbar">
+            <ul role="none">
+              <li role="none"><span class="iconic text" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
+            </ul>
+          </div>
+        </footer>
       </article>
     </template><!-- end #timeline-comment -->
     <template id="timeline-change">

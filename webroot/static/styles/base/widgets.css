@@ -77,6 +77,10 @@ meta[role="checkbox"]::after {
   text-decoration: none;
 }
 
+span[role="textbox"] {
+  line-height: 1.4em;
+}
+
 .cta[role="button"] {
   display: block;
   margin: .8rem auto 0;
@@ -115,15 +119,25 @@ meta[role="checkbox"]::after {
   text-indent: -99999px;
 }
 
+.iconic.text[role="button"] {
+  width: auto !important;
+  text-indent: 0;
+}
+
 .iconic[role="button"]::before {
   display: flex;
-  position: absolute;
   width: 100%;
   height: 100%;
   font-family: FontAwesome;
   text-indent: 0;
   justify-content: center;
   align-items: center;
+}
+
+.iconic.text[role="button"]::before {
+  display: inline-flex;
+  margin-right: .4rem;
+  width: auto;
 }
 
 [role="textbox"],
