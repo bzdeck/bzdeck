@@ -31,7 +31,8 @@
 [id$="vertical-thread"] header [role="radio"] {
   margin: 0 .4rem;
   border-radius: .4rem;
-  padding: .4rem 1.6rem;
+  padding: .2rem 1.2rem;
+  font-size: 1.1rem;
   text-align: center;
   text-transform: uppercase;
   transition: all .2s;
@@ -47,8 +48,8 @@
 }
 
 [id$="vertical-thread"] header [role="button"] {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2rem;
+  height: 2rem;
   flex: none;
 }
 
