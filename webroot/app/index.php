@@ -685,7 +685,7 @@
       <article tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change" role="article">
         <header>
           <div class="meta">
-            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="givenName"></strong><meta itemprop="email"></span>
             <span itemprop="how"></span>
             <time itemprop="creation_time"></time>
           </div>
@@ -916,7 +916,7 @@
       </li>
     </template><!-- end #person-finder-item -->
     <template id="person-with-image">
-      <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+      <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="givenName"></strong><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
     <template id="bug-participant">
       <li tabindex="0" role="link" itemscope itemtype="http://bzdeck.com/User">

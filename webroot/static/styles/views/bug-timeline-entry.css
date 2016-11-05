@@ -373,13 +373,11 @@
 }
 
 .bug-timeline [itemprop="change"] {
-  margin: var(--comment-margin) auto 0;
+  margin: var(--comment-margin) calc(var(--comment-margin) * 2) 0 calc(var(--comment-margin) * 2 + 2rem);
   border-radius: 1.6rem;
-  padding: .4rem 1.2rem;
   max-width: 80%;
-  background-color: var(--button-background-color);
+  color: var(--alternate-disabled-button-foreground-color);
   line-height: 2rem;
-  text-align: center;
 }
 
 [data-ui-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
@@ -394,9 +392,20 @@
   display: none;
 }
 
+.bug-timeline [itemprop="change"] [itemprop="author"] [itemprop="image"] {
+  display: inline;
+  margin: 0 .4rem 0 -2rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  vertical-align: text-bottom;
+}
+
 .bug-timeline [itemprop="change"] [itemprop="givenName"] {
-  font-weight: 500;
   white-space: nowrap;
+}
+
+.bug-timeline [itemprop="change"] strong {
+  color: var(--secondary-content-foreground-color);
 }
 
 .bug-timeline [itemprop="change"] time {
