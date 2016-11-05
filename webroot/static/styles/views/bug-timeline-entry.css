@@ -186,34 +186,23 @@
   list-style-type: decimal;
 }
 
-.bug-timeline [itemprop="comment"] [itemprop="text"]:empty {
+.bug-timeline [itemprop="comment"] [itemprop="extract"],
+.bug-timeline [itemprop="comment"][aria-expanded="false"] :-moz-any([itemprop="text"], [itemprop="attachment"], footer) {
   display: none;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
+.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="extract"] {
+  display: block;
   position: relative;
   z-index: 10;
-  margin-left: 4.8rem;
+  overflow: hidden;
+  margin: calc(var(--comment-padding) * -2) 0 0 4.8rem;
+  padding-top: 0;
   height: 1.6rem;
   color: var(--disabled-button-foreground-color);
   white-space: nowrap;
   text-overflow: ellipsis;
   line-height: 1.6rem;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:not(:empty) + [itemprop="attachment"] {
-  display: none;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] * {
-  display: inline;
-  color: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  font-style: normal;
-  font-weight: normal;
-  white-space: nowrap;
 }
 
 [data-ui-timeline-font-family="monospace"]:root .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] {
@@ -235,15 +224,6 @@
   margin-bottom: 0;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] p {
-  margin: 0 !important;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] p::after {
-  display: inline !important;
-  content: ' ';
-}
-
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] blockquote {
   margin: 0;
   border-left: .2rem solid var(--region-border-color);
@@ -251,23 +231,8 @@
   color: var(--secondary-content-foreground-color);
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] blockquote {
-  border: 0;
-  padding: 0;
-  color: inherit;
-}
-
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] a {
   -moz-user-select: text;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] a {
-  color: var(--disabled-button-foreground-color);
-  text-decoration: none;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"] br {
-  display: none;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] {
@@ -278,14 +243,6 @@
   color: var(--hyperlink-text-foreground-color); /* Looks like a link */
   background-color: var(--secondary-region-background-color);
   cursor: pointer; /* Looks like a link */
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-  margin-right: 0;
-  margin-bottom: 0;
-  border: 0;
-  padding: 0 var(--comment-margin) var(--comment-margin) !important;
-  background-color: transparent;
 }
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] [itemprop="content_type"] {
@@ -299,31 +256,16 @@
   text-align: center;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] [itemprop="content_type"] {
-  padding: 0;
-  font-size: 1.4rem;
-  line-height: 1.8rem;
-}
-
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
   padding: var(--comment-margin);
   min-height: 2rem;
   line-height: 1.8rem;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] h5 {
-  display: inline;
-  padding: 0;
-}
-
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
   position: relative;
   padding: 0 var(--comment-margin) var(--comment-margin);
   text-align: center;
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] div {
-  display: none;
 }
 
 [data-ui-timeline-display-attachments-inline="false"]:root .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
@@ -350,10 +292,6 @@
   border-radius: 0 0 .2rem .2rem;
   padding: calc(var(--comment-padding) / 2);
   background-color: var(--secondary-region-background-color);
-}
-
-.bug-timeline [itemprop="comment"][aria-expanded="false"] footer {
-  display: none;
 }
 
 .bug-timeline [itemprop="comment"] footer [role="toolbar"] {
@@ -414,11 +352,6 @@
 }
 
 @media (min-width: 1024px) {
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-    margin-top: -2.8rem;
-  }
-  
   .bug-timeline [itemprop="comment"] [itemprop="attachment"] h5 {
     padding-left: 4.2rem;
   }
@@ -436,11 +369,6 @@
     margin-bottom: var(--comment-margin);
   }
 
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"],
-  .bug-timeline [itemprop="comment"][aria-expanded="false"] [itemprop="text"]:empty + [itemprop="attachment"] {
-    margin-top: -2.4rem;
-  }
-  
   .bug-timeline [itemprop="comment"][aria-expanded="false"] header [itemprop="author"] .roles {
     display: none;
   }

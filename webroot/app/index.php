@@ -671,6 +671,7 @@
             <time itemprop="creation_time"></time>
           </div>
         </header>
+        <p itemprop="extract"></p>
         <div itemprop="text"></div>
         <footer>
           <div role="toolbar">

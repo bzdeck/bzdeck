@@ -449,18 +449,16 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     let extract = comment.text;
 
-    if (comment.attachment_id) {
-      return `(Created attachment)`; // l10n
-    }
-
-    if (comment.text.trim() === '' && comments.length === 1) {
+    if (comment.count === 0 && extract === '') {
       return `(No description)`; // l10n
     }
 
-    // Remove quote headers, quotes and attachment header (TODO: This requires l10n)
-    extract = extract.replace(/^(\(In\ reply\ to|>|Created\ attachment).*/gm, '');
+    // Remove quote headers and quotes (TODO: This requires l10n)
+    extract = extract.replace(/^(\(In\ reply\ to|>).*/gm, '');
+    // Remove attachment/review comment headers (TODO: This requires l10n)
+    extract = extract.replace(/^(Comment\ on\ attachment\ \d+\n|Review\ of\ attachment\ \d+:\n\-+\n).*/gm, '');
     // Remove like breaks, leading and trailing spaces
-    extract = extract.replace(/\n+/gm, ' ').trim();
+    extract = extract.replace(/\s+/gm, ' ').trim();
     // Boil down to 140 characters
     extract = extract.length <= 140 ? extract : extract.substr(0, 136) + ' ...';
 
