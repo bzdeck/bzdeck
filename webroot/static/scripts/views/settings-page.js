@@ -38,8 +38,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async activate () {
-    let tab_id = history.state ? history.state.tab_id : undefined;
-    let prefs = new Map();
+    const tab_id = history.state ? history.state.tab_id : undefined;
+    const prefs = new Map();
 
     await Promise.all([...Object.entries(BzDeck.config.prefs)].map(async ([name, value]) => {
       value.user = await BzDeck.prefs.get(name);
@@ -66,7 +66,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
     // Currently those widgets are not data driven.
     // A modern preference system is needed.
-    for (let [name, value] of prefs) {
+    for (const [name, value] of prefs) {
       this.activate_widget(name, value);
     }
 
@@ -91,10 +91,10 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bugzilla.html#timezone}
    */
   fill_timezone_options () {
-    let $radio_local = document.querySelector('#pref-timezone-local');
-    let $radio_host = document.querySelector('#pref-timezone-host');
-    let timezone_local = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let timezone_host = BzDeck.host.timezone;
+    const $radio_local = document.querySelector('#pref-timezone-local');
+    const $radio_host = document.querySelector('#pref-timezone-host');
+    const timezone_local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const timezone_host = BzDeck.host.timezone;
 
     $radio_local.textContent = `Your local timezone (${timezone_local})`;
     $radio_host.textContent = `Bugzilla default (${timezone_host})`;
@@ -112,17 +112,17 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   activate_widget (name, _value) {
-    let $root = document.documentElement;
-    let $widget = document.querySelector(`[id^="tabpanel-settings"] [data-pref="${name}"]`);
-    let value = _value.user !== undefined ? _value.user : _value.default;
-    let attr = 'data-' + name.replace(/[\._]/g, '-');
+    const $root = document.documentElement;
+    const $widget = document.querySelector(`[id^="tabpanel-settings"] [data-pref="${name}"]`);
+    const value = _value.user !== undefined ? _value.user : _value.default;
+    const attr = 'data-' + name.replace(/[\._]/g, '-');
 
-    let set_attrs = ($item, checked) => {
+    const set_attrs = ($item, checked) => {
       $item.tabIndex = 0;
       $item.setAttribute('aria-checked', checked);
     };
 
-    let on_change = value => {
+    const on_change = value => {
       this.trigger('#PrefChangeRequested', { name, value });
 
       if ($root.hasAttribute(attr)) {
@@ -138,7 +138,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       set_attrs($widget, value);
       (new FlareTail.widgets.CheckBox($widget)).bind('Toggled', event => on_change(event.detail.checked));
     } else {
-      for (let $radio of $widget.querySelectorAll('[role="radio"]')) {
+      for (const $radio of $widget.querySelectorAll('[role="radio"]')) {
         set_attrs($radio, $radio.dataset.value === String(value));
       }
 
@@ -154,15 +154,15 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   prepare_qrcode () {
-    let $outer = document.querySelector('#settings-qrcode-outer');
-    let $placeholder = $outer.querySelector('.placeholder');
+    const $outer = document.querySelector('#settings-qrcode-outer');
+    const $placeholder = $outer.querySelector('.placeholder');
+    const $button = $outer.querySelector('[role="button"]');
     let $iframe = $outer.querySelector('iframe');
-    let $button = $outer.querySelector('[role="button"]');
 
     // Because the QRCode library doesn't support the strict mode, load the script in an iframe
-    let generate = event => {
-      let QRCode = event.target.contentWindow.QRCode;
-      let { name, api_key } = BzDeck.account.data;
+    const generate = event => {
+      const QRCode = event.target.contentWindow.QRCode;
+      const { name, api_key } = BzDeck.account.data;
 
       new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
 

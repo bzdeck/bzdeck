@@ -23,7 +23,7 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
     },
     {
       set: (obj, prop, newval) => {
-        let oldval = obj[prop];
+        const oldval = obj[prop];
 
         if (prop === 'preview_id') {
           BzDeck.router.navigate(location.pathname, { preview_id: newval }, true);

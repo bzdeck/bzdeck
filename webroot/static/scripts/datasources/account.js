@@ -34,7 +34,7 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
    */
   onupgradeneeded (event) {
-    let database = event.target.result;
+    const database = event.target.result;
 
     // Create the initial stores
     if (event.oldVersion < 1) {

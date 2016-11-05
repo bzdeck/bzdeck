@@ -16,7 +16,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   constructor () {
     super(); // Assign this.id
 
-    let params = new URLSearchParams(location.search.substr(1));
+    const params = new URLSearchParams(location.search.substr(1));
 
     // Subscribe to events
     this.subscribe('P#DataLoaded');

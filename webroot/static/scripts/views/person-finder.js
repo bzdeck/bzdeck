@@ -85,14 +85,14 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
    */
   search_remote () {
-    let value = this.value; // Keep this as local a variable for later use
-    let params = new URLSearchParams();
+    const value = this.value; // Keep this as local a variable for later use
+    const params = new URLSearchParams();
 
     params.append('match', value);
     params.append('limit', 10);
 
     this.timer = window.setTimeout(async () => {
-      let users = await BzDeck.collections.users.search_remote(params);
+      const users = await BzDeck.collections.users.search_remote(params);
 
       // Check if the search term is not updated
       if (this.value === value && users.length) {
@@ -107,20 +107,20 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async search (users = new Map()) {
-    let has_colon = this.value.startsWith(':');
-    let re = new RegExp((has_colon ? '' : '\\b') + FlareTail.helpers.regexp.escape(this.value), 'i');
-    let find = str => re.test(str);
-    let _people = await Promise.all([...users.keys()].map(name => BzDeck.collections.users.get(name, { name })));
-    let people = new Map(_people.map(person => [person.email, person]));
-    let results = new Map();
-    let $fragment = new DocumentFragment();
+    const has_colon = this.value.startsWith(':');
+    const re = new RegExp((has_colon ? '' : '\\b') + FlareTail.helpers.regexp.escape(this.value), 'i');
+    const find = str => re.test(str);
+    const _people = await Promise.all([...users.keys()].map(name => BzDeck.collections.users.get(name, { name })));
+    const people = new Map(_people.map(person => [person.email, person]));
+    const results = new Map();
+    const $fragment = new DocumentFragment();
 
-    for (let [name, user] of users) {
+    for (const [name, user] of users) {
       if (this.exclude.has(name) || this.results.has(name)) {
         continue;
       }
 
-      let person = people.get(name); // name = email
+      const person = people.get(name); // name = email
 
       if ((has_colon && person.nick_names.some(nick => find(nick) || find(`:${nick}`))) ||
           find(person.name) || find(person.email)) {
@@ -137,9 +137,9 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
       return;
     }
 
-    for (let [name, user] of results) {
-      let data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
-      let attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
+    for (const [name, user] of results) {
+      const data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
+      const attrs = { id: `${this.combobox_id}--${user.email}`, 'data-value': user.email };
 
       $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));
     }

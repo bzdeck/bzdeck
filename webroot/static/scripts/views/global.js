@@ -16,8 +16,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   constructor () {
     super(); // Assign this.id
 
-    let datetime = FlareTail.helpers.datetime;
-    let $root = document.documentElement;
+    const datetime = FlareTail.helpers.datetime;
+    const $root = document.documentElement;
 
     // Automatically update relative dates on the app
     datetime.options.updater_enabled = true;
@@ -110,7 +110,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
     bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
 
-    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
+    const status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
 
     BzDeck.views.statusbar.show(status);
   }
@@ -150,8 +150,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {Boolean} default - Whether the event should lead to the default action.
    */
   onclick (event) {
-    let $target = event.target;
-    let $parent = $target.parentElement;
+    const $target = event.target;
+    const $parent = $target.parentElement;
 
     // Discard clicks on the fullscreen dialog
     if ($target === document) {
@@ -172,26 +172,25 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     }
 
     if ($target.matches(':any-link, [role="link"]')) {
-      let new_win;
-
       if ($target.hasAttribute('data-bug-id')) {
         // Bug link: open in a new app tab
         this.trigger('AnyView#OpeningBugRequested', { id: Number($target.getAttribute('data-bug-id')) });
       } else if ($target.hasAttribute('data-att-id')) {
         // Attachment link: open in a new app tab
-        let $content_type = $target.querySelector('[itemprop="content_type"]');
-        let att_id = Number($target.getAttribute('data-att-id'));
-        let att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
+        const $content_type = $target.querySelector('[itemprop="content_type"]');
+        const att_id = Number($target.getAttribute('data-att-id'));
+        const att_type = $content_type ? ($content_type.content || $content_type.textContent) : undefined;
 
         if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
           // Open the link directly in a new browser tab
-          new_win = window.open();
+          const new_win = window.open();
+
           new_win.opener = null;
           new_win.location = `${BzDeck.host.origin}/attachment.cgi?id=${att_id}`;
         } else {
           (async () => {
-            let bugs = await BzDeck.collections.bugs.get_all();
-            let bug_id = [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
+            const bugs = await BzDeck.collections.bugs.get_all();
+            const bug_id = [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
 
             if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
               this.trigger('AnyView#OpeningAttachmentRequested', { id: att_id });
@@ -202,7 +201,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         }
       } else {
         // Normal link: open in a new browser tab
-        new_win = window.open();
+        const new_win = window.open();
+
         new_win.opener = null;
         new_win.location = $target.href;
       }
@@ -220,8 +220,8 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   onkeydown (event) {
-    let modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
-    let tab = event.key === 'Tab';
+    const modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
+    const tab = event.key === 'Tab';
 
     if (!event.target.matches('[role="textbox"], [role="searchbox"]') && !modifiers && !tab) {
       event.preventDefault();
@@ -237,10 +237,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async on_gravatar_profile_requested ({ hash } = {}) {
-    let notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
+    const notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
 
     try {
-      let data = await FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`);
+      const data = await FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`);
 
       notify(data.entry[0]);
     } catch (error) {
@@ -259,10 +259,10 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_gravatar_image_requested ({ hash, color, initial } = {}) {
-    let notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
-    let $image = new Image();
-    let $canvas = document.createElement('canvas');
-    let ctx = $canvas.getContext('2d');
+    const notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
+    const $image = new Image();
+    const $canvas = document.createElement('canvas');
+    const ctx = $canvas.getContext('2d');
 
     $canvas.width = 160;
     $canvas.height = 160;
@@ -297,13 +297,13 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async on_user_info_updated ({ name } = {}) {
-    let user = await BzDeck.collections.users.get(name, { name });
+    const user = await BzDeck.collections.users.get(name, { name });
 
-    for (let $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
-      let title = `${user.original_name || user.name}\n${user.email}`;
-      let $person = $email.closest('[itemtype$="User"]');
-      let $name = $person.querySelector('[itemprop="name"]');
-      let $image = $person.querySelector('[itemprop="image"]');
+    for (const $email of [...document.querySelectorAll(`[itemprop="email"][content="${CSS.escape(user.email)}"]`)]) {
+      const title = `${user.original_name || user.name}\n${user.email}`;
+      const $person = $email.closest('[itemtype$="User"]');
+      const $name = $person.querySelector('[itemprop="name"]');
+      const $image = $person.querySelector('[itemprop="image"]');
 
       if ($person.title && $person.title !== title) {
         $person.title = title;

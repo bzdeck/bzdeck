@@ -23,7 +23,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.store_name = 'bugs';
 
     // [2015-08-10] Remove unnecessary attachment data introduced by a bug on AttachmentModel
-    for (let key of Object.keys(data)) if (!isNaN(key)) {
+    for (const key of Object.keys(data)) if (!isNaN(key)) {
       delete data[key];
     }
 
@@ -85,9 +85,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
    */
   async fetch (include_metadata = true, include_details = true) {
-    let _fetch = async (method, param_str = '') => {
+    const _fetch = async (method, param_str = '') => {
+      const params = new URLSearchParams(param_str);
       let path = `bug/${this.id}`;
-      let params = new URLSearchParams(param_str);
 
       if (method === 'last_visit') {
         path = `bug_user_last_visit/${this.id}`;
@@ -98,7 +98,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       return BzDeck.host.request(path, params);
     };
 
-    let fetchers = [];
+    const fetchers = [];
     let result;
 
     fetchers.push(include_metadata ? _fetch() : Promise.resolve());
@@ -114,8 +114,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       throw new Error('Failed to fetch bugs from Bugzilla.');
     }
 
+    const [_meta, _visit, _comments, _history, _attachments] = result;
     let _bug;
-    let [_meta, _visit, _comments, _history, _attachments] = result;
 
     if (include_metadata ? _meta.error : _comments.error) { // _meta is an empty resolve when include_metadata = false
       _bug = { id: this.id, error: { code: _meta.code, message: _meta.message }};
@@ -133,7 +133,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         _bug.history = _history.bugs[0].history || [];
         _bug.attachments = _attachments.bugs[this.id] || [];
 
-        for (let att of _bug.attachments) {
+        for (const att of _bug.attachments) {
           BzDeck.collections.attachments.set(att.id, att);
         }
       }
@@ -152,7 +152,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} cached - Whether the cache is found.
    */
   merge (data) {
-    let cache = this.data;
+    const cache = this.data;
 
     if (!cache) {
       this.save(data);
@@ -163,19 +163,19 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     // Deproxify cache and merge data
     data = Object.assign({}, cache, data);
 
-    let cached_time = new Date(cache.last_change_time);
-    let cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time;
-    let get_time = str => new Date(str).getTime(); // integer
-    let new_comments = new Map((data.comments || []).filter(c => cmp_time(c)).map(c => [get_time(c.creation_time), c]));
-    let new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
-                                                          .map(a => [get_time(a.creation_time), a]));
-    let new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h]));
-    let timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
+    const cached_time = new Date(cache.last_change_time);
+    const cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time;
+    const get_time = str => new Date(str).getTime(); // integer
+    const new_comments = new Map((data.comments || []).filter(c => cmp_time(c))
+                                                      .map(c => [get_time(c.creation_time), c]));
+    const new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
+                                                            .map(a => [get_time(a.creation_time), a]));
+    const new_history = new Map((data.history || []).filter(h => cmp_time(h)).map(h => [get_time(h.when), h]));
+    const timestamps = new Set([...new_comments.keys(), ...new_attachments.keys(), ...new_history.keys()].sort());
 
     (async () => {
-      let ignore_cc = await BzDeck.prefs.get('notifications.ignore_cc_changes');
+      const ignore_cc = (await BzDeck.prefs.get('notifications.ignore_cc_changes')) !== false;
 
-      ignore_cc = ignore_cc !== false;
       data._update_needed = false;
 
       // Mark the bug as read when the Ignore CC Changes option is enabled and there are only CC changes
@@ -185,11 +185,11 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
 
       // Combine all changes into one Map, then notify
-      for (let time of timestamps) {
-        let changes = new Map();
-        let comment = new_comments.get(time);
-        let attachment = new_attachments.get(time);
-        let history = new_history.get(time);
+      for (const time of timestamps) {
+        const changes = new Map();
+        const comment = new_comments.get(time);
+        const attachment = new_attachments.get(time);
+        const history = new_history.get(time);
 
         if (comment) {
           changes.set('comment', comment);
@@ -247,7 +247,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     let value;
 
     try {
-      let result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
+      const result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
 
       if (!Array.isArray(result)) {
         throw new Error('The last-visited timestamp could not be retrieved');
@@ -272,10 +272,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Array.<Number>} duplicates - Duplicate bug IDs.
    */
   get_duplicates () {
-    let duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
+    const duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
 
-    for (let comment of this.data.comments || []) {
-      let match = comment.text.match(/Bug (\d+) has been marked as a duplicate of this bug/);
+    for (const comment of this.data.comments || []) {
+      const match = comment.text.match(/Bug (\d+) has been marked as a duplicate of this bug/);
 
       if (match) {
         duplicates.add(Number(match[1]));
@@ -291,13 +291,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
   async detect_if_new () {
-    let visited = new Date(this.data._last_visit).getTime();
-    let changed = new Date(this.data.last_change_time).getTime();
-    let time10d = Date.now() - 1000 * 60 * 60 * 24 * 14;
-    let is_new = changed > time10d;
+    const visited = new Date(this.data._last_visit).getTime();
+    const changed = new Date(this.data.last_change_time).getTime();
+    const time10d = Date.now() - 1000 * 60 * 60 * 24 * 14;
+    const is_new = changed > time10d;
 
-    let has_new = entry => {
-      let time = new Date(entry.creation_time);
+    const has_new = entry => {
+      const time = new Date(entry.creation_time);
+
       return (visited && time > visited) || time > time10d;
     };
 
@@ -311,13 +312,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       return true;
     }
 
-    let ignore_cc = await BzDeck.prefs.get('notifications.ignore_cc_changes');
+    const ignore_cc = await BzDeck.prefs.get('notifications.ignore_cc_changes');
 
     // Ignore CC Changes option
     if (visited && ignore_cc !== false) {
-      for (let h of this.data.history || []) {
-        let time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
-        let non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
+      for (const h of this.data.history || []) {
+        const time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
+        const non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
         if (time > visited && non_cc_changes) {
           return true;
@@ -349,9 +350,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    *  value is the person's "detail" object in the raw bug object.
    */
   get_participants () {
-    let participants = new Map([[this.data.creator, this.data.creator_detail]]);
+    const participants = new Map([[this.data.creator, this.data.creator_detail]]);
 
-    let add = person => {
+    const add = person => {
       if (!participants.has(person.name)) {
         participants.set(person.name, person);
       }
@@ -365,23 +366,23 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       add(this.data.qa_contact_detail);
     }
 
-    for (let cc_detail of this.data.cc_detail || []) {
+    for (const cc_detail of this.data.cc_detail || []) {
       add(cc_detail);
     }
 
-    for (let mentors_detail of this.data.mentors_detail || []) {
+    for (const mentors_detail of this.data.mentors_detail || []) {
       add(mentors_detail);
     }
 
-    for (let { creator: name } of this.data.comments || []) {
+    for (const { creator: name } of this.data.comments || []) {
       add({ name });
     }
 
-    for (let { creator: name } of this.data.attachments || []) {
+    for (const { creator: name } of this.data.attachments || []) {
       add({ name });
     }
 
-    for (let { who: name } of this.data.history || []) {
+    for (const { who: name } of this.data.history || []) {
       add({ name });
     }
 
@@ -395,24 +396,24 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Set.<String>} contributors - List of all contributor account names (email addresses).
    */
   get_contributors () {
-    let contributors = new Map(); // key: name, value: number of contributions
-    let exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
-                              ...(this.data.mentors || [])]);
+    const contributors = new Map(); // key: name, value: number of contributions
+    const exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
+                                ...(this.data.mentors || [])]);
 
-    let add = name => {
+    const add = name => {
       if (!exclusions.has(name)) {
         contributors.set(name, contributors.has(name) ? contributors.get(name) + 1 : 1);
       }
     };
 
-    for (let c of this.data.comments || []) {
+    for (const c of this.data.comments || []) {
       add(c.creator);
     }
 
-    for (let a of this.data.attachments || []) {
+    for (const a of this.data.attachments || []) {
       add(a.creator);
 
-      for (let f of a.flags || []) if (f.setter !== a.creator) {
+      for (const f of a.flags || []) if (f.setter !== a.creator) {
         add(f.setter);
       }
     }
@@ -457,7 +458,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   onedit () {
-    let { changes, att_changes, uploads, can_submit } = this;
+    const { changes, att_changes, uploads, can_submit } = this;
 
     this.trigger_safe('#BugEdited', { bug_id: this.id, changes, att_changes, uploads, can_submit });
   }
@@ -469,10 +470,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   edit_comment (comment) {
-    let bug_id = this.id;
+    const bug_id = this.id;
 
     if (comment.match(/\S/)) {
-      let added = !this.has_comment;
+      const added = !this.has_comment;
 
       this.changes.comment = { body: comment, is_markdown: BzDeck.host.markdown_supported };
 
@@ -481,7 +482,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         this.onedit();
       }
     } else {
-      let removed = this.has_comment;
+      const removed = this.has_comment;
 
       delete this.changes.comment;
 
@@ -500,8 +501,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   edit_field (name, value) {
-    let { field, product } = BzDeck.host.data.config;
-    let is_closed = value => field.status.closed.includes(value);
+    const { field, product } = BzDeck.host.data.config;
+    const is_closed = value => field.status.closed.includes(value);
 
     if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
         typeof value === 'string' && value.match(/^\d+$/)) {
@@ -526,9 +527,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
       if (name === 'product') {
-        let { version: versions, component, target_milestone_detail } = product[value];
-        let components = Object.keys(component);
-        let milestones = target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name);
+        const { version: versions, component, target_milestone_detail } = product[value];
+        const components = Object.keys(component);
+        const milestones = target_milestone_detail.filter(ms => ms.is_active).map(ms => ms.name);
 
         this.changes.version = versions.find(v => ['unspecified'].includes(v)) || versions[0];
         this.changes.component = components.find(c => ['General'].includes(c)) || components[0];
@@ -569,13 +570,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
    */
   edit_flag (flag, added) {
-    let flags = this.changes.flags = this.changes.flags || [];
+    const flags = this.changes.flags = this.changes.flags || [];
 
     if (added) {
       flags.push(flag);
     } else {
-      let { id, name, requestee } = flag;
-      let index = flags.findIndex(f => f.id === id || (f.name === name && f.requestee === requestee));
+      const { id, name, requestee } = flag;
+      const index = flags.findIndex(f => f.id === id || (f.name === name && f.requestee === requestee));
 
       if (index > -1) {
         flags.splice(index, 1);
@@ -599,7 +600,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   add_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
-      let change = this.changes[field] || {};
+      const change = this.changes[field] || {};
 
       if ((change.remove || []).includes(email)) {
         change.remove.splice(change.remove.indexOf(email), 1);
@@ -642,7 +643,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   remove_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
-      let change = this.changes[field] || {};
+      const change = this.changes[field] || {};
 
       if ((change.add || []).includes(email)) {
         change.add.splice(change.add.indexOf(email), 1);
@@ -681,13 +682,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise.<undefined>}
    */
   async update_subscription (how) {
-    let subscribe = how === 'add';
-    let email = BzDeck.account.data.name;
+    const subscribe = how === 'add';
+    const email = BzDeck.account.data.name;
 
     // Update the view first
     this.trigger(subscribe ? '#ParticipantAdded' : '#ParticipantRemoved', { bug_id: this.id, field: 'cc', email });
 
-    let result = await this.post_changes({ cc: { [how]: [email] }});
+    const result = await this.post_changes({ cc: { [how]: [email] }});
 
     if (result.error) {
       this.trigger(subscribe ? '#FailedToSubscribe' : '#FailedToUnsubscribe', { bug_id: this.id });
@@ -704,7 +705,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} result - Whether the change object is updated.
    */
   cleanup_multiple_item_change (field) {
-    let change = this.changes[field];
+    const change = this.changes[field];
 
     if (!change) {
       return false;
@@ -736,13 +737,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
-    let oversized_files = new Set();
-    let max_size = BzDeck.host.data.config.max_attachment_size;
+    const oversized_files = new Set();
+    const max_size = BzDeck.host.data.config.max_attachment_size;
 
-    for (let _file of files) {
-      let worker = new SharedWorker('/static/scripts/workers/tasks.js');
-      let file = _file; // Redeclare the variable so it can be used in the following load event
-      let is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
+    for (const _file of files) {
+      const worker = new SharedWorker('/static/scripts/workers/tasks.js');
+      const file = _file; // Redeclare the variable so it can be used in the following load event
+      const is_patch = /\.(patch|diff)$/.test(file.name) || /^text\/x-(patch|diff)$/.test(file.type);
 
       // Check if the file is not exceeding the limit
       if (file.size > max_size) {
@@ -769,9 +770,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       return;
     }
 
+    const num_format = num => num.toLocaleString('en-US');
+    const max = num_format(max_size);
     let message;
-    let num_format = num => num.toLocaleString('en-US');
-    let max = num_format(max_size);
 
     if (oversized_files.size > 1) {
       message = `These files cannot be attached because they may exceed the maximum attachment size (${max} bytes) \
@@ -795,14 +796,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   attach_text (text) {
-    let worker = new SharedWorker('/static/scripts/workers/tasks.js');
-    let blob = new Blob([text], { type: 'text/plain' });
+    const worker = new SharedWorker('/static/scripts/workers/tasks.js');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt';
+    const is_patch = !!text.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/m);
+    const is_ghpr = text.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/);
+    const is_mrbr = text.match(/^https:\/\/reviewboard\.mozilla\.org\/r\/(\d+)\/$/);
     let summary = text.substr(0, 25) + (text.length > 25 ? '...' : '');
-    let file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt';
     let content_type = 'text/plain';
-    let is_patch = !!text.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/m);
-    let is_ghpr = text.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/);
-    let is_mrbr = text.match(/^https:\/\/reviewboard\.mozilla\.org\/r\/(\d+)\/$/);
 
     if (is_patch) {
       // TODO: Append a revision to the summary, based on the currently-attached patches if any
@@ -820,7 +821,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     worker.port.addEventListener('message', event => {
-      let data = event.data.split(',')[1]; // Drop 'data:text/plain;base64,'
+      const data = event.data.split(',')[1]; // Drop 'data:text/plain;base64,'
 
       this.add_attachment({ data, summary, file_name, content_type, is_patch }, blob.size);
     });
@@ -857,7 +858,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   async add_attachment (att, size) {
     // Cache as an AttachmentModel instance
-    let attachment = await BzDeck.collections.attachments.cache(att, size);
+    const attachment = await BzDeck.collections.attachments.cache(att, size);
 
     // Check if the file has already been attached
     if (this.find_attachment(attachment.hash)) {
@@ -879,7 +880,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} result - Whether the attachment is found and removed.
    */
   remove_attachment (hash) {
-    let index = this.find_att_index(hash);
+    const index = this.find_att_index(hash);
 
     if (index === -1) {
       return false;
@@ -906,7 +907,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   async edit_attachment ({ id, hash, prop, value } = {}) {
     if (hash) {
       // Edit a new attachment
-      let attachment = this.find_attachment(hash);
+      const attachment = this.find_attachment(hash);
 
       if (attachment && attachment[prop] !== value) {
         attachment[prop] = value;
@@ -919,13 +920,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     // Edit an existing attachment
-    let attachment = await BzDeck.collections.attachments.get(id);
+    const attachment = await BzDeck.collections.attachments.get(id);
 
     if (!attachment || attachment.bug_id !== this.data.id) {
       return;
     }
 
-    let changes = this.att_changes.get(id) || {};
+    const changes = this.att_changes.get(id) || {};
     let edited = true;
 
     // The properties prefixed with 'is_' are supposed to be a boolean but actually 0 or 1, so use the non-strict
@@ -958,7 +959,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
   move_up_attachment (hash) {
-    let index = this.find_att_index(hash);
+    const index = this.find_att_index(hash);
 
     if (index === -1) {
       return false;
@@ -975,7 +976,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} result - Whether the attachment is found and reordered.
    */
   move_down_attachment (hash) {
-    let index = this.find_att_index(hash);
+    const index = this.find_att_index(hash);
 
     if (index === -1) {
       return false;
@@ -992,7 +993,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Array.<String>} errors - List of the detected errors.
    */
   find_errors () {
-    let errors = [];
+    const errors = [];
 
     if (this.changes.resolution === 'DUPLICATE' && !this.changes.dupe_of ||
         this.changes.dupe_of !== undefined && typeof this.changes.dupe_of !== 'number' ||
@@ -1040,7 +1041,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         this.uploads[0].is_markdown = BzDeck.host.markdown_supported;
       } else {
         // Post the changes first
-        let result = await this.post_changes(this.changes);
+        const result = await this.post_changes(this.changes);
 
         if (result.error) {
           throw new Error(result.message);
@@ -1114,7 +1115,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     let size = 0;
 
     try {
-      let result = await BzDeck.host.request(`bug/${this.data.id}/attachment`, null, {
+      const result = await BzDeck.host.request(`bug/${this.data.id}/attachment`, null, {
         method: 'POST',
         data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
         listeners: {
@@ -1163,9 +1164,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   notify_upload_progress () {
-    let uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
-    let total = this.uploads.total;
-    let percentage = Math.round(uploaded / total * 100);
+    const uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
+    const total = this.uploads.total;
+    const percentage = Math.round(uploaded / total * 100);
 
     this.trigger('#SubmitProgress', { bug_id: this.id, uploaded, total, percentage });
   }
@@ -1176,7 +1177,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   _fetch () {
-    let bugzfeed = BzDeck.models.bugzfeed;
+    const bugzfeed = BzDeck.models.bugzfeed;
 
     if (!bugzfeed.connected || !bugzfeed.subscriptions.has(this.data.id)) {
       this.fetch();

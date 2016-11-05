@@ -34,15 +34,15 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    */
   async fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
-    let ids = [..._ids].sort();
+    const ids = [..._ids].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the bugs is not accessible. To work around
     // the issue, divide the array into chunks to retrieve 20 bugs per request, then divide each chunk again if failed.
-    let ids_chunks = FlareTail.helpers.array.chunk(ids, 20);
+    const ids_chunks = FlareTail.helpers.array.chunk(ids, 20);
 
-    let _fetch = async (ids, method, param_str = '') => {
+    const _fetch = async (ids, method, param_str = '') => {
+      const params = new URLSearchParams(param_str);
       let path = `bug/${ids[0]}`;
-      let params = new URLSearchParams(param_str);
       let result;
 
       if (method === 'last_visit') {
@@ -66,8 +66,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return result;
     };
 
-    let get_fetchers = ids => {
-      let fetchers = [];
+    const get_fetchers = ids => {
+      const fetchers = [];
 
       fetchers.push(include_metadata ? _fetch(ids) : Promise.resolve());
       fetchers.push(include_metadata ? _fetch(ids, 'last_visit') : Promise.resolve());
@@ -81,7 +81,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return fetchers;
     };
 
-    let get_bug = ([_meta, _visit, _comments, _history, _attachments], id, index = 0) => {
+    const get_bug = ([_meta, _visit, _comments, _history, _attachments], id, index = 0) => {
       let _bug = { id };
 
       if (include_metadata) {
@@ -95,7 +95,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
         _bug.history = _history.bugs[index].history || [];
         _bug.attachments = _attachments.bugs[id] || [];
 
-        for (let att of _bug.attachments) {
+        for (const att of _bug.attachments) {
           BzDeck.collections.attachments.set(att.id, att);
         }
       }
@@ -103,9 +103,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       return _bug;
     };
 
-    let bugs_chunks = await Promise.all(ids_chunks.map(async ids => {
+    const bugs_chunks = await Promise.all(ids_chunks.map(async ids => {
       try {
-        let values = await Promise.all(get_fetchers(ids));
+        const values = await Promise.all(get_fetchers(ids));
+
         return ids.map((id, index) => get_bug(values, id, index));
       } catch (error) {
         // Immediately return a bug object with an error when a single bug is returned
@@ -125,11 +126,11 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }));
 
     // Flatten an array of arrays
-    let _bugs = bugs_chunks.reduce((a, b) => a.concat(b), []);
+    const _bugs = bugs_chunks.reduce((a, b) => a.concat(b), []);
 
     // _bugs is an Array of raw bug objects. Convert them to BugModel instances
     return Promise.all(_bugs.map(async _bug => {
-      let bug = await this.get(_bug.id);
+      const bug = await this.get(_bug.id);
 
       if (bug) {
         bug.merge(_bug);
@@ -148,18 +149,18 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
    */
   async retrieve_last_visit (_ids) {
-    let bugs = await this.get_some([..._ids].sort());
-    let ids = [...bugs.keys()];
+    const bugs = await this.get_some([..._ids].sort());
+    const ids = [...bugs.keys()];
 
     if (!ids.length) {
       return bugs;
     }
 
     // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
-    let ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
+    const ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
 
-    let results_chunks = await Promise.all(ids_chunks.map(async ids => {
-      let params = new URLSearchParams();
+    const results_chunks = await Promise.all(ids_chunks.map(async ids => {
+      const params = new URLSearchParams();
       let results;
 
       ids.forEach(id => params.append('ids', id));
@@ -174,9 +175,9 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }));
 
     // Flatten an array of arrays
-    let results = results_chunks.reduce((a, b) => a.concat(b), []);
+    const results = results_chunks.reduce((a, b) => a.concat(b), []);
 
-    for (let { id, last_visit_ts } of results) {
+    for (const { id, last_visit_ts } of results) {
       bugs.get(id)._last_visit = last_visit_ts;
     }
 
@@ -190,10 +191,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   async search_local (params) {
-    let words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
-    let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
-    let all_bugs = await this.get_all();
-    let bugs = [...all_bugs.values()].filter(bug => {
+    const words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
+    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
+    const all_bugs = await this.get_all();
+    const bugs = [...all_bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||
              words.every(word => bug.alias.some(alias => match(alias, word))) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
@@ -208,11 +209,11 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   async search_remote (params) {
-    let result = await BzDeck.host.request('bug', params);
-    let _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
-    let __bugs = await this.retrieve_last_visit(_bugs.keys());
-    let bugs = await Promise.all([...__bugs].map(async ([id, bug]) => {
-      let retrieved = _bugs.get(id); // Raw data object
+    const result = await BzDeck.host.request('bug', params);
+    const _bugs = new Map(result.bugs ? result.bugs.map(bug => [bug.id, bug]) : []);
+    const __bugs = await this.retrieve_last_visit(_bugs.keys());
+    const bugs = await Promise.all([...__bugs].map(async ([id, bug]) => {
+      const retrieved = _bugs.get(id); // Raw data object
 
       if (!bug) {
         bug = await this.set(id, retrieved);
@@ -249,7 +250,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<undefined>}
    */
   async on_bug_updated ({ id } = {}) {
-    let bug = await this.get(id, { id });
+    const bug = await this.get(id, { id });
+
     bug.fetch();
   }
 }

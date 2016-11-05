@@ -109,7 +109,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     options.in_promise_all = true;
 
     try {
-      let [bugzilla, image_blob, gravatar] = await Promise.all([
+      const [bugzilla, image_blob, gravatar] = await Promise.all([
         this.get_bugzilla_profile(options),
         this.get_gravatar_image(options),
         // Refresh the Gravatar profile if already exists, or fetch later on demand
@@ -152,11 +152,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       throw new Error(this.data.error);
     }
 
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
 
     params.append('names', this.email);
 
-    let result = await BzDeck.host.request('user', params, { api_key: api_key || undefined });
+    const result = await BzDeck.host.request('user', params, { api_key: api_key || undefined });
 
     if (!result.users) {
       throw new Error(result.message || 'User Not Found');
@@ -223,7 +223,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     }
 
     return new Promise(resolve => {
-      let { hash, color, initial } = this;
+      const { hash, color, initial } = this;
 
       this.on('GlobalView#GravatarImageProvided', data => {
         if (data.hash === hash) {

@@ -38,7 +38,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_adding_bug_requested ({ bug_id, siblings } = {}) {
-    let $existing_bug = this.$container.querySelector(`article[data-bug-id="${bug_id}"]`);
+    const $existing_bug = this.$container.querySelector(`article[data-bug-id="${bug_id}"]`);
 
     BzDeck.views.statusbar.start_loading();
 
@@ -56,7 +56,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
       return;
     }
 
-    let bug_view = new BzDeck.BugDetailsView(this.id, bug_id, siblings);
+    const bug_view = new BzDeck.BugDetailsView(this.id, bug_id, siblings);
 
     this.presenter.siblings = siblings;
     this.loading_bug_id = bug_id;

@@ -39,12 +39,12 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @todo Need refactoring (#232)
    */
   open_tab ({ label, description, category, position = 'next' } = {}, view) {
+    const id = `${category}-${view.id}`;
+    const add_tab = () => this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
     let page;
     let pages = BzDeck.views.pages[`${category}_list`];
-    let id = `${category}-${view.id}`;
     let $tab = document.querySelector(`#tab-${CSS.escape(id)}`);
     let $tabpanel = document.querySelector(`#tabpanel-${CSS.escape(id)}`);
-    let add_tab = () => this.$$tablist.add_tab(id, label, description || label, $tabpanel, position);
 
     if (!pages) {
       pages = BzDeck.views.pages[`${category}_list`] = new Map();
@@ -80,7 +80,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_tab_selected ({ items, oldval } = {}) {
-    let path = this.tab_path_map.get(items[0].id);
+    const path = this.tab_path_map.get(items[0].id);
     let prev_tabpanel_id;
 
     document.documentElement.setAttribute('data-current-tab', path.match(/^\/(\w+)/)[1]);
@@ -91,7 +91,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
       prev_tabpanel_id = oldval[0].id.replace(/^tab-/, 'tabpanel-');
     }
 
-    for (let $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {
+    for (const $tabpanel of document.querySelectorAll('#main-tabpanels > [role="tabpanel"]')) {
       if ($tabpanel.id === prev_tabpanel_id) {
         $tabpanel.classList.add('fixed');
       } else {
@@ -119,8 +119,8 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   add_back_button ($parent) {
-    let $header = $parent.querySelector('header');
-    let $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+    const $header = $parent.querySelector('header');
+    const $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
     if (FlareTail.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n

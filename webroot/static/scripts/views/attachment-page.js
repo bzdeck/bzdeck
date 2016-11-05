@@ -32,10 +32,10 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   reactivate (att_id) {
-    let $$tablist = BzDeck.views.banner.$$tablist;
+    const $$tablist = BzDeck.views.banner.$$tablist;
 
     // Find an existing tab
-    for (let [page_id, page_view] of BzDeck.views.pages.attachment_list || []) {
+    for (const [page_id, page_view] of BzDeck.views.pages.attachment_list || []) {
       if (page_view.att_id === this.att_id && page_view.$tab.parentElement) {
         $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
 
@@ -74,7 +74,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_attachment_available ({ attachment } = {}) {
-    let { id, hash, summary } = attachment;
+    const { id, hash, summary } = attachment;
 
     if (hash) {
       this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n

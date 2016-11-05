@@ -87,11 +87,11 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
       return;
     }
 
-    let all_bugs = await BzDeck.collections.bugs.get_all();
-    let bugs = [...all_bugs.values()].filter(bug => bug.unread);
-    let status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
-    let extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
-    let unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+    const all_bugs = await BzDeck.collections.bugs.get_all();
+    const bugs = [...all_bugs.values()].filter(bug => bug.unread);
+    const status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
+    const extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
+    const unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
 
     // Update View
     this.view.toggle_unread(bugs, loaded, unread_num);
@@ -107,17 +107,17 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * @todo Improve the performance probably using a worker.
    */
   parse_comment (str, is_markdown = true) {
-    let blockquote = p => {
-      let regex = /^&gt;\s?/gm;
+    const blockquote = p => {
+      const regex = /^&gt;\s?/gm;
 
       if (!p.match(regex)) {
         return p;
       }
 
-      let lines = p.split(/\n/);
+      const lines = p.split(/\n/);
       let quote = [];
 
-      for (let [i, line] of lines.entries()) {
+      for (const [i, line] of lines.entries()) {
         if (line.match(regex)) {
           // A quote start
           quote.push(line);
@@ -125,7 +125,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
 
         if ((!line.match(regex) || !lines[i + 1]) && quote.length) {
           // A quote end, the next line is not a part of the quote, or no more lines
-          let quote_str = quote.join('\n');
+          const quote_str = quote.join('\n');
           let quote_repl = quote_str.replace(regex, '');
 
           if (quote_repl.match(regex)) {
@@ -133,7 +133,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
             quote_repl = blockquote(quote_repl);
           }
 
-          for (let p of quote_repl.split(/\n{2,}/)) {
+          for (const p of quote_repl.split(/\n{2,}/)) {
             quote_repl = quote_repl.replace(p, `<p>${p}</p>`);
           }
 
@@ -146,7 +146,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     };
 
     // Autolinkification of general URLs
-    let linkify_general = () => {
+    const linkify_general = () => {
       str = str.replace(
         /((https?|feed|ftps?|ircs?|mailto|news):(?:\/\/)?[\w-]+(\.[\w-]+)+((&amp;|[\w.,@?^=%$:\/~+#-])*(&amp;|[\w@?^=%$\/~+#-]))?)/gm,
         '<a href="$1">$1</a>'
@@ -161,7 +161,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     };
 
     // Autolinkification of bug IDs, attachment IDs, etc.
-    let linkify_bugzilla = () => {
+    const linkify_bugzilla = () => {
       str = str.replace(/Bug\s*#?(\d+)/igm, '<a href="/bug/$1" data-bug-id="$1">$&</a>');
       str = str.replace(/Attachment\s*#?(\d+)/igm, '<a href="/attachment/$1" data-att-id="$1">$&</a>');
     };
@@ -185,7 +185,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     str = FlareTail.helpers.string.sanitize(str);
 
     // Quotes
-    for (let p of str.split(/\n{2,}/)) {
+    for (const p of str.split(/\n{2,}/)) {
       str = str.replace(p, `<p>${blockquote(p)}</p>`);
     }
 

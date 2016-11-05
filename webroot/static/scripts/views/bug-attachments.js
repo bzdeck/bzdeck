@@ -19,8 +19,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   constructor (id, bug_id, $container) {
     super(id); // Assign this.id
 
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let mql = window.matchMedia('(max-width: 1023px)');
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const mql = window.matchMedia('(max-width: 1023px)');
 
     this.bug_id = bug_id;
     this.attachments = new Map();
@@ -30,7 +30,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.$listbox = this.$container.querySelector('[role="listbox"]');
     this.$obsolete_checkbox = this.$container.querySelector('.list [role="checkbox"]');
 
-    for (let $attachment of this.$container.querySelectorAll('[itemprop="attachment"]')) {
+    for (const $attachment of this.$container.querySelectorAll('[itemprop="attachment"]')) {
       $attachment.remove();
     }
 
@@ -39,14 +39,14 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.$$listbox.bind('dblclick', event => this.listbox_onclick(event));
 
     this.$$listbox.bind('Selected', event => {
-      let $target = event.detail.items[0];
+      const $target = event.detail.items[0];
 
       if (!$target || mobile && mql.matches) {
         return;
       }
 
-      let attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
-      let $attachment = this.$container.querySelector('.content');
+      const attachment = this.attachments.get($target.dataset.hash || Number($target.dataset.id));
+      const $attachment = this.$container.querySelector('.content');
 
       new FlareTail.widgets.ScrollBar($attachment);
       new BzDeck.AttachmentView(this.id, attachment, $attachment);
@@ -57,9 +57,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.$$obsolete_checkbox = new FlareTail.widgets.CheckBox(this.$obsolete_checkbox);
 
     this.$$obsolete_checkbox.bind('Toggled', event => {
-      let checked = event.detail.checked;
+      const checked = event.detail.checked;
 
-      for (let $att of this.$listbox.querySelectorAll('[role="option"]')) {
+      for (const $att of this.$listbox.querySelectorAll('[role="option"]')) {
         $att.setAttribute('aria-hidden', checked ? 'false' : $att.querySelector('[itemprop="is_obsolete"]').content);
       }
 
@@ -82,11 +82,11 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async render (attachments) {
-    let $listitem = this.get_template('details-attachment-listitem');
+    const $listitem = this.get_template('details-attachment-listitem');
 
     attachments.reverse(); // The newest attachment should be on the top of the list
 
-    let creators = await Promise.all(attachments.map(att => {
+    const creators = await Promise.all(attachments.map(att => {
       return BzDeck.collections.users.get(att.creator, { name: att.creator });
     }));
 
@@ -110,7 +110,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       }));
     });
 
-    let has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
+    const has_obsolete = [...this.attachments.values()].some(a => !!a.is_obsolete);
 
     this.update_list_title();
     this.$obsolete_checkbox.setAttribute('aria-hidden', !has_obsolete);
@@ -125,10 +125,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   listbox_onclick (event) {
-    let $selected = this.$$listbox.view.selected[0];
-    let id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let narrow = window.matchMedia('(max-width: 1023px)').matches;
+    const $selected = this.$$listbox.view.selected[0];
+    const id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const narrow = window.matchMedia('(max-width: 1023px)').matches;
 
     if (id && ((event.type === 'click' && mobile && narrow) || event.type === 'dblclick')) {
       this.trigger('AnyView#OpeningAttachmentRequested', { id });
@@ -161,7 +161,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     });
 
     this.$drop_target.addEventListener('drop', event => {
-      let dt = event.dataTransfer;
+      const dt = event.dataTransfer;
 
       if (dt.types.contains('Files')) {
         this.trigger_safe('BugView#FilesSelected', { input: dt });
@@ -174,16 +174,16 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     });
 
     this.$$listbox.bind('Selected', event => {
-      let $selected = this.$$listbox.view.selected[0];
-      let hash = $selected ? $selected.dataset.hash : undefined;
+      const $selected = this.$$listbox.view.selected[0];
+      const hash = $selected ? $selected.dataset.hash : undefined;
 
       this.$remove_button.setAttribute('aria-disabled', !hash);
     });
 
     this.$$listbox.assign_key_bindings({
       'Backspace': event => {
-        let $selected = this.$$listbox.view.selected[0];
-        let hash = $selected ? $selected.dataset.hash : undefined;
+        const $selected = this.$$listbox.view.selected[0];
+        const hash = $selected ? $selected.dataset.hash : undefined;
 
         if (hash) {
           this.trigger('BugView#RemoveAttachment', { hash });
@@ -192,7 +192,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       },
     });
 
-    let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
+    const can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
 
     if (can_choose_dir) {
       this.$add_button.title = 'Add attachments... (Shift+Click to choose directory)'; // l10n
@@ -261,7 +261,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       return;
     }
 
-    let $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
+    const $item = this.$listbox.querySelector(`[data-${hash ? 'hash' : 'id'}='${hash || id}']`);
 
     if (['summary', 'content_type'].includes(prop)) {
       $item.querySelector(`[itemprop="${prop}"]`).textContent = value;
@@ -293,8 +293,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   update_list_title () {
-    let total = this.attachments.size;
-    let uploads = [...this.attachments.values()].filter(att => att.is_unuploaded).length;
+    const total = this.attachments.size;
+    const uploads = [...this.attachments.values()].filter(att => att.is_unuploaded).length;
     let text = total === 1 ? '1 attachment' : `${total} attachments`; // l10n
 
     if (uploads > 0) {
@@ -313,8 +313,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_history_updated ({ state } = {}) {
-    let target_id = state ? state.att_id : undefined;
-    let $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
+    const target_id = state ? state.att_id : undefined;
+    const $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
     if ($target && !FlareTail.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
       if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {

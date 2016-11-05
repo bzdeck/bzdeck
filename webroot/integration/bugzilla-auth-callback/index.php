@@ -68,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['client_api_login']) && 
   <body>
     <script>
       window.addEventListener('DOMContentLoaded', event => {
-        let bc = new BroadcastChannel('BugzillaAuthCallback'),
-            client_api_login = '<?php echo $client_api_login ?>',
-            client_api_key = '<?php echo $client_api_key ?>';
+        const bc = new BroadcastChannel('BugzillaAuthCallback');
+        const client_api_login = '<?php echo $client_api_login ?>';
+        const client_api_key = '<?php echo $client_api_key ?>';
 
         // Notify the credentials to the main window over a BroadcastChannel and close this sub window
         bc.postMessage({ client_api_login, client_api_key });

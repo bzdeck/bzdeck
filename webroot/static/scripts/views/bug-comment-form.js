@@ -39,9 +39,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
     this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-    let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
 
-    for (let $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
+    for (const $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
       new FlareTail.widgets.ScrollBar($tabpanel);
     }
 
@@ -133,7 +133,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   init_attachment_tabpanel () {
-    let can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
+    const can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
 
     if (can_choose_dir) {
       this.$attach_button.title = 'Add attachments... (Shift+Click to choose directory)'; // l10n
@@ -157,27 +157,27 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   init_needinfo_tabpanel () {
-    let flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
-    let names = flags.map(flag => flag.requestee);
-    let self_assigned = this.bug.creator === this.bug.assigned_to;
-    let $tab = this.$form.querySelector('[id$="tab-needinfo"]');
-    let $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]');
-    let $finder_outer = $tabpanel.querySelector('.requestee-finder-outer');
-    let $$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-person-finder`, this.bug,
-                                               new Set([this.bug.creator, this.bug.assigned_to]));
-    let $finder = $$finder.$combobox;
+    const flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
+    const names = flags.map(flag => flag.requestee);
+    const self_assigned = this.bug.creator === this.bug.assigned_to;
+    const $tab = this.$form.querySelector('[id$="tab-needinfo"]');
+    const $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]');
+    const $finder_outer = $tabpanel.querySelector('.requestee-finder-outer');
+    const $$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-person-finder`, this.bug,
+                                                 new Set([this.bug.creator, this.bug.assigned_to]));
+    const $finder = $$finder.$combobox;
 
-    let add_row = (requestee, checked, { id, label } = {}) => {
-      let type = id ? 'clear' : 'request';
-      let flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee };
-      let $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);
-      let $checkbox = $row.querySelector('[role="checkbox"]');
-      let $$checkbox = new FlareTail.widgets.CheckBox($checkbox);
-      let $label = $checkbox.querySelector('span');
+    const add_row = (requestee, checked, { id, label } = {}) => {
+      const type = id ? 'clear' : 'request';
+      const flag = id ? { id, status: 'X' } : { new: true, name: 'needinfo', status: '?', requestee };
+      const $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);
+      const $checkbox = $row.querySelector('[role="checkbox"]');
+      const $$checkbox = new FlareTail.widgets.CheckBox($checkbox);
+      const $label = $checkbox.querySelector('span');
 
       (async () => {
-        let _requestee = await BzDeck.collections.users.get(requestee, { name: requestee });
-        let $person = this.fill(this.get_template('person-with-image'), _requestee.properties);
+        const _requestee = await BzDeck.collections.users.get(requestee, { name: requestee });
+        const $person = this.fill(this.get_template('person-with-image'), _requestee.properties);
 
         $row.replaceChild($person, $row.querySelector('strong'));
       })();
@@ -193,11 +193,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     };
 
     // Remove the rows first if any
-    for (let $element of $tabpanel.querySelectorAll('[class$="row"]')) {
+    for (const $element of $tabpanel.querySelectorAll('[class$="row"]')) {
       $element.remove();
     }
 
-    for (let { id, requestee } of flags) {
+    for (const { id, requestee } of flags) {
       add_row(requestee, requestee === BzDeck.account.data.name, { id });
     }
 
@@ -212,7 +212,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     $finder_outer.appendChild($finder);
     $finder.addEventListener('Change', event => {
-      let requestee = event.detail.$target.dataset.value;
+      const requestee = event.detail.$target.dataset.value;
 
       add_row(requestee, true);
       $$finder.exclude.add(requestee);
@@ -229,8 +229,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   oninput () {
-    let text = this.$textbox.value;
-    let storage_key = `bug-${this.bug.id}-comment`;
+    const text = this.$textbox.value;
+    const storage_key = `bug-${this.bug.id}-comment`;
 
     this.$textbox.style.removeProperty('height');
     this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
@@ -266,12 +266,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       return;
     }
 
-    let hash = attachment.hash;
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let click_event_type = mobile ? 'touchstart' : 'mousedown';
-    let mql = window.matchMedia('(max-width: 1023px)');
-    let $tbody = this.$attachments_tbody;
-    let $row = this.get_template('bug-comment-form-attachments-row');
+    const hash = attachment.hash;
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const click_event_type = mobile ? 'touchstart' : 'mousedown';
+    const mql = window.matchMedia('(max-width: 1023px)');
+    const $tbody = this.$attachments_tbody;
+    const $row = this.get_template('bug-comment-form-attachments-row');
 
     $row.dataset.hash = hash;
     $row.querySelector('[itemprop="summary"]').textContent = attachment.summary;
@@ -348,7 +348,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       return;
     }
 
-    let len = uploads.length;
+    const len = uploads.length;
 
     this.$attachments_tab.setAttribute('aria-disabled', !len);
     this.$$tablist.view.selected = len ? this.$attachments_tab : this.$comment_tab;

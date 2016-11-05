@@ -71,8 +71,8 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * @returns {Promise.<undefined>}
    */
   async load_bug () {
-    let container_id = this.container_id;
-    let bug_id = this.bug_id;
+    const container_id = this.container_id;
+    const bug_id = this.bug_id;
 
     if (!navigator.onLine) {
       this.trigger('#BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
@@ -101,8 +101,8 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
       BzDeck.collections.users.add_from_bug(bug);
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);
     } else {
-      let code = bug.error ? bug.error.code : 0;
-      let message = {
+      const code = bug.error ? bug.error.code : 0;
+      const message = {
         102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
               unpublished security issues or marketing-related topics. '
       }[code] || 'This bug data is not available.';

@@ -20,11 +20,11 @@ const tasks = {};
  * @returns {undefined}
  */
 tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
-  let xhr = new XMLHttpRequest();
+  const xhr = new XMLHttpRequest();
 
-  let post = event => {
-    let type = event.type;
-    let message = { type };
+  const post = event => {
+    const type = event.type;
+    const message = { type };
 
     if (type === 'load') {
       message.response = event.target.response;
@@ -60,8 +60,8 @@ tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
  * @returns {undefined}
  */
 tasks.decode = (port, { str, type } = {}) => {
-  let binary = atob(str);
-  let blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type });
+  const binary = atob(str);
+  const blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type });
 
   port.postMessage({ binary, blob });
 };
@@ -73,14 +73,14 @@ tasks.decode = (port, { str, type } = {}) => {
  * @returns {undefined}
  */
 tasks.readfile = (port, { file } = {}) => {
-  let reader = new FileReader();
+  const reader = new FileReader();
 
   reader.addEventListener('load', event => port.postMessage(event.target.result));
   reader.readAsDataURL(file);
 };
 
 self.addEventListener('connect', event => {
-  let port = event.ports[0];
+  const port = event.ports[0];
 
   port.addEventListener('message', event => tasks[event.data[0]](port, event.data[1]));
   port.start();

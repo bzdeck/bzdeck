@@ -28,7 +28,8 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
    * @returns {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
    */
   async get_current () {
-    let accounts = await this.get_all();
+    const accounts = await this.get_all();
+
     return [...accounts.values()].find(account => account.data.active);
   }
 }

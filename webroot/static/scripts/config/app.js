@@ -164,7 +164,7 @@ BzDeck.config = {
  */
 Object.defineProperty(BzDeck, 'compatible', {
   get: () => {
-    let features = [
+    const features = [
       'Worker' in window, // Firefox 3.5
       'FileReader' in window, // Firefox 3.6
       'isInteger' in Number, // Firefox 16

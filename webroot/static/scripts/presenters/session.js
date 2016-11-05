@@ -77,7 +77,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     this.trigger('#StatusUpdate', { status: 'ForcingLogin', message: '' });
 
     // User credentials will be passed from a sub window over a BroadcastChannel
-    let bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
+    const bc = this.auth_callback_bc = new BroadcastChannel('BugzillaAuthCallback');
 
     this.on('LoginFormView#LoginRequested', data => {
       bc.addEventListener('message', ({ data: { client_api_login: name, client_api_key: key }} = {}) => {
@@ -124,9 +124,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     BzDeck.host = await BzDeck.collections.hosts.get(host_id, { host: host_id });
 
     try {
-      let user = await BzDeck.host.verify_account(name, api_key);
-      let _account = { host: BzDeck.host.name, name, api_key, loaded: Date.now(), active: true, bugzilla: user };
-      let account = BzDeck.account = new BzDeck.AccountModel(_account);
+      const user = await BzDeck.host.verify_account(name, api_key);
+      const _account = { host: BzDeck.host.name, name, api_key, loaded: Date.now(), active: true, bugzilla: user };
+      const account = BzDeck.account = new BzDeck.AccountModel(_account);
 
       account.save();
       this.trigger('#UserFound');
@@ -168,7 +168,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       // Depends on BzDeck.collections.bugs
       await BzDeck.collections.attachments.load();
 
-      let bugs = await BzDeck.collections.bugs.get_all();
+      const bugs = await BzDeck.collections.bugs.get_all();
 
       this.firstrun = !bugs.size;
 
@@ -192,17 +192,17 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   async fetch_data (firstrun = false) {
     this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
 
-    let fetch_bugs = async () => {
-      let now = Date.now();
-      let get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
+    const fetch_bugs = async () => {
+      const now = Date.now();
+      const get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
       // Fetch only bugs changed in the last 14 days first to reduce the initial startup time
-      let params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
-      let bugs = await BzDeck.collections.subscriptions.fetch(firstrun, params);
+      const params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
+      const bugs = await BzDeck.collections.subscriptions.fetch(firstrun, params);
 
       if (firstrun) {
         // Fetch the remaining bugs changed within a year
-        let _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
-        let _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
+        const _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
+        const _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
 
         // If the first fetch returned no bugs, wait for the second fetch
         if (!bugs.size) {
@@ -236,7 +236,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     }
 
     try {
-      let endpoint = BzDeck.host.websocket_endpoint;
+      const endpoint = BzDeck.host.websocket_endpoint;
 
       BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
 
@@ -291,7 +291,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    */
   clean () {
     // Terminate timers
-    for (let timer of BzDeck.presenters.global.timers.values()) {
+    for (const timer of BzDeck.presenters.global.timers.values()) {
       window.clearInterval(timer);
     }
 

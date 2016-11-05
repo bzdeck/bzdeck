@@ -18,16 +18,16 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   constructor () {
     super(); // Assign this.id
 
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let $root = document.documentElement; // <html>
-    let $sidebar = document.querySelector('#sidebar');
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const $root = document.documentElement; // <html>
+    const $sidebar = document.querySelector('#sidebar');
 
     $root.setAttribute('data-sidebar-hidden', mobile);
     $sidebar.setAttribute('aria-hidden', mobile);
 
     $sidebar.addEventListener('click', event => {
       if (mobile) {
-        let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+        const hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
         $root.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
@@ -81,10 +81,10 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   open_folder (folder_id, bugs) {
-    let home = BzDeck.views.pages.home;
-    let toolbar = BzDeck.views.banner;
-    let folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
-    let unread = [...bugs.values()].filter(bug => bug.unread).length;
+    const home = BzDeck.views.pages.home;
+    const toolbar = BzDeck.views.banner;
+    const folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
+    const unread = [...bugs.values()].filter(bug => bug.unread).length;
 
     home.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
     home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
@@ -105,7 +105,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   toggle_unread (num) {
-    let $label = document.querySelector('#sidebar-folders--inbox label');
+    const $label = document.querySelector('#sidebar-folders--inbox label');
     let $num = $label.querySelector('span');
 
     if (num) {

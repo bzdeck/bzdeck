@@ -41,7 +41,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     this.presenter = new BzDeck.SearchPagePresenter(this.id);
     this.container_view = new BzDeck.BugContainerView(this.id, this.$preview_pane);
 
-    let params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
+    const params = new URLSearchParams(location.search.substr(1) || (history.state ? history.state.params : undefined));
 
     if (params.toString()) {
       // TODO: support other params
@@ -80,34 +80,36 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   setup_basic_search_pane () {
-    let config = BzDeck.host.data.config;
-    let $pane = this.$basic_search_pane = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
+    const config = BzDeck.host.data.config;
+    const $pane = this.$basic_search_pane = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
 
     // Custom scrollbar
-    for (let $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
+    for (const $outer of $pane.querySelectorAll('[id$="-list-outer"]')) {
       new FlareTail.widgets.ScrollBar($outer, { adjusted: true });
     }
 
-    let $classification_list = $pane.querySelector('[id$="-browse-classification-list"]');
-    let $product_list = $pane.querySelector('[id$="-browse-product-list"]');
-    let $component_list = $pane.querySelector('[id$="-browse-component-list"]');
-    let $status_list = $pane.querySelector('[id$="-browse-status-list"]');
-    let $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
+    const $classification_list = $pane.querySelector('[id$="-browse-classification-list"]');
+    const $product_list = $pane.querySelector('[id$="-browse-product-list"]');
+    const $component_list = $pane.querySelector('[id$="-browse-component-list"]');
+    const $status_list = $pane.querySelector('[id$="-browse-status-list"]');
+    const $resolution_list = $pane.querySelector('[id$="-browse-resolution-list"]');
 
-    let classifications = Object.keys(config.classification).sort().map((value, index) => ({
+    const classifications = Object.keys(config.classification).sort().map((value, index) => ({
       id: `${$classification_list.id}item-${index}`,
       label: value
     }));
 
-    let products = Object.keys(config.product).sort().map((value, index) => ({
+    const products = Object.keys(config.product).sort().map((value, index) => ({
       id: `${$product_list.id}item-${index}`,
       label: value
     }));
 
-    let components = new Set();
+    const components = new Set();
 
-    for (let [key, product] of Object.entries(config.product)) for (let component of Object.keys(product.component)) {
-      components.add(component); // Duplicates will be automatically removed
+    for (const [key, product] of Object.entries(config.product)) {
+      for (const component of Object.keys(product.component)) {
+        components.add(component); // Duplicates will be automatically removed
+      }
     }
 
     components = [...components].sort().map((value, index) => ({
@@ -115,33 +117,33 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       label: value
     }));
 
-    let statuses = config.field.status.values.map((value, index) => ({
+    const statuses = config.field.status.values.map((value, index) => ({
       id: `${$status_list.id}item-${index}`,
       label: value
     }));
 
-    let resolutions = config.field.resolution.values.map((value, index) => ({
+    const resolutions = config.field.resolution.values.map((value, index) => ({
       id: `${$resolution_list.id}item-${index}`,
       label: value || '---',
       selected: !value // Select '---' to search open bugs
     }));
 
-    let ListBox = FlareTail.widgets.ListBox;
-    let $$classification_list = new ListBox($classification_list, classifications);
-    let $$product_list = new ListBox($product_list, products);
-    let $$component_list = new ListBox($component_list, components);
-    let $$status_list = new ListBox($status_list, statuses);
-    let $$resolution_list = new ListBox($resolution_list, resolutions);
+    const ListBox = FlareTail.widgets.ListBox;
+    const $$classification_list = new ListBox($classification_list, classifications);
+    const $$product_list = new ListBox($product_list, products);
+    const $$component_list = new ListBox($component_list, components);
+    const $$status_list = new ListBox($status_list, statuses);
+    const $$resolution_list = new ListBox($resolution_list, resolutions);
 
     $$classification_list.bind('Selected', event => {
-      let products = [];
-      let components = [];
+      const products = [];
+      const components = [];
 
-      for (let classification of event.detail.labels) {
+      for (const classification of event.detail.labels) {
         products.push(...config.classification[classification].products);
       }
 
-      for (let product of products) {
+      for (const product of products) {
         components.push(...Object.keys(config.product[product].component));
       }
 
@@ -150,22 +152,22 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     });
 
     $$product_list.bind('Selected', event => {
-      let components = [];
+      const components = [];
 
-      for (let product of event.detail.labels) {
+      for (const product of event.detail.labels) {
         components.push(...Object.keys(config.product[product].component));
       }
 
       $$component_list.filter(components);
     });
 
-    let $textbox = $pane.querySelector('.text-box [role="searchbox"]');
-    let $$button = new FlareTail.widgets.Button($pane.querySelector('.text-box [role="button"]'));
+    const $textbox = $pane.querySelector('.text-box [role="searchbox"]');
+    const $$button = new FlareTail.widgets.Button($pane.querySelector('.text-box [role="button"]'));
 
     $$button.bind('Pressed', event => {
-      let params = new URLSearchParams();
+      const params = new URLSearchParams();
 
-      let map = {
+      const map = {
         classification: $classification_list,
         product: $product_list,
         component: $component_list,
@@ -173,8 +175,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
         resolution: $resolution_list
       };
 
-      for (let [name, $element] of Object.entries(map)) {
-        for (let $opt of $element.querySelectorAll('[aria-selected="true"]')) {
+      for (const [name, $element] of Object.entries(map)) {
+        for (const $opt of $element.querySelectorAll('[aria-selected="true"]')) {
           params.append(name, $opt.textContent);
         }
       }
@@ -194,11 +196,10 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async setup_result_pane () {
-    let $pane = this.$result_pane = this.$tabpanel.querySelector('[id$="-result-pane"]');
-    let $$grid;
-    let mobile = FlareTail.helpers.env.device.mobile;
+    const $pane = this.$result_pane = this.$tabpanel.querySelector('[id$="-result-pane"]');
+    const mobile = FlareTail.helpers.env.device.mobile;
 
-    let [sort_cond, columns] = await Promise.all([
+    const [sort_cond, columns] = await Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('search.list.columns'),
     ]);
@@ -210,18 +211,18 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
                                 : sort_cond || { key: 'id', order: 'ascending' }
     });
 
-    $$grid = this.thread.$$grid;
+    const $$grid = this.thread.$$grid;
 
     // Force to change the sort condition when switched to the mobile layout
     if (mobile) {
-      let cond = $$grid.options.sort_conditions;
+      const cond = $$grid.options.sort_conditions;
 
       cond.key = 'last_change_time';
       cond.order = 'descending';
     }
 
     $pane.addEventListener('transitionend', event => {
-      let selected = $$grid.view.selected;
+      const selected = $$grid.view.selected;
 
       if (event.propertyName === 'bottom' && selected.length) {
         $$grid.ensure_row_visibility(selected[selected.length - 1]);
@@ -339,8 +340,8 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
       return;
     }
 
-    let { preview_id } = history.state;
-    let siblings = this.get_shown_bugs();
+    const { preview_id } = history.state;
+    const siblings = this.get_shown_bugs();
 
     // Show the bug preview only when the preview pane is visible (on desktop and tablet)
     if (FlareTail.helpers.env.device.mobile) {

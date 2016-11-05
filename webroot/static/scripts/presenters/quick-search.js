@@ -32,18 +32,20 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {Promise.<undefined>}
    */
   async provide_recent_searches () {
-    let history = await BzDeck.prefs.get('search.quick.history');
+    const history = await BzDeck.prefs.get('search.quick.history');
 
-    let results = await Promise.all((history || []).map(async ({ type, id } = {}) => {
+    const results = await Promise.all((history || []).map(async ({ type, id } = {}) => {
       if (type === 'bug') {
-        let bug = await BzDeck.collections.bugs.get(id);
-        let result = bug ? await this.get_bug_result(bug) : undefined
+        const bug = await BzDeck.collections.bugs.get(id);
+        const result = bug ? await this.get_bug_result(bug) : undefined
+
         return result;
       }
 
       if (type === 'user') {
-        let user = await BzDeck.collections.users.get(id);
-        let result = user ? await this.get_user_result(user) : undefined;
+        const user = await BzDeck.collections.users.get(id);
+        const result = user ? await this.get_user_result(user) : undefined;
+
         return result;
       }
     }));
@@ -73,17 +75,17 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       return;
     }
 
-    let params_bugs = new URLSearchParams();
-    let params_users = new URLSearchParams();
+    const params_bugs = new URLSearchParams();
+    const params_users = new URLSearchParams();
 
-    let return_bugs = async bugs => {
-      let results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
+    const return_bugs = async bugs => {
+      const results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
 
       this.trigger_safe('#ResultsAvailable', { category: 'bugs', input, results });
     };
 
-    let return_users = async users => {
-      let results = await Promise.all(users.map(user => this.get_user_result(user)));
+    const return_users = async users => {
+      const results = await Promise.all(users.map(user => this.get_user_result(user)));
 
       this.trigger_safe('#ResultsAvailable', { category: 'users', input, results });
     };
@@ -114,8 +116,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {Promise.<Object>} result - Promise to be resolved in bug search result.
    */
   async get_bug_result (bug) {
-    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-    let _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
+    const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    const _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
 
     return {
       type: 'bug',
@@ -142,7 +144,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {undefined}
    */
   exec_advanced_search (input) {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
 
     if (input.trim()) {
       params.append('short_desc', input.trim());
@@ -162,12 +164,12 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    */
   on_result_selected ({ id, type } = {}) {
     (async () => {
-      let value = await BzDeck.prefs.get('search.quick.history');
-      let history = value || [];
+      const value = await BzDeck.prefs.get('search.quick.history');
+      const history = value || [];
       // Find an existing item
-      let index = history.findIndex(item => item.type === type && item.id === id);
+      const index = history.findIndex(item => item.type === type && item.id === id);
       // If the same item exists, update the timestamp and reorder the history. Otherwise, create a new object
-      let item = index > -1 ? history.splice(index, 1)[0] : { type, id };
+      const item = index > -1 ? history.splice(index, 1)[0] : { type, id };
 
       item.timestamp = Date.now();
       history.unshift(item);

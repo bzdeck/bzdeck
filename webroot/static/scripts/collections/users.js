@@ -30,10 +30,10 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<undefined>}
    */
   async add_from_bug (bug) {
-    let missing = new Set();
+    const missing = new Set();
 
     await Promise.all([...bug.participants.values()].map(async ({ name } = {}) => {
-      let user = await this.get(name);
+      const user = await this.get(name);
 
       if (!user) {
         missing.add(name);
@@ -51,8 +51,8 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<undefined>}
    */
   async refresh () {
-    let all_users = await this.get_all();
-    let users = [...all_users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
+    const all_users = await this.get_all();
+    const users = [...all_users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
 
     if (users.length) {
       this.fetch(users.map(user => user.email));
@@ -65,22 +65,23 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
    */
   async fetch (_names) {
-    let names = [..._names].sort();
+    const names = [..._names].sort();
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
     // issue, divide the array into chunks to retrieve 20 users per request, then divide each chunk again if failed.
-    let names_chunks = FlareTail.helpers.array.chunk(names, 20);
+    const names_chunks = FlareTail.helpers.array.chunk(names, 20);
 
-    let _fetch = async names => {
-      let params = new URLSearchParams();
+    const _fetch = async names => {
+      const params = new URLSearchParams();
 
       names.forEach(name => params.append('names', name));
 
-      let result = await BzDeck.host.request('user', params);
+      const result = await BzDeck.host.request('user', params);
+
       return result.users;
     };
 
-    let users_chunks = await Promise.all(names_chunks.map(names => {
+    const users_chunks = await Promise.all(names_chunks.map(names => {
       try {
         return _fetch(names);
       } catch (error) {
@@ -94,12 +95,13 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     }));
 
     // Flatten an array of arrays
-    let _users = users_chunks.reduce((a, b) => a.concat(b), []) 
+    const _users = users_chunks.reduce((a, b) => a.concat(b), []) 
 
-    let users = await Promise.all(_users.map(async _user => {
-      let name = _user.name;
-      let user = await this.get(name);
-      let obj = _user.error ? { name, error: 'Not Found' } : Object.assign(user ? user.data : {}, { bugzilla: _user });
+    const users = await Promise.all(_users.map(async _user => {
+      const name = _user.name;
+      const user = await this.get(name);
+      const obj = _user.error ? { name, error: 'Not Found' }
+                              : Object.assign(user ? user.data : {}, { bugzilla: _user });
 
       obj.updated = Date.now();
 
@@ -124,16 +126,16 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   async search_local (params) {
-    let words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
-    let match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
+    const words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
+    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
 
     // If the search string starts with a colon, remove it so a nick name may match
     if (words.length === 1 && words[0].startsWith(':')) {
       words[0] = words[0].substr(1);
     }
 
-    let all_users = await this.get_all();
-    let users = [...all_users.values()].filter(user => {
+    const all_users = await this.get_all();
+    const users = [...all_users.values()].filter(user => {
       return words.every(word => match(user.name, word)) ||
              words.every(word => user.nick_names.some(nick => match(nick, word)));
     });
@@ -147,13 +149,13 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
    */
   async search_remote (params) {
-    let result = await BzDeck.host.request('user', params);
+    const result = await BzDeck.host.request('user', params);
     // Raw data objects
-    let _users = new Map(result.users && result.users.length ? result.users.map(user => [user.name, user]) : []);
+    const _users = new Map(result.users && result.users.length ? result.users.map(user => [user.name, user]) : []);
     // Custom data objects
-    let some_users = await this.get_some(_users.keys());
+    const some_users = await this.get_some(_users.keys());
 
-    let users = await Promise.all([...some_users].map(async ([name, user]) => {
+    const users = await Promise.all([...some_users].map(async ([name, user]) => {
       return user || await this.set(name, { name, bugzilla: _users.get(name) });
     }));
 

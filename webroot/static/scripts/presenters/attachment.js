@@ -32,7 +32,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
    * @returns {Promise.<undefined>}
    */
   async get_attachment () {
-    let collection = BzDeck.collections.attachments;
+    const collection = BzDeck.collections.attachments;
 
     try {
       if (!navigator.onLine) {
@@ -54,7 +54,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
 
       this.attachment = att;
 
-      let [bug, creator] = await Promise.all([
+      const [bug, creator] = await Promise.all([
         BzDeck.collections.bugs.get(att.bug_id),
         BzDeck.collections.users.get(att.creator, { name: att.creator }),
       ]);

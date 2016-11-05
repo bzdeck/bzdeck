@@ -34,12 +34,12 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   reactivate (bug_id) {
-    let $$tablist = BzDeck.views.banner.$$tablist;
+    const $$tablist = BzDeck.views.banner.$$tablist;
 
     // Find an existing tab. To enable navigation within a tab, the bug ID is not included to the tab's id attribute,
     // that's why the tab look-up in BzDeck.views.banner.open_tab() is not working and we are doing it here instead.
     // TODO: Refactor tabs and router relationship (#232)
-    for (let [page_id, page_view] of BzDeck.views.pages.details_list || []) {
+    for (const [page_id, page_view] of BzDeck.views.pages.details_list || []) {
       if (page_view.bug_id === bug_id && page_view.$tab.parentElement) {
         $$tablist.view.selected = $$tablist.view.$focused = page_view.$tab;
         BzDeck.views.global.update_window_title(page_view.$tab);
@@ -57,7 +57,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   activate () {
-    let siblings = history.state ? history.state.siblings : [];
+    const siblings = history.state ? history.state.siblings : [];
 
     BzDeck.views.banner.open_tab({
       label: `Bug ${this.bug_id}`, // l10n

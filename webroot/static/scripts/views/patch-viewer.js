@@ -20,27 +20,27 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
   constructor (id, str) {
     super(id); // Assign this.id
 
-    let $fragment = new DocumentFragment();
+    const $fragment = new DocumentFragment();
 
     str = str.replace(/\r\n?/g, '\n');
 
-    for (let file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
-      let lines = file.split(/\n/);
-      let [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, ''));
+    for (const file of str.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
+      const lines = file.split(/\n/);
+      const [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, ''));
+      const $details = $fragment.appendChild(document.createElement('details'));
+      const $summary = $details.appendChild(document.createElement('summary'));
+      const $table = $details.appendChild(document.createElement('table'));
       let removed_ln = 0;
       let added_ln = 0;
-      let $details = $fragment.appendChild(document.createElement('details'));
-      let $summary = $details.appendChild(document.createElement('summary'));
-      let $table = $details.appendChild(document.createElement('table'));
 
       $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
 
-      for (let line of lines) {
-        let $row = $table.insertRow();
-        let $removed_ln = $row.insertCell();
-        let $added_ln = $row.insertCell();
-        let $sign = $row.insertCell();
-        let $line = $row.insertCell();
+      for (const line of lines) {
+        const $row = $table.insertRow();
+        const $removed_ln = $row.insertCell();
+        const $added_ln = $row.insertCell();
+        const $sign = $row.insertCell();
+        const $line = $row.insertCell();
 
         $removed_ln.classList.add('ln', 'removed');
         $added_ln.classList.add('ln', 'removed');
@@ -48,7 +48,7 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
         $line.classList.add('code');
 
         if (line.startsWith('@@')) {
-          let match = line.match(/^@@\ \-(\d+)(?:,\d+)?\s\+(\d+)(?:,\d+)?\s@@/);
+          const match = line.match(/^@@\ \-(\d+)(?:,\d+)?\s\+(\d+)(?:,\d+)?\s@@/);
 
           removed_ln = Number(match[1]);
           added_ln = Number(match[2]);

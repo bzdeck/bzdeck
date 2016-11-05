@@ -89,10 +89,10 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
     // The event type should be click and window.open should be in this event handler, otherwise the new window will be
     // blocked by the browser's popup blocker
     this.$bzauth_button.addEventListener('click', event => {
-      let new_win = window.open();
-      let callback_url = `${location.origin}/integration/bugzilla-auth-callback/`;
-      let auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
-                   + `?callback=${encodeURIComponent(callback_url)}&description=BzDeck`;
+      const new_win = window.open();
+      const callback_url = `${location.origin}/integration/bugzilla-auth-callback/`;
+      const auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
+                     + `?callback=${encodeURIComponent(callback_url)}&description=BzDeck`;
 
       new_win.opener = null;
       new_win.name = 'bugzilla-auth';
@@ -114,23 +114,23 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
     this.$qrauth_button.addEventListener('mousedown', async event => {
-      let $overlay = document.querySelector('#qrcode-auth-overlay');
+      const $overlay = document.querySelector('#qrcode-auth-overlay');
       let $scan_button;
       let $video;
       let stream;
 
-      let decode = () => {
-        let qrcode = $overlay.querySelector('iframe').contentWindow.qrcode;
-        let $canvas = document.createElement('canvas');
-        let width = $canvas.width = $video.videoWidth;
-        let height = $canvas.height = $video.videoHeight;
+      const decode = () => {
+        const qrcode = $overlay.querySelector('iframe').contentWindow.qrcode;
+        const $canvas = document.createElement('canvas');
+        const width = $canvas.width = $video.videoWidth;
+        const height = $canvas.height = $video.videoHeight;
 
         $canvas.getContext('2d').drawImage($video, 0, 0, width, height);
         qrcode.callback = result => this.trigger('#QRCodeDecoded', { host: this.host, result });
         qrcode.decode($canvas.toDataURL('image/png'));
       }
 
-      let hide_overlay = () => {
+      const hide_overlay = () => {
         this.$qrauth_button.focus();
         $overlay.setAttribute('aria-hidden', 'true');
         $scan_button.setAttribute('aria-disabled', 'true');

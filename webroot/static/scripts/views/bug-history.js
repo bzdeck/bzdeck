@@ -32,16 +32,16 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render (history) {
-    let conf_field = BzDeck.host.data.config.field;
-    let $row = this.get_template('details-change');
+    const conf_field = BzDeck.host.data.config.field;
+    const $row = this.get_template('details-change');
 
-    for (let hist of history) {
+    for (const hist of history) {
       this.history.push(hist);
 
-      for (let [i, change] of hist.changes.entries()) {
-        let { field_name, added, removed } = change;
-        let $_row = $row.cloneNode(true);
-        let $cell = field => $_row.querySelector(`[itemprop="${field}"]`);
+      for (const [i, change] of hist.changes.entries()) {
+        const { field_name, added, removed } = change;
+        const $_row = $row.cloneNode(true);
+        const $cell = field => $_row.querySelector(`[itemprop="${field}"]`);
 
         if (i === 0) {
           $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
@@ -53,21 +53,21 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
           $cell('who').remove();
         }
 
-        let _field = conf_field[field_name] ||
-                     // Bug 909055 - Field name mismatch in history: group vs groups
-                     conf_field[field_name.replace(/s$/, '')] ||
-                     // Bug 1078009 - Changes/history now include some wrong field names
-                     conf_field[{
-                       'flagtypes.name': 'flag',
-                       'attachments.description': 'attachment.description',
-                       'attachments.filename': 'attachment.file_name',
-                       'attachments.ispatch': 'attachment.is_patch',
-                       'attachments.isobsolete': 'attachment.is_obsolete',
-                       'attachments.isprivate': 'attachment.is_private',
-                       'attachments.mimetype': 'attachment.content_type',
-                     }[field_name]] ||
-                     // If the Bugzilla config is outdated, the field name can be null
-                     change;
+        const _field = conf_field[field_name] ||
+                       // Bug 909055 - Field name mismatch in history: group vs groups
+                       conf_field[field_name.replace(/s$/, '')] ||
+                       // Bug 1078009 - Changes/history now include some wrong field names
+                       conf_field[{
+                         'flagtypes.name': 'flag',
+                         'attachments.description': 'attachment.description',
+                         'attachments.filename': 'attachment.file_name',
+                         'attachments.ispatch': 'attachment.is_patch',
+                         'attachments.isobsolete': 'attachment.is_obsolete',
+                         'attachments.isprivate': 'attachment.is_private',
+                         'attachments.mimetype': 'attachment.content_type',
+                       }[field_name]] ||
+                       // If the Bugzilla config is outdated, the field name can be null
+                       change;
 
         $cell('what').textContent = _field.description || _field.field_name;
         $cell('removed').innerHTML = this.get_cell_content(field_name, removed);

@@ -82,8 +82,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   activate_results () {
     this.sections = new Map();
 
-    for (let $section of this.$results.querySelectorAll('[role="group"]')) {
-      let category = $section.id.match(/^quicksearch-results-(.+)$/)[1];
+    for (const $section of this.$results.querySelectorAll('[role="group"]')) {
+      const category = $section.id.match(/^quicksearch-results-(.+)$/)[1];
 
       this.sections.set(category, new BzDeck.QuickSearchResultsView(category, $section));
     }
@@ -111,7 +111,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   onsubmit () {
-    let $root = document.documentElement; // <html>
+    const $root = document.documentElement; // <html>
 
     if (FlareTail.helpers.env.device.mobile) {
       if (!$root.hasAttribute('data-quicksearch')) {
@@ -156,7 +156,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @returns {Boolean} displayed - Whether the results are displayed.
    */
   render_results ({ category, input, results } = {}) {
-    let section = this.sections.get(category);
+    const section = this.sections.get(category);
 
     // Check if the search terms have not changed since the search is triggered
     if (input !== this.$input.value) {
@@ -167,7 +167,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
     if (category === 'recent') {
       // Hide all sections first other than Recent Searches
-      for (let [category, _section] of this.sections) if (category !== 'recent') {
+      for (const [category, _section] of this.sections) if (category !== 'recent') {
         _section.render([]);
       }
     } else {
@@ -218,7 +218,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   cleanup () {
-    let $root = document.documentElement; // <html>
+    const $root = document.documentElement; // <html>
 
     if ($root.hasAttribute('data-quicksearch')) {
       $root.removeAttribute('data-quicksearch');
@@ -238,8 +238,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     if ($target.matches('[data-command="search-all-bugs"]')) {
       this.onsubmit();
     } else {
-      let id = $target.dataset.id;
-      let type = $target.getAttribute('itemtype').match(/\w+$/)[0].toLowerCase();
+      const id = $target.dataset.id;
+      const type = $target.getAttribute('itemtype').match(/\w+$/)[0].toLowerCase();
 
       this.trigger('#ResultSelected', { id: isNaN(id) ? id : Number(id), type });
     }
@@ -306,12 +306,12 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
    * @returns {undefined}
    */
   render (results) {
-    let $fragment = new DocumentFragment();
+    const $fragment = new DocumentFragment();
 
     this.results = results;
 
     // Show 5 results for people
-    for (let result of results.slice(0, this.category === 'users' ? 4 : 6)) {
+    for (const result of results.slice(0, this.category === 'users' ? 4 : 6)) {
       $fragment.appendChild(this.fill(this.templates[result.type].cloneNode(true), result, {
         id: `quicksearch-results-${this.category}-item-${result.id}`,
         'data-id': result.id,

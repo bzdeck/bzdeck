@@ -23,7 +23,7 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
     },
     {
       set: (obj, prop, newval) => {
-        let oldval = obj[prop];
+        const oldval = obj[prop];
 
         if (prop === 'preview_id') {
           BzDeck.router.navigate(location.pathname, { preview_id: newval }, true);
@@ -72,9 +72,9 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
     this.trigger('#SearchStarted');
 
     try {
-      let bugs = await BzDeck.collections.bugs.search_remote(params);
+      const _bugs = await BzDeck.collections.bugs.search_remote(params);
+      const bugs = this.data.bugs = new Map(_bugs.map(bug => [bug.id, bug]));
 
-      bugs = this.data.bugs = new Map(bugs.map(bug => [bug.id, bug]));
       this.trigger_safe('#SearchResultsAvailable', { bugs });
     } catch (error) {
       this.trigger('#SearchError', { message: error.message });

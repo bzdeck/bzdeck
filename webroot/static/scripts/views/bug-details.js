@@ -19,7 +19,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   constructor (container_id, bug_id, siblings, $bug) {
     super(container_id, bug_id, siblings); // Assign this.id
 
-    let mql = window.matchMedia('(max-width: 1023px)');
+    const mql = window.matchMedia('(max-width: 1023px)');
 
     this.$tablist = this.$bug.querySelector('[role="tablist"]');
     this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
@@ -27,8 +27,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     this.$outline = this.$bug.querySelector('.bug-outline');
 
     this.$$tablist.bind('Selected', event => {
-      let $selected = event.detail.items[0];
-      let $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
+      const $selected = event.detail.items[0];
+      const $tabpanel = this.$bug.querySelector(`#${$selected.getAttribute('aria-controls')}`);
 
       // Scroll a tabpanel to top when the tab is selected
       $tabpanel.querySelector('.scrollable').scrollTop = 0;
@@ -56,11 +56,11 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   change_layout (mql) {
-    let $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
-    let $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]');
-    let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
-    let $bug_info = this.$bug.querySelector('.bug-info');
-    let $bug_participants = this.$bug.querySelector('.bug-participants');
+    const $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
+    const $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]');
+    const $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
+    const $bug_info = this.$bug.querySelector('.bug-info');
+    const $bug_participants = this.$bug.querySelector('.bug-participants');
 
     if (mql.matches || FlareTail.helpers.env.device.mobile) {  // Mobile layout
       $info_tab.setAttribute('aria-hidden', 'false');
@@ -86,20 +86,20 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   add_mobile_tweaks () {
-    let mql = window.matchMedia('(max-width: 1023px)');
+    const mql = window.matchMedia('(max-width: 1023px)');
 
-    for (let $content of this.$bug.querySelectorAll('.scrollable')) {
-      let info = $content.matches('.bug-info');
-          top = 0,
-          hidden = false;
+    for (const $content of this.$bug.querySelectorAll('.scrollable')) {
+      const info = $content.matches('.bug-info');
+      let top = 0;
+      let hidden = false;
 
       $content.addEventListener('scroll', event => {
         if (!mql.matches && info) {
           return;
         }
 
-        let _top = event.target.scrollTop;
-        let _hidden = top < _top;
+        const _top = event.target.scrollTop;
+        const _hidden = top < _top;
 
         if (hidden !== _hidden) {
           hidden = _hidden;
@@ -117,9 +117,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   add_tab_badges () {
-    for (let prop of ['comments', 'attachments', 'history']) {
-      let tab_name = prop === 'comments' ? 'timeline' : prop;
-      let number = (this.bug[prop] || []).length;
+    for (const prop of ['comments', 'attachments', 'history']) {
+      const tab_name = prop === 'comments' ? 'timeline' : prop;
+      const number = (this.bug[prop] || []).length;
 
       this.$tablist.querySelector(`[id$="tab-${tab_name}"] label`).dataset.badge = number;
     }
@@ -131,14 +131,14 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   render_tracking_flags () {
-    let config = BzDeck.host.data.config;
-    let $outer = this.$bug.querySelector('[data-category="tracking-flags"]');
-    let $flag = this.get_template('details-tracking-flag');
-    let $fragment = new DocumentFragment();
+    const config = BzDeck.host.data.config;
+    const $outer = this.$bug.querySelector('[data-category="tracking-flags"]');
+    const $flag = this.get_template('details-tracking-flag');
+    const $fragment = new DocumentFragment();
 
-    for (let name of Object.keys(this.bug.data).sort()) {
-      let field = config.field[name];
-      let value = this.bug.data[name];
+    for (const name of Object.keys(this.bug.data).sort()) {
+      const field = config.field[name];
+      const value = this.bug.data[name];
 
       // Check the flag type, 99 is for project flags or tracking flags on bugzilla.mozilla.org
       if (!name.startsWith('cf_') || !field || !field.is_active || field.type !== 99) {
@@ -164,9 +164,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   render_attachments () {
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let mql = window.matchMedia('(max-width: 1023px)');
-    let $field = this.$bug.querySelector('[data-field="attachments"]');
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const mql = window.matchMedia('(max-width: 1023px)');
+    const $field = this.$bug.querySelector('[data-field="attachments"]');
 
     this.$$attachments = new BzDeck.BugAttachmentsView(this.id, this.bug.id, $field);
 
@@ -185,7 +185,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
         return;
       }
 
-      let $first = this.$$attachments.$listbox.querySelector('[role="option"][aria-disabled="false"]');
+      const $first = this.$$attachments.$listbox.querySelector('[role="option"][aria-disabled="false"]');
 
       if ($first) {
         this.$$attachments.$$listbox.view.selected = $first;
@@ -199,7 +199,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @returns {undefined}
    */
   render_history () {
-    let $tab = this.$tablist.querySelector('[id$="-tab-history"]');
+    const $tab = this.$tablist.querySelector('[id$="-tab-history"]');
 
     this.$$history = new BzDeck.BugHistoryView(this.id, this.$bug.querySelector('[data-field="history"]'));
 

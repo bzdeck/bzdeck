@@ -140,7 +140,7 @@ BzDeck.BugzfeedModel = class BugzfeedModel extends BzDeck.BaseModel {
    * @returns {undefined}
    */
   onmessage (event) {
-    let { command, bug: id, bugs: ids, result, when } = JSON.parse(event.data);
+    const { command, bug: id, bugs: ids, result, when } = JSON.parse(event.data);
 
     if (command === 'update') {
       this.trigger('#BugUpdated', { id });

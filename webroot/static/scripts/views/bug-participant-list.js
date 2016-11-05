@@ -53,7 +53,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @returns {undefined}
    */
   remove_empty_person () {
-    let $person = this.$list.querySelector('[itemscope]');
+    const $person = this.$list.querySelector('[itemscope]');
 
     if ($person && !$person.querySelector('[itemprop="email"]').content) {
       $person.remove();
@@ -72,7 +72,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.$button.setAttribute('aria-hidden', this.can_take && !this.editing);
     this.$finder.setAttribute('aria-hidden', !this.editing);
 
-    for (let $person of this.$list.querySelectorAll('[itemscope]')) {
+    for (const $person of this.$list.querySelectorAll('[itemscope]')) {
       if (this.editing) {
         this.add_remove_button_to_person($person);
       } else {
@@ -114,9 +114,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @returns {undefined}
    */
   add_subscribe_button () {
-    let listed = this.values.has(this.my_email);
-    let label = listed ? 'Unsubscribe' : 'Subscribe';
-    let aria_label = listed ? 'Remove myself from the Cc list' : 'Add myself to the Cc list';
+    const listed = this.values.has(this.my_email);
+    const label = listed ? 'Unsubscribe' : 'Subscribe';
+    const aria_label = listed ? 'Remove myself from the Cc list' : 'Add myself to the Cc list';
 
     this.$button = this.create_button('subscribe', label, aria_label);
 
@@ -160,11 +160,11 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       return;
     }
 
-    let $person = this.$list.querySelector('[itemscope]');
-    let self = email === this.my_email;
+    const $person = this.$list.querySelector('[itemscope]');
+    const self = email === this.my_email;
 
     if (!this.multiple && $person) {
-      let email = $person.querySelector('[itemprop="email"]').content;
+      const email = $person.querySelector('[itemprop="email"]').content;
 
       this.values.delete(email);
       this.$$finder.exclude.delete(email);
@@ -183,7 +183,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     }
 
     (async () => {
-      let participant = await BzDeck.collections.users.get(email, { name: email });
+      const participant = await BzDeck.collections.users.get(email, { name: email });
 
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
@@ -208,9 +208,9 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       return;
     }
 
-    let $email = this.$list.querySelector(`[itemprop="email"][content="${email}"]`);
-    let $person = $email ? $email.closest('[itemscope]') : undefined;
-    let self = email === this.my_email;
+    const $email = this.$list.querySelector(`[itemprop="email"][content="${email}"]`);
+    const $person = $email ? $email.closest('[itemscope]') : undefined;
+    const self = email === this.my_email;
 
     if (!$person) {
       return;
@@ -241,7 +241,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @returns {HTMLElement} $button
    */
   create_button (command, text, label) {
-    let $button = document.createElement('span');
+    const $button = document.createElement('span');
 
     $button.tabIndex = 0;
     $button.textContent = text;
@@ -260,8 +260,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @returns {HTMLElement} $button
    */
   add_remove_button_to_person ($person) {
-    let email = $person.querySelector('[itemprop="email"]').content;
-    let name = $person.querySelector('[itemprop="name"]').textContent;
+    const email = $person.querySelector('[itemprop="email"]').content;
+    const name = $person.querySelector('[itemprop="name"]').textContent;
     let $button = $person.querySelector('[role="button"]');
 
     if ($button) {

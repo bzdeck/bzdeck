@@ -22,10 +22,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     this.data = data;
     this.name = data.host;
 
-    let config = BzDeck.config.hosts[this.name];
+    const config = BzDeck.config.hosts[this.name];
 
     // Extract the local config for easier access
-    for (let [key, value] of Object.entries(config)) {
+    for (const [key, value] of Object.entries(config)) {
       this[key] = value;
     }
   }
@@ -47,9 +47,9 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       throw new Error('You have to go online to load data.'); // l10n
     }
 
-    let worker = new SharedWorker('/static/scripts/workers/tasks.js');
-    let url = new URL(this.origin + '/rest/' + path);
-    let headers = new Map();
+    const worker = new SharedWorker('/static/scripts/workers/tasks.js');
+    const url = new URL(this.origin + '/rest/' + path);
+    const headers = new Map();
 
     method = method || (data ? 'POST' : 'GET');
     data = data ? Object.assign({}, data) : undefined; // Avoid DataCloneError by postMessage
@@ -68,7 +68,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
 
     return new Promise((resolve, reject) => {
       worker.port.addEventListener('message', event => {
-        let type = event.data.type;
+        const type = event.data.type;
 
         if (type === 'abort') {
           reject(new Error('Connection aborted.'));
@@ -129,7 +129,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       throw new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.');
     }
 
-    let config_retrieved = this.data.config_retrieved = Date.now();
+    const config_retrieved = this.data.config_retrieved = Date.now();
 
     this.data.config = config;
     this.datasource.get_store(this.store_name).save({ host: this.name, config, config_retrieved });
@@ -145,7 +145,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user}
    */
   async verify_account (name, api_key) {
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     let result;
 
     params.append('names', name);

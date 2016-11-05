@@ -24,7 +24,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   onselect (event) {
-    let ids = event.detail.ids;
+    const ids = event.detail.ids;
 
     if (ids.length) {
       this.consumer.presenter.data.preview_id = Number.parseInt(ids[ids.length - 1]);
@@ -39,7 +39,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   ondblclick (event, selector) {
-    let $target = event.originalTarget;
+    const $target = event.originalTarget;
 
     if ($target.matches(selector)) {
       this.trigger('ThreadView#OpeningBugRequested');
@@ -75,12 +75,12 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   constructor (consumer, name, $grid, columns, options) {
     super(); // Assign this.id
 
-    let default_cols = BzDeck.config.grid.default_columns;
-    let field = BzDeck.host.data.config.field;
+    const default_cols = BzDeck.config.grid.default_columns;
+    const field = BzDeck.host.data.config.field;
 
-    let toggle_prop = prop => {
-      for (let $item of this.$$grid.view.selected) {
-        let _data = this.$$grid.data.rows[$item.sectionRowIndex].data;
+    const toggle_prop = prop => {
+      for (const $item of this.$$grid.view.selected) {
+        const _data = this.$$grid.data.rows[$item.sectionRowIndex].data;
 
         _data[prop] = _data[prop] !== true;
       }
@@ -130,8 +130,8 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   async update (bugs) {
     this.bugs = bugs;
 
-    let rows = await Promise.all([...bugs.values()].map(async bug => {
-      let row = {
+    const rows = await Promise.all([...bugs.values()].map(async bug => {
+      const row = {
         id: `${this.$$grid.view.$container.id}-row-${bug.id}`,
         data: {},
         dataset: {
@@ -141,21 +141,21 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       };
 
       await Promise.all(this.$$grid.data.columns.map(async column => {
-        let field = column.id;
+        const field = column.id;
         let value = bug[field];
 
         if (!value) {
           value = '';
         } else if (Array.isArray(value)) {
           if (field === 'mentors') { // Array of Person
-            let mentors = await Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name })));
+            const mentors = await Promise.all(bug.mentors.map(name => BzDeck.collections.users.get(name, { name })));
 
             value = mentors.map(mentor => mentors.name).join(', ');
           } else { // Keywords & Aliases
             value = value.join(', ');
           }
         } else if (typeof value === 'object' && !Array.isArray(value)) { // Person
-          let user = await BzDeck.collections.users.get(value.name, { name: value.name });
+          const user = await BzDeck.collections.users.get(value.name, { name: value.name });
 
           value = user.name;
         } else if (field === 'starred') {
@@ -205,7 +205,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @returns {undefined}
    */
   on_annotation_updated ({ bug, type, value } = {}) {
-    let $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug.id}"]`);
+    const $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug.id}"]`);
 
     if ($row) {
       $row.setAttribute(`data-${type}`, value);
@@ -235,8 +235,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   constructor (consumer, name, $container, options) {
     super(); // Assign this.id
 
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let animations = new Set();
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const animations = new Set();
 
     this.consumer = consumer;
     this.name = name;
@@ -257,9 +257,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$$listbox.bind('focus', event => {
       // Create a marquee effect when the bug title is overflowing
-      for (let $option of this.$$listbox.view.selected) {
-        let $summary = $option.querySelector('[itemprop="summary"]');
-        let width = $summary.scrollWidth;
+      for (const $option of this.$$listbox.view.selected) {
+        const $summary = $option.querySelector('[itemprop="summary"]');
+        const width = $summary.scrollWidth;
 
         if (width > $summary.clientWidth) {
           animations.add($summary.animate([
@@ -283,9 +283,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       F: event => FlareTail.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
       // Toggle star
       S: event => {
-        for (let $item of this.$$listbox.view.selected) {
+        for (const $item of this.$$listbox.view.selected) {
           (async () => {
-            let bug = await BzDeck.collections.bugs.get(Number($item.dataset.id));
+            const bug = await BzDeck.collections.bugs.get(Number($item.dataset.id));
 
             bug.starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
           })();
@@ -316,7 +316,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {Promise.<undefined>}
    */
   async init_filter () {
-    let pref_name = 'ui.home.filter';
+    const pref_name = 'ui.home.filter';
     let pref_value = this.options.filter_condition = await BzDeck.prefs.get(pref_name) || 'open';
 
     this.$filter = this.$header.querySelector('.filter');
@@ -324,7 +324,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$$filter = new FlareTail.widgets.RadioGroup(this.$filter);
     this.filter_radio = {};
 
-    for (let value of ['open', 'closed', 'all']) {
+    for (const value of ['open', 'closed', 'all']) {
       this.filter_radio[value] = this.$filter.querySelector(`[data-value="${value}"`);
     }
 
@@ -341,7 +341,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {Promise.<undefined>}
    */
   async init_sorter () {
-    let pref_name = 'home.list.sort_conditions';
+    const pref_name = 'home.list.sort_conditions';
     let pref_value = this.options.sort_conditions = await BzDeck.prefs.get(pref_name) || {};
 
     this.$sorter = this.$header.querySelector('[data-command="sort"]');
@@ -349,7 +349,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$$sorter = new FlareTail.widgets.Button(this.$sorter);
 
     this.$$sorter.bind('Pressed', event => {
-      let order = event.detail.pressed ? 'ascending' : 'descending';
+      const order = event.detail.pressed ? 'ascending' : 'descending';
 
       pref_value = this.options.sort_conditions = { key: 'last_change_time', type: 'time', order };
       this.update(this.bugs);
@@ -364,10 +364,10 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    */
   update (bugs) {
     let _bugs = [...bugs.values()];
-    let filter_condition = this.options.filter_condition || 'open';
-    let sort_conditions = this.options.sort_conditions;
-    let statuses = BzDeck.host.data.config.field.status;
-    let filtered_bugs = {
+    const filter_condition = this.options.filter_condition || 'open';
+    const sort_conditions = this.options.sort_conditions;
+    const statuses = BzDeck.host.data.config.field.status;
+    const filtered_bugs = {
       open: _bugs.filter(bug => statuses.open.includes(bug.status)),
       closed: _bugs.filter(bug => statuses.closed.includes(bug.status)),
     };
@@ -396,12 +396,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {Promise.<undefined>}
    */
   async render (addition = false) {
-    let bugs = this.unrendered_bugs.splice(0, 50);
-    let $fragment = new DocumentFragment();
+    const bugs = this.unrendered_bugs.splice(0, 50);
+    const $fragment = new DocumentFragment();
 
-    let contributors = await Promise.all(bugs.map(bug => {
+    const contributors = await Promise.all(bugs.map(bug => {
       // TODO: combine primary participants' avatars/initials (#124)
-      let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+      const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+
       return BzDeck.collections.users.get(contributor, { name: contributor });
     }));
 
@@ -409,7 +410,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     bugs.forEach((bug, index) => {
       // Reuse items whenever possible
-      let option_id = `${this.name}-vertical-thread-bug-${bug.id}`;
+      const option_id = `${this.name}-vertical-thread-bug-${bug.id}`;
       let $option = document.getElementById(option_id);
 
       if (!$option) {
@@ -448,13 +449,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {undefined}
    */
   on_annotation_updated ({ bug, type, value } = {}) {
-    let $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
+    const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
 
     if ($option) {
       $option.setAttribute(`data-${type}`, value);
 
       if (type === 'starred') {
-        let $checkbox = $option.querySelector('[itemprop="starred"]');
+        const $checkbox = $option.querySelector('[itemprop="starred"]');
 
         $checkbox.setAttribute('aria-checked', value);
         $checkbox.setAttribute('content', value);

@@ -21,23 +21,22 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     this.bug = bug;
     this.$bug = $bug;
 
-    let get_time = str => (new Date(str)).getTime();
-    let entries = new Map([...this.bug.comments.entries()]
+    const get_time = str => (new Date(str)).getTime();
+    const entries = new Map([...this.bug.comments.entries()]
             .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
-    let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const data_arr = [];
+    const $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
+    const timeline_id = $timeline.id = `${this.id}-timeline`;
+    const $comments_wrapper = $timeline.querySelector('.comments-wrapper');
     let read_comments_num = 0;
     let last_comment_time;
-    let data_arr = [];
-    let $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
-    let timeline_id = $timeline.id = `${this.id}-timeline`;
-    let $expander;
-    let $comments_wrapper = $timeline.querySelector('.comments-wrapper');
 
-    for (let attachment of this.bug.attachments) {
+    for (const attachment of this.bug.attachments) {
       entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
     }
 
-    for (let _history of this.bug.history) if (entries.has(get_time(_history.when))) {
+    for (const _history of this.bug.history) if (entries.has(get_time(_history.when))) {
       entries.get(get_time(_history.when)).set('history', _history);
     } else {
       entries.set(get_time(_history.when), new Map([['history', _history]]));
@@ -49,7 +48,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     // Collapse read comments
     // If the fill_bug_details function is called after the bug details are fetched,
     // the _last_visit annotation is already true, so check the delayed argument here
-    for (let [time, data] of this.entries) {
+    for (const [time, data] of this.entries) {
       // Append the time in data for later use
       data.set('time', time);
 
@@ -63,7 +62,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       }
     }
 
-    for (let [time, data] of this.entries) if (data.has('rendering') || time >= last_comment_time) {
+    for (const [time, data] of this.entries) if (data.has('rendering') || time >= last_comment_time) {
       data_arr.push(data);
     }
 
@@ -75,19 +74,20 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       // The last comment is rendered, so decrease the number
       read_comments_num--;
 
-      $expander = this.$expander = document.createElement('div');
+      const $expander = this.$expander = document.createElement('div');
+
       $expander.textContent = read_comments_num === 1 ? '1 older comment'
                                                       : `${read_comments_num} older comments`; // l10n
       $expander.className = 'read-comments-expander';
       $expander.tabIndex = 0;
       $expander.setAttribute('role', 'button');
       $expander.addEventListener(click_event_type, event => {
-        let $fragment = new DocumentFragment();
-        let data_arr = [];
+        const $fragment = new DocumentFragment();
+        const data_arr = [];
 
         $expander.textContent = 'Loading...'; // l10n
 
-        for (let [time, data] of this.entries) if (!data.get('rendered')) {
+        for (const [time, data] of this.entries) if (!data.get('rendered')) {
           data_arr.push(data);
         }
 
@@ -95,7 +95,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           $fragment.appendChild(await this.generate_entries(data_arr));
 
           // Collapse comments by default
-          for (let $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
+          for (const $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
             $comment.setAttribute('aria-expanded', 'false');
           }
 
@@ -125,13 +125,12 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a fragment containing entry nodes.
    */
   async generate_entries (data_arr) {
-    let $fragment = new DocumentFragment();
-
-    let _entries = await Promise.all(data_arr.map(data => {
+    const $fragment = new DocumentFragment();
+    const _entries = await Promise.all(data_arr.map(data => {
       return (new BzDeck.BugTimelineEntryView(this.id, this.bug, data)).create();
     }));
 
-    for (let entry of _entries) {
+    for (const entry of _entries) {
       $fragment.appendChild(entry.$outer);
       this.entries.get(entry.time).delete('rendering');
       this.entries.get(entry.time).set('rendered', true);
@@ -150,7 +149,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       this.$expander.dispatchEvent(new CustomEvent(FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown'));
     }
 
-    for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
+    for (const $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
       $comment.dispatchEvent(new CustomEvent('ToggleExpanded', { detail: { expanded: true }}));
     }
   }
@@ -161,7 +160,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   collapse_comments () {
-    for (let $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
+    for (const $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
       $comment.dispatchEvent(new CustomEvent('ToggleExpanded', { detail: { expanded: false }}));
     }
   }
@@ -174,12 +173,12 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_history_updated ({ hash } = {}) {
-    let match = hash.match(/^#c(\d+)$/);
+    const match = hash.match(/^#c(\d+)$/);
 
     if (match) {
-      let click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
-      let count = Number.parseInt(match[1]);
-      let $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
+      const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+      const count = Number.parseInt(match[1]);
+      const $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 
       if ($comment) {
         if (this.$expander) {
@@ -205,17 +204,17 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       return;
     }
 
-    for (let $attachment of this.$timeline.querySelectorAll('[itemprop="attachment"]')) {
-      let $media = $attachment.querySelector('img, audio, video');
+    for (const $attachment of this.$timeline.querySelectorAll('[itemprop="attachment"]')) {
+      const $media = $attachment.querySelector('img, audio, video');
 
       if ($media && !$media.src) {
-        let att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id'));
+        const att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id'));
 
         $media.parentElement.setAttribute('aria-busy', 'true');
 
         (async () => {
-          let attachment = await BzDeck.collections.attachments.get(att_id);
-          let result = await attachment.get_data();
+          const attachment = await BzDeck.collections.attachments.get(att_id);
+          const result = await attachment.get_data();
 
           $media.src = URL.createObjectURL(result.blob);
           attachment.data = result.attachment.data;

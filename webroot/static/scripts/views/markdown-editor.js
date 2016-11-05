@@ -30,10 +30,10 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
     });
 
     // Change the shortcut labels depending on the user's platform
-    let kbd_regex = /\(Cmd\+(\w)\)$/;
-    let kbd_suffix = FlareTail.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
+    const kbd_regex = /\(Cmd\+(\w)\)$/;
+    const kbd_suffix = FlareTail.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
 
-    for (let $button of [...this.$toolbar.querySelectorAll('[role="button"]')]) {
+    for (const $button of [...this.$toolbar.querySelectorAll('[role="button"]')]) {
       if ($button.title.match(kbd_regex)) {
         $button.title = $button.title.replace(kbd_regex, `(${kbd_suffix}$1)`);
       }
@@ -52,15 +52,15 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
    * @returns {undefined}
    */
   exec_command (tag) {
-    let value = this.$textbox.value;
-    let start = this.$textbox.selectionStart;
-    let end = this.$textbox.selectionEnd;
-    let before = value.substring(0, start);
-    let selection = value.substring(start, end);
-    let after = value.substring(end);
-    let multiline = selection.includes('\n');
+    const value = this.$textbox.value;
+    const start = this.$textbox.selectionStart;
+    const end = this.$textbox.selectionEnd;
+    const before = value.substring(0, start);
+    const selection = value.substring(start, end);
+    const after = value.substring(end);
+    const multiline = selection.includes('\n');
 
-    let update = (text, new_start, new_end) => {
+    const update = (text, new_start, new_end) => {
       this.$textbox.value = before + text + after;
 
       if (new_start) {
@@ -71,11 +71,11 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       FlareTail.helpers.event.trigger(this.$textbox, 'input', {}, false);
     };
 
-    let bracket = (mark, mark2 = '') => {
+    const bracket = (mark, mark2 = '') => {
       update(`${mark}${mark2}${selection}${mark2}${mark}`, start + mark.length, end + mark.length);
     };
 
-    let quote = mark => {
+    const quote = mark => {
       if (multiline) {
         update(selection.split('\n').map((line, i) => `${mark || (i + 1) + '.'} ${line}`).join('\n'));
       } else if (selection) {
@@ -85,7 +85,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
     };
 
-    let anchor = () => {
+    const anchor = () => {
       if (selection.match(/^(https?|ftp|mailto):/)) {
         update(`[](${selection})`, start + 1);
       } else {
@@ -93,7 +93,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
     };
 
-    let func = {
+    const func = {
       strong: () => bracket('**'),
       em: () => bracket('_'),
       a: () => anchor(),

@@ -35,13 +35,13 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
    * @returns {Promise.<undefined>}
    */
   async on_profile_requested () {
-    let origin = BzDeck.host.origin;
-    let email = encodeURI(this.email);
+    const origin = BzDeck.host.origin;
+    const email = encodeURI(this.email);
 
     this.user = await BzDeck.collections.users.get(this.email, { name: this.email });
 
     (async () => {
-      let profile = await this.user.get_gravatar_profile();
+      const profile = await this.user.get_gravatar_profile();
 
       this.trigger('#GravatarProfileFound', {
         style: { 'background-image': this.user.background_image ? `url(${this.user.background_image})` : 'none' },
@@ -50,7 +50,7 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
 
     (async () => {
       try {
-        let profile = await this.user.get_bugzilla_profile();
+        const profile = await this.user.get_bugzilla_profile();
 
         this.trigger('#BugzillaProfileFound', {
           profile: {

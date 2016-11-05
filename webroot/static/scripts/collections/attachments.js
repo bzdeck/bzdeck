@@ -33,9 +33,9 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   async load () {
     this.map = new Map();
 
-    let bugs = await BzDeck.collections.bugs.get_all();
+    const bugs = await BzDeck.collections.bugs.get_all();
 
-    for (let [id, bug] of bugs) for (let att of bug.attachments || []) {
+    for (const [id, bug] of bugs) for (const att of bug.attachments || []) {
       this.map.set(att.id, new this.model(att));
     }
 
@@ -52,7 +52,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
    */
   async cache (att, size) {
-    let current_time = (new Date()).toISOString();
+    const current_time = (new Date()).toISOString();
 
     Object.defineProperties(att, {
       // Add custom properties

@@ -71,7 +71,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {Boolean} result - Whether the view is updated.
    */
   on_bug_data_unavailable ({ code, message } = {}) {
-    let $error = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
+    const $error = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
       id: this.bug_id,
       status: message,
     }, {
@@ -87,7 +87,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   setup_toolbar () {
-    let $button = this.$bug.querySelector('[data-command="show-menu"]');
+    const $button = this.$bug.querySelector('[data-command="show-menu"]');
 
     if (!$button) {
       return;
@@ -95,20 +95,20 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     new FlareTail.widgets.Button($button);
 
-    let $timeline = this.$bug.querySelector('.bug-timeline');
-    let $menu = document.getElementById($button.getAttribute('aria-owns'));
-    let $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]');
-    let $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]');
-    let $copy_link = $menu.querySelector('[data-command="copy-link"]');
-    let $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]');
-    let $tweet_link = $menu.querySelector('[data-command="tweet"]');
+    const $timeline = this.$bug.querySelector('.bug-timeline');
+    const $menu = document.getElementById($button.getAttribute('aria-owns'));
+    const $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]');
+    const $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]');
+    const $copy_link = $menu.querySelector('[data-command="copy-link"]');
+    const $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]');
+    const $tweet_link = $menu.querySelector('[data-command="tweet"]');
 
-    let toggle_cc = value => {
+    const toggle_cc = value => {
       BzDeck.prefs.set('ui.timeline.show_cc_changes', value);
       document.documentElement.setAttribute('data-ui-timeline-show-cc-changes', String(value));
     };
 
-    let handlers = {
+    const handlers = {
       'show-cc': () => toggle_cc(true),
       'hide-cc': () => toggle_cc(false),
       'expand-comments': () => this.timeline.expand_comments(),
@@ -117,11 +117,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     };
 
     $menu.addEventListener('MenuOpened', async event => {
-      let collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \
-                                                    [itemprop="comment"][aria-expanded="false"]').length;
+      const collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \
+                                                      [itemprop="comment"][aria-expanded="false"]').length;
 
-      let show_cc_changes = await BzDeck.prefs.get('ui.timeline.show_cc_changes');
-      let cc_shown = !!show_cc_changes;
+      const show_cc_changes = await BzDeck.prefs.get('ui.timeline.show_cc_changes');
+      const cc_shown = !!show_cc_changes;
 
       $toggle_comments.setAttribute('aria-disabled', !this.timeline);
       $toggle_comments.setAttribute('data-command', collapsed ? 'expand-comments' : 'collapse-comments');
@@ -137,7 +137,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       $copy_link.addEventListener('mousedown', event => event.stopPropagation());
       $copy_link.addEventListener('click', event => document.execCommand('copy'));
       $copy_link.addEventListener('copy', event => {
-        let url = `${location.origin}/bug/${this.bug.id}`;
+        const url = `${location.origin}/bug/${this.bug.id}`;
 
         // Modify the clipboard
         event.clipboardData.setData('text/uri-list', url);
@@ -161,10 +161,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($tweet_link) {
       // https://dev.twitter.com/web/tweet-button/web-intent
-      let summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : '');
-      let href = 'https://twitter.com/intent/tweet?via=BzDeck'
-               + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
-               + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
+      const summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : '');
+      const href = 'https://twitter.com/intent/tweet?via=BzDeck'
+                 + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
+                 + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
 
       $tweet_link.href = href;
     }
@@ -181,17 +181,17 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   setup_navigation () {
-    let Button = FlareTail.widgets.Button;
-    let $toolbar = this.$bug.querySelector('[role="toolbar"]');
-    let $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]'));
-    let $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]'));
-    let index = this.siblings.indexOf(this.bug_id);
-    let prev = this.siblings[index - 1];
-    let next = this.siblings[index + 1];
-    let assign_key_binding = (key, command) => FlareTail.helpers.kbd.assign(this.$bug, { [key]: command });
+    const Button = FlareTail.widgets.Button;
+    const $toolbar = this.$bug.querySelector('[role="toolbar"]');
+    const $$btn_back = new Button($toolbar.querySelector('[data-command="nav-back"]'));
+    const $$btn_forward = new Button($toolbar.querySelector('[data-command="nav-forward"]'));
+    const index = this.siblings.indexOf(this.bug_id);
+    const prev = this.siblings[index - 1];
+    const next = this.siblings[index + 1];
+    const assign_key_binding = (key, command) => FlareTail.helpers.kbd.assign(this.$bug, { [key]: command });
 
-    let set_button_tooltip = async (id, $$button) => {
-      let bug = await BzDeck.collections.bugs.get(id);
+    const set_button_tooltip = async (id, $$button) => {
+      const bug = await BzDeck.collections.bugs.get(id);
 
       $$button.view.$button.title = bug && bug.summary ? `Bug ${id}\n${bug.summary}` : `Bug ${id}`; // l10n
     };
@@ -244,8 +244,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     this.setup_toolbar();
 
-    let _bug = {};
-    let get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
+    const _bug = {};
+    const get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
     (async () => {
       await Promise.all(BzDeck.config.grid.default_columns.map(async ({ id: field, type } = {}) => {
@@ -253,12 +253,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
           if (field === 'keywords') {
             _bug.keyword = this.bug.keywords;
           } else if (field === 'mentors') {
-            let mentors = await Promise.all(this.bug.mentors.map(name => get_user(name)));
+            const mentors = await Promise.all(this.bug.mentors.map(name => get_user(name)));
 
             _bug.mentor = mentors.map(mentor => mentor.properties);
           } else if (type === 'person') {
             if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
-              let user = await get_user(this.bug[field]);
+              const user = await get_user(this.bug[field]);
 
               _bug[field] = user.properties;
             }
@@ -269,7 +269,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       }));
 
       // Other Contributors, excluding Cc
-      let contributors = await Promise.all([...this.bug.contributors]
+      const contributors = await Promise.all([...this.bug.contributors]
           .filter(name => !this.bug.cc.includes(name)).map(name => get_user(name)));
 
       _bug.contributor = contributors.map(contributor => contributor.properties);
@@ -278,13 +278,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       this.set_product_tooltips();
     })();
 
-    let init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
-    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
-    let $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
-    let $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
-    let $container = this.$bug.closest('.bug-container');
-    let $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
-    let $timeline = this.$bug.querySelector('.bug-timeline');
+    const init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
+    const can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    const $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
+    const $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
+    const $container = this.$bug.closest('.bug-container');
+    const $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
+    const $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
@@ -316,7 +316,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     $timeline.setAttribute('aria-busy', 'true');
 
     // Empty timeline while keeping the scrollbar
-    for (let $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
+    for (const $comment of $timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
       $comment.remove();
     }
 
@@ -331,15 +331,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     })();
 
     // Focus management
-    let set_focus = async shift => {
-      let order = await BzDeck.prefs.get('ui.timeline.sort.order');
-      let ascending = order !== 'descending';
+    const set_focus = async shift => {
+      const order = await BzDeck.prefs.get('ui.timeline.sort.order');
+      const ascending = order !== 'descending';
       let entries = [...$timeline.querySelectorAll('[itemprop="comment"]')];
 
       entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
 
       // Focus the first (or last) visible entry
-      for (let $_entry of entries) if ($_entry.clientHeight) {
+      for (const $_entry of entries) if ($_entry.clientHeight) {
         $_entry.focus();
         $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
 
@@ -381,9 +381,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return;
     }
 
-    let _cc = await Promise.all(this.bug.cc.map(name => BzDeck.collections.users.get(name, { name })));
-
-    let _bug = {
+    const _cc = await Promise.all(this.bug.cc.map(name => BzDeck.collections.users.get(name, { name })));
+    const _bug = {
       cc: _cc.map(person => person.properties),
       depends_on: this.bug.depends_on,
       blocks: this.bug.blocks,
@@ -395,8 +394,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.fill(this.$bug, _bug);
 
     // Depends on, Blocks and Duplicates
-    for (let $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
-                                                [itemprop="duplicate"]')) {
+    for (const $li of this.$bug.querySelectorAll('[itemprop="depends_on"], [itemprop="blocks"], \
+                                                  [itemprop="duplicate"]')) {
       $li.setAttribute('data-bug-id', $li.textContent);
 
       (new FlareTail.widgets.Button($li)).bind('Pressed', event => {
@@ -405,9 +404,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     // See Also
-    for (let $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
-      let re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.'));
-      let match = $link.href.match(re);
+    for (const $link of this.$bug.querySelectorAll('[itemprop="see_also"]')) {
+      const re = new RegExp(`^${BzDeck.host.origin}/show_bug.cgi\\?id=(\\d+)$`.replace(/\./g, '\\.'));
+      const match = $link.href.match(re);
 
       if (match) {
         $link.text = match[1];
@@ -462,35 +461,33 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.comboboxes = new WeakMap();
     this.subscribe('BugModel#FieldEdited', true);
 
-    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
-    let is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
-    let editing = this.$bug.closest('.bug-container').matches('[aria-expanded="true"]');
+    const can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    const is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
+    const editing = this.$bug.closest('.bug-container').matches('[aria-expanded="true"]');
 
     // Iterate over the fields except the Flags section which is activated by BugFlagsView
-    for (let $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
-      let name = $section.dataset.field;
-      let is_status_field = ['status', 'resolution', 'dupe_of'].includes(name);
-      let toggle;
-      let $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
-      let $textbox = $section.querySelector('[role="textbox"]');
-      let $next_field = $section.nextElementSibling;
+    for (const $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
+      const name = $section.dataset.field;
+      const is_status_field = ['status', 'resolution', 'dupe_of'].includes(name);
+      const $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
+      const $textbox = $section.querySelector('[role="textbox"]');
+      const $next_field = $section.nextElementSibling;
 
       // Activate comboboxes
       if ($combobox) {
-        let $$combobox = new FlareTail.widgets.ComboBox($combobox);
+        const $$combobox = new FlareTail.widgets.ComboBox($combobox);
+        const toggle = disabled => $combobox.setAttribute('aria-disabled', disabled && !is_status_field);
 
         this.comboboxes.set($combobox, $$combobox);
-
         $combobox.setAttribute('aria-readonly', !can_editbugs);
 
-        toggle = disabled => $combobox.setAttribute('aria-disabled', disabled && !is_status_field);
         toggle(!editing);
         this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
 
         $$combobox.build_dropdown(this.get_field_values(name)
             .map(value => ({ value, selected: value === this.bug[name] })));
         $$combobox.bind('Change', event => {
-          let value = event.detail.value;
+          const value = event.detail.value;
 
           this.trigger('BugView#EditField', { name, value });
 
@@ -503,7 +500,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Activate textboxes
       if ($textbox) {
-        let $$textbox = new FlareTail.widgets.TextBox($textbox);
+        const $$textbox = new FlareTail.widgets.TextBox($textbox);
+        const toggle = enabled => {
+          $textbox.contentEditable = $textbox.spellcheck = enabled && can_editbugs;
+          $textbox.setAttribute('aria-disabled', !enabled);
+        };
 
         $textbox.tabIndex = 0;
         $textbox.setAttribute('aria-readonly', !can_editbugs);
@@ -512,11 +513,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
-
-        toggle = enabled => {
-          $textbox.contentEditable = $textbox.spellcheck = enabled && can_editbugs;
-          $textbox.setAttribute('aria-disabled', !enabled);
-        };
 
         toggle(editing);
         this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(enabled));
@@ -540,12 +536,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     {
-      let $participants = this.$bug.querySelector('.bug-participants');
+      const $participants = this.$bug.querySelector('.bug-participants');
 
       if ($participants) {
         // Add a tooltop for each person; should be replaced by a rich tooltip (#80)
         $participants.addEventListener('mouseover', event => {
-          let $target = event.target;
+          const $target = event.target;
 
           if ($target.matches('[itemprop][itemtype$="User"]') && !$target.title) {
             $target.title = $target.querySelector('[itemprop="description"]').content + '\n'
@@ -567,12 +563,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   activate_url_widget ($section, editing) {
-    let toggle = disabled => {
+    const toggle = disabled => {
       let $link = $section.querySelector('a');
       let $textbox = $section.querySelector('input');
 
       if (!disabled) {
-        let orignal_value = $link.getAttribute('href');
+        const orignal_value = $link.getAttribute('href');
 
         $textbox = document.createElement('input');
         $textbox.className = 'distinct';
@@ -607,15 +603,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
    */
   init_att_drop_target () {
+    const $target = this.$bug.querySelector('.att-drop-target');
     let timer;
-    let $target = this.$bug.querySelector('.att-drop-target');
 
     if (!$target) {
       return false;
     }
 
     this.$bug.addEventListener('dragover', event => {
-      let dt = event.dataTransfer;
+      const dt = event.dataTransfer;
 
       event.preventDefault();
 
@@ -639,7 +635,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     });
 
     this.$bug.addEventListener('drop', event => {
-      let dt = event.dataTransfer;
+      const dt = event.dataTransfer;
 
       event.preventDefault();
 
@@ -669,10 +665,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {Array} values - Field values.
    */
   get_field_values (field_name, product_name = this.bug.product) {
-    let { field, product } = BzDeck.host.data.config;
-    let { component, version_detail, target_milestone_detail } = product[product_name];
-
-    let values = {
+    const { field, product } = BzDeck.host.data.config;
+    const { component, version_detail, target_milestone_detail } = product[product_name];
+    const values = {
       product: Object.keys(product).filter(name => product[name].is_active).sort(),
       component: Object.keys(component).filter(name => component[name].is_active).sort(),
       version: version_detail.filter(version => version.is_active).map(version => version.name),
@@ -689,13 +684,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   update_resolution_ui (resolution) {
-    let is_open = resolution === '';
-    let is_dupe = resolution === 'DUPLICATE';
-    let can_editbugs = BzDeck.account.permissions.includes('editbugs');
-    let $resolution = this.$bug.querySelector('[data-field="resolution"]');
-    let $combobox = $resolution.querySelector('[role="combobox"]');
-    let $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]');
-    let $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
+    const is_open = resolution === '';
+    const is_dupe = resolution === 'DUPLICATE';
+    const can_editbugs = BzDeck.account.permissions.includes('editbugs');
+    const $resolution = this.$bug.querySelector('[data-field="resolution"]');
+    const $combobox = $resolution.querySelector('[role="combobox"]');
+    const $dupe_of = this.$bug.querySelector('[data-field="dupe_of"]');
+    const $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
 
     $resolution.hidden = is_open;
     $resolution.querySelector('[role="option"][data-value=""]').setAttribute('aria-hidden', !is_open);
@@ -723,18 +718,18 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if (name === 'product') {
-      let product_name = value;
+      const product_name = value;
 
       // When the Product is updated, the Version, Component, Target Milestone have to be updated as well
-      for (let field_name of ['version', 'component', 'target_milestone']) {
+      for (const field_name of ['version', 'component', 'target_milestone']) {
         this.comboboxes.get(this.$bug.querySelector(`[data-field="${field_name}"] [role="combobox"]`))
             .build_dropdown(this.get_field_values(field_name, product_name).map(value => ({ value, selected: false })));
       }
     }
 
-    let $field = this.$bug.querySelector(`[data-field="${name}"]`);
-    let $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
-    let $textbox = $field ? $field.querySelector('[role="textbox"]') : undefined;
+    const $field = this.$bug.querySelector(`[data-field="${name}"]`);
+    const $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
+    const $textbox = $field ? $field.querySelector('[role="textbox"]') : undefined;
 
     if ($combobox) {
       this.comboboxes.get($combobox).selected = value;
@@ -759,8 +754,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_files_selected ({ input } = {}) {
-    let iterate = items => {
-      for (let item of items) if (typeof item.getFilesAndDirectories === 'function') {
+    const iterate = items => {
+      for (const item of items) if (typeof item.getFilesAndDirectories === 'function') {
         (async () => iterate(await item.getFilesAndDirectories()))();
       } else {
         this.trigger_safe('BugView#AttachFiles', { files: [item] });
@@ -780,14 +775,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   set_product_tooltips () {
-    let config = BzDeck.host.data.config;
-    let strip_tags = str => FlareTail.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
-    let classification = config.classification[this.bug.classification];
-    let product = config.product[this.bug.product];
-    let component;
-    let $classification = this.$bug.querySelector('[itemprop="classification"]');
-    let $product = this.$bug.querySelector('[itemprop="product"]');
-    let $component;
+    const config = BzDeck.host.data.config;
+    const strip_tags = str => FlareTail.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
+    const classification = config.classification[this.bug.classification];
+    const product = config.product[this.bug.product];
+    const $classification = this.$bug.querySelector('[itemprop="classification"]');
+    const $product = this.$bug.querySelector('[itemprop="product"]');
 
     if ($classification && classification) {
       $classification.title = strip_tags(classification.description);
@@ -801,8 +794,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       $product.title = strip_tags(product.description);
     }
 
-    component = product.component[this.bug.component];
-    $component = this.$bug.querySelector('[itemprop="component"]');
+    const component = product.component[this.bug.component];
+    const $component = this.$bug.querySelector('[itemprop="component"]');
 
     if ($component && component) {
       $component.title = strip_tags(component.description);
@@ -815,14 +808,14 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async set_bug_tooltips () {
-    let related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
-                                  .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
+    const related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
+                                     .map($element => Number.parseInt($element.getAttribute('data-bug-id')));
 
     if (!related_ids.length) {
       return;
     }
 
-    let set_tooltops = bugs => bugs.forEach(bug => {
+    const set_tooltops = bugs => bugs.forEach(bug => {
       let title;
 
       if (!bug) {
@@ -839,7 +832,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         }[bug.error.code] || 'This bug data is not available.';
       }
 
-      for (let $element of this.$bug.querySelectorAll(`[data-bug-id="${bug.id}"]`)) {
+      for (const $element of this.$bug.querySelectorAll(`[data-bug-id="${bug.id}"]`)) {
         $element.title = title;
         $element.dataset.status = bug.status;
         $element.dataset.resolution = bug.resolution || '';
@@ -847,7 +840,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     });
 
     let bugs = await BzDeck.collections.bugs.get_some(related_ids);
-    let lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
+    const lookup_ids = new Set(related_ids.filter(id => !bugs.get(id)));
 
     set_tooltops(bugs);
 
@@ -867,11 +860,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   update (bug, changes) {
     this.bug = bug;
 
-    let $timeline = this.$bug.querySelector('.bug-timeline');
+    const $timeline = this.$bug.querySelector('.bug-timeline');
 
     if ($timeline) {
       (async () => {
-        let entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
+        const entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
 
         $timeline.querySelector('.comments-wrapper').appendChild(entry.$outer);
         $timeline.querySelector('.comments-wrapper > article:last-of-type')
@@ -889,15 +882,15 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if (changes.has('history') && this.render_history) {
-      let _bug = { id: this.bug.id, _update_needed: true };
+      const _bug = { id: this.bug.id, _update_needed: true };
 
       // Prep partial data
-      for (let { field_name: prop } in changes.get('history').changes) {
-        let value = _bug[prop] = this.bug[prop];
+      for (const { field_name: prop } in changes.get('history').changes) {
+        const value = _bug[prop] = this.bug[prop];
 
         // TEMP: the current fill method doesn't update combobox items, so update manually
         {
-          let $combobox = this.$bug.querySelector(`[data-field="${prop}"] [role="combobox"][aria-readonly="true"]`);
+          const $combobox = this.$bug.querySelector(`[data-field="${prop}"] [role="combobox"][aria-readonly="true"]`);
 
           if ($combobox) {
             this.comboboxes.get($combobox).selected = value;
@@ -950,8 +943,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       return;
     }
 
-    let pref = await BzDeck.prefs.get('editing.move_next_once_submitted');
-    let next = this.siblings[this.siblings.indexOf(this.bug_id) + 1];
+    const pref = await BzDeck.prefs.get('editing.move_next_once_submitted');
+    const next = this.siblings[this.siblings.indexOf(this.bug_id) + 1];
 
     if (pref === true && next) {
       this.navigate(next);

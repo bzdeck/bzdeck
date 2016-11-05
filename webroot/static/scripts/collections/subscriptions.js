@@ -27,12 +27,11 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
    */
   async get (id) {
-    let email = BzDeck.account.data.name;
-    let all_bugs = await (['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all());
-    let _bugs = [...all_bugs.values()];
-    let is_new_results = _bugs.map(bug => bug.is_new);
-
-    let bugs = _bugs.filter((bug, index) => {
+    const email = BzDeck.account.data.name;
+    const all_bugs = await (['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all());
+    const _bugs = [...all_bugs.values()];
+    const is_new_results = _bugs.map(bug => bug.is_new);
+    const bugs = _bugs.filter((bug, index) => {
       switch (id) {
         case 'inbox':     return is_new_results[index];
         case 'watching':  return bug.cc && bug.cc.includes(email);
@@ -56,8 +55,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
    */
   async get_all () {
-    let email = BzDeck.account.data.name;
-    let all_bugs = await BzDeck.collections.bugs.get_all();
+    const email = BzDeck.account.data.name;
+    const all_bugs = await BzDeck.collections.bugs.get_all();
 
     return new Map([...all_bugs.values()].filter(bug => {
       return (bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
@@ -77,20 +76,20 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
    */
   async fetch (firstrun = false, params = new URLSearchParams()) {
-    let fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
+    const fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];
 
     // Fire an event to show the throbber
     this.trigger('#FetchingSubscriptionsStarted');
 
     params.append('j_top', 'OR');
 
-    for (let [i, name] of fields.entries()) {
+    for (const [i, name] of fields.entries()) {
       params.append(`f${i}`, name);
       params.append(`o${i}`, 'equals');
       params.append(`v${i}`, BzDeck.account.data.name);
     }
 
-    let [last_loaded, cached_bugs] = await Promise.all([
+    const [last_loaded, cached_bugs] = await Promise.all([
       BzDeck.prefs.get('subscriptions.last_loaded'),
       BzDeck.collections.bugs.get_all(),
     ]);
@@ -107,21 +106,24 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     params.append('v9', [...cached_bugs.values()].filter(bug => bug.starred).map(bug => bug.id).join());
 
     try {
-      let result = await BzDeck.host.request('bug', params);
-      let _bugs = [];
+      const result = await BzDeck.host.request('bug', params);
+      let _bugs;
 
       if (firstrun) {
         _bugs = await Promise.all(result.bugs.map(_bug => BzDeck.collections.bugs.set(_bug.id, _bug)));
       } else if (result.bugs.length) {
         _bugs = await BzDeck.collections.bugs.fetch(result.bugs.map(_bug => _bug.id), true, false);
         this.trigger_safe('#Updated', { bugs: _bugs });
+      } else {
+        _bugs = [];
       }
 
-      // Retrieve the last visit timestamp for all bugs
-      cached_bugs = await BzDeck.collections.bugs.get_all();
-      await BzDeck.collections.bugs.retrieve_last_visit(cached_bugs.keys());
+      const all_bugs = await BzDeck.collections.bugs.get_all();
 
-      let bugs = await BzDeck.collections.bugs.get_some(_bugs.map(bug => bug.id)); // Map
+      // Retrieve the last visit timestamp for all bugs
+      await BzDeck.collections.bugs.retrieve_last_visit(all_bugs.keys());
+
+      const bugs = await BzDeck.collections.bugs.get_some(_bugs.map(bug => bug.id)); // Map
 
       BzDeck.prefs.set('subscriptions.last_loaded', Date.now());
       this.trigger('#FetchingSubscriptionsComplete');

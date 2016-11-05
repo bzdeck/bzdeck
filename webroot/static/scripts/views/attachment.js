@@ -60,7 +60,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_attachment_unavailable ({ message } = {}) {
-    let id = this.att_id;
+    const id = this.att_id;
 
     BzDeck.views.statusbar.show(`The attachment ${id} could not be retrieved. ${message}`); // l10n
   }
@@ -82,22 +82,22 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   activate_widgets () {
-    let { id, hash } = this.attachment;
+    const { id, hash } = this.attachment;
 
-    for (let $prop of this.$attachment.querySelectorAll('[itemprop]')) {
+    for (const $prop of this.$attachment.querySelectorAll('[itemprop]')) {
       // Check if the element is in the same itemscope
       if ($prop.parentElement.closest('[itemscope]') !== this.$attachment) {
         continue;
       }
 
-      let prop = $prop.getAttribute('itemprop');
-      let trigger = value => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
+      const prop = $prop.getAttribute('itemprop');
+      const trigger = value => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
-        let $$textbox = new FlareTail.widgets.TextBox($prop);
+        const $$textbox = new FlareTail.widgets.TextBox($prop);
 
         $$textbox.bind('Edited', event => {
-          let value = event.detail.value;
+          const value = event.detail.value;
 
           if (value) {
             trigger(value);
@@ -124,7 +124,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render () {
-    let media_type = this.attachment.content_type.split('/')[0];
+    const media_type = this.attachment.content_type.split('/')[0];
 
     this.$attachment.setAttribute('itemprop', 'attachment');
     this.$placeholder.innerHTML = '';
@@ -164,7 +164,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$outer.setAttribute('aria-busy', 'true');
 
     try {
-      let result = await this.attachment.get_data();
+      const result = await this.attachment.get_data();
 
       this.$media.src = URL.createObjectURL(result.blob);
       this.$media.setAttribute('itemprop', 'url');
@@ -186,7 +186,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$outer.setAttribute('aria-busy', 'true');
 
     try {
-      let result = await this.attachment.get_data('text');
+      const result = await this.attachment.get_data('text');
 
       (async () => this.$outer.appendChild(new BzDeck.PatchViewerView(this.id, result.text)))();
       this.$attachment.classList.add('patch');
@@ -203,7 +203,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render_link () {
-    let $link = document.createElement('a');
+    const $link = document.createElement('a');
 
     $link.href = `${BzDeck.host.origin}/attachment.cgi?id=${this.attachment.id || this.attachment.hash}`;
     $link.text = {
@@ -232,7 +232,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render_error (error) {
-    let $error = document.createElement('p');
+    const $error = document.createElement('p');
 
     $error.textContent = error.message;
     this.$outer.appendChild($error);

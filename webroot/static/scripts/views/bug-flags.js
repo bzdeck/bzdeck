@@ -29,22 +29,22 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   render ($outer, level = 4) {
-    let config = BzDeck.host.data.config;
-    let get_person = name => BzDeck.collections.users.get(name, { name }); // Promise
-    let _flags = (this.att ? this.att.flags : this.bug.flags) || [];
-    let $flag = this.get_template('details-flag');
-    let $fragment = new DocumentFragment();
+    const config = BzDeck.host.data.config;
+    const get_person = name => BzDeck.collections.users.get(name, { name }); // Promise
+    const _flags = (this.att ? this.att.flags : this.bug.flags) || [];
+    const $flag = this.get_template('details-flag');
+    const $fragment = new DocumentFragment();
 
     config.product[this.bug.product].component[this.bug.component].flag_type.forEach(async id => {
-      let flag = config.flag_type[id];
-      let _flag = _flags.find(f => f.name === flag.name);
-      let $_flag = $flag.cloneNode(true);
+      const flag = config.flag_type[id];
+      const _flag = _flags.find(f => f.name === flag.name);
+      const $_flag = $flag.cloneNode(true);
 
       if (flag.is_for_bugs === !!this.att) {
         return; // continue the loop
       }
 
-      let [setter, requestee] = await Promise.all([
+      const [setter, requestee] = await Promise.all([
         _flag && _flag.setter ? get_person(_flag.setter) : Promise.resolve({}),
         _flag && _flag.requestee ? get_person(_flag.requestee) : Promise.resolve({}),
       ]);
@@ -61,11 +61,11 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
         'data-has-value': _flag && !!_flag.status,
       }));
 
-      for (let prop of ['setter', 'requestee']) {
+      for (const prop of ['setter', 'requestee']) {
         $_flag.querySelector(`[itemprop="${prop}"]`).setAttribute('aria-hidden', !_flag || !_flag[prop]);
       }
 
-      // let $$combobox = new FlareTail.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
+      // const $$combobox = new FlareTail.widgets.ComboBox($_flag.querySelector('[role="combobox"][aria-readonly="true"]'));
 
       // $$combobox.build_dropdown(['---', '?', '+', '-'].map(value => ({ value, selected: value === this.bug[name] })));
       // $$combobox.bind('Change', event => {});

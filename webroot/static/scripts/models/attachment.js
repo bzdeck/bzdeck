@@ -32,7 +32,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
    */
   async fetch () {
-    let result = await BzDeck.host.request(`bug/attachment/${this.id}`);
+    const result = await BzDeck.host.request(`bug/attachment/${this.id}`);
 
     this.data = result.attachments[this.id];
 
@@ -47,11 +47,11 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    *  this AttachmentModel.
    */
   async get_data () {
-    let decode = () => new Promise(resolve => {
-      let worker = new SharedWorker('/static/scripts/workers/tasks.js');
+    const decode = () => new Promise(resolve => {
+      const worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
       worker.port.addEventListener('message', ({ data: { binary, blob }} = {}) => {
-        let text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
+        const text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
 
         resolve({ blob, text, attachment: this });
       });
@@ -65,9 +65,9 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     }
 
     try {
-      let result = await BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data'));
-      let attachment = result.attachments[this.id];
-      let data = attachment && attachment.data ? attachment.data : undefined;
+      const result = await BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data'));
+      const attachment = result.attachments[this.id];
+      const data = attachment && attachment.data ? attachment.data : undefined;
 
       if (!data) {
         throw new Error();
@@ -90,10 +90,10 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
    */
   async save () {
-    let bug = await BzDeck.collections.bugs.get(this.data.bug_id);
+    const bug = await BzDeck.collections.bugs.get(this.data.bug_id);
 
     if (bug && bug.attachments && bug.attachments.length) {
-      for (let [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
+      for (const [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
         bug.attachments[index].data = this.data.data;
       }
 

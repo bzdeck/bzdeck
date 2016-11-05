@@ -84,7 +84,7 @@ BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   update_progressbar () {
-    let percentage = this.data.progress;
+    const percentage = this.data.progress;
 
     this.$progressbar.setAttribute('aria-valuenow', percentage);
     this.$progressbar.setAttribute('aria-valuetext', `${percentage}% Loaded`); // l10n

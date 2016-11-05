@@ -34,7 +34,7 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
    */
   onupgradeneeded (event) {
-    let database = event.target.result;
+    const database = event.target.result;
 
     // Create the initial stores
     if (event.oldVersion < 1) {
@@ -44,7 +44,7 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
       database.createObjectStore('bugzilla', { keyPath: 'host' });
 
       {
-        let store = database.createObjectStore('accounts', { keyPath: 'loaded' });
+        const store = database.createObjectStore('accounts', { keyPath: 'loaded' });
 
         store.createIndex('host', 'host', { unique: false });
         store.createIndex('id', 'id', { unique: false });

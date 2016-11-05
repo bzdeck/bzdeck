@@ -17,13 +17,13 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   constructor (id) {
     super(id); // Assign this.id
 
-    let mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.helpers.env.device.mobile;
 
     this.data = new Proxy({
       folder_id: null
     }, {
       set: (obj, prop, newval) => {
-        let oldval = obj[prop];
+        const oldval = obj[prop];
 
         if (prop === 'folder_id' && oldval) {
           // On mobile, wait until the sidebar is closed so that the transition effects work smoother
@@ -63,8 +63,8 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * @returns {Promise.<undefined>}
    */
   async load_user_gravatar (folder_id) {
-    let user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
-    let profile = await user.get_gravatar_profile()
+    const user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
+    const profile = await user.get_gravatar_profile()
 
     this.trigger_safe('#GravatarProfileFound', { user });
   }
@@ -76,7 +76,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * @returns {Promise.<undefined>}
    */
   async open_folder (folder_id) {
-    let bugs = await BzDeck.collections.subscriptions.get(folder_id);
+    const bugs = await BzDeck.collections.subscriptions.get(folder_id);
 
     BzDeck.presenters.homepage.data.bugs = bugs; // Map
     this.trigger_safe('#FolderOpened', { folder_id, bugs });
@@ -103,9 +103,9 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * @returns {Promise.<undefined>}
    */
   async toggle_unread () {
-    let all_bugs = await BzDeck.collections.subscriptions.get_all();
-    let bugs = [...all_bugs.values()];
-    let is_new_results = bugs.map(bug => bug.is_new);
+    const all_bugs = await BzDeck.collections.subscriptions.get_all();
+    const bugs = [...all_bugs.values()];
+    const is_new_results = bugs.map(bug => bug.is_new);
 
     this.trigger('#UnreadToggled', {
       number: bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
@@ -129,7 +129,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * @returns {undefined}
    */
   on_app_menu_item_selected ({ command } = {}) {
-    let func = {
+    const func = {
       'show-profile': () => BzDeck.router.navigate('/profile/' + BzDeck.account.data.name),
       'show-settings': () => BzDeck.router.navigate('/settings'),
       logout: () => BzDeck.presenters.session.logout(),

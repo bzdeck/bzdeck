@@ -16,8 +16,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   constructor (folder_id) {
     super(); // Assign this.id
 
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let $sidebar = document.querySelector('#sidebar');
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const $sidebar = document.querySelector('#sidebar');
 
     this.$preview_pane = document.querySelector('#home-preview-pane');
 
@@ -31,7 +31,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     // Prepare the Menu button on the mobile banner
     if (mobile) {
       document.querySelector('#tabpanel-home .banner-nav-button').addEventListener('touchstart', event => {
-        let hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+        const hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
 
         document.querySelector('#sidebar').scrollTop = 0;
         document.documentElement.setAttribute('data-sidebar-hidden', hidden);
@@ -75,9 +75,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   connect (folder_id) {
-    let $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
-    let $tab = document.querySelector('#tab-home');
-    let $$tablist = BzDeck.views.banner.$$tablist;
+    const $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
+    const $tab = document.querySelector('#tab-home');
+    const $$tablist = BzDeck.views.banner.$$tablist;
 
     if (!$folder) {
       // Unknown folder; ignore
@@ -106,10 +106,10 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @todo FIXME: This should be smartly done in the presenter.
    */
   get_shown_bugs () {
-    let mobile = FlareTail.helpers.env.device.mobile;
-    let vertical = mobile || document.documentElement.getAttribute('data-home-layout') === 'vertical';
-    let items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
-                         : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
+    const mobile = FlareTail.helpers.env.device.mobile;
+    const vertical = mobile || document.documentElement.getAttribute('data-home-layout') === 'vertical';
+    const items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
+                           : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
     return [...items].map($item => Number($item.dataset.id));
   }
@@ -122,7 +122,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   change_layout (pref, sort_grid = false) {
-    let vertical = FlareTail.helpers.env.device.mobile || !pref || pref === 'vertical';
+    const vertical = FlareTail.helpers.env.device.mobile || !pref || pref === 'vertical';
 
     document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
 
@@ -144,11 +144,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   apply_vertical_layout () {
-    let mql = window.matchMedia('(max-width: 1023px)');
-    let $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
+    const mql = window.matchMedia('(max-width: 1023px)');
+    const $listbox = document.querySelector('#home-vertical-thread [role="listbox"]');
 
-    let show_preview = () => {
-      let $$listbox = this.thread.$$listbox;
+    const show_preview = () => {
+      const $$listbox = this.thread.$$listbox;
 
       if ($$listbox.view.members.length && !this.preview_is_hidden && !this.presenter.data.preview_id) {
         $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.selected[0] || $$listbox.view.members[0];
@@ -164,7 +164,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       // Star button
       $listbox.addEventListener('mousedown', async event => {
         if (event.target.matches('[itemprop="starred"]')) {
-          let bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
+          const bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
 
           bug.starred = event.target.matches('[aria-checked="false"]');
           event.stopPropagation();
@@ -186,7 +186,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {Promise.<undefined>}
    */
   async apply_classic_layout () {
-    let [sort_cond, columns] = await Promise.all([
+    const [sort_cond, columns] = await Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
       BzDeck.prefs.get('home.list.columns'),
     ]);
@@ -198,24 +198,24 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       sort_conditions: sort_cond || { key: 'id', order: 'ascending' }
     });
 
-    let $$grid = this.thread.$$grid;
+    const $$grid = this.thread.$$grid;
 
     (async () => {
-      let layout_pref = await BzDeck.prefs.get('ui.home.layout');
-      let vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
+      const layout_pref = await BzDeck.prefs.get('ui.home.layout');
+      const vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
 
       $$grid.options.adjust_scrollbar = !vertical;
       $$grid.options.date.simple = vertical;
 
       // Change the date format on the thread pane
-      for (let $time of $$grid.view.$container.querySelectorAll('time')) {
+      for (const $time of $$grid.view.$container.querySelectorAll('time')) {
         $time.textContent = FlareTail.helpers.datetime.format($time.dateTime, { simple: vertical });
         $time.dataset.simple = vertical;
       }
     })();
 
     if (!this.classic_thread_initialized) {
-      let bugs = await BzDeck.collections.bugs.get_all();
+      const bugs = await BzDeck.collections.bugs.get_all();
 
       // Fill the thread with all saved bugs, and filter the rows later
       this.thread.update(bugs);
@@ -241,11 +241,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   init_searchbar () {
+    const $searchbar = document.querySelector('#home-list-searchbar');
+    const $searchbox = $searchbar.querySelector('[role="searchbox"]');
+    const $search_button = $searchbar.querySelector('[role="button"][data-id="search"]');
+    const $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
     let listed_bugs;
-    let $searchbar = document.querySelector('#home-list-searchbar');
-    let $searchbox = $searchbar.querySelector('[role="searchbox"]');
-    let $search_button = $searchbar.querySelector('[role="button"][data-id="search"]');
-    let $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
 
     $searchbar.addEventListener('transitionend', event => {
       $searchbar.classList.contains('active') ? $searchbox.focus() : $search_button.focus();
@@ -331,11 +331,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   on_container_navigated ({ new_id } = {}) {
-    let vertical = document.documentElement.getAttribute('data-home-layout') === 'vertical';
-    let $$listbox = this.thread.$$listbox;
+    const vertical = document.documentElement.getAttribute('data-home-layout') === 'vertical';
+    const $$listbox = this.thread.$$listbox;
 
     if (vertical) {
-      let index = $$listbox.view.members.findIndex($member => Number($member.dataset.id) === new_id);
+      const index = $$listbox.view.members.findIndex($member => Number($member.dataset.id) === new_id);
 
       if (index) {
         $$listbox.view.selected = $$listbox.view.focused = $$listbox.view.members[index];
@@ -379,8 +379,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       return;
     }
 
-    let { preview_id } = history.state;
-    let siblings = this.get_shown_bugs();
+    const { preview_id } = history.state;
+    const siblings = this.get_shown_bugs();
 
     if (!preview_id) {
       return;

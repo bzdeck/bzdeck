@@ -34,9 +34,9 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   set_showing_events () {
-    for (let type of this.showing_events) {
+    for (const type of this.showing_events) {
       this.$owner.addEventListener(type, event => {
-        let value = event.target.value || event.target.dataset.id;
+        const value = event.target.value || event.target.dataset.id;
 
         this.hide_any();
         window.clearTimeout(this.timer);
@@ -57,7 +57,7 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   set_hiding_events () {
-    for (let type of this.hiding_events) {
+    for (const type of this.hiding_events) {
       this.$owner.addEventListener(type, event => this.hide());
     }
   }
@@ -68,11 +68,10 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   hide_any () {
-    let $tooltip = document.querySelector('body > [role="tooltip"]');
-    let $owner;
+    const $tooltip = document.querySelector('body > [role="tooltip"]');
 
     if ($tooltip) {
-      $owner = document.querySelector(`[aria-describedby="${$tooltip.id}"]`);
+      const $owner = document.querySelector(`[aria-describedby="${$tooltip.id}"]`);
 
       if ($owner) {
         $owner.removeAttribute('aria-describedby');
@@ -124,8 +123,8 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
       bug = await bug.fetch();
     }
 
-    let contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-    let _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
+    const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    const _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
 
     this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
       id: bug.id,
@@ -136,7 +135,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
       'data-id': bug.id,
     });
 
-    let rect = this.$owner.getBoundingClientRect();
+    const rect = this.$owner.getBoundingClientRect();
 
     this.$tooltip.id = `bug-${bug.id}-tooltip`;
     this.$tooltip.style.top = `calc(${Number.parseInt(rect.top)}px - 6rem)`;
