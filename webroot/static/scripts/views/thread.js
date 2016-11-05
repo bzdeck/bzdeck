@@ -235,9 +235,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   constructor (consumer, name, $container, options) {
     super(); // Assign this.id
 
-    const mobile = FlareTail.helpers.env.device.mobile;
-    const animations = new Set();
-
     this.consumer = consumer;
     this.name = name;
     this.options = options;
@@ -254,27 +251,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$$listbox.bind('Selected', event => this.onselect(event));
     this.$$listbox.bind('dblclick', event => this.ondblclick(event, '[role="option"]'));
-
-    this.$$listbox.bind('focus', event => {
-      // Create a marquee effect when the bug title is overflowing
-      for (const $option of this.$$listbox.view.selected) {
-        const $summary = $option.querySelector('[itemprop="summary"]');
-        const width = $summary.scrollWidth;
-
-        if (width > $summary.clientWidth) {
-          animations.add($summary.animate([
-            { textIndent: 0 },
-            { textIndent: 0, offset: .1 },
-            { textIndent: `-${width+10}px` },
-          ], { duration: width * 40, iterations: Infinity }));
-        }
-      }
-    }, true);
-
-    this.$$listbox.bind('blur', event => {
-      animations.forEach(animation => animation.cancel());
-      animations.clear();
-    }, true);
 
     this.$$listbox.assign_key_bindings({
       // Show previous bug, an alias of UP
