@@ -132,15 +132,20 @@
   font-weight: 500;
 }
 
-[id$="vertical-thread"] [role="option"] > span:last-of-type {
+[id$="vertical-thread"] [role="option"] ul {
+  display: block;
   right: 4.2rem;
   bottom: var(--option-padding);
   left: calc(var(--option-padding) * 2 + var(--option-height));
-  opacity: .8;
+  opacity: .7;
   font-size: 1.1rem;
 }
 
-[id$="vertical-thread"] [itemprop="id"]::after {
+[id$="vertical-thread"] [role="option"] li {
+  display: inline;
+}
+
+[id$="vertical-thread"] [role="option"] li:not(:last-child)::after {
   content: '\00A0\00B7'; /* nbsp + middot */
 }
 

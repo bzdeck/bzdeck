@@ -882,7 +882,11 @@
           <meta itemprop="email">
         </span>
         <span itemprop="summary"></span>
-        <span><span itemprop="id"></span> <time itemprop="last_change_time"></time></span>
+        <ul>
+          <li><span itemprop="id"></span></li>
+          <li><span itemprop="status"></span> <span itemprop="resolution"></span></li>
+          <li><time itemprop="last_change_time"></time></li>
+        </ul>
         <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
       </li>
     </template><!-- end #vertical-thread-item -->

@@ -417,6 +417,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
         $option = this.fill(this.$option.cloneNode(true), {
           id: bug.id,
           summary: bug.summary,
+          status: bug.status,
+          resolution: bug.resolution,
           last_change_time: bug.last_change_time,
           contributor: contributors[index].properties,
           starred: bug.starred,
