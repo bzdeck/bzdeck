@@ -239,6 +239,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.name = name;
     this.options = options;
     this.bugs = [];
+    this.properties = ['id', 'summary', 'extract', 'status', 'resolution', 'last_change_time', 'contributor', 'starred'];
 
     this.$container = $container;
     this.$header = this.$container.querySelector('header');
@@ -276,6 +277,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.init_filter();
     this.init_sorter();
 
+    this.on('BugModel#CacheUpdated', data => this.on_bug_updated(data), true);
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
     // Lazy loading while scrolling
@@ -373,6 +375,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    */
   async render (addition = false) {
     const bugs = this.unrendered_bugs.splice(0, 50);
+    const unloaded_bugs = bugs.filter(bug => !bug.comments);
     const $fragment = new DocumentFragment();
 
     const contributors = await Promise.all(bugs.map(bug => {
@@ -390,15 +393,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       let $option = document.getElementById(option_id);
 
       if (!$option) {
-        $option = this.fill(this.$option.cloneNode(true), {
-          id: bug.id,
-          summary: bug.summary,
-          status: bug.status,
-          resolution: bug.resolution,
-          last_change_time: bug.last_change_time,
-          contributor: contributors[index].properties,
-          starred: bug.starred,
-        }, {
+        const props = {};
+
+        for (const key of this.properties) {
+          props[key] = key === 'contributor' ? contributors[index].properties : bug[key];
+        }
+
+        $option = this.fill(this.$option.cloneNode(true), props, {
           id: option_id,
           'data-id': bug.id,
           'data-unread': !!bug.unread,
@@ -416,6 +417,36 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.$listbox.removeAttribute('aria-busy');
     this.$listbox.dispatchEvent(new CustomEvent('Rendered'));
     this.$$listbox.update_members();
+
+    // Fetch unloaded bug details
+    if (unloaded_bugs.length) {
+      BzDeck.collections.bugs.fetch(unloaded_bugs.map(bug => bug.id), false, true);
+    }
+  }
+
+  /**
+   * Called whenever a bug's cached is updated. Update the view if the bug ID matches.
+   * @listens BugModel#CacheUpdated
+   * @param {Number} bug_id - Changed bug's ID.
+   * @returns {Promise.<undefined>}
+   */
+  async on_bug_updated ({ bug_id } = {}) {
+    const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug_id}"]`);
+
+    if (!$option) {
+      return;
+    }
+
+    const bug = await BzDeck.collections.bugs.get(bug_id);
+    const _contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
+    const contributor = await BzDeck.collections.users.get(_contributor, { name: _contributor });
+    const props = {};
+
+    for (const key of this.properties) {
+      props[key] = key === 'contributor' ? contributor.properties : bug[key];
+    }
+
+    this.fill($option, props);
   }
 
   /**

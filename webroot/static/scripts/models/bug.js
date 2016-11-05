@@ -65,6 +65,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         enumerable: true,
         get: () => this.get_contributors(),
       },
+      extract: {
+        enumerable: true,
+        get: () => this.get_extract(),
+      },
       // Draft
       has_changes:      { get: () => !!Object.keys(this.changes).length },
       has_att_changes:  { get: () => !!this.att_changes.size },
@@ -149,6 +153,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * then notify any changes detected.
    * @param {Object} [data] - Bugzilla's raw bug object.
    * @fires BugModel#Updated
+   * @fires BugModel#CacheUpdated
    * @returns {Boolean} cached - Whether the cache is found.
    */
   merge (data) {
@@ -208,6 +213,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       this.save(data);
     })();
+
+    this.trigger('#CacheUpdated', { bug_id: this.id });
 
     return true;
   }
@@ -419,6 +426,45 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     return new Set([...contributors.keys()].sort((a, b) => contributors.get(b) - contributors.get(a)));
+  }
+
+  /**
+   * Get an extract of a comment.
+   * @param {Number} [comment_id] - If not specified, the last comment will be used.
+   * @returns {String} extract - Comment extract.
+   */
+  get_extract (comment_id) {
+    const comments = this.data.comments;
+
+    // The bug's comments could not be retrieved yet
+    if (!comments || !comments.length) {
+      return '';
+    }
+
+    const comment = comment_id ? comments.find(comment => comment.id === comment_id) : comments[comments.length - 1];
+
+    if (!comment) {
+      return '';
+    }
+
+    let extract = comment.text;
+
+    if (comment.attachment_id) {
+      return `(Created attachment)`; // l10n
+    }
+
+    if (comment.text.trim() === '' && comments.length === 1) {
+      return `(No description)`; // l10n
+    }
+
+    // Remove quote headers, quotes and attachment header (TODO: This requires l10n)
+    extract = extract.replace(/^(\(In\ reply\ to|>|Created\ attachment).*/gm, '');
+    // Remove like breaks, leading and trailing spaces
+    extract = extract.replace(/\n+/gm, ' ').trim();
+    // Boil down to 140 characters
+    extract = extract.length <= 140 ? extract : extract.substr(0, 136) + ' ...';
+
+    return extract;
   }
 
   /**

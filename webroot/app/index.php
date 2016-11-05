@@ -877,16 +877,19 @@
     </template><!-- end #quicksearch-results-users-item -->
     <template id="vertical-thread-item">
       <li tabindex="0" role="option" aria-selected="false" data-attrs="id data-id data-unread" itemscope itemtype="http://bzdeck.com/Bug">
-        <span itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
+        <div itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
           <img alt="" itemprop="image">
           <meta itemprop="email">
-        </span>
-        <span itemprop="summary"></span>
-        <ul>
-          <li><span itemprop="id"></span></li>
-          <li><span itemprop="status"></span> <span itemprop="resolution"></span></li>
-          <li><time itemprop="last_change_time"></time></li>
-        </ul>
+        </div>
+        <div class="labels">
+          <div itemprop="summary"></div>
+          <ul role="none">
+            <li role="none"><span itemprop="id"></span></li>
+            <li role="none"><span itemprop="status"></span> <span itemprop="resolution"></span></li>
+            <li role="none"><time itemprop="last_change_time"></time></li>
+          </ul>
+          <div itemprop="extract"></div>
+        </div>
         <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
       </li>
     </template><!-- end #vertical-thread-item -->

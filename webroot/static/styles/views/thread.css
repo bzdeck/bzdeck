@@ -77,10 +77,11 @@
 
 [id$="vertical-thread"] [role="option"] {
   --option-padding: 1.6rem;
-  --option-height: 3.2rem;
+  --option-height: 4.8rem;
+  --icon-height: 4rem;
   position: relative;
-  padding: var(--option-padding);
-  height: var(--option-height);
+  padding: 0 var(--option-padding);
+  height: calc(var(--option-height) + var(--option-padding) * 2);
 }
 
 [id$="vertical-thread"] [role="option"][aria-selected="false"]::before {
@@ -96,19 +97,19 @@
 [id$="vertical-thread"] [role="option"] > * {
   position: absolute;
   display: block;
-  line-height: 1.25;
+  margin: 0 !important;
   pointer-events: none;
 }
 
 [id$="vertical-thread"] [itemprop="contributor"] {
-  top: var(--option-padding);
+  top: calc(50% - var(--icon-height) / 2);
   left: var(--option-padding);
   overflow: hidden;
-  width: var(--option-height);
-  height: var(--option-height);
+  width: var(--icon-height);
+  height: var(--icon-height);
   color: #FCFCFC;
   font-size: 1.6rem;
-  line-height: var(--option-height);
+  line-height: var(--icon-height);
   text-align: center;
 }
 
@@ -118,14 +119,37 @@
   max-height: 100%;
 }
 
-[id$="vertical-thread"] [itemprop="summary"] {
-  top: calc(var(--option-padding) - .2rem);
-  right: 4.2rem;
-  left: calc(var(--option-padding) * 2 + var(--option-height));
+[id$="vertical-thread"] .labels {
+  display: flex;
   overflow: hidden;
-  font-size: 1.4rem;
+  top: 0;
+  right: 4.2rem;
+  left: calc(var(--icon-height) + var(--option-padding) * 2);
+  height: 100%;
+  line-height: 1.5;
+  flex-direction: column;
+  justify-content: center;
+}
+
+[id$="vertical-thread"] .labels [itemprop="id"]::before {
+  content: "#";
+}
+
+[id$="vertical-thread"] [itemprop="summary"],
+[id$="vertical-thread"] [itemprop="extract"] {
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+[id$="vertical-thread"] [itemprop="summary"] {
+  font-size: 1.4rem;
+}
+
+[id$="vertical-thread"] [itemprop="extract"],
+[id$="vertical-thread"] [role="option"] ul {
+  opacity: .7;
+  font-size: 1.1rem;
 }
 
 [id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="summary"] {
@@ -137,8 +161,6 @@
   right: 4.2rem;
   bottom: var(--option-padding);
   left: calc(var(--option-padding) * 2 + var(--option-height));
-  opacity: .7;
-  font-size: 1.1rem;
 }
 
 [id$="vertical-thread"] [role="option"] li {
