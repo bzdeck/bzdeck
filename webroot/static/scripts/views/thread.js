@@ -280,12 +280,26 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.on('BugModel#CacheUpdated', data => this.on_bug_updated(data), true);
     this.subscribe_safe('BugModel#AnnotationUpdated', true);
 
-    // Lazy loading while scrolling
+    // Lazy bug loading while scrolling
     this.$listbox_outer.addEventListener('scroll', event => {
       if (this.unrendered_bugs.length && event.target.scrollTop === event.target.scrollTopMax) {
         (async () => this.render(true))();
       }
     });
+
+    // Lazy avatar loading while scrolling
+    this.image_loader = new IntersectionObserver(entries => entries.forEach(entry => {
+      const $option = entry.target;
+      const $avatar = $option.querySelector('[itemprop="contributor"] [itemprop="image"]');
+      const $image = new Image();
+
+      if (entry.intersectionRatio > 0 && !$avatar.src) {
+        this.image_loader.unobserve($option);
+        // Preload the image so that CSS transition works smoothly
+        $image.addEventListener('load', event => $avatar.src = $image.src);
+        $image.src = $avatar.dataset.src;
+      }
+    }), { root: this.$listbox_outer });
   }
 
   /**
@@ -404,6 +418,15 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
           'data-id': bug.id,
           'data-unread': !!bug.unread,
         });
+      }
+
+      const $avatar = $option.querySelector('[itemprop="contributor"] [itemprop="image"]');
+
+      // Lazy avatar loading while scrolling
+      if (!$avatar.dataset.src) {
+        $avatar.dataset.src = $avatar.src;
+        $avatar.removeAttribute('src');
+        this.image_loader.observe($option);
       }
 
       $fragment.appendChild($option);
