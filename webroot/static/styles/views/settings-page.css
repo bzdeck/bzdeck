@@ -80,7 +80,7 @@
 }
 
 #settings-tab-timeline label::before {
-  content: "\F00B";
+  content: "\F086";
 }
 
 #settings-tab-editing label::before {

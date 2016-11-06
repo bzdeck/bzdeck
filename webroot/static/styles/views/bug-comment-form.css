@@ -91,14 +91,10 @@
   overflow: hidden;
   box-sizing: border-box;
   margin: 0;
-  border: .1rem solid var(--secondary-grid-border-color);
-  border-radius: .2rem;
   padding: var(--comment-margin);
   width: 100%;
   height: auto;
   min-height: 2rem;
-  background-color: var(--content-background-color);
-  box-shadow: none !important;
   font-size: 1.4rem;
   line-height: 1.6;
   font-family: inherit;

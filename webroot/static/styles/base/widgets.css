@@ -200,7 +200,7 @@ span[role="textbox"] {
   border-color: transparent;
   box-shadow: none;
   color: var(--textbox-foreground-color);
-  background-color: var(--textbox-background-color);
+  background-color: transparent;
 }
 
 .distinct[role="combobox"][aria-disabled="true"] [role="searchbox"] {

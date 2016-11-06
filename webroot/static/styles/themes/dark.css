@@ -98,7 +98,7 @@
 
   --textbox-border-color: var(--base-background-color-4);
   --textbox-foreground-color: var(--base-foreground-color-1);
-  --textbox-background-color: var(--base-background-color-6);
+  --textbox-background-color: var(--base-background-color-3);
   --disabled-textbox-border-color: ; /* Unchanged */
   --disabled-textbox-foreground-color: var(--base-foreground-color-2);
   --disabled-textbox-background-color: ; /* Unchanged */
