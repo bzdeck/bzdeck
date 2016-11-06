@@ -66,9 +66,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       color: {
         enumerable: true,
         get: () => { try { return this.data.gravatar.profileBackground.color; } catch (e) {
-          return '#' + String(this.original_name ? this.original_name.length : 0).substr(-1, 1)
-                     + String(this.email.length).substr(-1, 1)
-                     + String(this.email.length).substr(0, 1);
+          return '#' + this.hash.toUpperCase().match(/[0-9A-C]/g).join('').substr(0, 6);
         }}
       },
       // Return basic info for easier fill-in on views
