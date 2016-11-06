@@ -123,14 +123,13 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
       bug = await bug.fetch();
     }
 
-    const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-    const _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
+    const contributor = await bug.get_contributor();
 
     this.$tooltip = this.fill(this.get_template('bug-tooltip'), {
       id: bug.id,
       summary: bug.summary,
       last_change_time: bug.last_change_time,
-      contributor: _contributor.properties,
+      contributor,
     }, {
       'data-id': bug.id,
     });

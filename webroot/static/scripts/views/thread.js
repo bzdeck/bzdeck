@@ -390,14 +390,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   async render (addition = false) {
     const bugs = this.unrendered_bugs.splice(0, 50);
     const unloaded_bugs = bugs.filter(bug => !bug.comments);
+    const contributors = await Promise.all(bugs.map(bug => bug.get_contributor()));
     const $fragment = new DocumentFragment();
-
-    const contributors = await Promise.all(bugs.map(bug => {
-      // TODO: combine primary participants' avatars/initials (#124)
-      const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-
-      return BzDeck.collections.users.get(contributor, { name: contributor });
-    }));
 
     this.$listbox.setAttribute('aria-busy', 'true');
 
@@ -410,7 +404,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
         const props = {};
 
         for (const key of this.properties) {
-          props[key] = key === 'contributor' ? contributors[index].properties : bug[key];
+          props[key] = key === 'contributor' ? contributors[index] : bug[key];
         }
 
         $option = this.fill(this.$option.cloneNode(true), props, {
@@ -461,12 +455,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     }
 
     const bug = await BzDeck.collections.bugs.get(bug_id);
-    const _contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-    const contributor = await BzDeck.collections.users.get(_contributor, { name: _contributor });
+    const contributor = await bug.get_contributor();
     const props = {};
 
     for (const key of this.properties) {
-      props[key] = key === 'contributor' ? contributor.properties : bug[key];
+      props[key] = key === 'contributor' ? contributor : bug[key];
     }
 
     this.fill($option, props);

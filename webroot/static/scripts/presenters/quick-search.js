@@ -116,15 +116,14 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {Promise.<Object>} result - Promise to be resolved in bug search result.
    */
   async get_bug_result (bug) {
-    const contributor = bug.comments ? bug.comments[bug.comments.length - 1].creator : bug.creator;
-    const _contributor = await BzDeck.collections.users.get(contributor, { name: contributor });
+    const contributor = await bug.get_contributor();
 
     return {
       type: 'bug',
       id: bug.id,
       summary: bug.summary,
       last_change_time: bug.last_change_time,
-      contributor: _contributor.properties,
+      contributor,
     };
   }
 

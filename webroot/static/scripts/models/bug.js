@@ -61,9 +61,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         enumerable: true,
         get: () => this.get_participants(),
       },
-      contributors: {
+      other_contributors: {
         enumerable: true,
-        get: () => this.get_contributors(),
+        get: () => this.get_other_contributors(),
       },
       extract: {
         enumerable: true,
@@ -397,12 +397,25 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   }
 
   /**
+   * Get the last commenter on the bug. If the comments are not retrieved yet, the reporter will be returned instead.
+   * @param {undefined}
+   * @returns {Promise.<Object>} properties - Promise to be resolved in the contributor's basic info.
+   */
+  async get_contributor () {
+    const comments = this.data.comments;
+    const name = comments ? comments[comments.length - 1].creator : this.data.creator;
+    const contributor = await BzDeck.collections.users.get(name, { name });
+
+    return contributor.properties;
+  }
+
+  /**
    * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors. The list may
    * include commenters, attachment creators and flag setters.
    * @param {undefined}
    * @returns {Set.<String>} contributors - List of all contributor account names (email addresses).
    */
-  get_contributors () {
+  get_other_contributors () {
     const contributors = new Map(); // key: name, value: number of contributions
     const exclusions = new Set([this.data.creator, this.data.assigned_to, this.data.qa_contact,
                                 ...(this.data.mentors || [])]);
