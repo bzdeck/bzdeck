@@ -68,7 +68,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
     // Update user name & image asynchronously
     this.subscribe('UserModel#GravatarProfileRequested', true);
-    this.subscribe('UserModel#GravatarImageRequested', true);
     this.subscribe('UserModel#UserInfoUpdated', true);
 
     // General events
@@ -246,47 +245,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     } catch (error) {
       notify(undefined);
     }
-  }
-
-  /**
-   * Called whenever a Gravatar image is required. Retrieve the image, or generate a fallback image if the Gravatar
-   * image could not be found. Notify UserModel when the image is ready.
-   * @listens UserModel#GravatarImageRequested
-   * @param {String} hash - Hash value of the user's email.
-   * @param {String} color - Generated color of the user for the fallback image.
-   * @param {String} initial - Initial of the user for the fallback image.
-   * @fires GlobalView#GravatarImageProvided
-   * @returns {undefined}
-   */
-  on_gravatar_image_requested ({ hash, color, initial } = {}) {
-    const notify = blob => this.trigger('#GravatarImageProvided', { hash, blob });
-    const $image = new Image();
-    const $canvas = document.createElement('canvas');
-    const ctx = $canvas.getContext('2d');
-
-    $canvas.width = 160;
-    $canvas.height = 160;
-
-    $image.addEventListener('load', event => {
-      ctx.drawImage($image, 0, 0);
-      $canvas.toBlob(notify);
-    });
-
-    $image.addEventListener('error', event => {
-      // Plain background of the user's color
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 160, 160);
-      // Initial at the center of the canvas
-      ctx.font = '110px FiraSans';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#FFF';
-      ctx.fillText(initial, 80, 85); // Adjust the baseline by 5px
-      $canvas.toBlob(notify);
-    });
-
-    $image.crossOrigin = 'anonymous';
-    $image.src = `https://secure.gravatar.com/avatar/${hash}?s=160&d=404`;
   }
 
   /**

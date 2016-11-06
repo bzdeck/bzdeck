@@ -25,10 +25,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     BzDeck.datasources.global = new BzDeck.GlobalDataSource();
     BzDeck.datasources.account = new BzDeck.AccountDataSource();
 
-    // Register service workers. Due to the scope limitation, those files should be on the root directory
+    // Wait until the service worker is successfully registered so that request interceptions will always work
+    navigator.serviceWorker.ready.then(reg => this.find_account());
     navigator.serviceWorker.register('/service-worker.js');
-
-    this.find_account();
   }
 
   /**

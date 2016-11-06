@@ -109,8 +109,6 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     }));
 
     users.forEach(user => {
-      user.get_gravatar_image();
-
       // Refresh the Gravatar profile if already exists, or fetch later on demand
       if (user.gravatar) {
         user.get_gravatar_profile();

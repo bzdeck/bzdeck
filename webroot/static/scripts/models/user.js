@@ -55,7 +55,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       // Images provided by Gravatar
       image: {
         enumerable: true,
-        get: () => this.data.image_src || ''
+        // The avatar will be retrieved via service worker
+        get: () => `/api/gravatar/avatar/${this.hash}?color=${this.color.replace('#', '')}&initial=${this.initial}`,
       },
       background_image: {
         enumerable: true,
@@ -84,11 +85,6 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       },
     });
 
-    // Generate the avatar's object URL for this session
-    if (this.data.image_blob) {
-      this.data.image_src = URL.createObjectURL(this.data.image_blob);
-    }
-
     if (!this.data.updated) {
       (async () => {
         await this.fetch();
@@ -109,9 +105,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     options.in_promise_all = true;
 
     try {
-      const [bugzilla, image_blob, gravatar] = await Promise.all([
+      const [bugzilla, gravatar] = await Promise.all([
         this.get_bugzilla_profile(options),
-        this.get_gravatar_image(options),
         // Refresh the Gravatar profile if already exists, or fetch later on demand
         this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve(),
       ]);
@@ -120,8 +115,6 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         name: this.email, // String
         id: bugzilla.id, // Number
         bugzilla, // Object
-        image_blob, // Blob
-        image_src: image_blob ? URL.createObjectURL(image_blob) : undefined, // URL
         gravatar, // Object
         updated: Date.now(), // Number
       });
@@ -205,40 +198,6 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       }, true);
 
       this.trigger('#GravatarProfileRequested', { hash: this.hash });
-    });
-  }
-
-  /**
-   * Get or retrieve the user's Gravatar image. If the image cannot be found, generate a fallback image and return it.
-   * Because this requires DOM access, delegate the process to GlobalView.
-   * @listens GlobalView#GravatarImageProvided
-   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
-   * @fires UserModel#GravatarImageRequested
-   * @returns {Promise.<Blob>} bug - Promise to be resolved in the user's avatar image in the Blob format.
-   * @see {@link https://en.gravatar.com/site/implement/images/}
-   */
-  async get_gravatar_image ({ in_promise_all = false } = {}) {
-    if (this.data.image_blob) {
-      return this.data.image_blob;
-    }
-
-    return new Promise(resolve => {
-      const { hash, color, initial } = this;
-
-      this.on('GlobalView#GravatarImageProvided', data => {
-        if (data.hash === hash) {
-          resolve(data.blob);
-
-          // Save the image when called by UserCollection
-          if (!in_promise_all) {
-            this.data.image_blob = data.blob;
-            this.data.image_src = URL.createObjectURL(data.blob);
-            this.save();
-          }
-        }
-      }, true);
-
-      this.trigger('#GravatarImageRequested', { hash, color, initial });
     });
   }
 }

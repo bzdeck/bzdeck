@@ -156,9 +156,12 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   let request = event.request;
+  const url = new URL(event.request.url);
+  const path = url.pathname;
+  const gravatar_avatar = path.startsWith('/api/gravatar/avatar/');
 
   // Rewrite in-app requests as .htaccess does
-  if (pattern.test((new URL(event.request.url)).pathname)) {
+  if (pattern.test(path)) {
     request = new Request('/app/');
   }
 
@@ -171,9 +174,38 @@ self.addEventListener('fetch', event => {
         return response;
       }
 
+      let _request = request;
+
+      // Proxy Gravatar requests
+      if (gravatar_avatar) {
+        _request = new Request(`https://secure.gravatar.com/avatar/${path.substr(21)}?s=160&d=404`, { mode: 'cors' });
+      }
+
       // Request remote resource
-      return fetch(request).then(response => {
-        caches.open(version).then(cache => cache.put(request, response));
+      return fetch(_request).then(response => {
+        if (gravatar_avatar) {
+          if (!response.ok) {
+            // Generate a fallback SVG image and cache it for 24 hours. Specify fallback fonts because the Fira Sans
+            // webfont is not applied probably due to a bug in Firefox.
+            const params = new URLSearchParams(url.search);
+            const color = params.get('color') || '#666';
+            const initial = params.get('initial') || '';
+            const blob = new Blob([
+              `<?xml-stylesheet type="text/css" href="${location.origin}/static/styles/base/fonts.css"?>` +
+              `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" style="background-color:#${color}">` +
+              `<text text-anchor="middle" dominant-baseline="middle" x="50%" y="55%" ` +
+              `style="fill:#FFF;font-family:FiraSans,Calibri,'Lucida Sans',sans-serif;font-size:110px">${initial}` +
+              `</text></svg>`
+            ], { type: 'image/svg+xml;charset=utf-8' });
+            const headers = new Headers({ 'Expires': (new Date(Date.now() + 1000 * 60 * 60 * 24)).toUTCString() });
+
+            response = new Response(blob, { status: 200, statusText: 'OK', headers });
+          }
+
+          caches.open('gravatar').then(cache => cache.put(request, response));
+        } else {
+          caches.open(version).then(cache => cache.put(request, response));
+        }
 
         return response.clone();
       });
