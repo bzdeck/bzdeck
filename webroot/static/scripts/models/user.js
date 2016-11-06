@@ -93,6 +93,13 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       })();
     }
 
+    // Delete old avatar image cache
+    if (this.data.image_blob) {
+      delete this.data.image_blob;
+      delete this.data.image_src;
+      this.save();
+    }
+
     return this.proxy();
   }
 
