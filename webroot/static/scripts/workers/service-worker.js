@@ -134,6 +134,8 @@ const files = [
 // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
 const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
+let font_url;
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(version)
@@ -182,20 +184,29 @@ self.addEventListener('fetch', event => {
       }
 
       // Request remote resource
-      return fetch(_request).then(response => {
+      return fetch(_request).then(async response => {
         if (gravatar_avatar) {
           if (!response.ok) {
-            // Generate a fallback SVG image and cache it for 24 hours. Specify fallback fonts because the Fira Sans
-            // webfont is not applied probably due to a bug in Firefox.
+            // Generate a fallback SVG image and cache it for 24 hours.
             const params = new URLSearchParams(url.search);
-            const color = params.get('color') || '#666';
-            const initial = params.get('initial') || '';
+            const color = decodeURIComponent(params.get('color') || '#666');
+            const initial = decodeURIComponent(params.get('initial') || '');
+
+            if (!font_url) {
+              // Create a Blob URL for the Fira Sans font to use it in SVG. This is a workaround for the security
+              // restrictions in Gecko. See https://developer.mozilla.org/docs/Web/SVG/SVG_as_an_Image
+              const response = await fetch('/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106');
+              const blob = await response.blob();
+
+              font_url = URL.createObjectURL(blob);
+            }
+
             const blob = new Blob([
-              `<?xml-stylesheet type="text/css" href="${location.origin}/static/styles/base/fonts.css"?>` +
-              `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" style="background-color:#${color}">` +
-              `<text text-anchor="middle" dominant-baseline="middle" x="50%" y="55%" ` +
-              `style="fill:#FFF;font-family:FiraSans,Calibri,'Lucida Sans',sans-serif;font-size:110px">${initial}` +
-              `</text></svg>`
+              `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><style><![CDATA[@font-face{` +
+              `font-family:FiraSans;src:url(${font_url})}div{display:flex;width:160px;height:160px;` +
+              `justify-content:center;align-items:center;font-family:FiraSans;font-size:110px;color:#FFF;` +
+              `background-color:${color}}]]></style><foreignObject width="160" height="160"><div xmlns="` +
+              `http://www.w3.org/1999/xhtml">${initial}</div></foreignObject></svg>`
             ], { type: 'image/svg+xml;charset=utf-8' });
             const headers = new Headers({ 'Expires': (new Date(Date.now() + 1000 * 60 * 60 * 24)).toUTCString() });
 

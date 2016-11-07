@@ -63,7 +63,7 @@ Header always append Content-Security-Policy "\
   media-src mediastream:\
     https://bugzilla.mozilla.org https://*.bugzilla.mozilla.org\
     https://bugzilla-dev.allizom.org https://*.bugzilla-dev.allizom.org;\
-  connect-src\
+  connect-src 'self'\
     https://bugzilla.mozilla.org https://bugzilla-dev.allizom.org\
     https://bugzfeed.mozilla.org wss://bugzfeed.mozilla.org\
     https://secure.gravatar.com"

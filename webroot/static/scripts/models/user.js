@@ -56,7 +56,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       image: {
         enumerable: true,
         // The avatar will be retrieved via service worker
-        get: () => `/api/gravatar/avatar/${this.hash}?color=${this.color.replace('#', '')}&initial=${this.initial}`,
+        get: () => `/api/gravatar/avatar/${this.hash}` +
+                   `?color=${encodeURIComponent(this.color)}&initial=${encodeURIComponent(this.initial)}`,
       },
       background_image: {
         enumerable: true,
