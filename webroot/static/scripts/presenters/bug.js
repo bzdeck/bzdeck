@@ -26,7 +26,7 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
     this.siblings = siblings;
 
     // Attachments
-    this.on_safe('V#AttachFiles', data => this.bug.attach_files(data.files));
+    this.on('V#AttachFiles', data => this.bug.attach_files(data.files));
     this.on('V#AttachText', data => this.bug.attach_text(data.text));
     this.on('V#RemoveAttachment', data => this.bug.remove_attachment(data.hash));
     this.on('V#MoveUpAttachment', data => this.bug.move_up_attachment(data.hash));
@@ -96,7 +96,7 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
 
     if (bug.data && bug.data.summary) {
       this.bug = bug;
-      this.trigger_safe('#BugDataAvailable', { container_id, bug, siblings: this.siblings });
+      this.trigger('#BugDataAvailable', { container_id, id: this.bug_id, siblings: this.siblings });
       bug.mark_as_read();
       BzDeck.collections.users.add_from_bug(bug);
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);

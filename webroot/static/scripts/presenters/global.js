@@ -25,7 +25,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     }, 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
 
     // Subscribe to events
-    this.subscribe_safe('BugModel#AnnotationUpdated', true);
+    this.subscribe('BugModel#AnnotationUpdated', true);
     this.subscribe('AnyView#OpeningBugRequested', true);
     this.subscribe('AnyView#OpeningAttachmentRequested', true);
     this.subscribe('AnyView#OpeningProfileRequested', true);
@@ -34,12 +34,12 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel#AnnotationUpdated
-   * @param {Proxy} bug - Changed bug.
-   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Number} bug_id - Updated bug ID.
+   * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated ({ bug, type, value } = {}) {
+  on_annotation_updated ({ bug_id, type, value } = {}) {
     if (type === 'unread') {
       this.toggle_unread();
     }

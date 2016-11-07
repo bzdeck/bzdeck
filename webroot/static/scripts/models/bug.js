@@ -208,7 +208,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
           changes.set('history', history);
         }
 
-        this.trigger_safe('#Updated', { bug_id: this.id, bug: data, changes });
+        this.trigger('#Updated', { bug_id: this.id, changes });
       }
 
       this.save(data);
@@ -237,7 +237,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.data[`_${type}`] = value;
     this.save();
-    this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type, value });
+    this.trigger('#AnnotationUpdated', { bug_id: this.id, type, value });
 
     return true;
   }
@@ -267,7 +267,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.data._last_visit = value;
     this.save();
-    this.trigger_safe('#AnnotationUpdated', { bug_id: this.id, bug: this.proxy(), type: 'last_visit', value });
+    this.trigger('#AnnotationUpdated', { bug_id: this.id, type: 'last_visit', value });
   }
 
   /**
@@ -516,8 +516,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   onedit () {
     const { changes, att_changes, uploads, can_submit } = this;
+    const _changes = Object.assign({}, changes); // Deproxify for data transfer
 
-    this.trigger_safe('#BugEdited', { bug_id: this.id, changes, att_changes, uploads, can_submit });
+    this.trigger('#BugEdited', { bug_id: this.id, changes: _changes, att_changes, uploads, can_submit });
   }
 
   /**
@@ -788,7 +789,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Called whenever new attachment files are provided by the user through a file input form control or a drag-and-drop
    * action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
-   * @param {(FileList|Array)} files - Selected files.
+   * @param {Array.<File>} files - Selected files.
    * @fires BugModel#AttachmentError
    * @returns {undefined}
    * @todo Integrate online storage APIs to upload large attachments (#111)
@@ -924,8 +925,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     this.uploads.push(attachment);
 
-    this.trigger_safe('#AttachmentAdded', { bug_id: this.id, attachment });
-    this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.trigger('#AttachmentAdded', { bug_id: this.id, id: attachment.id });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
     this.onedit();
   }
 
@@ -946,7 +947,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.uploads.splice(index, 1);
 
     this.trigger('#AttachmentRemoved', { bug_id: this.id, index, hash });
-    this.trigger_safe('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
     this.onedit();
 
     return true;
@@ -969,7 +970,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       if (attachment && attachment[prop] !== value) {
         attachment[prop] = value;
 
-        this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
+        this.trigger('#AttachmentEdited', { bug_id: this.id, id, hash, prop, value });
         this.onedit();
       }
 
@@ -1006,7 +1007,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       return;
     }
 
-    this.trigger_safe('#AttachmentEdited', { bug_id: this.id, attachment, id, hash, prop, value });
+    this.trigger('#AttachmentEdited', { bug_id: this.id, id, hash, prop, value });
     this.onedit();
   }
 
@@ -1200,7 +1201,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         this.notify_upload_progress();
       }
 
-      this.trigger_safe('#AttachmentUploaded', { bug_id: this.id, attachment });
+      this.trigger('#AttachmentUploaded', { bug_id: this.id, id: attachment.id });
 
       this.uploads.total -= attachment.uploaded;
       this.remove_attachment(attachment.hash);

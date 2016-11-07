@@ -53,7 +53,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
     // Update the sidebar Inbox folder at startup and whenever notified
     this.toggle_unread();
-    this.subscribe_safe('BugModel#AnnotationUpdated', true);
+    this.subscribe('BugModel#AnnotationUpdated', true);
   }
 
   /**
@@ -64,9 +64,9 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    */
   async load_user_gravatar (folder_id) {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
-    const profile = await user.get_gravatar_profile()
+    const profile = await user.get_gravatar_profile();
 
-    this.trigger_safe('#GravatarProfileFound', { user });
+    this.trigger('#GravatarProfileFound');
   }
 
   /**
@@ -79,18 +79,18 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
     const bugs = await BzDeck.collections.subscriptions.get(folder_id);
 
     BzDeck.presenters.homepage.data.bugs = bugs; // Map
-    this.trigger_safe('#FolderOpened', { folder_id, bugs });
+    this.trigger('#FolderOpened', { folder_id, bug_ids: [...bugs.keys()] });
   }
 
   /**
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel#AnnotationUpdated
-   * @param {Proxy} bug - Changed bug.
-   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Number} bug_id - Updated bug ID.
+   * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated ({ bug, type, value } = {}) {
+  on_annotation_updated ({ bug_id, type, value } = {}) {
     if (type === 'unread') {
       this.toggle_unread();
     }

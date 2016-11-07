@@ -23,8 +23,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$placeholder = $placeholder;
 
     // Subscribe to events
-    this.subscribe_safe('P#AttachmentAvailable');
-    this.subscribe_safe('P#AttachmentUnavailable');
+    this.subscribe('P#AttachmentAvailable');
+    this.subscribe('P#AttachmentUnavailable');
     this.subscribe('P#LoadingStarted');
     this.subscribe('P#LoadingError');
 

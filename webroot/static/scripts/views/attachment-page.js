@@ -20,7 +20,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
     this.att_id = att_id;
 
     // Subscribe to events
-    this.subscribe_safe('P#AttachmentAvailable');
+    this.subscribe('P#AttachmentAvailable');
     this.subscribe('P#LoadingComplete');
 
     this.activate();

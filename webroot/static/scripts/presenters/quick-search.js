@@ -56,7 +56,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     results = [...results];
 
     if (results.length) {
-      this.trigger_safe('#ResultsAvailable', { category: 'recent', input: '', results });
+      this.trigger('#ResultsAvailable', { category: 'recent', input: '', results });
     }
   }
 
@@ -81,13 +81,13 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     const return_bugs = async bugs => {
       const results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
 
-      this.trigger_safe('#ResultsAvailable', { category: 'bugs', input, results });
+      this.trigger('#ResultsAvailable', { category: 'bugs', input, results });
     };
 
     const return_users = async users => {
       const results = await Promise.all(users.map(user => this.get_user_result(user)));
 
-      this.trigger_safe('#ResultsAvailable', { category: 'users', input, results });
+      this.trigger('#ResultsAvailable', { category: 'users', input, results });
     };
 
     params_bugs.append('short_desc', input);

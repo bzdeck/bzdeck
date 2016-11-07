@@ -32,7 +32,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     // Subscribe to events
     this.subscribe('P#Offline');
     this.subscribe('P#SearchStarted');
-    this.subscribe_safe('P#SearchResultsAvailable');
+    this.subscribe('P#SearchResultsAvailable');
     this.subscribe('P#SearchError');
     this.subscribe('P#SearchComplete');
     window.addEventListener('popstate', event => this.onpopstate());
@@ -298,10 +298,12 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called when the search results is retrieved. Show the results on the thread.
    * @listens SearchPagePresenter#SearchResultsAvailable
-   * @param {Map.<Number, Proxy>} bugs - Bugs matching the criteria.
-   * @returns {undefined}
+   * @param {Array.<Number>} ids - Bug IDs matching the criteria.
+   * @returns {Promise.<undefined>}
    */
-  on_search_results_available ({ bugs } = {}) {
+  async on_search_results_available ({ ids } = {}) {
+    const bugs = await BzDeck.collections.bugs.get_some(ids); // Map
+
     if (bugs.size > 0) {
       this.thread.update(bugs);
       this.hide_status();

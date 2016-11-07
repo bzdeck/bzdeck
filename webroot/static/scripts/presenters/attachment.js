@@ -59,7 +59,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
         BzDeck.collections.users.get(att.creator, { name: att.creator }),
       ]);
 
-      this.trigger_safe('#AttachmentAvailable', {
+      this.trigger('#AttachmentAvailable', {
         id: att.id,
         hash: att.hash,
         summary: att.summary,
@@ -71,7 +71,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
         creation_time: att.creation_time,
         last_change_time: att.last_change_time,
         creator: creator.properties,
-        bug,
+        bug_id: bug.id,
       });
     } catch (error) {
       this.trigger('#AttachmentUnavailable', { message: error.message });

@@ -45,7 +45,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     // Subscribe to events
     this.subscribe('PrefCollection#PrefChanged', true);
-    this.on_safe('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
+    this.on('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
     this.on('BugContainerPresenter#navigated', data => this.on_container_navigated(data));
     this.on('ThreadView#OpeningBugRequested', () => this.request_expanding_bug_container(true), true);
     this.on('SidebarView#FolderSelected', () => this.request_expanding_bug_container(false), true);
@@ -279,7 +279,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       }
     });
 
-    this.on_safe('QuickSearchPresenter#ResultsAvailable', async ({ category, input, results } = {}) => {
+    this.on('QuickSearchPresenter#ResultsAvailable', async ({ category, input, results } = {}) => {
       // Check if the search terms have not changed since the search is triggered
       if (category !== 'bugs' || input !== $searchbox.value) {
         return;

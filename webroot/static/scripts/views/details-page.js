@@ -20,7 +20,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
     this.bug_id = bug_id;
 
     // Subscribe to events
-    this.on_safe('BugPresenter#BugDataAvailable');
+    this.on('BugPresenter#BugDataAvailable');
 
     // Initiate the corresponding presenter
     this.presenter = new BzDeck.DetailsPagePresenter(this.id);
@@ -76,15 +76,19 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
    * Called when the bug data is found.
    * @listens BugPresenter#BugDataAvailable
-   * @param {Proxy} bug - Bug to show.
+   * @param {Number} id - Bug ID.
    * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_bug_data_available ({ bug, siblings } = {}) {
-    if (bug.id === this.bug_id) {
-      this.$tab.title = `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
-      BzDeck.views.global.update_window_title(this.$tab);
+  async on_bug_data_available ({ id, siblings } = {}) {
+    if (id !== this.bug_id) {
+      return;
     }
+
+    const bug = await BzDeck.collections.bugs.get(id);
+
+    this.$tab.title = `Bug ${bug.id}\n${bug.summary || 'Loading...'}`; // l10n
+    BzDeck.views.global.update_window_title(this.$tab);
   }
 }

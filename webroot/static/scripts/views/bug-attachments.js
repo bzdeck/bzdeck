@@ -26,6 +26,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.attachments = new Map();
 
     this.$container = $container;
+    this.$bug = this.$container.closest('[itemtype$="Bug"]');
     this.$title = this.$container.querySelector('h4');
     this.$listbox = this.$container.querySelector('[role="listbox"]');
     this.$obsolete_checkbox = this.$container.querySelector('.list [role="checkbox"]');
@@ -51,7 +52,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       new FlareTail.widgets.ScrollBar($attachment);
       new BzDeck.AttachmentView(this.id, attachment, $attachment);
 
-      this.trigger_safe('BugView#AttachmentSelected', { attachment });
+      this.trigger('BugView#AttachmentSelected', { id: attachment.id });
     });
 
     this.$$obsolete_checkbox = new FlareTail.widgets.CheckBox(this.$obsolete_checkbox);
@@ -69,10 +70,10 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.init_uploader();
 
     // Subscribe to events
-    this.subscribe_safe('BugModel#AttachmentAdded', true);
+    this.subscribe('BugModel#AttachmentAdded', true);
     this.subscribe('BugModel#AttachmentRemoved', true);
     this.subscribe('BugModel#AttachmentEdited', true);
-    this.subscribe_safe('BugModel#UploadListUpdated', true);
+    this.subscribe('BugModel#UploadListUpdated', true);
     this.subscribe('BugPresenter#HistoryUpdated');
   }
 
@@ -138,12 +139,14 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Initialize the attachment uploading interface. This offers Add/Remove buttons as well as the drag-and-drop support.
    * @param {undefined}
-   * @fires BugView#FilesSelected
    * @fires BugView#AttachText
    * @fires BugView#RemoveAttachment
    * @returns {undefined}
    */
   init_uploader () {
+    // Notify BugView once files are selected
+    const on_select = input => this.$bug.dispatchEvent(new CustomEvent('FilesSelected', { detail: { input }}));
+
     this.$drop_target = this.$container.querySelector('[aria-dropeffect]');
     this.$add_button = this.$container.querySelector('[data-command="add-attachment"]');
     this.$remove_button = this.$container.querySelector('[data-command="remove-attachment"]');
@@ -163,9 +166,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.$drop_target.addEventListener('drop', event => {
       const dt = event.dataTransfer;
 
-      if (dt.types.contains('Files')) {
-        this.trigger_safe('BugView#FilesSelected', { input: dt });
-      } else if (dt.types.contains('text/plain')) {
+      if (dt.types.includes('Files')) {
+        on_select(dt);
+      } else if (dt.types.includes('text/plain')) {
         this.trigger('BugView#AttachText', { text: dt.getData('text/plain') });
       }
 
@@ -208,21 +211,23 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     });
 
     this.$file_picker.addEventListener('change', event => {
-      this.trigger_safe('BugView#FilesSelected', { input: event.target });
+      on_select(event.target);
     });
   }
 
   /**
    * Called whenever a new attachment is added by the user. Add the item to the listbox.
    * @listens BugModel#AttachmentAdded
-   * @param {Number} bug_id - Changed bug ID.
-   * @param {Proxy} attachment - Added attachment data as AttachmentModel instance.
-   * @returns {undefined}
+   * @param {Number} bug_id - Corresponding bug ID.
+   * @param {Number} id - Added attachment's ID.
+   * @returns {Promise.<undefined>}
    */
-  on_attachment_added ({ bug_id, attachment } = {}) {
+  async on_attachment_added ({ bug_id, id } = {}) {
     if (bug_id !== this.bug_id) {
       return;
     }
+
+    const attachment = await BzDeck.collections.attachments.get(id);
 
     this.attachments.set(attachment.hash, attachment);
     this.render([attachment]);

@@ -41,7 +41,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     this.$$folders.view.members.forEach($option => $option.setAttribute('aria-label', $option.textContent));
     this.$$folders.bind('Selected', event => this.trigger('#FolderSelected', { id: event.detail.ids[0] }));
 
-    this.on_safe('P#FolderOpened', data => this.open_folder(data.folder_id, data.bugs));
+    this.on('P#FolderOpened', data => this.open_folder(data));
     this.on('P#UnreadToggled', data => this.toggle_unread(data.number));
 
     (new FlareTail.widgets.Button(document.querySelector('#main-menu--app--account'))).bind('Pressed', event => {
@@ -67,7 +67,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     });
 
     // Subscribe to events
-    this.subscribe_safe('P#GravatarProfileFound');
+    this.subscribe('P#GravatarProfileFound');
 
     // Initiate the corresponding presenter
     this.presenter = BzDeck.presenters.sidebar = new BzDeck.SidebarPresenter(this.id);
@@ -77,10 +77,11 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * Open a specified folder by updating the document title and rendering the home page thread.
    * @listens SidebarPresenter#FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
-   * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @returns {undefined}
+   * @param {Array.<Number>} bug_ids - List of bug IDs to render.
+   * @returns {Promise.<undefined>}
    */
-  open_folder (folder_id, bugs) {
+  async open_folder ({ folder_id, bug_ids } = {}) {
+    const bugs = await BzDeck.collections.bugs.get_some(bug_ids); // Map
     const home = BzDeck.views.pages.home;
     const toolbar = BzDeck.views.banner;
     const folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
@@ -119,10 +120,12 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   /**
    * Set up the account label & avatar.
    * @listens SidebarPresenter#GravatarProfileFound
-   * @param {Object} user - UserModel instance.
-   * @returns {undefined}
+   * @param {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_gravatar_profile_found ({ user } = {}) {
+  async on_gravatar_profile_found () {
+    const user = await BzDeck.collections.users.get(BzDeck.account.data.name);
+
     this.fill(document.querySelector('#main-menu--app--account label'), user);
     document.querySelector('#sidebar-account')
             .style.setProperty('background-image', user.background_image ? `url(${user.background_image})` : 'none');

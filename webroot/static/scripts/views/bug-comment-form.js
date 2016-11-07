@@ -72,12 +72,12 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     // Attachments
     this.subscribe('BugModel#AttachmentAdded', true);
     this.subscribe('BugModel#AttachmentRemoved', true);
-    this.subscribe_safe('BugModel#AttachmentEdited', true);
+    this.subscribe('BugModel#AttachmentEdited', true);
     this.subscribe('BugModel#AttachmentError', true);
-    this.subscribe_safe('BugModel#UploadListUpdated', true);
+    this.subscribe('BugModel#UploadListUpdated', true);
 
     // Other changes
-    this.subscribe_safe('BugModel#BugEdited', true);
+    this.subscribe('BugModel#BugEdited', true);
     this.subscribe('BugModel#CommentEdited', true);
 
     // Form submission
@@ -129,7 +129,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Prepare the content on the Attachment tabpanel.
    * @param {undefined}
-   * @fires BugView#FilesSelected
    * @returns {undefined}
    */
   init_attachment_tabpanel () {
@@ -145,8 +144,9 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       can_choose_dir && event.shiftKey ? this.$file_picker.chooseDirectory() : this.$file_picker.click();
     });
 
+    // Notify BugView once files are selected
     this.$file_picker.addEventListener('change', event => {
-      this.trigger_safe('BugView#FilesSelected', { input: event.target });
+      this.$bug.dispatchEvent(new CustomEvent('FilesSelected', { detail: { input: event.target }}));
     });
   }
 
@@ -252,20 +252,21 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Called whenever a new attachment is added by the user. Update the attachment list UI accordingly.
    * @listens BugModel#AttachmentAdded
-   * @param {Number} bug_id - Changed bug ID.
-   * @param {Proxy} attachment - Added attachment data as an AttachmentModel instance.
+   * @param {Number} bug_id - Corresponding bug ID.
+   * @param {Number} id - Added attachment's ID.
    * @fires AnyView#OpeningAttachmentRequested
    * @fires AnyView#OpeningBugRequested
    * @fires BugView#RemoveAttachment
    * @fires BugView#MoveUpAttachment
    * @fires BugView#MoveDownAttachment
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_attachment_added ({ bug_id, attachment } = {}) {
+  async on_attachment_added ({ bug_id, id } = {}) {
     if (bug_id !== this.bug.id) {
       return;
     }
 
+    const attachment = await BzDeck.collections.attachments.get(id);
     const hash = attachment.hash;
     const mobile = FlareTail.helpers.env.device.mobile;
     const click_event_type = mobile ? 'touchstart' : 'mousedown';

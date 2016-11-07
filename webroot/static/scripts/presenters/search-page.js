@@ -75,7 +75,7 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
       const _bugs = await BzDeck.collections.bugs.search_remote(params);
       const bugs = this.data.bugs = new Map(_bugs.map(bug => [bug.id, bug]));
 
-      this.trigger_safe('#SearchResultsAvailable', { bugs });
+      this.trigger('#SearchResultsAvailable', { ids: _bugs.map(bug => bug.id) });
     } catch (error) {
       this.trigger('#SearchError', { message: error.message });
     }

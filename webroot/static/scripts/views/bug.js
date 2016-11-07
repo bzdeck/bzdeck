@@ -30,7 +30,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.$bug.setAttribute('aria-hidden', 'true');
 
     // Subscribe to events
-    this.subscribe_safe('BugPresenter#BugDataAvailable');
+    this.subscribe('BugPresenter#BugDataAvailable');
     this.subscribe('BugPresenter#BugDataUnavailable');
     this.subscribe('BugModel#SubmitComplete', true);
 
@@ -44,13 +44,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Called when the bug data is found. Prepare the newly opened tabpanel.
    * @listens BugPresenter#BugDataAvailable
-   * @param {Proxy} bug - Bug to show.
+   * @param {Number} id - Bug ID.
    * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {Promise.<undefined>}
    */
-  on_bug_data_available ({ bug, siblings } = {}) {
-    this.bug = bug;
+  async on_bug_data_available ({ id, siblings } = {}) {
+    this.bug = await BzDeck.collections.bugs.get(id);
     this.render();
     this.init_att_drop_target();
 
@@ -58,9 +58,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.scrollbars = new Set([...this.$bug.querySelectorAll('.scrollable')]
                                   .map($area => new FlareTail.widgets.ScrollBar($area)));
 
-    this.subscribe_safe('BugModel#AnnotationUpdated', true); // Enable the global option
-    this.subscribe_safe('BugModel#Updated', true); // Cannot be 'M#Updated' because it doesn't work in BugDetailsView
-    this.subscribe_safe('BugView#FilesSelected');
+    this.subscribe('BugModel#AnnotationUpdated', true); // Enable the global option
+    this.subscribe('BugModel#Updated', true); // Cannot be 'M#Updated' because it doesn't work in BugDetailsView
   }
 
   /**
@@ -598,7 +597,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Initialize the attachment drag & drop support.
    * @param {undefined}
-   * @fires BugView#FilesSelected
    * @fires BugView#AttachText
    * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
    */
@@ -609,6 +607,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     if (!$target) {
       return false;
     }
+
+    // Listen custom events to get files
+    this.$bug.addEventListener('FilesSelected', event => this.on_files_selected(event.detail.input));
 
     this.$bug.addEventListener('dragover', event => {
       const dt = event.dataTransfer;
@@ -644,9 +645,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         return false;
       }
 
-      if (dt.types.contains('Files')) {
-        this.trigger_safe('BugView#FilesSelected', { input: dt });
-      } else if (dt.types.contains('text/plain')) {
+      if (dt.types.includes('Files')) {
+        this.on_files_selected(dt);
+      } else if (dt.types.includes('text/plain')) {
         this.trigger('BugView#AttachText', { text: dt.getData('text/plain') });
       }
 
@@ -748,24 +749,23 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the user selected files to attach through an input form control or drag and drop operation. If the
    * browser supports the new FileSystem API, look for the files and directories recursively. Otherwise, utilize the
    * traditional File API to identify the files. In any case, notify the selected files to the presenter.
-   * @listens BugView#FilesSelected
    * @param {(HTMLInputElement|DataTransfer)} input - Data source.
    * @fires BugView#AttachFiles
    * @returns {undefined}
    */
-  on_files_selected ({ input } = {}) {
+  on_files_selected (input) {
     const iterate = items => {
       for (const item of items) if (typeof item.getFilesAndDirectories === 'function') {
         (async () => iterate(await item.getFilesAndDirectories()))();
       } else {
-        this.trigger_safe('BugView#AttachFiles', { files: [item] });
+        this.trigger('BugView#AttachFiles', { files: [item] });
       }
     };
 
     if (typeof input.getFilesAndDirectories === 'function') {
       (async () => iterate(await input.getFilesAndDirectories()))();
     } else {
-      this.trigger_safe('BugView#AttachFiles', { files: input.files });
+      this.trigger('BugView#AttachFiles', { files: [...input.files] });
     }
   }
 
@@ -907,13 +907,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Called whenever a bug annotation is updated. Update the Star button on the toolbar.
    * @listens BugModel#AnnotationUpdated
-   * @param {Proxy} bug - Changed bug.
-   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Number} bug_id - Updated bug ID.
+   * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated ({ bug, type, value } = {}) {
-    if (this.$bug && bug.id === this.bug.id && type === 'starred') {
+  on_annotation_updated ({ bug_id, type, value } = {}) {
+    if (this.$bug && bug_id === this.bug.id && type === 'starred') {
       this.$bug.querySelector('header [role="button"][data-command="star"]').setAttribute('aria-pressed', value);
     }
   }
@@ -921,14 +921,16 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Called whenever any field of a bug is updated. Update the view if the bug ID matches.
    * @listens BugModel#Updated
-   * @param {Proxy} bug - Changed bug.
+   * @param {Number} bug_id - Changed bug ID.
    * @param {Map} changes - Change details.
-   * @returns {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_updated ({ bug, changes } = {}) {
-    if (bug.id === this.bug.id) {
-      this.update(bug, changes);
+  async on_updated ({ bug_id, changes } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
     }
+
+    this.update(await BzDeck.collections.bugs.get(bug_id), changes);
   }
 
   /**

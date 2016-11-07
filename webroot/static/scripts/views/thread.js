@@ -119,7 +119,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       S: event => toggle_prop('starred'),
     });
 
-    this.subscribe_safe('BugModel#AnnotationUpdated', true);
+    this.subscribe('BugModel#AnnotationUpdated', true);
   }
 
   /**
@@ -199,13 +199,13 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Called whenever a bug annotation is updated. Update the bug row on the thread.
    * @listens BugModel#AnnotationUpdated
-   * @param {Proxy} bug - Changed bug.
+   * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated ({ bug, type, value } = {}) {
-    const $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug.id}"]`);
+  on_annotation_updated ({ bug_id, type, value } = {}) {
+    const $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug_id}"]`);
 
     if ($row) {
       $row.setAttribute(`data-${type}`, value);
@@ -278,7 +278,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.init_sorter();
 
     this.on('BugModel#CacheUpdated', data => this.on_bug_updated(data), true);
-    this.subscribe_safe('BugModel#AnnotationUpdated', true);
+    this.subscribe('BugModel#AnnotationUpdated', true);
 
     // Lazy bug loading while scrolling
     this.$listbox_outer.addEventListener('scroll', event => {
@@ -468,13 +468,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Called whenever a bug annotation is updated. Update the bug item on the thread.
    * @listens BugModel#AnnotationUpdated
-   * @param {Proxy} bug - Changed bug.
-   * @param {String} type - Annotation type such as 'starred' or 'unread'.
+   * @param {Number} bug_id - Updated bug ID.
+   * @param {String} type - Annotation type such as 'starred'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
-  on_annotation_updated ({ bug, type, value } = {}) {
-    const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug.id}"]`);
+  on_annotation_updated ({ bug_id, type, value } = {}) {
+    const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug_id}"]`);
 
     if ($option) {
       $option.setAttribute(`data-${type}`, value);
