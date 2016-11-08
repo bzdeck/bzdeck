@@ -22,6 +22,7 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
     this.siblings = siblings;
 
     // Subscribe to events
+    this.subscribe('V#BugAdded');
     this.subscribe('BugView#NavigationRequested', true);
   }
 
@@ -52,5 +53,16 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
    */
   add_bug (bug_id) {
     this.trigger('#AddingBugRequested', { bug_id, siblings: this.siblings });
+  }
+
+  /**
+   * Called once a bug is added to the container. Mark the bug read at this time.
+   * @listens BugContainerView#BugAdded
+   * @param {Number} id - Added bug's ID.
+   * @returns {Promise.<undefined>}
+   */
+  async on_bug_added ({ id } = {}) {
+    this.bug = await BzDeck.collections.bugs.get(id);
+    this.bug.mark_as_read();
   }
 }

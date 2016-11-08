@@ -35,6 +35,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @param {Number} bug_id - Bug ID to show.
    * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
+   * @fires BugContainerView#BugAdded
    * @returns {undefined}
    */
   on_adding_bug_requested ({ bug_id, siblings = [] } = {}) {
@@ -51,7 +52,9 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
       this.$bug = $existing_bug;
       this.$bug.removeAttribute('aria-hidden');
       BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, `/bug/${this.bug_id}`);
+
       BzDeck.views.statusbar.stop_loading();
+      this.trigger('#BugAdded', { id: this.bug_id });
 
       return;
     }
@@ -69,6 +72,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @listens BugView#RenderingComplete
    * @param {String} container_id - Container ID of the bug.
    * @param {Number} bug_id - Bug ID to show.
+   * @fires BugContainerView#BugAdded
    * @returns {undefined}
    */
   on_rendering_complete ({ container_id, bug_id } = {}) {
@@ -90,6 +94,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     delete this.$loading_bug;
 
     BzDeck.views.statusbar.stop_loading();
+    this.trigger('#BugAdded', { id: this.bug_id });
   }
 
   /**

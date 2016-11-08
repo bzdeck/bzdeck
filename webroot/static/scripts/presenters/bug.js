@@ -97,7 +97,6 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
     if (bug.data && bug.data.summary) {
       this.bug = bug;
       this.trigger('#BugDataAvailable', { container_id, id: this.bug_id, siblings: this.siblings });
-      bug.mark_as_read();
       BzDeck.collections.users.add_from_bug(bug);
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);
     } else {

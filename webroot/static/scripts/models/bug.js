@@ -201,12 +201,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
       data._update_needed = false;
 
-      // Mark the bug as read when the Ignore CC Changes option is enabled and there are only CC changes
-      if (ignore_cc && !new_comments.size && !new_attachments.size &&
-          ![...new_history.values()].some(h => h.changes.some(c => c.field_name !== 'cc'))) {
-        this.mark_as_read();
-      }
-
       // Combine all changes into one Map, then notify
       for (const time of timestamps) {
         const changes = new Map();
