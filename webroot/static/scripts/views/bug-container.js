@@ -33,11 +33,11 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * Add a new bug to the container.
    * @listens BugContainerPresenter#AddingBugRequested
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {undefined}
    */
-  on_adding_bug_requested ({ bug_id, siblings } = {}) {
+  on_adding_bug_requested ({ bug_id, siblings = [] } = {}) {
     const $existing_bug = this.$container.querySelector(`article[data-bug-id="${bug_id}"]`);
 
     BzDeck.views.statusbar.start_loading();

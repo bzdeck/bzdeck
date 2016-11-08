@@ -49,11 +49,11 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Called whenever opening a bug is requested.
    * @listens AnyView#OpeningBugRequested
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    * @param {Number} [att_id] - Attachment ID.
    * @returns {undefined}
    */
-  on_opening_bug_requested ({ id, siblings, att_id } = {}) {
+  on_opening_bug_requested ({ id, siblings = [], att_id } = {}) {
     BzDeck.router.navigate(`/bug/${id}`, { siblings, att_id })
   }
 

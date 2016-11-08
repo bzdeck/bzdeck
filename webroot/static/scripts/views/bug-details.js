@@ -12,11 +12,11 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @constructor
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugDetailsView instance.
    */
-  constructor (container_id, bug_id, siblings, $bug) {
+  constructor (container_id, bug_id, siblings = [], $bug) {
     super(container_id, bug_id, siblings); // Assign this.id
 
     const mql = window.matchMedia('(max-width: 1023px)');

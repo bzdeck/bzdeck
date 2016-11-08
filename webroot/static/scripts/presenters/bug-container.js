@@ -12,14 +12,14 @@ BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePr
    * Get a BugContainerPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugContainerPresenter instance.
    */
-  constructor (id, siblings) {
+  constructor (id, siblings = []) {
     super(id); // Assign this.id
 
-    this.siblings = siblings || [];
+    this.siblings = siblings;
 
     // Subscribe to events
     this.subscribe('BugView#NavigationRequested', true);

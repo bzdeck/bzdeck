@@ -77,11 +77,11 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * Called when the bug data is found.
    * @listens BugPresenter#BugDataAvailable
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Promise.<undefined>}
    */
-  async on_bug_data_available ({ id, siblings } = {}) {
+  async on_bug_data_available ({ id, siblings = [] } = {}) {
     if (id !== this.bug_id) {
       return;
     }

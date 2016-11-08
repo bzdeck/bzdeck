@@ -13,11 +13,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @constructor
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Object} view - New BugView instance.
    */
-  constructor (container_id, bug_id, siblings) {
+  constructor (container_id, bug_id, siblings = []) {
     super(); // Assign this.id
 
     this.container_id = container_id;
@@ -45,11 +45,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the bug data is found. Prepare the newly opened tabpanel.
    * @listens BugPresenter#BugDataAvailable
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @returns {Promise.<undefined>}
    */
-  async on_bug_data_available ({ id, siblings } = {}) {
+  async on_bug_data_available ({ id, siblings = [] } = {}) {
     this.bug = await BzDeck.collections.bugs.get(id);
     this.render();
     this.init_att_drop_target();
