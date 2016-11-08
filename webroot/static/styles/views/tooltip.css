@@ -12,7 +12,7 @@
   width: 32rem;
   height: 3.2rem;
   background-color: var(--control-background-color);
-  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+  box-shadow: 0 .2rem .8rem #0003;
   pointer-events: auto;
 }
 

@@ -37,7 +37,7 @@
   border-left-width: .4rem;
   border-color: var(--highlighted-button-border-color);
   color: var(--region-header-foreground-color);
-  background: rgba(0, 0, 0, .2);
+  background: #0003;
 }
 
 #settings-tablist [role="tab"][aria-selected="false"] {

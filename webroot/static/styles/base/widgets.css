@@ -15,7 +15,7 @@
   height: 1.6rem;
   color: var(--base-accent-color-1);
   background-color: var(--control-background-color);
-  box-shadow: inset 0 .1rem .2rem rgba(0, 0, 0, .1);
+  box-shadow: inset 0 .1rem .2rem #0003;
   font-family: FontAwesome;
   text-align: center;
   vertical-align: text-bottom;
@@ -179,7 +179,7 @@ span[role="textbox"] {
 
 [role="combobox"] .listbox-outer {
   border-color: var(--control-border-color);
-  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .2);
+  box-shadow: 0 .2rem .8rem #0003;
 }
 
 [data-device|="mobile"]:root [role="combobox"] [role="option"] {
@@ -379,7 +379,7 @@ col[data-hidden="false"] {
 [role$="dialog"] {
   border-radius: 0 0 .4rem .4rem;
   background-color: var(--application-background-color);
-  box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .4);
+  box-shadow: 0 .2rem .8rem #0006;
   animation: pop .2s;
 }
 

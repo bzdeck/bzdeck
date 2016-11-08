@@ -10,8 +10,8 @@
 
 [id|="tabpanel-profile"] article > header div {
   position: relative;
-  color: rgba(255, 255, 255, .9);
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+  color: #FFFC;
+  background: linear-gradient(to bottom, transparent, #0006);
 }
 
 [id|="tabpanel-profile"] article > header [itemprop="image"] {
@@ -20,12 +20,12 @@
   border: .4rem solid #FFF;
   border-radius: 50%;
   background-color: #FFF;
-  box-shadow: 0 0 .1rem rgba(0, 0, 0, .5);
+  box-shadow: 0 0 .1rem #0009;
 }
 
 [id|="tabpanel-profile"] article > header h3 {
   position: absolute;
-  text-shadow: 0 0 .2rem rgba(0, 0, 0, .8);
+  text-shadow: 0 0 .2rem #000C;
 }
 
 [id|="tabpanel-profile"] article > header ~ * {

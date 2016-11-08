@@ -23,14 +23,14 @@
 
 [data-device|="mobile"]:root #sidebar {
   width: 100%;
-  background-color: rgba(0, 0, 0, .3) !important;
+  background-color: #0006 !important;
   transition: background-color .2s ease .4s; /* Set a delay for the transitioning sidebar */
   pointer-events: auto;
 }
 
 [data-device|="mobile"]:root #sidebar[aria-hidden="true"] {
   display: block;
-  background-color: rgba(0, 0, 0, 0) !important;
+  background-color: transparent !important;
   pointer-events: none;
 }
 
@@ -80,7 +80,7 @@
 
 [data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
   color: var(--highlighted-button-border-color);
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, .2) 20%, rgba(0, 0, 0, .2) 80%, rgba(0, 0, 0, .3) 100%);
+  background-image: linear-gradient(to bottom, #0004 0%, #0003 20%, #0003 80%, #0004 100%);
 }
 
 [data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] label {
@@ -124,7 +124,7 @@
   width: 100%;
   height: 100%;
   font-size: 2rem;
-  text-shadow: 0 0 .4rem rgba(0, 0, 0, .4);
+  text-shadow: 0 0 .4rem #0006;
 }
 
 [data-device|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
@@ -239,7 +239,7 @@
 }
 
 [data-device|="mobile"]:root #main-menu--app--account {
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+  background: linear-gradient(to bottom, transparent, #0006);
 }
 
 #main-menu--app--account label {
@@ -247,10 +247,10 @@
   position: relative;
   padding-left: 4rem;
   height: 3.2rem;
-  color: rgba(255, 255, 255, .9);
+  color: #FFFC;
   font-size: 1.1rem;
   line-height: 1.6rem;
-  text-shadow: 0 0 .1rem rgba(0, 0, 0, .6);
+  text-shadow: 0 0 .1rem #0009;
 }
 
 [data-device="desktop"]:root #main-menu--app--account label {
@@ -342,7 +342,7 @@
   left: 100%;
   border-width: .4rem;
   border-style: solid;
-  border-color: transparent rgba(0, 0, 0, .8) transparent transparent;
+  border-color: transparent #000C transparent transparent;
   width: 0;
   height: 0;
   opacity: 1;
@@ -355,7 +355,7 @@
   border-radius: .2rem;
   padding: 0 1.2rem;
   color: var(--application-header-foreground-color);
-  background: rgba(0, 0, 0, .8);
+  background: #000C;
   opacity: 1;
   line-height: 2.4rem;
   white-space: nowrap;

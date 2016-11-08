@@ -36,7 +36,7 @@
   --base-background-color-6: #F4F4F4;
   --base-background-color-7: #FCFCFC;
   --base-accent-color-1: #2383C3;
-  --base-accent-color-1-a6: rgba(35, 131, 195, .6);
+  --base-accent-color-1-a6: #2383C399;
 
   --application-foreground-color: var(--base-foreground-color-2);
   --application-background-color: var(--base-background-color-6);
@@ -128,7 +128,7 @@
 
   --content-foreground-color: var(--base-foreground-color-1);
   --content-background-color: var(--base-background-color-7);
-  --content-background-color-alpha: rgba(252, 252, 252, .9);
+  --content-background-color-alpha: #FCFCFCCC;
   --secondary-content-foreground-color: var(--base-foreground-color-2);
 
   --selected-text-foreground-color: ; /* Unchanged */
@@ -143,11 +143,11 @@
  * ---------------------------------------------------------------------------------------------- */
 
 ins, del {
-  text-decoration-color: rgba(99, 99, 99, .8); /* --secondary-content-foreground-color */
+  text-decoration-color: #636363CC; /* --secondary-content-foreground-color */
 }
 
 ::-moz-selection {
-  background-color: rgba(35, 131, 195, .3); /* --selected-text-background-color */
+  background-color: #2383C366; /* --selected-text-background-color */
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -155,16 +155,16 @@ ins, del {
  * ---------------------------------------------------------------------------------------------- */
 
 [role="menu"] {
-  box-shadow: 0 0 .4rem rgba(84, 84, 84, .8); /* --control-shadow-color */
+  box-shadow: 0 0 .4rem #444C; /* --control-shadow-color */
 }
 
 [role="textbox"], [role="searchbox"] {
-  box-shadow: inset 0 0 .2rem rgba(84, 84, 84, .2); /* --control-shadow-color */
+  box-shadow: inset 0 0 .2rem #4443; /* --control-shadow-color */
 }
 
 [role="textbox"]:focus, [role="searchbox"]:focus {
-  box-shadow: 0 0 .4rem rgba(35, 131, 195, .6), /* --active-textbox-border-color */
-              inset 0 0 .2rem rgba(84, 84, 84, .2); /* --control-shadow-color */
+  box-shadow: 0 0 .4rem #2383C399, /* --active-textbox-border-color */
+              inset 0 0 .2rem #4443; /* --control-shadow-color */
 }
 
 /* ----------------------------------------------------------------------------------------------
