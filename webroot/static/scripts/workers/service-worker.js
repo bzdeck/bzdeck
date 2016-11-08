@@ -100,7 +100,6 @@ const files = [
   '/static/scripts/views/home-page.js',
   '/static/scripts/views/login-form.js',
   '/static/scripts/views/markdown-editor.js',
-  '/static/scripts/views/patch-viewer.js',
   '/static/scripts/views/person-finder.js',
   '/static/scripts/views/profile-page.js',
   '/static/scripts/views/quick-search.js',

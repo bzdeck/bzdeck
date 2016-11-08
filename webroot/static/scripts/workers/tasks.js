@@ -79,6 +79,71 @@ tasks.readfile = (port, { file } = {}) => {
   reader.readAsDataURL(file);
 };
 
+/**
+ * Parse a patch file as an HTML string that can be displayed in the Patch Viewer.
+ * @param {MessagePort} port - Allow sending messages.
+ * @param {String} str - Raw patch content.
+ * @returns {undefined}
+ */
+tasks.parse_patch = (port, { str } = {}) => {
+  const entities = { '<': '&lt;', '>': '&gt;', '&': '&amp;' };
+  const sanitize = str => str.replace(/[<>&]/g, match => entities[match]);
+  let content = [];
+
+  for (const file of str.replace(/\r\n?/g, '\n').match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/mg)) {
+    const lines = file.split(/\n/);
+    const [filename_a, filename_b] = lines.splice(0, 2).map(line => line.split(/\s+/)[1].replace(/^[ab]\//, ''));
+    const filename = filename_a === '/dev/null' ? filename_b : filename_a;
+    let rows = [];
+    let removed_ln = 0;
+    let added_ln = 0;
+
+    for (const line of lines) {
+      let row_class = '';
+      let removed = '';
+      let added = '';
+      let sign = '';
+      let code = '';
+
+      if (line.startsWith('@@')) {
+        const match = line.match(/^@@\ \-(\d+)(?:,\d+)?\s\+(\d+)(?:,\d+)?\s@@/);
+
+        removed_ln = Number(match[1]);
+        added_ln = Number(match[2]);
+        row_class = 'head';
+        removed = '...';
+        added = '...';
+        code = line;
+      } else if (line.startsWith('-')) {
+        row_class = 'removed';
+        removed = removed_ln;
+        sign = line.substr(0, 1);
+        code = line.substr(1);
+        removed_ln++;
+      } else if (line.startsWith('+')) {
+        row_class = 'added';
+        added = added_ln;
+        sign = line.substr(0, 1);
+        code = line.substr(1);
+        added_ln++;
+      } else {
+        removed = removed_ln;
+        added = added_ln;
+        code = line.substr(1);
+        removed_ln++;
+        added_ln++;
+      }
+
+      rows.push(`<tr class="${row_class}"><td class="ln removed">${removed}</td><td class="ln added">${added}</td>` +
+                `<td class="sign">${sign}</td><td class="code">${sanitize(code)}</td></tr>`);
+    }
+
+    content.push(`<details open><summary>${sanitize(filename)}</summary><table>${rows.join('')}</table></details>`);
+  }
+
+  port.postMessage(content.join(''));
+};
+
 self.addEventListener('connect', event => {
   const port = event.ports[0];
 
