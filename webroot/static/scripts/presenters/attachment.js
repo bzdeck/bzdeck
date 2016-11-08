@@ -54,25 +54,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
 
       this.attachment = att;
 
-      const [bug, creator] = await Promise.all([
-        BzDeck.collections.bugs.get(att.bug_id),
-        BzDeck.collections.users.get(att.creator, { name: att.creator }),
-      ]);
-
-      this.trigger('#AttachmentAvailable', {
-        id: att.id,
-        hash: att.hash,
-        summary: att.summary,
-        file_name: att.file_name,
-        size: FlareTail.helpers.number.format_file_size(att.size),
-        content_type: att.content_type,
-        is_patch: !!att.is_patch,
-        is_obsolete: !!att.is_obsolete,
-        creation_time: att.creation_time,
-        last_change_time: att.last_change_time,
-        creator: creator.properties,
-        bug_id: bug.id,
-      });
+      this.trigger('#AttachmentAvailable');
     } catch (error) {
       this.trigger('#AttachmentUnavailable', { message: error.message });
     }

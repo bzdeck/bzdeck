@@ -33,6 +33,7 @@ BzDeck.PatchViewerView = class PatchViewerView extends BzDeck.BaseView {
       let removed_ln = 0;
       let added_ln = 0;
 
+      $details.open = true;
       $summary.textContent = filename_a === '/dev/null' ? filename_b : filename_a;
 
       for (const line of lines) {

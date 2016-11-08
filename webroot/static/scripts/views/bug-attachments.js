@@ -50,7 +50,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
       const $attachment = this.$container.querySelector('.content');
 
       new FlareTail.widgets.ScrollBar($attachment);
-      new BzDeck.AttachmentView(this.id, attachment, $attachment);
+      new BzDeck.AttachmentView(this.id, attachment.id, $attachment);
 
       this.trigger('BugView#AttachmentSelected', { id: attachment.id });
     });

@@ -64,17 +64,17 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
     // Initiate the corresponding presenter and sub-view
     this.presenter = new BzDeck.AttachmentPagePresenter(this.id, this.att_id);
-    this.attachment_view = new BzDeck.BzDeck.AttachmentView(this.id, this.att_id, this.$placeholder);
+    this.attachment_view = new BzDeck.AttachmentView(this.id, this.att_id, this.$placeholder);
   }
 
   /**
    * Called when the attachment is found. Render it on the page.
    * @listens AttachmentPresenter#AttachmentAvailable
-   * @param {Proxy} attachment - Prepared attachment data.
-   * @returns {undefined}
+   * @param {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_attachment_available ({ attachment } = {}) {
-    const { id, hash, summary } = attachment;
+  async on_attachment_available () {
+    const { id, hash, summary } = await BzDeck.collections.attachments.get(this.att_id);
 
     if (hash) {
       this.$tab.title = this.$tabpanel.querySelector('h2').textContent = `New Attachment\n${summary}`; // l10n

@@ -37,16 +37,26 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Called when the attachment is found. Render it on the page.
    * @listens AttachmentPresenter#AttachmentAvailable
-   * @param {Proxy} attachment - Prepared attachment data.
-   * @returns {undefined}
+   * @param {undefined}
+   * @returns {Promise.<undefined>}
    */
-  on_attachment_available ({ attachment } = {}) {
-    this.attachment = attachment;
+  async on_attachment_available () {
+    const att = this.attachment = await BzDeck.collections.attachments.get(this.att_id);
+    const bug = this.bug = await BzDeck.collections.bugs.get(att.bug_id);
+    const creator = await BzDeck.collections.users.get(att.creator, { name: att.creator });
 
-    this.$attachment = this.fill(this.get_template('details-attachment-content'), attachment, {
-      'data-att-id': attachment.id, // existing attachment
-      'data-att-hash': attachment.hash, // unuploaded attachment
-      'data-content-type': attachment.content_type,
+    // Override some properties with customized values
+    const properties = Object.assign({}, att.data, {
+      size: FlareTail.helpers.number.format_file_size(att.size),
+      creator: creator.properties,
+      is_patch: !!att.is_patch,
+      is_obsolete: !!att.is_obsolete,
+    });
+
+    this.$attachment = this.fill(this.get_template('details-attachment-content'), properties, {
+      'data-att-id': att.id, // existing attachment
+      'data-att-hash': att.hash, // unuploaded attachment
+      'data-content-type': att.content_type,
     });
 
     this.activate_widgets();
@@ -113,8 +123,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
     }
 
-    new FlareTail.widgets.ScrollBar($attachment);
-    new BzDeck.BugFlagsView(this.id, this.attachment.bug, this.attachment)
+    new FlareTail.widgets.ScrollBar(this.$attachment);
+    new BzDeck.BugFlagsView(this.id, this.bug, this.attachment)
         .render(this.$attachment.querySelector('.flags'), 6);
   }
 
