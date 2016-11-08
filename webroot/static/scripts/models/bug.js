@@ -57,6 +57,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         enumerable: true,
         get: () => this.detect_if_new(), // Promise
       },
+      is_involved: {
+        enumerable: true,
+        get: () => this.detect_if_involved(),
+      },
       participants: {
         enumerable: true,
         get: () => this.get_participants(),
@@ -78,6 +82,20 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       can_submit:       { get: () => !this.has_errors &&
                                       (this.has_changes || this.has_att_changes || this.has_attachments) },
     });
+
+    return this.proxy();
+  }
+
+  /**
+   * Save data only if the user is involved in the bug to prevent the database from becoming bloated with outdated bugs.
+   * @override
+   * @param {Object} [data] - Raw data object.
+   * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
+   */
+  async save (data = undefined) {
+    if (this.is_involved) {
+      super.save(data);
+    }
 
     return this.proxy();
   }
@@ -348,6 +366,19 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     return false;
+  }
+
+  /**
+   * Check if the current BzDeck user is involved in this bug in any way.
+   * @param {undefined}
+   * @returns {Boolean} result - Whether the user is involved.
+   */
+  detect_if_involved () {
+    const email = BzDeck.account.data.name;
+
+    return this.data.creator === email || this.data.assigned_to === email || this.data.qa_contact === email ||
+           (this.data.cc || []).includes(email) || (this.data.mentors || []).includes(email) ||
+           (this.data.flags || []).some(flag => flag.requestee === email) || this.data.starred;
   }
 
   /**

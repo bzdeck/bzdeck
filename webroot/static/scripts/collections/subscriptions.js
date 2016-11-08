@@ -58,11 +58,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     const email = BzDeck.account.data.name;
     const all_bugs = await BzDeck.collections.bugs.get_all();
 
-    return new Map([...all_bugs.values()].filter(bug => {
-      return (bug.cc && bug.cc.includes(email)) || bug.creator === email || bug.assigned_to === email ||
-             bug.qa_contact === email || (bug.mentors && bug.mentors.includes(email)) ||
-             (bug.flags && bug.flags.some(flag => flag.requestee === email));
-    }).map(bug => [bug.id, bug]));
+    return new Map([...all_bugs.values()].filter(bug => bug.is_involved).map(bug => [bug.id, bug]));
   }
 
   /**
