@@ -87,13 +87,14 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Save data only if the user is involved in the bug to prevent the database from becoming bloated with outdated bugs.
+   * Save data only if the user is involved in the bug or the bug is starred. This aims to prevent the database from
+   * becoming bloated with irrelevant, outdated bugs.
    * @override
    * @param {Object} [data] - Raw data object.
    * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
    */
   async save (data = undefined) {
-    if (this.is_involved) {
+    if (this.is_involved || this.data.starred) {
       super.save(data);
     }
 
@@ -372,7 +373,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     return this.data.creator === email || this.data.assigned_to === email || this.data.qa_contact === email ||
            (this.data.cc || []).includes(email) || (this.data.mentors || []).includes(email) ||
-           (this.data.flags || []).some(flag => flag.requestee === email) || this.data.starred;
+           (this.data.flags || []).some(flag => flag.requestee === email);
   }
 
   /**
