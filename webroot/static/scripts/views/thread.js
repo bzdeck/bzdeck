@@ -388,7 +388,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @returns {Promise.<undefined>}
    */
   async render (addition = false) {
-    const bugs = this.unrendered_bugs.splice(0, 50);
+    const bugs = this.unrendered_bugs.splice(0, 25);
     const unloaded_bugs = bugs.filter(bug => !bug.comments);
     const contributors = await Promise.all(bugs.map(bug => bug.get_contributor()));
     const $fragment = new DocumentFragment();
