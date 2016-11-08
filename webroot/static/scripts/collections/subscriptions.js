@@ -30,7 +30,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
     const email = BzDeck.account.data.name;
     const all_bugs = await (['all', 'inbox'].includes(id) ? this.get_all() : BzDeck.collections.bugs.get_all());
     const _bugs = [...all_bugs.values()];
-    const is_new_results = _bugs.map(bug => bug.is_new);
+    const is_new_results = await Promise.all(_bugs.map(bug => bug.is_new));
     const bugs = _bugs.filter((bug, index) => {
       switch (id) {
         case 'inbox':     return is_new_results[index];

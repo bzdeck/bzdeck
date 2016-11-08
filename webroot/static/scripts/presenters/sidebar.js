@@ -104,11 +104,11 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    */
   async toggle_unread () {
     const all_bugs = await BzDeck.collections.subscriptions.get_all();
-    const bugs = [...all_bugs.values()];
-    const is_new_results = bugs.map(bug => bug.is_new);
+    const _bugs = [...all_bugs.values()];
+    const is_new_results = await Promise.all(_bugs.map(bug => bug.is_new));
 
     this.trigger('#UnreadToggled', {
-      number: bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
+      number: _bugs.filter((bug, index) => bug.unread && is_new_results[index]).length,
     });
   }
 
