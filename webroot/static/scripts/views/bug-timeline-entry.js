@@ -84,7 +84,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     // The comment.count property is available on Bugzilla 5.0 and later
     const count = isNaN(comment.count) ? this.bug.comments.findIndex(c => c.creation_time === time) : comment.count;
 
-    $entry.id = `${this.id}-comment-${comment.id}`;
+    $entry.id = `bug-${this.bug.id}-${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-count', count);

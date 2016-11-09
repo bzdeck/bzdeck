@@ -27,7 +27,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
     const data_arr = [];
     const $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
-    const timeline_id = $timeline.id = `${this.id}-timeline`;
+    const timeline_id = $timeline.id = `bug-${this.bug.id}-${this.id}-timeline`;
     const $comments_wrapper = $timeline.querySelector('.comments-wrapper');
     let read_comments_num = 0;
     let last_comment_time;

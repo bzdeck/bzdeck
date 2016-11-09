@@ -22,7 +22,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.bug = bug;
     this.$bug = $bug;
 
-    this.$form = this.get_template('bug-comment-form', this.id);
+    this.$form = this.get_template('bug-comment-form', `${this.bug.id}-${this.id}`);
     this.$tabpanel = this.$form.querySelector('[role="tabpanel"]');
     this.$formatting_toolbar = this.$form.querySelector('.text-formatting-toolbar');
     this.$textbox = this.$form.querySelector('[id$="tabpanel-comment"] [role="textbox"]');
@@ -163,7 +163,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     const $tab = this.$form.querySelector('[id$="tab-needinfo"]');
     const $tabpanel = this.$form.querySelector('[id$="tabpanel-needinfo"]');
     const $finder_outer = $tabpanel.querySelector('.requestee-finder-outer');
-    const $$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-person-finder`, this.bug,
+    const $$finder = new BzDeck.PersonFinderView(this.id, `bug-${this.bug.id}-${this.id}-person-finder`, this.bug,
                                                  new Set([this.bug.creator, this.bug.assigned_to]));
     const $finder = $$finder.$combobox;
 

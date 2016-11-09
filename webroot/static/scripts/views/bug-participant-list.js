@@ -134,7 +134,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @returns {undefined}
    */
   add_person_finder () {
-    this.$$finder = new BzDeck.PersonFinderView(this.id, `${this.id}-${this.field}-person-finder`,
+    this.$$finder = new BzDeck.PersonFinderView(this.id, `bug-${this.bug.id}-${this.id}-${this.field}-person-finder`,
                                                 this.bug, this.values);
     this.$finder = this.$$finder.$combobox;
     this.$finder.setAttribute('aria-hidden', 'true');

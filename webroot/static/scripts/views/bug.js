@@ -23,7 +23,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.container_id = container_id;
     this.bug_id = bug_id;
     this.siblings = siblings;
-    this.$bug = this.get_template('bug-details-template', this.id);
+    this.$bug = this.get_template('bug-details-template', `${this.bug_id}-${this.id}`);
 
     this.$bug.setAttribute('data-bug-id', this.bug_id);
     this.$bug.setAttribute('aria-busy', 'true');
@@ -70,7 +70,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @returns {Boolean} result - Whether the view is updated.
    */
   on_bug_data_unavailable ({ code, message } = {}) {
-    const $error = this.fill(this.get_template('bug-details-error-template', this.bug_id), {
+    const $error = this.fill(this.get_template('bug-details-error-template', `${this.bug_id}-${this.id}`), {
       id: this.bug_id,
       status: message,
     }, {
