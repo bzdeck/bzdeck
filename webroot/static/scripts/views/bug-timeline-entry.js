@@ -91,7 +91,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
           .textContent = count > 0 ? `Comment ${count}` : 'Description'; // l10n
     $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, !!comment.is_markdown);
-    $entry.querySelector('[itemprop="extract"]').innerHTML = this.bug.get_extract(comment.id);
+    $entry.querySelector('[itemprop="extract"]').textContent = this.bug.get_extract(comment.id);
 
     const author = await BzDeck.collections.users.get(comment.creator, { name: comment.creator });
 
