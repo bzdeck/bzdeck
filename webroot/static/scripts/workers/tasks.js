@@ -60,7 +60,7 @@ tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
  * @returns {undefined}
  */
 tasks.decode = (port, { str, type } = {}) => {
-  const binary = decodeURIComponent(escape(atob(str)));
+  const binary = type.startsWith('text/') ? decodeURIComponent(escape(atob(str))) : atob(str);
   const blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type });
 
   port.postMessage({ binary, blob });

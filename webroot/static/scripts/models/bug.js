@@ -843,6 +843,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
           file_name: file.name,
           content_type: is_patch ? 'text/plain' : file.type || 'application/x-download',
           is_patch,
+          bug_id: this.id,
         }, file.size);
       });
 
