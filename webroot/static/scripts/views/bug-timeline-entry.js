@@ -300,7 +300,9 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   async create_history_entries () {
     const comment = this.data.get('comment');
     const history = this.data.get('history');
-    const changes = history.changes.filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name));
+    // Clone the objects so that the original data won't be affected
+    const changes = history.changes.map(change => Object.assign({}, change))
+                                   .filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name));
     const changer_name = history.who;
     const time = history.when;
     const find_index = field => changes.findIndex(change => change.field_name === field);
@@ -312,8 +314,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       const f2i = find_index(f2);
 
       if (f1i > -1 && f2i > -1) {
-        changes[f1i].added = [changes[f1i].added, changes[f2i].added].join(spacer);
-        changes[f1i].removed = [changes[f1i].removed, changes[f2i].removed].join(spacer);
+        changes[f1i].added = [changes[f1i].added, changes[f2i].added].join(spacer).trim();
+        changes[f1i].removed = [changes[f1i].removed, changes[f2i].removed].join(spacer).trim();
         changes.splice(f2i, 1);
       }
     };
