@@ -953,7 +953,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.uploads.push(attachment);
 
     this.trigger('#AttachmentAdded', { bug_id: this.id, id: attachment.id });
-    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => Object.assign({}, att)) });
     this.onedit();
   }
 
@@ -974,7 +974,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.uploads.splice(index, 1);
 
     this.trigger('#AttachmentRemoved', { bug_id: this.id, index, hash });
-    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => Object.assign({}, att)) });
     this.onedit();
 
     return true;
