@@ -135,91 +135,111 @@ const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
 
 let font_url;
 
+/**
+ * Generate a fallback avatar image in the SVG format.
+ * @param {URL} url - The URL used for the original request.
+ * @returns {Promise.<Response>} response - Promise to be resolved in a new 200 response that contains a blob of SVG.
+ */
+const generate_avatar = async url => {
+  const params = new URLSearchParams(url.search);
+  const color = decodeURIComponent(params.get('color') || '#666');
+  const initial = decodeURIComponent(params.get('initial') || '');
+
+  // Create a Blob URL for the Fira Sans font to use it in SVG. This is a workaround for the security restrictions in
+  // Gecko. See https://developer.mozilla.org/docs/Web/SVG/SVG_as_an_Image
+  if (!font_url) {
+    const response = await fetch('/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106');
+    const blob = await response.blob();
+
+    font_url = URL.createObjectURL(blob);
+  }
+
+  // Create a Blob with SVG data, embedding the defined color and initial of the user as well as the font's Blob URL.
+  // https://developer.mozilla.org/docs/Web/API/Canvas_API/Drawing_DOM_objects_into_a_canvas
+  const blob = new Blob([
+    `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><style><![CDATA[@font-face{font-family:` +
+    `FiraSans;src:url(${font_url})}div{display:flex;width:160px;height:160px;justify-content:center;align-items:` +
+    `center;font-family:FiraSans,sans-serif;font-size:110px;color:#FFF;background-color:${color}}]]></style>` +
+    `<foreignObject width="160" height="160"><div xmlns="http://www.w3.org/1999/xhtml">${initial}</div>` +
+    `</foreignObject></svg>`
+  ], { type: 'image/svg+xml;charset=utf-8' });
+
+  // Cache the image for 24 hours
+  const headers = new Headers({ 'Expires': (new Date(Date.now() + 1000 * 60 * 60 * 24)).toUTCString() });
+
+  return new Response(blob, { status: 200, statusText: 'OK', headers });
+};
+
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(version)
-        // Cache the files
-        .then(cache => cache.addAll(files))
-        // Activate the worker immediately
-        .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(version);
+
+    // Cache the files
+    await cache.addAll(files);
+
+    // Activate the worker immediately
+    return self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-        // Delete old caches
-        .then(keys => Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key))))
-        // Activate the worker for the main thread
-        .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+
+    // Delete old caches
+    await Promise.all(keys.filter(key => key !== version).map(key => caches.delete(key)));
+
+    // Activate the worker for the main thread
+    return self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', event => {
   let request = event.request;
-  const url = new URL(event.request.url);
+  const url = new URL(request.url);
   const path = url.pathname;
-  const gravatar_avatar = path.startsWith('/api/gravatar/avatar/');
+  const is_gravatar_avatar = path.startsWith('/api/gravatar/avatar/');
 
   // Rewrite in-app requests as .htaccess does
   if (pattern.test(path)) {
     request = new Request('/app/');
   }
 
-  event.respondWith(
+  event.respondWith((async () => {
     // Proxy requests and cache files when needed
-    // TODO: Provide custom 404 page
-    caches.match(request).then(response => {
-      // Return cache if found
-      if (response) {
-        return response;
-      }
+    let response = await caches.match(request);
 
-      let _request = request;
+    // Return cache if found
+    if (response) {
+      return response;
+    }
 
-      // Proxy Gravatar requests
-      if (gravatar_avatar) {
-        _request = new Request(`https://secure.gravatar.com/avatar/${path.substr(21)}?s=160&d=404`, { mode: 'cors' });
-      }
+    let _request = request;
+    let cache_name = 'misc';
 
+    // Proxy Gravatar requests
+    if (is_gravatar_avatar) {
+      _request = new Request(`https://secure.gravatar.com/avatar/${path.substr(21)}?s=160&d=404`, { mode: 'cors' });
+      cache_name = 'gravatar';
+    }
+
+    try {
       // Request remote resource
-      return fetch(_request).then(async response => {
-        if (gravatar_avatar) {
-          if (!response.ok) {
-            // Generate a fallback SVG image and cache it for 24 hours.
-            const params = new URLSearchParams(url.search);
-            const color = decodeURIComponent(params.get('color') || '#666');
-            const initial = decodeURIComponent(params.get('initial') || '');
+      response = await fetch(_request);
 
-            if (!font_url) {
-              // Create a Blob URL for the Fira Sans font to use it in SVG. This is a workaround for the security
-              // restrictions in Gecko. See https://developer.mozilla.org/docs/Web/SVG/SVG_as_an_Image
-              const response = await fetch('/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106');
-              const blob = await response.blob();
+      if (is_gravatar_avatar && !response.ok) {
+        response = await generate_avatar(url);
+      }
 
-              font_url = URL.createObjectURL(blob);
-            }
+      const cache = await caches.open(cache_name);
 
-            const blob = new Blob([
-              `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><style><![CDATA[@font-face{` +
-              `font-family:FiraSans;src:url(${font_url})}div{display:flex;width:160px;height:160px;` +
-              `justify-content:center;align-items:center;font-family:FiraSans;font-size:110px;color:#FFF;` +
-              `background-color:${color}}]]></style><foreignObject width="160" height="160"><div xmlns="` +
-              `http://www.w3.org/1999/xhtml">${initial}</div></foreignObject></svg>`
-            ], { type: 'image/svg+xml;charset=utf-8' });
-            const headers = new Headers({ 'Expires': (new Date(Date.now() + 1000 * 60 * 60 * 24)).toUTCString() });
+      // Cache the response
+      cache.put(request, response.clone());
+    } catch (ex) {
+      // TODO: Provide custom 404 page
+      response = new Response('404 Not Found', { status: 404 });
+    }
 
-            response = new Response(blob, { status: 200, statusText: 'OK', headers });
-          }
-
-          caches.open('gravatar').then(cache => cache.put(request, response));
-        } else {
-          caches.open(version).then(cache => cache.put(request, response));
-        }
-
-        return response.clone();
-      });
-    })
-    .catch(error => new Response('404 Not Found', { status: 404 }))
-  );
+    return response;
+  })());
 });
