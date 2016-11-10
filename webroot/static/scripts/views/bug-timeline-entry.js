@@ -280,16 +280,25 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         $media.src = URL.createObjectURL(result.blob);
         $outer.appendChild($media);
       } catch (error) {
-        const $error = document.createElement('span');
-
-        $error.textContent = error.message + ' Click here to reload.'; // l10n
-        $error.tabIndex = 0;
-        $error.setAttribute('role', 'button');
-        $error.addEventListener('click', () => load_attachment());
-        $outer.appendChild($error);
+        $outer.appendChild(create_button(error.message + ' Click here to reload.')); // l10n
       }
 
       $outer.removeAttribute('aria-busy');
+    };
+
+    const add_placeholder = () => {
+      $outer.appendChild(create_button('Click here to load the attachment')); // l10n
+    };
+
+    const create_button = str => {
+      const $button = document.createElement('span');
+
+      $button.textContent = str;
+      $button.tabIndex = 0;
+      $button.setAttribute('role', 'button');
+      $button.addEventListener('click', event => { load_attachment(); event.stopPropagation(); });
+
+      return $button;
     };
 
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
@@ -300,7 +309,12 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     }), { root: document.querySelector(`#bug-${this.bug.id}-${this.id}-timeline`) });
 
     if ($media) {
-      if ((await BzDeck.prefs.get('ui.timeline.display_attachments_inline')) !== false) {
+      const pref = await BzDeck.prefs.get('ui.timeline.show_attachments');
+      const cellular = navigator.connection && navigator.connection.type === 'cellular';
+
+      if (pref === 0 || (pref === 1 && cellular)) {
+        add_placeholder();
+      } else {
         observer.observe($outer);
       }
     } else {

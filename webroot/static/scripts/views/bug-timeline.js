@@ -115,7 +115,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     $timeline.removeAttribute('aria-busy', 'false');
 
     // Subscribe to events
-    this.subscribe('PrefCollection#PrefChanged', true);
     this.subscribe('BugPresenter#HistoryUpdated');
   }
 
@@ -188,38 +187,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
         $comment.scrollIntoView({ block: 'start', behavior: 'smooth' });
         $comment.focus();
-      }
-    }
-  }
-
-  /**
-   * Called whenever a preference value is changed by the user. Show media when the pref is enabled.
-   * @listens PrefCollection#PrefChanged
-   * @param {String} name - Preference name.
-   * @param {*} value - New value.
-   * @returns {undefined}
-   */
-  on_pref_changed ({ name, value } = {}) {
-    if (name !== 'ui.timeline.display_attachments_inline' || value !== true) {
-      return;
-    }
-
-    for (const $attachment of this.$timeline.querySelectorAll('[itemprop="attachment"]')) {
-      const $media = $attachment.querySelector('img, audio, video');
-
-      if ($media && !$media.src) {
-        const att_id = Number($attachment.querySelector('[itemprop="url"]').getAttribute('data-att-id'));
-
-        $media.parentElement.setAttribute('aria-busy', 'true');
-
-        (async () => {
-          const attachment = await BzDeck.collections.attachments.get(att_id);
-          const result = await attachment.get_data();
-
-          $media.src = URL.createObjectURL(result.blob);
-          attachment.data = result.attachment.data;
-          $media.parentElement.removeAttribute('aria-busy');
-        })();
       }
     }
   }

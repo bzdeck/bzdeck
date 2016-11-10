@@ -61,11 +61,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
       $root.setAttribute('data-ui-timeline-show-cc-changes', value !== undefined ? value : false);
     });
 
-    // Timeline: Attachments
-    BzDeck.prefs.get('ui.timeline.display_attachments_inline').then(value => {
-      $root.setAttribute('data-ui-timeline-display-attachments-inline', value !== undefined ? value : true);
-    });
-
     // Update user name & image asynchronously
     this.subscribe('UserModel#GravatarProfileRequested', true);
     this.subscribe('UserModel#UserInfoUpdated', true);

@@ -268,10 +268,6 @@
   text-align: center;
 }
 
-[data-ui-timeline-display-attachments-inline="false"]:root .bug-timeline [itemprop="comment"] [itemprop="attachment"] div {
-  display: none;
-}
-
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] {
   height: 10rem;
 }
@@ -285,6 +281,10 @@
 
 .bug-timeline [itemprop="comment"] [itemprop="attachment"] div[aria-busy="true"] * {
   opacity: 0;
+}
+
+.bug-timeline [itemprop="comment"] [itemprop="attachment"] div [role="button"] {
+  pointer-events: auto;
 }
 
 .bug-timeline [itemprop="comment"] footer {

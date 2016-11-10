@@ -123,7 +123,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
     };
 
     const on_change = value => {
-      this.trigger('#PrefChangeRequested', { name, value });
+      this.trigger('#PrefChangeRequested', { name, value: _value.type === 'integer' ? Number(value) : value });
 
       if ($root.hasAttribute(attr)) {
         $root.setAttribute(attr, value);

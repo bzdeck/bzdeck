@@ -204,9 +204,11 @@
                   </ul>
                 </section>
                 <section>
-                  <h4>Media Attachments</h4>
-                  <ul role="none">
-                    <li role="none"><span role="checkbox" data-pref="ui.timeline.display_attachments_inline">Show attachments inline</span></li>
+                  <h4>Show Media Attachments</h4>
+                  <ul role="radiogroup" data-pref="ui.timeline.show_attachments">
+                    <li role="none"><span role="radio" data-value="2">Always</span></li>
+                    <li role="none"><span role="radio" data-value="1">Only over Wi-Fi</span></li>
+                    <li role="none"><span role="radio" data-value="0">Never</span></li>
                   </ul>
                 </section>
               </section>
