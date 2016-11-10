@@ -28,7 +28,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     const data_arr = [];
     const $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
     const timeline_id = $timeline.id = `bug-${this.bug.id}-${this.id}-timeline`;
-    const $comments_wrapper = $timeline.querySelector('.comments-wrapper');
     let read_comments_num = 0;
     let last_comment_time;
 
@@ -67,7 +66,8 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     }
 
     // Append entries to the timeline
-    (async () => $comments_wrapper.appendChild(await this.generate_entries(data_arr)))();
+    this.$comments_wrapper = this.$timeline.querySelector('[role="feed"]');
+    (async () => this.$comments_wrapper.appendChild(await this.generate_entries(data_arr)))();
 
     // Show an expander if there are read comments
     if (read_comments_num > 1) {
@@ -100,7 +100,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           }
 
           $timeline.focus();
-          $comments_wrapper.replaceChild($fragment, $expander);
+          this.$comments_wrapper.replaceChild($fragment, $expander);
 
           delete this.$expander;
         })();
@@ -108,13 +108,14 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
         return FlareTail.helpers.event.ignore(event);
       });
 
-      $comments_wrapper.insertAdjacentElement('afterbegin', $expander);
+      this.$comments_wrapper.insertAdjacentElement('afterbegin', $expander);
     }
 
     $timeline.scrollTop = 0;
     $timeline.removeAttribute('aria-busy', 'false');
 
     // Subscribe to events
+    this.on('BugModel#Updated', data => this.on_bug_updated(data), true);
     this.subscribe('BugPresenter#HistoryUpdated');
   }
 
@@ -161,6 +162,33 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   collapse_comments () {
     for (const $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
       $comment.dispatchEvent(new CustomEvent('ToggleExpanded', { detail: { expanded: false }}));
+    }
+  }
+
+  /**
+   * Called whenever any field of a bug is updated. Update the view if the bug ID matches.
+   * @listens BugModel#Updated
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {Map} changes - Change details.
+   * @returns {Promise.<undefined>}
+   */
+  async on_bug_updated ({ bug_id, changes } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    const entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
+    
+    this.$comments_wrapper.appendChild(entry.$outer);
+    this.$comments_wrapper.querySelector('article:last-of-type').scrollIntoView({ block: 'start', behavior: 'smooth' });
+
+    // Update the aria-setsize attribute on each comment entry
+    if (changes.has('comment')) {
+      const size = this.bug.comments.length;
+
+      for (const $comment of this.$comments_wrapper.querySelectorAll('[itemprop="comment"]')) {
+        $comment.setAttribute('aria-setsize', size);
+      }
     }
   }
 

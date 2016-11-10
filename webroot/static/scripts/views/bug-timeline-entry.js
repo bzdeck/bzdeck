@@ -82,12 +82,15 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const $textbox = document.querySelector(`#bug-${this.id}-comment-form [role="textbox"]`);
 
     // The comment.count property is available on Bugzilla 5.0 and later
+    // It starts with 0, which is the reporter's comment or description
     const count = isNaN(comment.count) ? this.bug.comments.findIndex(c => c.creation_time === time) : comment.count;
 
     $entry.id = `bug-${this.bug.id}-${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-count', count);
+    $entry.setAttribute('aria-posinset', count + 1);
+    $entry.setAttribute('aria-setsize', this.bug.comments.length);
     $entry.querySelector(':not([itemscope]) > [itemprop="name"]')
           .textContent = count > 0 ? `Comment ${count}` : 'Description'; // l10n
     $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, !!comment.is_markdown);

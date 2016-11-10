@@ -295,7 +295,7 @@
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
           <div class="bug-timeline" tabindex="0" role="region" aria-live="true" aria-relevant="additions">
             <h3 class="bug-summary" itemprop="summary"></h3>
-            <div class="comments-wrapper"></div>
+            <div role="feed" class="comments-wrapper"></div>
           </div>
         </div><!-- end #search-TID-preview-bug-timeline-wrapper -->
         <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
@@ -346,7 +346,7 @@
                     <header class="bug-summary" data-field="summary">
                       <h3><span class="distinct" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></h3>
                     </header>
-                    <div class="comments-wrapper"></div>
+                    <div role="feed" class="comments-wrapper"></div>
                   </section>
                 </div>
               </div>

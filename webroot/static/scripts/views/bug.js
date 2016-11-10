@@ -860,18 +860,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   update (bug, changes) {
     this.bug = bug;
 
-    const $timeline = this.$bug.querySelector('.bug-timeline');
-
-    if ($timeline) {
-      (async () => {
-        const entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
-
-        $timeline.querySelector('.comments-wrapper').appendChild(entry.$outer);
-        $timeline.querySelector('.comments-wrapper > article:last-of-type')
-                 .scrollIntoView({ block: 'start', behavior: 'smooth' });
-      })();
-    }
-
     // Update the tab badges
     if (this.add_tab_badges) {
       this.add_tab_badges();
