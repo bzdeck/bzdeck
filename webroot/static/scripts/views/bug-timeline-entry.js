@@ -270,20 +270,39 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       }
     }
 
+    const load_attachment = async () => {
+      $outer.setAttribute('aria-busy', 'true');
+      $outer.innerHTML = ''; // l10n
+
+      try {
+        const result = await attachment.get_data();
+
+        $media.src = URL.createObjectURL(result.blob);
+        $outer.appendChild($media);
+      } catch (error) {
+        const $error = document.createElement('span');
+
+        $error.textContent = error.message + ' Click here to reload.'; // l10n
+        $error.tabIndex = 0;
+        $error.setAttribute('role', 'button');
+        $error.addEventListener('click', () => load_attachment());
+        $outer.appendChild($error);
+      }
+
+      $outer.removeAttribute('aria-busy');
+    };
+
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.intersectionRatio > 0) {
+        observer.disconnect();
+        load_attachment();
+      }
+    }), { root: document.querySelector(`#bug-${this.bug.id}-${this.id}-timeline`) });
+
     if ($media) {
-      $outer.appendChild($media);
-
-      (async () => {
-        if ((await BzDeck.prefs.get('ui.timeline.display_attachments_inline')) !== false) {
-          $outer.setAttribute('aria-busy', 'true');
-
-          const result = await attachment.get_data();
-
-          $media.src = URL.createObjectURL(result.blob);
-          attachment.data = result.attachment.data;
-          $outer.removeAttribute('aria-busy');
-        }
-      })();
+      if ((await BzDeck.prefs.get('ui.timeline.display_attachments_inline')) !== false) {
+        observer.observe($outer);
+      }
     } else {
       // TODO: support other attachment types
       $outer.remove();
