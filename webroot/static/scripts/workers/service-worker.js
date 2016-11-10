@@ -199,6 +199,10 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   const path = url.pathname;
   const is_gravatar_avatar = path.startsWith('/api/gravatar/avatar/');
+  // TODO: The URL may vary with the Bugzilla instance. Retrieve this from the configuration.
+  const is_bugzilla = url.origin.startsWith('https://bugzilla');
+  const is_bugzilla_attachment = is_bugzilla && path.startsWith('/rest/bug/attachment/')
+                                             && url.search === '?include_fields=data';
 
   // Rewrite in-app requests as .htaccess does
   if (pattern.test(path)) {
@@ -216,11 +220,18 @@ self.addEventListener('fetch', event => {
 
     let _request = request;
     let cache_name = 'misc';
+    let cache_enabled = true;
 
     // Proxy Gravatar requests
     if (is_gravatar_avatar) {
       _request = new Request(`https://secure.gravatar.com/avatar/${path.substr(21)}?s=160&d=404`, { mode: 'cors' });
       cache_name = 'gravatar';
+    }
+
+    // For Bugzilla API requests, only cache permanent attachment data
+    if (is_bugzilla) {
+      cache_name = 'bugzilla';
+      cache_enabled = is_bugzilla_attachment;
     }
 
     try {
@@ -234,7 +245,9 @@ self.addEventListener('fetch', event => {
       const cache = await caches.open(cache_name);
 
       // Cache the response
-      cache.put(request, response.clone());
+      if (cache_enabled) {
+        cache.put(request, response.clone());
+      }
     } catch (ex) {
       // TODO: Provide custom 404 page
       response = new Response('404 Not Found', { status: 404 });

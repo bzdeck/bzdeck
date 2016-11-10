@@ -22,6 +22,19 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
     this.data = data;
 
+    // Delete old attachment data in the database
+    if (this.data.data) {
+      (async () => {
+        const bug = await BzDeck.collections.bugs.get(this.data.bug_id);
+        const index = bug && bug.attachments ? bug.attachments.findIndex(att => att.id === this.id) : -1;
+
+        if (index > -1) {
+          delete bug.attachments[index].data;
+          bug.save();
+        }
+      })();
+    }
+
     return this.proxy();
   }
 
@@ -47,7 +60,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
    *  this AttachmentModel.
    */
   async get_data () {
-    const decode = () => new Promise(resolve => {
+    const decode = data => new Promise(resolve => {
       const worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
       worker.port.addEventListener('message', ({ data: { binary, blob }} = {}) => {
@@ -57,12 +70,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
       });
 
       worker.port.start();
-      worker.port.postMessage(['decode', { str: this.data.data, type: this.content_type }]);
+      worker.port.postMessage(['decode', { str: data, type: this.content_type }]);
     });
-
-    if (this.data.data) {
-      return decode();
-    }
 
     try {
       const result = await BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data'));
@@ -73,33 +82,9 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
         throw new Error();
       }
 
-      this.data.data = data;
-      BzDeck.collections.attachments.set(this.id, this.data);
-      this.save();
-
-      return decode();
+      return decode(data);
     } catch (error) {
       throw new Error(`The attachment ${this.id} could not be retrieved from Bugzilla.`);
     }
-  }
-
-  /**
-   * Save this attachment as part of the relevant bug.
-   * @override
-   * @param {undefined}
-   * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
-   */
-  async save () {
-    const bug = await BzDeck.collections.bugs.get(this.data.bug_id);
-
-    if (bug && bug.attachments && bug.attachments.length) {
-      for (const [index, att] of bug.attachments.entries()) if (att.id === this.id && !att.data) {
-        bug.attachments[index].data = this.data.data;
-      }
-
-      bug.save(bug.data);
-    }
-
-    return this.proxy();
   }
 }
