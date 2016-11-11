@@ -38,7 +38,10 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
     this.$folders = document.querySelector('#sidebar-folder-list');
     this.$$folders = new FlareTail.widgets.ListBox(this.$folders, BzDeck.config.folders);
-    this.$$folders.view.members.forEach($option => $option.setAttribute('aria-label', $option.textContent));
+    this.$$folders.view.members.forEach($option => {
+      $option.setAttribute('aria-label', $option.textContent);
+      $option.setAttribute('data-tooltip-position', 'right');
+    });
     this.$$folders.bind('Selected', event => this.trigger('#FolderSelected', { id: event.detail.ids[0] }));
 
     this.on('P#FolderOpened', data => this.open_folder(data));

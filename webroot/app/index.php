@@ -1008,7 +1008,7 @@
         <div tabindex="0" role="region">
           <section id="sidebar-account">
             <h2>Account</h2>
-            <span id="main-menu--app--account" role="button" tabindex="0" aria-label="Profile">
+            <span id="main-menu--app--account" role="button" tabindex="0" aria-label="Profile" data-tooltip-position="right">
               <label itemscope itemtype="http://bzdeck.com/User">
                 <img alt="" itemprop="image">
                 <strong itemprop="name"></strong>
@@ -1023,8 +1023,8 @@
           <section id="sidebar-menu">
             <h2>Menu</h2>
             <ul id="main-menu--app-menu" role="menu">
-              <li role="none"><a id="main-menu--app--about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about"><label>About BzDeck</label></a></li>
-              <li role="none"><span id="main-menu--app--settings" aria-label="Settings" role="menuitem" data-command="show-settings"><label>Settings</label></span></li>
+              <li role="none"><a id="main-menu--app--about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right"><label>About BzDeck</label></a></li>
+              <li role="none"><span id="main-menu--app--settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right"><label>Settings</label></span></li>
             </ul><!-- end #main-menu--app-menu -->
           </section><!-- end #sidebar-menu -->
         </div>

@@ -426,3 +426,111 @@ col[data-hidden="false"] {
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+/* ----------------------------------------------------------------------------------------------
+ * Tooltip
+ * ---------------------------------------------------------------------------------------------- */
+
+[aria-label][data-tooltip-position] {
+  --arrow-height: 1rem;
+  --label-height: 2.2rem;
+  --label-padding: 1rem;
+  --label-radius: .3rem;
+  --font-size: 1.1rem;
+  --foreground-color: #FFFC;
+  --background-color: #000C;
+  position: relative;
+}
+
+[aria-label][data-tooltip-position]::before,
+[aria-label][data-tooltip-position]::after {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  content: "";
+  transition: opacity .5s ease .5s;
+}
+
+[aria-label][data-tooltip-position]:hover::before,
+[aria-label][data-tooltip-position]:hover::after {
+  opacity: 1;
+}
+
+[aria-label][data-tooltip-position]::before {
+  border: calc(var(--arrow-height) / 2) solid transparent;
+  width: 0;
+  height: 0;
+}
+
+[aria-label]:-moz-any([data-tooltip-position^="top"], [data-tooltip-position^="bottom"])::before {
+  left: calc(50% - var(--arrow-height) / 2);
+}
+
+[aria-label][data-tooltip-position^="top"]::before {
+  bottom: 100%;
+  border-top-color: var(--background-color);
+}
+
+[aria-label][data-tooltip-position^="bottom"]::before {
+  top: 100%;
+  border-bottom-color: var(--background-color);
+}
+
+[aria-label]:-moz-any([data-tooltip-position="right"], [data-tooltip-position="left"])::before {
+  top: calc(50% - var(--arrow-height) / 2);
+}
+
+[aria-label][data-tooltip-position="right"]::before {
+  left: 100%;
+  border-right-color: var(--background-color);
+}
+
+[aria-label][data-tooltip-position="left"]::before {
+  right: 100%;
+  border-left-color: var(--background-color);
+}
+
+[aria-label][data-tooltip-position]::after {
+  height: var(--label-height);
+  border-radius: var(--label-radius);
+  padding: 0 var(--label-padding);
+  color: var(--foreground-color);
+  background: var(--background-color);
+  font-size: var(--font-size);
+  line-height: var(--label-height);
+  white-space: nowrap;
+  content: attr(aria-label);
+}
+
+[aria-label]:-moz-any([data-tooltip-position="top"], [data-tooltip-position="bottom"])::after {
+  right: 50%;
+  transform: translateX(50%);
+}
+
+[aria-label][data-tooltip-position^="top"]::after {
+  bottom: calc(100% + var(--arrow-height));
+}
+
+[aria-label][data-tooltip-position^="bottom"]::after {
+  top: calc(100% + var(--arrow-height));
+}
+
+[aria-label]:-moz-any([data-tooltip-position="right"], [data-tooltip-position="left"])::after {
+  top: calc(50% - var(--label-height) / 2);
+}
+
+[aria-label][data-tooltip-position="right"]::after {
+  left: calc(100% + var(--arrow-height));
+}
+
+[aria-label][data-tooltip-position="left"]::after {
+  right: calc(100% + var(--arrow-height));
+}
+
+[aria-label][data-tooltip-position$="-right"]::after {
+  left: calc(var(--label-height) / 2);
+}
+
+[aria-label][data-tooltip-position$="-left"]::after {
+  right: calc(var(--label-height) / 2);
+}
