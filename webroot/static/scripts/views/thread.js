@@ -402,9 +402,14 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
       if (!$option) {
         const props = {};
+        const flag = (bug.flags || []).find(flag => flag.requestee === BzDeck.account.data.name);
 
         for (const key of this.properties) {
           props[key] = key === 'contributor' ? contributors[index] : bug[key];
+        }
+
+        if (flag) {
+          props.flag = flag.name; // e.g. needinfo
         }
 
         $option = this.fill(this.$option.cloneNode(true), props, {

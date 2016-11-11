@@ -141,6 +141,25 @@
   content: "#";
 }
 
+[id$="vertical-thread"] .labels [itemprop="flag"] {
+  margin: 0 .2rem;
+  border-radius: .2rem;
+  padding: .1rem .6rem;
+  color: var(--base-foreground-color-6);
+  background: var(--base-accent-color-1);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+[id$="vertical-thread"] [role="listbox"][aria-activedescendant] [role="option"][aria-selected="true"] .labels [itemprop="flag"] {
+  color: var(--base-accent-color-1);
+  background: var(--base-background-color-7);
+}
+
+[id$="vertical-thread"] .labels [itemprop="flag"]:empty {
+  display: none;
+}
+
 [id$="vertical-thread"] [itemprop="summary"],
 [id$="vertical-thread"] [itemprop="extract"] {
   overflow: hidden;
@@ -173,7 +192,7 @@
   display: inline;
 }
 
-[id$="vertical-thread"] [role="option"] li:not(:last-child)::after {
+[id$="vertical-thread"] [role="option"] li:not(:first-child):not(:last-child)::after {
   content: '\00A0\00B7'; /* nbsp + middot */
 }
 
