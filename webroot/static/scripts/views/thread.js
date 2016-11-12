@@ -276,6 +276,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.init_filter();
     this.init_sorter();
+    this.init_menu();
 
     this.on('BugModel#CacheUpdated', data => this.on_bug_updated(data), true);
     this.subscribe('BugModel#AnnotationUpdated', true);
@@ -346,6 +347,24 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       pref_value = this.options.sort_conditions = { key: 'last_change_time', type: 'time', order };
       this.update(this.bugs);
       BzDeck.prefs.set(pref_name, pref_value);
+    });
+  }
+
+  /**
+   * Initialize the thread menu.
+   * @param {undefined}
+   * @returns {undefined}
+   */
+  init_menu () {
+    const $button = this.$header.querySelector('[data-command="show-menu"]');
+    const $menu = this.$header.querySelector('#home-vertical-thread-menu');
+
+    this.$$menu_button = new FlareTail.widgets.Button($button);
+
+    $menu.addEventListener('MenuItemSelected', event => {
+      if (event.detail.command === 'mark-all-read') {
+        BzDeck.collections.bugs.update_last_visit(this.bugs.keys());
+      }
     });
   }
 

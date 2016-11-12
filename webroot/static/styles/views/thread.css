@@ -53,17 +53,28 @@
   flex: none;
 }
 
-[id$="vertical-thread"] header [role="button"][data-command="sort"]::before {
+[id$="vertical-thread"] header [role="button"]::before {
   font-size: 1.6rem;
-  font-family: FiraSans;
 }
 
 [id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="false"]::before {
+  font-family: FiraSans;
   content: "\2193"; /* descending, new to old, default */
 }
 
 [id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="true"]::before {
+  font-family: FiraSans;
   content: "\2191"; /* ascending, old to new */
+}
+
+[id$="vertical-thread"] header [role="button"][data-command="show-menu"]::before {
+  font-family: FontAwesome;
+  content: '\F142';
+}
+
+#home-vertical-thread-menu {
+  top: 3.2rem;
+  right: .4rem;
 }
 
 [id$="vertical-thread"] .scrollable {

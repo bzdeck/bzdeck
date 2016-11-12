@@ -1058,6 +1058,12 @@
                         <li role="radio" data-value="all">All</li>
                       </ul>
                       <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
+                      <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
+                      <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
+                        <li role="none">
+                          <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>
+                        </li>
+                      </ul>
                     </header>
                     <div class="scrollable">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
