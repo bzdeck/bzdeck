@@ -35,7 +35,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel#AnnotationUpdated
    * @param {Number} bug_id - Updated bug ID.
-   * @param {String} type - Annotation type such as 'starred'.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
@@ -80,21 +80,14 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
    * Determine the number of unread bugs and notify the view.
    * @param {Boolean} [loaded=false] - Whether bug data is loaded at startup.
+   * @fires GlobalPresenter#UnreadBugsChanged
    * @returns {Promise.<undefined>}
    */
   async toggle_unread (loaded = false) {
-    if (!BzDeck.presenters.homepage) {
-      return;
-    }
-
     const all_bugs = await BzDeck.collections.bugs.get_all();
-    const bugs = [...all_bugs.values()].filter(bug => bug.unread);
-    const status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
-    const extract = bugs.slice(0, 3).map(bug => `${bug.id} - ${bug.summary}`).join('\n');
-    const unread_num = [...BzDeck.presenters.homepage.data.bugs.values()].filter(bug => bug.unread).length;
+    const bug_ids = [...all_bugs.values()].filter(bug => bug.unread).map(bug => bug.id);
 
-    // Update View
-    this.view.toggle_unread(bugs, loaded, unread_num);
+    this.trigger('#UnreadBugsChanged', { bug_ids, loaded });
   }
 
   /**

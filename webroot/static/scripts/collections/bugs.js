@@ -187,10 +187,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Mark bugs as read by updating the user's last visit timestamp for each bug.
    * @param {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to update.
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
+   * @returns {Promise.<undefined>}
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
    */
-  async update_last_visit (_ids) {
+  async mark_as_read (_ids) {
     const bugs = await this.get_some([..._ids].sort());
     // Check if the user is involved in each bug to prevent an exception being returned by the API
     const _bugs = [...bugs.values()].filter(bug => bug.is_involved);
@@ -198,10 +198,10 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     const result = await BzDeck.host.request(`bug_user_last_visit/${ids[0]}`, null, { method: 'POST', data: { ids }});
 
     if (Array.isArray(result)) {
-      _bugs.forEach((bug, index) => bug.data._last_visit = result[index].last_visit_ts);
+      for (const [index, bug] of _bugs.entries()) if (result[index]) {
+        bug.update_last_visit(result[index].last_visit_ts);
+      }
     }
-
-    return new Map(_bugs.map(bug => [bug.id, bug]));
   }
 
   /**

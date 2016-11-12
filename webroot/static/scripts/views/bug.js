@@ -896,7 +896,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called whenever a bug annotation is updated. Update the Star button on the toolbar.
    * @listens BugModel#AnnotationUpdated
    * @param {Number} bug_id - Updated bug ID.
-   * @param {String} type - Annotation type such as 'starred'.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */

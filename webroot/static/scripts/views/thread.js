@@ -200,7 +200,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * Called whenever a bug annotation is updated. Update the bug row on the thread.
    * @listens BugModel#AnnotationUpdated
    * @param {Number} bug_id - Updated bug ID.
-   * @param {String} type - Annotation type such as 'starred'.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */
@@ -363,7 +363,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     $menu.addEventListener('MenuItemSelected', event => {
       if (event.detail.command === 'mark-all-read') {
-        BzDeck.collections.bugs.update_last_visit(this.bugs.keys());
+        BzDeck.collections.bugs.mark_as_read(this.bugs.keys());
       }
     });
   }
@@ -490,7 +490,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * Called whenever a bug annotation is updated. Update the bug item on the thread.
    * @listens BugModel#AnnotationUpdated
    * @param {Number} bug_id - Updated bug ID.
-   * @param {String} type - Annotation type such as 'starred'.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */

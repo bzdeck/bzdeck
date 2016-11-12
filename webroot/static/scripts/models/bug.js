@@ -173,6 +173,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Object} [data] - Bugzilla's raw bug object.
    * @fires BugModel#Updated
    * @fires BugModel#CacheUpdated
+   * @fires BugModel#AnnotationUpdated
    * @returns {Boolean} cached - Whether the cache is found.
    */
   merge (data) {
@@ -225,9 +226,13 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
 
       this.save(data);
-    })();
+      this.trigger('#CacheUpdated', { bug_id: this.id });
 
-    this.trigger('#CacheUpdated', { bug_id: this.id });
+      // If the cache was read but the updated data is unread, fire an event to update the UI
+      if (cache._last_visit && new Date(cache._last_visit) >= cached_time && this.unread) {
+        this.trigger('BugModel#AnnotationUpdated', { bug_id: this.id, type: 'unread', value: true });
+      }
+    })();
 
     return true;
   }
@@ -256,31 +261,30 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Update the last-visited timestamp on Bugzilla through the API. Mark the bug as read and notify the change.
+   * Update the last-visited timestamp on Bugzilla through the API.
    * @param {undefined}
-   * @fires BugModel#AnnotationUpdated
    * @returns {Promise.<undefined>}
    * @todo For a better offline experience, synchronize the timestamp once going online.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html}
    */
   async mark_as_read () {
-    let value;
+    const result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
 
-    try {
-      const result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
-
-      if (!Array.isArray(result)) {
-        throw new Error('The last-visited timestamp could not be retrieved');
-      }
-
-      value = result[0].last_visit_ts;
-    } catch (error) {
-      value = (new Date()).toISOString();
+    if (Array.isArray(result) && result[0]) {
+      this.update_last_visit(result[0].last_visit_ts);
     }
+  }
 
-    this.data._last_visit = value;
+  /**
+   * Update the last-visited timestamp in cache.
+   * @param {String} ts - Last visited timestamp.
+   * @fires BugModel#AnnotationUpdated
+   * @returns {undefined}
+   */
+  update_last_visit (ts) {
+    this.data._last_visit = ts;
     this.save();
-    this.trigger('#AnnotationUpdated', { bug_id: this.id, type: 'last_visit', value });
+    this.trigger('#AnnotationUpdated', { bug_id: this.id, type: 'unread', value: false });
   }
 
   /**

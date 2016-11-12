@@ -86,7 +86,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Called whenever a bug annotation is updated. Notify the change if the type is 'unread'.
    * @listens BugModel#AnnotationUpdated
    * @param {Number} bug_id - Updated bug ID.
-   * @param {String} type - Annotation type such as 'starred'.
+   * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
    * @returns {undefined}
    */

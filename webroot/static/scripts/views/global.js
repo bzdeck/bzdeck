@@ -64,6 +64,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     // Update user name & image asynchronously
     this.subscribe('UserModel#GravatarProfileRequested', true);
     this.subscribe('UserModel#UserInfoUpdated', true);
+    this.subscribe('P#UnreadBugsChanged');
 
     // General events
     window.addEventListener('contextmenu', event => event.preventDefault());
@@ -81,30 +82,30 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
   /**
    * Update the document title and statusbar message when the number of unread bugs is changed.
-   * @param {Array.<Proxy>} bugs - All unread bugs in the database.
+   * @listens GlobalPresenter#ToggleUnread
+   * @param {Array.<Number>} bug_ids - IDs of unread bugs.
    * @param {Boolean} loaded - Whether bug data is loaded at startup.
-   * @param {Number} unread_num - Number of unread bugs currently displayed on the home page.
    * @returns {undefined}
    */
-  toggle_unread (bugs, loaded, unread_num) {
+  on_unread_bugs_changed ({ bug_ids, loaded } = {}) {
+    const count = bug_ids.length;
+
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
       BzDeck.views.pages.home.update_title(
-          document.title.replace(/(\s\(\d+\))?$/, unread_num ? ` (${unread_num})` : ''));
+          document.title.replace(/(\s\(\d+\))?$/, count ? ` (${count})` : ''));
     }
 
-    if (!loaded) {
+    if (!loaded || !BzDeck.views.statusbar) {
       return;
     }
 
-    if (bugs.length === 0) {
+    if (count === 0) {
       BzDeck.views.statusbar.show('No new bugs to download'); // l10n
 
       return;
     }
 
-    bugs.sort((a, b) => new Date(b.last_change_time) - new Date(a.last_change_time));
-
-    const status = bugs.length > 1 ? `You have ${bugs.length} unread bugs` : 'You have 1 unread bug'; // l10n
+    const status = count > 1 ? `You have ${count} unread bugs` : 'You have 1 unread bug'; // l10n
 
     BzDeck.views.statusbar.show(status);
   }
