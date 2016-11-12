@@ -75,7 +75,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   connect (folder_id) {
-    const $folder = document.querySelector(`#sidebar-folders--${folder_id}`);
+    const $folder = document.querySelector(`#sidebar-folder-${folder_id}`);
     const $tab = document.querySelector('#tab-home');
     const $$tablist = BzDeck.views.banner.$$tablist;
 

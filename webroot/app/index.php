@@ -280,14 +280,14 @@
             </ul>
             <ul id="search-TID-preview-bug-menu" role="menu" aria-expanded="false">
               <li role="none">
-                <a id="search-TID-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
-                <a id="search-TID-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
+                <a id="search-TID-preview-bug-menu-toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
+                <a id="search-TID-preview-bug-menu-toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
               </li>
               <li role="separator"></li>
               <li role="none">
-                <a id="search-TID-preview-bug-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
-                <a id="search-TID-preview-bug-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
-                <a id="search-TID-preview-bug-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
+                <a id="search-TID-preview-bug-menu-copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
+                <a id="search-TID-preview-bug-menu-open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
+                <a id="search-TID-preview-bug-menu-tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
             </ul><!-- end #search-TID-preview-bug-menu -->
           </div><!-- end [role="toolbar"] -->
@@ -317,15 +317,15 @@
             </ul>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
               <li role="none">
-                <a id="bug-TID-preview-bug-menu--toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
-                <a id="bug-TID-preview-bug-menu--toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
+                <a id="bug-TID-preview-bug-menu-toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
+                <a id="bug-TID-preview-bug-menu-toggle-cc" role="menuitem"><label>Show CC Changes</label></a>
               </li>
               <li role="separator"></li>
               <li role="none">
-                <a id="bug-TID-menu--open-tab" role="menuitem" data-command="open-tab"><label>Open in Tab</label></a>
-                <a id="bug-TID-menu--open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
-                <a id="bug-TID-menu--copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
-                <a id="bug-TID-menu--tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
+                <a id="bug-TID-menu-open-tab" role="menuitem" data-command="open-tab"><label>Open in Tab</label></a>
+                <a id="bug-TID-menu-open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
+                <a id="bug-TID-menu-copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
+                <a id="bug-TID-menu-tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>
               </li>
             </ul>
           </div><!-- end [role="toolbar"] -->
@@ -894,7 +894,7 @@
           </ul>
           <div itemprop="extract"></div>
         </div>
-        <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred"></span>
+        <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred">
       </li>
     </template><!-- end #vertical-thread-item -->
     <template id="bug-tooltip">
@@ -1009,7 +1009,7 @@
         <div tabindex="0" role="region">
           <section id="sidebar-account">
             <h2>Account</h2>
-            <span id="main-menu--app--account" role="button" tabindex="0" aria-label="Profile" data-tooltip-position="right">
+            <span id="main-menu-app-account" role="button" tabindex="0" aria-label="Profile" data-tooltip-position="right">
               <label itemscope itemtype="http://bzdeck.com/User">
                 <img alt="" itemprop="image">
                 <strong itemprop="name"></strong>
@@ -1023,10 +1023,10 @@
           </section><!-- end #sidebar-folders -->
           <section id="sidebar-menu">
             <h2>Menu</h2>
-            <ul id="main-menu--app-menu" role="menu">
-              <li role="none"><a id="main-menu--app--about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right"><label>About BzDeck</label></a></li>
-              <li role="none"><span id="main-menu--app--settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right"><label>Settings</label></span></li>
-            </ul><!-- end #main-menu--app-menu -->
+            <ul id="main-menu-app-menu" role="menu">
+              <li role="none"><a id="main-menu-app-about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right"><label>About BzDeck</label></a></li>
+              <li role="none"><span id="main-menu-app-settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right"><label>Settings</label></span></li>
+            </ul><!-- end #main-menu-app-menu -->
           </section><!-- end #sidebar-menu -->
         </div>
       </aside><!-- end #sidebar -->
@@ -1057,7 +1057,7 @@
                         <li role="radio" data-value="closed">Closed</li>
                         <li role="radio" data-value="all">All</li>
                       </ul>
-                      <div class="iconic" tabindex="0" role="button" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
+                      <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
                     </header>
                     <div class="scrollable">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>

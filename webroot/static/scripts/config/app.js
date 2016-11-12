@@ -109,48 +109,48 @@ BzDeck.config = {
   },
   folders: [
     {
-      id: 'sidebar-folders--inbox',
+      id: 'sidebar-folder-inbox',
       label: 'Inbox',
       selected: true,
       data: { id: 'inbox' }
     },
     {
-      id: 'sidebar-folders--starred',
+      id: 'sidebar-folder-starred',
       label: 'Starred',
       data: { id: 'starred' }
     },
     {
-      id: 'sidebar-folders--requests',
+      id: 'sidebar-folder-requests',
       label: 'Requests',
       data: { id: 'requests' }
     },
     {
-      id: 'sidebar-folders--reported',
+      id: 'sidebar-folder-reported',
       label: 'Reported',
       data: { id: 'reported' }
     },
     {
-      id: 'sidebar-folders--watching',
+      id: 'sidebar-folder-watching',
       label: 'Watching', // was CCed
       data: { id: 'watching' }
     },
     {
-      id: 'sidebar-folders--assigned',
+      id: 'sidebar-folder-assigned',
       label: 'Assigned',
       data: { id: 'assigned' }
     },
     {
-      id: 'sidebar-folders--mentor',
+      id: 'sidebar-folder-mentor',
       label: 'Mentor',
       data: { id: 'mentor' }
     },
     {
-      id: 'sidebar-folders--qa',
+      id: 'sidebar-folder-qa',
       label: 'QA',
       data: { id: 'qa' }
     },
     {
-      id: 'sidebar-folders--all',
+      id: 'sidebar-folder-all',
       label: 'All Bugs',
       data: { id: 'all' }
     }

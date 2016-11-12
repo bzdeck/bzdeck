@@ -96,8 +96,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     const $timeline = this.$bug.querySelector('.bug-timeline');
     const $menu = document.getElementById($button.getAttribute('aria-owns'));
-    const $toggle_comments = $menu.querySelector('[id$="--toggle-comments"]');
-    const $toggle_cc = $menu.querySelector('[id$="--toggle-cc"]');
+    const $toggle_comments = $menu.querySelector('[id$="-toggle-comments"]');
+    const $toggle_cc = $menu.querySelector('[id$="-toggle-cc"]');
     const $copy_link = $menu.querySelector('[data-command="copy-link"]');
     const $bugzilla_link = $menu.querySelector('[data-command="open-bugzilla"]');
     const $tweet_link = $menu.querySelector('[data-command="tweet"]');

@@ -135,47 +135,47 @@
   opacity: .4;
 }
 
-#sidebar-folders--inbox label::before {
+#sidebar-folder-inbox label::before {
   content: '\F01C';
 }
 
-#sidebar-folders--starred label::before {
+#sidebar-folder-starred label::before {
   content: '\F005';
 }
 
-#sidebar-folders--requests label::before {
+#sidebar-folder-requests label::before {
   content: '\F06A';
 }
 
-#sidebar-folders--reported label::before {
+#sidebar-folder-reported label::before {
   content: '\F1D8';
 }
 
-#sidebar-folders--watching label::before {
+#sidebar-folder-watching label::before {
   content: '\F02E';
 }
 
-#sidebar-folders--assigned label::before {
+#sidebar-folder-assigned label::before {
   content: '\F0F2';
 }
 
-#sidebar-folders--mentor label::before {
+#sidebar-folder-mentor label::before {
   content: '\F1CD';
 }
 
-#sidebar-folders--qa label::before {
+#sidebar-folder-qa label::before {
   content: '\F0C3'; /* flask */
 }
 
-#sidebar-folders--all label::before {
+#sidebar-folder-all label::before {
   content: '\F036';
 }
 
-#main-menu--app--settings label::before {
+#main-menu-app-settings label::before {
   content: '\F013';
 }
 
-#main-menu--app--about label::before {
+#main-menu-app-about label::before {
   content: '\F05A';
 }
 
@@ -209,7 +209,7 @@
 
 #sidebar [role="option"]:last-of-type,
 #sidebar [role="none"]:last-of-type [role="menuitem"],
-#main-menu--app--account {
+#main-menu-app-account {
   border-bottom-width: 0;
 }
 
@@ -223,7 +223,7 @@
   left: -9999rem;
 }
 
-#main-menu--app--account {
+#main-menu-app-account {
   display: block;
   box-sizing: border-box;
   border: 0;
@@ -233,16 +233,16 @@
   background: transparent;
 }
 
-[data-device="desktop"]:root #main-menu--app--account {
+[data-device="desktop"]:root #main-menu-app-account {
   width: 5.6rem !important;
   height: 5.6rem !important;
 }
 
-[data-device|="mobile"]:root #main-menu--app--account {
+[data-device|="mobile"]:root #main-menu-app-account {
   background: linear-gradient(to bottom, transparent, #0006);
 }
 
-#main-menu--app--account label {
+#main-menu-app-account label {
   display: block;
   position: relative;
   padding-left: 4rem;
@@ -253,27 +253,27 @@
   text-shadow: 0 0 .1rem #0009;
 }
 
-[data-device="desktop"]:root #main-menu--app--account label {
+[data-device="desktop"]:root #main-menu-app-account label {
   padding: 0;
 }
 
-#main-menu--app--account label * {
+#main-menu-app-account label * {
   display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-[data-device="desktop"]:root #main-menu--app--account label :not(img) {
+[data-device="desktop"]:root #main-menu-app-account label :not(img) {
   position: absolute;
   left: -99999px;
 }
 
-#main-menu--app--account label strong {
+#main-menu-app-account label strong {
   font-size: 1.2rem;
 }
 
-#main-menu--app--account [itemprop="image"] {
+#main-menu-app-account [itemprop="image"] {
   position: absolute;
   top: 0;
   left: 0;
@@ -281,7 +281,7 @@
   height: 3.2rem;
 }
 
-#main-menu--app--account [itemprop="email"] {
+#main-menu-app-account [itemprop="email"] {
   opacity: .8;
 }
 
@@ -291,7 +291,7 @@
   border-color: var(--secondary-region-border-color);
 }
 
-#main-menu--app-menu {
+#main-menu-app-menu {
   position: relative;
   overflow: hidden;
   border-radius: 0;
@@ -300,11 +300,11 @@
   box-shadow: none;
 }
 
-#main-menu--app-menu li {
+#main-menu-app-menu li {
   float: none;
 }
 
-[data-device="desktop"]:root #main-menu--app-menu {
+[data-device="desktop"]:root #main-menu-app-menu {
   overflow: visible; /* To show tooltips */
 }
 

@@ -47,11 +47,11 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     this.on('P#FolderOpened', data => this.open_folder(data));
     this.on('P#UnreadToggled', data => this.toggle_unread(data.number));
 
-    (new FlareTail.widgets.Button(document.querySelector('#main-menu--app--account'))).bind('Pressed', event => {
+    (new FlareTail.widgets.Button(document.querySelector('#main-menu-app-account'))).bind('Pressed', event => {
       this.trigger('#AppMenuItemSelected', { command: 'show-profile' });
     });
 
-    this.$app_menu = document.querySelector('#main-menu--app-menu');
+    this.$app_menu = document.querySelector('#main-menu-app-menu');
     this.$$app_menu = new FlareTail.widgets.Menu(this.$app_menu);
 
     this.$app_menu.addEventListener('MenuItemSelected', event => {
@@ -109,7 +109,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @returns {undefined}
    */
   toggle_unread (num) {
-    const $label = document.querySelector('#sidebar-folders--inbox label');
+    const $label = document.querySelector('#sidebar-folder-inbox label');
     let $num = $label.querySelector('span');
 
     if (num) {
@@ -129,7 +129,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   async on_gravatar_profile_found () {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name);
 
-    this.fill(document.querySelector('#main-menu--app--account label'), user);
+    this.fill(document.querySelector('#main-menu-app-account label'), user);
     document.querySelector('#sidebar-account')
             .style.setProperty('background-image', user.background_image ? `url(${user.background_image})` : 'none');
   }
