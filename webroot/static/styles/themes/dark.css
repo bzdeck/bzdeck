@@ -36,8 +36,9 @@
   --base-background-color-6: #282828;
   --base-background-color-7: #202020;
   --base-background-color-8: #FCFCFC;
-  --base-accent-color-1: #1A608F;
+  --base-accent-color-1: #1A608F; /* blue */
   --base-accent-color-1-a6: #1A608F99;
+  --base-accent-color-2: #DA2367; /* red */
 
   --application-foreground-color: var(--base-foreground-color-1);
   --application-background-color: var(--base-background-color-6);

@@ -153,12 +153,12 @@
 }
 
 [id$="vertical-thread"] .labels [itemprop="flag"] {
-  margin: 0 .2rem;
+  margin: 0 .2rem 0 0;
   border-radius: .2rem;
   padding: .1rem .6rem;
   color: var(--base-foreground-color-6);
-  background: var(--base-accent-color-1);
-  font-size: 1rem;
+  background: var(--base-accent-color-2);
+  font-size: 1.1rem;
   text-transform: uppercase;
 }
 
@@ -172,7 +172,7 @@
 }
 
 [id$="vertical-thread"] [itemprop="summary"],
-[id$="vertical-thread"] [itemprop="extract"] {
+[id$="vertical-thread"] .labels > p {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -185,7 +185,7 @@
 [id$="vertical-thread"] [itemprop="extract"],
 [id$="vertical-thread"] [role="option"] ul {
   opacity: .7;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 [id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="summary"] {
@@ -203,7 +203,7 @@
   display: inline;
 }
 
-[id$="vertical-thread"] [role="option"] li:not(:first-child):not(:last-child)::after {
+[id$="vertical-thread"] [role="option"] li:not(:last-child)::after {
   content: '\00A0\00B7'; /* nbsp + middot */
 }
 

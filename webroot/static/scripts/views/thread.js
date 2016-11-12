@@ -420,15 +420,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       let $option = document.getElementById(option_id);
 
       if (!$option) {
-        const props = {};
         const flag = (bug.flags || []).find(flag => flag.requestee === BzDeck.account.data.name);
+        const props = { flag: flag ? flag.name : undefined }; // e.g. needinfo
 
         for (const key of this.properties) {
           props[key] = key === 'contributor' ? contributors[index] : bug[key];
-        }
-
-        if (flag) {
-          props.flag = flag.name; // e.g. needinfo
         }
 
         $option = this.fill(this.$option.cloneNode(true), props, {
@@ -480,7 +476,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     const bug = await BzDeck.collections.bugs.get(bug_id);
     const contributor = await bug.get_contributor();
-    const props = {};
+    const flag = (bug.flags || []).find(flag => flag.requestee === BzDeck.account.data.name);
+    const props = { flag: flag ? flag.name : undefined }; // e.g. needinfo
 
     for (const key of this.properties) {
       props[key] = key === 'contributor' ? contributor : bug[key];
