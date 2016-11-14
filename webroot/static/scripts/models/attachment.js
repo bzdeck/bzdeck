@@ -87,4 +87,14 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
       throw new Error(`The attachment ${this.id} could not be retrieved from Bugzilla.`);
     }
   }
+
+  /**
+   * This method does nothing because attachment data is stored in the cache, but is required to avoid errors.
+   * @override
+   * @param {undefined}
+   * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
+   */
+  async save () {
+    return this.proxy();
+  }
 }
