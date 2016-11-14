@@ -164,8 +164,8 @@ const generate_avatar = async url => {
     `</foreignObject></svg>`
   ], { type: 'image/svg+xml;charset=utf-8' });
 
-  // Cache the image for 24 hours
-  const headers = new Headers({ 'Expires': (new Date(Date.now() + 1000 * 60 * 60 * 24)).toUTCString() });
+  // Use the in-memory cache instead of cache storage, because the Blob URL expires once the page is closed
+  const headers = new Headers({ 'Expires': (new Date(Date.now())).toUTCString(), 'Cache-Control': 'no-store' });
 
   return new Response(blob, { status: 200, statusText: 'OK', headers });
 };
@@ -240,6 +240,7 @@ self.addEventListener('fetch', event => {
 
       if (is_gravatar_avatar && !response.ok) {
         response = await generate_avatar(url);
+        cache_enabled = false;
       }
 
       const cache = await caches.open(cache_name);
