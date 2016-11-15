@@ -949,10 +949,8 @@
   </head>
   <body role="application">
     <section id="app-login">
-      <header>
-        <h1>BzDeck</h1>
-      </header>
       <div>
+        <h1>BzDeck</h1>
         <div>
           <p id="app-intro"><strong>BzDeck</strong> is a useful, experimental Bugzilla client demonstrating modern Web standard technologies. This app is currently optimized for <strong>bugzilla.mozilla.org</strong>. <a href="/about/">Learn more &raquo;</a></p>
           <div role="form" aria-hidden="true">

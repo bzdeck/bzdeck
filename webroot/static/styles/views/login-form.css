@@ -3,20 +3,29 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #app-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   z-index: 200;
   width: 100%;
   height: 100%;
-  color: #E3E3E3; /* Fallback */
-  color: var(--application-foreground-color);
+  color: #F6F6F6 !important;
   background-color: #545454; /* Fallback */
   background-color: var(--application-background-color);
+  background-image: url(/static/images/background/spring-lake-1598411_1280.jpg);
+  background-size: cover;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  text-align: center;
+  text-shadow: .1rem .1rem .1rem rgba(0, 0, 0, .6); /* Fallback */
+  text-shadow: .1rem .1rem .1rem #0009;
   opacity: 1;
   transition: opacity 1.5s;
 }
 
 #app-login[aria-hidden="true"] {
-  display: block;
+  display: flex;
   opacity: 0;
 }
 
@@ -24,28 +33,32 @@
   pointer-events: none;
 }
 
-#app-login header {
-  position: absolute;
+#app-login > div {
+  flex: none;
+  margin: 0 2.4rem;
+  width: auto;
+  max-width: 56rem;
 }
 
 #app-login h1 {
   overflow: hidden;
+  margin: 0 auto;
   width: 100%;
   height: 100%;
   text-indent: -9999rem;
   background-image: url(/static/images/logo/icon-256-white.png);
   background-size: contain;
   background-repeat: no-repeat;
-}
-
-#app-login > div {
-  position: absolute;
-  line-height: 1.6;
-  text-align: center;
+  filter: drop-shadow(.1rem .1rem .1rem rgba(0, 0, 0, .4)); /* Fallback */
+  filter: drop-shadow(.1rem .1rem .1rem #0006);
 }
 
 #app-login p {
-  margin-bottom: 1.2rem;
+  margin-top: 1.6rem;
+}
+
+#app-login p:empty {
+  display: none;
 }
 
 #app-login a {
@@ -59,75 +72,40 @@
 }
 
 #app-login [role="form"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 2rem;
-  transition: opacity 1s;
 }
 
 #app-login [role="form"][aria-hidden="true"] {
-  display: block;
-  opacity: 0;
-}
-
-#app-intro[aria-hidden="true"] ~ [role="form"][aria-hidden="true"] {
   display: none !important;
 }
 
-#app-login [role="form"][aria-hidden="false"] {
-  opacity: 1;
+#app-login [role="form"] p {
+  margin: 0;
+}
+
+#app-login [role="button"] {
+  margin: .8rem;
+  font-size: 1.6rem;
+  text-shadow: .1rem .1rem 0 #0003;
 }
 
 #app-login [role="status"] {
   margin-bottom: 0;
 }
 
-@media (min-width: 640px) {
-  #app-login header {
-    top: calc(50% - 12.8rem - 2rem);
-    left: calc(50% - 12.8rem / 2);
+@media (min-width: 640px), (min-height: 640px) {
+  #app-login h1 {
     width: 12.8rem;
     height: 12.8rem;
   }
-
-  #app-login > div {
-    top: 50%;
-    left: calc(50% - 48rem / 2);
-    width: 48rem;
-  }
 }
 
-@media (max-width: 639px) {
-  #app-login header {
-    top: 2rem;
-    left: calc(50% - 8rem / 2);
+@media (max-width: 639px), (max-height: 639px) {
+  #app-login h1 {
     width: 8rem;
     height: 8rem;
-  }
-
-  #app-login h1 {
-    background-size: 8rem;
-  }
-
-  #app-login > div {
-    top: 12rem;
-    box-sizing: border-box;
-    padding: 0 2.4rem;
-    width: 100%;
-  }
-}
-
-@media (max-height: 639px) {
-  #app-login header {
-    top: 2rem;
-    left: calc(50% - 4rem / 2);
-    width: 4rem;
-    height: 4rem;
-  }
-
-  #app-login h1 {
-    background-size: 4rem;
-  }
-
-  #app-login > div {
-    top: 8rem;
   }
 }
