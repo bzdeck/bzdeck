@@ -141,9 +141,8 @@ let font_url;
  * @returns {Promise.<Response>} response - Promise to be resolved in a new 200 response that contains a blob of SVG.
  */
 const generate_avatar = async url => {
-  const params = new URLSearchParams(url.search);
-  const color = decodeURIComponent(params.get('color') || '#666');
-  const initial = decodeURIComponent(params.get('initial') || '');
+  const color = url.searchParams.get('color') || '#666';
+  const initial = url.searchParams.get('initial') || '';
 
   // Create a Blob URL for the Fira Sans font to use it in SVG. This is a workaround for the security restrictions in
   // Gecko. See https://developer.mozilla.org/docs/Web/SVG/SVG_as_an_Image
