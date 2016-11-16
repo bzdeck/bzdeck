@@ -159,14 +159,14 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
       str = str.replace(/Attachment\s*#?(\d+)/igm, '<a href="/attachment/$1" data-att-id="$1">$&</a>');
     };
 
-    if (!str.trim()) {
-      return '';
-    }
-
     // Remove the attachment ID and description automatically inserted by Bugzilla. Previously, we were using the
     // comment.raw_text field that didn't contain this label, but it has been removed with Bugzilla 5.0, so modify the
     // comment.text field here instead. This probably won't work with localized Bugzilla instances.
     str = str.replace(/^Created\ attachment\ \d+\n.*\n?/m, '');
+
+    if (!str.trim()) {
+      return '';
+    }
 
     if (is_markdown) {
       linkify_bugzilla();

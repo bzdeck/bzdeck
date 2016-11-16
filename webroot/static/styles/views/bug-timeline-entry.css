@@ -157,6 +157,10 @@
   line-height: 1.6;
 }
 
+.bug-timeline-wrapper [itemprop="comment"] [itemprop="text"]:empty {
+  display: none;
+}
+
 .bug-timeline-wrapper [itemprop="comment"] [itemprop="text"] h1 {
   font-size: 3.2rem;
   font-weight: bold;
