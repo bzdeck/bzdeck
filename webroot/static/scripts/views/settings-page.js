@@ -85,7 +85,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
   /**
    * Fill the timezone radio options. Each Bugzilla instance's timezone is hardcoded in our config file because the
-   * Bugzilla API doesn't provide the info.
+   * Bugzilla API doesn't provide the info at this moment.
    * @param {undefined}
    * @returns {undefined}
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bugzilla.html#timezone}
@@ -96,8 +96,8 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
     const timezone_local = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const timezone_host = BzDeck.host.timezone;
 
-    $radio_local.textContent = `Your local timezone (${timezone_local})`;
-    $radio_host.textContent = `Bugzilla default (${timezone_host})`;
+    $radio_local.textContent = 'Your local timezone:' + ' ' + timezone_local.replace(/_/g, ' '); // l10n
+    $radio_host.textContent = 'Bugzilla default:' + ' ' + timezone_host.replace(/_/g, ' '); // l10n
     $radio_host.dataset.value = timezone_host;
   }
 
