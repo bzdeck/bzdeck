@@ -367,7 +367,7 @@ col[data-hidden="false"] {
   height: 100%;
 }
 
-[role="scrollbar"] {
+[role="scrollbar"]::before {
   border-radius: .8rem;
   background-color: var(--application-foreground-color);
 }
