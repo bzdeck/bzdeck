@@ -22,8 +22,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$$results = new FlareTail.widgets.Menu(this.$results);
 
     this.$input.addEventListener('input', event => this.oninput());
-    this.$input.addEventListener('focus', event => this.oninput());
-    this.$input.addEventListener('onblur', event => this.cleanup());
+    this.$input.addEventListener('focusin', event => this.oninput());
+    this.$input.addEventListener('focusout', event => this.cleanup());
     this.$input.addEventListener('mousedown', event => event.stopPropagation());
 
     // Suppress context menu

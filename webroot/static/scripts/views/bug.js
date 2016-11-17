@@ -507,8 +507,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
         $textbox.tabIndex = 0;
         $textbox.setAttribute('aria-readonly', !can_editbugs);
-        $$textbox.bind('focus', event => $textbox.spellcheck = true);
-        $$textbox.bind('blur', event => $textbox.spellcheck = false);
+        $$textbox.bind('focusin', event => $textbox.spellcheck = true);
+        $$textbox.bind('focusout', event => $textbox.spellcheck = false);
         $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));

@@ -11,8 +11,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
   /**
    * Initialize the Tooltip View.
    * @param {HTMLElement} $owner - Element that owns/triggers the tooltip.
-   * @param {Array.<String>} [showing_events] - Events to show the tooltip. Default: mouseenter/focus
-   * @param {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/blur
+   * @param {Array.<String>} [showing_events] - Events to show the tooltip. Default: mouseenter/focusin
+   * @param {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/focusout
    * @param {String} [type] - Type of the target data ID: string or number.
    * @returns {undefined}
    */
@@ -20,8 +20,8 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
     super(); // Assign this.id
 
     this.$owner = $owner;
-    this.showing_events = showing_events || ['mouseenter', 'focus'];
-    this.hiding_events = hiding_events || ['mouseleave', 'blur'];
+    this.showing_events = showing_events || ['mouseenter', 'focusin'];
+    this.hiding_events = hiding_events || ['mouseleave', 'focusout'];
     this.regex = type === 'number' ? /^\d+$/ : /^.+$/;
 
     this.set_showing_events();
