@@ -19,6 +19,12 @@
   font-family: FontAwesome;
   text-align: center;
   vertical-align: text-bottom;
+  transition: font-size .1s;
+}
+
+[role="checkbox"][aria-checked="false"]::before,
+[role="radio"][aria-checked="false"]::before {
+  font-size: 0;
 }
 
 [role="checkbox"]:focus::before,
@@ -28,23 +34,18 @@
 
 [role="checkbox"]::before {
   border-radius: 4px;
-}
-
-[role="checkbox"][aria-checked="true"]::before {
   font-size: 1.4rem;
   content: "\F00C";
 }
 
 [role="radio"]::before {
   border-radius: 50%;
-}
-
-[role="radio"][aria-checked="true"]::before {
   font-size: 1.2rem;
   content: "\F111";
 }
 
 meta[role="checkbox"]::after {
+  vertical-align: text-bottom;
   content: attr(aria-label);
 } 
 

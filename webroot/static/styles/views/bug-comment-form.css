@@ -218,14 +218,15 @@
 }
 
 .bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] {
+  display: flex;
+  align-items: baseline;
   padding: .4rem;
 }
 
 .bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="User"] [itemprop="image"] {
-  margin-right: .4rem;
+  margin: 0 .4rem;
   width: var(--comment-margin);
   height: var(--comment-margin);
-  vertical-align: text-bottom;
 }
 
 .bug-comment-form [id$="tabpanel-needinfo"] .requestee-finder-outer {
