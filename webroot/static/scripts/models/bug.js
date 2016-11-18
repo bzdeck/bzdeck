@@ -190,7 +190,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
     const cached_time = new Date(cache.last_change_time);
     const cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time;
-    const get_time = str => new Date(str).getTime(); // integer
+    const get_time = str => (new Date(str)).getTime(); // integer
     const new_comments = new Map((data.comments || []).filter(c => cmp_time(c))
                                                       .map(c => [get_time(c.creation_time), c]));
     const new_attachments = new Map((data.attachments || []).filter(a => cmp_time(a))
@@ -315,8 +315,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
    */
   async detect_if_new () {
-    const visited = new Date(this.data._last_visit).getTime();
-    const changed = new Date(this.data.last_change_time).getTime();
+    const visited = (new Date(this.data._last_visit)).getTime();
+    const changed = (new Date(this.data.last_change_time)).getTime();
     const time10d = Date.now() - 1000 * 60 * 60 * 24 * 14;
     const is_new = changed > time10d;
 
@@ -341,7 +341,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     // Ignore CC Changes option
     if (visited && ignore_cc !== false) {
       for (const h of this.data.history || []) {
-        const time = new Date(h.when).getTime(); // Should be an integer for the following === comparison
+        const time = (new Date(h.when)).getTime(); // Should be an integer for the following === comparison
         const non_cc_changes = h.changes.some(c => c.field_name !== 'cc');
 
         if (time > visited && non_cc_changes) {
