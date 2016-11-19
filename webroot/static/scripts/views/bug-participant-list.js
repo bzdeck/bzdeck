@@ -42,7 +42,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     }
 
     // Subscribe to events
-    this.subscribe('BugView#EditModeChanged');
+    this.subscribe('BugView#EditModeChanged', true);
     this.subscribe('BugModel#ParticipantAdded', true);
     this.subscribe('BugModel#ParticipantRemoved', true);
   }

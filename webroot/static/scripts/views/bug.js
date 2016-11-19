@@ -284,6 +284,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     const $container = this.$bug.closest('.bug-container');
     const $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
     const $timeline = this.$bug.querySelector('.bug-timeline');
+    const is_expanded = $container.matches('[aria-expanded="true"]');
 
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
@@ -292,6 +293,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     if ($edit_button) {
       $edit_button.setAttribute('aria-disabled', !can_editbugs);
+      $edit_button.setAttribute('aria-pressed', is_expanded);
 
       init_button($edit_button, event => {
         this.trigger('BugView#EditModeChanged', { enabled: event.detail.pressed });
@@ -306,6 +308,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
           }
         }
       });
+    }
+
+    // Switch to the edit mode if the container is already expanded
+    if (is_expanded) {
+      this.trigger('BugView#EditModeChanged', { enabled: true });
     }
 
     if (!$timeline) {
@@ -451,7 +458,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
-   * @listens BugView#EditModeChanged
    * @param {undefined}
    * @fires BugView#EditField
    * @returns {undefined}
@@ -481,7 +487,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $combobox.setAttribute('aria-readonly', !can_editbugs);
 
         toggle(!editing);
-        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
+        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled), true);
 
         $$combobox.build_dropdown(this.get_field_values(name)
             .map(value => ({ value, selected: value === this.bug[name] })));
@@ -514,7 +520,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
 
         toggle(editing);
-        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(enabled));
+        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(enabled), true);
       }
 
       // URL
@@ -555,7 +561,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the URL widget.
-   * @listens BugView#EditModeChanged
    * @param {HTMLElement} $section - Outer element.
    * @param {Boolean} editing - Whether the bug is in the edit mode.
    * @fires BugView#EditField
@@ -566,8 +571,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       let $link = $section.querySelector('a');
       let $textbox = $section.querySelector('input');
 
-      if (!disabled) {
-        const orignal_value = $link.getAttribute('href');
+      if (!disabled && !$textbox) {
+        const orignal_value = $link ? $link.getAttribute('href') : this.bug.url;
 
         $textbox = document.createElement('input');
         $textbox.className = 'distinct';
@@ -575,12 +580,17 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         $textbox.value = orignal_value;
         $textbox.setAttribute('role', 'textbox');
         $textbox.setAttribute('itemprop', 'url');
-        $section.replaceChild($textbox, $link);
+
+        if ($link) {
+          $section.replaceChild($textbox, $link);
+        } else {
+          $section.appendChild($textbox);
+        }
 
         $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
           name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
         }));
-      } else if (!$link) {
+      } else if (disabled && !$link) {
         $link = document.createElement('a');
         $link.href = $link.title = $textbox.value;
         $link.text = $textbox.value.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -591,7 +601,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     };
 
     toggle(!editing);
-    this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled));
+    this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled), true);
   }
 
   /**
