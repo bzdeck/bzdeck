@@ -1,3 +1,0 @@
-# A SQLite database file for the Bugzilla Auth Delegation will be created in this directory.
-# See /webroot/integration/bugzilla-auth-callback/index.php for details.
-*.sqlite
