@@ -14,7 +14,7 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
    * @param {Array.<String>} [showing_events] - Events to show the tooltip. Default: mouseenter/focusin
    * @param {Array.<String>} [hiding_events] - Events to hide the tooltip. Default: mouseleave/focusout
    * @param {String} [type] - Type of the target data ID: string or number.
-   * @returns {undefined}
+   * @returns {TooltipView} New TooltipView instance.
    */
   constructor ($owner, showing_events, hiding_events, type) {
     super(); // Assign this.id
@@ -30,8 +30,6 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Set event handlers on the owner element to show the tooltip.
-   * @param {undefined}
-   * @returns {undefined}
    */
   set_showing_events () {
     for (const type of this.showing_events) {
@@ -53,8 +51,6 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Set event handlers on the owner element to hide the tooltip.
-   * @param {undefined}
-   * @returns {undefined}
    */
   set_hiding_events () {
     for (const type of this.hiding_events) {
@@ -64,8 +60,6 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Remove any existing tooltips from the page.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide_any () {
     const $tooltip = document.querySelector('body > [role="tooltip"]');
@@ -83,8 +77,6 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 
   /**
    * Remove the current tooltip from the page.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide () {
     if (this.$tooltip) {
@@ -105,7 +97,7 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
    * @constructor
    * @param {...arguments} args - See BzDeck.TooltipView.prototype.constructor.
    * @fires AnyView#OpeningBugRequested
-   * @returns {Object} view - New BugTooltipView instance.
+   * @returns {BugTooltipView} New BugTooltipView instance.
    */
   constructor (...args) {
     super(...args);
@@ -113,8 +105,6 @@ BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
 
   /**
    * Show the bug tooltip on the page.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async show () {
     let bug = await BzDeck.collections.bugs.get(this.id, { id: this.id });

@@ -13,7 +13,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $container - The outer element.
-   * @returns {Object} view - New BugContainerView instance.
+   * @returns {BugContainerView} New BugContainerView instance.
    */
   constructor (id, $container) {
     super(id); // Assign this.id
@@ -33,10 +33,9 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * Add a new bug to the container.
    * @listens BugContainerPresenter#AddingBugRequested
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @fires BugContainerView#BugAdded
-   * @returns {undefined}
    */
   on_adding_bug_requested ({ bug_id, siblings = [] } = {}) {
     const $existing_bug = this.$container.querySelector(`article[data-bug-id="${bug_id}"]`);
@@ -73,7 +72,6 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @param {String} container_id - Container ID of the bug.
    * @param {Number} bug_id - Bug ID to show.
    * @fires BugContainerView#BugAdded
-   * @returns {undefined}
    */
   on_rendering_complete ({ container_id, bug_id } = {}) {
     if (container_id !== this.id) {
@@ -102,7 +100,6 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
    * @listens AnyView#ExpandingBugContainerRequested
    * @param {String} container_id - Container ID to be checked.
    * @param {Boolean} [expanded] - Whether the container should be expanded. If omitted, simply toggle it.
-   * @returns {undefined}
    */
   on_expanding_bug_container_requested ({ container_id, expanded } = {}) {
     if (container_id !== this.id) {

@@ -12,9 +12,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @constructor
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Object} view - New BugDetailsView instance.
+   * @returns {BugDetailsView} New BugDetailsView instance.
    */
   constructor (container_id, bug_id, siblings = [], $bug) {
     super(container_id, bug_id, siblings); // Assign this.id
@@ -53,7 +53,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
   /**
    * Change the page layout by moving some elements, depending on the viewport.
    * @param {MediaQueryList} mql - Detecting the current viewport.
-   * @returns {undefined}
    */
   change_layout (mql) {
     const $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
@@ -82,8 +81,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Add a UI gimmick for mobile that hides the tabs when scrolled down.
-   * @param {undefined}
-   * @returns {undefined}
    */
   add_mobile_tweaks () {
     const mql = window.matchMedia('(max-width: 1023px)');
@@ -113,8 +110,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Add the number of the comments, attachments and history entries to the each relevant tab as a small badge.
-   * @param {undefined}
-   * @returns {undefined}
    */
   add_tab_badges () {
     for (const prop of ['comments', 'attachments', 'history']) {
@@ -127,8 +122,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the Tracking Flags section on the bug info pane.
-   * @param {undefined}
-   * @returns {undefined}
    */
   render_tracking_flags () {
     const config = BzDeck.host.data.config;
@@ -160,8 +153,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the Attachments tabpanel content with BugAttachmentsView.
-   * @param {undefined}
-   * @returns {undefined}
    */
   render_attachments () {
     const mobile = FlareTail.helpers.env.device.mobile;
@@ -195,8 +186,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
 
   /**
    * Render the History tabpanel content with BugHistoryView.
-   * @param {undefined}
-   * @returns {undefined}
    */
   render_history () {
     const $tab = this.$tablist.querySelector('[id$="-tab-history"]');
@@ -215,7 +204,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * @listens BugPresenter#HistoryUpdated
    * @param {Object} [state] - Current history state.
    * @param {String} [state.att_id] - Attachment ID or hash.
-   * @returns {undefined}
    */
   on_history_updated ({ state } = {}) {
     if (state && state.att_id) {

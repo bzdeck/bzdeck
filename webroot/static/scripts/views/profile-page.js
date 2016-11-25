@@ -13,7 +13,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * @constructor
    * @param {String} email - Person's Bugzilla account name.
    * @fires ProfilePageView#ProfileRequested
-   * @returns {Object} view - New ProfilePageView instance.
+   * @returns {ProfilePageView} New ProfilePageView instance.
    */
   constructor (email) {
     super(); // Assign this.id
@@ -50,7 +50,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called by the app router to reuse the view.
    * @param {String} email - Person's Bugzilla account name.
-   * @returns {undefined}
    */
   reactivate (email) {
     this.activate();
@@ -58,8 +57,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
 
   /**
    * Activate to the view.
-   * @param {undefined}
-   * @returns {undefined}
    */
   activate () {
     BzDeck.views.banner.open_tab({
@@ -73,7 +70,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * Called when the User's Gravatar profile is retrieved. Apply the background image.
    * @listens ProfilePagePresenter#GravatarProfileFound
    * @param {Object} style - CSS style rules including the background image.
-   * @returns {undefined}
    * @todo Add more info such as the location and social accounts.
    */
   on_gravatar_profile_found ({ style } = {}) {
@@ -90,7 +86,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * @param {Object} profile - Profile info.
    * @param {Object} links - Related links.
    * @param {Object} style - CSS style rules including the user's generated color.
-   * @returns {undefined}
    */
   on_bugzilla_profile_found ({ profile, links, style } = {}) {
     if (!this.$tab || !this.$profile || !this.$header) {
@@ -109,7 +104,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * Called when the User's Bugzilla profile could not be retrieved. Show the error message.
    * @listens ProfilePagePresenter#BugzillaProfileFetchingError
    * @param {String} message - Error message.
-   * @returns {undefined}
    */
   on_bugzilla_profile_fetching_error ({ message } = {}) {
     if (!this.$status) {
@@ -122,8 +116,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called when fetching the User's Bugzilla profile is complete. Remove the throbber.
    * @listens ProfilePagePresenter#BugzillaProfileFetchingComplete
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_bugzilla_profile_fetching_complete () {
     if (!this.$tabpanel || !this.$status) {

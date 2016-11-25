@@ -12,7 +12,7 @@ BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
    * Get a BannerPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New BannerPresenter instance.
+   * @returns {BannerPresenter} New BannerPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -25,8 +25,6 @@ BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
   /**
    * Called whenever the Back button is clicked on the mobile view. Navigate backward when possible or just show Inbox.
    * @listens BannerView#BackButtonClicked
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_back_button_clicked () {
     if (history.state && history.state.previous) {
@@ -40,7 +38,6 @@ BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
    * Called whenever a tab in the global tablist is selected. Navigate to the specified location.
    * @listens BannerView#TabSelected
    * @param {String} path - Location pathname that corresponds to the tab.
-   * @returns {undefined}
    */
   on_tab_selected ({ path } = {}) {
     if (location.pathname + location.search !== path) {

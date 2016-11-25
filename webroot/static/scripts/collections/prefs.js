@@ -10,8 +10,7 @@
 BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
   /**
    * Get a PrefCollection instance.
-   * @param {undefined}
-   * @returns {Object} prefs - New PrefCollection instance.
+   * @returns {PrefCollection} New PrefCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -27,7 +26,6 @@ BzDeck.PrefCollection = class PrefCollection extends BzDeck.BaseCollection {
    * @param {(Number|String)} name - Key of the item.
    * @param {*} value - Raw data object or any value.
    * @fires PrefCollection#PrefChanged
-   * @returns {undefined}
    */
   set (name, value) {
     super.set(name, value);

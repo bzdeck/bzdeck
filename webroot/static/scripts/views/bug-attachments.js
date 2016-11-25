@@ -14,7 +14,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {HTMLElement} $container - Container node to render the attachments.
    * @fires BugView#AttachmentSelected
-   * @returns {Object} view - New BugAttachmentsView instance.
+   * @returns {BugAttachmentsView} New BugAttachmentsView instance.
    */
   constructor (id, bug_id, $container) {
     super(id); // Assign this.id
@@ -80,7 +80,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Render the provided attachments.
    * @param {Array.<Proxy>} attachments - Attachment list of the bug.
-   * @returns {Promise.<undefined>}
    */
   async render (attachments) {
     const $listitem = this.get_template('details-attachment-listitem');
@@ -123,7 +122,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * Called whenever the attachment list is clicked.
    * @param {MouseEvent} event - click or dblclick.
    * @fires AnyView#OpeningAttachmentRequested
-   * @returns {undefined}
    */
   listbox_onclick (event) {
     const $selected = this.$$listbox.view.selected[0];
@@ -138,10 +136,8 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Initialize the attachment uploading interface. This offers Add/Remove buttons as well as the drag-and-drop support.
-   * @param {undefined}
    * @fires BugView#AttachText
    * @fires BugView#RemoveAttachment
-   * @returns {undefined}
    */
   init_uploader () {
     // Notify BugView once files are selected
@@ -220,7 +216,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @listens BugModel#AttachmentAdded
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {Number} id - Added attachment's ID.
-   * @returns {Promise.<undefined>}
    */
   async on_attachment_added ({ bug_id, id } = {}) {
     if (bug_id !== this.bug_id) {
@@ -238,7 +233,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @listens BugModel#AttachmentRemoved
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} hash - Removed attachment's hash value in the cached list.
-   * @returns {undefined}
    */
   on_attachment_removed ({ bug_id, hash } = {}) {
     if (bug_id !== this.bug_id) {
@@ -259,7 +253,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @param {String} hash - Hash value for an unuploaded attachment or undefined for an existing one.
    * @param {String} prop - Edited property name.
    * @param {*} value - New value.
-   * @returns {undefined}
    */
   on_attachment_edited ({ bug_id, id, hash, prop, value } = {}) {
     if (bug_id !== this.bug_id) {
@@ -282,7 +275,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @listens BugModel#UploadListUpdated
    * @param {Number} bug_id - Changed bug ID.
    * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like object.
-   * @returns {undefined}
    */
   on_upload_list_updated ({ bug_id, uploads } = {}) {
     if (bug_id !== this.bug_id) {
@@ -294,8 +286,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
 
   /**
    * Update the list header title, showing the number of the attachments including unuploaded ones.
-   * @param {undefined}
-   * @returns {undefined}
    */
   update_list_title () {
     const total = this.attachments.size;
@@ -315,7 +305,6 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
    * @listens BugPresenter#HistoryUpdated
    * @param {Object} [state] - Current history state.
    * @param {String} [state.att_id] - Attachment ID or hash.
-   * @returns {undefined}
    */
   on_history_updated ({ state } = {}) {
     const target_id = state ? state.att_id : undefined;

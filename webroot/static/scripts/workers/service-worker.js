@@ -138,7 +138,7 @@ let font_url;
 /**
  * Generate a fallback avatar image in the SVG format.
  * @param {URL} url - The URL used for the original request.
- * @returns {Promise.<Response>} response - Promise to be resolved in a new 200 response that contains a blob of SVG.
+ * @returns {Promise.<Response>} New 200 response that contains a blob of SVG.
  */
 const generate_avatar = async url => {
   const color = url.searchParams.get('color') || '#666';

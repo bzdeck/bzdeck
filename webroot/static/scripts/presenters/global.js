@@ -12,7 +12,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Get a GlobalPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New GlobalPresenter instance.
+   * @returns {GlobalPresenter} New GlobalPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -37,7 +37,6 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
-   * @returns {undefined}
    */
   on_annotation_updated ({ bug_id, type, value } = {}) {
     if (type === 'unread') {
@@ -49,9 +48,9 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Called whenever opening a bug is requested.
    * @listens AnyView#OpeningBugRequested
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
    * @param {Number} [att_id] - Attachment ID.
-   * @returns {undefined}
    */
   on_opening_bug_requested ({ id, siblings = [], att_id } = {}) {
     BzDeck.router.navigate(`/bug/${id}`, { siblings, att_id })
@@ -61,7 +60,6 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Called whenever opening an attachment is requested.
    * @listens AnyView#OpeningAttachmentRequested
    * @param {Number} id - Attachment ID.
-   * @returns {undefined}
    */
   on_opening_attachment_requested ({ id } = {}) {
     BzDeck.router.navigate(`/attachment/${id}`);
@@ -71,7 +69,6 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Called whenever opening a user profile is requested.
    * @listens AnyView#OpeningProfileRequested
    * @param {String} email - Person's Bugzilla account name.
-   * @returns {undefined}
    */
   on_opening_profile_requested ({ email } = {}) {
     BzDeck.router.navigate(`/profile/${email}`);
@@ -81,7 +78,6 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * Determine the number of unread bugs and notify the view.
    * @param {Boolean} [loaded=false] - Whether bug data is loaded at startup.
    * @fires GlobalPresenter#UnreadBugsChanged
-   * @returns {Promise.<undefined>}
    */
   async toggle_unread (loaded = false) {
     const all_bugs = await BzDeck.collections.bugs.get_all();
@@ -95,7 +91,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    * converted to in-app links. Quotes are nested in <blockquote> elements.
    * @param {String} str - Bug comment in plain text, as provided by Bugzilla.
    * @param {Boolean} [is_markdown=true] - Whether the comment is written in Markdown.
-   * @returns {String} str - HTML-formatted comment.
+   * @returns {String} HTML-formatted comment.
    * @todo Add more autolinkification support (#68)
    * @todo Improve the performance probably using a worker.
    */

@@ -12,7 +12,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Get a SidebarPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New SidebarPresenter instance.
+   * @returns {SidebarPresenter} New SidebarPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -58,9 +58,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
   /**
    * Load the user's Gravatar profile.
-   * @param {undefined}
    * @fires SidebarPresenter#GravatarProfileFound
-   * @returns {Promise.<undefined>}
    */
   async load_user_gravatar (folder_id) {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
@@ -73,7 +71,6 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @fires SidebarPresenter#FolderOpened
-   * @returns {Promise.<undefined>}
    */
   async open_folder (folder_id) {
     const bugs = await BzDeck.collections.subscriptions.get(folder_id);
@@ -88,7 +85,6 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
-   * @returns {undefined}
    */
   on_annotation_updated ({ bug_id, type, value } = {}) {
     if (type === 'unread') {
@@ -98,9 +94,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
   /**
    * Notify the number of unread bugs so the view can show it on the Inbox option.
-   * @param {undefined}
    * @fires SidebarPresenter#UnreadToggled
-   * @returns {Promise.<undefined>}
    */
   async toggle_unread () {
     const all_bugs = await BzDeck.collections.subscriptions.get_all();
@@ -116,7 +110,6 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Called whenever a folder is selected.
    * @listens SidebarView#FolderSelected
    * @param {String} id - Folder id.
-   * @returns {undefined}
    */
   on_folder_selected ({ id } = {}) {
     this.data.folder_id = id;
@@ -126,7 +119,6 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
    * Called whenever an Application menu item is selected.
    * @listens SidebarView#AppMenuItemSelected
    * @param {String} command - Command name of the menu item.
-   * @returns {undefined}
    */
   on_app_menu_item_selected ({ command } = {}) {
     const func = {

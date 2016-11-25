@@ -6,14 +6,13 @@
  * Define the User Collection that represents Bugzilla users. Each user is a UserModel.
  * @extends BzDeck.BaseCollection
  * @todo Move this to the worker thread.
- * @see {@link https://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
+ * @see {@link https://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user Bugzilla API}
  */
 BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Get a UserCollection instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} users - New UserCollection instance.
+   * @returns {UserCollection} New UserCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -27,7 +26,6 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * Add bug participants, including Cc members, assignee, QA and mentors, to the user database, and return the models
    * of those users.
    * @param {Proxy} bug - BugModel object.
-   * @returns {Promise.<undefined>}
    */
   async add_from_bug (bug) {
     const missing = new Set();
@@ -47,8 +45,6 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
   /**
    * Refresh user profiles if the data is older than 10 days
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async refresh () {
     const all_users = await this.get_all();
@@ -62,7 +58,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Retrieve multiple users from Bugzilla with specific user names, and return user objects.
    * @param {(Array|Set)} _names - List of user names (email addresses) to retrieve.
-   * @returns {Promise.<Array.<Proxy>>} users - Promise to be resolved in proxified UserModel instances.
+   * @returns {Promise.<Array.<Proxy>>} Proxified UserModel instances.
    */
   async fetch (_names) {
     const names = [..._names].sort();
@@ -95,7 +91,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
     }));
 
     // Flatten an array of arrays
-    const _users = users_chunks.reduce((a, b) => a.concat(b), []) 
+    const _users = users_chunks.reduce((a, b) => a.concat(b), []);
 
     const users = await Promise.all(_users.map(async _user => {
       const name = _user.name;
@@ -121,7 +117,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Search users from the local database and return the results.
    * @param {URLSearchParams} params - Search query.
-   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @returns {Promise.<Array.<Proxy>>} Search results.
    */
   async search_local (params) {
     const words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
@@ -144,7 +140,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Search users from the remote Bugzilla instance and return the results.
    * @param {URLSearchParams} params - Search query.
-   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @returns {Promise.<Array.<Proxy>>} Search results.
    */
   async search_remote (params) {
     const result = await BzDeck.host.request('user', params);
@@ -163,7 +159,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Sort descending (new to old) and return search results.
    * @param {Array.<Proxy>} users - List of found users.
-   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @returns {Promise.<Array.<Proxy>>} Search results.
    * @todo Improve the sorting algorithm. Another possible factors: How active the person is? How often the person has
    *  interacted with the user?
    */

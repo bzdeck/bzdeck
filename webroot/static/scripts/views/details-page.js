@@ -12,7 +12,7 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * it. Otherwise, open a new tab and try to load the bug.
    * @constructor
    * @param {Number} bug_id - ID of the bug to display.
-   * @returns {Object} view - New DetailsPageView instance.
+   * @returns {DetailsPageView} New DetailsPageView instance.
    */
   constructor (bug_id) {
     super(); // Assign this.id
@@ -31,7 +31,6 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
    * Called by the app router to reuse the presenter.
    * @param {Number} bug_id - Bug ID to show.
-   * @returns {undefined}
    */
   reactivate (bug_id) {
     const $$tablist = BzDeck.views.banner.$$tablist;
@@ -53,8 +52,6 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
 
   /**
    * Connect to the view.
-   * @param {undefined}
-   * @returns {undefined}
    */
   activate () {
     const siblings = history.state ? history.state.siblings : [];
@@ -77,9 +74,8 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
    * Called when the bug data is found.
    * @listens BugPresenter#BugDataAvailable
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Promise.<undefined>}
    */
   async on_bug_data_available ({ id, siblings = [] } = {}) {
     if (id !== this.bug_id) {

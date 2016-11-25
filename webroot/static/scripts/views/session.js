@@ -10,8 +10,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Get a SessionView instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} view - New SessionView instance.
+   * @returns {SessionView} New SessionView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -31,8 +30,6 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Called once the user data is loaded. Set up global UI modules.
    * @listens SessionPresenter#DataLoaded
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_data_loaded () {
     BzDeck.views.global = new BzDeck.GlobalView();
@@ -48,8 +45,6 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * Called once the application is ready and the user is signed in. Hide the sign-in page and show the main application
    * page instead.
    * @listens SessionPresenter#Login
-   * @param {undefined}
-   * @returns {undefined}
    * @todo Focus handling.
    */
   on_login () {
@@ -65,8 +60,6 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Called once the user is signed out from the app. Hide the main application page and show the sign-in page instead.
    * @listens SessionPresenter#Logout
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_logout () {
     BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('.statusbar');

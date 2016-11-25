@@ -12,7 +12,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * Get a QuickSearchPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New QuickSearchPresenter instance.
+   * @returns {QuickSearchPresenter} New QuickSearchPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -27,9 +27,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
   /**
    * Provide recent searches done by the user. Notify the results with an event.
    * @listens QuickSearchView#RecentSearchesRequested
-   * @param {undefined}
    * @fires QuickSearchPresenter#ResultsAvailable
-   * @returns {Promise.<undefined>}
    */
   async provide_recent_searches () {
     const history = await BzDeck.prefs.get('search.quick.history');
@@ -65,7 +63,6 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @listens QuickSearchView#QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
    * @fires QuickSearchPresenter#ResultsAvailable
-   * @returns {undefined}
    * @todo Add support for other objects like products and components (#326).
    */
   exec_quick_search (input) {
@@ -113,7 +110,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
   /**
    * Extract some bug properties for a quick search result.
    * @param {Proxy} bug - BugModel instance.
-   * @returns {Promise.<Object>} result - Promise to be resolved in bug search result.
+   * @returns {Promise.<Object>} Bug search result.
    */
   async get_bug_result (bug) {
     const contributor = await bug.get_contributor();
@@ -130,7 +127,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
   /**
    * Extract some user properties for a quick search result.
    * @param {Proxy} user - UserModel instance.
-   * @returns {Promise.<Object>} result - Promise to be resolved in user search result.
+   * @returns {Promise.<Object>} User search result.
    */
   async get_user_result (user) {
     return Object.assign({ type: 'user', id: user.email }, user.properties);
@@ -140,7 +137,6 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * Execute an advanced search by opening a new search page.
    * @listens QuickSearchView#AdvancedSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
-   * @returns {undefined}
    */
   exec_advanced_search (input) {
     const params = new URLSearchParams();
@@ -159,7 +155,6 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @listens QuickSearchView#ResultSelected
    * @param {{String|Number)} id - Item name, such as bug ID or user name.
    * @param {String} type - Item type, such as 'bug' or 'user'.
-   * @returns {undefined}
    */
   on_result_selected ({ id, type } = {}) {
     (async () => {

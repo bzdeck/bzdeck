@@ -12,7 +12,7 @@ BzDeck.DetailsPagePresenter = class DetailsPagePresenter extends BzDeck.BasePres
    * Get a DetailsPagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New DetailsPagePresenter instance.
+   * @returns {DetailsPagePresenter} New DetailsPagePresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id

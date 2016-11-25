@@ -12,7 +12,7 @@ BzDeck.AccountModel = class AccountModel extends BzDeck.BaseModel {
    * Get an AccountModel instance.
    * @constructor
    * @param {Object} data - User account data including Bugzilla account info.
-   * @returns {Proxy} account - New AccountModel instance.
+   * @returns {AccountModel} New AccountModel instance.
    */
   constructor (data) {
     super(); // Assign this.id

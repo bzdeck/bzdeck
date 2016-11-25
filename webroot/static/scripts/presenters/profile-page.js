@@ -13,7 +13,7 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {String} email - Person's Bugzilla account name.
-   * @returns {Object} presenter - New ProfilePagePresenter instance.
+   * @returns {ProfilePagePresenter} New ProfilePagePresenter instance.
    */
   constructor (id, email) {
     super(id); // Assign this.id
@@ -27,12 +27,10 @@ BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePres
   /**
    * Called once the user is retrieved. Get the Gravatar and Bugzilla profiles.
    * @listens ProfilePageView#ProfileRequested
-   * @param {undefined}
    * @fires ProfilePagePresenter#GravatarProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFound
    * @fires ProfilePagePresenter#BugzillaProfileFetchingError
    * @fires ProfilePagePresenter#BugzillaProfileFetchingComplete
-   * @returns {Promise.<undefined>}
    */
   async on_profile_requested () {
     const origin = BzDeck.host.origin;

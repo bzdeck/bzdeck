@@ -11,8 +11,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   /**
    * Get a BannerView instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} view - New BannerView instance.
+   * @returns {BannerView} New BannerView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -35,7 +34,6 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @param {String} category - Category of the tabpanel content, such as 'details' or 'settings'.
    * @param {String} [position] - Where to show the tab: 'next' (default) or 'last'.
    * @param {Object} view - View instance that requests the tab.
-   * @returns {undefined}
    * @todo Need refactoring (#232)
    */
   open_tab ({ label, description, category, position = 'next' } = {}, view) {
@@ -77,7 +75,6 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * @param {Array.<HTMLElement>} items - Newly selected nodes.
    * @param {Array.<HTMLElement>} oldval - Previously selected nodes.
    * @fires BannerView#TabSelected
-   * @returns {undefined}
    */
   on_tab_selected ({ items, oldval } = {}) {
     const path = this.tab_path_map.get(items[0].id);
@@ -104,8 +101,6 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
 
   /**
    * Called whenever a global tab is opened or closed. Update the data-tab-count attribute on <html>.
-   * @param {undefined}
-   * @returns {undefined}
    */
   update_tab_count () {
     document.documentElement.setAttribute('data-tab-count', this.$$tablist.view.members.length);
@@ -116,7 +111,6 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * banner.
    * @param {HTMLElement} $parent - Tabpanel that contains the header.
    * @fires BannerView#BackButtonClicked
-   * @returns {undefined}
    */
   add_back_button ($parent) {
     const $header = $parent.querySelector('header');

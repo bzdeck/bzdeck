@@ -15,7 +15,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if
    *  any.
-   * @returns {DocumentFragment} $fragment - Generated entry node in a fragment.
+   * @returns {BugTimelineEntryView} New BugTimelineEntryView instance.
    */
   constructor (id, bug, data) {
     super(id); // Assign this.id
@@ -26,8 +26,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create a timeline entry.
-   * @param {undefined}
-   * @returns {Promise.<Object>} entry - Promise to be resolved in an object containing the entry fragment and timestamp.
+   * @returns {Promise.<Object>} Object containing the entry fragment and
+   *  timestamp.
    */
   async create () {
     const comment = this.data.get('comment');
@@ -64,9 +64,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create a comment entry that contains the author name/image, timestamp, comment body and Reply button.
-   * @param {undefined}
    * @fires BugView#CommentSelected
-   * @returns {Promise.<HTMLElement>} $entry - Promise to be resolved in the generated entry node.
+   * @returns {Promise.<HTMLElement>} Generated entry node.
    */
   async create_comment_entry () {
     const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
@@ -218,7 +217,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * Expand or collapse a comment entry.
    * @param {HTMLElement} $entry - Comment node of interest.
    * @param {Boolean} [expanded] - Whether the comment should be expanded.
-   * @returns {undefined}
    */
   toggle_expanded ($entry, expanded) {
     expanded = expanded !== undefined ? expanded : $entry.getAttribute('aria-expanded') === 'false';
@@ -234,8 +232,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create an Attachment box that will be added to the entry node.
-   * @param {undefined}
-   * @returns {Promise.<HTMLElement>} $attachment - Promise to be resolved in the rendered attachment item.
+   * @returns {Promise.<HTMLElement>} Rendered attachment item.
    */
   async create_attachment_box () {
     const attachment = await BzDeck.collections.attachments.get(this.data.get('attachment').id);
@@ -330,8 +327,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
   /**
    * Create history entries that show any changes to the bug.
-   * @param {undefined}
-   * @returns {Promise.<DocumentFragment>} $fragment - Promise to be resolved in generated entries in a fragment.
+   * @returns {Promise.<DocumentFragment>} Generated entries in a fragment.
    */
   async create_history_entries () {
     const comment = this.data.get('comment');
@@ -374,8 +370,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @param {String} time - Timestamp of the change.
    * @param {Object} change - Change details.
    * @param {Object} [comment] - Comment posted at the same time as the change, if any.
-   * @returns {Promise.<HTMLElement>} $change - Promise to be resolved in the rendered change item.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history}
+   * @returns {Promise.<HTMLElement>} Rendered change item.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#bug-history Bugzilla API}
    */
   async create_history_entry (changer_name, time, change, comment) {
     const $change = this.get_template('timeline-change');
@@ -453,7 +449,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const removed_feedbacks = _feedbacks.removed.size ? this.create_people_array(_feedbacks.removed) : undefined;
     const added_needinfos = _needinfos.added.size ? this.create_people_array(_needinfos.added) : undefined;
     const removed_needinfos = _needinfos.removed.size ? this.create_people_array(_needinfos.removed) : undefined;
-    const get_removals = change.removed ? 
+    const get_removals = change.removed ?
             this.create_history_change_element(change, 'removed').then($elm => $elm.outerHTML) : undefined;
     const get_additions = change.added ?
             this.create_history_change_element(change, 'added').then($elm => $elm.outerHTML) : undefined;
@@ -625,7 +621,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
   /**
    * Render one or more users in a pretty way, showing the avatar and real name and joining with a comma and "and".
    * @param {Set.<String>} set - List of user account names.
-   * @returns {Promise.<String>} str - Promise to be resolved in the rendered HTML string.
+   * @returns {Promise.<String>} Rendered HTML string.
    */
   async create_people_array (set) {
     const people = await Promise.all([...set].map(name => BzDeck.collections.users.get(name, { name })));
@@ -645,7 +641,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * Render a history change in a pretty way, converting Bug IDs to in-app links.
    * @param {Object} change - Change details.
    * @param {String} how - How the change was made: 'added' or 'removed'.
-   * @returns {Promise.<HTMLElement>} $elm - Promise to be resolved in a rendered element.
+   * @returns {Promise.<HTMLElement>} Rendered element.
    */
   async create_history_change_element (change, how) {
     const $elm = document.createElement('span');

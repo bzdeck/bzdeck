@@ -10,10 +10,9 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   /**
    * Get a SidebarView instance.
    * @constructor
-   * @param {undefined}
    * @fires SidebarView#FolderSelected
    * @fires SidebarView#AppMenuItemSelected
-   * @returns {Object} view - New SidebarView instance.
+   * @returns {SidebarView} New SidebarView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -81,7 +80,6 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * @listens SidebarPresenter#FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @param {Array.<Number>} bug_ids - List of bug IDs to render.
-   * @returns {Promise.<undefined>}
    */
   async open_folder ({ folder_id, bug_ids } = {}) {
     const bugs = await BzDeck.collections.bugs.get_some(bug_ids); // Map
@@ -106,7 +104,6 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
    * Show the number of unread bugs on the Inbox option.
    * @listens SidebarPresenter#UnreadToggled
    * @param {Number} num - Number of unread bugs.
-   * @returns {undefined}
    */
   toggle_unread (num) {
     const $label = document.querySelector('#sidebar-folder-inbox label');
@@ -123,8 +120,6 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   /**
    * Set up the account label & avatar.
    * @listens SidebarPresenter#GravatarProfileFound
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async on_gravatar_profile_found () {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name);

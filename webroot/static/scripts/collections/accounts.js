@@ -11,8 +11,7 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
   /**
    * Get an AccountCollection instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} accounts - New AccountCollection instance.
+   * @returns {AccountCollection} New AccountCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -24,8 +23,7 @@ BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection
 
   /**
    * Get the currently signed-in user account if any.
-   * @param {undefined}
-   * @returns {Promise.<Object>} account - Promise to be resolved in AccountModel instance.
+   * @returns {Promise.<Object>} AccountModel instance.
    */
   async get_current () {
     const accounts = await this.get_all();

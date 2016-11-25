@@ -12,7 +12,7 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * Get a SearchPagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New SearchPagePresenter instance.
+   * @returns {SearchPagePresenter} New SearchPagePresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -44,8 +44,6 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the same search
    * results so the user can easily navigate through those bugs.
    * @listens SearchPageView#OpeningTabRequested
-   * @param {undefined}
-   * @returns {undefined}
    */
   open_tab () {
     BzDeck.router.navigate('/bug/' + this.data.preview_id, { siblings: [...this.data.bugs.keys()] });
@@ -60,7 +58,6 @@ BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresen
    * @fires SearchPagePresenter#SearchResultsAvailable
    * @fires SearchPagePresenter#SearchError
    * @fires SearchPagePresenter#SearchComplete
-   * @returns {Promise.<undefined>}
    */
   async exec_search (params) {
     if (!navigator.onLine) {

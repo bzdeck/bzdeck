@@ -6,7 +6,7 @@
  * Define the User Model that represents a Bugzilla user. Available through the UserCollection.
  * @extends BzDeck.BaseModel
  * @todo Move this to the worker thread.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user Bugzilla API}
  */
 BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
@@ -14,8 +14,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @constructor
    * @param {Object} data - Profile object including Bugzilla's raw user data.
    * @fires UserModel#UserInfoUpdated
-   * @returns {Proxy} user - Proxified UserModel instance, so consumers can seamlessly access user properties via
-   *  user.prop instead of user.data.prop.
+   * @returns {Proxy} Proxified UserModel instance, so consumers can seamlessly access user properties via user.prop
+   *  instead of user.data.prop.
    */
   constructor (data) {
     super(); // Assign this.id
@@ -105,7 +105,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
    * @param {Object} [options] - Extra options.
-   * @returns {Promise.<Proxy>} data - Promise to be resolved in the user's profile.
+   * @returns {Promise.<Proxy>} The user's profile.
    */
   async fetch (options = {}) {
     options.in_promise_all = true;
@@ -139,8 +139,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel.
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @param {String} [api_key] - API key used to authenticate against the Bugzilla API.
-   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Bugzilla profile.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
+   * @returns {Promise.<Object>} The user's Bugzilla profile.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user Bugzilla API}
    */
   async get_bugzilla_profile ({ in_promise_all = false, api_key } = {}) {
     if (this.data.bugzilla && this.data.bugzilla.id) {
@@ -170,8 +170,8 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
    * @listens GlobalView#GravatarProfileProvided
    * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @fires UserModel#GravatarProfileRequested
-   * @returns {Promise.<Object>} bug - Promise to be resolved in the user's Gravatar profile.
-   * @see {@link https://en.gravatar.com/site/implement/profiles/json/}
+   * @returns {Promise.<Object>} The user's Gravatar profile.
+   * @see {@link https://en.gravatar.com/site/implement/profiles/json/ Gravatar API}
    */
   async get_gravatar_profile ({ in_promise_all = false } = {}) {
     if (this.data.gravatar) {

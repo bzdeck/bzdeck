@@ -13,9 +13,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @constructor
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Object} view - New BugView instance.
+   * @returns {BugView} New BugView instance.
    */
   constructor (container_id, bug_id, siblings = []) {
     super(); // Assign this.id
@@ -45,9 +45,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called when the bug data is found. Prepare the newly opened tabpanel.
    * @listens BugPresenter#BugDataAvailable
    * @param {Number} id - Bug ID.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Promise.<undefined>}
    */
   async on_bug_data_available ({ id, siblings = [] } = {}) {
     this.bug = await BzDeck.collections.bugs.get(id);
@@ -67,7 +66,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @listens BugContainerPresenter#BugDataUnavailable
    * @param {Number} code - Error code usually defined by Bugzilla.
    * @param {String} message - Error message text.
-   * @returns {Boolean} result - Whether the view is updated.
+   * @returns {Boolean} Whether the view is updated.
    */
   on_bug_data_unavailable ({ code, message } = {}) {
     const $error = this.fill(this.get_template('bug-details-error-template', `${this.bug_id}-${this.id}`), {
@@ -82,8 +81,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set up menu items on the toolbar.
-   * @param {undefined}
-   * @returns {undefined}
    */
   setup_toolbar () {
     const $button = this.$bug.querySelector('[data-command="show-menu"]');
@@ -176,8 +173,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set up the Back and Forward navigation when applicable, including the toolbar buttons and keyboard shortcuts.
-   * @param {undefined}
-   * @returns {undefined}
    */
   setup_navigation () {
     const Button = FlareTail.widgets.Button;
@@ -221,7 +216,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Switch to another bug within the same tab through the Back and Forward navigation.
    * @param {Number} new_id - ID of the bug to show next.
    * @fires BugContainerView#NavigationRequested
-   * @returns {undefined}
    */
   navigate (new_id) {
     this.trigger('BugView#NavigationRequested', { container_id: this.container_id, old_id: this.bug_id, new_id });
@@ -229,11 +223,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
-   * @param {undefined}
    * @fires BugView#EditModeChanged
    * @fires BugView#OpeningTabRequested
    * @fires AnyView#TogglingPreviewRequested
-   * @returns {undefined}
    */
   render () {
     if (!this.bug.summary && !this.bug._update_needed) {
@@ -378,7 +370,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @fires AnyView#OpeningBugRequested
    * @fires BugView#RenderingComplete
-   * @returns {Promise.<undefined>}
    */
   async fill_details (delayed) {
     // When the comments and history are loaded async, the template can be removed
@@ -458,9 +449,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Activate the UI widgets such as textboxes and comboboxes.
-   * @param {undefined}
    * @fires BugView#EditField
-   * @returns {undefined}
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
@@ -564,7 +553,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {HTMLElement} $section - Outer element.
    * @param {Boolean} editing - Whether the bug is in the edit mode.
    * @fires BugView#EditField
-   * @returns {undefined}
    */
   activate_url_widget ($section, editing) {
     const toggle = disabled => {
@@ -606,9 +594,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Initialize the attachment drag & drop support.
-   * @param {undefined}
    * @fires BugView#AttachText
-   * @returns {Boolean} result - Whether the attachment drop target is found and initialized.
+   * @returns {Boolean} Whether the attachment drop target is found and initialized.
    */
   init_att_drop_target () {
     const $target = this.$bug.querySelector('.att-drop-target');
@@ -673,7 +660,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    *  and status.
    * @param {String} [product_name] - The default is the bug's product name, but it could be different when the user
    *  attempts to change the product.
-   * @returns {Array} values - Field values.
+   * @returns {Array.<Object>} Field values.
    */
   get_field_values (field_name, product_name = this.bug.product) {
     const { field, product } = BzDeck.host.data.config;
@@ -692,7 +679,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Update the Resolution field UI when the Status is changed.
    * @param {String} resolution - FIXED, DUPLICATE, etc.
-   * @returns {undefined}
    */
   update_resolution_ui (resolution) {
     const is_open = resolution === '';
@@ -721,7 +707,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} name - Field name.
    * @param {String} value - Field value.
-   * @returns {undefined}
    */
   on_field_edited ({ bug_id, name, value } = {}) {
     if (bug_id !== this.bug.id) {
@@ -761,7 +746,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * traditional File API to identify the files. In any case, notify the selected files to the presenter.
    * @param {(HTMLInputElement|DataTransfer)} input - Data source.
    * @fires BugView#AttachFiles
-   * @returns {undefined}
    */
   on_files_selected (input) {
     const iterate = items => {
@@ -781,8 +765,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set a tooltip on each product name that shows the Bugzilla-defined description of that product.
-   * @param {undefined}
-   * @returns {undefined}
    */
   set_product_tooltips () {
     const config = BzDeck.host.data.config;
@@ -814,8 +796,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set a tooptip on each bug ID that shows the summary and status of that bug.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async set_bug_tooltips () {
     const related_ids = [...this.$bug.querySelectorAll('[data-bug-id]')]
@@ -865,7 +845,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * periodic fetches or Bugzfeed push notifications.
    * @param {Proxy} bug - Updated BugModel instance.
    * @param {Map.<String, Object>} changes - Change details.
-   * @returns {undefined}
    */
   update (bug, changes) {
     this.bug = bug;
@@ -908,7 +887,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
-   * @returns {undefined}
    */
   on_annotation_updated ({ bug_id, type, value } = {}) {
     if (this.$bug && bug_id === this.bug.id && type === 'starred') {
@@ -921,7 +899,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @listens BugModel#Updated
    * @param {Number} bug_id - Changed bug ID.
    * @param {Map} changes - Change details.
-   * @returns {Promise.<undefined>}
    */
   async on_updated ({ bug_id, changes } = {}) {
     if (bug_id !== this.bug.id) {
@@ -935,8 +912,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Called once a submission is complete, regardless of errors. Move to the next bug if possible.
    * @listens BugModel#SubmitComplete
    * @param {Number} bug_id - Changed bug ID.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async on_submit_complete ({ bug_id } = {}) {
     if (bug_id !== this.bug_id) {

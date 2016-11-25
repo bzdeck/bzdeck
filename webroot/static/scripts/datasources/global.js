@@ -11,8 +11,7 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
   /**
    * Get an GlobalDataSource instance. This is necessary to call the constructor of the base Event class.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} accounts - New GlobalDataSource instance.
+   * @returns {GlobalDataSource} New GlobalDataSource instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -20,8 +19,7 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
 
   /**
    * Preload the app-wide database.
-   * @param {undefined}
-   * @returns {Promise.<IDBDatabase>} database - Target IndexedDB database.
+   * @returns {Promise.<IDBDatabase>} Target IndexedDB database.
    */
   async load () {
     return this.open_database('global', 1);
@@ -30,8 +28,8 @@ BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
   /**
    * Called whenever the database is created or upgraded. Create object stores and handle upgrades.
    * @param {IDBVersionChangeEvent} event - The upgradeneeded event.
-   * @returns {IDBDatabase} database - Target IndexedDB database.
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
+   * @returns {IDBDatabase} Target IndexedDB database.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded MDN}
    */
   onupgradeneeded (event) {
     const database = event.target.result;

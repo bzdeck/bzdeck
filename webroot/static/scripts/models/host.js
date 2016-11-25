@@ -12,7 +12,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * Get an BugModel instance.
    * @constructor
    * @param {Object} data - Host data.
-   * @returns {Proxy} bug - New HostModel instance.
+   * @returns {HostModel} New HostModel instance.
    */
   constructor (data) {
     super(); // Assign this.id
@@ -37,10 +37,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @param {String} [method='GET'] - Request method.
    * @param {Object} [data] - Post data.
    * @param {String} [api_key] - API key used to authenticate against the Bugzilla API.
-   * @param {Object.<String, Function>} [listeners] - Event listeners. The key is an event type like 'load', the
-   *  value is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
-   * @returns {Promise.<Object>} response - Promise to be resolved in the raw bug object retrieved from Bugzilla.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/}
+   * @param {Object.<String, Function>} [listeners] - Event listeners. The key is an event type like 'load', the value
+   *  is the handler. If the type is 'progress' and the post data is set, it will called during the upload.
+   * @returns {Promise.<Object>} Raw bug object retrieved from Bugzilla.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/ Bugzilla API}
    */
   async request (path, params, { method, data, api_key, listeners = {} } = {}) {
     if (!navigator.onLine) {
@@ -100,10 +100,9 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current
    * config from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI
    * compat layer instead.
-   * @param {undefined}
-   * @returns {Promise.<Object>} config - Promise to be resolved in the Bugzilla configuration data.
-   * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other}
-   * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937}
+   * @returns {Promise.<Object>} Bugzilla configuration data.
+   * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other MozillaWiki}
+   * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937 Bug 504937}
    */
   async get_config () {
     if (!navigator.onLine) {
@@ -141,8 +140,8 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * Verify the combination of the provided user name and API key.
    * @param {String} name - User name. Usually email address.
    * @param {String} api_key - API key to authenticate.
-   * @returns {Promise.<Object>} user - Promise to be resolved in the verified user's info.
-   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user}
+   * @returns {Promise.<Object>} Verified user's info.
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user Bugzilla API}
    */
   async verify_account (name, api_key) {
     const params = new URLSearchParams();

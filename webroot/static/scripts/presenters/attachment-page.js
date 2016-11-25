@@ -12,7 +12,7 @@ BzDeck.AttachmentPagePresenter = class AttachmentPagePresenter extends BzDeck.Ba
    * Get a AttachmentPagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New AttachmentPagePresenter instance.
+   * @returns {AttachmentPagePresenter} New AttachmentPagePresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id

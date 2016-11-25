@@ -5,7 +5,7 @@
 /**
  * Define the Attachment View that represents an attachment displayed in the Bug Details page or Attachment page.
  * @extends BzDeck.BaseView
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment Bugzilla API}
  */
 BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
@@ -14,7 +14,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @param {HTMLElement} $placeholder - Node to show the attachment.
-   * @returns {Object} view - New AttachmentView instance.
+   * @returns {AttachmentView} New AttachmentView instance.
    */
   constructor (id, att_id, $placeholder) {
     super(id); // Assign this.id
@@ -37,8 +37,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Called when the attachment is found. Render it on the page.
    * @listens AttachmentPresenter#AttachmentAvailable
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async on_attachment_available () {
     const att = this.attachment = await BzDeck.collections.attachments.get(this.att_id);
@@ -67,7 +65,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    * Called when the attachment is not found. Show an error message on the page.
    * @listens AttachmentPresenter#AttachmentUnavailable
    * @param {String} message - Error message.
-   * @returns {undefined}
    */
   on_attachment_unavailable ({ message } = {}) {
     const id = this.att_id;
@@ -78,8 +75,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Called when loading the attachment started. Show a message accordingly.
    * @listens AttachmentPresenter#LoadingStarted
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_loading_started () {
     BzDeck.views.statusbar.show('Loading...'); // l10n
@@ -87,9 +82,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Activate the editable widgets including textboxes and checkboxes.
-   * @param {undefined}
    * @fires AttachmentView#EditAttachment
-   * @returns {undefined}
    */
   activate_widgets () {
     const { id, hash } = this.attachment;
@@ -130,8 +123,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Start rendering the attachment in the placeholder.
-   * @param {undefined}
-   * @returns {undefined}
    */
   render () {
     const media_type = this.attachment.content_type.split('/')[0];
@@ -167,8 +158,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render an image, video or audio.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async render_media () {
     this.$outer.setAttribute('aria-busy', 'true');
@@ -189,8 +178,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render a patch with the Patch Viewer.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async render_patch () {
     this.$outer.setAttribute('aria-busy', 'true');
@@ -213,8 +200,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
   /**
    * Render a link to the binary file, GitHub pull request or Review Board request.
-   * @param {undefined}
-   * @returns {undefined}
    */
   render_link () {
     const $link = document.createElement('a');
@@ -243,7 +228,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Render an error message when the attachment data could not be retrieved from the cache nor Bugzilla.
    * @param {Error} error - Error object.
-   * @returns {undefined}
    */
   render_error (error) {
     const $error = document.createElement('p');

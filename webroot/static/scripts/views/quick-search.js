@@ -11,7 +11,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * Get a QuickSearchView instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
-   * @returns {Object} view - New QuickSearchView instance.
+   * @returns {QuickSearchView} New QuickSearchView instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -44,8 +44,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Enable some keyboard shortcuts on the elements.
-   * @param {undefined}
-   * @returns {undefined}
    */
   assign_keyboard_bindings () {
     FlareTail.helpers.kbd.assign(window, {
@@ -76,8 +74,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Activate each result sections and cache them in a Map for later access.
-   * @param {undefined}
-   * @returns {undefined}
    */
   activate_results () {
     this.sections = new Map();
@@ -92,9 +88,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Called whenever the user is typing or focusing on the search box. If the box is has some characters, show the
    * search results. Otherwise, show the Recent Searches if any.
-   * @param {undefined}
    * @fires QuickSearchView#RecentSearchesRequested
-   * @returns {undefined}
    */
   oninput () {
     if (this.$input.value.trim()) {
@@ -107,8 +101,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   /**
    * Called whenever the search button is pressed. On desktop, execute a new Advanced Search. On mobile, focus on the
    * search box or execute a new Advanced Search.
-   * @param {undefined}
-   * @returns {undefined}
    */
   onsubmit () {
     const $root = document.documentElement; // <html>
@@ -128,9 +120,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Request quick search results.
-   * @param {undefined}
    * @fires QuickSearchView#QuickSearchRequested
-   * @returns {undefined}
    */
   exec_quick_search () {
     this.trigger('#QuickSearchRequested', { input: this.$input.value });
@@ -138,9 +128,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Request advanced search results, leading to a new search page.
-   * @param {undefined}
    * @fires QuickSearchView#AdvancedSearchRequested
-   * @returns {undefined}
    */
   exec_advanced_search () {
     this.trigger('#AdvancedSearchRequested', { input: this.$input.value });
@@ -152,8 +140,8 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * @listens QuickSearchPresenter#ResultsAvailable
    * @param {String} category - Search category, such as 'recent', 'bugs' or 'users'.
    * @param {String} input - Original search terms.
-   * @param {Array} results - Search results.
-   * @returns {Boolean} displayed - Whether the results are displayed.
+   * @param {Array.<Object>} results - Search results.
+   * @returns {Boolean} Whether the results are displayed.
    */
   render_results ({ category, input, results } = {}) {
     const section = this.sections.get(category);
@@ -192,8 +180,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Show the drop down list for the search results.
-   * @param {undefined}
-   * @returns {undefined}
    */
   show_results () {
     if (!this.$results.matches('[aria-expanded="true"]')) {
@@ -203,8 +189,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * Hide the drop down list for the search results.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide_results () {
     if (!this.$results.matches('[aria-expanded="false"]')) {
@@ -214,8 +198,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
 
   /**
    * End a quick search session.
-   * @param {undefined}
-   * @returns {undefined}
    */
   cleanup () {
     const $root = document.documentElement; // <html>
@@ -232,7 +214,6 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * drop down list.
    * @param {HTMLElement} $target - Selected element.
    * @fires QuickSearchView#ResultSelected
-   * @returns {undefined}
    */
   on_result_selected ($target) {
     if ($target.matches('[data-command="search-all-bugs"]')) {
@@ -262,7 +243,7 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
    * @constructor
    * @param {String} category - Search category, such as 'recent', 'bugs' or 'users'.
    * @param {HTMLElement} $outer - Section node.
-   * @returns {Object} view - New QuickSearchResultsView instance.
+   * @returns {QuickSearchResultsView} New QuickSearchResultsView instance.
    */
   constructor (category, $outer) {
     super(); // Assign this.id
@@ -280,8 +261,6 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
 
   /**
    * Show the section.
-   * @param {undefined}
-   * @returns {undefined}
    */
   show () {
     if (!this.$outer.matches('[aria-hidden="false"]')) {
@@ -291,8 +270,6 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
 
   /**
    * Hide the section.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide () {
     if (!this.$outer.matches('[aria-hidden="true"]')) {
@@ -303,7 +280,6 @@ BzDeck.QuickSearchResultsView = class QuickSearchResultsView extends BzDeck.Base
   /**
    * Render the search results on the section using a template.
    * @param {Array.<Object>} results - Search results.
-   * @returns {undefined}
    */
   render (results) {
     const $fragment = new DocumentFragment();

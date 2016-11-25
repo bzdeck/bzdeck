@@ -13,7 +13,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {URLSearchParams} params - Search parameters.
-   * @returns {Object} presenter - New SessionPresenter instance.
+   * @returns {SessionPresenter} New SessionPresenter instance.
    */
   constructor (id, params) {
     super(id); // Assign this.id
@@ -32,10 +32,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Bootstrap Step 1. Find a user account from the local database.
-   * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {Promise.<undefined>}
    */
   async find_account () {
     this.trigger('#StatusUpdate', { message: 'Looking for your account...' }); // l10n
@@ -67,10 +65,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @listens LoginFormView#LoginRequested
    * @listens LoginFormView#QRCodeDecoded
    * @listens LoginFormView#QRCodeError
-   * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {undefined}
    */
   force_login () {
     this.trigger('#StatusUpdate', { status: 'ForcingLogin', message: '' });
@@ -109,7 +105,6 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
    * @fires SessionPresenter#UserFound
-   * @returns {Promise.<undefined>}
    */
   async verify_account (host_id, name, api_key) {
     this.trigger('#StatusUpdate', { message: 'Verifying your account...' }); // l10n
@@ -138,10 +133,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Bootstrap Step 4. Load data from the local database once the user account is set.
-   * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {Promise.<undefined>}
    */
   async load_data () {
     this.trigger('#StatusUpdate', { status: 'LoadingData', message: 'Loading your data...' }); // l10n
@@ -186,7 +179,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    * Bootstrap Step 5. Retrieve bugs and Bugzilla config from the remote Bugzilla instance.
    * @param {Boolean} [firstrun=false] - True for the initial session.
    * @fires SessionPresenter#StatusUpdate
-   * @returns {Promise.<Array>} - Promise to be resolved in retrieved data.
+   * @returns {Promise.<Array>} Retrieved data.
    */
   async fetch_data (firstrun = false) {
     this.trigger('#StatusUpdate', { message: 'Loading Bugzilla config and your bugs...' });
@@ -221,10 +214,8 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Bootstrap Step 6. Set up everything including the global presenters and views, then complete bootstrapping.
-   * @param {undefined}
    * @fires SessionPresenter#StatusUpdate
    * @fires SessionPresenter#Error
-   * @returns {Promise.<undefined>}
    */
   async init_components () {
     this.trigger('#StatusUpdate', { message: 'Initializing UI...' }); // l10n
@@ -259,9 +250,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Notify the view of the user's sign-in once prepared.
-   * @param {undefined}
    * @fires SessionPresenter#Login
-   * @returns {undefined}
    */
   login () {
     this.trigger('#Login');
@@ -269,9 +258,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Notify the view of the user's sign-out, run the clean-up script, and delete the active account info.
-   * @param {undefined}
    * @fires SessionPresenter#Logout
-   * @returns {Promise.<undefined>}
    */
   async logout () {
     this.trigger('#Logout');
@@ -285,8 +272,6 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
   /**
    * Clean up the browsing session by terminating all timers and Bugzfeed subscriptions.
-   * @param {undefined}
-   * @returns {undefined}
    */
   clean () {
     // Terminate timers

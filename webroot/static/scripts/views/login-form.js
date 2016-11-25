@@ -12,7 +12,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {URLSearchParams} params - Query info in the current URL.
-   * @returns {Object} view - New LoginFormView instance.
+   * @returns {LoginFormView} New LoginFormView instance.
    */
   constructor (id, params) {
     super(id); // Assign this.id
@@ -40,8 +40,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Display the sign-in form when no active account is found.
-   * @param {undefined}
-   * @returns {undefined}
    */
   show () {
     this.$form.setAttribute('aria-hidden', 'false');
@@ -50,8 +48,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Hide the sign-in form while loading data.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide () {
     this.$form.setAttribute('aria-hidden', 'true');
@@ -59,8 +55,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
   /**
    * Hide the introductory paragraph on from the sign-in form.
-   * @param {undefined}
-   * @returns {undefined}
    */
   hide_intro () {
     document.querySelector('#app-intro').setAttribute('aria-hidden', 'true');
@@ -69,7 +63,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Display a message on the sign-in form.
    * @param {String} message - Message to show.
-   * @returns {undefined}
    */
   show_status (message) {
     this.$statusbar.querySelector('p').textContent = message;
@@ -78,10 +71,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Display the "Sign in with Bugzilla" button that triggers Bugzilla's Authentication Delegation process. When the
    * button is clicked, take the user to the Bugzilla authentication page.
-   * @param {undefined}
    * @fires LoginFormView#LoginRequested
-   * @returns {undefined}
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html}
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/integrating/auth-delegation.html Bugzilla API}
    */
   activate_bugzilla_auth () {
     this.$bzauth_button = this.$form.querySelector('[data-id="bugzilla-auth"]');
@@ -106,10 +97,8 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * Display the "Sign in with QR Code" button on mobile. The user can quickly sign into the app by capturing a QR code
    * displayed on BzDeck for desktop, that encodes the user's Bugzilla account name and API key. The decoding is done by
    * a third-party library. This may not work depending on the spec of the device's camera.
-   * @param {undefined}
    * @fires LoginFormView#QRCodeDecoded
    * @fires LoginFormView#QRCodeError
-   * @returns {undefined}
    */
   activate_qrcode_auth () {
     this.$qrauth_button = this.$form.querySelector('[data-id="qrcode-auth"]');
@@ -172,7 +161,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * @listens SessionPresenter#StatusUpdate
    * @param {String} status - Current status.
    * @param {String} message - Message text to display.
-   * @returns {undefined}
    */
   on_status_update ({ status, message } = {}) {
     this.show_status(message);
@@ -191,7 +179,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
    * Called whenever an error is detected during the sign-in process. Show the error message.
    * @listens SessionPresenter#Error
    * @param {String} message - Message text to display.
-   * @returns {undefined}
    */
   on_error ({ message } = {}) {
     this.show_status(message);
@@ -200,8 +187,6 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Called when the user has logged out from the app. Show the sign-in form again.
    * @listens SessionPresenter#Logout
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_logout () {
     this.show();

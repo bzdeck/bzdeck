@@ -12,7 +12,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $form - Form container element.
-   * @returns {Object} view - New MarkdownEditor instance.
+   * @returns {MarkdownEditor} New MarkdownEditor instance.
    */
   constructor (id, $form) {
     super(id); // Assign this.id
@@ -49,7 +49,6 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
   /**
    * Update the text by adding marks.
    * @param {String} tag - One of HTML tag names, such as strong, a, code, ul.
-   * @returns {undefined}
    */
   exec_command (tag) {
     const value = this.$textbox.value;

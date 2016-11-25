@@ -14,7 +14,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.
-   * @returns {Object} view - New BugParticipantListView instance.
+   * @returns {BugParticipantListView} New BugParticipantListView instance.
    */
   constructor (id, bug, $section) {
     super(id); // Assign this.id
@@ -49,8 +49,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Remove an empty person node on the list. FIXME: This should be handled by the template engine.
-   * @param {undefined}
-   * @returns {undefined}
    */
   remove_empty_person () {
     const $person = this.$list.querySelector('[itemscope]');
@@ -64,7 +62,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * Called whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
    * @listens BugView#EditModeChanged
    * @param {Boolean} enabled - Whether the edit mode is enabled.
-   * @returns {undefined}
    */
   on_edit_mode_changed ({ enabled } = {}) {
     this.editing = enabled;
@@ -85,9 +82,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add the Take button to the <header> in the <section>.
-   * @param {undefined}
    * @fires BugView#AddParticipant
-   * @returns {undefined}
    */
   add_take_button () {
     this.$button = this.create_button('take', 'Take', {
@@ -108,10 +103,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add the Subscribe button to the <header> in the <section>.
-   * @param {undefined}
    * @fires BugView#Unsubscribe
    * @fires BugView#Subscribe
-   * @returns {undefined}
    */
   add_subscribe_button () {
     const listed = this.values.has(this.my_email);
@@ -129,9 +122,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
   /**
    * Add a Person Finder under the <header>.
-   * @param {undefined}
    * @fires BugView#AddParticipant
-   * @returns {undefined}
    */
   add_person_finder () {
     this.$$finder = new BzDeck.PersonFinderView(this.id, `bug-${this.bug.id}-${this.id}-${this.field}-person-finder`,
@@ -153,7 +144,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the added person.
-   * @returns {undefined}
    */
   on_participant_added ({ bug_id, field, email } = {}) {
     if (bug_id !== this.bug.id || field !== this.field) {
@@ -201,7 +191,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} field - Relevant bug field, like assigned_to or cc.
    * @param {String} email - Email of the removed person.
-   * @returns {undefined}
    */
   on_participant_removed ({ bug_id, field, email } = {}) {
     if (bug_id !== this.bug.id || field !== this.field) {

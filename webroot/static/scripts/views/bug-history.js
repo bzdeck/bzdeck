@@ -12,7 +12,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $container - Outer element to display the content.
-   * @returns {Object} view - New BugHistoryView instance.
+   * @returns {BugHistoryView} New BugHistoryView instance.
    */
   constructor (id, $container) {
     super(id); // Assign this.id
@@ -28,8 +28,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
 
   /**
    * Render the history on the view.
-   * @param {Array} history - Bug's history property.
-   * @returns {undefined}
+   * @param {Array.<Object>} history - Bug's history property.
    */
   render (history) {
     const conf_field = BzDeck.host.data.config.field;
@@ -82,7 +81,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * Generate the content for a table cell. Bug ID will be converted to a link.
    * @param {String} field - Changed bug field name, like 'summary' or 'blocks'.
    * @param {String} content - Old or new value for the field.
-   * @returns {String} content - Formatted cell content.
+   * @returns {String} Formatted cell content.
    */
   get_cell_content (field, content) {
     if (['blocks', 'depends_on'].includes(field)) {

@@ -12,7 +12,7 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
    * Get a HomePagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New HomePagePresenter instance.
+   * @returns {HomePagePresenter} New HomePagePresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -44,8 +44,6 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
   /**
    * Called whenever an unknown folder is selected in the sidebar.
    * @listens HomePageView#UnknownFolderSelected
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_unknown_folder_selected () {
     BzDeck.router.navigate('/home/inbox');

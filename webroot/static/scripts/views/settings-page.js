@@ -11,8 +11,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * Called by the app router and initialize the Settings Page View. If the Settings has an existing tab, switch to it.
    * Otherwise, open a new tab and load the content.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} view - New SettingsPageView instance.
+   * @returns {SettingsPageView} New SettingsPageView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -25,8 +24,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
   /**
    * Called by the app router to reuse the view.
-   * @param {undefined}
-   * @returns {undefined}
    */
   reactivate () {
     this.activate();
@@ -34,8 +31,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
   /**
    * Activate the view.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async activate () {
     const tab_id = history.state ? history.state.tab_id : undefined;
@@ -86,9 +81,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Fill the timezone radio options. Each Bugzilla instance's timezone is hardcoded in our config file because the
    * Bugzilla API doesn't provide the info at this moment.
-   * @param {undefined}
-   * @returns {undefined}
-   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bugzilla.html#timezone}
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bugzilla.html#timezone Bugzilla API}
    */
   fill_timezone_options () {
     const $radio_local = document.querySelector('#pref-timezone-local');
@@ -109,7 +102,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
    * @param {*}      _value.default - Default value.
    * @param {String} _value.type - Type of the value: boolean, integer or string.
    * @fires SettingsPageView#PrefChangeRequested
-   * @returns {undefined}
    */
   activate_widget (name, _value) {
     const $root = document.documentElement;
@@ -150,8 +142,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Generate and display the mobile authentication QR code on the Account tabpanel. The code encodes the user's
    * Bugzilla account name and API key.
-   * @param {undefined}
-   * @returns {undefined}
    */
   prepare_qrcode () {
     const $outer = document.querySelector('#settings-qrcode-outer');

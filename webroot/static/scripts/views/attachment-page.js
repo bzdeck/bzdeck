@@ -12,7 +12,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * switch to it. Otherwise, open a new tab and try to load the attachment.
    * @constructor
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @returns {Object} view - New AttachmentPageView instance.
+   * @returns {AttachmentPageView} New AttachmentPageView instance.
    */
   constructor (att_id) {
     super(); // Assign this.id
@@ -29,7 +29,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called by the app router to reuse the view.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @returns {undefined}
    */
   reactivate (att_id) {
     const $$tablist = BzDeck.views.banner.$$tablist;
@@ -48,8 +47,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
 
   /**
    * Activate the view.
-   * @param {undefined}
-   * @returns {undefined}
    */
   activate () {
     BzDeck.views.banner.open_tab({
@@ -70,8 +67,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called when the attachment is found. Render it on the page.
    * @listens AttachmentPresenter#AttachmentAvailable
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async on_attachment_available () {
     const { id, hash, summary } = await BzDeck.collections.attachments.get(this.att_id);
@@ -88,8 +83,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called when loading the attachment completed. Remove the throbber.
    * @listens AttachmentPresenter#LoadingComplete
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_loading_complete () {
     this.$tabpanel.removeAttribute('aria-busy');

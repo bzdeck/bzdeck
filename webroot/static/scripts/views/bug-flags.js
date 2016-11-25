@@ -13,7 +13,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Relevant bug with the flags.
    * @param {Proxy} [att] - Relevant attachment.
-   * @returns {Object} view - New BugFlagsView instance.
+   * @returns {BugFlagsView} New BugFlagsView instance.
    */
   constructor (id, bug, att = undefined) {
     super(id); // Assign this.id
@@ -25,8 +25,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
   /**
    * Render the Flags section on the bug info pane or attachment view. This feature is still a work in progress.
    * @param {HTMLElement} $outer - Container element to render.
-   * @param {Number} level - aria-level for the label.
-   * @returns {undefined}
+   * @param {Number} [level=4] - aria-level for the label.
    */
   render ($outer, level = 4) {
     const config = BzDeck.host.data.config;

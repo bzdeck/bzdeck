@@ -14,9 +14,9 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
-   * @param {Array.<Number>} [siblings=[]] - Optional bug ID list that can be navigated with the Back and Forward buttons
+   * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.
-   * @returns {Object} presenter - New BugPresenter instance.
+   * @returns {BugPresenter} New BugPresenter instance.
    */
   constructor (id, container_id, bug_id, siblings = []) {
     super(id); // Assign this.id
@@ -63,12 +63,10 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
   /**
    * Load the bug from the local database or remote Bugzilla instance.
    * @listens BugView#Initialized
-   * @param {undefined}
    * @fires BugPresenter#LoadingStarted
    * @fires BugPresenter#LoadingFinished
    * @fires BugPresenter#BugDataAvailable
    * @fires BugPresenter#BugDataUnavailable
-   * @returns {Promise.<undefined>}
    */
   async load_bug () {
     const container_id = this.container_id;
@@ -116,7 +114,6 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * Called whenever a comment is selected. Update the location hash to include the comment ID.
    * @listens BugView#CommentSelected
    * @param {Number} number - Comment number.
-   * @returns {undefined}
    */
   on_comment_selected ({ number } = {}) {
     if (location.pathname === `/bug/${this.bug.id}`) {
@@ -127,9 +124,7 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
   /**
    * Called in the constructor and whenever the location fragment or history state is updated. If the current bug is
    * still displayed, fire an event so the relevant views can do something.
-   * @param {undefined}
    * @fires BugPresenter#HistoryUpdated
-   * @returns {undefined}
    */
   check_fragment () {
     if (this.bug && location.pathname === `/bug/${this.bug.id}`) {
@@ -141,8 +136,6 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
    * Called whenever a previewed bug is selected for details. Open the bug in a new tab with a list of the home page
    * thread so the user can easily navigate through those bugs.
    * @listens BugView#OpeningTabRequested
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_opening_tab_requested () {
     BzDeck.router.navigate('/bug/' + this.bug.id, { siblings: this.siblings });

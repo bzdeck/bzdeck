@@ -12,7 +12,7 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
    * Get a SettingsPagePresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New SettingsPagePresenter instance.
+   * @returns {SettingsPagePresenter} New SettingsPagePresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -27,7 +27,6 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
    * @listens SettingsPageView#PrefChangeRequested
    * @param {String} name - Preference name.
    * @param {*} value - New value.
-   * @returns {undefined}
    */
   on_pref_change_requested ({ name, value } = {}) {
     BzDeck.prefs.set(name, value);

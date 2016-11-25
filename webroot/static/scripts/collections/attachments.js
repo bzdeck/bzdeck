@@ -12,8 +12,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   /**
    * Get an AttachmentCollection instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} attachments - New AttachmentCollection instance.
+   * @returns {AttachmentCollection} New AttachmentCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -25,10 +24,8 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * Load the all attachment data from local bug cache, create a new AttachmentModel instance for each item, cache them
    * in a new Map for faster access, then return a Promise in a way consistent with the super load method.
    * @override
-   * @param {undefined}
-   * @returns {Promise.<Map.<Number, Proxy>>} attachments - Promise to be resolved in a map of AttachmentModel
-   *  instances. The map key is usually an attachment ID, but it can be a hash value for an unuploaded attachment as the
-   *  cache method below shows.
+   * @returns {Promise.<Map.<Number, Proxy>>} Map of AttachmentModel instances. The map key is usually an attachment ID,
+   *  but it can be a hash value for an unuploaded attachment as the cache method below shows.
    */
   async load () {
     this.map = new Map();
@@ -48,8 +45,8 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
    * by Object.assign() before the data is sent through the API.
    * @param {Object} att - Raw attachment upload object for Bugzilla.
    * @param {Number} size - Actual file size.
-   * @returns {Promise.<Proxy>} attachment - Promise to be resolved in AttachmentModel instance.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
+   * @returns {Promise.<Proxy>} AttachmentModel instance.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment Bugzilla API}
    */
   async cache (att, size) {
     const current_time = (new Date()).toISOString();

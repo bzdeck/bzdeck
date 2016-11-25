@@ -13,8 +13,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * Get a SubscriptionCollection instance. This constructor is required to fire events in the member functions.
    * Otherwise `constructor.name` will be blank and `this.trigger` doesn't work.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} collection - New SubscriptionCollection instance.
+   * @returns {SubscriptionCollection} New SubscriptionCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -24,7 +23,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * Get bugs the user is participating from the local database with a specific key, like inbox, starred or reported.
    * @override
    * @param {String} id - Key of the subscription.
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
+   * @returns {Promise.<Map.<Number, Proxy>>} Map of bug IDs and BugModel instances.
    */
   async get (id) {
     const email = BzDeck.account.data.name;
@@ -51,8 +50,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
   /**
    * Get all bugs the user is participating from the local database.
    * @override
-   * @param {undefined}
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of Bug IDs and BugModel instances.
+   * @returns {Promise.<Map.<Number, Proxy>>} Map of Bug IDs and BugModel instances.
    */
   async get_all () {
     const email = BzDeck.account.data.name;
@@ -68,8 +66,8 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
    * @fires SubscriptionCollection#FetchingSubscriptionsStarted
    * @fires SubscriptionCollection#FetchingSubscriptionsComplete
    * @fires SubscriptionCollection#Updated
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in map of bug IDs and BugModel instances.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
+   * @returns {Promise.<Map.<Number, Proxy>>} Map of bug IDs and BugModel instances.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug Bugzilla API}
    */
   async fetch (firstrun = false, params = new URLSearchParams()) {
     const fields = ['cc', 'reporter', 'assigned_to', 'qa_contact', 'bug_mentor', 'requestees.login_name'];

@@ -13,7 +13,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
-   * @returns {Object} view - New BugTimelineView instance.
+   * @returns {BugTimelineView} New BugTimelineView instance.
    */
   constructor (id, bug, $bug, delayed) {
     super(id); // Assign this.id
@@ -122,7 +122,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Generate timeline entries.
    * @param {Array.<Map>} data_arr - List of entry data.
-   * @returns {Promise.<HTMLElement>} $fragment - Promise to be resolved in a fragment containing entry nodes.
+   * @returns {Promise.<HTMLElement>} Fragment containing entry nodes.
    */
   async generate_entries (data_arr) {
     const $fragment = new DocumentFragment();
@@ -141,8 +141,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Expand all comments on the timeline.
-   * @param {undefined}
-   * @returns {undefined}
    */
   expand_comments () {
     if (this.$expander) {
@@ -156,8 +154,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Collapse all comments on the timeline.
-   * @param {undefined}
-   * @returns {undefined}
    */
   collapse_comments () {
     for (const $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="true"]')) {
@@ -170,7 +166,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * @listens BugModel#Updated
    * @param {Number} bug_id - Changed bug ID.
    * @param {Map} changes - Change details.
-   * @returns {Promise.<undefined>}
    */
   async on_bug_updated ({ bug_id, changes } = {}) {
     if (bug_id !== this.bug.id) {
@@ -178,7 +173,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     }
 
     const entry = await (new BzDeck.BugTimelineEntryView(this.id, this.bug, changes)).create();
-    
+
     this.$comments_wrapper.appendChild(entry.$outer);
     this.$comments_wrapper.querySelector('article:last-of-type').scrollIntoView({ block: 'start', behavior: 'smooth' });
 
@@ -197,7 +192,6 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    * comment into view.
    * @listens BugPresenter#HistoryUpdated
    * @param {String} hash - location.hash.
-   * @returns {undefined}
    */
   on_history_updated ({ hash } = {}) {
     const match = hash.match(/^#c(\d+)$/);

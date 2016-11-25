@@ -15,7 +15,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    * @param {Proxy} [bug] - Specific bug to search against.
    * @param {Set.<String>} [exclude] - List of Bugzilla user accounts that should be excluded from search results. For
    *  example, if the Person Finder is for Cc, the current Cc members should not be displayed on the results.
-   * @returns {Object} view - New PersonFinderView instance.
+   * @returns {PersonFinderView} New PersonFinderView instance.
    */
   constructor (id, combobox_id, bug = undefined, exclude = new Set()) {
     super(id); // Assign this.id
@@ -37,7 +37,6 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
   /**
    * Called whenever the user is typing on the searchbox. Execute searches based on the terms.
    * @param {InputEvent} event - The input event fired on the searchbox.
-   * @returns {undefined}
    */
   oninput (event) {
     this.value = event.detail.value.toLowerCase();
@@ -62,8 +61,6 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
 
   /**
    * Start searching from the specified bug.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async search_bug () {
     this.search(this.participants);
@@ -71,8 +68,6 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
 
   /**
    * Start searching from the local database.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async search_local () {
     this.search(await BzDeck.collections.users.get_all());
@@ -80,9 +75,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
 
   /**
    * Start searching from the remote Bugzilla instance using the API.
-   * @param {undefined}
-   * @returns {undefined}
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user}
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user Bugzilla API}
    */
   search_remote () {
     const value = this.value; // Keep this as local a variable for later use
@@ -104,7 +97,6 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
   /**
    * Find matching people from the provided user list, and show the results on the drop down list.
    * @param {Map.<String, Proxy>} users - User list.
-   * @returns {Promise.<undefined>}
    */
   async search (users = new Map()) {
     const has_colon = this.value.startsWith(':');
@@ -150,8 +142,6 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
 
   /**
    * Clear any terms on the searchbox.
-   * @param {undefined}
-   * @returns {undefined}
    */
   clear () {
     this.$$combobox.clear_input();

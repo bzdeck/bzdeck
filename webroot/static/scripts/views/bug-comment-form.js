@@ -14,7 +14,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {Object} bug - BugModel instance.
    * @param {HTMLElement} $bug - Bug container element.
    * @fires BugView#Submit
-   * @returns {Object} view - New BugCommentFormView instance.
+   * @returns {BugCommentFormView} New BugCommentFormView instance.
    */
   constructor (id, bug, $bug) {
     super(id); // Assign this.id
@@ -92,7 +92,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called by the tablist-role element whenever one of the tabs on the form is selected. Perform an action depending on
    * the newly selected tab.
    * @param {HTMLElement} $tab - Selected tab node.
-   * @returns {undefined}
    */
   on_tab_selected ($tab) {
     if (BzDeck.host.markdown_supported) {
@@ -107,9 +106,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the Comment tabpanel.
-   * @param {undefined}
    * @fires BugView#Submit
-   * @returns {undefined}
    */
   init_comment_tabpanel () {
     // Fill in an auto-saved draft comment if any, or workaround a Firefox bug where the placeholder is not displayed in
@@ -128,8 +125,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the Attachment tabpanel.
-   * @param {undefined}
-   * @returns {undefined}
    */
   init_attachment_tabpanel () {
     const can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
@@ -152,9 +147,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Prepare the content on the NeedInfo tabpanel.
-   * @param {undefined}
    * @fires BugView#EditFlag
-   * @returns {undefined}
    */
   init_needinfo_tabpanel () {
     const flags = this.bug.flags ? this.bug.flags.filter(flag => flag.name === 'needinfo') : [];
@@ -224,9 +217,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
   /**
    * Called by the textbox element whenever the new comment is edited by the user.
-   * @param {undefined}
    * @fires BugView#EditComment
-   * @returns {undefined}
    */
   oninput () {
     const text = this.$textbox.value;
@@ -259,7 +250,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @fires BugView#RemoveAttachment
    * @fires BugView#MoveUpAttachment
    * @fires BugView#MoveDownAttachment
-   * @returns {Promise.<undefined>}
    */
   async on_attachment_added ({ bug_id, id } = {}) {
     if (bug_id !== this.bug.id) {
@@ -307,7 +297,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#AttachmentRemoved
    * @param {Number} bug_id - Changed bug ID.
    * @param {Number} index - Removed attachment's index in the cached list.
-   * @returns {undefined}
    */
   on_attachment_removed ({ bug_id, index } = {}) {
     if (bug_id !== this.bug.id) {
@@ -324,7 +313,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {String} hash - Attachment hash for unuploaded attachment.
    * @param {String} prop - Changed property name.
    * @param {*} value - New property value.
-   * @returns {undefined}
    */
   on_attachment_edited ({ bug_id, hash, prop, value } = {}) {
     if (bug_id !== this.bug.id) {
@@ -342,7 +330,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#UploadListUpdated
    * @param {Number} bug_id - Changed bug ID.
    * @param {Array.<Proxy>} uploads - List of the new attachments in Array-like Object.
-   * @returns {undefined}
    */
   on_upload_list_updated ({ bug_id, uploads } = {}) {
     if (bug_id !== this.bug.id) {
@@ -361,7 +348,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#AttachmentError
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} message - Explanation of the detected error.
-   * @returns {undefined}
    */
   on_attachment_error ({ bug_id, message } = {}) {
     if (bug_id !== this.bug.id) {
@@ -381,7 +367,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#CommentEdited
    * @param {Number} bug_id - Changed bug ID.
    * @param {Boolean} has_comment - Whether the comment is empty.
-   * @returns {undefined}
    */
   on_comment_edited ({ bug_id, has_comment } = {}) {
     if (bug_id !== this.bug.id) {
@@ -397,7 +382,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @listens BugModel#BugEdited
    * @param {Number} bug_id - Changed bug ID.
    * @param {Boolean} can_submit - Whether the changes can be submitted immediately.
-   * @returns {undefined}
    */
   on_bug_edited ({ bug_id, can_submit } = {}) {
     if (bug_id !== this.bug.id) {
@@ -412,8 +396,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * update the statusbar message.
    * @listens BugModel#Submit
    * @param {Number} bug_id - Changed bug ID.
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_submit ({ bug_id } = {}) {
     if (bug_id !== this.bug.id) {
@@ -432,7 +414,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {Number} total - Total size of attachments.
    * @param {Number} uploaded - Uploaded size of attachments.
    * @param {Number} percentage - Uploaded percentage.
-   * @returns {undefined}
    * @todo Use a progressbar (#159)
    */
   on_submit_progress ({ bug_id, total, uploaded, percentage } = {}) {
@@ -447,8 +428,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called whenever all the changes are submitted successfully. Reset the form content.
    * @listens BugModel#SubmitSuccess
    * @param {Number} bug_id - Changed bug ID.
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_submit_success ({ bug_id } = {}) {
     if (bug_id !== this.bug.id) {
@@ -465,7 +444,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * @param {Number} bug_id - Changed bug ID.
    * @param {String} error - Error message.
    * @param {Boolean} button_disabled - Whether the submit button should be disabled.
-   * @returns {undefined}
    */
   on_submit_error ({ bug_id, error, button_disabled } = {}) {
     if (bug_id !== this.bug.id) {
@@ -480,8 +458,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
    * Called once a submission is complete, regardless of errors. Enable and focus on the comment form.
    * @listens BugModel#SubmitComplete
    * @param {Number} bug_id - Changed bug ID.
-   * @param {undefined}
-   * @returns {undefined}
    */
   on_submit_complete ({ bug_id } = {}) {
     if (bug_id !== this.bug.id) {

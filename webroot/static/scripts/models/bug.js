@@ -6,14 +6,14 @@
  * Define the Bug Model that represents a downloaded bug. Available through the BugCollection.
  * @extends BzDeck.BaseModel
  * @todo Move this to the worker thread.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html Bugzilla API}
  */
 BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
    * @constructor
    * @param {Object} data - Bugzilla's raw bug object.
-   * @returns {Proxy} bug - Proxified BugModel instance, so consumers can seamlessly access bug properties via bug.prop
+   * @returns {Proxy} Proxified BugModel instance, so consumers can seamlessly access bug properties via bug.prop
    *  instead of bug.data.prop.
    */
   constructor (data) {
@@ -91,7 +91,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * becoming bloated with irrelevant, outdated bugs.
    * @override
    * @param {Object} [data] - Raw data object.
-   * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
+   * @returns {Promise.<Proxy>} Proxified BugModel instance.
    */
   async save (data = undefined) {
     if (this.is_involved || this.data.starred) {
@@ -105,7 +105,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Retrieve bug data from Bugzilla.
    * @param {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
    * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
-   * @returns {Promise.<Proxy>} bug - Promise to be resolved in the proxified BugModel instance.
+   * @returns {Promise.<Proxy>} Proxified BugModel instance.
    */
   async fetch (include_metadata = true, include_details = true) {
     const _fetch = async (method, param_str = '') => {
@@ -174,7 +174,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @fires BugModel#Updated
    * @fires BugModel#CacheUpdated
    * @fires BugModel#AnnotationUpdated
-   * @returns {Boolean} cached - Whether the cache is found.
+   * @returns {Boolean} Whether the cache is found.
    */
   merge (data) {
     const cache = this.data;
@@ -242,7 +242,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} type - Annotation type: star.
    * @param {Boolean} value - Whether to add star or not.
    * @fires BugModel#AnnotationUpdated
-   * @returns {Boolean} result - Whether the annotation is updated.
+   * @returns {Boolean} Whether the annotation is updated.
    */
   update_annotation (type, value) {
     if (this.data[`_${type}`] === value) {
@@ -262,10 +262,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Update the last-visited timestamp on Bugzilla through the API.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    * @todo For a better offline experience, synchronize the timestamp once going online.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html}
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug-user-last-visit.html Bugzilla API}
    */
   async mark_as_read () {
     const result = await BzDeck.host.request(`bug_user_last_visit/${this.id}`, null, { method: 'POST', data: {}});
@@ -279,7 +277,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Update the last-visited timestamp in cache.
    * @param {String} ts - Last visited timestamp.
    * @fires BugModel#AnnotationUpdated
-   * @returns {undefined}
    */
   update_last_visit (ts) {
     this.data._last_visit = ts;
@@ -292,8 +289,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * to generate the list. This list could be empty if the comments are not fetched yet. The list may also contain false
    * info if a duplicated bug has been reopened. This unreliable method won't be necessary once the API offers the
    * duplicates field (Bug 880163, BzDeck #317).
-   * @param {undefined}
-   * @returns {Array.<Number>} duplicates - Duplicate bug IDs.
+   * @returns {Array.<Number>} Duplicate bug IDs.
    */
   get_duplicates () {
     const duplicates = new Set(); // Use a Set to avoid potential duplicated IDs
@@ -311,8 +307,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Check if the bug is unread or has been changed within the last 14 days.
-   * @param {undefined}
-   * @returns {Promise.<Boolean>} new - Promise to be resolved in whether the bug is new.
+   * @returns {Promise.<Boolean>} Whether the bug is new.
    */
   async detect_if_new () {
     const visited = (new Date(this.data._last_visit)).getTime();
@@ -369,8 +364,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Check if the current BzDeck user is involved in this bug in any way.
-   * @param {undefined}
-   * @returns {Boolean} result - Whether the user is involved.
+   * @returns {Boolean} Whether the user is involved.
    */
   detect_if_involved () {
     const email = BzDeck.account.data.name;
@@ -382,9 +376,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Get a list of people involved in the bug.
-   * @param {undefined}
-   * @returns {Map.<String, Object>} participants - List of all participants. The map's key is an account name and the
-   *  value is the person's "detail" object in the raw bug object.
+   * @returns {Map.<String, Object>} List of all participants. The map's key is an account name and the value is the
+   *  person's "detail" object in the raw bug object.
    */
   get_participants () {
     const participants = new Map([[this.data.creator, this.data.creator_detail]]);
@@ -428,8 +421,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Get the last commenter on the bug. If the comments are not retrieved yet, the reporter will be returned instead.
-   * @param {undefined}
-   * @returns {Promise.<Object>} properties - Promise to be resolved in the contributor's basic info.
+   * @returns {Promise.<Object>} The contributor's basic info.
    */
   async get_contributor () {
     const comments = this.data.comments;
@@ -442,8 +434,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get a list of people contributing to the bug, excluding the reporter, assignee, QA and mentors. The list may
    * include commenters, attachment creators and flag setters.
-   * @param {undefined}
-   * @returns {Set.<String>} contributors - List of all contributor account names (email addresses).
+   * @returns {Set.<String>} List of all contributor account names (email addresses).
    */
   get_other_contributors () {
     const contributors = new Map(); // key: name, value: number of contributions
@@ -474,7 +465,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get an extract of a comment.
    * @param {Number} [comment_id] - If not specified, the last comment will be used.
-   * @returns {String} extract - Comment extract.
+   * @returns {String} Comment extract.
    */
   get_extract (comment_id) {
     const comments = this.data.comments;
@@ -510,9 +501,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Create and return a Proxy for the bug changes object that fires an event whenever any field value is modified.
-   * @param {undefined}
    * @fires BugModel#FieldEdited
-   * @returns {Proxy} changes - Changes object.
+   * @returns {Proxy} Changes object.
    */
   reset_changes () {
     this.changes = new Proxy({}, {
@@ -540,9 +530,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Called internally whenever a bug field or an attachment property is edited by the user. Fire an event to notify the
    * views of the change.
-   * @param {undefined}
    * @fires BugModel#BugEdited
-   * @returns {undefined}
    */
   onedit () {
     const { changes, att_changes, uploads, can_submit } = this;
@@ -555,7 +543,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Called whenever a new comment is edited by the user. Cache the comment and notify changes accordingly.
    * @param {String} comment - Comment text.
    * @fires BugModel#CommentEdited
-   * @returns {undefined}
    */
   edit_comment (comment) {
     const bug_id = this.id;
@@ -586,7 +573,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * fields are supported at this moment: status, resolution, dupe_of.
    * @param {String} name - Field name.
    * @param {*} value - Field value.
-   * @returns {undefined}
    */
   edit_field (name, value) {
     const { field, product } = BzDeck.host.data.config;
@@ -654,8 +640,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} flag.requestee - Person created the flag.
    * @param {Boolean} added - Whether the flag is newly added.
    * @fires BugModel#FlagEdited
-   * @returns {undefined}
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html}
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html Bugzilla API}
    */
   edit_flag (flag, added) {
     const flags = this.changes.flags = this.changes.flags || [];
@@ -684,7 +669,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be added.
    * @fires BugModel#ParticipantAdded
-   * @returns {Boolean} result - Whether the participant is successfully added to the cache.
+   * @returns {Boolean} Whether the participant is successfully added to the cache.
    */
   add_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -727,7 +712,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be removed.
    * @fires BugModel#ParticipantRemoved
-   * @returns {Boolean} result - Whether the participant is successfully removed from the cache.
+   * @returns {Boolean} Whether the participant is successfully removed from the cache.
    */
   remove_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
@@ -767,7 +752,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @fires BugModel#FailedToUnsubscribe
    * @fires BugModel#Subscribed
    * @fires BugModel#Unsubscribed
-   * @returns {Promise.<undefined>}
    */
   async update_subscription (how) {
     const subscribe = how === 'add';
@@ -790,7 +774,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Clean up a change with both additions and removals, such as mentor or cc. If there are no changes, removed the
    * object from the cache.
    * @param {String} field - mentor or cc.
-   * @returns {Boolean} result - Whether the change object is updated.
+   * @returns {Boolean} Whether the change object is updated.
    */
   cleanup_multiple_item_change (field) {
     const change = this.changes[field];
@@ -821,7 +805,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * action. Read and cache the files. If the file size exceeds Bugzilla's limitation, notify the error.
    * @param {Array.<File>} files - Selected files.
    * @fires BugModel#AttachmentError
-   * @returns {undefined}
    * @todo Integrate online storage APIs to upload large attachments (#111)
    */
   attach_files (files) {
@@ -882,7 +865,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Called whenever a new attachment text is provided by the user through a text input form control or a drag-and-drop
    * action. Read and cache the text.
    * @param {String} text - Added plain text or URL string.
-   * @returns {undefined}
    */
   attach_text (text) {
     const worker = new SharedWorker('/static/scripts/workers/tasks.js');
@@ -922,7 +904,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Find an attachment index from the cached new attachment list by comparing the hash values.
    * @param {String} hash - Hash value of the attachment object to find.
-   * @returns {Number} index - 0 or a positive integer if the attachment is found, -1 if not found.
+   * @returns {Number} 0 or a positive integer if the attachment is found, -1 if not found.
    */
   find_att_index (hash) {
     return this.uploads.findIndex(a => a.hash === hash);
@@ -931,7 +913,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Find an attachment object from the cached new attachment list by comparing the hash values.
    * @param {String} hash - Hash value of the attachment object to find.
-   * @returns {Proxy} attachment - AttachmentModel instance if the attachment is found, undefined if not found
+   * @returns {Proxy} AttachmentModel instance if the attachment is found, undefined if not found.
    */
   find_attachment (hash) {
     return this.uploads.find(a => a.hash === hash);
@@ -943,7 +925,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Number} size - Actual file size.
    * @fires BugModel#AttachmentAdded
    * @fires BugModel#UploadListUpdated
-   * @returns {Promise.<undefined>}
    */
   async add_attachment (att, size) {
     // Cache as an AttachmentModel instance
@@ -966,7 +947,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} hash - Hash value of the attachment object to remove.
    * @fires BugModel#AttachmentRemoved
    * @fires BugModel#UploadListUpdated
-   * @returns {Boolean} result - Whether the attachment is found and removed.
+   * @returns {Boolean} Whether the attachment is found and removed.
    */
   remove_attachment (hash) {
     const index = this.find_att_index(hash);
@@ -991,7 +972,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {String} prop - Edited property name.
    * @param {*} value - New value.
    * @fires BugModel#AttachmentEdited
-   * @returns {Promise.<undefined>}
    */
   async edit_attachment ({ id, hash, prop, value } = {}) {
     if (hash) {
@@ -1045,7 +1025,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Move up an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
    * @param {String} hash - Hash value of the attachment object to move.
-   * @returns {Boolean} result - Whether the attachment is found and reordered.
+   * @returns {Boolean} Whether the attachment is found and reordered.
    */
   move_up_attachment (hash) {
     const index = this.find_att_index(hash);
@@ -1062,7 +1042,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Move down an attachment within the cached new attachment list when the order of the unuploaded attachments matters.
    * @param {String} hash - Hash value of the attachment object to move.
-   * @returns {Boolean} result - Whether the attachment is found and reordered.
+   * @returns {Boolean} Whether the attachment is found and reordered.
    */
   move_down_attachment (hash) {
     const index = this.find_att_index(hash);
@@ -1078,8 +1058,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Find any errors in the user-modified fields. Only the dupe_of field is supported at this moment.
-   * @param {undefined}
-   * @returns {Array.<String>} errors - List of the detected errors.
+   * @returns {Array.<String>} List of the detected errors.
    */
   find_errors () {
     const errors = [];
@@ -1099,12 +1078,11 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Submit all the changes made on the bug to Bugzilla.
-   * @param {undefined}
    * @fires BugModel#Submit
    * @fires BugModel#SubmitSuccess
    * @fires BugModel#SubmitError
    * @fires BugModel#SubmitComplete
-   * @returns {Promise} submission - Can be a rejected Promise if any error is found.
+   * @returns {Promise} Can be a rejected Promise if any error is found.
    */
   async submit () {
     if (this.has_errors) {
@@ -1173,8 +1151,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Post the meta data changes made on the bug to Bugzilla.
    * @param {Object} data - Bug change object.
-   * @returns {Promise} request - Can be a rejected Promise if any error is found.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug}
+   * @returns {Promise} Can be a rejected Promise if any error is found.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#update-bug Bugzilla API}
    */
   async post_changes (data) {
     return BzDeck.host.request(`bug/${this.data.id}`, null, { method: 'PUT', data });
@@ -1184,8 +1162,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * Post attachment changes to Bugzilla.
    * @param {Number} att_id - Attachment ID.
    * @param {Object} data - Attachment change object.
-   * @returns {Promise} request - Can be a rejected Promise if any error is found.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment}
+   * @returns {Promise} Can be a rejected Promise if any error is found.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#update-attachment Bugzilla API}
    */
   async post_att_changes (att_id, data) {
     return BzDeck.host.request(`bug/attachment/${att_id}`, null, { method: 'PUT', data });
@@ -1196,8 +1174,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {Proxy} attachment - AttachmentModel instance.
    * @fires BugModel#AttachmentUploaded
    * @fires BugModel#AttachmentUploadError
-   * @returns {Promise} request - Can be a rejected Promise if any error is found.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment}
+   * @returns {Promise} Can be a rejected Promise if any error is found.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#create-attachment Bugzilla API}
    */
   async post_attachment (attachment) {
     let size_computable;
@@ -1248,9 +1226,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Notify the upload progress while the new attachment is being uploaded to Bugzilla.
-   * @param {undefined}
    * @fires BugModel#SubmitProgress
-   * @returns {undefined}
    */
   notify_upload_progress () {
     const uploaded = this.uploads.map(att => att.uploaded).reduce((p, c) => p + c);
@@ -1262,8 +1238,6 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
 
   /**
    * Retrieve the bug to update the timeline, when Bugzfeed is not working.
-   * @param {undefined}
-   * @returns {undefined}
    */
   _fetch () {
     const bugzfeed = BzDeck.models.bugzfeed;

@@ -10,8 +10,7 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
    * Get a ThreadView instance. This is necessary to call the constructor of the base Event class.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} view - New ThreadView instance.
+   * @returns {ThreadView} New ThreadView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -21,7 +20,6 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * Called whenever one or more items are selected on the thread. Show the last-selected bug in the relevant Preview
    * Pane or a new tab.
    * @param {CustomEvent} event - Providing an array of selected item IDs.
-   * @returns {undefined}
    */
   onselect (event) {
     const ids = event.detail.ids;
@@ -36,7 +34,6 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * @param {MouseEvent} event - Fired dblclick event.
    * @param {String} selector - Defining the target element.
    * @fires ThreadView#OpeningBugRequested
-   * @returns {undefined}
    */
   ondblclick (event, selector) {
     const $target = event.originalTarget;
@@ -50,7 +47,6 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
    * Open a specific bug in a new tab.
    * @param {Number} id - Bug ID to show.
    * @fires AnyView#OpeningBugRequested
-   * @returns {undefined}
    */
   open_bug (id) {
     this.trigger('AnyView#OpeningBugRequested', { id, siblings: [...this.consumer.presenter.data.bugs.keys()] });
@@ -68,9 +64,9 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @param {Object} consumer - View that contains the thread.
    * @param {String} name - Identifier for the thread.
    * @param {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
-   * @param {Array} columns - Column list.
+   * @param {Array.<Object>} columns - Column list.
    * @param {Object} options - Used for the Grid widget.
-   * @returns {Object} view - New ClassicThreadView instance.
+   * @returns {ClassicThreadView} New ClassicThreadView instance.
    */
   constructor (consumer, name, $grid, columns, options) {
     super(); // Assign this.id
@@ -125,7 +121,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Update the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @returns {Promise.<undefined>}
    */
   async update (bugs) {
     this.bugs = bugs;
@@ -190,7 +185,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Filter the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to show.
-   * @returns {undefined}
    */
   filter (bugs) {
     this.$$grid.filter([...bugs.keys()]);
@@ -202,7 +196,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
    * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
-   * @returns {undefined}
    */
   on_annotation_updated ({ bug_id, type, value } = {}) {
     const $row = this.$$grid.view.$body.querySelector(`[role="row"][data-id="${bug_id}"]`);
@@ -230,7 +223,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @param {HTMLElement} $container - Element that contains a child element with the listbox role.
    * @param {Object} options - Extra options for display.
    * @param {Object} options.sort_conditions - Thread sorting conditions.
-   * @returns {Object} view - New VerticalThreadView instance.
+   * @returns {VerticalThreadView} New VerticalThreadView instance.
    */
   constructor (consumer, name, $container, options) {
     super(); // Assign this.id
@@ -305,8 +298,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Initialize the filter function.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async init_filter () {
     const pref_name = 'ui.home.filter';
@@ -330,8 +321,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Initialize the sorting function.
-   * @param {undefined}
-   * @returns {Promise.<undefined>}
    */
   async init_sorter () {
     const pref_name = 'home.list.sort_conditions';
@@ -352,8 +341,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
   /**
    * Initialize the thread menu.
-   * @param {undefined}
-   * @returns {undefined}
    */
   init_menu () {
     const $button = this.$header.querySelector('[data-command="show-menu"]');
@@ -371,7 +358,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Update the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
-   * @returns {undefined}
    */
   update (bugs) {
     let _bugs = [...bugs.values()];
@@ -404,7 +390,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Render thread items using a custom template.
    * @param {Boolean} [addition=false] - Whether the bugs will be appended to the thread.
-   * @returns {Promise.<undefined>}
    */
   async render (addition = false) {
     const bugs = this.unrendered_bugs.splice(0, 25);
@@ -465,7 +450,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * Called whenever a bug's cached is updated. Update the view if the bug ID matches.
    * @listens BugModel#CacheUpdated
    * @param {Number} bug_id - Changed bug's ID.
-   * @returns {Promise.<undefined>}
    */
   async on_bug_updated ({ bug_id } = {}) {
     const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug_id}"]`);
@@ -492,7 +476,6 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @param {Number} bug_id - Updated bug ID.
    * @param {String} type - Annotation type such as 'starred' or 'unread'.
    * @param {Boolean} value - New annotation value.
-   * @returns {undefined}
    */
   on_annotation_updated ({ bug_id, type, value } = {}) {
     const $option = this.$listbox.querySelector(`[role="option"][data-id="${bug_id}"]`);

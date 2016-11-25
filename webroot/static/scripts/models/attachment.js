@@ -7,14 +7,14 @@
  * AttachmentCollection.
  * @extends BzDeck.BaseModel
  * @todo Move this to the worker thread.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html Bugzilla API}
  */
 BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Get an AttachmentModel instance.
    * @constructor
    * @param {Object} data - Bugzilla's raw attachment object or unuploaded attachment object.
-   * @returns {Proxy} attachment - Proxified AttachmentModel instance, so consumers can seamlessly access attachment
+   * @returns {Proxy} Proxified AttachmentModel instance, so consumers can seamlessly access attachment
    *  properties via attachment.prop instead of attachment.data.prop.
    */
   constructor (data) {
@@ -40,9 +40,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
 
   /**
    * Retrieve the attachment from Bugzilla.
-   * @param {undefined}
-   * @returns {Promise.<Proxy>} attachment - Promise to be resolved in the AttachmentModel instance.
-   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment}
+   * @returns {Promise.<Proxy>} AttachmentModel instance.
+   * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/attachment.html#get-attachment Bugzilla API}
    */
   async fetch () {
     const result = await BzDeck.host.request(`bug/attachment/${this.id}`);
@@ -55,9 +54,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Get the attachment raw file data only. If it's not in the cache, retrieve the data from Bugzilla and save it in the
    * local database.
-   * @param {undefined}
-   * @returns {Promise.<Object>} data - Promise to be resolved in an object containing the Blob and plaintext data, and
-   *  this AttachmentModel.
+   * @returns {Promise.<Object>} Object containing the Blob and plaintext data, and this AttachmentModel.
    */
   async get_data () {
     const decode = data => new Promise(resolve => {
@@ -91,8 +88,7 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * This method does nothing because attachment data is stored in the cache, but is required to avoid errors.
    * @override
-   * @param {undefined}
-   * @returns {Promise.<Proxy>} item - Promise to be resolved in the proxified AttachmentModel instance.
+   * @returns {Promise.<Proxy>} Proxified AttachmentModel instance.
    */
   async save () {
     return this.proxy();

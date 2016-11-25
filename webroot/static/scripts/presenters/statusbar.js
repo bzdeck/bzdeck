@@ -12,7 +12,7 @@ BzDeck.StatusbarPresenter = class StatusbarPresenter extends BzDeck.BasePresente
    * Get a StatusbarPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {Object} presenter - New StatusbarPresenter instance.
+   * @returns {StatusbarPresenter} New StatusbarPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id

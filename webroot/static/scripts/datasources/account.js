@@ -11,8 +11,7 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
   /**
    * Get an AccountDataSource instance. This is necessary to call the constructor of the base Event class.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} accounts - New AccountDataSource instance.
+   * @returns {AccountDataSource} New AccountDataSource instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -20,8 +19,7 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
 
   /**
    * Preload the account-specific database.
-   * @param {undefined}
-   * @returns {Promise.<IDBDatabase>} database - Target IndexedDB database.
+   * @returns {Promise.<IDBDatabase>} Target IndexedDB database.
    */
   async load () {
     return this.open_database(`${BzDeck.host.name}::${BzDeck.account.data.name}`, 2);
@@ -30,8 +28,8 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
   /**
    * Called whenever the database is created or upgraded. Create object stores and handle upgrades.
    * @param {IDBVersionChangeEvent} event - The upgradeneeded event.
-   * @returns {IDBDatabase} database - Target IndexedDB database.
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded}
+   * @returns {IDBDatabase} Target IndexedDB database.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/IDBOpenDBRequest/onupgradeneeded MDN}
    */
   onupgradeneeded (event) {
     const database = event.target.result;

@@ -6,14 +6,13 @@
  * Define the Bug Collection that represents all downloaded bugs.
  * @extends BzDeck.BaseCollection
  * @todo Move this to the worker thread.
- * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug}
+ * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/bug.html#get-bug Bugzilla API}
  */
 BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Get a BugCollection instance.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} bugs - New BugCollection instance.
+   * @returns {BugCollection} New BugCollection instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -30,7 +29,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @param {(Array|Set)} _ids - List of bug IDs to retrieve.
    * @param {Boolean} [include_metadata=true] - Whether to retrieve the metadata of the bug.
    * @param {Boolean} [include_details=true] - Whether to retrieve the comments, history and attachment metadata.
-   * @returns {Promise.<Array.<Proxy>>} bugs - Promise to be resolved in proxified BugModel instances.
+   * @returns {Promise.<Array.<Proxy>>} Proxified BugModel instances.
    */
   async fetch (_ids, include_metadata = true, include_details = true) {
     // Sort the IDs to make sure the subsequent index access always works
@@ -145,8 +144,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Retrieve the user's last visit timestamp for bugs, then update each bug's read status.
    * @param {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to retrieve.
-   * @returns {Promise.<Map.<Number, Proxy>>} bugs - Promise to be resolved in a map of bug IDs and BugModel instances.
-   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
+   * @returns {Promise.<Map.<Number, Proxy>>} A map of bug IDs and BugModel instances.
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html Bugzilla API}
    */
   async retrieve_last_visit (_ids) {
     const bugs = await this.get_some([..._ids].sort());
@@ -187,8 +186,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Mark bugs as read by updating the user's last visit timestamp for each bug.
    * @param {(Array|Set|Iterator).<Number>} _ids - List of bug IDs to update.
-   * @returns {Promise.<undefined>}
-   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html}
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug-user-last-visit.html Bugzilla API}
    */
   async mark_as_read (_ids) {
     const bugs = await this.get_some([..._ids].sort());
@@ -207,7 +205,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Search bugs from the local database and return the results.
    * @param {URLSearchParams} params - Search query.
-   * @returns {Promise.<Object>} Promise to be resolved in the search results.
+   * @returns {Promise.<Object>} Search results.
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   async search_local (params) {
@@ -226,7 +224,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Search bugs from the remote Bugzilla instance and return the results.
    * @param {URLSearchParams} params - Search query.
-   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @returns {Promise.<Array.<Proxy>>} Search results.
    */
   async search_remote (params) {
     const result = await BzDeck.host.request('bug', params);
@@ -250,7 +248,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Sort descending (new to old) and return search results.
    * @param {Array.<Proxy>} bugs - List of found bugs.
-   * @returns {Promise.<Array.<Proxy>>} results - Promise to be resolved in the search results.
+   * @returns {Promise.<Array.<Proxy>>} Search results.
    * @todo Improve the sorting algorithm. Another possible factors: How often the user visited the bug? How active the
    *  bug is?
    */
@@ -267,7 +265,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * Called whenever a bug is updated. Retrieve the latest data from Bugzilla.
    * @listens BugzfeedModel#BugUpdated
    * @param {Number} id - Bug ID.
-   * @returns {Promise.<undefined>}
    */
   async on_bug_updated ({ id } = {}) {
     const bug = await this.get(id, { id });

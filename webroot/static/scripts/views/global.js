@@ -10,8 +10,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Get a GlobalView instance. This should be called after user prefs are loaded.
    * @constructor
-   * @param {undefined}
-   * @returns {Object} view - New GlobalView instance.
+   * @returns {GlobalView} New GlobalView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -85,7 +84,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @listens GlobalPresenter#ToggleUnread
    * @param {Array.<Number>} bug_ids - IDs of unread bugs.
    * @param {Boolean} loaded - Whether bug data is loaded at startup.
-   * @returns {undefined}
    */
   on_unread_bugs_changed ({ bug_ids, loaded } = {}) {
     const count = bug_ids.length;
@@ -113,7 +111,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Update the document title based on the specified tab.
    * @param {HTMLElement} $tab - Tab to retrieve the label.
-   * @returns {undefined}
    */
   update_window_title ($tab) {
     if ($tab.id === 'tab-home') {
@@ -126,7 +123,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Called whenever the history state is updated. Hide the Sidebar on mobile.
    * @param {PopStateEvent} event - The popstate event.
-   * @returns {undefined}
    */
   onpopstate (event) {
     if (FlareTail.helpers.env.device.mobile) {
@@ -142,7 +138,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @fires AnyView#OpeningBugRequested
    * @fires AnyView#OpeningAttachmentRequested
    * @fires AnyView#OpeningProfileRequested
-   * @returns {Boolean} default - Whether the event should lead to the default action.
+   * @returns {Boolean} Whether the event should lead to the default action.
    */
   onclick (event) {
     const $target = event.target;
@@ -212,7 +208,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * Called whenever any key is pressed on desktop. Prevent the browser's built-in keyboard shortcuts being triggered,
    * like Ctrl+F to find in page or Ctrl+S to save the page.
    * @param {KeyboardEvent} event - The keydown event.
-   * @returns {undefined}
    */
   onkeydown (event) {
     const modifiers = event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
@@ -229,7 +224,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @listens UserModel#GravatarProfileRequested
    * @param {String} hash - Hash value of the user's email.
    * @fires GlobalView#GravatarProfileProvided
-   * @returns {Promise.<undefined>}
    */
   async on_gravatar_profile_requested ({ hash } = {}) {
     const notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
@@ -248,7 +242,6 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * retrieved. Find the user's node on the view and update the displayed information accordingly.
    * @listens UserModel#UserInfoUpdated
    * @param {String} name - Name of the updated person.
-   * @returns {Promise.<undefined>}
    */
   async on_user_info_updated ({ name } = {}) {
     const user = await BzDeck.collections.users.get(name, { name });

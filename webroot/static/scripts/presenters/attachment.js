@@ -13,7 +13,7 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
-   * @returns {Object} presenter - New AttachmentPresenter instance.
+   * @returns {AttachmentPresenter} New AttachmentPresenter instance.
    */
   constructor (id, att_id) {
     super(id); // Assign this.id
@@ -24,12 +24,10 @@ BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresen
   /**
    * Prepare attachment data for the view. Find it from the local database or remote Bugzilla instance, then notify the
    * result regardless of the availability.
-   * @param {undefined}
    * @fires AttachmentPresenter#LoadingStarted
    * @fires AttachmentPresenter#LoadingComplete
    * @fires AttachmentPresenter#AttachmentAvailable
    * @fires AttachmentPresenter#AttachmentUnavailable
-   * @returns {Promise.<undefined>}
    */
   async get_attachment () {
     const collection = BzDeck.collections.attachments;
