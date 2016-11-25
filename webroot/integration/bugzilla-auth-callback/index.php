@@ -5,8 +5,8 @@
 
 // The current Bugzilla Auth Delegation implementation involves 2 calls for a better security practice, therefore we
 // need a database to retain the data. See Bug 1175643 for details.
-$pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_PERSISTENT => true]);
-$pdo->exec('CREATE TABLE IF NOT EXISTS auth (id TEXT PRIMARY KEY, client_api_login TEXT, client_api_key TEXT)');
+$db = new SQLite3($_SERVER['DOCUMENT_ROOT'] . '/../private/bzdeck.sqlite');
+$db->exec('CREATE TABLE IF NOT EXISTS auth (id TEXT PRIMARY KEY, client_api_login TEXT, client_api_key TEXT)');
 
 // Validate the API key
 function validate_api_key ($value) {
@@ -28,10 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($client_api_login && $client_api_key) {
     // Generate a random ID
-    $id = md5(uniqid());
+    $id = md5(strval(mt_rand()));
 
     // Save the Bugzilla user name and API key temporarily in the database
-    $pdo->prepare('INSERT INTO auth VALUES (?, ?, ?)')->execute([$id, $client_api_login, $client_api_key]);
+    $_client_api_login = $db->escapeString($client_api_login);
+    $_client_api_key = $db->escapeString($client_api_key);
+    $db->exec("INSERT INTO auth VALUES ('{$id}', '{$_client_api_login}', '{$_client_api_key}')");
 
     // Return a JSON object
     header('Content-Type: application/json');
@@ -47,13 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['client_api_login']) && 
   $client_api_login = $_GET['client_api_login'];
 
   // Query the database
-  $sth = $pdo->prepare('SELECT client_api_key FROM auth WHERE id = ? AND client_api_login = ?');
-  $sth->execute([$id, $client_api_login]);
-  $client_api_key = $sth->fetchColumn();
+  $_id = $db->escapeString($id);
+  $_client_api_login = $db->escapeString($client_api_login);
+  $client_api_key = $db->querySingle("SELECT client_api_key FROM auth " .
+                                     "WHERE id='{$_id}' AND client_api_login='{$_client_api_login}'");
 
   if ($client_api_key) {
     // Delete the data
-    $pdo->prepare('DELETE FROM auth WHERE id = ?')->execute([$id]);
+    $db->exec("DELETE FROM auth WHERE id='{$_id}'");
 
 ?>
 <!DOCTYPE html>
