@@ -186,7 +186,10 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       const result = await this.attachment.get_data('text');
       const worker = new SharedWorker('/static/scripts/workers/tasks.js');
 
-      worker.port.addEventListener('message', event => this.$outer.innerHTML = event.data);
+      worker.port.addEventListener('message', event => {
+        this.$outer.innerHTML = event.data;
+        worker.port.close();
+      }, { once: true });
       worker.port.start();
       worker.port.postMessage(['parse_patch', { str: result.text }]);
 

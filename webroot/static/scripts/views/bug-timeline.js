@@ -106,7 +106,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
         })();
 
         return FlareTail.util.Events.ignore(event);
-      });
+      }, { once: true });
 
       this.$comments_wrapper.insertAdjacentElement('afterbegin', $expander);
     }

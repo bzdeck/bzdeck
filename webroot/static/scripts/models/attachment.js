@@ -64,7 +64,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
         const text = (this.is_patch || this.content_type.startsWith('text/')) ? binary : undefined;
 
         resolve({ blob, text, attachment: this });
-      });
+        worker.port.close();
+      }, { once: true });
 
       worker.port.start();
       worker.port.postMessage(['decode', { str: data, type: this.content_type }]);

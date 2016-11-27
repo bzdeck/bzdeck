@@ -290,7 +290,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       if (entry.intersectionRatio > 0 && !$avatar.src) {
         this.image_loader.unobserve($option);
         // Preload the image so that CSS transition works smoothly
-        $image.addEventListener('load', event => $avatar.src = $image.src);
+        $image.addEventListener('load', event => $avatar.src = $image.src, { once: true });
         $image.src = $avatar.dataset.src;
       }
     }), { root: this.$listbox_outer });

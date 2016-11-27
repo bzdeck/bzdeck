@@ -86,6 +86,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
           }
         }
 
+        if (type === 'loadend') {
+          worker.port.close();
+        }
+
         if (type in listeners) {
           listeners[type](event.data);
         }

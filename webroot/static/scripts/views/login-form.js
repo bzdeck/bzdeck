@@ -127,6 +127,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
         if (stream) {
           stream.getVideoTracks()[0].stop();
           $video.pause();
+          URL.revokeObjectURL($video.src);
         }
       };
 

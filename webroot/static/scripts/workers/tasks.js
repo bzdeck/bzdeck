@@ -45,9 +45,10 @@ tasks.xhr = (port, { url, method = 'GET', headers, data } = {}) => {
     headers.forEach((value, key) => xhr.setRequestHeader(key, value));
   }
 
-  xhr.addEventListener('abort', event => post(event));
-  xhr.addEventListener('error', event => post(event));
-  xhr.addEventListener('load', event => post(event));
+  xhr.addEventListener('abort', event => post(event), { once: true });
+  xhr.addEventListener('error', event => post(event), { once: true });
+  xhr.addEventListener('load', event => post(event), { once: true });
+  xhr.addEventListener('loadend', event => { post(event); port.close(); }, { once: true });
   (data ? xhr.upload : xhr).addEventListener('progress', event => post(event));
   xhr.send(data ? JSON.stringify(data) : null);
 };
@@ -64,6 +65,7 @@ tasks.decode = (port, { str, type } = {}) => {
   const blob = new Blob([new Uint8Array([...binary].map((x, i) => binary.charCodeAt(i)))], { type });
 
   port.postMessage({ binary, blob });
+  port.close();
 };
 
 /**
@@ -75,7 +77,10 @@ tasks.decode = (port, { str, type } = {}) => {
 tasks.readfile = (port, { file } = {}) => {
   const reader = new FileReader();
 
-  reader.addEventListener('load', event => port.postMessage(event.target.result));
+  reader.addEventListener('load', event => {
+    port.postMessage(event.target.result);
+    port.close();
+  }, { once: true });
   reader.readAsDataURL(file);
 };
 
@@ -142,6 +147,7 @@ tasks.parse_patch = (port, { str } = {}) => {
   }
 
   port.postMessage(content.join(''));
+  port.close();
 };
 
 self.addEventListener('connect', event => {

@@ -219,7 +219,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
         this.$button.label = this.$button.textContent = 'Subscribe';
         this.$button.setAttribute('aria-label', 'Add myself to the Cc list');
       }
-    });
+    }, { once: true });
   }
 
   /**
@@ -269,7 +269,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     $button.addEventListener('click', event => {
       event.stopPropagation();
       this.trigger('BugView#RemoveParticipant', { field: this.field, email });
-    });
+    }, { once: true });
 
     $person.appendChild($button);
     $person.tabIndex = -1;

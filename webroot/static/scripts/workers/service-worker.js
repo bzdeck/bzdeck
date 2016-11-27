@@ -179,7 +179,7 @@ self.addEventListener('install', event => {
     // Activate the worker immediately
     return self.skipWaiting();
   })());
-});
+}, { once: true });
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
@@ -191,7 +191,7 @@ self.addEventListener('activate', event => {
     // Activate the worker for the main thread
     return self.clients.claim();
   })());
-});
+}, { once: true });
 
 self.addEventListener('fetch', event => {
   let request = event.request;

@@ -155,8 +155,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       const { name, api_key } = BzDeck.account.data;
 
       new QRCode($placeholder, { text: [name, api_key].join('|'), width: 192, height: 192, });
-
-      $iframe.removeEventListener('load', generate);
     };
 
     // Show the code on demand
@@ -167,7 +165,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
 
         if (!$iframe) {
           $iframe = document.createElement('iframe');
-          $iframe.addEventListener('load', generate);
+          $iframe.addEventListener('load', generate, { once: true });
           $iframe.hidden = true;
           $iframe.src = '/integration/qrcode-encoder/';
           $outer.appendChild($iframe);

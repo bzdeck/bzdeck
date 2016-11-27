@@ -85,4 +85,4 @@ window.addEventListener('DOMContentLoaded', event => {
     // Bootstrapper
     BzDeck.views.session = new BzDeck.SessionView();
   }
-});
+}, { once: true });

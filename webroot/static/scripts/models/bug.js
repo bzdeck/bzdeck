@@ -832,7 +832,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
           is_patch,
           bug_id: this.id,
         }, file.size);
-      });
+        worker.port.close();
+      }, { once: true });
 
       worker.port.start();
       worker.port.postMessage(['readfile', { file }]);
@@ -869,7 +870,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   attach_text (text) {
     const worker = new SharedWorker('/static/scripts/workers/tasks.js');
     const blob = new Blob([text], { type: 'text/plain' });
-    const file_name = URL.createObjectURL(blob).match(/\w+$/)[0] + '.txt';
+    const file_name = FlareTail.util.Misc.hash(32) + '.txt';
     const is_patch = !!text.match(/\-\-\-\ .*\n\+\+\+\ .*(?:\n[@\+\-\ ].*)+/m);
     const is_ghpr = text.match(/^https:\/\/github\.com\/(.*)\/pull\/(\d+)$/);
     const is_mrbr = text.match(/^https:\/\/reviewboard\.mozilla\.org\/r\/(\d+)\/$/);
@@ -895,7 +896,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       const data = event.data.split(',')[1]; // Drop 'data:text/plain;base64,'
 
       this.add_attachment({ data, summary, file_name, content_type, is_patch }, blob.size);
-    });
+      worker.port.close();
+    }, { once: true });
 
     worker.port.start();
     worker.port.postMessage(['readfile', { file: blob }]);
