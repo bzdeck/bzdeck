@@ -45,8 +45,8 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
         if (i === 0) {
           $cell('who').innerHTML = hist.who.replace('@', '&#8203;@');
           $cell('who').rowSpan = $cell('when').rowSpan = hist.changes.length;
-          FlareTail.helpers.datetime.fill_element($cell('when').appendChild(document.createElement('time')),
-                                             hist.when, { relative: false });
+          FlareTail.util.DateTime.fill_element($cell('when').appendChild(document.createElement('time')),
+                                               hist.when, { relative: false });
         } else {
           $cell('when').remove();
           $cell('who').remove();
@@ -88,6 +88,6 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
       return content.replace(/(\d+)/g, '<a href="/bug/$1" data-bug-id="$1">$1</a>');
     }
 
-    return FlareTail.helpers.string.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
+    return FlareTail.util.String.sanitize(content).replace('@', '&#8203;@'); // ZERO WIDTH SPACE
   }
 }

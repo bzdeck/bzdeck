@@ -65,7 +65,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
     // issue, divide the array into chunks to retrieve 20 users per request, then divide each chunk again if failed.
-    const names_chunks = FlareTail.helpers.array.chunk(names, 20);
+    const names_chunks = FlareTail.util.Array.chunk(names, 20);
 
     const _fetch = async names => {
       const params = new URLSearchParams();
@@ -121,7 +121,7 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    */
   async search_local (params) {
     const words = params.get('match').trim().split(/\s+/).map(word => word.toLowerCase());
-    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
+    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.RegExp.escape(word)}`, 'i'));
 
     // If the search string starts with a colon, remove it so a nick name may match
     if (words.length === 1 && words[0].startsWith(':')) {

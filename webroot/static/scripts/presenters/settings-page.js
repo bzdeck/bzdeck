@@ -32,15 +32,15 @@ BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePr
     BzDeck.prefs.set(name, value);
 
     if (name === 'ui.theme.selected') {
-      FlareTail.helpers.theme.selected = value;
+      document.selectedStyleSheetSet = value;
     }
 
     if (name === 'ui.date.timezone') {
-      FlareTail.helpers.datetime.options.timezone = value === 'local' ? undefined : value;
+      FlareTail.util.DateTime.options.timezone = value === 'local' ? undefined : value;
     }
 
     if (name === 'ui.date.relative') {
-      FlareTail.helpers.datetime.options.relative = value
+      FlareTail.util.DateTime.options.relative = value;
     }
 
     if (name === 'notifications.show_desktop_notifications' && value === true) {

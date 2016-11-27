@@ -37,7 +37,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
 
     // Due to Bug 1169040, the Bugzilla API returns an error even if one of the bugs is not accessible. To work around
     // the issue, divide the array into chunks to retrieve 20 bugs per request, then divide each chunk again if failed.
-    const ids_chunks = FlareTail.helpers.array.chunk(ids, 20);
+    const ids_chunks = FlareTail.util.Array.chunk(ids, 20);
 
     const _fetch = async (ids, method, param_str = '') => {
       const params = new URLSearchParams(param_str);
@@ -156,7 +156,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }
 
     // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
-    const ids_chunks = FlareTail.helpers.array.chunk(ids, 100);
+    const ids_chunks = FlareTail.util.Array.chunk(ids, 100);
 
     const results_chunks = await Promise.all(ids_chunks.map(async ids => {
       const params = new URLSearchParams();
@@ -210,7 +210,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    */
   async search_local (params) {
     const words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
-    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.helpers.regexp.escape(word)}`, 'i'));
+    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.RegExp.escape(word)}`, 'i'));
     const all_bugs = await this.get_all();
     const bugs = [...all_bugs.values()].filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||

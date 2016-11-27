@@ -147,7 +147,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       params.append('resolution', '---'); // Search only open bugs
     }
 
-    BzDeck.router.navigate('/search/' + FlareTail.helpers.misc.hash(), { 'params' : params.toString() });
+    BzDeck.router.navigate('/search/' + FlareTail.util.Misc.hash(), { 'params' : params.toString() });
   }
 
   /**

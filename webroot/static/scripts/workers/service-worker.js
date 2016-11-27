@@ -59,7 +59,7 @@ const files = [
   // Scripts (should be the same as the list in static-file-list.inc.php)
   '/vendor/JavaScript-MD5/scripts/md5.min.js',
   '/vendor/showdown/dist/showdown.min.js',
-  '/vendor/flaretail.js/scripts/helpers.js',
+  '/vendor/flaretail.js/scripts/util.js',
   '/vendor/flaretail.js/scripts/widgets.js',
   '/vendor/flaretail.js/scripts/app.js',
   '/static/scripts/config/app.js',

@@ -100,7 +100,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    */
   async search (users = new Map()) {
     const has_colon = this.value.startsWith(':');
-    const re = new RegExp((has_colon ? '' : '\\b') + FlareTail.helpers.regexp.escape(this.value), 'i');
+    const re = new RegExp((has_colon ? '' : '\\b') + FlareTail.util.RegExp.escape(this.value), 'i');
     const find = str => re.test(str);
     const _people = await Promise.all([...users.keys()].map(name => BzDeck.collections.users.get(name, { name })));
     const people = new Map(_people.map(person => [person.email, person]));

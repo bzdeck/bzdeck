@@ -39,7 +39,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
     this.$submit = this.$form.querySelector('[data-command="submit"]');
 
-    const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
 
     for (const $tabpanel of this.$form.querySelectorAll('[role="tabpanel"]')) {
       new FlareTail.widgets.ScrollBar($tabpanel);
@@ -120,7 +120,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$textbox.addEventListener('keydown', event => event.stopPropagation(), true);
 
     this.$textbox.addEventListener('input', event => this.oninput());
-    FlareTail.helpers.kbd.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView#Submit') });
+    FlareTail.util.Keybind.assign(this.$textbox, { 'Accel+Enter': event => this.trigger('BugView#Submit') });
   }
 
   /**
@@ -258,7 +258,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     const attachment = await BzDeck.collections.attachments.get(id);
     const hash = attachment.hash;
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const click_event_type = mobile ? 'touchstart' : 'mousedown';
     const mql = window.matchMedia('(max-width: 1023px)');
     const $tbody = this.$attachments_tbody;

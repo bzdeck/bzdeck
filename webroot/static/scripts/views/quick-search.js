@@ -27,7 +27,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
     this.$input.addEventListener('mousedown', event => event.stopPropagation());
 
     // Suppress context menu
-    this.$input.addEventListener('contextmenu', event => FlareTail.helpers.event.ignore(event), true);
+    this.$input.addEventListener('contextmenu', event => FlareTail.util.Events.ignore(event), true);
 
     this.$button.addEventListener('mousedown', event => { event.stopPropagation(); this.onsubmit() });
     this.$$results.bind('MenuItemSelected', event => this.on_result_selected(event.detail.target));
@@ -46,14 +46,14 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
    * Enable some keyboard shortcuts on the elements.
    */
   assign_keyboard_bindings () {
-    FlareTail.helpers.kbd.assign(window, {
+    FlareTail.util.Keybind.assign(window, {
       'Accel+K': event => {
         this.$input.focus();
         event.preventDefault();
       },
     });
 
-    FlareTail.helpers.kbd.assign(this.$input, {
+    FlareTail.util.Keybind.assign(this.$input, {
       'ArrowUp|ArrowDown': event => {
         if (this.$input.value.trim() && this.$results.matches('[aria-expanded="false"]')) {
           this.exec_quick_search();
@@ -65,7 +65,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
       },
     });
 
-    FlareTail.helpers.kbd.assign(this.$button, {
+    FlareTail.util.Keybind.assign(this.$button, {
       'Enter|Space': event => {
         this.exec_advanced_search();
       },
@@ -105,7 +105,7 @@ BzDeck.QuickSearchView = class QuickSearchView extends BzDeck.BaseView {
   onsubmit () {
     const $root = document.documentElement; // <html>
 
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       if (!$root.hasAttribute('data-quicksearch')) {
         $root.setAttribute('data-quicksearch', 'activated');
         // Somehow moving focus doesn't work, so use the async function here

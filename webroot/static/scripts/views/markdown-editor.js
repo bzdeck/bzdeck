@@ -26,12 +26,12 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
         this.$textbox.focus();
       }
 
-      return FlareTail.helpers.event.ignore(event);
+      return FlareTail.util.Events.ignore(event);
     });
 
     // Change the shortcut labels depending on the user's platform
     const kbd_regex = /\(Cmd\+(\w)\)$/;
-    const kbd_suffix = FlareTail.helpers.env.platform.macintosh ? '\u2318' : 'Ctrl+';
+    const kbd_suffix = FlareTail.env.platform.macintosh ? '\u2318' : 'Ctrl+';
 
     for (const $button of [...this.$toolbar.querySelectorAll('[role="button"]')]) {
       if ($button.title.match(kbd_regex)) {
@@ -39,7 +39,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
     }
 
-    FlareTail.helpers.kbd.assign(this.$textbox, {
+    FlareTail.util.Keybind.assign(this.$textbox, {
       'Accel+B': event => this.exec_command('strong'),
       'Accel+I': event => this.exec_command('em'),
       'Accel+K': event => this.exec_command('a'),
@@ -67,7 +67,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
 
       // Fire an event to resize the textbox if needed
-      FlareTail.helpers.event.trigger(this.$textbox, 'input', {}, false);
+      FlareTail.util.Events.trigger(this.$textbox, 'input', {}, false);
     };
 
     const bracket = (mark, mark2 = '') => {

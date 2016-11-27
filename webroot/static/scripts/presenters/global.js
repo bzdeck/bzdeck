@@ -171,7 +171,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
       return (new showdown.Converter()).makeHtml(str);
     }
 
-    str = FlareTail.helpers.string.sanitize(str);
+    str = FlareTail.util.String.sanitize(str);
 
     // Quotes
     for (const p of str.split(/\n{2,}/)) {

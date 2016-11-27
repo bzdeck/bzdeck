@@ -15,7 +15,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   constructor () {
     super(); // Assign this.id
 
-    const datetime = FlareTail.helpers.datetime;
+    const datetime = FlareTail.util.DateTime;
     const $root = document.documentElement;
 
     // Automatically update relative dates on the app
@@ -24,12 +24,9 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     // Theme
     BzDeck.prefs.get('ui.theme.selected').then(theme => {
       // Change the theme
-      if (theme && FlareTail.helpers.theme.list.contains(theme)) {
-        FlareTail.helpers.theme.selected = theme;
+      if (theme && document.styleSheetSets.contains(theme)) {
+        document.selectedStyleSheetSet = theme;
       }
-
-      // Preload images from CSS
-      FlareTail.helpers.theme.preload_images();
     });
 
     // Date format
@@ -125,7 +122,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    * @param {PopStateEvent} event - The popstate event.
    */
   onpopstate (event) {
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       document.documentElement.setAttribute('data-sidebar-hidden', 'true');
       document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
     }
@@ -152,14 +149,14 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     if ($target.matches('[itemtype$="User"][role="link"]')) {
       this.trigger('AnyView#OpeningProfileRequested', { email: $target.querySelector('[itemprop="email"]').content });
 
-      return FlareTail.helpers.event.ignore(event);
+      return FlareTail.util.Events.ignore(event);
     }
 
     // Support clicks on the avatar image in a comment
     if ($parent && $parent.matches('[itemtype$="User"][role="link"]')) {
       this.trigger('AnyView#OpeningProfileRequested', { email: $parent.querySelector('[itemprop="email"]').content });
 
-      return FlareTail.helpers.event.ignore(event);
+      return FlareTail.util.Events.ignore(event);
     }
 
     if ($target.matches(':any-link, [role="link"]')) {
@@ -183,7 +180,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
             const bugs = await BzDeck.collections.bugs.get_all();
             const bug_id = [...bugs.values()].find(bug => (bug.attachments || []).some(att => att.id === att_id)).id;
 
-            if (!bug_id || (FlareTail.helpers.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
+            if (!bug_id || (FlareTail.env.device.mobile && window.matchMedia('(max-width: 1023px)').matches)) {
               this.trigger('AnyView#OpeningAttachmentRequested', { id: att_id });
             } else {
               this.trigger('AnyView#OpeningBugRequested', { id: bug_id, att_id });
@@ -198,7 +195,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         new_win.location = $target.href;
       }
 
-      return FlareTail.helpers.event.ignore(event);
+      return FlareTail.util.Events.ignore(event);
     }
 
     return true;
@@ -229,7 +226,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     const notify = profile => this.trigger('#GravatarProfileProvided', { hash, profile });
 
     try {
-      const data = await FlareTail.helpers.network.jsonp(`https://secure.gravatar.com/${hash}.json`);
+      const data = await FlareTail.util.Network.jsonp(`https://secure.gravatar.com/${hash}.json`);
 
       notify(data.entry[0]);
     } catch (error) {

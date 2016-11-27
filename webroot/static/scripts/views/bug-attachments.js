@@ -19,7 +19,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   constructor (id, bug_id, $container) {
     super(id); // Assign this.id
 
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const mql = window.matchMedia('(max-width: 1023px)');
 
     this.bug_id = bug_id;
@@ -126,7 +126,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   listbox_onclick (event) {
     const $selected = this.$$listbox.view.selected[0];
     const id = $selected ? $selected.dataset.hash || Number($selected.dataset.id) : undefined;
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const narrow = window.matchMedia('(max-width: 1023px)').matches;
 
     if (id && ((event.type === 'click' && mobile && narrow) || event.type === 'dblclick')) {
@@ -310,7 +310,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     const target_id = state ? state.att_id : undefined;
     const $target = target_id ? this.$listbox.querySelector(`[id$='attachment-${target_id}']`) : undefined;
 
-    if ($target && !FlareTail.helpers.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
+    if ($target && !FlareTail.env.device.mobile && !window.matchMedia('(max-width: 1023px)').matches) {
       if ($target.matches('[data-obsolete="true"]') && !this.$$obsolete_checkbox.checked) {
         this.$obsolete_checkbox.click();
       }

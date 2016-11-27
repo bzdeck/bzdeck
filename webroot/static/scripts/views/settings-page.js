@@ -65,7 +65,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       this.activate_widget(name, value);
     }
 
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       document.querySelector('#settings-tab-account').setAttribute('aria-disabled', 'true');
       document.querySelector('#settings-tab-account').setAttribute('aria-selected', 'false');
       document.querySelector('#settings-tabpanel-account').setAttribute('aria-hidden', 'true');

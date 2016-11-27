@@ -54,7 +54,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
     Object.defineProperties(att, {
       // Add custom properties
       uploaded: { writable: true, value: 0 },
-      hash: { value: FlareTail.helpers.misc.hash() },
+      hash: { value: FlareTail.util.Misc.hash() },
       is_unuploaded: { value: true },
       // Emulate properties on the existing attachment objects
       creator: { value: BzDeck.account.data.name },

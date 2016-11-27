@@ -45,7 +45,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
     // Override some properties with customized values
     const properties = Object.assign({}, att.data, {
-      size: FlareTail.helpers.number.format_file_size(att.size),
+      size: FlareTail.util.Number.format_file_size(att.size),
       creator: creator.properties,
       is_patch: !!att.is_patch,
       is_obsolete: !!att.is_obsolete,

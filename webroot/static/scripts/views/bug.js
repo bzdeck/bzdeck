@@ -182,7 +182,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     const index = this.siblings.indexOf(this.bug_id);
     const prev = this.siblings[index - 1];
     const next = this.siblings[index + 1];
-    const assign_key_binding = (key, command) => FlareTail.helpers.kbd.assign(this.$bug, { [key]: command });
+    const assign_key_binding = (key, command) => FlareTail.util.Keybind.assign(this.$bug, { [key]: command });
 
     const set_button_tooltip = async (id, $$button) => {
       const bug = await BzDeck.collections.bugs.get(id);
@@ -347,7 +347,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     // Assign keyboard shortcuts
     if (!$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
-      FlareTail.helpers.kbd.assign($timeline, {
+      FlareTail.util.Keybind.assign($timeline, {
         // Toggle star
         S: event => this.bug.starred = !this.bug.starred,
         // Reply
@@ -768,7 +768,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    */
   set_product_tooltips () {
     const config = BzDeck.host.data.config;
-    const strip_tags = str => FlareTail.helpers.string.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
+    const strip_tags = str => FlareTail.util.String.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
     const classification = config.classification[this.bug.classification];
     const product = config.product[this.bug.product];
     const $classification = this.$bug.querySelector('[itemprop="classification"]');

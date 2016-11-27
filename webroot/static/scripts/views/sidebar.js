@@ -17,7 +17,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   constructor () {
     super(); // Assign this.id
 
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const $root = document.documentElement; // <html>
     const $sidebar = document.querySelector('#sidebar');
 
@@ -61,7 +61,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
       // Keep the menu open. Need a better way to handle this
       this.$app_menu.removeAttribute('aria-expanded');
 
-      if (FlareTail.helpers.env.device.mobile) {
+      if (FlareTail.env.device.mobile) {
         // Hide the sidebar
         document.documentElement.setAttribute('data-sidebar-hidden', 'true');
         document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
@@ -93,7 +93,7 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
 
     // Mobile compact layout
-    if (FlareTail.helpers.env.device.mobile &&
+    if (FlareTail.env.device.mobile &&
         toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
       // Select the home tab
       toolbar.$$tablist.view.selected = toolbar.$$tablist.view.members[0];

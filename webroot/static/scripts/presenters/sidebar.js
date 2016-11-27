@@ -17,7 +17,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   constructor (id) {
     super(id); // Assign this.id
 
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
 
     this.data = new Proxy({
       folder_id: null

@@ -33,7 +33,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
     this.activate_bugzilla_auth();
 
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       this.activate_qrcode_auth();
     }
   }

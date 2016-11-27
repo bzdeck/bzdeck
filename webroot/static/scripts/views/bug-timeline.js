@@ -24,7 +24,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     const get_time = str => (new Date(str)).getTime();
     const entries = new Map([...this.bug.comments.entries()]
             .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
-    const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
     const data_arr = [];
     const $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
     const timeline_id = $timeline.id = `bug-${this.bug.id}-${this.id}-timeline`;
@@ -105,7 +105,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
           delete this.$expander;
         })();
 
-        return FlareTail.helpers.event.ignore(event);
+        return FlareTail.util.Events.ignore(event);
       });
 
       this.$comments_wrapper.insertAdjacentElement('afterbegin', $expander);
@@ -144,7 +144,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
    */
   expand_comments () {
     if (this.$expander) {
-      this.$expander.dispatchEvent(new CustomEvent(FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown'));
+      this.$expander.dispatchEvent(new CustomEvent(FlareTail.env.device.mobile ? 'touchstart' : 'mousedown'));
     }
 
     for (const $comment of this.$timeline.querySelectorAll('[itemprop="comment"][aria-expanded="false"]')) {
@@ -197,7 +197,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     const match = hash.match(/^#c(\d+)$/);
 
     if (match) {
-      const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+      const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
       const count = Number.parseInt(match[1]);
       const $comment = this.$timeline.querySelector(`[data-comment-count="${count}"]`);
 

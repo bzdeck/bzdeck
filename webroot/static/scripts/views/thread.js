@@ -108,9 +108,9 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 
     this.$$grid.assign_key_bindings({
       // Show previous bug, an alias of UP
-      B: event => FlareTail.helpers.kbd.dispatch($grid, 'ArrowUp'),
+      B: event => FlareTail.util.Keybind.dispatch($grid, 'ArrowUp'),
       // Show next bug, an alias of DOWN
-      F: event => FlareTail.helpers.kbd.dispatch($grid, 'ArrowDown'),
+      F: event => FlareTail.util.Keybind.dispatch($grid, 'ArrowDown'),
       // Toggle star
       S: event => toggle_prop('starred'),
     });
@@ -248,9 +248,9 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     this.$$listbox.assign_key_bindings({
       // Show previous bug, an alias of UP
-      B: event => FlareTail.helpers.kbd.dispatch(this.$listbox, 'ArrowUp'),
+      B: event => FlareTail.util.Keybind.dispatch(this.$listbox, 'ArrowUp'),
       // Show next bug, an alias of DOWN
-      F: event => FlareTail.helpers.kbd.dispatch(this.$listbox, 'ArrowDown'),
+      F: event => FlareTail.util.Keybind.dispatch(this.$listbox, 'ArrowDown'),
       // Toggle star
       S: event => {
         for (const $item of this.$$listbox.view.selected) {
@@ -375,7 +375,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     // Filter & sort bugs
     _bugs = filter_condition === 'all' ? _bugs : filtered_bugs[filter_condition];
-    _bugs = sort_conditions ? FlareTail.helpers.array.sort(_bugs, sort_conditions) : _bugs;
+    _bugs = sort_conditions ? FlareTail.util.Array.sort(_bugs, sort_conditions) : _bugs;
 
     this.bugs = bugs;
     this.unrendered_bugs = _bugs;

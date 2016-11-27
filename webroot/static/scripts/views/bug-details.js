@@ -34,7 +34,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       $tabpanel.querySelector('.scrollable').scrollTop = 0;
 
       // Desktop: Show the outline pane only when the timeline tab is selected
-      if (!mql.matches && FlareTail.helpers.env.device.desktop) {
+      if (!mql.matches && FlareTail.env.device.desktop) {
         this.$outline.setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
       }
     });
@@ -42,7 +42,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     mql.addListener(mql => this.change_layout(mql));
     this.change_layout(mql);
 
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       this.add_mobile_tweaks();
     }
 
@@ -61,7 +61,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
     const $bug_info = this.$bug.querySelector('.bug-info');
     const $bug_participants = this.$bug.querySelector('.bug-participants');
 
-    if (mql.matches || FlareTail.helpers.env.device.mobile) {  // Mobile layout
+    if (mql.matches || FlareTail.env.device.mobile) {  // Mobile layout
       $info_tab.setAttribute('aria-hidden', 'false');
       $participants_tab.setAttribute('aria-hidden', 'false');
       this.$bug.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
@@ -155,7 +155,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
    * Render the Attachments tabpanel content with BugAttachmentsView.
    */
   render_attachments () {
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const mql = window.matchMedia('(max-width: 1023px)');
     const $field = this.$bug.querySelector('[data-field="attachments"]');
 

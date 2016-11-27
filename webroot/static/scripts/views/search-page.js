@@ -190,7 +190,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    */
   async setup_result_pane () {
     const $pane = this.$result_pane = this.$tabpanel.querySelector('[id$="-result-pane"]');
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
 
     const [sort_cond, columns] = await Promise.all([
       BzDeck.prefs.get('home.list.sort_conditions'),
@@ -323,7 +323,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     const siblings = this.get_shown_bugs();
 
     // Show the bug preview only when the preview pane is visible (on desktop and tablet)
-    if (FlareTail.helpers.env.device.mobile) {
+    if (FlareTail.env.device.mobile) {
       BzDeck.router.navigate('/bug/' + preview_id, { siblings });
     } else if (preview_id !== this.preview_id) {
       this.preview_id = preview_id;

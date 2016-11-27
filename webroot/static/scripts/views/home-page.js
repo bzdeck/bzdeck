@@ -16,7 +16,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   constructor (folder_id) {
     super(); // Assign this.id
 
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const $sidebar = document.querySelector('#sidebar');
 
     this.$preview_pane = document.querySelector('#home-preview-pane');
@@ -37,7 +37,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
         document.documentElement.setAttribute('data-sidebar-hidden', hidden);
         $sidebar.setAttribute('aria-hidden', hidden);
 
-        return FlareTail.helpers.event.ignore(event);
+        return FlareTail.util.Events.ignore(event);
       });
     }
 
@@ -103,7 +103,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @todo FIXME: This should be smartly done in the presenter.
    */
   get_shown_bugs () {
-    const mobile = FlareTail.helpers.env.device.mobile;
+    const mobile = FlareTail.env.device.mobile;
     const vertical = mobile || document.documentElement.getAttribute('data-home-layout') === 'vertical';
     const items = vertical ? document.querySelectorAll('#home-vertical-thread [role="option"]')
                            : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
@@ -118,7 +118,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    *  Vertical Thread always sorts bugs by date.
    */
   change_layout (pref, sort_grid = false) {
-    const vertical = FlareTail.helpers.env.device.mobile || !pref || pref === 'vertical';
+    const vertical = FlareTail.env.device.mobile || !pref || pref === 'vertical';
 
     document.documentElement.setAttribute('data-home-layout', vertical ? 'vertical' : 'classic');
 
@@ -194,14 +194,14 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     (async () => {
       const layout_pref = await BzDeck.prefs.get('ui.home.layout');
-      const vertical = FlareTail.helpers.env.device.mobile || !layout_pref || layout_pref === 'vertical';
+      const vertical = FlareTail.env.device.mobile || !layout_pref || layout_pref === 'vertical';
 
       $$grid.options.adjust_scrollbar = !vertical;
       $$grid.options.date.simple = vertical;
 
       // Change the date format on the thread pane
       for (const $time of $$grid.view.$container.querySelectorAll('time')) {
-        $time.textContent = FlareTail.helpers.datetime.format($time.dateTime, { simple: vertical });
+        $time.textContent = FlareTail.util.DateTime.format($time.dateTime, { simple: vertical });
         $time.dataset.simple = vertical;
       }
     })();

@@ -68,7 +68,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
    * @returns {Promise.<HTMLElement>} Generated entry node.
    */
   async create_comment_entry () {
-    const click_event_type = FlareTail.helpers.env.device.mobile ? 'touchstart' : 'mousedown';
+    const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
     const comment = this.data.get('comment');
     const time = comment.creation_time;
     const $entry = this.get_template('timeline-comment');
@@ -115,7 +115,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       // Move focus on the textbox. Use async to make sure the event always works
       window.setTimeout(() => $textbox.focus(), 100);
       // Trigger an event to do something. Disable async to make sure the following lines work
-      FlareTail.helpers.event.trigger($textbox, 'input', {}, false);
+      FlareTail.util.Events.trigger($textbox, 'input', {}, false);
       // Scroll to make sure the comment is visible
       $tabpanel.scrollTop = $tabpanel.scrollHeight;
       $entry.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -150,7 +150,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
 
     // Assign keyboard shortcuts
-    FlareTail.helpers.kbd.assign($entry, {
+    FlareTail.util.Keybind.assign($entry, {
       R: event => reply(),
       // Collapse/expand the comment
       C: event => this.toggle_expanded($entry),
@@ -192,7 +192,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     $author.querySelector('[itemprop="name"]').textContent = author.name;
     $author.querySelector('[itemprop="email"]').content = author.email;
     $author.querySelector('[itemprop="image"]').src = author.image;
-    FlareTail.helpers.datetime.fill_element($time, time);
+    FlareTail.util.DateTime.fill_element($time, time);
 
     // Mark unread
     $entry.setAttribute('data-unread', 'true');
@@ -253,7 +253,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       attachment.summary,
       attachment.file_name,
       attachment.is_patch ? 'Patch' : attachment.content_type, // l10n
-      FlareTail.helpers.number.format_file_size(attachment.size),
+      FlareTail.util.Number.format_file_size(attachment.size),
     ].join('\n');
 
     if (media_type === 'image') {
@@ -414,7 +414,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     });
 
     $change.setAttribute('data-change-field', change.field_name);
-    FlareTail.helpers.datetime.fill_element($time, time);
+    FlareTail.util.DateTime.fill_element($time, time);
 
     const _reviews = { added: new Set(), removed: new Set() };
     const _feedbacks = { added: new Set(), removed: new Set() };
@@ -671,7 +671,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         return `<a href="${url}">${url}</a>`;
       }).join(', '));
     } else {
-      render(FlareTail.helpers.array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span'));
+      render(FlareTail.util.Array.join(change[how].split(', '), how === 'added' ? 'strong' : 'span'));
     }
 
     return $elm;

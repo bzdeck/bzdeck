@@ -119,7 +119,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
 
     // Fetch the config via BzAPI
     try {
-      config = await FlareTail.helpers.network.json(this.origin + '/bzapi/configuration?cached_ok=1');
+      config = await FlareTail.util.Network.json(this.origin + '/bzapi/configuration?cached_ok=1');
     } catch (error) {
       throw new Error('Bugzilla configuration could not be loaded. The instance might be offline.');
     }

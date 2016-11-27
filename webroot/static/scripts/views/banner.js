@@ -62,12 +62,11 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
       this.add_back_button($tabpanel);
     }
 
-    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab;
-    $tabpanel.focus();
-
     BzDeck.views.global.update_window_title($tab);
     BzDeck.views.pages[category] = page;
     this.tab_path_map.set($tab.id, location.pathname + location.search);
+    this.$$tablist.view.selected = this.$$tablist.view.$focused = $tab;
+    $tabpanel.focus();
   }
 
   /**
@@ -116,12 +115,12 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     const $header = $parent.querySelector('header');
     const $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
 
-    if (FlareTail.helpers.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
+    if (FlareTail.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n
       $button.addEventListener('touchstart', event => {
         this.trigger('#BackButtonClicked');
 
-        return FlareTail.helpers.event.ignore(event);
+        return FlareTail.util.Events.ignore(event);
       });
 
       $header.insertAdjacentElement('afterbegin', $button);
