@@ -282,18 +282,14 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     });
 
     // Lazy avatar loading while scrolling
-    this.image_loader = new IntersectionObserver(entries => entries.forEach(entry => {
+    this.observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => {
       const $option = entry.target;
-      const $avatar = $option.querySelector('[itemprop="contributor"] [itemprop="image"]');
-      const $image = new Image();
 
-      if (entry.intersectionRatio > 0 && !$avatar.src) {
-        this.image_loader.unobserve($option);
-        // Preload the image so that CSS transition works smoothly
-        $image.addEventListener('load', event => $avatar.src = $image.src, { once: true });
-        $image.src = $avatar.dataset.src;
+      if (entry.intersectionRatio > 0) {
+        this.observer.unobserve($option);
+        this.show_avatar($option);
       }
-    }), { root: this.$listbox_outer });
+    }), { root: this.$listbox_outer }) : undefined;
   }
 
   /**
@@ -425,7 +421,13 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       if (!$avatar.dataset.src) {
         $avatar.dataset.src = $avatar.src;
         $avatar.removeAttribute('src');
-        this.image_loader.observe($option);
+
+        if (this.observer) {
+          // Defer loading of the avatar if the Intersection Observer API is available
+          this.observer.observe($option);
+        } else {
+          this.show_avatar($option);
+        }
       }
 
       $fragment.appendChild($option);
@@ -443,6 +445,21 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     // Fetch unloaded bug details
     if (unloaded_bugs.length) {
       BzDeck.collections.bugs.fetch(unloaded_bugs.map(bug => bug.id), false, true);
+    }
+  }
+
+  /**
+   * Show the avatar of a participant on a given thread item.
+   * @param {HTMLElement} $option - A thread item node.
+   */
+  show_avatar ($option) {
+    const $avatar = $option.querySelector('[itemprop="contributor"] [itemprop="image"]');
+    const $image = new Image();
+
+    if (!$avatar.src) {
+      // Preload the image so that CSS transition works smoothly
+      $image.addEventListener('load', event => $avatar.src = $image.src, { once: true });
+      $image.src = $avatar.dataset.src;
     }
   }
 
