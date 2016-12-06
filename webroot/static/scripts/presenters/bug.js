@@ -72,23 +72,23 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
     const container_id = this.container_id;
     const bug_id = this.bug_id;
 
-    if (!navigator.onLine) {
-      this.trigger('#BugDataUnavailable', { code: 0, message: 'You have to go online to load the bug.' });
-
-      return;
-    }
-
     this.trigger('#LoadingStarted', { container_id, bug_id });
 
     let bug = await BzDeck.collections.bugs.get(this.bug_id);
+    let error_code = 0;
+    let error_message = 'This bug data is not available.';
 
     if (!bug || bug.error) {
-      try {
-        bug = await BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id });
-        bug = await bug.fetch();
-      } catch (error) {
-        bug = {};
-        this.trigger('#BugDataUnavailable', { container_id, bug_id, code: 0, message: 'Failed to load data.' });
+      if (!navigator.onLine) {
+        error_message = 'You have to go online to load the bug.';
+      } else {
+        try {
+          bug = await BzDeck.collections.bugs.get(this.bug_id, { id: this.bug_id });
+          bug = await bug.fetch();
+        } catch (error) {
+          bug = {};
+          error_message = 'Failed to retrieve data from Bugzilla.';
+        }
       }
     }
 
@@ -98,13 +98,16 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
       BzDeck.collections.users.add_from_bug(bug);
       BzDeck.models.bugzfeed._subscribe([this.bug_id]);
     } else {
-      const code = bug.error ? bug.error.code : 0;
-      const message = {
-        102: 'You are not authorized to access this bug, probably because it has sensitive information such as \
-              unpublished security issues or marketing-related topics. '
-      }[code] || 'This bug data is not available.';
+      if (bug.error && bug.error.code) {
+        error_code = bug.error.code;
+      }
 
-      this.trigger('#BugDataUnavailable', { container_id, bug_id, code, message });
+      if (error_code === 102) {
+        error_message = 'You are not authorized to access this bug, probably because it has sensitive information such \
+                         as unpublished security issues or marketing-related topics. '
+      }
+
+      this.trigger('#BugDataUnavailable', { container_id, bug_id, code: error_code, message: error_message });
     }
 
     this.trigger('#LoadingFinished', { container_id, bug_id });
