@@ -190,8 +190,9 @@
   color: var(--control-foreground-color);
   background-color: var(--control-background-color);
   font-size: 1.1rem;
-  line-height: 1;
+  line-height: 1rem;
   text-align: center;
+  text-indent: 0;
 }
 
 [data-device="desktop"]:root #sidebar-folder-list [role="option"] label span {
