@@ -77,17 +77,19 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
       return result.users;
     };
 
-    const users_chunks = await Promise.all(names_chunks.map(names => {
-      try {
-        return _fetch(names);
-      } catch (error) {
-        // Retrieve the users one by one if failed
-        try {
-          return Promise.all(names.map(name => _fetch([name])));
-        } catch (error) {
-          return { name, error: true };
-        }
+    const users_chunks = await Promise.all(names_chunks.map(async names => {
+      const users = await _fetch(names);
+
+      if (users && !users.error) {
+        return users;
       }
+
+      // Retrieve the users one by one if failed
+      return Promise.all(names.map(async name => {
+        const users = await _fetch([name])
+
+        return users ? users[0] : { name, error: true };
+      }));
     }));
 
     // Flatten an array of arrays
