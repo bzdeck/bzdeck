@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#sidebar {
+#navigator {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-[data-device="desktop"]:root #sidebar {
+[data-device="desktop"]:root #navigator {
   overflow: visible; /* To show tooltips */
   width: 5.6rem;
   border-width: 0 .1rem 0 0;
@@ -21,33 +21,33 @@
   background-color: var(--application-header-background-color);
 }
 
-[data-device|="mobile"]:root #sidebar {
+[data-device|="mobile"]:root #navigator {
   width: 100%;
   background-color: #0006 !important;
-  transition: background-color .2s ease .4s; /* Set a delay for the transitioning sidebar */
+  transition: background-color .2s ease .4s; /* Set a delay for the transitioning navigator */
   pointer-events: auto;
 }
 
-[data-device|="mobile"]:root #sidebar[aria-hidden="true"] {
+[data-device|="mobile"]:root #navigator[aria-hidden="true"] {
   display: block;
   background-color: transparent !important;
   pointer-events: none;
 }
 
-#sidebar > div {
+#navigator > div {
   position: absolute;
   overflow: hidden;
   left: 0;
   bottom: 0;
 }
 
-[data-device="desktop"]:root #sidebar > div {
+[data-device="desktop"]:root #navigator > div {
   overflow: visible; /* To show tooltips */
   top: .8rem;
   right: 0;
 }
 
-[data-device|="mobile"]:root #sidebar > div {
+[data-device|="mobile"]:root #navigator > div {
   top: 0;
   right: auto;
   left: 0;
@@ -57,20 +57,20 @@
   transition: transform .3s ease .1s; /* Set a delay to avoid conflict with setAttribute on <html> */
 }
 
-[data-device|="mobile"]:root #sidebar[aria-hidden="true"] > div {
+[data-device|="mobile"]:root #navigator[aria-hidden="true"] > div {
   transform: translateX(-100%);
 }
 
-#sidebar h2 {
+#navigator h2 {
   position: absolute;
   left: -9999rem;
 }
 
-#sidebar-folder-list {
+#navigator-folder-list {
   background: transparent;
 }
 
-[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) {
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) {
   padding: .4rem .8rem;
   height: 3.2rem;
   background-color: transparent;
@@ -78,23 +78,23 @@
   color: var(--application-header-foreground-color);
 }
 
-[data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] {
+[data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] {
   color: var(--highlighted-button-border-color);
   background-image: linear-gradient(to bottom, #0004 0%, #0003 20%, #0003 80%, #0004 100%);
 }
 
-[data-device="desktop"]:root #sidebar [role="option"][aria-selected="true"] label {
+[data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] label {
   opacity: 1;
 }
 
-#sidebar :-moz-any([role="option"], [role="menuitem"]) {
+#navigator :-moz-any([role="option"], [role="menuitem"]) {
   padding: .4rem 1.2rem;
   height: 2.4rem;
   font-size: 1.4rem;
   line-height: 2.4rem;
 }
 
-[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label {
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label {
   position: relative;
   height: 100%;
   text-indent: -99999px;
@@ -102,19 +102,19 @@
   transition: opacity .2s;
 }
 
-[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]):hover label,
-[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]):focus label {
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):hover label,
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):focus label {
   opacity: .8;
 }
 
-#sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+#navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
   font-family: FontAwesome;
   text-align: center;
   vertical-align: middle;
   text-indent: 0;
 }
 
-[data-device="desktop"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,7 +127,7 @@
   text-shadow: 0 0 .4rem #0006;
 }
 
-[data-device|="mobile"]:root #sidebar :-moz-any([role="option"], [role="menuitem"]) label::before {
+[data-device|="mobile"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
   margin-right: 1.2rem;
   width: 2.4rem;
   height: 2.4rem;
@@ -135,39 +135,39 @@
   opacity: .4;
 }
 
-#sidebar-folder-inbox label::before {
+#navigator-folder-inbox label::before {
   content: '\F01C';
 }
 
-#sidebar-folder-starred label::before {
+#navigator-folder-starred label::before {
   content: '\F005';
 }
 
-#sidebar-folder-requests label::before {
+#navigator-folder-requests label::before {
   content: '\F06A';
 }
 
-#sidebar-folder-reported label::before {
+#navigator-folder-reported label::before {
   content: '\F1D8';
 }
 
-#sidebar-folder-watching label::before {
+#navigator-folder-watching label::before {
   content: '\F02E';
 }
 
-#sidebar-folder-assigned label::before {
+#navigator-folder-assigned label::before {
   content: '\F0F2';
 }
 
-#sidebar-folder-mentor label::before {
+#navigator-folder-mentor label::before {
   content: '\F1CD';
 }
 
-#sidebar-folder-qa label::before {
+#navigator-folder-qa label::before {
   content: '\F0C3'; /* flask */
 }
 
-#sidebar-folder-all label::before {
+#navigator-folder-all label::before {
   content: '\F036';
 }
 
@@ -179,7 +179,7 @@
   content: '\F05A';
 }
 
-#sidebar-folder-list [role="option"] label span {
+#navigator-folder-list [role="option"] label span {
   display: inline-block;
   position: relative;
   float: right;
@@ -195,31 +195,31 @@
   text-indent: 0;
 }
 
-[data-device="desktop"]:root #sidebar-folder-list [role="option"] label span {
+[data-device="desktop"]:root #navigator-folder-list [role="option"] label span {
   top: -1.8rem;
 }
 
-[data-device|="mobile"]:root #sidebar-folder-list [role="option"] label span {
+[data-device|="mobile"]:root #navigator-folder-list [role="option"] label span {
   top: -2rem;
 }
 
-#sidebar [role="menuitem"][aria-selected="true"] {
+#navigator [role="menuitem"][aria-selected="true"] {
   color: inherit;
   background-color: transparent;
 }
 
-#sidebar [role="option"]:last-of-type,
-#sidebar [role="none"]:last-of-type [role="menuitem"],
+#navigator [role="option"]:last-of-type,
+#navigator [role="none"]:last-of-type [role="menuitem"],
 #main-menu-app-account {
   border-bottom-width: 0;
 }
 
-#sidebar-account {
+#navigator-account {
   background-position: center center;
   background-size: cover;
 }
 
-#sidebar-account h2 {
+#navigator-account h2 {
   position: absolute;
   left: -9999rem;
 }
@@ -286,7 +286,7 @@
   opacity: .8;
 }
 
-#sidebar-menu {
+#navigator-menu {
   border-width: .1rem 0 0;
   border-style: solid;
   border-color: var(--secondary-region-border-color);
@@ -309,18 +309,18 @@
   overflow: visible; /* To show tooltips */
 }
 
-[data-device="desktop"]:root #sidebar-account,
-[data-device="desktop"]:root #sidebar-menu {
+[data-device="desktop"]:root #navigator-account,
+[data-device="desktop"]:root #navigator-menu {
   position: absolute;
   width: 100%;
 }
 
-[data-device="desktop"]:root #sidebar-account {
+[data-device="desktop"]:root #navigator-account {
   bottom: 0;
   background-image: none !important;
 }
 
-[data-device="desktop"]:root #sidebar-menu {
+[data-device="desktop"]:root #navigator-menu {
   border-width: 0;
   bottom: 5.6rem;
 }

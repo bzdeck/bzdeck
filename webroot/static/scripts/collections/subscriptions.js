@@ -4,7 +4,7 @@
 
 /**
  * Define the Subscription Collection, which is a labelled bug list. The visual presentation of each subscription is a
- * Sidebar folder, like Inbox, Starred or Reported.
+ * Navigator folder, like Inbox, Starred or Reported.
  * @extends BzDeck.BaseCollection
  * @todo Move this to the worker thread.
  */

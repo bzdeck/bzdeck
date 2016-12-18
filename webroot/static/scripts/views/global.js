@@ -118,13 +118,13 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever the history state is updated. Hide the Sidebar on mobile.
+   * Called whenever the history state is updated. Hide the Navigator on mobile.
    * @param {PopStateEvent} event - The popstate event.
    */
   onpopstate (event) {
     if (FlareTail.env.device.mobile) {
-      document.documentElement.setAttribute('data-sidebar-hidden', 'true');
-      document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+      document.documentElement.setAttribute('data-navigator-hidden', 'true');
+      document.querySelector('#navigator').setAttribute('aria-hidden', 'true');
     }
   }
 

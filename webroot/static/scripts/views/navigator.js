@@ -3,39 +3,39 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Sidebar View that represents the global application sidebar.
+ * Define the Navigator View that represents the global application navigator.
  * @extends BzDeck.BaseView
  */
-BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
+BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
   /**
-   * Get a SidebarView instance.
+   * Get a NavigatorView instance.
    * @constructor
-   * @fires SidebarView#FolderSelected
-   * @fires SidebarView#AppMenuItemSelected
-   * @returns {SidebarView} New SidebarView instance.
+   * @fires NavigatorView#FolderSelected
+   * @fires NavigatorView#AppMenuItemSelected
+   * @returns {NavigatorView} New NavigatorView instance.
    */
   constructor () {
     super(); // Assign this.id
 
     const mobile = FlareTail.env.device.mobile;
     const $root = document.documentElement; // <html>
-    const $sidebar = document.querySelector('#sidebar');
+    const $navigator = document.querySelector('#navigator');
 
-    $root.setAttribute('data-sidebar-hidden', mobile);
-    $sidebar.setAttribute('aria-hidden', mobile);
+    $root.setAttribute('data-navigator-hidden', mobile);
+    $navigator.setAttribute('aria-hidden', mobile);
 
-    $sidebar.addEventListener('click', event => {
+    $navigator.addEventListener('click', event => {
       if (mobile) {
-        const hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+        const hidden = $navigator.getAttribute('aria-hidden') !== 'true';
 
-        $root.setAttribute('data-sidebar-hidden', hidden);
-        $sidebar.setAttribute('aria-hidden', hidden);
+        $root.setAttribute('data-navigator-hidden', hidden);
+        $navigator.setAttribute('aria-hidden', hidden);
       }
     });
 
-    new FlareTail.widgets.ScrollBar($sidebar.querySelector('div'));
+    new FlareTail.widgets.ScrollBar($navigator.querySelector('div'));
 
-    this.$folders = document.querySelector('#sidebar-folder-list');
+    this.$folders = document.querySelector('#navigator-folder-list');
     this.$$folders = new FlareTail.widgets.ListBox(this.$folders, BzDeck.config.folders);
     this.$$folders.view.members.forEach($option => {
       $option.setAttribute('aria-label', $option.textContent);
@@ -62,9 +62,9 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
       this.$app_menu.removeAttribute('aria-expanded');
 
       if (FlareTail.env.device.mobile) {
-        // Hide the sidebar
-        document.documentElement.setAttribute('data-sidebar-hidden', 'true');
-        document.querySelector('#sidebar').setAttribute('aria-hidden', 'true');
+        // Hide the navigator
+        document.documentElement.setAttribute('data-navigator-hidden', 'true');
+        document.querySelector('#navigator').setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -72,12 +72,12 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
     this.subscribe('P#GravatarProfileFound');
 
     // Initiate the corresponding presenter
-    this.presenter = BzDeck.presenters.sidebar = new BzDeck.SidebarPresenter(this.id);
+    this.presenter = BzDeck.presenters.navigator = new BzDeck.NavigatorPresenter(this.id);
   }
 
   /**
    * Open a specified folder by updating the document title and rendering the home page thread.
-   * @listens SidebarPresenter#FolderOpened
+   * @listens NavigatorPresenter#FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @param {Array.<Number>} bug_ids - List of bug IDs to render.
    */
@@ -102,11 +102,11 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Show the number of unread bugs on the Inbox option.
-   * @listens SidebarPresenter#UnreadToggled
+   * @listens NavigatorPresenter#UnreadToggled
    * @param {Number} num - Number of unread bugs.
    */
   toggle_unread (num) {
-    const $label = document.querySelector('#sidebar-folder-inbox label');
+    const $label = document.querySelector('#navigator-folder-inbox label');
     let $num = $label.querySelector('span');
 
     if (num) {
@@ -119,13 +119,13 @@ BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
 
   /**
    * Set up the account label & avatar.
-   * @listens SidebarPresenter#GravatarProfileFound
+   * @listens NavigatorPresenter#GravatarProfileFound
    */
   async on_gravatar_profile_found () {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name);
 
     this.fill(document.querySelector('#main-menu-app-account label'), user);
-    document.querySelector('#sidebar-account')
+    document.querySelector('#navigator-account')
             .style.setProperty('background-image', user.background_image ? `url(${user.background_image})` : 'none');
   }
 }

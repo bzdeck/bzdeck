@@ -751,7 +751,7 @@
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>
               </div>
-            </div> 
+            </div>
           </div><!-- end #TID-tabpanel-needinfo -->
         </div>
         <footer>
@@ -1002,9 +1002,9 @@
           <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
         </ul><!-- end #main-tablist -->
       </header>
-      <aside id="sidebar" tabindex="0" role="complementary">
+      <nav id="navigator" tabindex="0" role="navigation">
         <div tabindex="0" role="region">
-          <section id="sidebar-account">
+          <section id="navigator-account">
             <h2>Account</h2>
             <span id="main-menu-app-account" role="button" tabindex="0" aria-label="Profile" data-tooltip-position="right">
               <label itemscope itemtype="http://bzdeck.com/User">
@@ -1013,20 +1013,20 @@
                 <span itemprop="email"></span>
               </label>
             </span>
-          </section><!-- end #sidebar-account -->
-          <section id="sidebar-folders">
+          </section><!-- end #navigator-account -->
+          <section id="navigator-folders">
             <h2>Bugs</h2>
-            <ul id="sidebar-folder-list" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
-          </section><!-- end #sidebar-folders -->
-          <section id="sidebar-menu">
+            <ul id="navigator-folder-list" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
+          </section><!-- end #navigator-folders -->
+          <section id="navigator-menu">
             <h2>Menu</h2>
             <ul id="main-menu-app-menu" role="menu">
               <li role="none"><a id="main-menu-app-about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right"><label>About BzDeck</label></a></li>
               <li role="none"><span id="main-menu-app-settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right"><label>Settings</label></span></li>
             </ul><!-- end #main-menu-app-menu -->
-          </section><!-- end #sidebar-menu -->
+          </section><!-- end #navigator-menu -->
         </div>
-      </aside><!-- end #sidebar -->
+      </nav><!-- end #navigator -->
       <main role="main">
         <div id="main-tabpanels">
           <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">

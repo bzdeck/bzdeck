@@ -15,7 +15,7 @@ const BzDeck = {};
  * @property {Object} app - App's path list used by Router.
  * @property {Object} grid - Columns on classic threads.
  * @property {Object} prefs - Preferences types and default values.
- * @property {Array.<Object>} folders - Sidebar folder list.
+ * @property {Array.<Object>} folders - Navigator folder list.
  */
 BzDeck.config = {
   hosts: {
@@ -109,48 +109,48 @@ BzDeck.config = {
   },
   folders: [
     {
-      id: 'sidebar-folder-inbox',
+      id: 'navigator-folder-inbox',
       label: 'Inbox',
       selected: true,
       data: { id: 'inbox' }
     },
     {
-      id: 'sidebar-folder-starred',
+      id: 'navigator-folder-starred',
       label: 'Starred',
       data: { id: 'starred' }
     },
     {
-      id: 'sidebar-folder-requests',
+      id: 'navigator-folder-requests',
       label: 'Requests',
       data: { id: 'requests' }
     },
     {
-      id: 'sidebar-folder-reported',
+      id: 'navigator-folder-reported',
       label: 'Reported',
       data: { id: 'reported' }
     },
     {
-      id: 'sidebar-folder-watching',
+      id: 'navigator-folder-watching',
       label: 'Watching', // was CCed
       data: { id: 'watching' }
     },
     {
-      id: 'sidebar-folder-assigned',
+      id: 'navigator-folder-assigned',
       label: 'Assigned',
       data: { id: 'assigned' }
     },
     {
-      id: 'sidebar-folder-mentor',
+      id: 'navigator-folder-mentor',
       label: 'Mentor',
       data: { id: 'mentor' }
     },
     {
-      id: 'sidebar-folder-qa',
+      id: 'navigator-folder-qa',
       label: 'QA',
       data: { id: 'qa' }
     },
     {
-      id: 'sidebar-folder-all',
+      id: 'navigator-folder-all',
       label: 'All Bugs',
       data: { id: 'all' }
     }

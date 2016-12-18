@@ -42,7 +42,7 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
   }
 
   /**
-   * Called whenever an unknown folder is selected in the sidebar.
+   * Called whenever an unknown folder is selected in the navigator.
    * @listens HomePageView#UnknownFolderSelected
    */
   on_unknown_folder_selected () {

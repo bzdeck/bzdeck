@@ -8,7 +8,7 @@
  */
 BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
-   * Called by the app router and initialize the Home Page View. Select the specified Sidebar folder.
+   * Called by the app router and initialize the Home Page View. Select the specified Navigator folder.
    * @constructor
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {HomePageView} New HomePageView instance.
@@ -17,7 +17,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     super(); // Assign this.id
 
     const mobile = FlareTail.env.device.mobile;
-    const $sidebar = document.querySelector('#sidebar');
+    const $navigator = document.querySelector('#navigator');
 
     this.$preview_pane = document.querySelector('#home-preview-pane');
 
@@ -31,11 +31,11 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     // Prepare the Menu button on the mobile banner
     if (mobile) {
       document.querySelector('#tabpanel-home .banner-nav-button').addEventListener('touchstart', event => {
-        const hidden = $sidebar.getAttribute('aria-hidden') !== 'true';
+        const hidden = $navigator.getAttribute('aria-hidden') !== 'true';
 
-        document.querySelector('#sidebar').scrollTop = 0;
-        document.documentElement.setAttribute('data-sidebar-hidden', hidden);
-        $sidebar.setAttribute('aria-hidden', hidden);
+        document.querySelector('#navigator').scrollTop = 0;
+        document.documentElement.setAttribute('data-navigator-hidden', hidden);
+        $navigator.setAttribute('aria-hidden', hidden);
 
         return FlareTail.util.Events.ignore(event);
       });
@@ -48,7 +48,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     this.on('SubscriptionCollection#Updated', data => this.on_subscriptions_updated(), true);
     this.on('BugContainerPresenter#navigated', data => this.on_container_navigated(data));
     this.on('ThreadView#OpeningBugRequested', () => this.request_expanding_bug_container(true), true);
-    this.on('SidebarView#FolderSelected', () => this.request_expanding_bug_container(false), true);
+    this.on('NavigatorView#FolderSelected', () => this.request_expanding_bug_container(false), true);
     window.addEventListener('popstate', event => this.onpopstate());
 
     // Initiate the corresponding presenter and sub-view
@@ -68,12 +68,12 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   }
 
   /**
-   * Select the Home tab and open the specified Sidebar folder.
+   * Select the Home tab and open the specified Navigator folder.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @fires HomePageView#UnknownFolderSelected
    */
   connect (folder_id) {
-    const $folder = document.querySelector(`#sidebar-folder-${folder_id}`);
+    const $folder = document.querySelector(`#navigator-folder-${folder_id}`);
     const $tab = document.querySelector('#tab-home');
     const $$tablist = BzDeck.views.banner.$$tablist;
 
@@ -88,9 +88,9 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       $$tablist.view.selected = $$tablist.view.$focused = $tab;
     }
 
-    if (BzDeck.presenters.sidebar.data.folder_id !== folder_id) {
-      BzDeck.views.sidebar.$$folders.view.selected = $folder;
-      BzDeck.presenters.sidebar.open_folder(folder_id);
+    if (BzDeck.presenters.navigator.data.folder_id !== folder_id) {
+      BzDeck.views.navigator.$$folders.view.selected = $folder;
+      BzDeck.presenters.navigator.open_folder(folder_id);
     }
 
     BzDeck.views.banner.tab_path_map.set('tab-home', location.pathname);
@@ -129,8 +129,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     }
 
     // Render the thread
-    if (BzDeck.presenters.sidebar && BzDeck.presenters.sidebar.data.folder_id) {
-      BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
+    if (BzDeck.presenters.navigator && BzDeck.presenters.navigator.data.folder_id) {
+      BzDeck.presenters.navigator.open_folder(BzDeck.presenters.navigator.data.folder_id);
     }
   }
 
@@ -336,8 +336,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * @listens SubscriptionCollection#Updated
    */
   on_subscriptions_updated () {
-    if (BzDeck.presenters.sidebar) {
-      BzDeck.presenters.sidebar.open_folder(BzDeck.presenters.sidebar.data.folder_id);
+    if (BzDeck.presenters.navigator) {
+      BzDeck.presenters.navigator.open_folder(BzDeck.presenters.navigator.data.folder_id);
     }
   }
 
@@ -345,7 +345,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * Called whenever expanding or collapsing the bug container is requested via other general views. Transfer the event
    * while appending the container ID so that BugContainerView can handle it properly.
    * @listens ThreadView#OpeningBugRequested
-   * @listens SidebarView#FolderSelected
+   * @listens NavigatorView#FolderSelected
    * @param {Boolean} expanded - Whether the preview should be expanded.
    * @fires AnyView#ExpandingBugContainerRequested
    */
@@ -357,7 +357,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
    * Called whenever the history state is updated.
    */
   onpopstate () {
-    if (location.pathname !== `/home/${BzDeck.presenters.sidebar.data.folder_id}` || !history.state) {
+    if (location.pathname !== `/home/${BzDeck.presenters.navigator.data.folder_id}` || !history.state) {
       return;
     }
 

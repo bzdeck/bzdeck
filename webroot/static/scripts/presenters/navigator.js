@@ -3,16 +3,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Sidebar Presenter that controls everything on the global application sidebar.
+ * Define the Navigator Presenter that controls everything on the global application navigator.
  * @extends BzDeck.BasePresenter
  * @todo Move this to the worker thread.
  */
-BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
+BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a SidebarPresenter instance.
+   * Get a NavigatorPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {SidebarPresenter} New SidebarPresenter instance.
+   * @returns {NavigatorPresenter} New NavigatorPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
@@ -26,7 +26,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
         const oldval = obj[prop];
 
         if (prop === 'folder_id' && oldval) {
-          // On mobile, wait until the sidebar is closed so that the transition effects work smoother
+          // On mobile, wait until the navigator is closed so that the transition effects work smoother
           if (mobile) {
             window.setTimeout(window => {
               BzDeck.router.navigate('/home/' + newval);
@@ -51,14 +51,14 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
     this.load_user_gravatar();
 
-    // Update the sidebar Inbox folder at startup and whenever notified
+    // Update the navigator Inbox folder at startup and whenever notified
     this.toggle_unread();
     this.subscribe('BugModel#AnnotationUpdated', true);
   }
 
   /**
    * Load the user's Gravatar profile.
-   * @fires SidebarPresenter#GravatarProfileFound
+   * @fires NavigatorPresenter#GravatarProfileFound
    */
   async load_user_gravatar (folder_id) {
     const user = await BzDeck.collections.users.get(BzDeck.account.data.name, { name: BzDeck.account.data.name });
@@ -70,7 +70,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
   /**
    * Open a specific folder by ID.
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
-   * @fires SidebarPresenter#FolderOpened
+   * @fires NavigatorPresenter#FolderOpened
    */
   async open_folder (folder_id) {
     const bugs = await BzDeck.collections.subscriptions.get(folder_id);
@@ -94,7 +94,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
   /**
    * Notify the number of unread bugs so the view can show it on the Inbox option.
-   * @fires SidebarPresenter#UnreadToggled
+   * @fires NavigatorPresenter#UnreadToggled
    */
   async toggle_unread () {
     const all_bugs = await BzDeck.collections.subscriptions.get_all();
@@ -108,7 +108,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
   /**
    * Called whenever a folder is selected.
-   * @listens SidebarView#FolderSelected
+   * @listens NavigatorView#FolderSelected
    * @param {String} id - Folder id.
    */
   on_folder_selected ({ id } = {}) {
@@ -117,7 +117,7 @@ BzDeck.SidebarPresenter = class SidebarPresenter extends BzDeck.BasePresenter {
 
   /**
    * Called whenever an Application menu item is selected.
-   * @listens SidebarView#AppMenuItemSelected
+   * @listens NavigatorView#AppMenuItemSelected
    * @param {String} command - Command name of the menu item.
    */
   on_app_menu_item_selected ({ command } = {}) {
