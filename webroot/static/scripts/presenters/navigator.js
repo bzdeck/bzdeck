@@ -48,6 +48,7 @@ BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresente
     // Subscribe to events
     this.subscribe('V#FolderSelected');
     this.subscribe('V#AppMenuItemSelected');
+    this.on('SubscriptionCollection#Updated', () => this.on_subscriptions_updated(), true);
 
     this.load_user_gravatar();
 
@@ -75,7 +76,7 @@ BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresente
   async open_folder (folder_id) {
     const bugs = await BzDeck.collections.subscriptions.get(folder_id);
 
-    BzDeck.presenters.homepage.data.bugs = bugs; // Map
+    BzDeck.presenters.sidebar_list.data.bugs = bugs; // Map
     this.trigger('#FolderOpened', { folder_id, bug_ids: [...bugs.keys()] });
   }
 
@@ -130,5 +131,14 @@ BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresente
     if (func) {
       func();
     }
+  }
+
+  /**
+   * Called whenever any bug is updated. Refresh the thread. FIXME: add/remove/update each bug when required, instead of
+   * refreshing the entire thread unconditionally.
+   * @listens SubscriptionCollection#Updated
+   */
+  on_subscriptions_updated () {
+    this.open_folder(this.data.folder_id);
   }
 }

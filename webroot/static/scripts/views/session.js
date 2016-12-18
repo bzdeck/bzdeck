@@ -33,8 +33,8 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    */
   on_data_loaded () {
     BzDeck.views.global = new BzDeck.GlobalView();
-    BzDeck.views.main = new BzDeck.MainView();
     BzDeck.views.navigator = new BzDeck.NavigatorView();
+    BzDeck.views.app_body = new BzDeck.AppBodyView();
     BzDeck.views.statusbar = new BzDeck.StatusbarView();
 
     // Activate the router once everything is ready

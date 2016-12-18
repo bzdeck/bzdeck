@@ -53,8 +53,3 @@
 [data-device="desktop"]:root #app-container .statusbar [role="progressbar"][aria-valuenow="100"] {
   opacity: 0;
 }
-
-#app-body {
-  flex: auto;
-  display: flex;
-}

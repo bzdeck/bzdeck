@@ -15,6 +15,7 @@ $styles = [
   '/static/styles/base/widgets.css',
   '/static/styles/base/animations.css',
   // Views
+  '/static/styles/views/app-body.css',
   '/static/styles/views/app-container.css',
   '/static/styles/views/app-landing.css',
   '/static/styles/views/attachment-page.css',
@@ -39,6 +40,8 @@ $styles = [
   '/static/styles/views/qrcode-auth-overlay.css',
   '/static/styles/views/search-page.css',
   '/static/styles/views/settings-page.css',
+  '/static/styles/views/sidebar.css',
+  '/static/styles/views/sidebar-list.css',
   '/static/styles/views/thread.css',
   '/static/styles/views/tooltip.css',
   // Themes cannot go here, because those require the title attribute on <link>
@@ -80,6 +83,7 @@ $scripts = [
   '/static/scripts/collections/users.js',
   // Views
   '/static/scripts/views/base.js',
+  '/static/scripts/views/app-body.js',
   '/static/scripts/views/attachment.js',
   '/static/scripts/views/attachment-page.js',
   '/static/scripts/views/bug.js',
@@ -104,6 +108,8 @@ $scripts = [
   '/static/scripts/views/search-page.js',
   '/static/scripts/views/session.js',
   '/static/scripts/views/settings-page.js',
+  '/static/scripts/views/sidebar.js',
+  '/static/scripts/views/sidebar-list.js',
   '/static/scripts/views/statusbar.js',
   '/static/scripts/views/thread.js',
   '/static/scripts/views/tooltip.js',
@@ -123,5 +129,6 @@ $scripts = [
   '/static/scripts/presenters/search-page.js',
   '/static/scripts/presenters/session.js',
   '/static/scripts/presenters/settings-page.js',
+  '/static/scripts/presenters/sidebar-list.js',
   '/static/scripts/presenters/statusbar.js',
 ];

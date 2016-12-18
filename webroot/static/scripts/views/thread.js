@@ -319,7 +319,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * Initialize the sorting function.
    */
   async init_sorter () {
-    const pref_name = 'home.list.sort_conditions';
+    const pref_name = 'sidebar.list.sort_conditions';
     let pref_value = this.options.sort_conditions = await BzDeck.prefs.get(pref_name) || {};
 
     this.$sorter = this.$header.querySelector('[data-command="sort"]');

@@ -975,6 +975,43 @@
         </div>
       </nav><!-- end #navigator -->
       <div id="app-body">
+        <aside role="complementary" id="sidebar">
+          <section role="region" id="sidebar-list-pane">
+            <header>
+              <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
+              <h3>Inbox</h3>
+              <div id="sidebar-list-searchbar" role="search">
+                <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
+                <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
+                <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
+              </div>
+            </header>
+            <section id="sidebar-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="sidebar-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
+            </section>
+            <section id="home-vertical-thread" tabindex="0" role="region">
+              <header role="toolbar">
+                <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
+                  <li role="radio" data-value="open">Open</li>
+                  <li role="radio" data-value="closed">Closed</li>
+                  <li role="radio" data-value="all">All</li>
+                </ul>
+                <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
+                <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
+                <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
+                  <li role="none">
+                    <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>
+                  </li>
+                </ul>
+              </header>
+              <div class="scrollable">
+                <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
+              </div>
+            </section>
+            <footer aria-hidden="true">
+              <div role="status"><span>No bugs found in this folder.</span></div>
+            </footer>
+          </section><!-- end #sidebar-list-pane -->
+        </aside><!-- end #sidebar -->
         <main role="main">
           <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
             <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
@@ -986,41 +1023,6 @@
                   <h2>Inbox</h2>
                 </header>
                 <div>
-                  <div id="home-list-pane" tabindex="0" role="region">
-                    <header>
-                      <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
-                      <h3>Inbox</h3>
-                      <div id="home-list-searchbar" role="search">
-                        <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
-                        <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
-                        <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
-                      </div>
-                    </header>
-                    <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
-                    </section>
-                    <section id="home-vertical-thread" tabindex="0" role="region">
-                      <header role="toolbar">
-                        <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
-                          <li role="radio" data-value="open">Open</li>
-                          <li role="radio" data-value="closed">Closed</li>
-                          <li role="radio" data-value="all">All</li>
-                        </ul>
-                        <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
-                        <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
-                        <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
-                          <li role="none">
-                            <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>
-                          </li>
-                        </ul>
-                      </header>
-                      <div class="scrollable">
-                        <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
-                      </div>
-                    </section>
-                    <footer aria-hidden="true">
-                      <div role="status"><span>No bugs found in this folder.</span></div>
-                    </footer>
-                  </div><!-- end #home-list-pane -->
                   <div id="home-preview-pane" class="bug-container" tabindex="0" role="region" aria-expanded="false"></div>
                 </div>
               </section>

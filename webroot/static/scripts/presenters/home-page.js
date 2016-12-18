@@ -17,28 +17,8 @@ BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter 
   constructor (id) {
     super(id); // Assign this.id
 
-    this.data = new Proxy({
-      bugs: new Map(),
-      preview_id: null
-    },
-    {
-      set: (obj, prop, newval) => {
-        const oldval = obj[prop];
-
-        if (prop === 'preview_id') {
-          BzDeck.router.navigate(location.pathname, { preview_id: newval }, true);
-        }
-
-        obj[prop] = newval;
-
-        return true;
-      }
-    });
-
     // Subscribe to events
     this.subscribe('V#UnknownFolderSelected');
-
-    BzDeck.presenters.homepage = this;
   }
 
   /**

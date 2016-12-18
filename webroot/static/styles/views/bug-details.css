@@ -47,10 +47,6 @@
   height: 3.2rem;
 }
 
-[data-device="desktop"]:root .bug-container[aria-expanded="false"] [itemtype$="Bug"] > div > [role="tablist"] {
-  display: none;
-}
-
 [data-device|="mobile"]:root [itemtype$="Bug"] > div > [role="tablist"] {
   height: 4rem;
 }
@@ -191,11 +187,11 @@
   flex-direction: row;
   top: 4rem;
   right: 0;
-  left: 50%;
+  left: 70%;
 }
 
-[data-device="desktop"]:root .bug-container[aria-expanded="false"] .bug-outline {
-  width: 20%;
+[data-device="desktop"]:root .bug-container .bug-outline {
+  width: 30%;
   flex-direction: column;
 }
 
@@ -203,7 +199,7 @@
   flex: auto;
 }
 
-[data-device="desktop"]:root .bug-container[aria-expanded="false"] .bug-outline > [role="region"] {
+[data-device="desktop"]:root .bug-container .bug-outline > [role="region"] {
   flex: none;
   width: auto;
 }
@@ -444,7 +440,7 @@
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [id$="tabpanel-timeline"] {
-    right: 50%;
+    right: 30%;
   }
 }
 
@@ -482,7 +478,7 @@
     padding-left: 12rem;
   }
 
-  .bug-container[aria-expanded="false"] .bug-info .bug-fieldset [data-field] {
+  .bug-container .bug-info .bug-fieldset [data-field] {
     padding-left: 8rem;
   }
 

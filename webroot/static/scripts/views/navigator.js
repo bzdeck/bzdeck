@@ -76,21 +76,21 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
   }
 
   /**
-   * Open a specified folder by updating the document title and rendering the home page thread.
+   * Open a specified folder by updating the document title and rendering the sidebar thread.
    * @listens NavigatorPresenter#FolderOpened
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @param {Array.<Number>} bug_ids - List of bug IDs to render.
    */
   async open_folder ({ folder_id, bug_ids } = {}) {
     const bugs = await BzDeck.collections.bugs.get_some(bug_ids); // Map
-    const home = BzDeck.views.pages.home;
+    const sidebar = BzDeck.views.sidebar_list;
     const main = BzDeck.views.main;
     const folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
     const unread = [...bugs.values()].filter(bug => bug.unread).length;
 
-    home.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
-    home.thread.filter ? home.thread.filter(bugs) : home.thread.update(bugs);
-    document.querySelector('#home-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
+    main.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
+    sidebar.thread.filter ? sidebar.thread.filter(bugs) : sidebar.thread.update(bugs);
+    document.querySelector('#sidebar-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
 
     // Mobile compact layout
     if (FlareTail.env.device.mobile &&

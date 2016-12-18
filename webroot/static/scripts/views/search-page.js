@@ -193,7 +193,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
     const mobile = FlareTail.env.device.mobile;
 
     const [sort_cond, columns] = await Promise.all([
-      BzDeck.prefs.get('home.list.sort_conditions'),
+      BzDeck.prefs.get('sidebar.list.sort_conditions'),
       BzDeck.prefs.get('search.list.columns'),
     ]);
 

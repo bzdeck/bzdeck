@@ -20,9 +20,23 @@ BzDeck.MainView = class MainView extends BzDeck.BaseView {
     this.$$tablist.bind('Opened', event => this.update_tab_count());
     this.$$tablist.bind('Closed', event => this.update_tab_count());
     this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
+    this.$preview_pane = document.querySelector('#home-preview-pane');
+
+    Object.defineProperties(this, {
+      preview_is_hidden: {
+        enumerable: true,
+        get: () => !this.$preview_pane.clientHeight
+      },
+    });
+
+    // Subscribe to events
+    this.on('ThreadView#OpeningBugRequested', () => this.request_expanding_bug_container(true), true);
+    this.on('NavigatorView#FolderSelected', () => this.request_expanding_bug_container(false), true);
+    window.addEventListener('popstate', event => this.onpopstate());
 
     // Initiate the corresponding presenter and sub-view
     BzDeck.presenters.main = new BzDeck.MainPresenter(this.id);
+    this.container_view = new BzDeck.BugContainerView(this.id, this.$preview_pane);
   }
 
   /**
@@ -101,5 +115,56 @@ BzDeck.MainView = class MainView extends BzDeck.BaseView {
    */
   update_tab_count () {
     document.querySelector('main').setAttribute('data-tab-count', this.$$tablist.view.members.length);
+  }
+
+  /**
+   * Update the document title and tab label.
+   * @param {String} title - Title to display.
+   */
+  update_title (title) {
+    if (!location.pathname.startsWith('/home/')) {
+      return;
+    }
+
+    document.title = document.querySelector('#tab-home').title = title;
+    document.querySelector('#tab-home label').textContent =
+        document.querySelector('#tabpanel-home h2').textContent =
+        document.querySelector('#sidebar-list-pane h3').textContent = title.replace(/\s\(\d+\)$/, '');
+  }
+
+  /**
+   * Called whenever expanding or collapsing the bug container is requested via other general views. Transfer the event
+   * while appending the container ID so that BugContainerView can handle it properly.
+   * @listens ThreadView#OpeningBugRequested
+   * @listens NavigatorView#FolderSelected
+   * @param {Boolean} expanded - Whether the preview should be expanded.
+   * @fires AnyView#ExpandingBugContainerRequested
+   */
+  request_expanding_bug_container (expanded) {
+    this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.id, expanded });
+  }
+
+  /**
+   * Called whenever the history state is updated.
+   */
+  onpopstate () {
+    if (location.pathname !== `/home/${BzDeck.presenters.navigator.data.folder_id}` || !history.state) {
+      return;
+    }
+
+    const { preview_id } = history.state;
+    const siblings = BzDeck.views.sidebar_list.get_shown_bugs();
+
+    if (!preview_id) {
+      return;
+    }
+
+    // Show the bug preview only when the preview pane is visible (on desktop and tablet)
+    if (this.preview_is_hidden) {
+      BzDeck.router.navigate('/bug/' + preview_id, { siblings });
+    } else if (preview_id !== this.preview_id) {
+      this.preview_id = preview_id;
+      this.container_view.on_adding_bug_requested({ bug_id: preview_id, siblings });
+    }
   }
 }

@@ -83,7 +83,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    */
   add_back_button ($parent) {
     const $header = $parent.querySelector('header');
-    const $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+    const $button = document.querySelector('#sidebar .banner-nav-button').cloneNode(true);
 
     if (FlareTail.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
       $button.setAttribute('aria-label', 'Back'); // l10n
@@ -107,8 +107,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     const count = bug_ids.length;
 
     if (document.documentElement.getAttribute('data-current-tab') === 'home') {
-      BzDeck.views.pages.home.update_title(
-          document.title.replace(/(\s\(\d+\))?$/, count ? ` (${count})` : ''));
+      BzDeck.views.main.update_title(document.title.replace(/(\s\(\d+\))?$/, count ? ` (${count})` : ''));
     }
 
     if (!loaded || !BzDeck.views.statusbar) {
@@ -132,7 +131,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
    */
   update_window_title ($tab) {
     if ($tab.id === 'tab-home') {
-      BzDeck.views.pages.home.update_title($tab.title);
+      BzDeck.views.main.update_title($tab.title);
     } else {
       document.title = $tab.title.replace('\n', ' – ');
     }
