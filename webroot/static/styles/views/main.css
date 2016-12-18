@@ -25,14 +25,8 @@ main {
 #main-tablist {
   flex: none;
   height: 4rem;
-  transition: height .2s ease .5s;
   color: var(--secondary-region-header-foreground-color);
   background-color: var(--secondary-region-header-background-color);
-}
-
-[data-device="desktop"]:root main:not([data-tab-count]) #main-tablist,
-[data-device="desktop"]:root main[data-tab-count="1"] #main-tablist {
-  height: 0; /* Hide the tablist when there is only one tab */
 }
 
 #main-tablist [role="tab"] {
