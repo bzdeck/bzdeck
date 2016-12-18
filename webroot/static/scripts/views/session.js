@@ -48,13 +48,13 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @todo Focus handling.
    */
   on_login () {
-    this.$app_login = document.querySelector('#app-login');
-    this.$app_body = document.querySelector('#app-body');
+    this.$app_landing = document.querySelector('#app-landing');
+    this.$app_container = document.querySelector('#app-container');
 
-    this.$app_login.setAttribute('aria-hidden', 'true');
-    this.$app_body.removeAttribute('aria-hidden');
+    this.$app_landing.setAttribute('aria-hidden', 'true');
+    this.$app_container.removeAttribute('aria-hidden');
 
-    BzDeck.views.statusbar.$statusbar = this.$app_body.querySelector('.statusbar');
+    BzDeck.views.statusbar.$statusbar = this.$app_container.querySelector('.statusbar');
   }
 
   /**
@@ -62,11 +62,11 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    * @listens SessionPresenter#Logout
    */
   on_logout () {
-    BzDeck.views.statusbar.$statusbar = this.$app_login.querySelector('.statusbar');
+    BzDeck.views.statusbar.$statusbar = this.$app_landing.querySelector('.statusbar');
     BzDeck.views.statusbar.show('You have logged out.'); // l10n
 
-    this.$app_login.removeAttribute('aria-hidden');
-    this.$app_body.setAttribute('aria-hidden', 'true');
+    this.$app_landing.removeAttribute('aria-hidden');
+    this.$app_container.setAttribute('aria-hidden', 'true');
   }
 }
 

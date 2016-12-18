@@ -930,24 +930,26 @@
       </section><!-- end #qrcode-auth-overlay -->
     </template><!-- end #qrcode-auth-overlay-template -->
   </head>
-  <body role="application">
-    <section id="app-login">
-      <div>
-        <h1>BzDeck</h1>
+  <body>
+    <div role="document" id="app-landing">
+      <section id="app-login">
         <div>
-          <p id="app-intro"><strong>BzDeck</strong> is a useful, experimental Bugzilla client demonstrating modern Web standard technologies. This app is currently optimized for <strong>bugzilla.mozilla.org</strong>. <a href="/about/">Learn more &raquo;</a></p>
-          <div role="form" aria-hidden="true">
-            <p><span class="cta" role="button" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
-            <p><span class="cta" role="button" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
-          </div>
-          <div class="statusbar" role="status">
-            <p>This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
+          <h1>BzDeck</h1>
+          <div>
+            <p id="app-intro"><strong>BzDeck</strong> is a useful, experimental Bugzilla client demonstrating modern Web standard technologies. This app is currently optimized for <strong>bugzilla.mozilla.org</strong>. <a href="/about/">Learn more &raquo;</a></p>
+            <div role="form" aria-hidden="true">
+              <p><span class="cta" role="button" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
+              <p><span class="cta" role="button" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
+            </div>
+            <div class="statusbar" role="status">
+              <p>This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section><!-- end #app-login -->
-    <section id="app-body" aria-hidden="true">
-      <nav id="navigator" tabindex="0" role="navigation">
+      </section><!-- end #app-login -->
+    </div><!-- end #app-landing -->
+    <div role="application" id="app-container" aria-hidden="true">
+      <nav id="navigator" role="navigation">
         <div tabindex="0" role="region">
           <section id="navigator-account">
             <h2>Account</h2>
@@ -972,63 +974,65 @@
           </section><!-- end #navigator-menu -->
         </div>
       </nav><!-- end #navigator -->
-      <main role="main">
-        <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
-          <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
-        </ul><!-- end #main-tablist -->
-        <div id="main-tabpanels">
-          <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
-            <section>
-              <header>
-                <h2>Inbox</h2>
-              </header>
-              <div>
-                <div id="home-list-pane" tabindex="0" role="region">
-                  <header>
-                    <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
-                    <h3>Inbox</h3>
-                    <div id="home-list-searchbar" role="search">
-                      <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
-                      <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
-                      <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
-                    </div>
-                  </header>
-                  <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
-                  </section>
-                  <section id="home-vertical-thread" tabindex="0" role="region">
-                    <header role="toolbar">
-                      <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
-                        <li role="radio" data-value="open">Open</li>
-                        <li role="radio" data-value="closed">Closed</li>
-                        <li role="radio" data-value="all">All</li>
-                      </ul>
-                      <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
-                      <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
-                      <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
-                        <li role="none">
-                          <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>
-                        </li>
-                      </ul>
+      <div id="app-body">
+        <main role="main">
+          <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
+            <li id="tab-home" title="Home" draggable="true" role="tab" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></li>
+          </ul><!-- end #main-tablist -->
+          <div id="main-tabpanels">
+            <div id="tabpanel-home" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="tab-home">
+              <section>
+                <header>
+                  <h2>Inbox</h2>
+                </header>
+                <div>
+                  <div id="home-list-pane" tabindex="0" role="region">
+                    <header>
+                      <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
+                      <h3>Inbox</h3>
+                      <div id="home-list-searchbar" role="search">
+                        <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
+                        <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
+                        <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
+                      </div>
                     </header>
-                    <div class="scrollable">
-                      <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
-                    </div>
-                  </section>
-                  <footer aria-hidden="true">
-                    <div role="status"><span>No bugs found in this folder.</span></div>
-                  </footer>
-                </div><!-- end #home-list-pane -->
-                <div id="home-preview-pane" class="bug-container" tabindex="0" role="region" aria-expanded="false"></div>
-              </div>
-            </section>
-          </div><!-- end #tabpanel-home -->
-        </div><!-- end #main-tabpanels -->
-      </main>
+                    <section id="home-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="home-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
+                    </section>
+                    <section id="home-vertical-thread" tabindex="0" role="region">
+                      <header role="toolbar">
+                        <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
+                          <li role="radio" data-value="open">Open</li>
+                          <li role="radio" data-value="closed">Closed</li>
+                          <li role="radio" data-value="all">All</li>
+                        </ul>
+                        <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
+                        <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
+                        <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
+                          <li role="none">
+                            <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>
+                          </li>
+                        </ul>
+                      </header>
+                      <div class="scrollable">
+                        <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
+                      </div>
+                    </section>
+                    <footer aria-hidden="true">
+                      <div role="status"><span>No bugs found in this folder.</span></div>
+                    </footer>
+                  </div><!-- end #home-list-pane -->
+                  <div id="home-preview-pane" class="bug-container" tabindex="0" role="region" aria-expanded="false"></div>
+                </div>
+              </section>
+            </div><!-- end #tabpanel-home -->
+          </div><!-- end #main-tabpanels -->
+        </main>
+      </div><!-- end #app-body -->
       <div class="statusbar" role="status">
         <p></p>
         <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
       </div>
-    </section><!-- end #app-body -->
+    </div><!-- end #app-container -->
     <div itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="BzDeck">
       <meta itemprop="url" content="https://www.bzdeck.com/">

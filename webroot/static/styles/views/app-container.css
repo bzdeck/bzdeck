@@ -2,22 +2,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#app-body {
+#app-container {
+  display: flex;
   position: fixed;
   z-index: 100;
   width: 100%;
   height: 100%;
 }
 
-#app-body[aria-hidden="true"] {
+#app-container[aria-hidden="true"] {
   display: block;
 }
 
-#app-body[aria-hidden="true"] * {
+#app-container[aria-hidden="true"] * {
   pointer-events: none;
 }
 
-#app-body .statusbar {
+#app-container .statusbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -26,13 +27,13 @@
   height: .2rem;
 }
 
-#app-body .statusbar p,
-[data-device|="mobile"]:root #app-body .statusbar [role="progressbar"] {
+#app-container .statusbar p,
+[data-device|="mobile"]:root #app-container .statusbar [role="progressbar"] {
   position: absolute;
   left: -99999px;
 }
- 
-[data-device="desktop"]:root #app-body .statusbar [role="progressbar"] {
+
+[data-device="desktop"]:root #app-container .statusbar [role="progressbar"] {
   position: absolute;
   top: 0;
   left: 0;
@@ -44,11 +45,16 @@
   transition: width .5s, opacity 1s;
 }
 
-[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="0"] {
+[data-device="desktop"]:root #app-container .statusbar [role="progressbar"][aria-valuenow="0"] {
   transition-duration: 0s;
 }
 
-[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="0"],
-[data-device="desktop"]:root #app-body .statusbar [role="progressbar"][aria-valuenow="100"] {
+[data-device="desktop"]:root #app-container .statusbar [role="progressbar"][aria-valuenow="0"],
+[data-device="desktop"]:root #app-container .statusbar [role="progressbar"][aria-valuenow="100"] {
   opacity: 0;
+}
+
+#app-body {
+  flex: auto;
+  display: flex;
 }

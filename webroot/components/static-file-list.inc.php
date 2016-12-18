@@ -15,7 +15,8 @@ $styles = [
   '/static/styles/base/widgets.css',
   '/static/styles/base/animations.css',
   // Views
-  '/static/styles/views/app-body.css',
+  '/static/styles/views/app-container.css',
+  '/static/styles/views/app-landing.css',
   '/static/styles/views/attachment-page.css',
   '/static/styles/views/attachment.css',
   '/static/styles/views/bug-attachments.css',

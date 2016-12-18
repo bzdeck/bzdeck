@@ -3,15 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #navigator {
-  position: absolute;
-  top: 0;
-  bottom: 0;
   z-index: 200;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
 [data-device="desktop"]:root #navigator {
+  flex: none;
+  position: relative;
   overflow: visible; /* To show tooltips */
   width: 5.6rem;
   border-width: 0 .1rem 0 0;
@@ -22,6 +20,10 @@
 }
 
 [data-device|="mobile"]:root #navigator {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   width: 100%;
   background-color: #0006 !important;
   transition: background-color .2s ease .4s; /* Set a delay for the transitioning navigator */
