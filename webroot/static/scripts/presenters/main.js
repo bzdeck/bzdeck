@@ -3,40 +3,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Banner Presenter that controls everything on the global application header.
+ * Define the Main Presenter that controls everything on the main application region.
  * @extends BzDeck.BasePresenter
  * @todo Move this to the worker thread.
  */
-BzDeck.BannerPresenter = class BannerPresenter extends BzDeck.BasePresenter {
+BzDeck.MainPresenter = class MainPresenter extends BzDeck.BasePresenter {
   /**
-   * Get a BannerPresenter instance.
+   * Get a MainPresenter instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
-   * @returns {BannerPresenter} New BannerPresenter instance.
+   * @returns {MainPresenter} New MainPresenter instance.
    */
   constructor (id) {
     super(id); // Assign this.id
 
     // Subscribe to events
-    this.subscribe('V#BackButtonClicked');
     this.subscribe('V#TabSelected');
   }
 
   /**
-   * Called whenever the Back button is clicked on the mobile view. Navigate backward when possible or just show Inbox.
-   * @listens BannerView#BackButtonClicked
-   */
-  on_back_button_clicked () {
-    if (history.state && history.state.previous) {
-      history.back();
-    } else {
-      BzDeck.router.navigate('/home/inbox');
-    }
-  }
-
-  /**
    * Called whenever a tab in the global tablist is selected. Navigate to the specified location.
-   * @listens BannerView#TabSelected
+   * @listens MainView#TabSelected
    * @param {String} path - Location pathname that corresponds to the tab.
    */
   on_tab_selected ({ path } = {}) {

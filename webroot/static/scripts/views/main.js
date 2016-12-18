@@ -3,15 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Banner View that represents the global application header, containing the Quick Search bar (currently
- * disabled) and global tabs.
+ * Define the Main View that represents the main application region, containing the main tabs and tabpanels.
  * @extends BzDeck.BaseView
  */
-BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
+BzDeck.MainView = class MainView extends BzDeck.BaseView {
   /**
-   * Get a BannerView instance.
+   * Get a MainView instance.
    * @constructor
-   * @returns {BannerView} New BannerView instance.
+   * @returns {MainView} New MainView instance.
    */
   constructor () {
     super(); // Assign this.id
@@ -23,8 +22,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
     this.tab_path_map = new Map([['tab-home', '/home/inbox']]);
 
     // Initiate the corresponding presenter and sub-view
-    BzDeck.presenters.banner = new BzDeck.BannerPresenter(this.id),
-    BzDeck.views.quick_search = new BzDeck.QuickSearchView(this.id);
+    BzDeck.presenters.main = new BzDeck.MainPresenter(this.id);
   }
 
   /**
@@ -59,7 +57,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
       $tab = add_tab();
 
       // Prepare the Back button on the mobile banner
-      this.add_back_button($tabpanel);
+      BzDeck.views.global.add_back_button($tabpanel);
     }
 
     BzDeck.views.global.update_window_title($tab);
@@ -73,7 +71,7 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
    * Called whenever a global tab is selected.
    * @param {Array.<HTMLElement>} items - Newly selected nodes.
    * @param {Array.<HTMLElement>} oldval - Previously selected nodes.
-   * @fires BannerView#TabSelected
+   * @fires MainView#TabSelected
    */
   on_tab_selected ({ items, oldval } = {}) {
     const path = this.tab_path_map.get(items[0].id);
@@ -99,31 +97,9 @@ BzDeck.BannerView = class BannerView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever a global tab is opened or closed. Update the data-tab-count attribute on <html>.
+   * Called whenever a global tab is opened or closed. Update the data-tab-count attribute on <main>.
    */
   update_tab_count () {
-    document.documentElement.setAttribute('data-tab-count', this.$$tablist.view.members.length);
-  }
-
-  /**
-   * Add the Back button to the header of each page. Only on mobile, and the header is actually not in the global
-   * banner.
-   * @param {HTMLElement} $parent - Tabpanel that contains the header.
-   * @fires BannerView#BackButtonClicked
-   */
-  add_back_button ($parent) {
-    const $header = $parent.querySelector('header');
-    const $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
-
-    if (FlareTail.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
-      $button.setAttribute('aria-label', 'Back'); // l10n
-      $button.addEventListener('touchstart', event => {
-        this.trigger('#BackButtonClicked');
-
-        return FlareTail.util.Events.ignore(event);
-      });
-
-      $header.insertAdjacentElement('afterbegin', $button);
-    }
+    document.querySelector('main').setAttribute('data-tab-count', this.$$tablist.view.members.length);
   }
 }

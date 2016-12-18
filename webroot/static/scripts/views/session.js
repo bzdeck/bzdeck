@@ -33,7 +33,7 @@ BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
    */
   on_data_loaded () {
     BzDeck.views.global = new BzDeck.GlobalView();
-    BzDeck.views.banner = new BzDeck.BannerView();
+    BzDeck.views.main = new BzDeck.MainView();
     BzDeck.views.navigator = new BzDeck.NavigatorView();
     BzDeck.views.statusbar = new BzDeck.StatusbarView();
 

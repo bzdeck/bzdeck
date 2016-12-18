@@ -62,7 +62,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * Connect to the view.
    */
   connect () {
-    BzDeck.views.banner.open_tab({
+    BzDeck.views.main.open_tab({
       label: 'Search', // l10n
       description: 'Search & Browse Bugs', // l10n
       category: 'search',

@@ -41,7 +41,7 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       prefs.set(name, value);
     }));
 
-    BzDeck.views.banner.open_tab({
+    BzDeck.views.main.open_tab({
       label: 'Settings', // l10n
       category: 'settings',
     }, this);

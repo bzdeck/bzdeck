@@ -209,7 +209,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     // Prepare the Back button on the mobile banner
-    BzDeck.views.banner.add_back_button(this.$bug);
+    BzDeck.views.global.add_back_button(this.$bug);
   }
 
   /**

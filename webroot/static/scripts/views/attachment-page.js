@@ -31,7 +31,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    */
   reactivate (att_id) {
-    const $$tablist = BzDeck.views.banner.$$tablist;
+    const $$tablist = BzDeck.views.main.$$tablist;
 
     // Find an existing tab
     for (const [page_id, page_view] of BzDeck.views.pages.attachment_list || []) {
@@ -49,7 +49,7 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
    * Activate the view.
    */
   activate () {
-    BzDeck.views.banner.open_tab({
+    BzDeck.views.main.open_tab({
       label: isNaN(this.att_id) ? 'New Attachment' : `Attachment ${this.att_id}`, // l10n
       category: 'attachment',
     }, this);

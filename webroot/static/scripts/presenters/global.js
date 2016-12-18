@@ -29,6 +29,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
     this.subscribe('AnyView#OpeningBugRequested', true);
     this.subscribe('AnyView#OpeningAttachmentRequested', true);
     this.subscribe('AnyView#OpeningProfileRequested', true);
+    this.subscribe('V#BackButtonClicked');
   }
 
   /**
@@ -72,6 +73,18 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
    */
   on_opening_profile_requested ({ email } = {}) {
     BzDeck.router.navigate(`/profile/${email}`);
+  }
+
+  /**
+   * Called whenever the Back button is clicked on the mobile view. Navigate backward when possible or just show Inbox.
+   * @listens GlobalView#BackButtonClicked
+   */
+  on_back_button_clicked () {
+    if (history.state && history.state.previous) {
+      history.back();
+    } else {
+      BzDeck.router.navigate('/home/inbox');
+    }
   }
 
   /**

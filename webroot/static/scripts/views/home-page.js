@@ -54,6 +54,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
     // Initiate the corresponding presenter and sub-view
     this.presenter =  new BzDeck.HomePagePresenter(this.id);
     this.container_view = new BzDeck.BugContainerView(this.id, this.$preview_pane);
+    BzDeck.presenters.quick_search = new BzDeck.QuickSearchPresenter(this.id);
 
     BzDeck.views.pages.home = this;
     this.connect(folder_id);
@@ -75,7 +76,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   connect (folder_id) {
     const $folder = document.querySelector(`#navigator-folder-${folder_id}`);
     const $tab = document.querySelector('#tab-home');
-    const $$tablist = BzDeck.views.banner.$$tablist;
+    const $$tablist = BzDeck.views.main.$$tablist;
 
     if (!$folder) {
       // Unknown folder; ignore
@@ -93,7 +94,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
       BzDeck.presenters.navigator.open_folder(folder_id);
     }
 
-    BzDeck.views.banner.tab_path_map.set('tab-home', location.pathname);
+    BzDeck.views.main.tab_path_map.set('tab-home', location.pathname);
     BzDeck.views.global.update_window_title($tab);
   }
 
@@ -227,8 +228,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Initialize the searchbar available in the vertical layout.
    * @listens QuickSearchPresenter#ResultsAvailable
-   * @fires QuickSearchView#QuickSearchRequested
-   * @fires QuickSearchView#AdvancedSearchRequested
+   * @fires AnyView#QuickSearchRequested
+   * @fires AnyView#AdvancedSearchRequested
    */
   init_searchbar () {
     const $searchbar = document.querySelector('#home-list-searchbar');
@@ -243,9 +244,8 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     $search_button.addEventListener('mousedown', event => {
       if ($searchbar.classList.contains('active')) {
-        // TEMP: Use QuickSearchPresenter to open the advanced search page
         // TEMP: Disable the advanced search until further development takes place (#12)
-        // this.trigger('QuickSearchView#AdvancedSearchRequested', { input: $searchbox.value });
+        // this.trigger('AnyView#AdvancedSearchRequested', { input: $searchbox.value });
       } else {
         $searchbar.classList.add('active');
       }
@@ -264,8 +264,7 @@ BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
 
     $searchbox.addEventListener('input', event => {
       if ($searchbox.value.trim()) {
-        // TEMP: Use QuickSearchPresenter to retrieve search results
-        this.trigger('QuickSearchView#QuickSearchRequested', { input: $searchbox.value });
+        this.trigger('AnyView#QuickSearchRequested', { input: $searchbox.value });
       }
     });
 

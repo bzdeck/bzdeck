@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 main {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   z-index: 20;
   top: 0;
@@ -12,14 +14,7 @@ main {
 }
 
 [data-device="desktop"]:root main {
-  top: 3.6rem; /* height of the banner */
   left: 5.6rem;
-  transition: top .2s ease .5s;
-}
-
-[data-device="desktop"]:root:not([data-tab-count]) main,
-[data-device="desktop"][data-tab-count="1"]:root main {
-  top: 0; /* Hide the tablist when there is only one tab */
 }
 
 [data-device|="mobile"]:root main {
@@ -30,15 +25,50 @@ main {
   left: 0;
 }
 
+#main-tablist {
+  flex: none;
+  height: 4.4rem;
+  transition: height .2s ease .5s;
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-device="desktop"]:root main:not([data-tab-count]) #main-tablist,
+[data-device="desktop"]:root main[data-tab-count="1"] #main-tablist {
+  height: 0; /* Hide the tablist when there is only one tab */
+}
+
+#main-tablist [role="tab"] {
+  border: 0;
+}
+
+#main-tablist [role="tab"][aria-selected="true"] {
+  background-color: var(--secondary-application-header-background-color);
+}
+
+#main-tablist [role="tab"] .close {
+  color: var(--secondary-application-header-foreground-color);
+  background-color: transparent;
+  background-image: none;
+}
+
+#main-tablist [role="tab"] .close::after {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-family: FontAwesome;
+  content: "\F00D";
+  justify-content: center;
+  align-items: center;
+}
+
 #tab-home .close {
   display: none;
 }
 
 #main-tabpanels {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
+  flex: auto;
 }
 
 [data-device|="mobile"]:root #main-tabpanels > [role="tabpanel"] {

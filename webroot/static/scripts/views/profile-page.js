@@ -59,7 +59,7 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
    * Activate to the view.
    */
   activate () {
-    BzDeck.views.banner.open_tab({
+    BzDeck.views.main.open_tab({
       label: 'Profile', // l10n
       description: 'User Profile', // l10n
       category: 'profile',

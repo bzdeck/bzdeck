@@ -50,7 +50,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
       this.bug_id = bug_id;
       this.$bug = $existing_bug;
       this.$bug.removeAttribute('aria-hidden');
-      BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, `/bug/${this.bug_id}`);
+      BzDeck.views.main.tab_path_map.set(`tab-details-${this.id}`, `/bug/${this.bug_id}`);
 
       BzDeck.views.statusbar.stop_loading();
       this.trigger('#BugAdded', { id: this.bug_id });
@@ -86,7 +86,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
     this.$bug = this.$loading_bug;
 
     this.$bug.removeAttribute('aria-hidden');
-    BzDeck.views.banner.tab_path_map.set(`tab-details-${this.id}`, `/bug/${this.bug_id}`);
+    BzDeck.views.main.tab_path_map.set(`tab-details-${this.id}`, `/bug/${this.bug_id}`);
 
     delete this.loading_bug_id;
     delete this.$loading_bug;

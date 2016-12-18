@@ -168,11 +168,3 @@ ins, del {
   box-shadow: 0 0 .4rem #1A608F99, /* --active-textbox-border-color */
               inset 0 0 .4rem #1C1C1C33; /* --control-shadow-color */
 }
-
-/* ----------------------------------------------------------------------------------------------
- * Global Header
- * ---------------------------------------------------------------------------------------------- */
-
-[role="banner"] [role="search"]:focus + [role="button"] {
-  background-image: -moz-image-rect(url(/static/images/themes/light/sprite.png), 0, 128, 32, 96); /* Use the Light theme asset */
-}

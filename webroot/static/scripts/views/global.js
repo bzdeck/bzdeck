@@ -77,6 +77,27 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   }
 
   /**
+   * Add the Back button to the header of each page, only on mobile.
+   * @param {HTMLElement} $parent - Tabpanel that contains the header.
+   * @fires GlobalView#BackButtonClicked
+   */
+  add_back_button ($parent) {
+    const $header = $parent.querySelector('header');
+    const $button = document.querySelector('#tabpanel-home .banner-nav-button').cloneNode(true);
+
+    if (FlareTail.env.device.mobile && !$parent.querySelector('.banner-nav-button') && $header) {
+      $button.setAttribute('aria-label', 'Back'); // l10n
+      $button.addEventListener('touchstart', event => {
+        this.trigger('#BackButtonClicked');
+
+        return FlareTail.util.Events.ignore(event);
+      });
+
+      $header.insertAdjacentElement('afterbegin', $button);
+    }
+  }
+
+  /**
    * Update the document title and statusbar message when the number of unread bugs is changed.
    * @listens GlobalPresenter#ToggleUnread
    * @param {Array.<Number>} bug_ids - IDs of unread bugs.

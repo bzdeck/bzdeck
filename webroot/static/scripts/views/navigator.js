@@ -84,7 +84,7 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
   async open_folder ({ folder_id, bug_ids } = {}) {
     const bugs = await BzDeck.collections.bugs.get_some(bug_ids); // Map
     const home = BzDeck.views.pages.home;
-    const toolbar = BzDeck.views.banner;
+    const main = BzDeck.views.main;
     const folder_label = BzDeck.config.folders.find(f => f.data.id === folder_id).label;
     const unread = [...bugs.values()].filter(bug => bug.unread).length;
 
@@ -94,9 +94,9 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
 
     // Mobile compact layout
     if (FlareTail.env.device.mobile &&
-        toolbar.$$tablist.view.selected[0].id !== 'tab-home') {
+        main.$$tablist.view.selected[0].id !== 'tab-home') {
       // Select the home tab
-      toolbar.$$tablist.view.selected = toolbar.$$tablist.view.members[0];
+      main.$$tablist.view.selected = main.$$tablist.view.members[0];
     }
   }
 
