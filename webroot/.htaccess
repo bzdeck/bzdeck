@@ -37,6 +37,7 @@ RewriteRule ^(attachment|bug|home|profile|search|settings) /app/ [L]
 # Rewrite: misc
 RewriteRule ^favicon\.ico$ /static/images/logo/favicon.ico [L]
 RewriteRule ^service-worker\.js$ /static/scripts/workers/service-worker.js [L]
+RewriteRule ^service-worker-resources\.js$ /components/service-worker-resources.js.php [L]
 
 # Performance: remove ETag
 FileETag None
