@@ -1,8 +1,9 @@
+<?php include_once($_SERVER['DOCUMENT_ROOT'] . '/components/output-link-elements.inc.php'); ?>
+<?php output_link_headers(); ?>
 <!DOCTYPE html>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<?php include_once($_SERVER['DOCUMENT_ROOT'] . '/components/output-link-elements.inc.php'); ?>
 <html lang="en">
   <head>
     <meta charset="UTF-8">

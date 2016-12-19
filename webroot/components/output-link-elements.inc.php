@@ -9,6 +9,20 @@ include_once('static-resource-list.inc.php');
 define('DEBUG', $_GET['debug'] && $_GET['debug'] === 'true');
 
 /**
+ * Output Link response headers for HTTP/2 server push.
+ * @see https://httpd.apache.org/docs/2.4/howto/http2.html
+ */
+function output_link_headers () {
+  global $resources;
+
+  foreach ($resources as $type => $files) {
+    foreach ($files as $path) {
+      header("Link: <{$path}>;rel=preload", false);
+    }
+  }
+}
+
+/**
  * Output <link> elements for CSS and <script> elements for JavaScript files.
  * @param string $type Type of resources, either `css` or `js`.
  * @see https://httpd.apache.org/docs/2.4/howto/http2.html
