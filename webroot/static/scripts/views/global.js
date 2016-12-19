@@ -90,7 +90,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
       $button.addEventListener('touchstart', event => {
         this.trigger('#BackButtonClicked');
 
-        return FlareTail.util.Events.ignore(event);
+        return FlareTail.util.Event.ignore(event);
       });
 
       $header.insertAdjacentElement('afterbegin', $button);
@@ -169,14 +169,14 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
     if ($target.matches('[itemtype$="User"][role="link"]')) {
       this.trigger('AnyView#OpeningProfileRequested', { email: $target.querySelector('[itemprop="email"]').content });
 
-      return FlareTail.util.Events.ignore(event);
+      return FlareTail.util.Event.ignore(event);
     }
 
     // Support clicks on the avatar image in a comment
     if ($parent && $parent.matches('[itemtype$="User"][role="link"]')) {
       this.trigger('AnyView#OpeningProfileRequested', { email: $parent.querySelector('[itemprop="email"]').content });
 
-      return FlareTail.util.Events.ignore(event);
+      return FlareTail.util.Event.ignore(event);
     }
 
     if ($target.matches(':any-link, [role="link"]')) {
@@ -215,7 +215,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         new_win.location = $target.href;
       }
 
-      return FlareTail.util.Events.ignore(event);
+      return FlareTail.util.Event.ignore(event);
     }
 
     return true;

@@ -170,7 +170,7 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
       document.documentElement.setAttribute('data-navigator-hidden', hidden);
       $navigator.setAttribute('aria-hidden', hidden);
 
-      return FlareTail.util.Events.ignore(event);
+      return FlareTail.util.Event.ignore(event);
     });
   }
 

@@ -26,7 +26,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
         this.$textbox.focus();
       }
 
-      return FlareTail.util.Events.ignore(event);
+      return FlareTail.util.Event.ignore(event);
     });
 
     // Change the shortcut labels depending on the user's platform
@@ -67,7 +67,7 @@ BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
       }
 
       // Fire an event to resize the textbox if needed
-      FlareTail.util.Events.trigger(this.$textbox, 'input', {}, false);
+      FlareTail.util.Event.trigger(this.$textbox, 'input', {}, false);
     };
 
     const bracket = (mark, mark2 = '') => {
