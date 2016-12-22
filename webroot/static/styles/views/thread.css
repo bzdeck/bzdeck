@@ -2,18 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-[id$="vertical-thread"] {
+.bug-listbox-container {
   display: flex;
   position: relative;
   overflow: hidden;
   flex-direction: column;
 }
 
-[id$="vertical-thread"][aria-busy="true"] > * {
+.bug-listbox-container[aria-busy="true"] > * {
   display: none;
 }
 
-[id$="vertical-thread"] header {
+.bug-listbox-container header {
   display: flex;
   margin: 0 1.2rem;
   border-top: 1px solid var(--secondary-grid-border-color);
@@ -22,13 +22,13 @@
   justify-content: center;
 }
 
-[id$="vertical-thread"] header [role="radiogroup"] {
+.bug-listbox-container header [role="radiogroup"] {
   display: flex;
   justify-content: center;
   flex: auto;
 }
 
-[id$="vertical-thread"] header [role="radio"] {
+.bug-listbox-container header [role="radio"] {
   margin: 0 .4rem;
   border-radius: .4rem;
   padding: .2rem 1.2rem;
@@ -38,36 +38,36 @@
   transition: all .2s;
 }
 
-[id$="vertical-thread"] header [role="radio"][aria-checked="true"] {
+.bug-listbox-container header [role="radio"][aria-checked="true"] {
   color: var(--alternate-pressed-button-foreground-color);
   background-color: var(--alternate-pressed-button-background-color);
 }
 
-[id$="vertical-thread"] header [role="radio"]::before {
+.bug-listbox-container header [role="radio"]::before {
   display: none;
 }
 
-[id$="vertical-thread"] header [role="button"] {
+.bug-listbox-container header [role="button"] {
   width: 2rem;
   height: 2rem;
   flex: none;
 }
 
-[id$="vertical-thread"] header [role="button"]::before {
+.bug-listbox-container header [role="button"]::before {
   font-size: 1.6rem;
 }
 
-[id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="false"]::before {
+.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="false"]::before {
   font-family: FiraSans;
   content: "\2193"; /* descending, new to old, default */
 }
 
-[id$="vertical-thread"] header [role="button"][data-command="sort"][aria-pressed="true"]::before {
+.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="true"]::before {
   font-family: FiraSans;
   content: "\2191"; /* ascending, old to new */
 }
 
-[id$="vertical-thread"] header [role="button"][data-command="show-menu"]::before {
+.bug-listbox-container header [role="button"][data-command="show-menu"]::before {
   font-family: FontAwesome;
   content: '\F142';
 }
@@ -77,17 +77,17 @@
   right: .4rem;
 }
 
-[id$="vertical-thread"] .scrollable {
+.bug-listbox-container .scrollable {
   display: flex;
   flex: auto;
   background: var(--control-background-color);
 }
 
-[id$="vertical-thread"] [role="listbox"] {
+.bug-listbox-container [role="listbox"] {
   flex: auto;
 }
 
-[id$="vertical-thread"] [role="option"] {
+.bug-listbox-container [role="option"] {
   --option-padding: 1.6rem;
   --option-height: 4.8rem;
   --icon-height: 4rem;
@@ -96,7 +96,7 @@
   height: calc(var(--option-height) + var(--option-padding) * 2);
 }
 
-[id$="vertical-thread"] [role="option"][aria-selected="false"]::before {
+.bug-listbox-container [role="option"][aria-selected="false"]::before {
   position: absolute;
   bottom: 0;
   left: 1.2rem;
@@ -106,14 +106,14 @@
   content: "";
 }
 
-[id$="vertical-thread"] [role="option"] > * {
+.bug-listbox-container [role="option"] > * {
   position: absolute;
   display: block;
   margin: 0 !important;
   pointer-events: none;
 }
 
-[id$="vertical-thread"] [itemprop="contributor"] {
+.bug-listbox-container [itemprop="contributor"] {
   top: calc(50% - var(--icon-height) / 2);
   left: var(--option-padding);
   overflow: hidden;
@@ -125,7 +125,7 @@
   text-align: center;
 }
 
-[id$="vertical-thread"] [itemprop="contributor"] [itemprop="image"] {
+.bug-listbox-container [itemprop="contributor"] [itemprop="image"] {
   display: block;
   max-width: 100%;
   max-height: 100%;
@@ -133,11 +133,11 @@
   transition: opacity .4s;
 }
 
-[id$="vertical-thread"] [itemprop="contributor"] [itemprop="image"]:not([src]) {
+.bug-listbox-container [itemprop="contributor"] [itemprop="image"]:not([src]) {
   opacity: 0;
 }
 
-[id$="vertical-thread"] .labels {
+.bug-listbox-container .labels {
   display: flex;
   overflow: hidden;
   top: 0;
@@ -149,11 +149,11 @@
   justify-content: center;
 }
 
-[id$="vertical-thread"] .labels [itemprop="id"]::before {
+.bug-listbox-container .labels [itemprop="id"]::before {
   content: "#";
 }
 
-[id$="vertical-thread"] .labels [itemprop="flag"] {
+.bug-listbox-container .labels [itemprop="flag"] {
   margin: 0 .2rem 0 0;
   border-radius: .2rem;
   padding: .1rem .6rem;
@@ -163,52 +163,52 @@
   text-transform: uppercase;
 }
 
-[id$="vertical-thread"] [role="listbox"][aria-activedescendant] [role="option"][aria-selected="true"] .labels [itemprop="flag"] {
+.bug-listbox-container [role="listbox"][aria-activedescendant] [role="option"][aria-selected="true"] .labels [itemprop="flag"] {
   color: var(--base-accent-color-1);
   background: var(--base-background-color-7);
 }
 
-[id$="vertical-thread"] .labels [itemprop="flag"]:empty {
+.bug-listbox-container .labels [itemprop="flag"]:empty {
   display: none;
 }
 
-[id$="vertical-thread"] [itemprop="summary"],
-[id$="vertical-thread"] .labels > p {
+.bug-listbox-container [itemprop="summary"],
+.bug-listbox-container .labels > p {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-[id$="vertical-thread"] [itemprop="summary"] {
+.bug-listbox-container [itemprop="summary"] {
   font-size: 1.4rem;
 }
 
-[id$="vertical-thread"] [itemprop="extract"],
-[id$="vertical-thread"] [role="option"] ul {
+.bug-listbox-container [itemprop="extract"],
+.bug-listbox-container [role="option"] ul {
   opacity: .7;
   font-size: 1.2rem;
 }
 
-[id$="vertical-thread"] [role="option"][data-unread="true"] [itemprop="summary"] {
+.bug-listbox-container [role="option"][data-unread="true"] [itemprop="summary"] {
   font-weight: 500;
 }
 
-[id$="vertical-thread"] [role="option"] ul {
+.bug-listbox-container [role="option"] ul {
   display: block;
   right: 4.2rem;
   bottom: var(--option-padding);
   left: calc(var(--option-padding) * 2 + var(--option-height));
 }
 
-[id$="vertical-thread"] [role="option"] li {
+.bug-listbox-container [role="option"] li {
   display: inline;
 }
 
-[id$="vertical-thread"] [role="option"] li:not(:last-child)::after {
+.bug-listbox-container [role="option"] li:not(:last-child)::after {
   content: '\00A0\00B7'; /* nbsp + middot */
 }
 
-[id$="vertical-thread"] [itemprop="starred"] {
+.bug-listbox-container [itemprop="starred"] {
   top: calc(50% - 1.6rem);
   right: 1.2rem;
   width: 3.2rem;
@@ -216,7 +216,7 @@
   pointer-events: auto;
 }
 
-[id$="vertical-thread"] [itemprop="starred"]::before {
+.bug-listbox-container [itemprop="starred"]::before {
   display: inline-block;
   margin: 0;
   border: 0;
@@ -230,15 +230,15 @@
   text-align: center;
 }
 
-[id$="vertical-thread"] [itemprop="starred"][aria-checked="false"]::before {
+.bug-listbox-container [itemprop="starred"][aria-checked="false"]::before {
   content: "\F006";
 }
 
-[id$="vertical-thread"] [itemprop="starred"][aria-checked="true"]::before {
+.bug-listbox-container [itemprop="starred"][aria-checked="true"]::before {
   content: "\F005";
 }
 
-[id$="vertical-thread"] [itemprop="starred"]::after {
+.bug-listbox-container [itemprop="starred"]::after {
   content: "";
 }
 
@@ -308,7 +308,7 @@
 }
 
 @media (max-width: 1023px) {
-  [data-device|="mobile"]:root [id$="vertical-thread"] [role="option"][data-unread="false"] {
+  [data-device|="mobile"]:root .bug-listbox-container [role="option"][data-unread="false"] {
     color: inherit;
     background-color: var(--secondary-region-background-color);
   }

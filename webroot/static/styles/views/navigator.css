@@ -137,6 +137,10 @@
   opacity: .4;
 }
 
+#navigator-folder-search label::before {
+  content: '\F002';
+}
+
 #navigator-folder-inbox label::before {
   content: '\F01C';
 }

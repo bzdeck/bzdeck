@@ -129,7 +129,7 @@ BzDeck.MainView = class MainView extends BzDeck.BaseView {
     document.title = document.querySelector('#tab-home').title = title;
     document.querySelector('#tab-home label').textContent =
         document.querySelector('#tabpanel-home h2').textContent =
-        document.querySelector('#sidebar-list-pane h3').textContent = title.replace(/\s\(\d+\)$/, '');
+        document.querySelector('#sidebar-list-panel h3').textContent = title.replace(/\s\(\d+\)$/, '');
   }
 
   /**

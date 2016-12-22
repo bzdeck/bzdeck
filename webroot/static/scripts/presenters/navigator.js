@@ -113,6 +113,10 @@ BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresente
    * @param {String} id - Folder id.
    */
   on_folder_selected ({ id } = {}) {
+    if (['search'].includes(id)) {
+      return;
+    }
+    
     this.data.folder_id = id;
   }
 

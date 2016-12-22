@@ -55,6 +55,7 @@ $resources = (object) [
     '/static/styles/views/settings-page.css',
     '/static/styles/views/sidebar.css',
     '/static/styles/views/sidebar-list.css',
+    '/static/styles/views/sidebar-search.css',
     '/static/styles/views/thread.css',
     '/static/styles/views/tooltip.css',
     // Themes
@@ -122,6 +123,7 @@ $resources = (object) [
     '/static/scripts/views/settings-page.js',
     '/static/scripts/views/sidebar.js',
     '/static/scripts/views/sidebar-list.js',
+    '/static/scripts/views/sidebar-search.js',
     '/static/scripts/views/statusbar.js',
     '/static/scripts/views/thread.js',
     '/static/scripts/views/tooltip.js',
@@ -142,6 +144,7 @@ $resources = (object) [
     '/static/scripts/presenters/session.js',
     '/static/scripts/presenters/settings-page.js',
     '/static/scripts/presenters/sidebar-list.js',
+    '/static/scripts/presenters/sidebar-search.js',
     '/static/scripts/presenters/statusbar.js',
     // Workers
     '/static/scripts/workers/tasks.js',

@@ -16,13 +16,14 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
   constructor (id) {
     super(id); // Assign this.id
 
+    this.$container = document.querySelector('#sidebar-list-panel');
+
     // Subscribe to events
     this.on('BugContainerPresenter#navigated', data => this.on_container_navigated(data));
     this.subscribe('PrefCollection#PrefChanged', true);
 
     // Initiate the corresponding presenter and sub-view
     BzDeck.presenters.sidebar_list = this.presenter = new BzDeck.SidebarListPresenter(this.id);
-    BzDeck.presenters.quick_search = new BzDeck.QuickSearchPresenter(this.id);
 
     this.add_mobile_tweaks();
     (async () => this.change_layout(await BzDeck.prefs.get('ui.home.layout')))();
@@ -94,7 +95,6 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
         }
       });
 
-      this.init_searchbar();
       this.vertical_thread_initialized = true;
     }
 
@@ -186,65 +186,6 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
                            : this.thread.$$grid.view.$body.querySelectorAll('[role="row"]:not([aria-hidden="true"])');
 
     return [...items].map($item => Number($item.dataset.id));
-  }
-
-  /**
-   * Initialize the searchbar available in the vertical layout.
-   * @listens QuickSearchPresenter#ResultsAvailable
-   * @fires AnyView#QuickSearchRequested
-   * @fires AnyView#AdvancedSearchRequested
-   */
-  init_searchbar () {
-    const $searchbar = document.querySelector('#sidebar-list-searchbar');
-    const $searchbox = $searchbar.querySelector('[role="searchbox"]');
-    const $search_button = $searchbar.querySelector('[role="button"][data-id="search"]');
-    const $close_button = $searchbar.querySelector('[role="button"][data-id="close"]');
-    let listed_bugs;
-
-    $searchbar.addEventListener('transitionend', event => {
-      $searchbar.classList.contains('active') ? $searchbox.focus() : $search_button.focus();
-    });
-
-    $search_button.addEventListener('mousedown', event => {
-      if ($searchbar.classList.contains('active')) {
-        // TEMP: Disable the advanced search until further development takes place (#12)
-        // this.trigger('AnyView#AdvancedSearchRequested', { input: $searchbox.value });
-      } else {
-        $searchbar.classList.add('active');
-      }
-    });
-
-    $close_button.addEventListener('mousedown', event => {
-      if (listed_bugs) {
-        // Restore the bugs previously listed
-        this.thread.update(listed_bugs);
-        listed_bugs = undefined;
-      }
-
-      $searchbar.classList.remove('active');
-      document.querySelector('#home-vertical-thread').focus();
-    });
-
-    $searchbox.addEventListener('input', event => {
-      if ($searchbox.value.trim()) {
-        this.trigger('AnyView#QuickSearchRequested', { input: $searchbox.value });
-      }
-    });
-
-    this.on('QuickSearchPresenter#ResultsAvailable', async ({ category, input, results } = {}) => {
-      // Check if the search terms have not changed since the search is triggered
-      if (category !== 'bugs' || input !== $searchbox.value) {
-        return;
-      }
-
-      if (!listed_bugs) {
-        // Keep the bugs currently listed on the thread
-        listed_bugs = this.thread.bugs;
-      }
-
-      // Render the results
-      this.thread.update(await BzDeck.collections.bugs.get_some(results.map(result => result.id)));
-    }, true);
   }
 
   /**

@@ -90,7 +90,7 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
 
     main.update_title(folder_label + (unread > 0 ? ` (${unread})` : ''));
     sidebar.thread.filter ? sidebar.thread.filter(bugs) : sidebar.thread.update(bugs);
-    document.querySelector('#sidebar-list-pane > footer').setAttribute('aria-hidden', !!bugs.size);
+    document.querySelector('#sidebar-list-panel > footer').setAttribute('aria-hidden', !!bugs.size);
 
     // Mobile compact layout
     if (FlareTail.env.device.mobile &&

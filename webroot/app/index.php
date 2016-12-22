@@ -964,7 +964,9 @@
           </section><!-- end #navigator-account -->
           <section id="navigator-folders">
             <h2>Bugs</h2>
-            <ul id="navigator-folder-list" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
+            <ul id="navigator-folder-list" role="listbox" tabindex="0" aria-multiselectable="false">
+              <li tabindex="0" role="option" id="navigator-folder-search" aria-selected="false" data-id="search" aria-label="Search" data-tooltip-position="right"><label>Search</label></li>
+            </ul>
           </section><!-- end #navigator-folders -->
           <section id="navigator-menu">
             <h2>Menu</h2>
@@ -977,19 +979,14 @@
       </nav><!-- end #navigator -->
       <div id="app-body">
         <aside role="complementary" id="sidebar">
-          <section role="region" id="sidebar-list-pane">
+          <section role="region" id="sidebar-list-panel" class="sidebar-panel" aria-hidden="false">
             <header>
               <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
               <h3>Inbox</h3>
-              <div id="sidebar-list-searchbar" role="search">
-                <span class="iconic" tabindex="0" role="button" aria-label="Search" data-id="search"></span>
-                <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
-                <span class="iconic" tabindex="0" role="button" aria-label="Close" data-id="close"></span>
-              </div>
             </header>
             <section id="sidebar-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="sidebar-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
             </section>
-            <section id="home-vertical-thread" tabindex="0" role="region">
+            <section id="home-vertical-thread" class="bug-listbox-container" tabindex="0" role="region">
               <header role="toolbar">
                 <ul class="filter" role="radiogroup" aria-label="Filter Bugs by Status">
                   <li role="radio" data-value="open">Open</li>
@@ -1011,7 +1008,20 @@
             <footer aria-hidden="true">
               <div role="status"><span>No bugs found in this folder.</span></div>
             </footer>
-          </section><!-- end #sidebar-list-pane -->
+          </section><!-- end #sidebar-list-panel -->
+          <section role="region" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true">
+            <header>
+              <h3>Search</h3>
+              <div id="sidebar-search-container" role="search">
+                <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
+              </div>
+            </header>
+            <section id="sidebar-search-results" class="bug-listbox-container" tabindex="0" role="region">
+              <div class="scrollable">
+                <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
+              </div>
+            </section>
+          </section><!-- end #sidebar-search-panel -->
         </aside><!-- end #sidebar -->
         <main role="main">
           <ul id="main-tablist" tabindex="0" role="tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">

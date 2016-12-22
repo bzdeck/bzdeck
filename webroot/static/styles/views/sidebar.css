@@ -9,6 +9,43 @@
   width: 30%;
 }
 
-#sidebar > [role="region"] {
+.sidebar-panel {
+  flex: auto;
+  overflow: hidden;
+}
+
+.sidebar-panel[aria-hidden="false"] {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-home-layout="vertical"]:root .sidebar-panel > header {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-device|="mobile"]:root .sidebar-panel > header {
+  color: var(--application-header-foreground-color);
+  background-color: var(--application-header-background-color);
+}
+
+[data-home-layout="vertical"]:root .sidebar-panel > header h3 {
+  overflow: hidden;
+  padding: 0 1.6rem;
+  height: 4rem;
+  font-size: 1.6rem;
+  line-height: 4rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
+[data-device|="mobile"]:root .sidebar-panel > header h3 {
+  font-size: 2rem;
+  text-align: center;
+}
+
+[data-home-layout="vertical"]:root .sidebar-panel .bug-listbox-container {
   flex: auto;
 }

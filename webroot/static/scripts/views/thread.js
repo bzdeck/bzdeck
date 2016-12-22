@@ -267,9 +267,11 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       },
     });
 
-    this.init_filter();
-    this.init_sorter();
-    this.init_menu();
+    if (this.$header) {
+      this.init_filter();
+      this.init_sorter();
+      this.init_menu();
+    }
 
     this.on('BugModel#CacheUpdated', data => this.on_bug_updated(data), true);
     this.subscribe('BugModel#AnnotationUpdated', true);
@@ -366,8 +368,10 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     };
 
     // Update the filter radio button labels
-    this.filter_radio.open.textContent = `Open (${filtered_bugs.open.length})`;
-    this.filter_radio.closed.textContent = `Closed (${filtered_bugs.closed.length})`;
+    if (this.filter_radio) {
+      this.filter_radio.open.textContent = `Open (${filtered_bugs.open.length})`;
+      this.filter_radio.closed.textContent = `Closed (${filtered_bugs.closed.length})`;
+    }
 
     // Filter & sort bugs
     _bugs = filter_condition === 'all' ? _bugs : filtered_bugs[filter_condition];

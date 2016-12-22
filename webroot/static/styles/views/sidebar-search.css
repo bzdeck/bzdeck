@@ -2,9 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#app-body {
-  flex: auto;
-  display: flex;
-  position: relative;
-  z-index: 100;
+#sidebar-search-container {
+  padding: 0 1.6rem 1.6rem;
+}
+
+#sidebar-search-container [role="searchbox"] {
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 1.4rem;
+  line-height: 1.2;
 }
