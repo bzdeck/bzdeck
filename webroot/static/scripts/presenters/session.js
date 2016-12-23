@@ -207,7 +207,6 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
 
     return Promise.all([
       BzDeck.host.get_config(),
-      BzDeck.collections.users.refresh(),
       fetch_bugs(),
     ]);
   }
@@ -254,6 +253,9 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
    */
   login () {
     this.trigger('#Login');
+
+    // Perform post-sign-in tasks
+    BzDeck.collections.users.refresh();
   }
 
   /**
