@@ -27,93 +27,11 @@ BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
    * of those users.
    * @param {Proxy} bug - BugModel object.
    */
-  async add_from_bug (bug) {
-    const missing = new Set();
-
-    await Promise.all([...bug.participants.values()].map(async ({ name } = {}) => {
-      const user = await this.get(name);
-
-      if (!user) {
-        missing.add(name);
-      }
-    }));
-
-    if (missing.size) {
-      this.fetch(missing);
+  add_from_bug (bug) {
+    for (const [name, bugzilla] of bug.participants) {
+      // Get user or create new user
+      this.get(name, { name, bugzilla });
     }
-  }
-
-  /**
-   * Refresh user profiles if the data is older than 10 days
-   */
-  async refresh () {
-    const all_users = await this.get_all();
-    const users = [...all_users.values()].filter(user => user.updated && user.updated < Date.now() - 864000000);
-
-    if (users.length) {
-      this.fetch(users.map(user => user.email));
-    }
-  }
-
-  /**
-   * Retrieve multiple users from Bugzilla with specific user names, and return user objects.
-   * @param {(Array|Set)} _names - List of user names (email addresses) to retrieve.
-   * @returns {Promise.<Array.<Proxy>>} Proxified UserModel instances.
-   */
-  async fetch (_names) {
-    const names = [..._names].sort();
-
-    // Due to Bug 1169040, the Bugzilla API returns an error even if one of the users is not found. To work around the
-    // issue, divide the array into chunks to retrieve 20 users per request, then divide each chunk again if failed.
-    const names_chunks = FlareTail.util.Array.chunk(names, 20);
-
-    const _fetch = async names => {
-      const params = new URLSearchParams();
-
-      names.forEach(name => params.append('names', name));
-
-      const result = await BzDeck.host.request('user', params);
-
-      return result.users;
-    };
-
-    const users_chunks = await Promise.all(names_chunks.map(async names => {
-      const users = await _fetch(names);
-
-      if (users && !users.error) {
-        return users;
-      }
-
-      // Retrieve the users one by one if failed
-      return Promise.all(names.map(async name => {
-        const users = await _fetch([name])
-
-        return users ? users[0] : { name, error: true };
-      }));
-    }));
-
-    // Flatten an array of arrays
-    const _users = users_chunks.reduce((a, b) => a.concat(b), []);
-
-    const users = await Promise.all(_users.map(async _user => {
-      const name = _user.name;
-      const user = await this.get(name);
-      const obj = _user.error ? { name, error: 'Not Found' }
-                              : Object.assign(user ? user.data : {}, { bugzilla: _user });
-
-      obj.updated = Date.now();
-
-      return this.set(name, obj);
-    }));
-
-    users.forEach(user => {
-      // Refresh the Gravatar profile if already exists, or fetch later on demand
-      if (user.gravatar) {
-        user.get_gravatar_profile();
-      }
-    });
-
-    return users;
   }
 
   /**

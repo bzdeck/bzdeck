@@ -12,7 +12,9 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get an UserModel instance.
    * @constructor
-   * @param {Object} data - Profile object including Bugzilla's raw user data.
+   * @param {Object} data - Profile object.
+   * @param {String} data.name - User name, usually the same as email address.
+   * @param {Object} [data.bugzilla] - Bugzilla's raw user data.
    * @fires UserModel#UserInfoUpdated
    * @returns {Proxy} Proxified UserModel instance, so consumers can seamlessly access user properties via user.prop
    *  instead of user.data.prop.
@@ -84,9 +86,9 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       },
     });
 
-    if (!this.data.updated) {
+    if (!this.data.bugzilla || !this.data.bugzilla.id) {
       (async () => {
-        await this.fetch();
+        await this.get_bugzilla_profile();
         // Notify the change to update the UI when necessary
         this.trigger('#UserInfoUpdated', { name: this.email });
       })();
@@ -103,52 +105,20 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Retrieve the user's relevant data from Bugzilla and Gravatar, save the results, and return the profile.
-   * @param {Object} [options] - Extra options.
-   * @returns {Promise.<Proxy>} The user's profile.
-   */
-  async fetch (options = {}) {
-    options.in_promise_all = true;
-
-    try {
-      const [bugzilla, gravatar] = await Promise.all([
-        this.get_bugzilla_profile(options),
-        // Refresh the Gravatar profile if already exists, or fetch later on demand
-        this.data.gravatar ? this.get_gravatar_profile(options) : Promise.resolve(),
-      ]);
-
-      this.save({
-        name: this.email, // String
-        id: bugzilla.id, // Number
-        bugzilla, // Object
-        gravatar, // Object
-        updated: Date.now(), // Number
-      });
-    } catch (error) {
-      this.save({
-        name: this.email,
-        error: error.message,
-        updated: Date.now(),
-      });
-    }
-
-    return this.data;
-  }
-
-  /**
    * Get or retrieve the user's Bugzilla profile. The profile may be available at the time of creating the UserModel.
-   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @param {String} [api_key] - API key used to authenticate against the Bugzilla API.
    * @returns {Promise.<Object>} The user's Bugzilla profile.
    * @see {@link http://bugzilla.readthedocs.org/en/latest/api/core/v1/user.html#get-user Bugzilla API}
    */
-  async get_bugzilla_profile ({ in_promise_all = false, api_key } = {}) {
+  async get_bugzilla_profile ({ api_key } = {}) {
     if (this.data.bugzilla && this.data.bugzilla.id) {
       return this.data.bugzilla;
     }
 
-    if (this.data.error) {
-      throw new Error(this.data.error);
+    // If the user data has an error (e.g. not found) but it's loaded within 24 hours, just return the error object.
+    // Otherwise continue to retrieve the data again
+    if (this.data.error && this.data.updated > Date.now() - 1000 * 60 * 60 * 24) {
+      return this.data;
     }
 
     const params = new URLSearchParams();
@@ -158,22 +128,34 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     const result = await BzDeck.host.request('user', params, { api_key: api_key || undefined });
 
     if (!result.users) {
-      throw new Error(result.message || 'User Not Found');
+      this.save({
+        name: this.email,
+        error: result.message || 'User Not Found',
+        updated: Date.now(),
+      });
+
+      throw new Error(this.data.error);
     }
 
-    return result.users[0];
+    const _user = result.users[0];
+
+    this.data.id = _user.id;
+    this.data.bugzilla = _user;
+    this.data.updated = Date.now();
+    this.save();
+
+    return _user;
   }
 
   /**
    * Get or retrieve the user's Gravatar profile. Because the request can be done only through JSONP that requires DOM
    * access, delegate the process to GlobalView.
    * @listens GlobalView#GravatarProfileProvided
-   * @param {Boolean} [in_promise_all=false] - Whether the function is called as part of Promise.all().
    * @fires UserModel#GravatarProfileRequested
    * @returns {Promise.<Object>} The user's Gravatar profile.
    * @see {@link https://en.gravatar.com/site/implement/profiles/json/ Gravatar API}
    */
-  async get_gravatar_profile ({ in_promise_all = false } = {}) {
+  async get_gravatar_profile () {
     if (this.data.gravatar) {
       if (this.data.gravatar.error) {
         throw new Error('The Gravatar profile could not be found');
@@ -187,19 +169,12 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
         if (hash === this.hash) {
           if (profile) {
             resolve(profile);
-          } else if (in_promise_all) {
-            // Resolve anyway if this is called in Promise.all()
-            profile = { error: 'Not Found' };
-            resolve(profile);
           } else {
             reject(new Error('The Gravatar profile could not be found'));
           }
 
-          // Save the profile when called by UserCollection
-          if (!in_promise_all) {
-            this.data.gravatar = profile;
-            this.save();
-          }
+          this.data.gravatar = profile;
+          this.save();
         }
       }, true);
 
