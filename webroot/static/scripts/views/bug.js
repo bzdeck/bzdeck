@@ -351,7 +351,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         // Toggle star
         S: event => this.bug.starred = !this.bug.starred,
         // Reply
-        R: event => document.querySelector(`#bug-${this.id}-comment-form [role="textbox"]`).focus(),
+        R: event => document.querySelector(`#bug-${this.bug.id}-${this.id}-comment-form [role="textbox"]`).focus(),
         // Focus management
         'PageUp|Shift+Space': event => set_focus(true),
         'PageDown|Space': event => set_focus(false),

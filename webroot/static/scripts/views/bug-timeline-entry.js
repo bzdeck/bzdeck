@@ -78,7 +78,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const $time = $entry.querySelector('[itemprop="creation_time"]');
     const $reply_button = $entry.querySelector('[data-command="reply"]');
     const $comment_body = $entry.querySelector('[itemprop="text"]');
-    const $textbox = document.querySelector(`#bug-${this.id}-comment-form [role="textbox"]`);
 
     // The comment.count property is available on Bugzilla 5.0 and later
     // It starts with 0, which is the reporter's comment or description
@@ -108,8 +107,8 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       const quote_header = `(In reply to ${author.name} from comment #${count})`;
       const quote_lines = comment.text.split(/\n/).map(line => `> ${line}`);
       const quote = [quote_header, ...quote_lines].join('\n');
-      const $tabpanel = document.querySelector(`#bug-${this.id}-comment-form-tabpanel-comment`);
-      const $textbox = document.querySelector(`#bug-${this.id}-comment-form [role="textbox"]`);
+      const $tabpanel = document.querySelector(`#bug-${this.bug.id}-${this.id}-comment-form-tabpanel-comment`);
+      const $textbox = document.querySelector(`#bug-${this.bug.id}-${this.id}-comment-form [role="textbox"]`);
 
       $textbox.value += `${$textbox.value ? '\n\n' : ''}${quote}\n\n`;
       // Move focus on the textbox. Use async to make sure the event always works
