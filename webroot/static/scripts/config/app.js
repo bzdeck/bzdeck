@@ -109,6 +109,11 @@ BzDeck.config = {
   },
   folders: [
     {
+      id: 'navigator-folder-search',
+      label: 'Search',
+      data: { id: 'search' }
+    },
+    {
       id: 'navigator-folder-inbox',
       label: 'Inbox',
       selected: true,

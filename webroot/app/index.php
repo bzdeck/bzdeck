@@ -77,7 +77,7 @@
                   <dl>
                     <dt>Summary</dt>
                     <dd><input type="search" role="searchbox"></dd>
-                    <dd><span role="button">Search</span></dd>
+                    <dd><span role="button" tabindex="0">Search</span></dd>
                   </dl>
                 </section>
               </div><!-- end .text-box -->
@@ -114,19 +114,39 @@
           </header>
           <div>
             <ul id="settings-tablist" tabindex="0" role="tablist" aria-level="2" aria-orientation="vertical" data-removable="false" data-reorderable="false">
-              <li id="settings-tab-account" role="tab" aria-controls="settings-tabpanel-account" aria-selected="true"><label>Account</label></li>
-              <li id="settings-tab-design" role="tab" aria-controls="settings-tabpanel-design" aria-selected="false"><label>Design</label></li>
-              <li id="settings-tab-datetime" role="tab" aria-controls="settings-tabpanel-datetime" aria-selected="false"><label>Date &amp; Time</label></li>
-              <li id="settings-tab-notifications" role="tab" aria-controls="settings-tabpanel-notifications" aria-selected="false"><label>Notifications</label></li>
-              <li id="settings-tab-timeline" role="tab" aria-controls="settings-tabpanel-timeline" aria-selected="false"><label>Timeline</label></li>
-              <li id="settings-tab-editing" role="tab" aria-controls="settings-tabpanel-editing" aria-selected="false"><label>Editing</label></li>
+              <li id="settings-tab-account" role="tab" aria-controls="settings-tabpanel-account" aria-selected="true">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Account</label>
+              </li>
+              <li id="settings-tab-design" role="tab" aria-controls="settings-tabpanel-design" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Design</label>
+              </li>
+              <li id="settings-tab-datetime" role="tab" aria-controls="settings-tabpanel-datetime" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Date &amp; Time</label>
+              </li>
+              <li id="settings-tab-notifications" role="tab" aria-controls="settings-tabpanel-notifications" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Notifications</label>
+              </li>
+              <li id="settings-tab-timeline" role="tab" aria-controls="settings-tabpanel-timeline" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Timeline</label>
+              </li>
+              <li id="settings-tab-editing" role="tab" aria-controls="settings-tabpanel-editing" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>Editing</label>
+              </li>
             </ul><!-- end #settings-tablist -->
             <div id="settings-tabpanel-account" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="settings-tab-account">
               <section>
                 <h3>Account</h3>
                 <section id="settings-qrcode-outer">
                   <h4>BzDeck on mobile</h4>
-                  <p>Did you know BzDeck works on Android? Open the app with Firefox on your phone or tablet, then scan this QR code to sign in quickly:<br><span role="button">Show QR Code</span></p>
+                  <p>Did you know BzDeck works on Android? Open the app with Firefox on your phone or tablet, then scan this QR code to sign in quickly:<br>
+                    <span role="button" tabindex="0">Show QR Code</span>
+                  </p>
                   <div class="placeholder" hidden></div>
                 </section>
               </section>
@@ -271,14 +291,14 @@
         <header>
           <h3>Bug <span itemprop="id"></span></h3>
           <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Star this bug" tabindex="0" role="button" aria-pressed="false" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu">Menu</span></li>
-              <li role="none"><span class="iconic" title="Open this bug in a new tab" tabindex="0" role="button" data-command="open-tab">Open in Tab</span></li>
-            </ul>
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Show the query pane to search again" tabindex="0" role="button" data-command="show-basic-search-pane">Search Again</span></li>
-            </ul>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Star this bug" aria-pressed="false" data-command="star" data-field="starred" data-icon="&#xF006;"></span>
+              <span role="button" class="iconic" aria-label="Menu" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu" data-icon="&#xF142;"></span>
+              <span role="button" class="iconic" aria-label="Open this bug in a new tab" data-command="open-tab" data-icon="&#xF08E;"></span>
+            </div>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Show the query pane to search again" data-command="show-basic-search-pane" data-icon="&#xF002;"></span>
+            </div>
             <ul id="search-TID-preview-bug-menu" role="menu" aria-expanded="false">
               <li role="none">
                 <a id="search-TID-preview-bug-menu-toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
@@ -307,15 +327,15 @@
         <header>
           <h2>Bug <span itemprop="id"></span></h2>
           <div role="toolbar">
-            <ul class="nav" role="none">
-              <li role="none"><span class="iconic" title="Show the previous bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-back">Back</span></li>
-              <li role="none"><span class="iconic" title="Show the next bug" tabindex="0" role="button" aria-disabled="true" data-command="nav-forward">Forward</span></li>
-            </ul>
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Star" tabindex="0" role="button" aria-pressed="false" aria-label="Star this bug" data-command="star" data-field="starred">Star</span></li>
-              <li role="none"><span class="iconic" title="Edit" tabindex="0" role="button" aria-pressed="false" aria-label="Edit the fields of this bug" data-command="edit"></span>
-              <li role="none"><span class="iconic" title="Menu" tabindex="0" role="button" aria-pressed="false" aria-label="Show the menu items for this bug" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu">Menu</span></li>
-            </ul>
+            <div role="group" class="nav">
+              <span role="button" class="iconic" aria-label="Show the previous bug" aria-disabled="true" data-command="nav-back" data-icon="&#xF053;"></span>
+              <span role="button" class="iconic" aria-label="Show the next bug" aria-disabled="true" data-command="nav-forward" data-icon="&#xF054;"></span>
+            </div>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Star this bug" aria-pressed="false" data-command="star" data-field="starred" data-icon="&#xF006;"></span>
+              <span role="button" class="iconic" aria-label="Edit the fields of this bug" aria-pressed="false" data-command="edit" data-icon="&#xF040;"></span>
+              <span role="button" class="iconic" aria-label="Show the menu items for this bug" aria-pressed="false" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu" data-icon="&#xF142;"></span>
+            </div>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
               <li role="none">
                 <a id="bug-TID-preview-bug-menu-toggle-comments" role="menuitem"><label>Expand All Comments</label></a>
@@ -442,11 +462,15 @@
                   </header>
                   <section role="group" aria-label="Aliases" data-field="alias">
                     <h4>Aliases</h4>
-                    <ul><li itemprop="alias" role="button"></li></ul>
+                    <ul>
+                      <li role="button" tabindex="0" itemprop="alias"></li>
+                    </ul>
                   </section>
                   <section role="group" aria-label="Keywords" data-field="keyword">
                     <h4>Keywords</h4>
-                    <ul><li itemprop="keyword" role="button"></li></ul>
+                    <ul>
+                      <li role="button" tabindex="0" itemprop="keyword"></li>
+                    </ul>
                   </section>
                   <section role="group" aria-label="Whiteboard" data-field="whiteboard">
                     <h4>Whiteboard</h4>
@@ -471,7 +495,7 @@
                       <h4>Depends on</h4>
                     </header>
                     <ul class="list">
-                      <li role="button" itemprop="depends_on"></li>
+                      <li role="button" tabindex="0" itemprop="depends_on"></li>
                     </ul>
                   </section>
                   <section role="group" aria-label="Blocks" data-field="blocks">
@@ -479,12 +503,14 @@
                       <h4>Blocks</h4>
                     </header>
                     <ul class="list">
-                      <li role="button" itemprop="blocks"></li>
+                      <li role="button" tabindex="0" itemprop="blocks"></li>
                     </ul>
                   </section>
                   <section role="group" aria-label="Duplicates" data-field="duplicate">
                     <h4>Duplicates</h4>
-                    <ul><li role="button" itemprop="duplicate"></li></ul>
+                    <ul>
+                      <li role="button" tabindex="0" itemprop="duplicate"></li>
+                    </ul>
                   </section>
                 </section>
                 <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
@@ -593,16 +619,16 @@
                   <div class="list">
                     <header>
                       <h4>0 Attachments</h4>
-                      <meta tabindex="0" role="checkbox" aria-label="Show Obsolete" aria-checked="false" aria-hidden="true">
+                      <span role="checkbox" tabindex="0" aria-checked="false" aria-hidden="true">Show Obsolete</span>
                     </header>
                     <div class="scrollable" aria-dropeffect="none">
                       <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals"></ul>
                     </div>
                     <div role="toolbar">
-                      <ul role="none">
-                        <li role="none"><span class="iconic" title="Add attachments..." tabindex="0" role="button" data-command="add-attachment"></span></li>
-                        <li role="none"><span class="iconic" title="Remove an attachment" tabindex="0" role="button" aria-disabled="true" data-command="remove-attachment"></span></li>
-                      </ul>
+                      <div role="group">
+                        <span role="button" class="iconic" aria-label="Add attachments..." data-command="add-attachment" data-icon="&#xF067;"></span>
+                        <span role="button" class="iconic" aria-label="Remove an attachment" aria-disabled="true" data-command="remove-attachment" data-icon="&#xF068;"></span>
+                      </div>
                       <input type="file" hidden multiple directory>
                     </div>
                   </div>
@@ -678,9 +704,9 @@
         <div itemprop="text"></div>
         <footer>
           <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic text" title="Reply to this comment" tabindex="0" role="button" data-command="reply">Reply</span></li>
-            </ul>
+            <div role="group">
+              <span role="button" class="iconic text" tabindex="0" data-command="reply" data-icon="&#xF112;">Reply</span>
+            </div>
           </div>
         </footer>
       </article>
@@ -706,21 +732,21 @@
             <li id="bug-TID-comment-form-tab-attachments" role="tab" aria-controls="bug-TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></li>
             <li id="bug-TID-comment-form-tab-needinfo" role="tab" aria-controls="bug-TID-comment-form-tabpanel-needinfo" aria-selected="false" aria-hidden="true"><label>Need Info</label></li>
           </ul><!-- end #TID-tablist -->
-          <div id="bug-TID-comment-form-text-formatting-toolbar" class="text-formatting-toolbar" role="toolbar" aria-label="Markdown text-formatting toolbar">
-            <ul role="group">
-              <li role="none"><span class="iconic" title="Insert bold text (Cmd+B)" tabindex="0" role="button" data-command="strong"></span></li>
-              <li role="none"><span class="iconic" title="Insert italic text (Cmd+I)" tabindex="0" role="button" data-command="em"></span></li>
-              <li role="none"><span class="iconic" title="Insert a link (Cmd+K)" tabindex="0" role="button" data-command="a"></span></li>
-            </ul>
-            <ul role="group">
-              <li role="none"><span class="iconic" title="Insert a header" tabindex="0" role="button" data-command="h2"></span></li>
-              <li role="none"><span class="iconic" title="Insert a quote" tabindex="0" role="button" data-command="blockquote"></span></li>
-              <li role="none"><span class="iconic" title="Insert code" tabindex="0" role="button" data-command="code"></span></li>
-            </ul>
-            <ul role="group">
-              <li role="none"><span class="iconic" title="Insert a bulleted list" tabindex="0" role="button" data-command="ul"></span></li>
-              <li role="none"><span class="iconic" title="Insert a numbered list" tabindex="0" role="button" data-command="ol"></span></li>
-            </ul>
+          <div role="toolbar" id="bug-TID-comment-form-text-formatting-toolbar" class="text-formatting-toolbar" aria-label="Markdown text-formatting toolbar">
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Insert bold text (Cmd+B)" data-command="strong" data-icon="&#xF032;"></span>
+              <span role="button" class="iconic" aria-label="Insert italic text (Cmd+I)" data-command="em" data-icon="&#xF033;"></span>
+              <span role="button" class="iconic" aria-label="Insert a link (Cmd+K)" data-command="a" data-icon="&#xF0C1;"></span>
+            </div>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Insert a header" data-command="h2" data-icon="&#xF1DC;"></span>
+              <span role="button" class="iconic" aria-label="Insert a quote" data-command="blockquote" data-icon="&#xF10D;"></span>
+              <span role="button" class="iconic" aria-label="Insert code" data-command="code" data-icon="&#xF121;"></span>
+            </div>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Insert a bulleted list" data-command="ul" data-icon="&#xF0CA;"></span>
+              <span role="button" class="iconic" aria-label="Insert a numbered list" data-command="ol" data-icon="&#xF0CB;"></span>
+            </div>
           </div><!-- end #TID-text-formatting-toolbar -->
         </header>
         <div>
@@ -757,36 +783,36 @@
         </div>
         <footer>
           <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span class="iconic" title="Add attachments..." tabindex="0" role="button" data-command="attach">Attach</span></li>
-            </ul>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Add attachments..." data-command="attach" data-icon="&#xF0C6;"></span>
+            </div>
           </div>
           <div role="status"></div>
           <div role="toolbar">
-            <ul role="none">
-              <li role="none"><span role="button" aria-disabled="true" data-command="submit">Save Changes</span></li>
-            </ul>
+            <div role="group">
+              <span role="button" aria-disabled="true" data-command="submit">Save Changes</span>
+            </div>
           </div>
         </footer>
       </section><!-- end #TID -->
     </template><!-- end #bug-comment-form -->
     <template id="bug-comment-form-request-needinfo-row">
       <div class="request-needinfo-row">
-        <meta tabindex="0" role="checkbox" aria-label="Ask"> <strong></strong> <span></span>
+        <span role="checkbox" tabindex="0"><label>Ask <strong></strong> <span></span></label></span>
       </div>
     </template><!-- end #bug-comment-form-request-needinfo-row -->
     <template id="bug-comment-form-clear-needinfo-row">
       <div class="clear-needinfo-row">
-        <meta tabindex="0" role="checkbox" aria-label="Provide information as"> <strong></strong>
+        <span role="checkbox" tabindex="0"><label>Provide information as <strong></strong></label></span>
       </div>
     </template><!-- end #bug-comment-form-clear-needinfo-row -->
     <template id="bug-comment-form-attachments-row">
       <tr itemscope itemtype="http://bzdeck.com/Attachment">
         <th itemprop="summary"></th>
-        <td><span class="iconic" title="Edit" tabindex="0" role="button" data-command="edit">Edit</span></td>
-        <td><span class="iconic" title="Remove" tabindex="0" role="button" data-command="remove">Remove</span></td>
-        <td><span class="iconic" title="Move Up" tabindex="0" role="button" data-command="move-up">Move Up</span></td>
-        <td><span class="iconic" title="Move Down" tabindex="0" role="button" data-command="move-down">Move Down</span></td>
+        <td><span role="button" class="iconic" aria-label="Edit" data-command="edit" data-icon="&#xF040;"></span></td>
+        <td><span role="button" class="iconic" aria-label="Remove" data-command="remove" data-icon="&#xF014;"></span></td>
+        <td><span role="button" class="iconic" aria-label="Move Up" data-command="move-up" data-icon="&#xF077;"></span></td>
+        <td><span role="button" class="iconic" aria-label="Move Down" data-command="move-down" data-icon="&#xF078;"></span></td>
       </tr>
     </template>
     <template id="timeline-attachment">
@@ -823,7 +849,11 @@
             <ul>
               <li>Name: <span class="distinct" contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
               <li>Type: <span class="distinct" contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
-              <li>Size: <span itemprop="size"></span> <meta tabindex="0" role="checkbox" itemprop="is_patch" aria-label="Patch"> <meta tabindex="0" role="checkbox" itemprop="is_obsolete" aria-label="Obsolete"></li>
+              <li>Size:
+                <span itemprop="size"></span>
+                <meta itemprop="is_patch"><span role="checkbox" tabindex="0" data-itemprop="is_patch">Patch</span>
+                <meta itemprop="is_obsolete"><span role="checkbox" tabindex="0" data-itemprop="is_obsolete">Obsolete</span>
+              </li>
               <li>Created on <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
               <li>Modified on <time itemprop="last_change_time" data-relative="false"></time></li>
             </ul>
@@ -877,7 +907,7 @@
           </ul>
           <p><span itemprop="flag"></span> <span itemprop="extract"></span></p>
         </div>
-        <meta role="checkbox" tabindex="0" itemprop="starred" aria-label="Starred">
+        <meta itemprop="starred" aria-hidden="true">
       </li>
     </template><!-- end #vertical-thread-item -->
     <template id="bug-tooltip">
@@ -919,13 +949,13 @@
     <template id="qrcode-auth-overlay-template">
       <section id="qrcode-auth-overlay" role="region" aria-hidden="true">
         <header>
-          <div class="banner-nav-button" role="button" tabindex="0" aria-label="Back"></div>
+          <span role="button" class="iconic banner-nav-button" tabindex="0" aria-label="Back" data-icon="&#xF053;"></span>
           <h2>Scan QR Code</h2>
         </header>
         <div>
           <p>Open BzDeck with Firefox for desktop. Go to the Settings, then tap the button below to scan the displayed QR code.</p>
           <video></video>
-          <p><span class="cta" role="button" tabindex="0" aria-disabled="true" data-id="scan">Scan to sign in</span></p>
+          <p><span role="button" class="cta" tabindex="0" aria-disabled="true" data-id="scan">Scan to sign in</span></p>
         </div>
         <iframe hidden src="/integration/qrcode-decoder/"></iframe>
       </section><!-- end #qrcode-auth-overlay -->
@@ -939,8 +969,8 @@
           <div>
             <p id="app-intro"><strong>BzDeck</strong> is a useful, experimental Bugzilla client demonstrating modern Web standard technologies. This app is currently optimized for <strong>bugzilla.mozilla.org</strong>. <a href="/about/">Learn more &raquo;</a></p>
             <div role="form" aria-hidden="true">
-              <p><span class="cta" role="button" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
-              <p><span class="cta" role="button" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
+              <p><span role="button" class="cta" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
+              <p><span role="button" class="cta" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
             </div>
             <div class="statusbar" role="status">
               <p>This application requires <a href="https://www.mozilla.org/firefox/developer/">Firefox Developer Edition</a> or <a href="https://nightly.mozilla.org/">Firefox Nightly</a> with JavaScript enabled.</p>
@@ -954,7 +984,7 @@
         <div tabindex="0" role="region">
           <section id="navigator-account">
             <h2>Account</h2>
-            <span id="main-menu-app-account" role="button" tabindex="0" aria-label="Profile" data-tooltip-position="right">
+            <span role="button" id="main-menu-app-account" tabindex="0" aria-label="Profile" data-tooltip-position="right">
               <label itemscope itemtype="http://bzdeck.com/User">
                 <img alt="" itemprop="image">
                 <strong itemprop="name"></strong>
@@ -964,15 +994,23 @@
           </section><!-- end #navigator-account -->
           <section id="navigator-folders">
             <h2>Bugs</h2>
-            <ul id="navigator-folder-list" role="listbox" tabindex="0" aria-multiselectable="false">
-              <li tabindex="0" role="option" id="navigator-folder-search" aria-selected="false" data-id="search" aria-label="Search" data-tooltip-position="right"><label>Search</label></li>
-            </ul>
+            <ul id="navigator-folder-list" role="listbox" tabindex="0" aria-multiselectable="false"></ul>
           </section><!-- end #navigator-folders -->
           <section id="navigator-menu">
             <h2>Menu</h2>
             <ul id="main-menu-app-menu" role="menu">
-              <li role="none"><a id="main-menu-app-about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right"><label>About BzDeck</label></a></li>
-              <li role="none"><span id="main-menu-app-settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right"><label>Settings</label></span></li>
+              <li role="none">
+                <a id="main-menu-app-about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right">
+                  <span class="icon" aria-hidden="true"></span>
+                  <label>About BzDeck</label>
+                </a>
+              </li>
+              <li role="none">
+                <span id="main-menu-app-settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right">
+                  <span class="icon" aria-hidden="true"></span>
+                  <label>Settings</label>
+                </span>
+              </li>
             </ul><!-- end #main-menu-app-menu -->
           </section><!-- end #navigator-menu -->
         </div>
@@ -981,7 +1019,7 @@
         <aside role="complementary" id="sidebar">
           <section role="region" id="sidebar-list-panel" class="sidebar-panel" aria-hidden="false">
             <header>
-              <div class="banner-nav-button iconic" tabindex="0" role="button" aria-label="Menu"></div>
+              <span role="button" class="iconic banner-nav-button" tabindex="0" aria-label="Menu" data-icon="&#xF0C9;"></span>
               <h3>Inbox</h3>
             </header>
             <section id="sidebar-list" class="bug-list" role="grid" aria-live="true" aria-relevant="additions removals" aria-labelledby="sidebar-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
@@ -993,8 +1031,8 @@
                   <li role="radio" data-value="closed">Closed</li>
                   <li role="radio" data-value="all">All</li>
                 </ul>
-                <div class="iconic" tabindex="0" role="button" aria-pressed="false" data-command="sort" aria-label="Sort Bugs in Ascending Order"></div>
-                <div class="iconic" tabindex="0" role="button" aria-pressed="false" aria-haspopup="true" aria-label="Show menu for the thread" aria-owns="home-vertical-thread-menu" data-command="show-menu"></div>
+                <span role="button" class="iconic" aria-label="Sort Bugs in Ascending Order" aria-pressed="false" data-command="sort"></span>
+                <span role="button" class="iconic" aria-label="Show menu for the thread" aria-pressed="false" aria-haspopup="true" aria-owns="home-vertical-thread-menu" data-command="show-menu" data-icon="&#xF142;"></span>
                 <ul id="home-vertical-thread-menu" role="menu" aria-expanded="false">
                   <li role="none">
                     <a id="home-vertical-thread-menu-mark-all-read" role="menuitem" data-command="mark-all-read"><label>Mark All Bugs as Read</label></a>

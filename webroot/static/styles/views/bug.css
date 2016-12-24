@@ -9,20 +9,11 @@
 [itemtype$="Bug"] [role="toolbar"] {
   position: relative;
   flex: none;
-  height: 3.2rem;
 }
 
-[itemtype$="Bug"] > header > [role="toolbar"] {
+[itemtype$="Bug"] > header > [role="toolbar"] > [role="group"] {
   margin: .4rem;
-}
-
-[itemtype$="Bug"] [role="toolbar"] ul:not([role="menu"]) {
-  display: inline-flex;
-}
-
-[itemtype$="Bug"] [role="toolbar"] ul[role="none"] li {
-  display: inline-block;
-  vertical-align: top;
+  height: 3.2rem;
 }
 
 [itemtype$="Bug"] [role="toolbar"] .iconic {
@@ -52,36 +43,8 @@
   -moz-user-select: text; /* Enable click-to-copy */
 }
 
-[itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="false"]::before {
-  content: '\F006';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="true"]::before {
+[itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="true"] .icon::before {
   content: '\F005';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="reply"]::before {
-  content: '\F112';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="edit"]::before {
-  content: '\F040'; /* pencil */
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="show-menu"]::before {
-  content: '\F142';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="nav-back"]::before {
-  content: '\F053';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="nav-forward"]::before {
-  content: '\F054';
-}
-
-[itemtype$="Bug"] [role="toolbar"] [data-command="show-basic-search-pane"]::before {
-  content: '\F002';
 }
 
 [itemtype$="Bug"] [role="toolbar"] > [role="menu"] {

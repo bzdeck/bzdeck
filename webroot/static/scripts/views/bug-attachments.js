@@ -148,6 +148,9 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     this.$remove_button = this.$container.querySelector('[data-command="remove-attachment"]');
     this.$file_picker = this.$container.querySelector('input[type="file"]');
 
+    new FlareTail.widgets.Button(this.$add_button);
+    new FlareTail.widgets.Button(this.$remove_button);
+
     this.$drop_target.addEventListener('dragover', event => {
       this.$drop_target.setAttribute('aria-dropeffect', 'copy');
       event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed = 'copy';

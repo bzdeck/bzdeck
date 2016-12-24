@@ -1,35 +1,3 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-.text-formatting-toolbar [data-command="strong"]::before {
-  content: "\F032";
-}
-
-.text-formatting-toolbar [data-command="em"]::before {
-  content: "\F033";
-}
-
-.text-formatting-toolbar [data-command="a"]::before {
-  content: "\F0C1";
-}
-
-.text-formatting-toolbar [data-command="h2"]::before {
-  content: "\F1DC";
-}
-
-.text-formatting-toolbar [data-command="blockquote"]::before {
-  content: "\F10D";
-}
-
-.text-formatting-toolbar [data-command="code"]::before {
-  content: "\F121";
-}
-
-.text-formatting-toolbar [data-command="ul"]::before {
-  content: "\F0CA";
-}
-
-.text-formatting-toolbar [data-command="ol"]::before {
-  content: "\F0CB";
-}

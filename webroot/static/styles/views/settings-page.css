@@ -18,13 +18,13 @@
 }
 
 #settings-tablist [role="tab"] {
-  display: block;
+  display: flex;
   float: none;
   box-sizing: content-box; /* initial value */
   border-width: 0 0 0 .4rem;
   border-style: solid;
   border-color: transparent;
-  padding: .4rem 1.2rem;
+  padding: .4rem .8rem .4rem .4rem;
   width: auto;
   height: auto;
   font-size: 1.25rem;
@@ -53,37 +53,37 @@
   line-height: 2rem;
 }
 
-#settings-tablist [role="tab"] label::before {
-  display: inline-block;
-  margin: -.4rem 1rem 0 0;
-  width: 2rem;
+#settings-tablist [role="tab"] .icon {
+  display: inline-flex;
+  margin: 0;
+  width: 4rem;
   font-family: FontAwesome;
   font-size: 1.8rem;
-  text-align: center;
-  vertical-align: bottom;
+  justify-content: center;
+  align-items: center;
 }
 
-#settings-tab-account label::before {
+#settings-tab-account .icon::before {
   content: "\F007";
 }
 
-#settings-tab-design label::before {
+#settings-tab-design .icon::before {
   content: "\F1FC";
 }
 
-#settings-tab-datetime label::before {
+#settings-tab-datetime .icon::before {
   content: "\F017";
 }
 
-#settings-tab-notifications label::before {
+#settings-tab-notifications .icon::before {
   content: "\F0F3";
 }
 
-#settings-tab-timeline label::before {
+#settings-tab-timeline .icon::before {
   content: "\F086";
 }
 
-#settings-tab-editing label::before {
+#settings-tab-editing .icon::before {
   content: "\F044";
 }
 
@@ -105,7 +105,7 @@
   bottom: 4rem;
   left: calc(16rem + 4rem);
   width: auto;
-  height: auto; 
+  height: auto;
 }
 
 [id^="settings-tabpanel"] > section > * {
@@ -200,7 +200,7 @@
   [data-device|="mobile"]:root [id^="settings-tabpanel"],
   [data-device|="mobile"]:root [id^="settings-tabpanel"] > * {
     position: static;
-    height: auto; 
+    height: auto;
   }
 
   [data-device|="mobile"]:root [id^="settings-tabpanel"][aria-hidden="true"] {

@@ -56,6 +56,7 @@
 }
 
 [itemtype$="Attachment"][data-content-type] .properties li {
+  display: flex;
   margin: .4rem 0;
   line-height: 1.5;
 }
@@ -69,7 +70,12 @@
 }
 
 [itemtype$="Attachment"][data-content-type] .properties li * {
+  display: flex;
   white-space: nowrap;
+}
+
+[itemtype$="Attachment"][data-content-type] .properties li > * {
+  margin: 0 .4rem;
 }
 
 [itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {

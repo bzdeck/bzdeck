@@ -83,9 +83,6 @@
 [data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] {
   color: var(--highlighted-button-border-color);
   background-image: linear-gradient(to bottom, #0004 0%, #0003 20%, #0003 80%, #0004 100%);
-}
-
-[data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] label {
   opacity: 1;
 }
 
@@ -97,26 +94,29 @@
 }
 
 [data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label {
-  position: relative;
-  height: 100%;
-  text-indent: -99999px;
-  opacity: .6;
-  transition: opacity .2s;
+  display: none;
 }
 
-[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):hover label,
-[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):focus label {
-  opacity: .8;
-}
-
-#navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
+#navigator :-moz-any([role="option"], [role="menuitem"]) .icon::before {
   font-family: FontAwesome;
   text-align: center;
   vertical-align: middle;
   text-indent: 0;
 }
 
-[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) .icon {
+  display: flex;
+  opacity: .6;
+  transition: opacity .2s;
+  pointer-events: none;
+}
+
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):hover .icon,
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]):focus .icon {
+  opacity: .8;
+}
+
+[data-device="desktop"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) .icon::before {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,7 +129,7 @@
   text-shadow: 0 0 .4rem #0006;
 }
 
-[data-device|="mobile"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) label::before {
+[data-device|="mobile"]:root #navigator :-moz-any([role="option"], [role="menuitem"]) .icon::before {
   margin-right: 1.2rem;
   width: 2.4rem;
   height: 2.4rem;
@@ -137,51 +137,51 @@
   opacity: .4;
 }
 
-#navigator-folder-search label::before {
+#navigator-folder-search .icon::before {
   content: '\F002';
 }
 
-#navigator-folder-inbox label::before {
+#navigator-folder-inbox .icon::before {
   content: '\F01C';
 }
 
-#navigator-folder-starred label::before {
+#navigator-folder-starred .icon::before {
   content: '\F005';
 }
 
-#navigator-folder-requests label::before {
+#navigator-folder-requests .icon::before {
   content: '\F06A';
 }
 
-#navigator-folder-reported label::before {
+#navigator-folder-reported .icon::before {
   content: '\F1D8';
 }
 
-#navigator-folder-watching label::before {
+#navigator-folder-watching .icon::before {
   content: '\F02E';
 }
 
-#navigator-folder-assigned label::before {
+#navigator-folder-assigned .icon::before {
   content: '\F0F2';
 }
 
-#navigator-folder-mentor label::before {
+#navigator-folder-mentor .icon::before {
   content: '\F1CD';
 }
 
-#navigator-folder-qa label::before {
+#navigator-folder-qa .icon::before {
   content: '\F0C3'; /* flask */
 }
 
-#navigator-folder-all label::before {
+#navigator-folder-all .icon::before {
   content: '\F036';
 }
 
-#main-menu-app-settings label::before {
+#main-menu-app-settings .icon::before {
   content: '\F013';
 }
 
-#main-menu-app-about label::before {
+#main-menu-app-about .icon::before {
   content: '\F05A';
 }
 
@@ -247,6 +247,10 @@
 
 [data-device|="mobile"]:root #main-menu-app-account {
   background: linear-gradient(to bottom, transparent, #0006);
+}
+
+#main-menu-app-account .icon {
+  display: none;
 }
 
 #main-menu-app-account label {

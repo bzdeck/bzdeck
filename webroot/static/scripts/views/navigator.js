@@ -38,6 +38,11 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
     this.$folders = document.querySelector('#navigator-folder-list');
     this.$$folders = new FlareTail.widgets.ListBox(this.$folders, BzDeck.config.folders);
     this.$$folders.view.members.forEach($option => {
+      const $icon = document.createElement('span');
+
+      $icon.setAttribute('class', 'icon');
+      $icon.setAttribute('aria-hidden', 'true');
+      $option.insertAdjacentElement('afterbegin', $icon);
       $option.setAttribute('aria-label', $option.textContent);
       $option.setAttribute('data-tooltip-position', 'right');
     });

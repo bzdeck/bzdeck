@@ -303,13 +303,15 @@
 }
 
 .bug-timeline [itemprop="comment"] footer [role="button"] {
+  display: inline-flex;
   height: 1.6rem;
   font-size: 1.2rem;
   line-height: 1.6rem;
   pointer-events: auto !important;
 }
 
-.bug-timeline [itemprop="comment"] footer [role="button"]::before {
+.bug-timeline [itemprop="comment"] footer [role="button"] .icon {
+  margin-right: .4rem;
   width: 1.6rem;
   height: 1.6rem;
 }

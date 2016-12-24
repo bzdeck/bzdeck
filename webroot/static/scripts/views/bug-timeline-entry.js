@@ -147,7 +147,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     };
 
     // Activate the buttons
-    $reply_button.addEventListener(click_event_type, event => { reply(); event.stopPropagation(); });
+    (new FlareTail.widgets.Button($reply_button)).bind('Pressed', event => { reply(); event.stopPropagation(); });
 
     // Assign keyboard shortcuts
     FlareTail.util.Keybind.assign($entry, {

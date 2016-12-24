@@ -55,6 +55,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$form.addEventListener('wheel', event => event.stopPropagation());
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
     this.$tablist.setAttribute('aria-level', this.id.startsWith('details-bug-') ? 3 : 2);
+
+    new FlareTail.widgets.Button(this.$submit);
     this.$submit.addEventListener(click_event_type, event => this.trigger('BugView#Submit'));
 
     this.init_comment_tabpanel();
@@ -129,6 +131,8 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   init_attachment_tabpanel () {
     const can_choose_dir = this.$file_picker.isFilesAndDirectoriesSupported === false;
 
+    new FlareTail.widgets.Button(this.$attach_button);
+
     if (can_choose_dir) {
       this.$attach_button.title = 'Add attachments... (Shift+Click to choose directory)'; // l10n
     }
@@ -166,13 +170,13 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
       const $row = this.get_template(`bug-comment-form-${type}-needinfo-row`);
       const $checkbox = $row.querySelector('[role="checkbox"]');
       const $$checkbox = new FlareTail.widgets.CheckBox($checkbox);
-      const $label = $checkbox.querySelector('span');
+      const $label = $checkbox.querySelector('label span');
 
       (async () => {
         const _requestee = await BzDeck.collections.users.get(requestee, { name: requestee });
         const $person = this.fill(this.get_template('person-with-image'), _requestee.properties);
 
-        $row.replaceChild($person, $row.querySelector('strong'));
+        $row.querySelector('label').replaceChild($person, $row.querySelector('label strong'));
       })();
 
       $$checkbox.bind('Toggled', event => this.trigger('BugView#EditFlag', { flag, added: event.detail.checked }));
@@ -266,6 +270,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     $row.dataset.hash = hash;
     $row.querySelector('[itemprop="summary"]').textContent = attachment.summary;
+    $row.querySelectorAll('[role="button"]').forEach($button => new FlareTail.widgets.Button($button));
 
     $row.querySelector('[data-command="edit"]').addEventListener(click_event_type, event => {
       if (!this.id.startsWith('details-bug-') || mobile && mql.matches) {

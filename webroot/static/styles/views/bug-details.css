@@ -334,14 +334,6 @@
   text-align: center;
 }
 
-.bug-fieldset .iconic[role="button"][data-command="edit"]::after {
-  content: '\F040'; /* pencil */
-}
-
-.bug-fieldset .iconic[role="button"][data-command="remove"]::after {
-  content: '\F056'; /* remove */
-}
-
 .bug-fieldset [role="combobox"]:not([aria-hidden="true"]) {
   display: block !important;
   width: 100%;
@@ -376,12 +368,8 @@
 .bug-fieldset :not([role="combobox"]) [role="button"]:not(.iconic) {
   overflow: hidden;
   border-width: 0;
-  padding: .2rem .4rem;
-  max-width: 100%;
-  height: 1.4rem;
   color: inherit !important; /* TEMP */
   background: transparent none !important; /* TEMP */
-  line-height: 1.4rem;
   white-space: nowrap;
   text-overflow: ellipsis;
 }

@@ -90,7 +90,7 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
         if (event.target.matches('[itemprop="starred"]')) {
           const bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
 
-          bug.starred = event.target.matches('[aria-checked="false"]');
+          bug.starred = event.target.matches('[content="false"]');
           event.stopPropagation();
         }
       });

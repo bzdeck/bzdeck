@@ -125,23 +125,6 @@
   padding: 0 !important;
 }
 
-.bug-comment-form [id$="tabpanel-attachments"] [role="checkbox"] {
-  margin: 0 .8rem .8rem;
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="checkbox"]::before {
-  font-family: FontAwesome;
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="checkbox"][aria-checked="false"]::before {
-  content: "\F096";
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="checkbox"][aria-checked="true"]::before {
-  color: var(--base-accent-color-1);
-  content: '\F14A';
-}
-
 .bug-comment-form [id$="tabpanel-attachments"] table {
   table-layout: fixed;
   width: calc(100% - 1.2rem); /* Space for the scrollbar */
@@ -183,22 +166,6 @@
   visibility: hidden;
 }
 
-.bug-comment-form [id$="tabpanel-attachments"] [role="button"][data-command="edit"]::before {
-  content: "\F040";
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="button"][data-command="remove"]::before {
-  content: "\F014";
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="button"][data-command="move-up"]::before {
-  content: "\F077";
-}
-
-.bug-comment-form [id$="tabpanel-attachments"] [role="button"][data-command="move-down"]::before {
-  content: "\F078";
-}
-
 .bug-comment-form [id$="tabpanel-needinfo"] [role="textbox"][contenteditable="true"] {
   box-sizing: border-box;
   margin: .2rem;
@@ -223,6 +190,9 @@
   padding: .4rem;
 }
 
+.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] {
+
+}
 .bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="User"] [itemprop="image"] {
   margin: 0 .4rem;
   width: var(--comment-margin);
@@ -264,11 +234,6 @@
   margin: 0;
 }
 
-.bug-comment-form > footer [role="toolbar"] [role="button"][data-command="attach"]::before {
-  font-size: 2.4rem;
-  content: '\F0C6';
-}
-
 .bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] {
   box-sizing: border-box;
   border: 0;
@@ -278,6 +243,10 @@
   font-size: 1.4rem;
   line-height: 3.2rem;
   font-style: italic;
+}
+
+.bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] .icon {
+  display: none;
 }
 
 .bug-comment-form > footer [role="button"][aria-disabled="false"] {
@@ -352,7 +321,7 @@
 
   /* Almost same as [itemtype$="Bug"] [role="toolbar"] .iconic::before */
   [data-device|="mobile"]:root .bug-comment-form > footer [role="toolbar"]
-      [role="button"][data-command="submit"]::before {
+      [role="button"][data-command="submit"] .icon::before {
     display: inline-block;
     position: absolute;
     top: calc(50% - 1.6rem);

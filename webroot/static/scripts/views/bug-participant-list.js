@@ -271,6 +271,13 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.trigger('BugView#RemoveParticipant', { field: this.field, email });
     }, { once: true });
 
+    const $icon = document.createElement('span');
+
+    $icon.setAttribute('class', 'icon');
+    $icon.setAttribute('aria-hidden', 'true');
+    $button.innerHTML = "";
+    $button.appendChild($icon);
+
     $person.appendChild($button);
     $person.tabIndex = -1;
     $person.setAttribute('role', 'none');

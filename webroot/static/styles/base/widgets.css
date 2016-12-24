@@ -2,52 +2,50 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-[role="checkbox"],
-[role="radio"] {
-  line-height: 1.6rem;
-}
-
-[role="checkbox"]::before,
-[role="radio"]::before {
-  margin-right: .8rem;
+[role="checkbox"] .icon,
+[role="radio"] .icon {
+  margin-right: .4rem;
   border: 1px solid var(--control-border-color);
   width: 1.6rem;
   height: 1.6rem;
   color: var(--base-accent-color-1);
   background-color: var(--control-background-color);
   box-shadow: inset 0 .1rem .2rem #0003;
-  font-family: FontAwesome;
-  text-align: center;
-  vertical-align: text-bottom;
-  transition: font-size .1s;
 }
 
-[role="checkbox"][aria-checked="false"]::before,
-[role="radio"][aria-checked="false"]::before {
-  font-size: 0;
-}
-
-[role="checkbox"]:focus::before,
-[role="radio"]:focus::before {
+[role="checkbox"]:focus .icon,
+[role="radio"]:focus .icon {
   border-color: var(--base-accent-color-1);
 }
 
-[role="checkbox"]::before {
+[role="checkbox"] .icon {
   border-radius: 4px;
+}
+
+[role="radio"] .icon {
+  border-radius: 50%;
+}
+
+[role="checkbox"] .icon::before,
+[role="radio"] .icon::before {
+  font-family: FontAwesome;
+  transition: font-size .1s;
+}
+
+[role="checkbox"][aria-checked="false"] .icon::before,
+[role="radio"][aria-checked="false"] .icon::before {
+  font-size: 0;
+}
+
+[role="checkbox"] .icon::before {
   font-size: 1.4rem;
   content: "\F00C";
 }
 
-[role="radio"]::before {
-  border-radius: 50%;
+[role="radio"] .icon::before {
   font-size: 1.2rem;
   content: "\F111";
 }
-
-meta[role="checkbox"]::after {
-  vertical-align: text-bottom;
-  content: attr(aria-label);
-} 
 
 [role="button"] {
   border-color: var(--button-border-color);
@@ -110,29 +108,20 @@ span[role="textbox"] {
 }
 
 .iconic[role="button"] {
-  position: relative;
-  overflow: hidden;
   box-sizing: content-box;
   border-width: 0;
   border-radius: 0;
   padding: 0;
   background: transparent;
-  text-indent: -99999px;
 }
 
 .iconic.text[role="button"] {
   width: auto !important;
-  text-indent: 0;
 }
 
-.iconic[role="button"]::before {
-  display: flex;
-  width: 100%;
-  height: 100%;
+.iconic[role="button"] .icon[data-icon]::before {
   font-family: FontAwesome;
-  text-indent: 0;
-  justify-content: center;
-  align-items: center;
+  content: attr(data-icon);
 }
 
 .iconic.text[role="button"]::before {
@@ -169,12 +158,12 @@ span[role="textbox"] {
   box-shadow: none;
 }
 
-[role="combobox"] [role="button"]::after {
+[role="combobox"] [role="button"] .icon::before {
   font-family: FontAwesome;
   content: '\F0DC';
 }
 
-[role="combobox"] [role="searchbox"]:focus ~ [role="button"]::after {
+[role="combobox"] [role="searchbox"]:focus ~ [role="button"] .icon::before {
   color: var(--highlighted-button-background-color);
 }
 

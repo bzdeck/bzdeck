@@ -86,6 +86,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
    */
   activate_widgets () {
     const { id, hash } = this.attachment;
+    const trigger = (prop, value) => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
 
     for (const $prop of this.$attachment.querySelectorAll('[itemprop]')) {
       // Check if the element is in the same itemscope
@@ -94,7 +95,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
 
       const prop = $prop.getAttribute('itemprop');
-      const trigger = value => this.trigger('AttachmentView#EditAttachment', { id, hash, prop, value });
 
       if ($prop.matches('[role="textbox"]')) {
         const $$textbox = new FlareTail.widgets.TextBox($prop);
@@ -103,16 +103,27 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
           const value = event.detail.value;
 
           if (value) {
-            trigger(value);
+            trigger(prop, value);
           } else {
             // The property value cannot be empty; fill the default value
             $$textbox.value = this.attachment[prop];
           }
         });
       }
+    }
 
-      if ($prop.matches('[role="checkbox"]')) {
-        (new FlareTail.widgets.CheckBox($prop)).bind('Toggled', event => trigger(event.detail.checked));
+    for (const $widget of this.$attachment.querySelectorAll('[data-itemprop]')) {
+      const prop = $widget.getAttribute('data-itemprop');
+      const $prop = this.$attachment.querySelector(`[itemprop="${prop}"]`);
+      let value = $prop.content === 'true';
+
+      if ($widget.matches('[role="checkbox"]')) {
+        $widget.setAttribute('aria-checked', value);
+
+        (new FlareTail.widgets.CheckBox($widget)).bind('Toggled', event => {
+          value = $prop.content = event.detail.checked;
+          trigger(prop, value);
+        });
       }
     }
 

@@ -77,6 +77,15 @@
   text-overflow: ellipsis;
 }
 
+.bug-participants [itemprop][itemtype$="User"] [role="button"][data-command="remove"] {
+  text-indent: 0;
+}
+
+.bug-participants [itemprop][itemtype$="User"] [role="button"][data-command="remove"] .icon::before {
+  font-family: FontAwesome;
+  content: '\F056';
+}
+
 @media (min-width: 1024px) {
   [data-device="desktop"]:root .bug-participants[id|="bug"] {
     flex: none;

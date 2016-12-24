@@ -14,7 +14,6 @@
 }
 
 .bug-listbox-container header {
-  display: flex;
   margin: 0 1.2rem;
   border-top: 1px solid var(--secondary-grid-border-color);
   padding: .8rem 0;
@@ -38,6 +37,10 @@
   transition: all .2s;
 }
 
+.bug-listbox-container header .filter [role="radio"] .icon {
+  display: none !important;
+}
+
 .bug-listbox-container header [role="radio"][aria-checked="true"] {
   color: var(--alternate-pressed-button-foreground-color);
   background-color: var(--alternate-pressed-button-background-color);
@@ -51,25 +54,17 @@
   width: 2rem;
   height: 2rem;
   flex: none;
-}
-
-.bug-listbox-container header [role="button"]::before {
   font-size: 1.6rem;
 }
 
-.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="false"]::before {
+.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="false"] .icon::before {
   font-family: FiraSans;
   content: "\2193"; /* descending, new to old, default */
 }
 
-.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="true"]::before {
+.bug-listbox-container header [role="button"][data-command="sort"][aria-pressed="true"] .icon::before {
   font-family: FiraSans;
   content: "\2191"; /* ascending, old to new */
-}
-
-.bug-listbox-container header [role="button"][data-command="show-menu"]::before {
-  font-family: FontAwesome;
-  content: '\F142';
 }
 
 #home-vertical-thread-menu {
@@ -225,21 +220,18 @@
   color: inherit;
   background-color: transparent;
   box-shadow: none;
+  font-family: FontAwesome;
   font-size: 2rem;
   line-height: 3.2rem;
   text-align: center;
 }
 
-.bug-listbox-container [itemprop="starred"][aria-checked="false"]::before {
+.bug-listbox-container [itemprop="starred"][content="false"]::before {
   content: "\F006";
 }
 
-.bug-listbox-container [itemprop="starred"][aria-checked="true"]::before {
+.bug-listbox-container [itemprop="starred"][content="true"]::before {
   content: "\F005";
-}
-
-.bug-listbox-container [itemprop="starred"]::after {
-  content: "";
 }
 
 .bug-list col[data-id="id"][data-hidden="false"] {

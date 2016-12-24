@@ -257,7 +257,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
           (async () => {
             const bug = await BzDeck.collections.bugs.get(Number($item.dataset.id));
 
-            bug.starred = $item.querySelector('[itemprop="starred"]').matches('[aria-checked="false"]');
+            bug.starred = $item.querySelector('[itemprop="starred"]').matches('[content="false"]');
           })();
         }
       },
@@ -505,10 +505,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       $option.setAttribute(`data-${type}`, value);
 
       if (type === 'starred') {
-        const $checkbox = $option.querySelector('[itemprop="starred"]');
-
-        $checkbox.setAttribute('aria-checked', value);
-        $checkbox.setAttribute('content', value);
+        $option.querySelector('[itemprop="starred"]').setAttribute('content', value);
       }
     }
   }

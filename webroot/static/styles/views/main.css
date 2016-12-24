@@ -44,9 +44,8 @@ main {
   background-image: none;
 }
 
-#main-tablist [role="tab"] .close::after {
+#main-tablist [role="tab"] .close .icon::after {
   display: flex;
-  position: absolute;
   width: 100%;
   height: 100%;
   font-family: FontAwesome;
