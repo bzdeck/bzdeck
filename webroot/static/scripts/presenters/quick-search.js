@@ -19,7 +19,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
 
     // Subscribe to events
     this.on('AnyView#RecentSearchesRequested', data => this.provide_recent_searches(), true);
-    this.on('AnyView#QuickSearchRequested', data => this.exec_quick_search(data.input), true);
+    this.on('AnyView#QuickSearchRequested', data => this.exec_quick_search(data), true);
     this.on('AnyView#AdvancedSearchRequested', data => this.exec_advanced_search(data.input), true);
   }
 
@@ -53,7 +53,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     results = [...results];
 
     if (results.length) {
-      this.trigger('#ResultsAvailable', { category: 'recent', input: '', results });
+      this.trigger('#ResultsAvailable', { category: 'recent', remote: false, input: '', results });
     }
   }
 
@@ -61,10 +61,12 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * Execute a quick search and notify the results with an event.
    * @listens AnyView#QuickSearchRequested
    * @param {String} input - Original search terms, may contain spaces.
+   * @param {String} [product] - Product query, e.g. `Core`.
+   * @param {String} [status] - Status query, e.g. `__open__` or 'NEW'.
    * @fires QuickSearchPresenter#ResultsAvailable
-   * @todo Add support for other objects like products and components (#326).
+   * @todo Add support for other objects like assignee and components (#326).
    */
-  exec_quick_search (input) {
+  exec_quick_search ({ input, product = '', status = '' } = {}) {
     input = input.trim();
 
     if (!input) {
@@ -74,34 +76,41 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     const params_bugs = new URLSearchParams();
     const params_users = new URLSearchParams();
 
-    const return_bugs = async bugs => {
+    const return_bugs = async (remote, bugs) => {
       const results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
 
-      this.trigger('#ResultsAvailable', { category: 'bugs', input, results });
+      this.trigger('#ResultsAvailable', { category: 'bugs', remote, input, product, status, results });
     };
 
-    const return_users = async users => {
+    const return_users = async (remote, users) => {
       const results = await Promise.all(users.map(user => this.get_user_result(user)));
 
-      this.trigger('#ResultsAvailable', { category: 'users', input, results });
+      this.trigger('#ResultsAvailable', { category: 'users', remote, input, product, status, results });
     };
 
-    params_bugs.append('short_desc', input);
-    params_bugs.append('short_desc_type', 'allwordssubstr');
-    params_bugs.append('resolution', '---'); // Search only open bugs
-    (async () => return_bugs(await BzDeck.collections.bugs.search_local(params_bugs)))();
+    // Use the same query as https://bugzilla.mozilla.org/query.cgi?format=specific for a faster response
+    params_bugs.append('query_format', 'specific');
+    params_bugs.append('comments', '0');
+    params_bugs.append('content', input);
+    params_bugs.append('product', product);
+    params_bugs.append('status', status);
+    (async () => return_bugs(false, await BzDeck.collections.bugs.search_local(params_bugs)))();
 
+    /*
     params_users.append('match', input);
     params_users.append('limit', 10);
-    (async () => return_users(await BzDeck.collections.users.search_local(params_users)))();
+    (async () => return_users(false, await BzDeck.collections.users.search_local(params_users)))();
+    */
 
     // Remote searches require at least 3 characters
     if (input.length >= 3) {
       // Use a .5 second timer not to send requests so frequently while the user is typing
       window.clearTimeout(this.searchers);
       this.searchers = window.setTimeout(async () => {
-        return_bugs(await BzDeck.collections.bugs.search_remote(params_bugs));
-        return_users(await BzDeck.collections.users.search_remote(params_users));
+        return_bugs(true, await BzDeck.collections.bugs.search_remote(params_bugs));
+        /*
+        return_users(true, await BzDeck.collections.users.search_remote(params_users));
+        */
       }, 500);
     }
   }

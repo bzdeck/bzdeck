@@ -209,14 +209,43 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   async search_local (params) {
-    const words = params.get('short_desc').trim().split(/\s+/).map(word => word.toLowerCase());
-    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.RegExp.escape(word)}`, 'i'));
+    const all_statuses = BzDeck.host.data.config.field.status;
+    const products = params.getAll('product').filter(String);
+    const statuses = params.getAll('status').filter(String);
+    const words = params.get('content').trim().split(/\s+/).map(word => word.toLowerCase());
+    const match = (str, word) => !!str.match(new RegExp(`\\b${FlareTail.util.RegExp.escape(word)}\\b`, 'i'));
     const all_bugs = await this.get_all();
-    const bugs = [...all_bugs.values()].filter(bug => {
+    let bugs = [...all_bugs.values()];
+
+    // Filter by summary, aliases and IDs
+    bugs = bugs.filter(bug => {
       return words.every(word => bug.summary && match(bug.summary, word)) ||
              words.every(word => bug.alias.some(alias => match(alias, word))) ||
              words.length === 1 && !Number.isNaN(words[0]) && String(bug.id).startsWith(words[0]);
     });
+
+    // Filter by products
+    if (products.length) {
+      bugs = bugs.filter(bug => products.includes(bug.product));
+    }
+
+    // Filter by statuses
+    if (statuses.length) {
+      // Replace shorthand status with actual statuses. Remove __all__ since it's not necessary
+      for (const short_status of ['__open__', '__closed__', '__all__']) {
+        const index = statuses.findIndex(status => status === short_status);
+
+        if (index > -1) {
+          if (short_status === '__all__') {
+            statuses.splice(index, 1);
+          } else {
+            statuses.splice(index, 1, ...all_statuses[short_status.replace(/_/g, '')]);
+          }
+        }
+      }
+
+      bugs = bugs.filter(bug => statuses.includes(bug.status));
+    }
 
     return this.get_search_results(bugs);
   }

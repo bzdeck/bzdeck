@@ -3,10 +3,34 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #sidebar-search-container {
-  padding: 0 1.6rem 1.6rem;
+  padding: 0 1.6rem .8rem;
 }
 
-#sidebar-search-container [role="searchbox"] {
+#sidebar-search-container section {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: .8rem;
+}
+
+#sidebar-search-container section h4 {
+  flex: none;
+  width: 10rem;
+}
+
+#sidebar-search-container section > :not(h4) {
+  flex: auto;
+}
+
+#sidebar-search-container [role="button"][data-command="clear"] {
+  position: absolute;
+  top: calc(50% - .8rem);
+  right: .8rem;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+#sidebar-search-container [role="searchbox"][itemprop="summary"] {
   box-sizing: border-box;
   width: 100%;
   font-size: 1.4rem;

@@ -99,6 +99,7 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
     }
 
     this.thread = new BzDeck.VerticalThreadView(this, 'home', document.querySelector('#home-vertical-thread'), {
+      filter_condition: 'open',
       sort_conditions: { key: 'last_change_time', type: 'time', order: 'descending' }
     });
   }

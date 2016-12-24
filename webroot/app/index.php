@@ -1050,10 +1050,26 @@
           <section role="region" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true">
             <header>
               <h3>Search</h3>
-              <div id="sidebar-search-container" role="search">
-                <input placeholder="Search all bugs..." tabindex="0" role="searchbox">
-              </div>
             </header>
+            <div id="sidebar-search-container" role="search">
+              <section data-field="summary">
+                <h4>Summary</h4>
+                <input role="searchbox" placeholder="Keywords" tabindex="0" itemprop="summary">
+                <span role="button" class="iconic" data-command="clear" data-icon="&#xF00D;"></span>
+              </section>
+              <section data-field="product">
+                <h4>Product</h4>
+                <span role="combobox" class="distinct" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
+                </span>
+              </section>
+              <section data-field="status">
+                <h4>Status</h4>
+                <span role="combobox" class="distinct" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                  <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                </span>
+              </section>
+            </div>
             <section id="sidebar-search-results" class="bug-listbox-container" tabindex="0" role="region">
               <div class="scrollable">
                 <ul tabindex="0" role="listbox" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></ul>
