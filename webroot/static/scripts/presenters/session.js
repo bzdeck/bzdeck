@@ -255,7 +255,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     this.trigger('#Login');
 
     // Perform post-sign-in tasks
-    BzDeck.collections.users.refresh();
+    // BzDeck.collections.users.refresh();
   }
 
   /**
