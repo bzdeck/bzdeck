@@ -370,229 +370,239 @@
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
               <div id="bug-TID-info" class="bug-info scrollable" tabindex="0" role="region">
-                <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
-                  <header>
-                    <h3>Status</h3>
-                  </header>
-                  <section role="group" aria-label="Filed" data-field="creation_time">
-                    <h4>Filed</h4>
-                    <time itemprop="creation_time" data-relative="false"></time>
-                  </section>
-                  <section role="group" aria-label="Last Modified" data-field="last_change_time">
-                    <h4>Modified</h4>
-                    <time itemprop="last_change_time" data-relative="false"></time>
-                  </section>
-                  <section role="group" aria-label="Status" data-field="status">
-                    <h4>Status</h4>
-                    <span class="distinct" role="combobox" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
-                    </span>
-                  </section>
-                  <section hidden role="group" aria-label="Resolution" data-field="resolution">
-                    <h4>Resolution</h4>
-                    <span class="distinct" role="combobox" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
-                    </span>
-                  </section>
-                  <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
-                    <h4>Duplicate of</h4>
-                    <span class="distinct" contenteditable="true" role="textbox" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
-                  </section>
-                  <section role="group" aria-label="Target Milestone" data-field="target_milestone">
-                    <h4>Milestone</h4>
-                    <span class="distinct" role="combobox" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Severity" data-field="severity">
-                    <h4>Severity</h4>
-                    <span class="distinct" role="combobox" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Priority" data-field="priority">
-                    <h4>Priority</h4>
-                    <span class="distinct" role="combobox" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
-                    </span>
-                  </section>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
-                  <header>
-                    <h3>Affected</h3>
-                  </header>
-                  <section role="group" aria-label="Product" data-field="product">
-                    <h4>Product</h4>
-                    <span class="distinct" role="combobox" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Component" data-field="component">
-                    <h4>Component</h4>
-                    <span class="distinct" role="combobox" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Version" data-field="version">
-                    <h4>Version</h4>
-                    <span class="distinct" role="combobox" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="Hardware" data-field="platform">
-                    <h4>Hardware</h4>
-                    <span class="distinct" role="combobox" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
-                    </span>
-                  </section>
-                  <section role="group" aria-label="OS" data-field="op_sys">
-                    <h4>OS</h4>
-                    <span class="distinct" role="combobox" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
-                      <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
-                    </span>
-                  </section>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
-                  <header>
-                    <h3>Notes</h3>
-                  </header>
-                  <section role="group" aria-label="Summary" data-field="summary">
-                    <h4>Summary</h4>
-                    <span class="distinct" contenteditable="true" role="textbox" itemprop="summary"></span>
-                  </section>
-                  <section role="group" aria-label="Aliases" data-field="alias">
-                    <h4>Aliases</h4>
-                    <ul>
-                      <li role="button" tabindex="0" itemprop="alias"></li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Keywords" data-field="keyword">
-                    <h4>Keywords</h4>
-                    <ul>
-                      <li role="button" tabindex="0" itemprop="keyword"></li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Whiteboard" data-field="whiteboard">
-                    <h4>Whiteboard</h4>
-                    <span class="distinct" contenteditable="true" role="textbox" itemprop="whiteboard"></span>
-                  </section>
-                  <section role="group" aria-label="URL" data-field="url">
-                    <h4>URL</h4>
-                    <a role="link" itemprop="url"></a>
-                  </section>
-                  <section role="group" aria-label="See Also" data-field="see_also">
-                    <h4>See Also</h4>
-                    <ul><li><a role="link" itemprop="see_also"></a></li></ul>
-                  </section>
-                  <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
-                  <header>
-                    <h3>Dependencies</h3>
-                  </header>
-                  <section role="group" aria-label="Depends on" data-field="depends_on">
-                    <header>
-                      <h4>Depends on</h4>
-                    </header>
-                    <ul class="list">
-                      <li role="button" tabindex="0" itemprop="depends_on"></li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Blocks" data-field="blocks">
-                    <header>
-                      <h4>Blocks</h4>
-                    </header>
-                    <ul class="list">
-                      <li role="button" tabindex="0" itemprop="blocks"></li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Duplicates" data-field="duplicate">
-                    <h4>Duplicates</h4>
-                    <ul>
-                      <li role="button" tabindex="0" itemprop="duplicate"></li>
-                    </ul>
-                  </section>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
-                  <header>
-                    <h3>Flags</h3>
-                  </header>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
-                  <header>
-                    <h3>Tracking Flags</h3>
-                  </header>
-                </section>
-                <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
-                  <header>
-                    <h3>Participants</h3>
-                  </header>
-                  <section role="group" aria-label="Reporter" data-field="creator">
-                    <header>
-                      <h4>Reporter</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Assignee" data-field="assigned_to">
-                    <header>
-                      <h4>Assignee</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="assigned_to" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="QA" data-field="qa_contact">
-                    <header>
-                      <h4>QA</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="qa_contact" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Mentors" data-field="mentor">
-                    <header>
-                      <h4>Mentors</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="mentor" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
-                  <section role="group" aria-label="Cc" data-field="cc">
-                    <header>
-                      <h4>Cc</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="cc" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
-                </section>
+                <div class="bug-fieldset-wrapper">
+                  <div class="col">
+                    <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
+                      <header>
+                        <h3>Status</h3>
+                      </header>
+                      <section role="group" aria-label="Filed" data-field="creation_time">
+                        <h4>Filed</h4>
+                        <time itemprop="creation_time" data-relative="false"></time>
+                      </section>
+                      <section role="group" aria-label="Last Modified" data-field="last_change_time">
+                        <h4>Modified</h4>
+                        <time itemprop="last_change_time" data-relative="false"></time>
+                      </section>
+                      <section role="group" aria-label="Status" data-field="status">
+                        <h4>Status</h4>
+                        <span role="combobox" class="distinct" aria-label="Status" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
+                        </span>
+                      </section>
+                      <section hidden role="group" aria-label="Resolution" data-field="resolution">
+                        <h4>Resolution</h4>
+                        <span role="combobox" class="distinct" aria-label="Resolution" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="resolution"></span>
+                        </span>
+                      </section>
+                      <section hidden role="group" aria-label="Duplicate of" data-field="dupe_of">
+                        <h4>Duplicate of</h4>
+                        <span role="textbox" class="distinct" contenteditable="true" aria-label="Duplicate of" aria-disabled="true" itemprop="dupe_of"></span>
+                      </section>
+                      <section role="group" aria-label="Target Milestone" data-field="target_milestone">
+                        <h4>Milestone</h4>
+                        <span role="combobox" class="distinct" aria-label="Target Milestone" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="target_milestone"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="Severity" data-field="severity">
+                        <h4>Severity</h4>
+                        <span role="combobox" class="distinct" aria-label="Severity" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="severity"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="Priority" data-field="priority">
+                        <h4>Priority</h4>
+                        <span role="combobox" class="distinct" aria-label="Priority" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="priority"></span>
+                        </span>
+                      </section>
+                    </section>
+                    <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
+                      <header>
+                        <h3>Affected</h3>
+                      </header>
+                      <section role="group" aria-label="Product" data-field="product">
+                        <h4>Product</h4>
+                        <span role="combobox" class="distinct" aria-label="Product" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="product"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="Component" data-field="component">
+                        <h4>Component</h4>
+                        <span role="combobox" class="distinct" aria-label="Component" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="component"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="Version" data-field="version">
+                        <h4>Version</h4>
+                        <span role="combobox" class="distinct" aria-label="Version" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="version"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="Hardware" data-field="platform">
+                        <h4>Hardware</h4>
+                        <span role="combobox" class="distinct" aria-label="Hardware" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="platform"></span>
+                        </span>
+                      </section>
+                      <section role="group" aria-label="OS" data-field="op_sys">
+                        <h4>OS</h4>
+                        <span role="combobox" class="distinct" aria-label="OS" aria-autocomplete="list" aria-readonly="true">
+                          <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="op_sys"></span>
+                        </span>
+                      </section>
+                    </section>
+                  </div><!-- end .col -->
+                  <div class="col">
+                    <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
+                      <header>
+                        <h3>Notes</h3>
+                      </header>
+                      <section role="group" aria-label="Summary" data-field="summary">
+                        <h4>Summary</h4>
+                        <span role="textbox" class="distinct" contenteditable="true" itemprop="summary"></span>
+                      </section>
+                      <section role="group" aria-label="Aliases" data-field="alias">
+                        <h4>Aliases</h4>
+                        <ul>
+                          <li role="button" tabindex="0" itemprop="alias"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Keywords" data-field="keyword">
+                        <h4>Keywords</h4>
+                        <ul>
+                          <li role="button" tabindex="0" itemprop="keyword"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Whiteboard" data-field="whiteboard">
+                        <h4>Whiteboard</h4>
+                        <span role="textbox" class="distinct" contenteditable="true" itemprop="whiteboard"></span>
+                      </section>
+                      <section role="group" aria-label="URL" data-field="url">
+                        <h4>URL</h4>
+                        <a role="link" itemprop="url"></a>
+                      </section>
+                      <section role="group" aria-label="See Also" data-field="see_also">
+                        <h4>See Also</h4>
+                        <ul><li><a role="link" itemprop="see_also"></a></li></ul>
+                      </section>
+                      <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
+                    </section>
+                    <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
+                      <header>
+                        <h3>Dependencies</h3>
+                      </header>
+                      <section role="group" aria-label="Depends on" data-field="depends_on">
+                        <header>
+                          <h4>Depends on</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="depends_on"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Blocks" data-field="blocks">
+                        <header>
+                          <h4>Blocks</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="blocks"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Duplicates" data-field="duplicate">
+                        <h4>Duplicates</h4>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="duplicate"></li>
+                        </ul>
+                      </section>
+                    </section>
+                  </div><!-- end .col -->
+                  <div class="col">
+                    <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
+                      <header>
+                        <h3>Participants</h3>
+                      </header>
+                      <section role="group" aria-label="Reporter" data-field="creator">
+                        <header>
+                          <h4>Reporter</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="link" tabindex="0" itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
+                            <meta itemprop="email">
+                            <meta itemprop="description">
+                            <img alt="" itemprop="image">
+                            <span itemprop="name"></span>
+                          </li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Assignee" data-field="assigned_to">
+                        <header>
+                          <h4>Assignee</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="link" tabindex="0" itemprop="assigned_to" itemscope itemtype="http://bzdeck.com/User">
+                            <meta itemprop="email">
+                            <meta itemprop="description">
+                            <img alt="" itemprop="image">
+                            <span itemprop="name"></span>
+                          </li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="QA" data-field="qa_contact">
+                        <header>
+                          <h4>QA</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="link" tabindex="0" itemprop="qa_contact" itemscope itemtype="http://bzdeck.com/User">
+                            <meta itemprop="email">
+                            <meta itemprop="description">
+                            <img alt="" itemprop="image">
+                            <span itemprop="name"></span>
+                          </li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Mentors" data-field="mentor">
+                        <header>
+                          <h4>Mentors</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="link" tabindex="0" itemprop="mentor" itemscope itemtype="http://bzdeck.com/User">
+                            <meta itemprop="email">
+                            <meta itemprop="description">
+                            <img alt="" itemprop="image">
+                            <span itemprop="name"></span>
+                          </li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Cc" data-field="cc">
+                        <header>
+                          <h4>Cc</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="link" tabindex="0" itemprop="cc" itemscope itemtype="http://bzdeck.com/User">
+                            <meta itemprop="email">
+                            <meta itemprop="description">
+                            <img alt="" itemprop="image">
+                            <span itemprop="name"></span>
+                          </li>
+                        </ul>
+                      </section>
+                    </section>
+                  </div><!-- end .col -->
+                  <div class="col">
+                    <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
+                      <header>
+                        <h3>Flags</h3>
+                      </header>
+                    </section>
+                    <section role="group" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
+                      <header>
+                        <h3>Tracking Flags</h3>
+                      </header>
+                    </section>
+                  </div><!-- end .col -->
+                </div><!-- end .bug-fieldset-wrapper -->
               </div><!-- end .bug-info -->
             </div><!-- end #bug-TID-tabpanel-info -->
             <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">

@@ -3,7 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 .bug-attachments {
-  border-top: .1rem solid var(--secondary-region-border-color);
+  box-sizing: border-box;
+  border-width: .1rem 0;
+  border-style: solid;
+  border-color: var(--secondary-region-border-color);
 }
 
 .bug-attachments h3 {
@@ -163,23 +166,11 @@
   --toolbar-height: 3.2rem;
 }
 
-.bug-attachments .list [role="toolbar"] > ul > li {
-  border-right: .1rem solid var(--grid-border-color);
-  height: var(--toolbar-height);
-}
-
 .bug-attachments .list [role="toolbar"] [role="button"] {
+  border-right: .1rem solid var(--grid-border-color);
   width: var(--toolbar-height);
   height: var(--toolbar-height);
-}
-
-.bug-attachments .list [role="toolbar"] [role="button"]::before {
-  top: 0;
-  left: 0;
-  width: var(--toolbar-height);
-  height: var(--toolbar-height);
-  font-size: calc(var(--toolbar-height) / 2);
-  line-height: var(--toolbar-height);
+  font-size: 1.6rem;
 }
 
 .bug-attachments .content {

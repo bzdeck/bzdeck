@@ -32,13 +32,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     // Subscribe to events
     this.subscribe('BugPresenter#BugDataAvailable');
     this.subscribe('BugPresenter#BugDataUnavailable');
-    this.subscribe('BugModel#BugEdited', true);
-    this.subscribe('BugModel#CommentEdited', true);
-    this.subscribe('BugModel#Submit', true);
-    this.subscribe('BugModel#SubmitProgress', true);
-    this.subscribe('BugModel#SubmitSuccess', true);
-    this.subscribe('BugModel#SubmitError', true);
-    this.subscribe('BugModel#SubmitComplete', true);
 
     // Initiate the corresponding presenter
     this.presenter = new BzDeck.BugPresenter(this.id, this.container_id, this.bug_id, this.siblings);
@@ -65,6 +58,13 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     this.subscribe('BugModel#AnnotationUpdated', true); // Enable the global option
     this.subscribe('BugModel#Updated', true); // Cannot be 'M#Updated' because it doesn't work in BugDetailsView
+    this.subscribe('BugModel#BugEdited', true);
+    this.subscribe('BugModel#CommentEdited', true);
+    this.subscribe('BugModel#Submit', true);
+    this.subscribe('BugModel#SubmitProgress', true);
+    this.subscribe('BugModel#SubmitSuccess', true);
+    this.subscribe('BugModel#SubmitError', true);
+    this.subscribe('BugModel#SubmitComplete', true);
   }
 
   /**
@@ -236,7 +236,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @fires BugView#OpeningTabRequested
    * @fires AnyView#TogglingPreviewRequested
    */
-  render () {
+  async render () {
     if (!this.bug.summary && !this.bug._update_needed) {
       // The bug is being loaded
       return;
@@ -247,30 +247,27 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     const _bug = {};
     const get_user = name => BzDeck.collections.users.get(name, { name }); // Promise
 
-    (async () => {
-      await Promise.all(BzDeck.config.grid.default_columns.map(async ({ id: field, type } = {}) => {
-        if (this.bug[field] !== undefined) {
-          if (field === 'keywords') {
-            _bug.keyword = this.bug.keywords;
-          } else if (field === 'mentors') {
-            const mentors = await Promise.all(this.bug.mentors.map(name => get_user(name)));
+    await Promise.all(BzDeck.config.grid.default_columns.map(async ({ id: field, type } = {}) => {
+      if (this.bug[field] !== undefined) {
+        if (field === 'keywords') {
+          _bug.keyword = this.bug.keywords;
+        } else if (field === 'mentors') {
+          const mentors = await Promise.all(this.bug.mentors.map(name => get_user(name)));
 
-            _bug.mentor = mentors.map(mentor => mentor.properties);
-          } else if (type === 'person') {
-            if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
-              const user = await get_user(this.bug[field]);
+          _bug.mentor = mentors.map(mentor => mentor.properties);
+        } else if (type === 'person') {
+          if (this.bug[field] && !this.bug[field].startsWith('nobody@')) { // Is this BMO-specific?
+            const user = await get_user(this.bug[field]);
 
-              _bug[field] = user.properties;
-            }
-          } else {
-            _bug[field] = this.bug[field] || '';
+            _bug[field] = user.properties;
           }
+        } else {
+          _bug[field] = this.bug[field] || '';
         }
-      }));
+      }
+    }));
 
-      this.fill(this.$bug, _bug);
-      this.set_product_tooltips();
-    })();
+    this.fill(this.$bug, _bug);
 
     const init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
     const can_editbugs = BzDeck.account.permissions.includes('editbugs');
@@ -304,6 +301,8 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         this.bug = await this.bug.fetch(false);
         this.fill_details(true);
       }
+
+      this.set_product_tooltips();
     })();
 
     // Focus management

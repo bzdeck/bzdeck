@@ -71,7 +71,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       mentor: 'Take myself the mentor of this bug',
     }[this.field]);
 
-    this.$button.setAttribute('aria-hidden', this.can_take);
+    this.$button.setAttribute('aria-hidden', !this.can_take);
     this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
     this.$button.addEventListener('click', event => {
@@ -129,7 +129,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       return;
     }
 
-    const $person = this.$list.querySelector('[itemscope]');
+    let $person = this.$list.querySelector('[itemscope]');
     const self = email === this.my_email;
 
     if (!this.multiple && $person) {

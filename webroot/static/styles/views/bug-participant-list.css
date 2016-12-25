@@ -3,19 +3,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 .bug-fieldset[data-category="participants"] [data-field] {
+  overflow: hidden;
   margin: 1.2rem;
 }
 
-.bug-fieldset[data-category="participants"] [data-field] header {
-  display: flex;
-  min-height: 1.6rem;
+.bug-fieldset[data-category="participants"] [data-field]:not(:last-child) {
+  border-bottom: .1rem solid var(--secondary-grid-border-color);
+  padding-bottom: 1.2rem;
 }
 
-.bug-fieldset[data-category="participants"] [data-field] h4 {
-  flex: auto;
-  margin-bottom: .8rem;
-  min-height: 1.6rem;
-  line-height: 1.6rem;
+.bug-fieldset[data-category="participants"] [data-field] header {
+  float: left;
+  margin-left: -12rem;
+}
+
+.bug-fieldset[data-category="participants"] [data-field] header h4 {
+  position: static;
 }
 
 .bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
@@ -36,11 +39,12 @@
 }
 
 .bug-fieldset[data-category="participants"] header [role="button"] {
+  padding: 0;
   width: auto;
   opacity: .6;
 }
 
-.bug-fieldset[data-category="participants"] [role="combobox"][aria-hidden="false"] {
+.bug-fieldset[data-category="participants"] [role="combobox"]:not([aria-hidden="true"]) {
   display: block;
   margin-bottom: .8rem;
   width: 100%;

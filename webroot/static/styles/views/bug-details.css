@@ -204,15 +204,15 @@
   width: auto;
 }
 
-[data-device="desktop"]:root [id$="tabpanel-info"] > .bug-info {
-  margin: 0 .8rem;
-  width: auto;
-  column-count: 2;
-  column-gap: .8rem;
+[data-device="desktop"]:root [id$="tabpanel-info"] .bug-fieldset-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 1.2rem;
 }
 
-[data-device="desktop"]:root [id$="tabpanel-info"] > .bug-info > * {
-  page-break-inside: avoid;
+[data-device="desktop"]:root [id$="tabpanel-info"] .bug-fieldset-wrapper > .col {
+  margin-left: 1.2rem;
+  flex-basis: calc(50% - 1.2rem);
 }
 
 .bug-info,
@@ -227,9 +227,6 @@
 
 .bug-fieldset > header {
   display: flex;
-  position: sticky;
-  top: 0;
-  z-index: 10;
   padding: .4rem 1.2rem; /* Need some right padding for the scrollbar  */
   height: 1.6rem;
   color: var(--secondary-region-header-foreground-color);
@@ -273,7 +270,7 @@
 }
 
 .bug-info .bug-fieldset [data-field] {
-  margin: .8rem 1.6rem;
+  margin: .8rem 1.2rem;
 }
 
 .bug-fieldset [data-field] h4 {
@@ -376,13 +373,21 @@
   white-space: pre; /* = <br> */
 }
 
-.bug-fieldset :not([role="combobox"]) [role="button"]:not(.iconic) {
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic) {
   overflow: hidden;
   border-width: 0;
   color: inherit !important; /* TEMP */
   background: transparent none !important; /* TEMP */
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic):not(:last-child) {
+  margin-right: .8rem;
+}
+
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic) .icon {
+  display: none;
 }
 
 [data-bug-id]:-moz-any([data-status="RESOLVED"], [data-status="VERIFIED"], [data-status="CLOSED"]) {
