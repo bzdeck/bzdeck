@@ -269,12 +269,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
         }
       }));
 
-      // Other Contributors, excluding Cc
-      const contributors = await Promise.all([...this.bug.other_contributors]
-          .filter(name => !this.bug.cc.includes(name)).map(name => get_user(name)));
-
-      _bug.contributor = contributors.map(contributor => contributor.properties);
-
       this.fill(this.$bug, _bug);
       this.set_product_tooltips();
     })();

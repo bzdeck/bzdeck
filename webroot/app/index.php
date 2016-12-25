@@ -594,19 +594,6 @@
                       </li>
                     </ul>
                   </section>
-                  <section role="group" aria-label="Other Contributors" data-field="contributor">
-                    <header>
-                      <h4>Other Contributors</h4>
-                    </header>
-                    <ul class="list">
-                      <li tabindex="0" role="link" itemprop="contributor" itemscope itemtype="http://bzdeck.com/User">
-                        <meta itemprop="email">
-                        <meta itemprop="description">
-                        <img alt="" itemprop="image">
-                        <span itemprop="name"></span>
-                      </li>
-                    </ul>
-                  </section>
                 </section>
               </div><!-- end .bug-info -->
             </div><!-- end #bug-TID-tabpanel-info -->
