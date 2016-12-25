@@ -294,7 +294,6 @@
             <div role="group">
               <span role="button" class="iconic" aria-label="Star this bug" aria-pressed="false" data-command="star" data-field="starred" data-icon="&#xF006;"></span>
               <span role="button" class="iconic" aria-label="Menu" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu" data-icon="&#xF142;"></span>
-              <span role="button" class="iconic" aria-label="Open this bug in a new tab" data-command="open-tab" data-icon="&#xF08E;"></span>
             </div>
             <div role="group">
               <span role="button" class="iconic" aria-label="Show the query pane to search again" data-command="show-basic-search-pane" data-icon="&#xF002;"></span>
@@ -342,7 +341,6 @@
               </li>
               <li role="separator"></li>
               <li role="none">
-                <a id="bug-TID-menu-open-tab" role="menuitem" data-command="open-tab"><label>Open in Tab</label></a>
                 <a id="bug-TID-menu-open-bugzilla" role="menuitem" data-command="open-bugzilla"><label>Open in Bugzilla</label></a>
                 <a id="bug-TID-menu-copy-link" role="menuitem" data-command="copy-link"><label>Copy Link</label></a>
                 <a id="bug-TID-menu-tweet" role="menuitem" data-command="tweet"><label>Tweet</label></a>

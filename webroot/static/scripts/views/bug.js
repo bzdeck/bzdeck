@@ -115,7 +115,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       'hide-cc': () => toggle_cc(false),
       'expand-comments': () => this.timeline.expand_comments(),
       'collapse-comments': () => this.timeline.collapse_comments(),
-      'open-tab': () => this.trigger('BugView#OpeningTabRequested'),
     };
 
     $menu.addEventListener('MenuOpened', async event => {
