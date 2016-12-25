@@ -181,10 +181,6 @@
   content: '\F013';
 }
 
-#main-menu-app-about .icon::before {
-  content: '\F05A';
-}
-
 #navigator-folder-list [role="option"] label span {
   display: inline-block;
   position: relative;

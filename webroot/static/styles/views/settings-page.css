@@ -87,6 +87,10 @@
   content: "\F044";
 }
 
+#settings-tab-about .icon::before {
+  content: "\F05A";
+}
+
 [data-device="desktop"]:root #tabpanel-settings > section > div {
   overflow: hidden;
   padding: 0 4rem;

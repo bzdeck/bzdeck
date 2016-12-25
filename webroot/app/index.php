@@ -138,6 +138,10 @@
                 <span class="icon" aria-hidden="true"></span>
                 <label>Editing</label>
               </li>
+              <li id="settings-tab-about" role="tab" aria-controls="settings-tabpanel-about" aria-selected="false">
+                <span class="icon" aria-hidden="true"></span>
+                <label>About</label>
+              </li>
             </ul><!-- end #settings-tablist -->
             <div id="settings-tabpanel-account" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="settings-tab-account">
               <section>
@@ -245,6 +249,27 @@
                 </section>
               </section>
             </div><!-- end #settings-tabpanel-editing -->
+            <div id="settings-tabpanel-about" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="settings-tab-about">
+              <section>
+                <h3>About</h3>
+                <section>
+                  <h4>About BzDeck</h4>
+                  <ul>
+                    <li><a href="https://github.com/bzdeck/bzdeck/wiki">Project Overview</a></li>
+                    <li><a href="https://github.com/bzdeck/bzdeck/wiki/FAQ">FAQ</a></li>
+                    <li><a href="https://github.com/bzdeck/bzdeck/wiki/Privacy-Notice">Privacy Notice</a></li>
+                  </ul>
+                </section>
+                <section>
+                  <h4>Keep in Touch</h4>
+                  <ul>
+                    <li><a href="https://twitter.com/BzDeck">Twitter</a></li>
+                    <li><a href="https://www.facebook.com/BzDeck">Facebook</a></li>
+                    <li><a href="https://www.google.com/+BzDeck">Google+</a></li>
+                  </ul>
+                </section>
+              </section>
+            </div><!-- end #settings-tabpanel-about -->
           </div>
           <footer>
           </footer>
@@ -987,12 +1012,6 @@
           <section id="navigator-menu">
             <h2>Menu</h2>
             <ul id="main-menu-app-menu" role="menu">
-              <li role="none">
-                <a id="main-menu-app-about" href="/about/" aria-label="About BzDeck" role="menuitem" data-command="show-about" data-tooltip-position="right">
-                  <span class="icon" aria-hidden="true"></span>
-                  <label>About BzDeck</label>
-                </a>
-              </li>
               <li role="none">
                 <span id="main-menu-app-settings" aria-label="Settings" role="menuitem" data-command="show-settings" data-tooltip-position="right">
                   <span class="icon" aria-hidden="true"></span>
