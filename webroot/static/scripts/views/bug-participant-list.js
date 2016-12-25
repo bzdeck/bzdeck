@@ -22,7 +22,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.bug = bug;
     this.field = $section.dataset.field;
 
-    this.editing = false;
     this.multiple = ['mentor', 'cc'].includes(this.field);
     this.can_take = ['assigned_to', 'qa_contact', 'mentor'].includes(this.field);
     this.values = new Set(this.multiple ? this.bug[this.field] : this.bug[this.field] ? [this.bug[this.field]] : []);
@@ -41,8 +40,11 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.add_subscribe_button();
     }
 
+    for (const $person of this.$list.querySelectorAll('[itemscope]')) {
+      this.add_remove_button_to_person($person);
+    }
+
     // Subscribe to events
-    this.subscribe('BugView#EditModeChanged', true);
     this.subscribe('BugModel#ParticipantAdded', true);
     this.subscribe('BugModel#ParticipantRemoved', true);
   }
@@ -59,28 +61,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   }
 
   /**
-   * Called whenever the participant list's edit mode is changed. Toggle the Take button and Person Finder.
-   * @listens BugView#EditModeChanged
-   * @param {Boolean} enabled - Whether the edit mode is enabled.
-   */
-  on_edit_mode_changed ({ enabled } = {}) {
-    this.editing = enabled;
-
-    this.$button.setAttribute('aria-hidden', this.can_take && !this.editing);
-    this.$finder.setAttribute('aria-hidden', !this.editing);
-
-    for (const $person of this.$list.querySelectorAll('[itemscope]')) {
-      if (this.editing) {
-        this.add_remove_button_to_person($person);
-      } else {
-        $person.querySelector('[role="button"]').remove();
-        $person.tabIndex = 0;
-        $person.setAttribute('role', 'link');
-      }
-    }
-  }
-
-  /**
    * Add the Take button to the <header> in the <section>.
    * @fires BugView#AddParticipant
    */
@@ -91,7 +71,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       mentor: 'Take myself the mentor of this bug',
     }[this.field]);
 
-    this.$button.setAttribute('aria-hidden', 'true');
+    this.$button.setAttribute('aria-hidden', this.can_take);
     this.$button.setAttribute('aria-disabled', this.values.has(this.my_email));
 
     this.$button.addEventListener('click', event => {
@@ -128,7 +108,6 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.$$finder = new BzDeck.PersonFinderView(this.id, `bug-${this.bug.id}-${this.id}-${this.field}-person-finder`,
                                                 this.bug, this.values);
     this.$finder = this.$$finder.$combobox;
-    this.$finder.setAttribute('aria-hidden', 'true');
 
     this.$finder.addEventListener('Change', event => {
       this.$$finder.clear();
@@ -178,10 +157,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
       this.$list.insertAdjacentElement('afterbegin', $person);
-
-      if (this.editing) {
-        this.add_remove_button_to_person($person);
-      }
+      this.add_remove_button_to_person($person);
     })();
   }
 

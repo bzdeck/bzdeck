@@ -19,12 +19,15 @@
 .bug-timeline .bug-summary {
   position: static;
   margin: var(--comment-margin) var(--comment-margin) 0;
-  line-height: 1.4;
-  -moz-user-select: text;
 }
 
 [data-device|="mobile"]:root :not(#home-preview-bug-timeline-wrapper) > .bug-timeline .bug-summary {
   margin-top: 5.2rem !important; /* Bug details */
+}
+
+.bug-timeline .bug-summary [itemprop="summary"] {
+  line-height: 1.4;
+  -moz-user-select: text;
 }
 
 .bug-timeline .comments-wrapper {

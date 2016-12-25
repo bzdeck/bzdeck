@@ -204,6 +204,17 @@
   width: auto;
 }
 
+[data-device="desktop"]:root [id$="tabpanel-info"] > .bug-info {
+  margin: 0 .8rem;
+  width: auto;
+  column-count: 2;
+  column-gap: .8rem;
+}
+
+[data-device="desktop"]:root [id$="tabpanel-info"] > .bug-info > * {
+  page-break-inside: avoid;
+}
+
 .bug-info,
 .bug-participants {
   overflow: hidden;
@@ -389,11 +400,11 @@
   }
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] {
-    left: calc(50% - 36rem / 2);
+    left: calc(50% - 48rem / 2);
     margin: .7rem 0;
     border: .1rem solid var(--button-border-color);
     border-radius: .4rem;
-    width: 36rem;
+    width: 48rem;
     height: 2.4rem;
     background-color: var(--content-background-color);
   }
@@ -464,10 +475,6 @@
   .bug-info .bug-fieldset [data-field] {
     position: relative;
     padding-left: 12rem;
-  }
-
-  .bug-container .bug-info .bug-fieldset [data-field] {
-    padding-left: 8rem;
   }
 
   .bug-info .bug-fieldset[data-category="tracking-flags"] [data-field] {

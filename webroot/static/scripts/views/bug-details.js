@@ -39,44 +39,12 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BugView {
       }
     });
 
-    mql.addListener(mql => this.change_layout(mql));
-    this.change_layout(mql);
-
     if (FlareTail.env.device.mobile) {
       this.add_mobile_tweaks();
     }
 
     // Subscribe to events
     this.subscribe('BugPresenter#HistoryUpdated');
-  }
-
-  /**
-   * Change the page layout by moving some elements, depending on the viewport.
-   * @param {MediaQueryList} mql - Detecting the current viewport.
-   */
-  change_layout (mql) {
-    const $info_tab = this.$bug.querySelector('[id$="-tab-info"]');
-    const $participants_tab = this.$bug.querySelector('[id$="-tab-participants"]');
-    const $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
-    const $bug_info = this.$bug.querySelector('.bug-info');
-    const $bug_participants = this.$bug.querySelector('.bug-participants');
-
-    if (mql.matches || FlareTail.env.device.mobile) {  // Mobile layout
-      $info_tab.setAttribute('aria-hidden', 'false');
-      $participants_tab.setAttribute('aria-hidden', 'false');
-      this.$bug.querySelector('[id$="-tabpanel-info"]').appendChild($bug_info);
-      this.$bug.querySelector('[id$="-tabpanel-participants"]').appendChild($bug_participants);
-    } else {
-      if ([$info_tab, $participants_tab].includes(this.$$tablist.view.selected[0])) {
-        this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
-      }
-
-      $info_tab.setAttribute('aria-hidden', 'true');
-      $participants_tab.setAttribute('aria-hidden', 'true');
-      this.$outline.appendChild($bug_info);
-      this.$outline.appendChild($bug_participants);
-      this.$tablist.removeAttribute('aria-hidden');
-    }
   }
 
   /**

@@ -32,6 +32,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     // Subscribe to events
     this.subscribe('BugPresenter#BugDataAvailable');
     this.subscribe('BugPresenter#BugDataUnavailable');
+    this.subscribe('BugModel#BugEdited', true);
+    this.subscribe('BugModel#CommentEdited', true);
+    this.subscribe('BugModel#Submit', true);
+    this.subscribe('BugModel#SubmitProgress', true);
+    this.subscribe('BugModel#SubmitSuccess', true);
+    this.subscribe('BugModel#SubmitError', true);
     this.subscribe('BugModel#SubmitComplete', true);
 
     // Initiate the corresponding presenter
@@ -169,6 +175,11 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     if (this.siblings.length) {
       this.setup_navigation();
     }
+
+    // Activate footer widgets
+    this.$submit_button = this.$bug.querySelector('footer [data-command="submit"]');
+    (new FlareTail.widgets.Button(this.$submit_button)).bind('Pressed', event => this.trigger('BugView#Submit'));
+    this.$statusbar = this.$bug.querySelector('footer [role="status"]');
   }
 
   /**
@@ -223,7 +234,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Render the bug and, activate the toolbar buttons and assign keyboard shortcuts.
-   * @fires BugView#EditModeChanged
    * @fires BugView#OpeningTabRequested
    * @fires AnyView#TogglingPreviewRequested
    */
@@ -272,7 +282,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     const init_button = ($button, handler) => (new FlareTail.widgets.Button($button)).bind('Pressed', handler);
     const can_editbugs = BzDeck.account.permissions.includes('editbugs');
     const $star_button = this.$bug.querySelector('[role="button"][data-command="star"]');
-    const $edit_button = this.$bug.querySelector('[role="button"][data-command="edit"]');
     const $container = this.$bug.closest('.bug-container');
     const $timeline_tab = this.$bug.querySelector('[id$="-tab-timeline"]');
     const $timeline = this.$bug.querySelector('.bug-timeline');
@@ -281,30 +290,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     if ($star_button) {
       $star_button.setAttribute('aria-pressed', this.bug.starred);
       init_button($star_button, event => this.bug.starred = event.detail.pressed);
-    }
-
-    if ($edit_button) {
-      $edit_button.setAttribute('aria-disabled', !can_editbugs);
-      $edit_button.setAttribute('aria-pressed', is_expanded);
-
-      init_button($edit_button, event => {
-        this.trigger('BugView#EditModeChanged', { enabled: event.detail.pressed });
-
-        if ($container.matches('[aria-expanded]')) {
-          // Toggle the bug container
-          this.trigger('AnyView#ExpandingBugContainerRequested', { container_id: this.container_id });
-
-          // Select the Timeline tab when the bug container is collapsed
-          if (this.$$tablist && $container.matches('[aria-expanded="true"]')) {
-            this.$$tablist.view.selected = this.$$tablist.view.$focused = $timeline_tab;
-          }
-        }
-      });
-    }
-
-    // Switch to the edit mode if the container is already expanded
-    if (is_expanded) {
-      this.trigger('BugView#EditModeChanged', { enabled: true });
     }
 
     if (!$timeline) {
@@ -457,12 +442,10 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
     const can_editbugs = BzDeck.account.permissions.includes('editbugs');
     const is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
-    const editing = this.$bug.closest('.bug-container').matches('[aria-expanded="true"]');
 
     // Iterate over the fields except the Flags section which is activated by BugFlagsView
     for (const $section of this.$bug.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
       const name = $section.dataset.field;
-      const is_status_field = ['status', 'resolution', 'dupe_of'].includes(name);
       const $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
       const $textbox = $section.querySelector('[role="textbox"]');
       const $next_field = $section.nextElementSibling;
@@ -470,13 +453,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       // Activate comboboxes
       if ($combobox) {
         const $$combobox = new FlareTail.widgets.ComboBox($combobox);
-        const toggle = disabled => $combobox.setAttribute('aria-disabled', disabled && !is_status_field);
 
         this.comboboxes.set($combobox, $$combobox);
         $combobox.setAttribute('aria-readonly', !can_editbugs);
-
-        toggle(!editing);
-        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled), true);
 
         $$combobox.build_dropdown(this.get_field_values(name)
             .map(value => ({ value, selected: value === this.bug[name] })));
@@ -495,26 +474,20 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
       // Activate textboxes
       if ($textbox) {
         const $$textbox = new FlareTail.widgets.TextBox($textbox);
-        const toggle = enabled => {
-          $textbox.contentEditable = $textbox.spellcheck = enabled && can_editbugs;
-          $textbox.setAttribute('aria-disabled', !enabled);
-        };
 
         $textbox.tabIndex = 0;
+        $textbox.contentEditable = $textbox.spellcheck = can_editbugs;
         $textbox.setAttribute('aria-readonly', !can_editbugs);
         $$textbox.bind('focusin', event => $textbox.spellcheck = true);
         $$textbox.bind('focusout', event => $textbox.spellcheck = false);
         $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
         $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
-
-        toggle(editing);
-        this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(enabled), true);
       }
 
       // URL
       if (name === 'url') {
-        this.activate_url_widget($section, editing);
+        this.activate_url_widget($section);
       }
 
       if (name === 'dupe_of') {
@@ -551,45 +524,34 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Activate the URL widget.
    * @param {HTMLElement} $section - Outer element.
-   * @param {Boolean} editing - Whether the bug is in the edit mode.
    * @fires BugView#EditField
    */
-  activate_url_widget ($section, editing) {
-    const toggle = disabled => {
-      let $link = $section.querySelector('a');
-      let $textbox = $section.querySelector('input');
+  activate_url_widget ($section) {
+    let $textbox = $section.querySelector('input');
 
-      if (!disabled && !$textbox) {
-        const orignal_value = $link ? $link.getAttribute('href') : this.bug.url;
+    if ($textbox) {
+      return;
+    }
 
-        $textbox = document.createElement('input');
-        $textbox.className = 'distinct';
-        $textbox.type = 'url';
-        $textbox.value = orignal_value;
-        $textbox.setAttribute('role', 'textbox');
-        $textbox.setAttribute('itemprop', 'url');
+    const $link = $section.querySelector('a');
+    const orignal_value = $link ? $link.getAttribute('href') : this.bug.url;
 
-        if ($link) {
-          $section.replaceChild($textbox, $link);
-        } else {
-          $section.appendChild($textbox);
-        }
+    $textbox = document.createElement('input');
+    $textbox.className = 'distinct';
+    $textbox.type = 'url';
+    $textbox.value = orignal_value;
+    $textbox.setAttribute('role', 'textbox');
+    $textbox.setAttribute('itemprop', 'url');
 
-        $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
-          name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
-        }));
-      } else if (disabled && !$link) {
-        $link = document.createElement('a');
-        $link.href = $link.title = $textbox.value;
-        $link.text = $textbox.value.replace(/^https?:\/\//, '').replace(/\/$/, '');
-        $link.setAttribute('role', 'link');
-        $link.setAttribute('itemprop', 'url');
-        $section.replaceChild($link, $textbox);
-      }
-    };
+    if ($link) {
+      $section.replaceChild($textbox, $link);
+    } else {
+      $section.appendChild($textbox);
+    }
 
-    toggle(!editing);
-    this.on('BugView#EditModeChanged', ({ enabled } = {}) => toggle(!enabled), true);
+    $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
+      name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
+    }));
   }
 
   /**
@@ -906,6 +868,96 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     this.update(await BzDeck.collections.bugs.get(bug_id), changes);
+  }
+
+  /**
+   * Called whenever any of the fields, comments or attachments are edited by the user. If there is any change, enable
+   * the Submit button. Otherwise, disable it.
+   * @listens BugModel#BugEdited
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {Boolean} can_submit - Whether the changes can be submitted immediately.
+   */
+  on_bug_edited ({ bug_id, can_submit } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$submit_button.setAttribute('aria-disabled', !can_submit);
+  }
+
+  /**
+   * Called whenever the a comment text is added or removed by the user. Clear the status text.
+   * @listens BugModel#CommentEdited
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {Boolean} has_comment - Whether the comment is empty.
+   */
+  on_comment_edited ({ bug_id, has_comment } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$statusbar.textContent = '';
+  }
+
+  /**
+   * Called whenever the changes are about to be submitted to Bugzilla. Disable the Submit button and update the
+   * statusbar message.
+   * @listens BugModel#Submit
+   * @param {Number} bug_id - Changed bug ID.
+   */
+  on_submit ({ bug_id } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$statusbar.textContent = 'Submitting...';
+    this.$submit_button.setAttribute('aria-disabled', 'true');
+  }
+
+  /**
+   * Called whenever the upload of a new attachment is in progress. Show the current status on the statusbar.
+   * @listens BugModel#SubmitProgress
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {Number} total - Total size of attachments.
+   * @param {Number} uploaded - Uploaded size of attachments.
+   * @param {Number} percentage - Uploaded percentage.
+   * @todo Use a progressbar (#159)
+   */
+  on_submit_progress ({ bug_id, total, uploaded, percentage } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$statusbar.textContent = `${percentage}% uploaded`;
+  }
+
+  /**
+   * Called whenever all the changes are submitted successfully. Clear the status text.
+   * @listens BugModel#SubmitSuccess
+   * @param {Number} bug_id - Changed bug ID.
+   */
+  on_submit_success ({ bug_id } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$statusbar.textContent = '';
+  }
+
+  /**
+   * Called whenever any error is detected while submitting the changes. Show the error message on the statusbar.
+   * @listens BugModel#SubmitError
+   * @param {Number} bug_id - Changed bug ID.
+   * @param {String} error - Error message.
+   * @param {Boolean} button_disabled - Whether the submit button should be disabled.
+   */
+  on_submit_error ({ bug_id, error, button_disabled } = {}) {
+    if (bug_id !== this.bug.id) {
+      return;
+    }
+
+    this.$statusbar.textContent = error || 'There was an error while submitting your changes. Please try again.';
+    this.$submit_button.setAttribute('aria-disabled', button_disabled);
   }
 
   /**

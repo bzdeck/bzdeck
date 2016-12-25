@@ -2,23 +2,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-.bug-participants .bug-fieldset [data-field] {
+.bug-fieldset[data-category="participants"] [data-field] {
   margin: 1.2rem;
 }
 
-.bug-participants .bug-fieldset [data-field] header {
+.bug-fieldset[data-category="participants"] [data-field] header {
   display: flex;
   min-height: 1.6rem;
 }
 
-.bug-participants .bug-fieldset [data-field] h4 {
+.bug-fieldset[data-category="participants"] [data-field] h4 {
   flex: auto;
   margin-bottom: .8rem;
   min-height: 1.6rem;
   line-height: 1.6rem;
 }
 
-.bug-participants [itemprop][itemtype$="User"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
   overflow: hidden;
   border-width: 0;
   padding: .2rem .4rem;
@@ -31,22 +31,22 @@
   text-overflow: ellipsis;
 }
 
-.bug-participants [role="button"][aria-disabled="true"] {
+.bug-fieldset[data-category="participants"] [role="button"][aria-disabled="true"] {
   display: none;
 }
 
-.bug-participants header [role="button"] {
+.bug-fieldset[data-category="participants"] header [role="button"] {
   width: auto;
   opacity: .6;
 }
 
-.bug-participants [role="combobox"][aria-hidden="false"] {
+.bug-fieldset[data-category="participants"] [role="combobox"][aria-hidden="false"] {
   display: block;
   margin-bottom: .8rem;
   width: 100%;
 }
 
-.bug-participants [itemprop][itemtype$="User"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
   display: flex;
   padding: 0;
   height: 2.4rem;
@@ -55,73 +55,73 @@
   transition: opacity .4s;
 }
 
-.bug-participants [itemprop][itemtype$="User"].removing {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"].removing {
   opacity: 0;
 }
 
-.bug-participants [itemprop][itemtype$="User"]:not(:last-of-type) {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"]:not(:last-of-type) {
   margin-bottom: .8rem;
 }
 
-.bug-participants [itemprop][itemtype$="User"] [itemprop="image"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [itemprop="image"] {
   flex: none;
   margin-right: .8rem;
   width: 2.4rem;
   height: 2.4rem;
 }
 
-.bug-participants [itemprop][itemtype$="User"] [itemprop="name"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [itemprop="name"] {
   flex: auto;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.bug-participants [itemprop][itemtype$="User"] [role="button"][data-command="remove"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [role="button"][data-command="remove"] {
   text-indent: 0;
 }
 
-.bug-participants [itemprop][itemtype$="User"] [role="button"][data-command="remove"] .icon::before {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [role="button"][data-command="remove"] .icon::before {
   font-family: FontAwesome;
   content: '\F056';
 }
 
 @media (min-width: 1024px) {
-  [data-device="desktop"]:root .bug-participants[id|="bug"] {
+  [data-device="desktop"]:root .bug-fieldset[data-category="participants"][id|="bug"] {
     flex: none;
     width: var(--participant-list-width);
   }
 
-  [data-device="desktop"]:root .bug-participants[id^="search"] {
+  [data-device="desktop"]:root .bug-fieldset[data-category="participants"][id^="search"] {
     right: 0;
     width: var(--participant-list-width);
   }
 
-  [data-device|="mobile"]:root .bug-participants .list {
+  [data-device|="mobile"]:root .bug-fieldset[data-category="participants"] .list {
     display: flex;
     flex-wrap: wrap;
   }
 
-  [data-device|="mobile"]:root .bug-participants [itemprop][itemtype$="User"] {
+  [data-device|="mobile"]:root .bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
     flex: 0 0 var(--participant-list-width);
     margin-right: .8rem;
   }
 }
 
 @media (max-width: 1023px) {
-  .bug-participants .list {
+  .bug-fieldset[data-category="participants"] .list {
     display: flex;
     flex-wrap: wrap;
   }
 
-  .bug-participants [itemprop][itemtype$="User"] {
+  .bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
     flex: 0 0 var(--participant-list-width);
     margin-right: .8rem;
   }
 }
 
 @media (max-width: 639px) {
-  .bug-participants .list {
+  .bug-fieldset[data-category="participants"] .list {
     display: block;
   }
 }

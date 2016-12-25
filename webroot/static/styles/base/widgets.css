@@ -81,7 +81,9 @@ span[role="textbox"] {
 }
 
 .cta[role="button"] {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: .8rem auto 0;
   padding: .8rem .4rem;
   border-color: var(--highlighted-button-border-color);
@@ -104,7 +106,7 @@ span[role="textbox"] {
 }
 
 .cta[role="button"][aria-disabled="true"] {
-  filter: brightness(1.5) grayscale(100%);
+  filter: brightness(1.8) grayscale(100%);
 }
 
 .iconic[role="button"] {

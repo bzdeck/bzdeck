@@ -32,12 +32,10 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$preview_tab = this.$form.querySelector('[id$="tab-preview"]');
     this.$attachments_tab = this.$form.querySelector('[id$="tab-attachments"]');
     this.$preview = this.$form.querySelector('[id$="tabpanel-preview"] [itemprop="text"]');
-    this.$status = this.$form.querySelector('[role="status"]');
     this.$attach_button = this.$form.querySelector('[data-command="attach"]');
     this.$file_picker = this.$form.querySelector('input[type="file"]');
     this.$attachments_table = this.$form.querySelector('[id$="tabpanel-attachments"] table');
     this.$attachments_tbody = this.$attachments_table.querySelector('tbody');
-    this.$submit = this.$form.querySelector('[data-command="submit"]');
 
     const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
 
@@ -55,9 +53,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.$form.addEventListener('wheel', event => event.stopPropagation());
     this.$$tablist.bind('Selected', event => this.on_tab_selected(event.detail.items[0]));
     this.$tablist.setAttribute('aria-level', this.id.startsWith('details-bug-') ? 3 : 2);
-
-    new FlareTail.widgets.Button(this.$submit);
-    this.$submit.addEventListener(click_event_type, event => this.trigger('BugView#Submit'));
 
     this.init_comment_tabpanel();
     this.init_attachment_tabpanel();
@@ -79,14 +74,11 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     this.subscribe('BugModel#UploadListUpdated', true);
 
     // Other changes
-    this.subscribe('BugModel#BugEdited', true);
     this.subscribe('BugModel#CommentEdited', true);
 
     // Form submission
     this.subscribe('BugModel#Submit', true);
-    this.subscribe('BugModel#SubmitProgress', true);
     this.subscribe('BugModel#SubmitSuccess', true);
-    this.subscribe('BugModel#SubmitError', true);
     this.subscribe('BugModel#SubmitComplete', true);
   }
 
@@ -229,10 +221,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     this.$textbox.style.removeProperty('height');
     this.$textbox.style.setProperty('height', `${this.$textbox.scrollHeight}px`);
-
-    if (this.$status.textContent) {
-      this.$status.textContent = '';
-    }
 
     this.trigger('BugView#EditComment', { text });
 
@@ -382,23 +370,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   }
 
   /**
-   * Called whenever any of the fields, comments or attachments are edited by the user. If there is any change, enable
-   * the Submit button. Otherwise, disable it.
-   * @listens BugModel#BugEdited
-   * @param {Number} bug_id - Changed bug ID.
-   * @param {Boolean} can_submit - Whether the changes can be submitted immediately.
-   */
-  on_bug_edited ({ bug_id, can_submit } = {}) {
-    if (bug_id !== this.bug.id) {
-      return;
-    }
-
-    this.$submit.setAttribute('aria-disabled', !can_submit);
-  }
-
-  /**
-   * Called whenever the changes are about to be submitted to Bugzilla. Disable the comment form and Submit button and
-   * update the statusbar message.
+   * Called whenever the changes are about to be submitted to Bugzilla. Disable the comment form.
    * @listens BugModel#Submit
    * @param {Number} bug_id - Changed bug ID.
    */
@@ -408,25 +380,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
     }
 
     this.$textbox.setAttribute('aria-readonly', 'true');
-    this.$submit.setAttribute('aria-disabled', 'true');
-    this.$status.textContent = 'Submitting...';
-  }
-
-  /**
-   * Called whenever the upload of a new attachment is in progress. Show the current status on the statusbar.
-   * @listens BugModel#SubmitProgress
-   * @param {Number} bug_id - Changed bug ID.
-   * @param {Number} total - Total size of attachments.
-   * @param {Number} uploaded - Uploaded size of attachments.
-   * @param {Number} percentage - Uploaded percentage.
-   * @todo Use a progressbar (#159)
-   */
-  on_submit_progress ({ bug_id, total, uploaded, percentage } = {}) {
-    if (bug_id !== this.bug.id) {
-      return;
-    }
-
-    this.$status.textContent = `${percentage}% uploaded`;
   }
 
   /**
@@ -441,22 +394,6 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
 
     this.$textbox.value = '';
     this.oninput();
-  }
-
-  /**
-   * Called whenever any error is detected while submitting the changes. Show the error message on the statusbar.
-   * @listens BugModel#SubmitError
-   * @param {Number} bug_id - Changed bug ID.
-   * @param {String} error - Error message.
-   * @param {Boolean} button_disabled - Whether the submit button should be disabled.
-   */
-  on_submit_error ({ bug_id, error, button_disabled } = {}) {
-    if (bug_id !== this.bug.id) {
-      return;
-    }
-
-    this.$submit.setAttribute('aria-disabled', button_disabled);
-    this.$status.textContent = error || 'There was an error while submitting your changes. Please try again.';
   }
 
   /**

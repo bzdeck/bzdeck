@@ -49,6 +49,18 @@
   max-height: 20rem;
 }
 
+.bug-comment-form [id$="tabpanel-comment"] [role="group"] {
+  display: flex;
+  align-items: flex-end;
+}
+
+.bug-comment-form [id$="tabpanel-comment"] [role="group"] [role="button"] {
+  margin: 0 .8rem .8rem 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 2.4rem;
+}
+
 .bug-comment-form .text-formatting-toolbar[role="toolbar"] {
   position: absolute;
   top: .8rem;
@@ -190,9 +202,6 @@
   padding: .4rem;
 }
 
-.bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] {
-
-}
 .bug-comment-form [id$="tabpanel-needinfo"] [class$="row"] [itemtype$="User"] [itemprop="image"] {
   margin: 0 .4rem;
   width: var(--comment-margin);
@@ -201,62 +210,6 @@
 
 .bug-comment-form [id$="tabpanel-needinfo"] .requestee-finder-outer {
   margin-top: .8rem;
-}
-
-.bug-comment-form > footer {
-  display: flex;
-  overflow: hidden;
-  margin: var(--comment-margin);
-  height: 3.2rem;
-  transition: height .2s ease .1s; /* This delay makes sure <strong> clickable */
-}
-
-.bug-comment-form > footer[aria-hidden="true"] {
-  display: flex;
-  border-bottom-width: 0;
-  height: 0;
-}
-
-.bug-comment-form > footer [role="status"] {
-  flex: auto;
-  line-height: 3.2rem;
-  text-align: right;
-}
-
-.bug-comment-form > footer [role="status"] strong {
-  color: var(--hyperlink-text-foreground-color);
-  font-weight: normal;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.bug-comment-form > footer [role="toolbar"] ul {
-  margin: 0;
-}
-
-.bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] {
-  box-sizing: border-box;
-  border: 0;
-  border-radius: .2rem;
-  padding: 0 2.4rem !important;
-  height: 3.2rem;
-  font-size: 1.4rem;
-  line-height: 3.2rem;
-  font-style: italic;
-}
-
-.bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] .icon {
-  display: none;
-}
-
-.bug-comment-form > footer [role="button"][aria-disabled="false"] {
-  color: var(--highlighted-button-foreground-color);
-  background-color: var(--highlighted-button-background-color);
-}
-
-.bug-comment-form > footer [role="button"][aria-disabled="true"] {
-  color: var(--alternate-disabled-button-foreground-color);
-  background-color: var(--alternate-disabled-button-background-color);
 }
 
 @media (max-width: 1023px) {
@@ -287,58 +240,5 @@
   [data-device|="mobile"]:root .bug-comment-form [role="textbox"][aria-multiline="true"] {
     border: 0;
     min-height: 1.6rem;
-  }
-
-  [data-device|="mobile"]:root .bug-comment-form > footer {
-    margin: 0;
-    height: 3.8rem;
-    background-color: transparent;
-  }
-
-  [data-device|="mobile"]:root .bug-comment-form > footer [role="status"] {
-    visibility: hidden; /* TBD */
-  }
-
-  [data-device|="mobile"]:root .bug-comment-form > footer [role="toolbar"] {
-    margin: .4rem;
-  }
-
-  /* Almost same as [itemtype$="Bug"] [role="toolbar"] .iconic */
-  [data-device|="mobile"]:root .bug-comment-form > footer [role="toolbar"] [role="button"][data-command="submit"] {
-    position: relative;
-    overflow: hidden;
-    box-sizing: content-box;
-    border-width: 0;
-    border-radius: 0;
-    padding: 0 !important;
-    width: 3.2rem;
-    height: 3.2rem;
-    background: transparent;
-    line-height: 1;
-    text-indent: -99999px;
-    vertical-align: top;
-  }
-
-  /* Almost same as [itemtype$="Bug"] [role="toolbar"] .iconic::before */
-  [data-device|="mobile"]:root .bug-comment-form > footer [role="toolbar"]
-      [role="button"][data-command="submit"] .icon::before {
-    display: inline-block;
-    position: absolute;
-    top: calc(50% - 1.6rem);
-    left: calc(50% - 1.6rem);
-    margin: 0;
-    width: 3.2rem;
-    height: 3.2rem;
-    font-size: 2rem;
-    line-height: 3.2rem;
-    font-family: FontAwesome;
-    text-align: center;
-    text-indent: 0;
-    vertical-align: top;
-    content: '\F1D8';
-  }
-
-  [data-device|="mobile"]:root .bug-comment-form > footer [role="button"][aria-disabled="false"] {
-    color: var(--highlighted-button-background-color);
   }
 }

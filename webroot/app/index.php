@@ -333,7 +333,6 @@
             </div>
             <div role="group">
               <span role="button" class="iconic" aria-label="Star this bug" aria-pressed="false" data-command="star" data-field="starred" data-icon="&#xF006;"></span>
-              <span role="button" class="iconic" aria-label="Edit the fields of this bug" aria-pressed="false" data-command="edit" data-icon="&#xF040;"></span>
               <span role="button" class="iconic" aria-label="Show the menu items for this bug" aria-pressed="false" aria-haspopup="true" aria-owns="bug-TID-menu" data-command="show-menu" data-icon="&#xF142;"></span>
             </div>
             <ul id="bug-TID-menu" role="menu" aria-expanded="false">
@@ -351,11 +350,10 @@
             </ul>
           </div><!-- end [role="toolbar"] -->
         </header>
-        <div>
+        <div class="body">
           <ul id="bug-TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
             <li id="bug-TID-tab-timeline" role="tab" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></li>
             <li id="bug-TID-tab-info" role="tab" aria-controls="bug-TID-tabpanel-info" aria-selected="false"><label>Info</label></li>
-            <li id="bug-TID-tab-participants" role="tab" aria-controls="bug-TID-tabpanel-participants" aria-selected="false"><label>Participants</label></li>
             <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-selected="false"><label>Attachments</label></li>
             <li id="bug-TID-tab-history" role="tab" aria-controls="bug-TID-tabpanel-history" aria-disabled="true" aria-selected="false"><label>History</label></li>
           </ul><!-- end #bug-TID-tablist -->
@@ -364,8 +362,8 @@
               <div class="bug-timeline-wrapper">
                 <div class="bug-timeline scrollable" tabindex="0" role="article" aria-live="true" aria-relevant="additions">
                   <section>
-                    <header class="bug-summary" data-field="summary">
-                      <h3><span class="distinct" contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></h3>
+                    <header class="bug-summary">
+                      <h3 itemprop="summary"></h3>
                     </header>
                     <div role="feed" class="comments-wrapper"></div>
                   </section>
@@ -460,6 +458,10 @@
                   <header>
                     <h3>Notes</h3>
                   </header>
+                  <section role="group" aria-label="Summary" data-field="summary">
+                    <h4>Summary</h4>
+                    <span class="distinct" contenteditable="true" role="textbox" itemprop="summary"></span>
+                  </section>
                   <section role="group" aria-label="Aliases" data-field="alias">
                     <h4>Aliases</h4>
                     <ul>
@@ -523,10 +525,6 @@
                     <h3>Tracking Flags</h3>
                   </header>
                 </section>
-              </div><!-- end .bug-info -->
-            </div><!-- end #bug-TID-tabpanel-info -->
-            <div id="bug-TID-tabpanel-participants" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-participants">
-              <div id="bug-TID-participants" class="bug-participants scrollable" tabindex="0" role="region">
                 <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                   <header>
                     <h3>Participants</h3>
@@ -610,8 +608,8 @@
                     </ul>
                   </section>
                 </section>
-              </div><!-- end .bug-participants -->
-            </div><!-- end #bug-TID-tabpanel-participants -->
+              </div><!-- end .bug-info -->
+            </div><!-- end #bug-TID-tabpanel-info -->
             <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
               <div class="bug-attachments" tabindex="0">
                 <section role="group" aria-label="Attachments" data-field="attachments">
@@ -660,6 +658,12 @@
           <div id="bug-TID-outline" class="bug-outline scrollable">
           </div><!-- end #bug-TID-outline -->
         </div>
+        <footer>
+          <div role="toolbar">
+            <div role="status"></div>
+            <span role="button" class="cta" aria-disabled="true" data-command="submit">Save Changes</span>
+          </div><!-- end [role="toolbar"] -->
+        </footer>
         <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-template -->
@@ -751,7 +755,10 @@
         </header>
         <div>
           <div id="bug-TID-comment-form-tabpanel-comment" tabindex="0" role="tabpanel" aria-hidden="false" aria-labelledby="bug-TID-comment-form-tab-comment">
-            <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
+            <div role="group">
+              <span role="button" class="iconic" aria-label="Add attachments..." data-command="attach" data-icon="&#xF0C6;"></span>
+              <textarea rows="1" placeholder="Leave a comment" role="textbox" aria-multiline="true"></textarea>
+            </div>
           </div><!-- end #TID-tabpanel-comment -->
           <div id="bug-TID-comment-form-tabpanel-preview" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-preview">
             <article itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
@@ -781,19 +788,6 @@
             </div>
           </div><!-- end #TID-tabpanel-needinfo -->
         </div>
-        <footer>
-          <div role="toolbar">
-            <div role="group">
-              <span role="button" class="iconic" aria-label="Add attachments..." data-command="attach" data-icon="&#xF0C6;"></span>
-            </div>
-          </div>
-          <div role="status"></div>
-          <div role="toolbar">
-            <div role="group">
-              <span role="button" aria-disabled="true" data-command="submit">Save Changes</span>
-            </div>
-          </div>
-        </footer>
       </section><!-- end #TID -->
     </template><!-- end #bug-comment-form -->
     <template id="bug-comment-form-request-needinfo-row">

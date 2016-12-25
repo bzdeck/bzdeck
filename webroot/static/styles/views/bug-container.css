@@ -12,6 +12,8 @@
 }
 
 .bug-container > [itemtype$="Bug"] {
+  display: flex;
+  flex-direction: column;
   position: relative;
   flex: none;
   width: 100%;

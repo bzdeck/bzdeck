@@ -22,7 +22,9 @@
   font-size: 2rem;
 }
 
-[itemtype$="Bug"] > header {
+[itemtype$="Bug"] > header,
+[itemtype$="Bug"] > footer {
+  flex: none;
   display: flex;
   box-sizing: border-box;
   height: 4rem;
@@ -51,6 +53,41 @@
   position: absolute;
   top: 100%;
   right: .4rem;
+}
+
+[itemtype$="Bug"] > .body {
+  position: relative;
+  flex: auto;
+}
+
+[itemtype$="Bug"] > footer [role="status"] {
+  flex: auto;
+  display: flex;
+  align-items: center;
+  margin: .8rem 1.2rem;
+}
+
+[itemtype$="Bug"] > footer [role="status"] strong {
+  color: var(--hyperlink-text-foreground-color);
+  font-weight: normal;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+[itemtype$="Bug"] > footer [role="toolbar"] {
+  flex: auto;
+}
+
+[itemtype$="Bug"] > footer [role="toolbar"] [role="button"][data-command="submit"] {
+  margin: .4rem;
+  border: 0;
+  border-radius: .4rem;
+  padding: 0 1.6rem;
+  width: auto;
+}
+
+[itemtype$="Bug"] > footer [role="toolbar"] [role="button"][data-command="submit"] .icon {
+  display: none;
 }
 
 [itemtype$="Bug"] .att-drop-target {
