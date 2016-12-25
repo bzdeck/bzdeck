@@ -22,7 +22,7 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
    * @returns {Promise.<IDBDatabase>} Target IndexedDB database.
    */
   async load () {
-    return this.open_database(`${BzDeck.host.name}::${BzDeck.account.data.name}`, 2);
+    return this.open_database(`${BzDeck.host.name}::${BzDeck.account.data.name}`, 3);
   }
 
   /**
@@ -33,21 +33,23 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
    */
   onupgradeneeded (event) {
     const database = event.target.result;
+    const transaction = event.target.transaction;
 
     // Create the initial stores
     if (event.oldVersion < 1) {
-      database.createObjectStore('bugs', { keyPath: 'id' })
-              .createIndex('alias', 'alias', { unique: true });
-
-      database.createObjectStore('users', { keyPath: 'name' })
-              .createIndex('id', 'id', { unique: true });
-
+      database.createObjectStore('bugs', { keyPath: 'id' });
+      database.createObjectStore('users', { keyPath: 'name' });
       database.createObjectStore('prefs', { keyPath: 'name' });
     }
 
     if (event.oldVersion < 2) {
       // On Bugzilla 5.0 and later, the alias field is array and it's no longer unique
-      event.target.transaction.objectStore('bugs').deleteIndex('alias');
+      transaction.objectStore('bugs').deleteIndex('alias');
+    }
+
+    if (event.oldVersion < 3) {
+      // User's ID can be undefined when they are not found in Bugzilla, so delete the index
+      transaction.objectStore('users').deleteIndex('id');
     }
 
     return database;
