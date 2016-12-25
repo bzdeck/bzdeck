@@ -891,7 +891,6 @@
           <div itemprop="summary"></div>
           <ul role="none">
             <li role="none"><span itemprop="id"></span></li>
-            <li role="none"><span itemprop="status"></span> <span itemprop="resolution"></span></li>
             <li role="none"><time itemprop="last_change_time"></time></li>
           </ul>
           <p><span itemprop="flag"></span> <span itemprop="extract"></span></p>

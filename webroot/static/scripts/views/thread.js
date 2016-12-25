@@ -232,7 +232,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     this.name = name;
     this.options = options;
     this.bugs = [];
-    this.properties = ['id', 'summary', 'extract', 'status', 'resolution', 'last_change_time', 'contributor', 'starred'];
+    this.properties = ['id', 'summary', 'extract', 'last_change_time', 'contributor', 'starred'];
 
     this.$container = $container;
     this.$header = this.$container.querySelector('header');
