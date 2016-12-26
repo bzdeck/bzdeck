@@ -46,7 +46,7 @@
 }
 
 [itemtype$="Attachment"][data-content-type] [itemprop="content_type"]::before {
-  content: '' !important; /* Hide the icon */
+  content: "" !important; /* Hide the icon */
 }
 
 [itemtype$="Attachment"][data-content-type] [itemprop="image"] {

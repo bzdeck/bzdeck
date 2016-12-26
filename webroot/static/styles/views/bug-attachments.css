@@ -115,7 +115,7 @@
 }
 
 .bug-attachments .list [role="option"] [itemprop="id"]::after {
-  content: '\00A0\00B7'; /* nbsp + middot */
+  content: "\00A0\00B7"; /* nbsp + middot */
 }
 
 .bug-attachments .list [role="option"] meta {
@@ -145,11 +145,11 @@
 }
 
 .bug-attachments .list [role="option"] [itemprop="is_obsolete"][content="true"]::before {
-  content: '\F014';
+  content: "\F014";
 }
 
 .bug-attachments .list [role="option"] [itemprop="is_unuploaded"][content="true"]::before {
-  content: '\F10C';
+  content: "\F10C";
 }
 
 .bug-attachments .list [role="toolbar"] {
@@ -170,7 +170,11 @@
   border-right: .1rem solid var(--grid-border-color);
   width: var(--toolbar-height);
   height: var(--toolbar-height);
-  font-size: 1.6rem;
+}
+
+.bug-attachments .list [role="toolbar"] [role="button"] .icon::before {
+  font-size: 2.4rem;
+  font-family: FiraSans;
 }
 
 .bug-attachments .content {

@@ -6,33 +6,33 @@
   font-family: FiraSans;
   font-weight: 300;
   font-style: italic;
-  src: url(/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.106) format('woff2');
+  src: url(/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.106) format("woff2");
 }
 
 @font-face {
   font-family: FiraSans;
   font-weight: normal;
   font-style: normal;
-  src: url(/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106) format('woff2');
+  src: url(/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106) format("woff2");
 }
 
 @font-face {
   font-family: FiraSans;
   font-weight: 500;
   font-style: normal;
-  src: url(/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.106) format('woff2');
+  src: url(/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.106) format("woff2");
 }
 
 @font-face {
   font-family: FiraMono;
   font-weight: normal;
   font-style: normal;
-  src: url(/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.206) format('woff2');
+  src: url(/vendor/Fira/fonts/FiraMono-Regular.woff2?v=3.206) format("woff2");
 }
 
 @font-face {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
-  src: url(/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0) format('woff2');
+  src: url(/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0) format("woff2");
 }

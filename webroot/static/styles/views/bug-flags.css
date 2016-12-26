@@ -16,5 +16,5 @@
 }
 
 [itemtype="http://bzdeck.com/Flag"] [itemprop="requestee"]::before {
-  content: ' → ';
+  content: " → ";
 }

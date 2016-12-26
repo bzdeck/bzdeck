@@ -640,8 +640,8 @@
                     </div>
                     <div role="toolbar">
                       <div role="group">
-                        <span role="button" class="iconic" aria-label="Add attachments..." data-command="add-attachment" data-icon="&#xF067;"></span>
-                        <span role="button" class="iconic" aria-label="Remove an attachment" aria-disabled="true" data-command="remove-attachment" data-icon="&#xF068;"></span>
+                        <span role="button" class="iconic" aria-label="Add attachments..." data-command="add-attachment" data-icon="+"></span>
+                        <span role="button" class="iconic" aria-label="Remove an attachment" aria-disabled="true" data-command="remove-attachment" data-icon="-"></span>
                       </div>
                       <input type="file" hidden multiple directory>
                     </div>

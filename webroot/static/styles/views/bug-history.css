@@ -45,7 +45,7 @@
 .bug-history :-moz-any(th, td) {
   border-width: .1rem;
   border-style: solid;
-  padding: .2rem .4rem;
+  padding: .4rem .8rem;
   line-height: 1.6;
   text-align: left;
   vertical-align: top;

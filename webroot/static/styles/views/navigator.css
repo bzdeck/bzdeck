@@ -83,6 +83,9 @@
 [data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] {
   color: var(--highlighted-button-border-color);
   background-image: linear-gradient(to bottom, #0004 0%, #0003 20%, #0003 80%, #0004 100%);
+}
+
+[data-device="desktop"]:root #navigator [role="option"][aria-selected="true"] .icon {
   opacity: 1;
 }
 
@@ -138,47 +141,47 @@
 }
 
 #navigator-folder-search .icon::before {
-  content: '\F002';
+  content: "\F002";
 }
 
 #navigator-folder-inbox .icon::before {
-  content: '\F01C';
+  content: "\F01C";
 }
 
 #navigator-folder-starred .icon::before {
-  content: '\F005';
+  content: "\F005";
 }
 
 #navigator-folder-requests .icon::before {
-  content: '\F06A';
+  content: "\F06A";
 }
 
 #navigator-folder-reported .icon::before {
-  content: '\F1D8';
+  content: "\F1D8";
 }
 
 #navigator-folder-watching .icon::before {
-  content: '\F02E';
+  content: "\F02E";
 }
 
 #navigator-folder-assigned .icon::before {
-  content: '\F0F2';
+  content: "\F0F2";
 }
 
 #navigator-folder-mentor .icon::before {
-  content: '\F1CD';
+  content: "\F1CD";
 }
 
 #navigator-folder-qa .icon::before {
-  content: '\F0C3'; /* flask */
+  content: "\F0C3"; /* flask */
 }
 
 #navigator-folder-all .icon::before {
-  content: '\F036';
+  content: "\F036";
 }
 
 #main-menu-app-settings .icon::before {
-  content: '\F013';
+  content: "\F013";
 }
 
 #navigator-folder-list [role="option"] label span {

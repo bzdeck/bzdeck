@@ -46,7 +46,7 @@
 }
 
 [itemtype$="Bug"] [role="toolbar"] [data-command="star"][aria-pressed="true"] .icon::before {
-  content: '\F005';
+  content: "\F005";
 }
 
 [itemtype$="Bug"] [role="toolbar"] > [role="menu"] {
@@ -79,7 +79,7 @@
 }
 
 [itemtype$="Bug"] > footer [role="toolbar"] [role="button"][data-command="submit"] {
-  margin: .4rem;
+  margin: .8rem;
   border: 0;
   border-radius: .4rem;
   padding: 0 1.6rem;
@@ -147,7 +147,7 @@
   text-align: center;
   text-indent: .8rem;
   letter-spacing: .8rem;
-  content: '\F1C5\F1C9\F1C6\F0F6';
+  content: "\F1C5\F1C9\F1C6\F0F6";
 }
 
 [id|="tabpanel-details"][role="tabpanel"] > article > header {
@@ -176,7 +176,7 @@
   font-size: 8rem;
   line-height: 8rem;
   color: var(--disabled-button-foreground-color);
-  content: '\F071';
+  content: "\F071";
 }
 
 [itemtype$="Bug"] > div > [role="tablist"] {

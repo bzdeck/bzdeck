@@ -162,7 +162,7 @@ span[role="textbox"] {
 
 [role="combobox"] [role="button"] .icon::before {
   font-family: FontAwesome;
-  content: '\F0DC';
+  content: "\F107";
 }
 
 [role="combobox"] [role="searchbox"]:focus ~ [role="button"] .icon::before {
@@ -261,6 +261,7 @@ col[data-hidden="false"] {
 [role="menu"] {
   border-radius: .4rem;
   background-color: var(--control-background-color);
+  box-shadow: 0 .2rem .8rem #0003;
 }
 
 [role="menu"] [role="separator"] {

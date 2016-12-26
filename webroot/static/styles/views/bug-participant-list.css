@@ -3,7 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 .bug-fieldset[data-category="participants"] [data-field] {
-  overflow: hidden;
   margin: 1.2rem;
 }
 
@@ -86,8 +85,9 @@
 }
 
 .bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [role="button"][data-command="remove"] .icon::before {
-  font-family: FontAwesome;
-  content: '\F056';
+  font-size: 2rem;
+  font-family: FiraSans;
+  content: "×";
 }
 
 @media (min-width: 1024px) {

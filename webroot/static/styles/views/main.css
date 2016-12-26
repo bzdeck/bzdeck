@@ -48,8 +48,9 @@ main {
   display: flex;
   width: 100%;
   height: 100%;
-  font-family: FontAwesome;
-  content: "\F00D";
+  font-size: 2.4rem;
+  font-family: FiraSans;
+  content: "×";
   justify-content: center;
   align-items: center;
 }

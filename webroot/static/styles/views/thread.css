@@ -200,7 +200,7 @@
 }
 
 .bug-listbox-container [role="option"] li:not(:last-child)::after {
-  content: '\00A0\00B7'; /* nbsp + middot */
+  content: "\00A0\00B7"; /* nbsp + middot */
 }
 
 .bug-listbox-container [itemprop="starred"] {

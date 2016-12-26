@@ -59,7 +59,7 @@
 }
 
 .person-finder [role="option"] [itemprop="nick"]::before {
-  content: ':';
+  content: ":";
 }
 
 .person-finder [role="option"] [itemprop="email"]::before {

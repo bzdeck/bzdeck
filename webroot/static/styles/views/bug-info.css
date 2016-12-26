@@ -14,7 +14,7 @@
 
 [data-device="desktop"]:root [id$="tabpanel-info"] .bug-fieldset-wrapper > .col {
   margin-left: 1.2rem;
-  flex-basis: calc(50% - 1.2rem);
+  width: calc(50% - 1.2rem);
 }
 
 .bug-info,
