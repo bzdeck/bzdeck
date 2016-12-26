@@ -479,71 +479,6 @@
                         </span>
                       </section>
                     </section>
-                  </div><!-- end .col -->
-                  <div class="col">
-                    <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
-                      <header>
-                        <h3>Notes</h3>
-                      </header>
-                      <section role="group" aria-label="Summary" data-field="summary">
-                        <h4>Summary</h4>
-                        <span role="textbox" class="distinct" contenteditable="true" itemprop="summary"></span>
-                      </section>
-                      <section role="group" aria-label="Aliases" data-field="alias">
-                        <h4>Aliases</h4>
-                        <ul>
-                          <li role="button" tabindex="0" itemprop="alias"></li>
-                        </ul>
-                      </section>
-                      <section role="group" aria-label="Keywords" data-field="keyword">
-                        <h4>Keywords</h4>
-                        <ul>
-                          <li role="button" tabindex="0" itemprop="keyword"></li>
-                        </ul>
-                      </section>
-                      <section role="group" aria-label="Whiteboard" data-field="whiteboard">
-                        <h4>Whiteboard</h4>
-                        <span role="textbox" class="distinct" contenteditable="true" itemprop="whiteboard"></span>
-                      </section>
-                      <section role="group" aria-label="URL" data-field="url">
-                        <h4>URL</h4>
-                        <a role="link" itemprop="url"></a>
-                      </section>
-                      <section role="group" aria-label="See Also" data-field="see_also">
-                        <h4>See Also</h4>
-                        <ul><li><a role="link" itemprop="see_also"></a></li></ul>
-                      </section>
-                      <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
-                    </section>
-                    <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
-                      <header>
-                        <h3>Dependencies</h3>
-                      </header>
-                      <section role="group" aria-label="Depends on" data-field="depends_on">
-                        <header>
-                          <h4>Depends on</h4>
-                        </header>
-                        <ul class="list">
-                          <li role="button" tabindex="0" itemprop="depends_on"></li>
-                        </ul>
-                      </section>
-                      <section role="group" aria-label="Blocks" data-field="blocks">
-                        <header>
-                          <h4>Blocks</h4>
-                        </header>
-                        <ul class="list">
-                          <li role="button" tabindex="0" itemprop="blocks"></li>
-                        </ul>
-                      </section>
-                      <section role="group" aria-label="Duplicates" data-field="duplicate">
-                        <h4>Duplicates</h4>
-                        <ul class="list">
-                          <li role="button" tabindex="0" itemprop="duplicate"></li>
-                        </ul>
-                      </section>
-                    </section>
-                  </div><!-- end .col -->
-                  <div class="col">
                     <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                       <header>
                         <h3>Participants</h3>
@@ -616,6 +551,67 @@
                     </section>
                   </div><!-- end .col -->
                   <div class="col">
+                    <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
+                      <header>
+                        <h3>Notes</h3>
+                      </header>
+                      <section role="group" aria-label="Summary" data-field="summary">
+                        <h4>Summary</h4>
+                        <span role="textbox" class="distinct" contenteditable="true" itemprop="summary"></span>
+                      </section>
+                      <section role="group" aria-label="Aliases" data-field="alias">
+                        <h4>Aliases</h4>
+                        <ul>
+                          <li role="button" tabindex="0" itemprop="alias"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Keywords" data-field="keyword">
+                        <h4>Keywords</h4>
+                        <ul>
+                          <li role="button" tabindex="0" itemprop="keyword"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Whiteboard" data-field="whiteboard">
+                        <h4>Whiteboard</h4>
+                        <span role="textbox" class="distinct" contenteditable="true" itemprop="whiteboard"></span>
+                      </section>
+                      <section role="group" aria-label="URL" data-field="url">
+                        <h4>URL</h4>
+                        <a role="link" itemprop="url"></a>
+                      </section>
+                      <section role="group" aria-label="See Also" data-field="see_also">
+                        <h4>See Also</h4>
+                        <ul><li><a role="link" itemprop="see_also"></a></li></ul>
+                      </section>
+                      <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
+                    </section>
+                    <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
+                      <header>
+                        <h3>Dependencies</h3>
+                      </header>
+                      <section role="group" aria-label="Depends on" data-field="depends_on">
+                        <header>
+                          <h4>Depends on</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="depends_on"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Blocks" data-field="blocks">
+                        <header>
+                          <h4>Blocks</h4>
+                        </header>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="blocks"></li>
+                        </ul>
+                      </section>
+                      <section role="group" aria-label="Duplicates" data-field="duplicate">
+                        <h4>Duplicates</h4>
+                        <ul class="list">
+                          <li role="button" tabindex="0" itemprop="duplicate"></li>
+                        </ul>
+                      </section>
+                    </section>
                     <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
                       <header>
                         <h3>Flags</h3>
