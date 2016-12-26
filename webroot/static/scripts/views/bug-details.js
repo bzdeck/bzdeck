@@ -3,22 +3,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * Define the Bug Info View that represents the Info tabpanel content in the Bug Details page.
+ * Define the BugDetailsView that represents the Info tabpanel content in the Bug Details page.
  * @extends BzDeck.BaseView
  */
-BzDeck.BugInfoView = class BugInfoView extends BzDeck.BaseView {
+BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
   /**
-   * Get a BugInfoView instance.
+   * Get a BugDetailsView instance.
    * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $bug - Bug container element.
-   * @returns {BugInfoView} New BugInfoView instance.
+   * @returns {BugDetailsView} New BugDetailsView instance.
    */
   constructor (id, $bug) {
     super(id); // Assign this.id
 
     this.$bug = $bug;
-    this.$container = this.$bug.querySelector('.bug-info');
+    this.$container = this.$bug.querySelector('.bug-details');
   }
 
   /**

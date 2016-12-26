@@ -23,7 +23,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
   }
 
   /**
-   * Render the Flags section on the bug info pane or attachment view. This feature is still a work in progress.
+   * Render the Flags section on the bug Details pane or attachment view. This feature is still a work in progress.
    * @param {HTMLElement} $outer - Container element to render.
    * @param {Number} [level=4] - aria-level for the label.
    */

@@ -289,7 +289,7 @@
   content: "\F086";
 }
 
-[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-info"] label::before {
+[itemtype$="Bug"] > div > [role="tablist"] [id$="tab-details"] label::before {
   content: "\F05A";
 }
 

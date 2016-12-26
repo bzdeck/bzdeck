@@ -281,9 +281,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.$$timeline.render(this.bug);
     this.$$comment_form = new BzDeck.BugCommentFormView(this.id, this.bug, this.$bug),
 
-    // Render the Info tab content
-    this.$$info = new BzDeck.BugInfoView(this.id, this.$bug);
-    this.$$info.render(this.bug);
+    // Render the Details tab content
+    this.$$details = new BzDeck.BugDetailsView(this.id, this.$bug);
+    this.$$details.render(this.bug);
 
     this.render_attachments();
     this.render_history();
@@ -497,12 +497,12 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     const mql = window.matchMedia('(max-width: 1023px)');
 
     for (const $content of this.$bug.querySelectorAll('.scrollable')) {
-      const info = $content.matches('.bug-info');
+      const details = $content.matches('.bug-details');
       let top = 0;
       let hidden = false;
 
       $content.addEventListener('scroll', event => {
-        if (!mql.matches && info) {
+        if (!mql.matches && details) {
           return;
         }
 

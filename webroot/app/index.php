@@ -376,7 +376,7 @@
         <div class="body">
           <ul id="bug-TID-tablist" tabindex="0" role="tablist" aria-level="2" data-removable="false" data-reorderable="false">
             <li id="bug-TID-tab-timeline" role="tab" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></li>
-            <li id="bug-TID-tab-info" role="tab" aria-controls="bug-TID-tabpanel-info" aria-selected="false"><label>Info</label></li>
+            <li id="bug-TID-tab-details" role="tab" aria-controls="bug-TID-tabpanel-details" aria-selected="false"><label>Details</label></li>
             <li id="bug-TID-tab-attachments" role="tab" aria-controls="bug-TID-tabpanel-attachments" aria-selected="false"><label>Attachments</label></li>
             <li id="bug-TID-tab-history" role="tab" aria-controls="bug-TID-tabpanel-history" aria-disabled="true" aria-selected="false"><label>History</label></li>
           </ul><!-- end #bug-TID-tablist -->
@@ -393,8 +393,8 @@
                 </div>
               </div>
             </div><!-- end #bug-TID-tabpanel-timeline -->
-            <div id="bug-TID-tabpanel-info" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-info">
-              <div id="bug-TID-info" class="bug-info scrollable" tabindex="0" role="region">
+            <div id="bug-TID-tabpanel-details" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-details">
+              <div id="bug-TID-details" class="bug-details scrollable" tabindex="0" role="region">
                 <div class="bug-fieldset-wrapper">
                   <div class="col">
                     <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
@@ -624,8 +624,8 @@
                     </section>
                   </div><!-- end .col -->
                 </div><!-- end .bug-fieldset-wrapper -->
-              </div><!-- end .bug-info -->
-            </div><!-- end #bug-TID-tabpanel-info -->
+              </div><!-- end .bug-details -->
+            </div><!-- end #bug-TID-tabpanel-details -->
             <div id="bug-TID-tabpanel-attachments" tabindex="0" role="tabpanel" aria-hidden="true" aria-labelledby="bug-TID-tab-attachments">
               <div class="bug-attachments" tabindex="0">
                 <section role="group" aria-label="Attachments" data-field="attachments">
@@ -693,8 +693,8 @@
         </div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-error-template -->
-    <template id="preview-bug-info">
-      <div class="bug-info" tabindex="0" role="region">
+    <template id="preview-bug-details">
+      <div class="bug-details" tabindex="0" role="region">
         <dl>
           <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
           <dt>Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
@@ -709,8 +709,8 @@
           <dt>Severity</dt><dd itemprop="severity"></dd>
           <dt>Priority</dt><dd itemprop="priority"></dd>
         </dl>
-      </div><!-- end .bug-info -->
-    </template><!-- end #preview-bug-info -->
+      </div><!-- end .bug-details -->
+    </template><!-- end #preview-bug-details -->
     <template id="timeline-comment">
       <article tabindex="0" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" role="article">
         <header>
