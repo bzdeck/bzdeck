@@ -45,25 +45,7 @@ article[id$="preview-bug"] > header {
   width: 100%;
 }
 
-#home-preview-pane .bug-info .bug-fieldset > div > section {
-  padding-left: 8rem;
-}
-
-#home-preview-pane .bug-info .bug-fieldset > div > section h4 {
-  opacity: .6;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.bug-container[aria-expanded="false"] .bug-info .bug-fieldset > div > section :-moz-any(span[itemprop], a):only-of-type {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-#home-preview-bug-timeline-wrapper,
-#home-preview-bug-info {
+#home-preview-bug-timeline-wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -72,18 +54,6 @@ article[id$="preview-bug"] > header {
 #home-preview-bug-timeline-wrapper {
   left: 0;
   width: 50%;
-}
-
-#home-preview-bug-info {
-  left: 50%;
-}
-
-.bug-container[aria-expanded="false"] #home-preview-bug-info {
-  width: 20% !important;
-}
-
-.bug-container[aria-expanded="true"] #home-preview-bug-info {
-  width: 50% !important;
 }
 
 article[id$="preview-bug"] > div {
@@ -95,16 +65,7 @@ article[id$="preview-bug"] > div {
   margin-top: 4rem !important; /* The height of the header */
 }
 
-article[id$="preview-bug"] > .bug-info {
-  flex: none;
-  width: 50% !important;
-}
-
 @media (max-width: 1023px) {
-  article[id$="preview-bug"] > .bug-info {
-    display: none;
-  }
-
   [data-device|="mobile"]:root article[id$="preview-bug"] > div {
     margin-top: 4rem;
   }

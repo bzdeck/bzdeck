@@ -10,26 +10,89 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
   /**
    * Get a BugTimelineView instance.
    * @param {String} id - Unique instance identifier shared with the parent view.
-   * @param {Proxy} bug - Proxified BugModel instance.
    * @param {HTMLElement} $bug - Outer element to display the content.
    * @param {Boolean} delayed - Whether the bug details including comments and attachments will be rendered later.
    * @returns {BugTimelineView} New BugTimelineView instance.
    */
-  constructor (id, bug, $bug, delayed) {
+  constructor (id, $bug, delayed) {
     super(id); // Assign this.id
 
-    this.bug = bug;
+    this.delayed = delayed;
     this.$bug = $bug;
+    this.$timeline = this.$bug.querySelector('.bug-timeline');
+
+    this.$timeline.setAttribute('aria-busy', 'true');
+
+    this.empty();
+    this.init_keyboard_shortcuts();
+  }
+
+  /**
+   * Empty the timeline while keeping the scrollbar.
+   */
+  empty () {
+    for (const $comment of this.$timeline.querySelectorAll('article, [role="form"], .read-comments-expander')) {
+      $comment.remove();
+    }
+  }
+
+  /**
+   * Assign some keyboard shortcuts on the timeline.
+   */
+  init_keyboard_shortcuts () {
+    if (this.$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
+      return;
+    }
+
+    FlareTail.util.Keybind.assign(this.$timeline, {
+      // Toggle star
+      S: event => this.bug.starred = !this.bug.starred,
+      // Reply
+      R: event => document.querySelector(`#bug-${this.bug.id}-${this.id}-comment-form [role="textbox"]`).focus(),
+      // Focus management
+      'PageUp|Shift+Space': event => this.set_focus(true),
+      'PageDown|Space': event => this.set_focus(false),
+    });
+
+    this.$timeline.setAttribute('keyboard-shortcuts-enabled', 'true');
+  }
+
+  /**
+   * Move focus on the timeline.
+   * @param {Boolean} [shift=false] - Whether the focus should be moved backwards.
+   */
+  async move_focus (shift = false) {
+    const order = await BzDeck.prefs.get('ui.timeline.sort.order');
+    const ascending = order !== 'descending';
+    let entries = [...this.$timeline.querySelectorAll('[itemprop="comment"]')];
+
+    entries = ascending && shift || !ascending && !shift ? entries.reverse() : entries;
+
+    // Focus the first (or last) visible entry
+    for (const $_entry of entries) if ($_entry.clientHeight) {
+      $_entry.focus();
+      $_entry.scrollIntoView({ block: ascending ? 'start' : 'end', behavior: 'smooth' });
+
+      break;
+    }
+  }
+
+  /**
+   * Render the timeline once bug data is ready.
+   * @param {Proxy} bug - Proxified BugModel instance.
+   */
+  render (bug) {
+    this.bug = bug;
 
     const get_time = str => (new Date(str)).getTime();
     const entries = new Map([...this.bug.comments.entries()]
             .map(([index, comment]) => [get_time(comment.creation_time), new Map([['comment', comment]])]));
     const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
     const data_arr = [];
-    const $timeline = this.$timeline = this.$bug.querySelector('.bug-timeline');
-    const timeline_id = $timeline.id = `bug-${this.bug.id}-${this.id}-timeline`;
     let read_comments_num = 0;
     let last_comment_time;
+
+    this.$timeline.id = `bug-${this.bug.id}-${this.id}-timeline`;
 
     for (const attachment of this.bug.attachments) {
       entries.get(get_time(attachment.creation_time)).set('attachment', attachment);
@@ -51,7 +114,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       // Append the time in data for later use
       data.set('time', time);
 
-      if (!delayed && this.bug._last_visit && time < get_time(this.bug._last_visit)) {
+      if (!this.delayed && this.bug._last_visit && time < get_time(this.bug._last_visit)) {
         if (data.has('comment')) {
           read_comments_num++;
           last_comment_time = time;
@@ -81,38 +144,13 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       $expander.className = 'read-comments-expander';
       $expander.tabIndex = 0;
       $expander.setAttribute('role', 'button');
-      $expander.addEventListener(click_event_type, event => {
-        const $fragment = new DocumentFragment();
-        const data_arr = [];
-
-        $expander.textContent = 'Loading...'; // l10n
-
-        for (const [time, data] of this.entries) if (!data.get('rendered')) {
-          data_arr.push(data);
-        }
-
-        (async () => {
-          $fragment.appendChild(await this.generate_entries(data_arr));
-
-          // Collapse comments by default
-          for (const $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
-            $comment.setAttribute('aria-expanded', 'false');
-          }
-
-          $timeline.focus();
-          this.$comments_wrapper.replaceChild($fragment, $expander);
-
-          delete this.$expander;
-        })();
-
-        return FlareTail.util.Event.ignore(event);
-      }, { once: true });
+      $expander.addEventListener(click_event_type, event => this.expander_onclick(event), { once: true });
 
       this.$comments_wrapper.insertAdjacentElement('afterbegin', $expander);
     }
 
-    $timeline.scrollTop = 0;
-    $timeline.removeAttribute('aria-busy', 'false');
+    this.$timeline.scrollTop = 0;
+    this.$timeline.removeAttribute('aria-busy', 'false');
 
     // Subscribe to events
     this.on('BugModel#Updated', data => this.on_bug_updated(data), true);
@@ -137,6 +175,35 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
     }
 
     return $fragment;
+  }
+
+  /**
+   * Called whenever the comment expander is clicked. Render the remaining comments.
+   * @param {(MouseEvent|TouchEvent)} event - A `mousedown` or `touchstart` event.
+   */
+  async expander_onclick (event) {
+    FlareTail.util.Event.ignore(event);
+
+    const $fragment = new DocumentFragment();
+    const data_arr = [];
+
+    this.$expander.textContent = 'Loading...'; // l10n
+
+    for (const [time, data] of this.entries) if (!data.get('rendered')) {
+      data_arr.push(data);
+    }
+
+    $fragment.appendChild(await this.generate_entries(data_arr));
+
+    // Collapse comments by default
+    for (const $comment of $fragment.querySelectorAll('[itemprop="comment"]')) {
+      $comment.setAttribute('aria-expanded', 'false');
+    }
+
+    this.$timeline.focus();
+    this.$comments_wrapper.replaceChild($fragment, this.$expander);
+
+    delete this.$expander;
   }
 
   /**

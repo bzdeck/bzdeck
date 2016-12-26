@@ -58,7 +58,7 @@ BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
       return;
     }
 
-    const bug_view = new BzDeck.BugDetailsView(this.id, bug_id, siblings);
+    const bug_view = new BzDeck.BugView(this.id, bug_id, siblings);
 
     this.presenter.siblings = siblings;
     this.loading_bug_id = bug_id;

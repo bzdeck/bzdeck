@@ -102,8 +102,7 @@
     color: inherit;
   }
 
-  [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper,
-  [data-device|="mobile"]:root #home-preview-bug-info {
+  [data-device|="mobile"]:root #home-preview-bug-timeline-wrapper {
     margin-top: 4rem;
   }
 }
