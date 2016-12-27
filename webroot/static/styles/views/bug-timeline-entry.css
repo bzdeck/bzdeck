@@ -19,10 +19,6 @@
   display: block;
 }
 
-.bug-timeline [itemprop="comment"][aria-expanded="false"] + [itemprop="comment"][aria-expanded="false"] {
-  margin-top: -.1rem;
-}
-
 .bug-timeline [itemprop="comment"]:focus {
   position: relative;
   z-index: 10; /* Show all borders */
@@ -317,11 +313,12 @@
 }
 
 .bug-timeline [itemprop="change"] {
-  margin: var(--comment-margin) calc(var(--comment-margin) * 2) 0 calc(var(--comment-margin) * 2 + 2rem);
+  margin: var(--comment-margin) auto 0;
   border-radius: 1.6rem;
   max-width: 80%;
   color: var(--alternate-disabled-button-foreground-color);
   line-height: 2rem;
+  text-align: center;
 }
 
 [data-ui-timeline-show-cc-changes="false"]:root .bug-timeline [itemprop="change"][data-change-field="cc"] {
@@ -333,18 +330,17 @@
 }
 
 .bug-timeline [itemprop="change"] [itemprop="image"] {
-  display: none;
-}
-
-.bug-timeline [itemprop="change"] [itemprop="author"] [itemprop="image"] {
-  display: inline;
-  margin: 0 .4rem 0 -2rem;
+  display: inline-block;
   width: 1.6rem;
   height: 1.6rem;
   vertical-align: text-bottom;
 }
 
-.bug-timeline [itemprop="change"] [itemprop="givenName"] {
+.bug-timeline [itemprop="change"] [itemprop="name"]:before {
+  content: "\00A0"; /* nbsp */
+}
+
+.bug-timeline [itemprop="change"] [itemprop="name"] {
   white-space: nowrap;
 }
 

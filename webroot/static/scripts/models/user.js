@@ -31,11 +31,11 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
     // These properties should work even when the user's Bugzilla profile is still being loaded
     Object.defineProperties(this, {
       // This is not the Bugzilla user name (email address) but pretty name.
-      // Replace both 'Kohei Yoshino [:Kohei]' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
+      // Replace both 'Kohei Yoshino [:Kohei] - NI please' and 'Kohei Yoshino :Kohei' with 'Kohei Yoshino'
       name: {
         enumerable: true,
-        get: () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/g, '').trim()
-                        || this.email.split('@')[0]
+        get: () => this.original_name.replace(/[\[\(<‹].*?[›>\)\]]/g, '').replace(/\:[\w\-]+/g, '')
+                                     .replace(/\s+\-\s+.*$/g, '').trim() || this.email.split('@')[0]
       },
       // Other name props
       original_name: {

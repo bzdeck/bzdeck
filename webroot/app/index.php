@@ -735,7 +735,7 @@
       <article tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change" role="article">
         <header>
           <div class="meta">
-            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="givenName"></strong><meta itemprop="email"></span>
+            <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="name"></strong><meta itemprop="email"></span>
             <span itemprop="how"></span>
             <time itemprop="creation_time"></time>
           </div>
@@ -890,8 +890,8 @@
         <span role="combobox" aria-autocomplete="list" aria-readonly="true" data-attrs="aria-label">
           <span role="searchbox" aria-readonly="true" tabindex="0" itemprop="status"></span>
         </span>
-        <span role="link" itemprop="setter" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
-        <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="givenName"></span><meta itemprop="email"></span>
+        <span role="link" itemprop="setter" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
+        <span role="link" itemprop="requestee" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span>
       </section>
     </template><!-- end #details-flag -->
     <template id="details-tracking-flag">
@@ -945,7 +945,7 @@
       </li>
     </template><!-- end #person-finder-item -->
     <template id="person-with-image">
-      <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="givenName"></strong><meta itemprop="email"></span>
+      <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="name"></strong><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
     <template id="bug-participant">
       <li tabindex="0" role="link" itemscope itemtype="http://bzdeck.com/User">
