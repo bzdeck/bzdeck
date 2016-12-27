@@ -125,7 +125,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
    */
   activate_widgets () {
     this.comboboxes = new WeakMap();
-    this.subscribe('M#FieldEdited', true);
+    this.subscribe('BugModel#FieldEdited', true);
 
     const can_editbugs = BzDeck.account.permissions.includes('editbugs');
     const is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
@@ -149,7 +149,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
         $$combobox.bind('Change', event => {
           const value = event.detail.value;
 
-          this.trigger('#EditField', { name, value });
+          this.trigger('BugView#EditField', { name, value });
 
           if (name === 'status' && is_closed(value) && $next_field.matches('[data-field="resolution"]') ||
               name === 'resolution' && value === 'DUPLICATE' && $next_field.matches('[data-field="dupe_of"]')) {
@@ -167,9 +167,9 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
         $textbox.setAttribute('aria-readonly', !can_editbugs);
         $$textbox.bind('focusin', event => $textbox.spellcheck = true);
         $$textbox.bind('focusout', event => $textbox.spellcheck = false);
-        $$textbox.bind('input', event => this.trigger('#EditField', { name, value: $$textbox.value }));
-        $$textbox.bind('cut', event => this.trigger('#EditField', { name, value: $$textbox.value }));
-        $$textbox.bind('paste', event => this.trigger('#EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('cut', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
+        $$textbox.bind('paste', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));
       }
 
       // URL
@@ -236,7 +236,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
       $section.appendChild($textbox);
     }
 
-    $textbox.addEventListener('input', event => this.trigger('#EditField', {
+    $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
       name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
     }));
   }
@@ -320,8 +320,8 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     }
 
     const $field = this.$container.querySelector(`[data-field="${name}"]`);
-    const $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
-    const $textbox = $field ? $field.querySelector('[role="textbox"]') : undefined;
+    const $combobox = $field ? $field.querySelector('[role="combobox"]:not(.person-finder)') : undefined;
+    const $textbox = $combobox ? $combobox.querySelector('[role="textbox"]') : undefined;
 
     if ($combobox) {
       this.comboboxes.get($combobox).selected = value;

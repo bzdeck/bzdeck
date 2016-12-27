@@ -666,8 +666,8 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     this.trigger('#ParticipantAdded', { bug_id: this.id, field, email });
-    this.onedit();
     this.cleanup_multiple_item_change(field);
+    this.onedit();
 
     return true;
   }
@@ -696,13 +696,16 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       }
 
       this.changes[field] = change;
+    } else if (field === 'assigned_to' && this.data.assigned_to !== BzDeck.host.default_assignee) {
+      // Fall back to the default assignee
+      this.changes[field] = BzDeck.host.default_assignee;
     } else {
-      this.changes[field] = field === 'assigned_to' ? BzDeck.host.default_assignee : '';
+      delete this.changes[field];
     }
 
     this.trigger('#ParticipantRemoved', { bug_id: this.id, field, email });
-    this.onedit();
     this.cleanup_multiple_item_change(field);
+    this.onedit();
 
     return true;
   }
