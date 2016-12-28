@@ -7,41 +7,42 @@
   top: 0;
   left: 0;
   box-sizing: border-box;
-  border-width: 0 .1rem 0 0;
-  border-style: solid;
-  border-color: var(--application-header-border-color);
-  padding: .8rem 0;
+  padding: 1.6rem 0;
   width: 16rem;
   height: 100%;
-  color: var(--application-header-foreground-color);
-  background-color: var(--application-header-background-color);
+}
+
+#settings-tablist::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: .1rem;
+  background: linear-gradient(to bottom, transparent, var(--secondary-region-border-color) 16rem);
+  content: "";
 }
 
 #settings-tablist [role="tab"] {
   display: flex;
   float: none;
   box-sizing: content-box; /* initial value */
-  border-width: 0 0 0 .4rem;
-  border-style: solid;
-  border-color: transparent;
-  padding: .4rem .8rem .4rem .4rem;
+  border: 0;
+  padding: .4rem .8rem;
   width: auto;
   height: auto;
-  font-size: 1.25rem;
-  line-height: 2rem;
   background-clip: border-box; /* initial value */
+  opacity: .7;
   transition: all .2s;
 }
 
-#settings-tablist [role="tab"][aria-selected="true"] {
-  border-left-width: .4rem;
-  border-color: var(--highlighted-button-border-color);
-  color: var(--region-header-foreground-color);
-  background: #0003;
+#settings-tablist [role="tab"]:hover {
+  opacity: 1;
 }
 
-#settings-tablist [role="tab"][aria-selected="false"] {
-  color: var(--secondary-application-header-foreground-color);
+#settings-tablist [role="tab"][aria-selected="true"] {
+  color: var(--secondary-region-header-foreground-color);
+  background-color: var(--secondary-region-header-background-color);
+  opacity: 1;
 }
 
 #settings-tablist [role="tab"] label {
@@ -188,6 +189,7 @@
   color: var(--highlighted-button-foreground-color);
   background-color: var(--highlighted-button-background-color);
   line-height: 1.6rem;
+  font-style: italic;
 }
 
 @media (min-width: 1024px) {
