@@ -16,7 +16,7 @@ $resources = (object) [
     '/vendor/Fira/fonts/FiraSans-Book.woff2?v=4.106',
     '/vendor/Fira/fonts/FiraSans-LightItalic.woff2?v=4.106',
     '/vendor/Fira/fonts/FiraSans-Medium.woff2?v=4.106',
-    '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.4.0',
+    '/vendor/Font-Awesome/fonts/fontawesome-webfont.woff2?v=4.7.0',
   ],
   // Stylesheets
   'styles' => [
