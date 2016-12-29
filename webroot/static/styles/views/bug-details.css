@@ -131,12 +131,6 @@
   height: 1.6rem;
   line-height: 1.6rem;
   text-indent: -99999px;
-  opacity: 1;
-  transition: opacity .2s;
-}
-
-.bug-fieldset .iconic[role="button"]:hover {
-  opacity: .8;
 }
 
 .bug-fieldset .iconic[role="button"]::after {
@@ -178,17 +172,17 @@
   white-space: pre; /* = <br> */
 }
 
-.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic) {
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic):not(:last-child) {
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]):not(:last-child) {
   margin-right: .8rem;
 }
 
-.bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic) .icon {
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]) .icon {
   display: none;
 }
 

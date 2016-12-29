@@ -24,6 +24,8 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
     this.multiple = ['mentor', 'cc'].includes(this.field);
     this.can_take = ['assigned_to', 'qa_contact', 'mentor'].includes(this.field);
+    this.can_change = this.field !== 'creator';
+    this.can_subscribe = this.field === 'cc';
     this.values = new Set(this.multiple ? this.bug[this.field] : this.bug[this.field] ? [this.bug[this.field]] : []);
     this.my_email = BzDeck.account.data.name;
 
@@ -32,16 +34,25 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.$list = this.$section.querySelector('.list')
 
     this.remove_empty_person();
-    this.add_person_finder();
+
+    if (this.can_change) {
+      this.add_person_finder();
+    }
 
     if (this.can_take) {
       this.add_take_button();
-    } else {
+    }
+
+    if (this.can_subscribe) {
       this.add_subscribe_button();
     }
 
+    if (!this.multiple && this.can_change) {
+      this.$controls.setAttribute('aria-hidden', !!this.$list.querySelector('[itemscope]'));
+    }
+
     for (const $person of this.$list.querySelectorAll('[itemscope]')) {
-      this.add_remove_button_to_person($person);
+      this.add_menu_to_person($person);
     }
 
     // Subscribe to events
@@ -157,8 +168,12 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
       this.$list.insertAdjacentElement('afterbegin', $person);
-      this.add_remove_button_to_person($person);
+      this.add_menu_to_person($person);
     })();
+
+    if (!this.multiple && this.can_change) {
+      this.$controls.setAttribute('aria-hidden', 'true');
+    }
   }
 
   /**
@@ -196,6 +211,10 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
         this.$button.setAttribute('aria-label', 'Add myself to the Cc list');
       }
     }, { once: true });
+
+    if (!this.multiple && this.can_change) {
+      this.$controls.setAttribute('aria-hidden', 'false');
+    }
   }
 
   /**
@@ -219,45 +238,106 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
   }
 
   /**
-   * Add the Remove button to each person.
+   * Add drop down menu to each person.
    * @param {HTMLElement} $person - Person on the list.
    * @fires BugView#RemoveParticipant
-   * @returns {HTMLElement} $button
+   * @fires BugView#AddParticipant
    */
-  add_remove_button_to_person ($person) {
+  add_menu_to_person ($person) {
     const email = $person.querySelector('[itemprop="email"]').content;
     const name = $person.querySelector('[itemprop="name"]').textContent;
-    let $button = $person.querySelector('[role="button"]');
+    const $$button = new FlareTail.widgets.Button($person);
+    let $$menu;
 
-    if ($button) {
-      $button.remove();
+    $$button.bind('Pressed', event => {
+      if (!$$menu) {
+        $$menu = this.build_menu(email);
+
+        const $menu = $$menu.view.$container;
+
+        $person.appendChild($menu);
+        $person.setAttribute('aria-owns', $menu.id);
+
+        $$menu.bind('MenuOpened', event => {
+          // Check for the bug's properties and changes, and disable a menuitem if the person is in the field
+          for (const field of ['assigned_to', 'qa_contact', 'mentor', 'cc']) {
+            let $menuitem = $menu.querySelector(`[data-command="add"][data-prop=${field}]`);
+            let bug_has = field === 'cc' ? this.bug.cc === email : (this.bug[field] || []).includes(email);
+            let change_has = (field === 'cc' && this.bug.changes.cc === email) ||
+                (this.bug.changes[field] && this.bug.changes[field].add && this.bug.changes[field].add.includes(email));
+
+            if ($menuitem) {
+              $menuitem.setAttribute('aria-disabled', (bug_has || change_has));
+            }
+          }
+        });
+
+        $$menu.bind('MenuItemSelected', event => {
+          const func = {
+            remove: () => this.trigger('BugView#RemoveParticipant', { field: this.field, email }),
+            add: () => this.trigger('BugView#AddParticipant', { field: event.detail.target.dataset.prop, email }),
+            profile: () => BzDeck.router.navigate(`/profile/${email}`),
+          }[event.detail.command]();
+        });
+      }
+
+      $$menu.bind('MenuClosed', event => $person.setAttribute('aria-pressed', 'false'));
+
+      if (event.detail.pressed) {
+        $$menu.open();
+      } else {
+        $$menu.close();
+      }
+    });
+  }
+
+  /**
+   * Create a menu for a person.
+   * @param {String} email - Email of the person.
+   * @returns {Menu} Menu widget.
+   */
+  build_menu (email) {
+    const menu_data = [];
+    const $menu = document.createElement('ul');
+
+    $menu.id = FlareTail.util.Misc.hash(7, true);
+    $menu.setAttribute('role', 'menu');
+    $menu.setAttribute('aria-expanded', 'false');
+
+    menu_data.push({ id: `${$menu.id}-email`, label: email, disabled: true });
+    menu_data.push({ id: `${$menu.id}-profile`, label: 'View Profile', data: { command: 'profile' }});
+    menu_data.push({ type: 'separator' });
+
+    if (this.field !== 'creator') {
+      menu_data.push({
+        id: `${$menu.id}-remove`,
+        label: {
+          assigned_to: `Unassign from this bug`,
+          qa_contact: `Remove from QA Contact`,
+          mentor: `Remove from Mentors`,
+          cc: `Remove from Cc list`,
+        }[this.field],
+        data: { command: 'remove', prop: this.field },
+      });
+
+      menu_data.push({ type: 'separator' });
     }
 
-    $button = this.create_button('remove', 'Remove', {
-      assigned_to: `Unassign ${name} (${email}) from this bug`,
-      qa_contact: `Take ${name} (${email}) off from the QA Contact of this bug`,
-      mentor: `Take ${name} (${email}) off from the Mentor of this bug`,
-      cc: `Remove ${name} (${email}) from the Cc list of this bug`,
-    }[this.field]);
+    for (const field of ['assigned_to', 'qa_contact', 'mentor', 'cc']) {
+      if (this.field !== field) {
+        menu_data.push({
+          id: `${$menu.id}-add-${field}`,
+          label: {
+            assigned_to: `Assign to this bug`,
+            qa_contact: `Add to QA Contact`,
+            mentor: `Add to Mentors`,
+            cc: `Add to Cc list`,
+          }[field],
+          data: { command: 'add', prop: field },
+        });
+      }
+    }
 
-    $button.classList.add('iconic');
-
-    $button.addEventListener('click', event => {
-      event.stopPropagation();
-      this.trigger('BugView#RemoveParticipant', { field: this.field, email });
-    }, { once: true });
-
-    const $icon = document.createElement('span');
-
-    $icon.setAttribute('class', 'icon');
-    $icon.setAttribute('aria-hidden', 'true');
-    $button.innerHTML = "";
-    $button.appendChild($icon);
-
-    $person.appendChild($button);
-    $person.tabIndex = -1;
-    $person.setAttribute('role', 'none');
-
-    return $button;
+    return new FlareTail.widgets.Menu($menu, menu_data);
   }
 }

@@ -184,7 +184,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
       // Multiple value fields, including alias, keywords, see_also, depends_on, blocks
 
       // Activate Participants UI
-      if (['assigned_to', 'qa_contact', 'mentor', 'cc'].includes(name)) {
+      if (['creator', 'assigned_to', 'qa_contact', 'mentor', 'cc'].includes(name)) {
         new BzDeck.BugParticipantListView(this.id, this.bug, $section);
       }
     }

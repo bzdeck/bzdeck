@@ -408,6 +408,10 @@ col[data-hidden="false"] {
   background-size: contain;
 }
 
+[itemtype$="User"] [itemprop="alternateName"]:not(:empty)::before {
+  content: ":";
+}
+
 .compact[itemtype$="User"] {
   overflow: hidden;
   padding: .4rem .8rem;
@@ -435,10 +439,6 @@ col[data-hidden="false"] {
 
 .compact[itemtype$="User"] [itemprop="alternateName"]:empty {
   display: none;
-}
-
-.compact[itemtype$="User"] [itemprop="alternateName"]::before {
-  content: ":";
 }
 
 .compact[itemtype$="User"] [itemprop="email"]::before {

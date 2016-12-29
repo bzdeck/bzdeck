@@ -511,17 +511,12 @@
                       </header>
                       <section role="group" aria-label="Reporter" data-field="creator">
                         <h4>Reporter</h4>
-                        <div class="row controls">
-                          <div class="finder-outer"></div>
-                          <div class="button-outer"></div>
-                        </div>
                         <div class="row">
                           <ul class="list">
-                            <li role="link" class="person compact" tabindex="0" itemprop="creator" itemscope itemtype="http://bzdeck.com/User">
+                            <li role="button" class="person" tabindex="0" itemprop="creator" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
                               <img alt="" itemprop="image">
-                              <span itemprop="name"></span>
-                              <span itemprop="alternateName"></span>
-                              <meta itemprop="email">
+                              <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+                              <span class="icon" aria-hidden="true"></span>
                             </li>
                           </ul>
                         </div>
@@ -534,11 +529,10 @@
                         </div>
                         <div class="row">
                           <ul class="list">
-                            <li role="link" class="person compact" tabindex="0" itemprop="assigned_to" itemscope itemtype="http://bzdeck.com/User">
+                            <li role="button" class="person" tabindex="0" itemprop="assigned_to" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
                               <img alt="" itemprop="image">
-                              <span itemprop="name"></span>
-                              <span itemprop="alternateName"></span>
-                              <meta itemprop="email">
+                              <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+                              <span class="icon" aria-hidden="true"></span>
                             </li>
                           </ul>
                         </div>
@@ -551,11 +545,10 @@
                         </div>
                         <div class="row">
                           <ul class="list">
-                            <li role="link" class="person compact" tabindex="0" itemprop="qa_contact" itemscope itemtype="http://bzdeck.com/User">
+                            <li role="button" class="person" tabindex="0" itemprop="qa_contact" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
                               <img alt="" itemprop="image">
-                              <span itemprop="name"></span>
-                              <span itemprop="alternateName"></span>
-                              <meta itemprop="email">
+                              <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+                              <span class="icon" aria-hidden="true"></span>
                             </li>
                           </ul>
                         </div>
@@ -568,11 +561,10 @@
                         </div>
                         <div class="row">
                           <ul class="list">
-                            <li role="link" class="person compact" tabindex="0" itemprop="mentor" itemscope itemtype="http://bzdeck.com/User">
+                            <li role="button" class="person" tabindex="0" itemprop="mentor" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
                               <img alt="" itemprop="image">
-                              <span itemprop="name"></span>
-                              <span itemprop="alternateName"></span>
-                              <meta itemprop="email">
+                              <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+                              <span class="icon" aria-hidden="true"></span>
                             </li>
                           </ul>
                         </div>
@@ -585,11 +577,10 @@
                         </div>
                         <div class="row">
                           <ul class="list">
-                            <li role="link" class="person compact" tabindex="0" itemprop="cc" itemscope itemtype="http://bzdeck.com/User">
+                            <li role="button" class="person" tabindex="0" itemprop="cc" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
                               <img alt="" itemprop="image">
-                              <span itemprop="name"></span>
-                              <span itemprop="alternateName"></span>
-                              <meta itemprop="email">
+                              <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+                              <span class="icon" aria-hidden="true"></span>
                             </li>
                           </ul>
                         </div>
@@ -1014,11 +1005,10 @@
       <span role="link" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="name"></strong><meta itemprop="email"></span>
     </template><!-- end #person-with-image -->
     <template id="bug-participant">
-      <li tabindex="0" role="link" itemscope itemtype="http://bzdeck.com/User">
-        <meta itemprop="email">
-        <meta itemprop="description">
+      <li role="button" class="person" tabindex="0" itemscope itemtype="http://bzdeck.com/User" aria-pressed="false">
         <img alt="" itemprop="image">
-        <span itemprop="name"></span>
+        <label><span itemprop="name"></span><span itemprop="alternateName"></span><meta itemprop="email"></label>
+        <span class="icon" aria-hidden="true"></span>
       </li>
     </template><!-- end #bug-participant -->
     <template id="qrcode-auth-overlay-template">
