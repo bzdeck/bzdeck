@@ -50,6 +50,7 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
       if (query.input) {
         this.trigger('AnyView#QuickSearchRequested', query);
         this.thread.$listbox.setAttribute('aria-busy', 'true');
+        $clear_button.setAttribute('aria-hidden', 'false');
       }
     };
 
@@ -57,6 +58,7 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
       this.thread.update([]);
       $searchbox.value = query.input = '';
       $searchbox.focus();
+      $clear_button.setAttribute('aria-hidden', 'true');
     };
 
     products.unshift({ label: 'All', value: '', selected: true });

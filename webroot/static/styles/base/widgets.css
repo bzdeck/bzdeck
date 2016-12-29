@@ -204,6 +204,19 @@ span[role="textbox"] {
   display: none;
 }
 
+.searchbar {
+  display: flex;
+  align-items: center;
+}
+
+.searchbar [role="button"][data-command="clear"] {
+  margin-left: -2rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.6rem;
+  opacity: .7;
+}
+
 [role="grid"] {
   height: 100%;
   color: var(--grid-foreground-color);

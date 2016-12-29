@@ -1057,8 +1057,10 @@
             <div id="sidebar-search-container" role="search">
               <section data-field="summary">
                 <h4>Summary</h4>
-                <input role="searchbox" placeholder="Keywords" tabindex="0" itemprop="summary">
-                <span role="button" class="iconic" data-command="clear" data-icon="&#xF00D;"></span>
+                <div class="searchbar">
+                  <input role="searchbox" placeholder="Keywords" tabindex="0" itemprop="summary">
+                  <span role="button" class="iconic" aria-label="Clear" aria-hidden="true" data-command="clear" data-icon="&#xF057;"></span>
+                </div>
               </section>
               <section data-field="product">
                 <h4>Product</h4>

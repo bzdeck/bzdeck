@@ -22,14 +22,6 @@
   flex: auto;
 }
 
-#sidebar-search-container [role="button"][data-command="clear"] {
-  position: absolute;
-  top: calc(50% - .8rem);
-  right: .8rem;
-  width: 1.6rem;
-  height: 1.6rem;
-}
-
 #sidebar-search-container [role="searchbox"][itemprop="summary"] {
   box-sizing: border-box;
   width: 100%;
