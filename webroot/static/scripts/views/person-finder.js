@@ -130,7 +130,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
     }
 
     for (const [name, user] of results) {
-      const data = { name: user.name, nick: user.nick_names[0] || '', email: user.email, image: user.image };
+      const data = { name: user.name, alternateName: user.nick_names[0] || '', email: user.email, image: user.image };
       const attrs = { id: `${this.combobox_id}-${user.email}`, 'data-value': user.email };
 
       $fragment.appendChild(this.fill(this.$option.cloneNode(true), data, attrs));

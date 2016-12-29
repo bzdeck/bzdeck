@@ -3,7 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 .bug-fieldset[data-category="participants"] [data-field] {
-  margin: 1.2rem;
+  margin: 1.2rem 0;
+  padding: 0 1.2rem 0 8rem;
 }
 
 .bug-fieldset[data-category="participants"] [data-field]:not(:last-child) {
@@ -20,17 +21,24 @@
   position: static;
 }
 
-.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
-  overflow: hidden;
-  border-width: 0;
-  padding: .2rem .4rem;
-  max-width: 100%;
-  height: 1.4rem;
-  color: inherit !important; /* TEMP */
-  background: transparent none !important; /* TEMP */
-  line-height: 1.4rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.bug-fieldset[data-category="participants"] .finder-outer {
+  display: flex;
+}
+
+.bug-fieldset[data-category="participants"] .finder-outer label {
+  flex: none;
+  margin-right: .4rem;
+}
+
+.bug-fieldset[data-category="participants"] .finder-outer [role="combobox"] {
+  flex: auto;
+}
+
+.bug-fieldset[data-category="participants"] .button-outer {
+  flex: none !important;
+  margin-left: .8rem;
+  border-left: .1rem solid var(--secondary-grid-border-color);
+  padding-left: .8rem;
 }
 
 .bug-fieldset[data-category="participants"] [role="button"][aria-disabled="true"] {
@@ -41,12 +49,6 @@
   padding: 0;
   width: auto;
   opacity: .6;
-}
-
-.bug-fieldset[data-category="participants"] [role="combobox"]:not([aria-hidden="true"]) {
-  display: block;
-  margin-bottom: .8rem;
-  width: 100%;
 }
 
 .bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] {
@@ -73,7 +75,7 @@
   height: 2.4rem;
 }
 
-.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [itemprop="name"] {
+.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [itemprop="email"] {
   flex: auto;
   overflow: hidden;
   white-space: nowrap;

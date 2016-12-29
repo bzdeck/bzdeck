@@ -224,7 +224,6 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     const orignal_value = $link ? $link.getAttribute('href') : this.bug.url;
 
     $textbox = document.createElement('input');
-    $textbox.className = 'distinct';
     $textbox.type = 'url';
     $textbox.value = orignal_value;
     $textbox.setAttribute('role', 'textbox');
@@ -254,12 +253,12 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     const $dupe_of = this.$container.querySelector('[data-field="dupe_of"]');
     const $dupe_of_prop = $dupe_of.querySelector('[itemprop="dupe_of"]');
 
-    $resolution.hidden = is_open;
+    $resolution.setAttribute('aria-hidden', is_open);
     $resolution.querySelector('[role="option"][data-value=""]').setAttribute('aria-hidden', !is_open);
     $combobox.setAttribute('aria-disabled', !can_editbugs && is_open);
     this.comboboxes.get($combobox).selected = resolution;
 
-    $dupe_of.hidden = !is_dupe;
+    $dupe_of.setAttribute('aria-hidden', !is_dupe);
 
     if ($dupe_of_prop) {
       $dupe_of_prop.setAttribute('aria-disabled', !is_dupe);

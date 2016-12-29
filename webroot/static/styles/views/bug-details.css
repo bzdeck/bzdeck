@@ -75,12 +75,21 @@
   margin: .8rem 1.2rem;
 }
 
-.bug-fieldset [data-field] h4 {
-  font-weight: 500;
-}
-
 .bug-details .bug-fieldset [data-field] h4 {
   line-height: 2rem;
+}
+
+.bug-details .bug-fieldset [data-field] .row {
+  display: flex;
+  align-items: center;
+}
+
+.bug-details .bug-fieldset [data-field] .row:not(:first-child) {
+  margin-top: .8rem;
+}
+
+.bug-details .bug-fieldset [data-field] .row > * {
+  flex: auto;
 }
 
 .bug-fieldset [data-field] > :-moz-any(time, a) {
@@ -95,7 +104,6 @@
 .bug-details dt,
 .bug-details dd,
 .bug-fieldset [data-field] > ul > li {
-  padding: .4rem 0;
   min-height: 1.6rem;
   line-height: 1.6rem;
 }
@@ -144,11 +152,6 @@
   text-align: center;
 }
 
-.bug-fieldset [role="combobox"]:not([aria-hidden="true"]) {
-  display: block !important;
-  width: 100%;
-}
-
 .bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="searchbox"] {
   opacity: 1;
 }
@@ -177,9 +180,6 @@
 
 .bug-fieldset :not([role="combobox"]) > [role="button"]:not(.iconic) {
   overflow: hidden;
-  border-width: 0;
-  color: inherit !important; /* TEMP */
-  background: transparent none !important; /* TEMP */
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -213,7 +213,7 @@
 @media (min-width: 640px) {
   .bug-details .bug-fieldset [data-field] {
     position: relative;
-    padding-left: 12rem;
+    padding-left: 8rem;
   }
 
   .bug-details .bug-fieldset[data-category="tracking-flags"] [data-field] {
@@ -224,6 +224,12 @@
     position: absolute;
     top: 0;
     left: 0;
+    width: 7rem;
+    text-align: right;
+  }
+
+  .bug-details .bug-fieldset[data-category="tracking-flags"] [data-field] h4 {
+    width: 19rem;
   }
 }
 

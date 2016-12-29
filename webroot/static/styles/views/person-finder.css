@@ -3,65 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 .person-finder {
-  position: relative;
   width: 16rem;
-}
-
-.person-finder::before {
-  position: absolute;
-  top: 0;
-  left: .2rem;
-  width: 1.8rem;
-  height: 1.8rem;
-  opacity: .8;
-  font-family: FontAwesome;
-  line-height: 1.8rem;
-  text-align: center;
-  text-indent: 0;
-  content: "\F002"; /* search */
-}
-
-.person-finder [role="searchbox"] {
-  padding: 0 0 0 2rem;
 }
 
 .person-finder [role="listbox"] {
   padding: .4rem 0;
-}
-
-.person-finder [role="option"] {
-  overflow: hidden;
-  padding: .4rem .8rem;
-  max-width: 40rem;
-  height: 1.6rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.person-finder [role="option"] [itemprop="image"] {
-  margin-right: .4rem;
-  width: 1.6rem;
-  height: 1.6rem;
-  vertical-align: text-bottom;
-}
-
-.person-finder [role="option"] [itemprop="nick"],
-.person-finder [role="option"] [itemprop="email"] {
-  display: inline;
-  margin-left: .4rem;
-  opacity: .5;
-  font-size: 1.1rem;
-  line-height: 1.6rem;
-}
-
-.person-finder [role="option"] [itemprop="nick"]:empty {
-  display: none;
-}
-
-.person-finder [role="option"] [itemprop="nick"]::before {
-  content: ":";
-}
-
-.person-finder [role="option"] [itemprop="email"]::before {
-  content: attr(content);
 }

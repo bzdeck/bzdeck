@@ -28,7 +28,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
     this.my_email = BzDeck.account.data.name;
 
     this.$section = $section;
-    this.$header = this.$section.querySelector('header');
+    this.$controls = this.$section.querySelector('.controls');
     this.$list = this.$section.querySelector('.list')
 
     this.remove_empty_person();
@@ -78,7 +78,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.trigger('BugView#AddParticipant', { field: this.field, email: this.my_email });
     });
 
-    this.$header.appendChild(this.$button);
+    this.$controls.querySelector('.button-outer').appendChild(this.$button);
   }
 
   /**
@@ -97,7 +97,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.trigger(this.values.has(this.my_email) ? 'BugView#Unsubscribe' : 'BugView#Subscribe');
     });
 
-    this.$header.appendChild(this.$button);
+    this.$controls.querySelector('.button-outer').appendChild(this.$button);
   }
 
   /**
@@ -114,7 +114,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
       this.trigger('BugView#AddParticipant', { field: this.field, email: event.detail.$target.dataset.value });
     });
 
-    this.$header.insertAdjacentElement('afterend', this.$$finder.$combobox);
+    this.$controls.querySelector('.finder-outer').appendChild(this.$$finder.$combobox);
   }
 
   /**

@@ -73,6 +73,7 @@
   min-height: 1em;
   background-clip: padding-box;
   line-height: 1;
+  vertical-align: top;
   text-decoration: none;
 }
 
@@ -176,32 +177,6 @@ span[role="textbox"] {
 
 [data-device|="mobile"]:root [role="combobox"] [role="option"] {
   padding: .4rem .8rem;
-}
-
-.distinct[role="textbox"],
-.distinct[role="combobox"] [role="searchbox"] {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: calc(1em + .8rem);
-  color: var(--active-textbox-foreground-color);
-  background-color: var(--active-textbox-background-color);
-}
-
-.distinct[role="textbox"][aria-disabled="true"],
-.distinct[role="combobox"][aria-disabled="true"] [role="searchbox"] {
-  border-color: transparent;
-  box-shadow: none;
-  color: var(--textbox-foreground-color);
-  background-color: transparent;
-}
-
-.distinct[role="combobox"][aria-disabled="true"] [role="searchbox"] {
-  padding: 0 .8rem;
-  opacity: 1;
-}
-
-.distinct[role="combobox"][aria-disabled="true"] [role="button"] {
-  display: none;
 }
 
 .searchbar {
@@ -431,6 +406,43 @@ col[data-hidden="false"] {
   background-image: -moz-image-rect(var(--base-sprite-image), 64, 320, 128, 256);
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.compact[itemtype$="User"] {
+  overflow: hidden;
+  padding: .4rem .8rem;
+  max-width: 40rem;
+  height: 1.6rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.compact[itemtype$="User"] [itemprop="image"] {
+  margin-right: .4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  vertical-align: text-bottom;
+}
+
+.compact[itemtype$="User"] [itemprop="alternateName"],
+.compact[itemtype$="User"] [itemprop="email"] {
+  display: inline;
+  margin-left: .4rem;
+  opacity: .5;
+  font-size: 1.1rem;
+  line-height: 1.6rem;
+}
+
+.compact[itemtype$="User"] [itemprop="alternateName"]:empty {
+  display: none;
+}
+
+.compact[itemtype$="User"] [itemprop="alternateName"]::before {
+  content: ":";
+}
+
+.compact[itemtype$="User"] [itemprop="email"]::before {
+  content: attr(content);
 }
 
 /* ----------------------------------------------------------------------------------------------
