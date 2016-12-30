@@ -118,10 +118,12 @@
   width: calc(100% - 8rem);
 }
 
+.bug-fieldset [role="link"],
 .bug-fieldset [role="button"] {
-  flex: none;
+  flex: none !important;
 }
 
+.bug-fieldset .iconic[role="link"],
 .bug-fieldset .iconic[role="button"] {
   position: relative;
   margin-left: .4rem;
@@ -133,6 +135,7 @@
   text-indent: -99999px;
 }
 
+.bug-fieldset .iconic[role="link"]::after,
 .bug-fieldset .iconic[role="button"]::after {
   display: block;
   position: absolute;
@@ -144,6 +147,14 @@
   line-height: 1.6rem;
   text-indent: 0;
   text-align: center;
+}
+
+.bug-fieldset .iconic[role="link"][aria-disabled="true"] {
+  color: var(--disabled-button-foreground-color);
+}
+
+.bug-fieldset .iconic[role="link"]::after {
+  content: "\F08E";
 }
 
 .bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="searchbox"] {

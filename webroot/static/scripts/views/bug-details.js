@@ -134,7 +134,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     for (const $section of this.$container.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
       const name = $section.dataset.field;
       const $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
-      const $textbox = $section.querySelector('[role="textbox"]');
+      const $textbox = $section.querySelector('[role="textbox"]:not([aria-invalid])');
       const $next_field = $section.nextElementSibling;
 
       // Activate comboboxes
@@ -214,30 +214,38 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
    * @fires BugView#EditField
    */
   activate_url_widget ($section) {
-    let $textbox = $section.querySelector('input');
+    const $link = $section.querySelector('[role="link"]');
+    const $textbox = $section.querySelector('[role="textbox"]');
+    let valid = true;
+    let url = '';
 
-    if ($textbox) {
-      return;
-    }
+    const onclick = event => {
+      if (valid && url) {
+        const new_win = window.open();
 
-    const $link = $section.querySelector('a');
-    const orignal_value = $link ? $link.getAttribute('href') : this.bug.url;
+        new_win.opener = null;
+        new_win.location = url;
+      }
 
-    $textbox = document.createElement('input');
-    $textbox.type = 'url';
-    $textbox.value = orignal_value;
-    $textbox.setAttribute('role', 'textbox');
-    $textbox.setAttribute('itemprop', 'url');
+      return FlareTail.util.Event.ignore(event);
+    };
 
-    if ($link) {
-      $section.replaceChild($textbox, $link);
-    } else {
-      $section.appendChild($textbox);
-    }
+    const oninput = event => {
+      valid = $textbox.validity.valid;
+      url = $textbox.value;
 
-    $textbox.addEventListener('input', event => this.trigger('BugView#EditField', {
-      name: 'url', value: $textbox.validity.valid ? $textbox.value : orignal_value
-    }));
+      $textbox.setAttribute('aria-invalid', !valid);
+      $link.setAttribute('aria-disabled', !(valid && url));
+      $link.tabIndex = valid && url ? 0 : -1;
+
+      if (event) {
+        this.trigger('BugView#EditField', { name: 'url', value: valid ? url : this.bug.url });
+      }
+    };
+
+    $link.addEventListener('click', event => onclick(event));
+    $textbox.addEventListener('input', event => oninput(event));
+    oninput();
   }
 
   /**

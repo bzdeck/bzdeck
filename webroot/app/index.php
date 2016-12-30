@@ -623,7 +623,10 @@
                       <section role="group" aria-label="URL" data-field="url">
                         <h4>URL</h4>
                         <div class="row">
-                          <a role="link" itemprop="url"></a>
+                          <input role="textbox" type="url" itemprop="url" aria-invalid="false">
+                          <span role="link" class="iconic" aria-disabled="true" aria-label="Open URL in new tab">
+                            <span class="icon" aria-hidden="true"></span>
+                          </span>
                         </div>
                       </section>
                       <section role="group" aria-label="See Also" data-field="see_also">
