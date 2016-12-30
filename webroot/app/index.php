@@ -637,6 +637,14 @@
                           </ul>
                         </div>
                       </section>
+                      <section role="group" aria-label="Duplicates" data-field="duplicate">
+                        <h4>Duplicates</h4>
+                        <div class="row">
+                          <ul class="list">
+                            <li role="button" tabindex="0" itemprop="duplicate"></li>
+                          </ul>
+                        </div>
+                      </section>
                       <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
                     </section>
                     <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
@@ -656,14 +664,6 @@
                         <div class="row">
                           <ul class="list">
                             <li role="button" tabindex="0" itemprop="blocks"></li>
-                          </ul>
-                        </div>
-                      </section>
-                      <section role="group" aria-label="Duplicates" data-field="duplicate">
-                        <h4>Duplicates</h4>
-                        <div class="row">
-                          <ul class="list">
-                            <li role="button" tabindex="0" itemprop="duplicate"></li>
                           </ul>
                         </div>
                       </section>
