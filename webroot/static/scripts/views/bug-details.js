@@ -221,10 +221,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
 
     const onclick = event => {
       if (valid && url) {
-        const new_win = window.open();
-
-        new_win.opener = null;
-        new_win.location = url;
+        FlareTail.util.Navigator.open_window(url);
       }
 
       return FlareTail.util.Event.ignore(event);

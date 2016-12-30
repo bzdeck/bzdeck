@@ -191,10 +191,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
 
         if (att_type && ['text/x-github-pull-request', 'text/x-review-board-request'].includes(att_type)) {
           // Open the link directly in a new browser tab
-          const new_win = window.open();
-
-          new_win.opener = null;
-          new_win.location = `${BzDeck.host.origin}/attachment.cgi?id=${att_id}`;
+          FlareTail.util.Navigator.open_window(`${BzDeck.host.origin}/attachment.cgi?id=${att_id}`);
         } else {
           (async () => {
             const bugs = await BzDeck.collections.bugs.get_all();
@@ -209,10 +206,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         }
       } else {
         // Normal link: open in a new browser tab
-        const new_win = window.open();
-
-        new_win.opener = null;
-        new_win.location = $target.href;
+        FlareTail.util.Navigator.open_window($target.href);
       }
 
       return FlareTail.util.Event.ignore(event);

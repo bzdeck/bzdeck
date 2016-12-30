@@ -77,18 +77,13 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   activate_bugzilla_auth () {
     this.$bzauth_button = this.$form.querySelector('[data-id="bugzilla-auth"]');
 
-    // The event type should be click and window.open should be in this event handler, otherwise the new window will be
-    // blocked by the browser's popup blocker
+    // The event type should be click, otherwise the new window will be blocked by the browser's popup blocker
     this.$bzauth_button.addEventListener('click', event => {
-      const new_win = window.open();
       const callback_url = `${location.origin}/integration/bugzilla-auth-callback/`;
       const auth_url = `${BzDeck.config.hosts[this.host].origin}/auth.cgi`
                      + `?callback=${encodeURIComponent(callback_url)}&description=BzDeck`;
 
-      new_win.opener = null;
-      new_win.name = 'bugzilla-auth';
-      new_win.location = auth_url;
-
+      FlareTail.util.Navigator.open_window(auth_url, 'bugzilla-auth');
       this.trigger('#LoginRequested', { host: this.host })
     });
   }
