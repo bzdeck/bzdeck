@@ -3,40 +3,39 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 [itemtype$="Attachment"][data-content-type] {
+  flex: auto;
   display: flex;
-  width: 100%;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
-[itemtype$="Attachment"][data-content-type]:not(.patch) {
-  flex: auto;
+[itemtype$="Attachment"][data-content-type] [role="tablist"] {
+  border-bottom: .1rem solid var(--secondary-region-border-color);
 }
 
-[itemtype$="Attachment"][data-content-type] > header {
-  flex: none;
-  overflow: hidden;
+[itemtype$="Attachment"][data-content-type] [role="tab"] {
+  margin: 0 0 0 1.6rem;
+  padding: 1.2rem 1.2rem .8rem;
+  border-width: 0 0 .4rem;
+  border-color: transparent;
+  width: auto;
 }
 
-[itemtype$="Attachment"][data-content-type] > header ~ * {
-  flex: auto;
+[itemtype$="Attachment"][data-content-type] [role="tab"][aria-selected="true"] {
+  border-color: var(--highlighted-button-border-color);
 }
 
-[itemtype$="Attachment"][data-content-type] h4 {
-  margin: 1.2rem;
-  font-size: 1.6rem;
-  line-height: 1.25;
-}
-
-[itemtype$="Attachment"][data-content-type] .fields {
-  margin: 0 .6rem;
+[itemtype$="Attachment"][data-content-type] .info {
   line-height: 1.6;
 }
 
-[itemtype$="Attachment"][data-content-type] .fields > * {
-  margin: 0 .6rem 1.2rem;
+[itemtype$="Attachment"][data-content-type] .info > * {
+  margin: 1.2rem;
+  height: auto;
 }
 
-[itemtype$="Attachment"][data-content-type] .fields h5 {
+[itemtype$="Attachment"][data-content-type] .info h5 {
   position: absolute;
   text-indent: -99999px;
 }
@@ -57,6 +56,7 @@
 
 [itemtype$="Attachment"][data-content-type] .properties li {
   display: flex;
+  align-items: center;
   margin: .4rem 0;
   line-height: 1.5;
 }
@@ -69,13 +69,23 @@
   margin-bottom: 0;
 }
 
-[itemtype$="Attachment"][data-content-type] .properties li * {
-  display: flex;
-  white-space: nowrap;
-}
-
 [itemtype$="Attachment"][data-content-type] .properties li > * {
   margin: 0 .4rem;
+}
+
+[itemtype$="Attachment"][data-content-type] .properties li > label {
+  flex: none;
+  display: inline-block;
+  width: 6.4rem;
+  margin: 0 .4rem 0 0;
+  text-align: right;
+}
+
+[itemtype$="Attachment"][data-content-type] .properties [role="textbox"] {
+  flex: auto;
+  display: block;
+  width: 24rem;
+  white-space: normal;
 }
 
 [itemtype$="Attachment"][data-content-type][data-att-hash] [itemprop="is_obsolete"] {
@@ -93,12 +103,12 @@
   font-size: inherit;
 }
 
-[itemtype$="Attachment"][data-content-type]:not(.patch) .body {
+[itemtype$="Attachment"][data-content-type]:not(.patch) .preview {
   flex: auto;
   overflow: hidden;
 }
 
-[itemtype$="Attachment"][data-content-type].media .body {
+.media[itemtype$="Attachment"][data-content-type] .preview {
   display: flex;
   box-sizing: border-box;
   padding: .8rem;
@@ -107,16 +117,17 @@
   align-items: center;
 }
 
-[itemtype$="Attachment"][data-content-type].media .body [itemprop="url"] {
+.media[itemtype$="Attachment"][data-content-type] .preview [itemprop="url"] {
+  max-height: 100%;
   object-fit: contain;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body summary {
+.patch[itemtype$="Attachment"][data-content-type] .preview summary {
   display: block;
   position: sticky;
-  top: -.1rem; /* exclude border-top */
+  top: 0;
   box-sizing: border-box;
-  border-width: .1rem 0;
+  border-width: 0 0 .1rem;
   border-style: solid;
   border-color: var(--grid-border-color);
   padding: .8rem 1rem;
@@ -125,36 +136,36 @@
   background-color: var(--grid-header-background-color);
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body table {
+.patch[itemtype$="Attachment"][data-content-type] .preview table {
   overflow: hidden;
   background-color: var(--grid-background-color); /* Hide the default <details> style on click */
   table-layout: fixed;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body tbody {
+.patch[itemtype$="Attachment"][data-content-type] .preview tbody {
   font-family: FiraMono, monospace;
   line-height: 1.8;
   white-space: pre-wrap;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body tr.head {
+.patch[itemtype$="Attachment"][data-content-type] .preview tr.head {
   background-color: #F8F8FF;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body tr.removed {
+.patch[itemtype$="Attachment"][data-content-type] .preview tr.removed {
   background-color: #FFE4E4;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body tr.added {
+.patch[itemtype$="Attachment"][data-content-type] .preview tr.added {
   background-color: #E1FEE2;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body td {
+.patch[itemtype$="Attachment"][data-content-type] .preview td {
   padding: 0 .8rem;
   vertical-align: top;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body td.ln {
+.patch[itemtype$="Attachment"][data-content-type] .preview td.ln {
   border-width: 0 .1rem 0 0;
   border-style: solid;
   border-color: var(--secondary-grid-border-color);
@@ -164,47 +175,47 @@
   text-align: right;
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body td.sign {
+.patch[itemtype$="Attachment"][data-content-type] .preview td.sign {
   width: 1rem;
   padding-right: 0;
   color: var(--disabled-control-foreground-color);
 }
 
-[itemtype$="Attachment"][data-content-type].patch .body td.code {
+.patch[itemtype$="Attachment"][data-content-type] .preview td.code {
   width: auto;
   font-size: 1rem;
   -moz-user-select: text;
   cursor: text;
 }
 
-[itemtype$="Attachment"][data-content-type]:-moz-any(.link, .error) .body {
+[itemtype$="Attachment"][data-content-type]:-moz-any(.link, .error) .preview {
   display: flex;
   height: 100%;
   justify-content: center;
   align-items: center;
 }
 
-[itemtype$="Attachment"][data-content-type].link .body a {
+.link[itemtype$="Attachment"][data-content-type] .preview a {
   display: block;
   padding: .8rem;
   text-align: center;
   text-decoration: none;
 }
 
-[itemtype$="Attachment"][data-content-type].link .body a::before {
+.link[itemtype$="Attachment"][data-content-type] .preview a::before {
   display: block;
   padding-bottom: .8rem;
   font-size: 8rem;
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"]::before,
-[itemtype$="Attachment"] .body > a::before {
+[itemtype$="Attachment"] .preview > a::before {
   font-family: FontAwesome;
   content: "\F016"; /* Default file icon */
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"][content^="text/"]::before,
-[itemtype$="Attachment"][data-content-type^="text/"] .body > a::before {
+[itemtype$="Attachment"][data-content-type^="text/"] .preview > a::before {
   content: "\F0F6";
 }
 
@@ -213,12 +224,12 @@
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"][content="text/x-github-pull-request"]::before,
-[itemtype$="Attachment"][data-content-type="text/x-github-pull-request"] .body > a::before {
+[itemtype$="Attachment"][data-content-type="text/x-github-pull-request"] .preview > a::before {
   content: "\F09B";
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"][content="text/x-review-board-request"]::before,
-[itemtype$="Attachment"][data-content-type="text/x-review-board-request"] .body > a::before {
+[itemtype$="Attachment"][data-content-type="text/x-review-board-request"] .preview > a::before {
   content: "\F0EA"; /* clipboard icon */
 }
 
@@ -235,44 +246,34 @@
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"][content="application/pdf"]::before,
-[itemtype$="Attachment"][data-content-type="application/pdf"] .body > a::before {
+[itemtype$="Attachment"][data-content-type="application/pdf"] .preview > a::before {
   content: "\F1C1";
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/msword"],
     [content="application/vnd.openxmlformats-officedocument.wordprocessingml.document"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/msword"],
-    [data-content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) .body > a::before {
+    [data-content-type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) .preview > a::before {
   content: "\F1C2";
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/vnd.ms-excel"],
     [content="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-excel"],
-    [data-content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) .body > a::before {
+    [data-content-type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]) .preview > a::before {
   content: "\F1C3";
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/vnd.ms-powerpoint"],
     [content="application/vnd.openxmlformats-officedocument.presentationml.presentation"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/vnd.ms-powerpoint"],
-    [data-content-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) .body > a::before {
+    [data-content-type="application/vnd.openxmlformats-officedocument.presentationml.presentation"]) .preview > a::before {
   content: "\F1C4";
 }
 
 [itemtype$="Attachment"] [itemprop="content_type"]:-moz-any([content="application/zip"],
     [content="application/gzip"], [content="application/x-gzip"], [content="application/x-bzip2"])::before,
 [itemtype$="Attachment"]:-moz-any([data-content-type="application/zip"], [data-content-type="application/gzip"],
-    [data-content-type="application/x-gzip"], [data-content-type="application/x-bzip2"]) .body > a::before {
+    [data-content-type="application/x-gzip"], [data-content-type="application/x-bzip2"]) .preview > a::before {
   content: "\F1C6";
-}
-
-@media (min-width: 1024px) {
-  [itemtype$="Attachment"][data-content-type] .fields {
-    display: flex;
-  }
-
-  [itemtype$="Attachment"][data-content-type] .fields > * {
-    flex: 1 1 50%;
-  }
 }

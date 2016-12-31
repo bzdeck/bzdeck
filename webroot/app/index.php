@@ -905,30 +905,36 @@
       </li>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
-        <header>
-          <h4><span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></h4>
-        </header>
-        <div class="fields">
-          <section class="properties">
-            <h5>Properties</h5>
-            <ul>
-              <li>Name: <span contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
-              <li>Type: <span contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
-              <li>Size:
-                <span itemprop="size"></span>
-                <meta itemprop="is_patch"><span role="checkbox" tabindex="0" data-itemprop="is_patch">Patch</span>
-                <meta itemprop="is_obsolete"><span role="checkbox" tabindex="0" data-itemprop="is_obsolete">Obsolete</span>
-              </li>
-              <li>Created on <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
-              <li>Modified on <time itemprop="last_change_time" data-relative="false"></time></li>
-            </ul>
-          </section>
-          <section class="flags">
-            <h5>Flags</h5>
-          </section>
-        </div><!-- end .fields -->
-        <div class="body"></div>
+      <section id="TID" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
+        <div role="tablist">
+          <div role="tab" aria-controls="TID-preview" aria-selected="true">Preview</div>
+          <div role="tab" aria-controls="TID-info" aria-selected="false">Info</div>
+        </div>
+        <div role="tabpanel" id="TID-preview" class="scrollable" aria-hidden="false">
+          <div class="preview"></div>
+        </div><!-- end [role="tabpanel"] -->
+        <div role="tabpanel" id="TID-info" aria-hidden="true">
+          <div class="info">
+            <section class="properties">
+              <h5>Properties</h5>
+              <ul>
+                <li><label>Created</label> <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
+                <li><label>Modified</label> <time itemprop="last_change_time" data-relative="false"></time></li>
+                <li><label>Summary</label> <span contenteditable="true" role="textbox" itemprop="summary" aria-label="Summary" aria-required="true"></span></li>
+                <li><label>Name</label> <span contenteditable="true" role="textbox" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
+                <li><label>Type</label> <span contenteditable="true" role="textbox" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
+                <li><label>Size</label>
+                  <span itemprop="size"></span>
+                  <meta itemprop="is_patch"><span role="checkbox" tabindex="0" data-itemprop="is_patch">Patch</span>
+                  <meta itemprop="is_obsolete"><span role="checkbox" tabindex="0" data-itemprop="is_obsolete">Obsolete</span>
+                </li>
+              </ul>
+            </section>
+            <section class="flags">
+              <h5>Flags</h5>
+            </section>
+          </div>
+        </div><!-- end [role="tabpanel"] -->
       </section>
     </template><!-- end #details-attachment-content -->
     <template id="details-change">

@@ -42,6 +42,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     const att = this.attachment = await BzDeck.collections.attachments.get(this.att_id);
     const bug = this.bug = await BzDeck.collections.bugs.get(att.bug_id);
     const creator = await BzDeck.collections.users.get(att.creator, { name: att.creator });
+    const prefix = `attachment-${this.att_id}-${FlareTail.util.Misc.hash()}`;
 
     // Override some properties with customized values
     const properties = Object.assign({}, att.data, {
@@ -51,11 +52,13 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       is_obsolete: !!att.is_obsolete,
     });
 
-    this.$attachment = this.fill(this.get_template('details-attachment-content'), properties, {
+    this.$attachment = this.fill(this.get_template('details-attachment-content', prefix), properties, {
       'data-att-id': att.id, // existing attachment
       'data-att-hash': att.hash, // unuploaded attachment
       'data-content-type': att.content_type,
     });
+
+    this.$outer = this.$attachment.querySelector('.preview');
 
     this.activate_widgets();
     this.render();
@@ -127,7 +130,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
       }
     }
 
-    new FlareTail.widgets.ScrollBar(this.$attachment);
+    new FlareTail.widgets.TabList(this.$attachment.querySelector('[role="tablist"]'));
     new BzDeck.BugFlagsView(this.id, this.bug, this.attachment)
         .render(this.$attachment.querySelector('.flags'), 6);
   }
@@ -141,8 +144,6 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     this.$attachment.setAttribute('itemprop', 'attachment');
     this.$placeholder.innerHTML = '';
     this.$placeholder.appendChild(this.$attachment);
-
-    this.$outer = this.$attachment.querySelector('.body');
 
     if (media_type === 'image') {
       this.$media = new Image();
@@ -199,6 +200,7 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
 
       worker.port.addEventListener('message', event => {
         this.$outer.innerHTML = event.data;
+        new FlareTail.widgets.ScrollBar(this.$outer);
         worker.port.close();
       }, { once: true });
       worker.port.start();
