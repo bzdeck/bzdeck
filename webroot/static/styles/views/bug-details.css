@@ -157,21 +157,8 @@
   content: "\F08E";
 }
 
-.bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="searchbox"] {
-  opacity: 1;
-}
-
 .bug-fieldset [role="combobox"][aria-readonly="true"][aria-disabled="true"] [role="button"] {
   display: none;
-}
-
-[data-device="desktop"]:root .bug-details [role="combobox"][aria-readonly="true"] [role="searchbox"] {
-  transition: all .4s;
-}
-
-[data-device="desktop"]:root .bug-details [role="combobox"][aria-readonly="true"]:not(:hover) [role="searchbox"]:not(:focus) {
-  border-color: transparent;
-  background-color: transparent;
 }
 
 .bug-fieldset [role="combobox"][aria-readonly="true"] .listbox-outer {

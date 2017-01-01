@@ -134,7 +134,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     for (const $section of this.$container.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
       const name = $section.dataset.field;
       const $combobox = $section.querySelector('[role="combobox"][aria-readonly="true"]');
-      const $textbox = $section.querySelector('[role="textbox"]:not([aria-invalid])');
+      const $textbox = $section.querySelector(':not([role="combobox"]) > [role="textbox"]:not([aria-invalid])');
       const $next_field = $section.nextElementSibling;
 
       // Activate comboboxes
@@ -142,7 +142,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
         const $$combobox = new FlareTail.widgets.ComboBox($combobox);
 
         this.comboboxes.set($combobox, $$combobox);
-        $combobox.setAttribute('aria-readonly', !can_editbugs);
+        $combobox.setAttribute('aria-disabled', !can_editbugs);
 
         $$combobox.build_dropdown(this.get_field_values(name)
             .map(value => ({ value, selected: value === this.bug[name] })));
@@ -164,7 +164,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
 
         $textbox.tabIndex = 0;
         $textbox.contentEditable = $textbox.spellcheck = can_editbugs;
-        $textbox.setAttribute('aria-readonly', !can_editbugs);
+        $textbox.setAttribute('aria-disabled', !can_editbugs);
         $$textbox.bind('focusin', event => $textbox.spellcheck = true);
         $$textbox.bind('focusout', event => $textbox.spellcheck = false);
         $$textbox.bind('input', event => this.trigger('BugView#EditField', { name, value: $$textbox.value }));

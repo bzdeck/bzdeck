@@ -157,6 +157,7 @@ span[role="textbox"] {
   background-color: var(--active-textbox-background-color);
 }
 
+[role="combobox"] [role="textbox"],
 [role="combobox"] [role="searchbox"] {
   box-shadow: none;
 }
@@ -166,6 +167,7 @@ span[role="textbox"] {
   content: "\F107";
 }
 
+[role="combobox"] [role="textbox"]:focus ~ [role="button"] .icon::before,
 [role="combobox"] [role="searchbox"]:focus ~ [role="button"] .icon::before {
   color: var(--highlighted-button-background-color);
 }
