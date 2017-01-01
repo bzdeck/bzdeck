@@ -46,12 +46,15 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
       category: 'settings',
     }, this);
 
-    if (this.ui_ready) {
+    const $tablist = document.querySelector('#settings-tablist');
+
+    if ($tablist.classList.contains('initialized')) {
       return;
     }
 
     // Activate tabs
-    this.$$tablist = new FlareTail.widgets.TabList(document.querySelector('#settings-tablist'));
+    this.$$tablist = new FlareTail.widgets.TabList($tablist);
+    $tablist.classList.add('initialized');
 
     if (tab_id) {
       this.$$tablist.view.selected = this.$$tablist.view.$focused = document.querySelector(`#settings-tab-${tab_id}`);
@@ -74,8 +77,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
     } else {
       this.prepare_qrcode();
     }
-
-    this.ui_ready = true;
   }
 
   /**
