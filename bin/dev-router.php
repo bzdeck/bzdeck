@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // This file is used for testing BzDeck with PHP's built-in web server.
-// Usage: 
+// Usage:
 // 1. php -S localhost:8000 dev-router.php
 // 2. Visit http://localhost:8000
 
@@ -31,5 +31,5 @@ if (array_key_exists($_SERVER['REQUEST_URI'], $rewrite_map)) {
   include('webroot/integration/bugzilla-auth-callback/index.php');
 } else {
   // Handle everything else
-  include('webroot/app/index.php');
+  include('webroot/app/index.html');
 }
