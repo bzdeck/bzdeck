@@ -214,7 +214,7 @@
 }
 
 #navigator [role="option"]:last-of-type,
-#navigator [role="none"]:last-of-type [role="menuitem"],
+#main-menu-app-menu [role="menuitem"],
 #main-menu-app-account {
   border-bottom-width: 0;
 }
@@ -308,10 +308,6 @@
   padding: 0;
   background-color: transparent;
   box-shadow: none;
-}
-
-#main-menu-app-menu li {
-  float: none;
 }
 
 [data-device="desktop"]:root #main-menu-app-menu {

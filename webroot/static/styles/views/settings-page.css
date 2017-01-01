@@ -162,6 +162,16 @@
   list-style-type: decimal;
 }
 
+[id^="settings-tabpanel"] > section > section > :-moz-any([role="radiogroup"], [role="group"]) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+[id^="settings-tabpanel"] > section > section > :-moz-any([role="radiogroup"], [role="group"]) > * {
+  margin: .4rem 0;
+}
+
 [data-device|="mobile"]:root #settings-tab-account,
 [data-device|="mobile"]:root #settings-tabpanel-account {
   display: none; /* The Account tabpanel only has the QR code for now, so it should be hidden on mobile */

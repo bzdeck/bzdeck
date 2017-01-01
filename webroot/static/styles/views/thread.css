@@ -167,8 +167,7 @@
   display: none;
 }
 
-.bug-listbox-container [itemprop="summary"],
-.bug-listbox-container .labels > p {
+.bug-listbox-container .labels > div {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -178,29 +177,15 @@
   font-size: 1.4rem;
 }
 
+.bug-listbox-container [itemprop="id"],
 .bug-listbox-container [itemprop="extract"],
-.bug-listbox-container [role="option"] ul {
+.bug-listbox-container [itemprop="last_change_time"] {
   opacity: .7;
   font-size: 1.2rem;
 }
 
 .bug-listbox-container [role="option"][data-unread="true"] [itemprop="summary"] {
   font-weight: 500;
-}
-
-.bug-listbox-container [role="option"] ul {
-  display: block;
-  right: 4.2rem;
-  bottom: var(--option-padding);
-  left: calc(var(--option-padding) * 2 + var(--option-height));
-}
-
-.bug-listbox-container [role="option"] li {
-  display: inline;
-}
-
-.bug-listbox-container [role="option"] li:not(:last-child)::after {
-  content: "\00A0\00B7"; /* nbsp + middot */
 }
 
 .bug-listbox-container [itemprop="starred"] {

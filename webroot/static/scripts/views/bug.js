@@ -165,17 +165,21 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     if ($bugzilla_link) {
-      $bugzilla_link.href = `${BzDeck.host.origin}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
+      const url = `${BzDeck.host.origin}/show_bug.cgi?id=${this.bug.id}&redirect=no`;
+
+      $bugzilla_link.addEventListener('mousedown', event => event.stopPropagation());
+      $bugzilla_link.addEventListener('click', event => FlareTail.util.Navigator.open_window(url));
     }
 
     if ($tweet_link) {
       // https://dev.twitter.com/web/tweet-button/web-intent
       const summary = this.bug.summary.substr(0, 80) + (this.bug.summary.length > 80 ? '...' : '');
-      const href = 'https://twitter.com/intent/tweet?via=BzDeck'
-                 + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
-                 + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
+      const url = 'https://twitter.com/intent/tweet?via=BzDeck'
+                + '&text=' + encodeURIComponent(`Bug ${this.bug.id} - ${summary}`)
+                + '&url=' + encodeURIComponent(`${location.origin}/bug/${this.bug.id}`);
 
-      $tweet_link.href = href;
+      $tweet_link.addEventListener('mousedown', event => event.stopPropagation());
+      $tweet_link.addEventListener('click', event => FlareTail.util.Navigator.open_window(url));
     }
 
     // Set Back & Forward navigation
