@@ -155,28 +155,34 @@
 }
 
 [itemtype$="Bug"][data-error-code] > div {
+  flex: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-[itemtype$="Bug"][data-error-code] > div > [role="status"] {
-  margin: 1.6rem;
-  max-width: 80rem;
-  font-size: 1.6rem;
-  line-height: 1.6;
-  text-align: center;
+[itemtype$="Bug"][data-error-code] > div > .icon {
+  display: block;
+  margin-bottom: .8rem;
 }
 
-[itemtype$="Bug"][data-error-code] > div > [role="status"]::before {
+[itemtype$="Bug"][data-error-code] > div > .icon::before {
   display: block;
-  height: 8.8rem;
+  width: 8rem;
+  height: 8rem;
   font-family: FontAwesome;
   font-size: 8rem;
   line-height: 8rem;
   color: var(--disabled-button-foreground-color);
   content: "\F071";
+}
+
+[itemtype$="Bug"][data-error-code] > div > [role="status"] {
+  max-width: 80rem;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  text-align: center;
 }
 
 [itemtype$="Bug"] > div > [role="tablist"] {

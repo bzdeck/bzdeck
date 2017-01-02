@@ -76,17 +76,19 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * @listens BugContainerPresenter#BugDataUnavailable
    * @param {Number} code - Error code usually defined by Bugzilla.
    * @param {String} message - Error message text.
-   * @returns {Boolean} Whether the view is updated.
+   * @fires BugView#RenderingComplete
    */
   on_bug_data_unavailable ({ code, message } = {}) {
     const $error = this.fill(this.get_template('bug-details-error-template', `${this.bug_id}-${this.id}`), {
       id: this.bug_id,
-      status: message,
     }, {
       'data-error-code': code,
     });
 
     this.$bug.parentElement.replaceChild($error, this.$bug);
+    $error.querySelector('[role="status"]').textContent = message;
+
+    this.trigger('#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id, error: true });
   }
 
   /**
@@ -300,7 +302,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     }
 
     this.$bug.removeAttribute('aria-busy');
-    this.trigger('#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id });
+    this.trigger('#RenderingComplete', { container_id: this.container_id, bug_id: this.bug_id, error: false });
   }
 
   /**
