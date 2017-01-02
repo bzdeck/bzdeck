@@ -369,8 +369,8 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     // Update the filter radio button labels
     if (this.filter_radio) {
-      this.filter_radio.open.textContent = `Open (${filtered_bugs.open.length})`;
-      this.filter_radio.closed.textContent = `Closed (${filtered_bugs.closed.length})`;
+      this.filter_radio.open.textContent = '%d Open'.replace('%d', filtered_bugs.open.length); // l10n
+      this.filter_radio.closed.textContent = '%d Closed'.replace('%d', filtered_bugs.closed.length); // l10n
     }
 
     // Filter & sort bugs
