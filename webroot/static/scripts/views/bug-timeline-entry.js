@@ -71,7 +71,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const click_event_type = FlareTail.env.device.mobile ? 'touchstart' : 'mousedown';
     const comment = this.data.get('comment');
     const time = comment.creation_time;
-    const $entry = this.get_template('timeline-comment');
+    const $entry = this.get_template('timeline-comment', `bug-${this.bug.id}-${this.id}-comment-${comment.id}`);
     const $header = $entry.querySelector('header');
     const $author = $entry.querySelector('[itemprop="author"]');
     const $roles = $author.querySelector('.roles');
@@ -83,7 +83,6 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     // It starts with 0, which is the reporter's comment or description
     const count = isNaN(comment.count) ? this.bug.comments.findIndex(c => c.creation_time === time) : comment.count;
 
-    $entry.id = `bug-${this.bug.id}-${this.id}-comment-${comment.id}`;
     $entry.dataset.id = comment.id;
     $entry.dataset.time = (new Date(time)).getTime();
     $entry.setAttribute('data-comment-count', count);

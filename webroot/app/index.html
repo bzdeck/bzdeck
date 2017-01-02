@@ -38,36 +38,36 @@
             <h2>Search &amp; Browse Bugs</h2>
           </header>
           <div>
-            <div role="search" id="search-TID-basic-search-pane">
+            <div role="search" id="search-TID-basic-search-pane" aria-label="Advanced Search">
               <div class="browse-box">
                 <section id="search-TID-browse-classification">
                   <h3>Classification</h3>
                   <div id="search-TID-browse-classification-list-outer">
-                    <div role="listbox" id="search-TID-browse-classification-list" tabindex="0" aria-multiselectable="true"></div>
+                    <div role="listbox" id="search-TID-browse-classification-list" tabindex="0" aria-label="Classification" aria-multiselectable="true"></div>
                   </div>
                 </section>
                 <section id="search-TID-browse-product">
                   <h3>Product</h3>
                   <div id="search-TID-browse-product-list-outer">
-                    <div role="listbox" id="search-TID-browse-product-list" tabindex="0" aria-multiselectable="true"></div>
+                    <div role="listbox" id="search-TID-browse-product-list" tabindex="0" aria-label="Product" aria-multiselectable="true"></div>
                   </div>
                 </section>
                 <section id="search-TID-browse-component">
                   <h3>Component</h3>
                   <div id="search-TID-browse-component-list-outer">
-                    <div role="listbox" id="search-TID-browse-component-list" tabindex="0" aria-multiselectable="true"></div>
+                    <div role="listbox" id="search-TID-browse-component-list" tabindex="0" aria-label="Component" aria-multiselectable="true"></div>
                   </div>
                 </section>
                 <section id="search-TID-browse-status">
                   <h3>Status</h3>
                   <div id="search-TID-browse-status-list-outer">
-                    <div role="listbox" id="search-TID-browse-status-list" tabindex="0" aria-multiselectable="true"></div>
+                    <div role="listbox" id="search-TID-browse-status-list" tabindex="0" aria-label="Status" aria-multiselectable="true"></div>
                   </div>
                 </section>
                 <section id="search-TID-browse-resolution">
                   <h3>Resolution</h3>
                   <div id="search-TID-browse-resolution-list-outer">
-                    <div role="listbox" id="search-TID-browse-resolution-list" tabindex="0" aria-multiselectable="true"></div>
+                    <div role="listbox" id="search-TID-browse-resolution-list" tabindex="0" aria-label="Resolution" aria-multiselectable="true"></div>
                   </div>
                 </section>
               </div><!-- end .browse-box -->
@@ -76,14 +76,14 @@
                   <h3>Search Terms</h3>
                   <dl>
                     <dt>Summary</dt>
-                    <dd><input role="searchbox" type="search"></dd>
+                    <dd><input role="searchbox" type="search" aria-label="Summary"></dd>
                     <dd><span role="button" tabindex="0">Search</span></dd>
                   </dl>
                 </section>
               </div><!-- end .text-box -->
             </div><!-- end #search-TID-basic-search-pane -->
             <div id="search-TID-result-pane">
-              <section role="grid" id="search-TID-result" class="bug-list" aria-multiselectable="true" aria-readonly="true" data-selection="rows"></section>
+              <section role="grid" id="search-TID-result" class="bug-list" aria-label="Search Results" aria-multiselectable="true" aria-readonly="true" data-selection="rows"></section>
               <div role="status" aria-hidden="true"><span></span></div>
             </div><!-- end #search-TID-result-pane -->
             <div id="search-TID-preview-pane" aria-hidden="true"></div>
@@ -98,9 +98,9 @@
     </template><!-- end #tabpanel-details-template -->
     <template id="tabpanel-attachment-template">
       <div role="tabpanel" id="tabpanel-attachment-TID" aria-labelledby="tab-attachment-TID">
-        <article role="article" id="attachment-TID">
+        <article role="article" id="attachment-TID" aria-labelledby="attachment-TID-title">
           <header>
-            <h2>Attachment <span itemprop="id"></span></h2>
+            <h2 id="attachment-TID-title">Attachment <span itemprop="id"></span></h2>
           </header>
           <div class="scrollable"></div>
         </article>
@@ -112,8 +112,8 @@
           <header>
             <h2>Settings</h2>
           </header>
-          <div>
-            <div role="tablist" id="settings-tablist" aria-level="2" aria-orientation="vertical" data-removable="false" data-reorderable="false">
+          <div role="form" aria-label="Settings">
+            <div role="tablist" id="settings-tablist" aria-label="Settings Categories" aria-level="2" aria-orientation="vertical" data-removable="false" data-reorderable="false">
               <div role="tab" id="settings-tab-account" aria-controls="settings-tabpanel-account" aria-selected="true">
                 <span class="icon" aria-hidden="true"></span>
                 <label>Account</label>
@@ -160,14 +160,14 @@
                 <h3>Design</h3>
                 <section>
                   <h4>Theme</h4>
-                  <div role="radiogroup" data-pref="ui.theme.selected">
+                  <div role="radiogroup" aria-label="Theme" data-pref="ui.theme.selected">
                     <div role="radio" data-value="Light">Light</div>
                     <div role="radio" data-value="Dark">Dark</div>
                   </div>
                 </section>
                 <section data-platform="desktop">
                   <h4>Desktop Layout</h4>
-                  <div role="radiogroup" data-pref="ui.home.layout">
+                  <div role="radiogroup" aria-label="Desktop Layout" data-pref="ui.home.layout">
                     <div role="radio" data-value="vertical">Vertical View</div>
                     <div role="radio" data-value="classic">Classic View</div>
                   </div>
@@ -179,7 +179,7 @@
                 <h3>Date &amp; Time</h3>
                 <section>
                   <h4>Timezone</h4>
-                  <div role="radiogroup" data-pref="ui.date.timezone">
+                  <div role="radiogroup" aria-label="Timezone" data-pref="ui.date.timezone">
                     <div role="radio" data-value="local" id="pref-timezone-local">Your local timezone</div>
                     <div role="radio" data-value="UTC" id="pref-timezone-host">Bugzilla default</div>
                     <div role="radio" data-value="UTC">UTC</div>
@@ -187,7 +187,7 @@
                 </section>
                 <section>
                   <h4>Date Format</h4>
-                  <div role="group">
+                  <div role="group" aria-label="Date Format">
                     <div role="checkbox" data-pref="ui.date.relative">Use relative dates by default</div>
                   </div>
                 </section>
@@ -198,7 +198,7 @@
                 <h3>Notifications</h3>
                 <section>
                   <h4>General</h4>
-                  <div role="group">
+                  <div role="group" aria-label="Notifications General">
                     <div role="checkbox" data-pref="notifications.show_desktop_notifications">Show desktop notifications if possible</div>
                     <div role="checkbox" data-pref="notifications.ignore_cc_changes">Ignore CC changes</div>
                   </div>
@@ -210,27 +210,27 @@
                 <h3>Timeline</h3>
                 <section>
                   <h4>Sort Order</h4>
-                  <div role="radiogroup" data-pref="ui.timeline.sort.order">
+                  <div role="radiogroup" aria-label="Sort Order" data-pref="ui.timeline.sort.order">
                     <div role="radio" data-value="ascending">Ascending (old to new)</div>
                     <div role="radio" data-value="descending">Descending (new to old)</div>
                   </div>
                 </section>
                 <section>
                   <h4>Font Family</h4>
-                  <div role="radiogroup" data-pref="ui.timeline.font.family">
+                  <div role="radiogroup" aria-label="Font Family" data-pref="ui.timeline.font.family">
                     <div role="radio" data-value="proportional">Proportional</div>
                     <div role="radio" data-value="monospace">Monospace</div>
                   </div>
                 </section>
                 <section>
                   <h4>CC Changes</h4>
-                  <div role="group">
+                  <div role="group" aria-label="CC Changes">
                     <div role="checkbox" data-pref="ui.timeline.show_cc_changes">Show CC changes</div>
                   </div>
                 </section>
                 <section>
                   <h4>Show Media Attachments</h4>
-                  <div role="radiogroup" data-pref="ui.timeline.show_attachments">
+                  <div role="radiogroup" aria-label="Show Media Attachments" data-pref="ui.timeline.show_attachments">
                     <div role="radio" data-value="2">Always</div>
                     <div role="radio" data-value="1">Only over Wi-Fi</div>
                     <div role="radio" data-value="0">Never</div>
@@ -243,7 +243,7 @@
                 <h3>Editing</h3>
                 <section>
                   <h4>Navigation</h4>
-                  <div role="group">
+                  <div role="group" aria-label="Navigation">
                     <div role="checkbox" data-pref="editing.move_next_once_submitted">Move to the next bug after saving changes</div>
                   </div>
                 </section>
@@ -283,7 +283,7 @@
             <h2>Profile</h2>
           </header>
           <div>
-            <article role="article" id="profile-TID" itemscope itemtype="http://bzdeck.com/User">
+            <article role="article" id="profile-TID" itemscope itemtype="http://bzdeck.com/User" aria-label="Profile">
               <header>
                 <div>
                   <img alt="" itemprop="image">
@@ -312,10 +312,10 @@
       </div><!-- end #tabpanel-profile -->
     </template><!-- end #tabpanel-profile-template -->
     <template id="search-preview-bug-template">
-      <article role="article" id="search-TID-preview-bug" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug">
+      <article role="article" id="search-TID-preview-bug" aria-hidden="true" itemscope itemtype="http://bzdeck.com/Bug" aria-labelledby="search-TID-preview-bug-title">
         <header>
-          <h3>Bug <span itemprop="id"></span></h3>
-          <div role="toolbar">
+          <h3 id="search-TID-preview-bug-title">Bug <span itemprop="id"></span></h3>
+          <div role="toolbar" aria-label="Bug Actions">
             <div role="group">
               <span role="button" class="iconic" aria-label="Star this bug" aria-pressed="false" data-command="star" data-field="starred" data-icon="&#xF006;"></span>
               <span role="button" class="iconic" aria-label="Menu" aria-pressed="false" aria-haspopup="true" aria-owns="search-TID-preview-bug-menu" data-command="show-menu" data-icon="&#xF142;"></span>
@@ -334,19 +334,19 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div id="search-TID-preview-bug-timeline-wrapper" class="bug-timeline-wrapper">
-          <div role="region" class="bug-timeline" aria-live="true" aria-relevant="additions">
+          <div class="bug-timeline">
             <h3 class="bug-summary" itemprop="summary"></h3>
-            <div role="feed" class="comments-wrapper"></div>
+            <div role="feed" class="comments-wrapper" aria-label="Bug Timeline" aria-live="true" aria-relevant="additions"></div>
           </div>
         </div><!-- end #search-TID-preview-bug-timeline-wrapper -->
         <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #search-TID-preview-bug -->
     </template><!-- end #search-preview-bug-template -->
     <template id="bug-details-template">
-      <article role="form" id="bug-TID" itemscope itemtype="http://bzdeck.com/Bug">
+      <article role="region" id="bug-TID" itemscope itemtype="http://bzdeck.com/Bug" aria-labelledby="bug-TID-title">
         <header>
-          <h2>Bug <span itemprop="id"></span></h2>
-          <div role="toolbar">
+          <h2 id="bug-TID-title">Bug <span itemprop="id"></span></h2>
+          <div role="toolbar" aria-label="Bug Actions">
             <div role="group" class="nav">
               <span role="button" class="iconic" aria-label="Show the previous bug" aria-disabled="true" data-command="nav-back" data-icon="&#xF053;"></span>
               <span role="button" class="iconic" aria-label="Show the next bug" aria-disabled="true" data-command="nav-forward" data-icon="&#xF054;"></span>
@@ -366,7 +366,7 @@
           </div><!-- end [role="toolbar"] -->
         </header>
         <div class="body">
-          <div role="tablist" id="bug-TID-tablist" aria-level="2" data-removable="false" data-reorderable="false">
+          <div role="tablist" id="bug-TID-tablist" aria-label="Bug Information" aria-level="2" data-removable="false" data-reorderable="false">
             <div role="tab" id="bug-TID-tab-timeline" aria-controls="bug-TID-tabpanel-timeline" aria-selected="true"><label>Timeline</label></div>
             <div role="tab" id="bug-TID-tab-details" aria-controls="bug-TID-tabpanel-details" aria-selected="false"><label>Details</label></div>
             <div role="tab" id="bug-TID-tab-attachments" aria-controls="bug-TID-tabpanel-attachments" aria-selected="false"><label>Attachments</label></div>
@@ -375,21 +375,21 @@
           <div id="bug-TID-tabpanels">
             <div role="tabpanel" id="bug-TID-tabpanel-timeline" aria-hidden="false" aria-labelledby="bug-TID-tab-timeline">
               <div class="bug-timeline-wrapper">
-                <div role="article" class="bug-timeline scrollable" aria-live="true" aria-relevant="additions">
+                <div role="article" class="bug-timeline scrollable" aria-labelledby="bug-TID-summary">
                   <section>
                     <header class="bug-summary">
-                      <h3 itemprop="summary"></h3>
+                      <h3 id="bug-TID-summary" itemprop="summary"></h3>
                     </header>
-                    <div role="feed" class="comments-wrapper"></div>
+                    <div role="feed" class="comments-wrapper" aria-label="Bug Timeline" aria-live="true" aria-relevant="additions"></div>
                   </section>
                 </div>
               </div>
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div role="tabpanel" id="bug-TID-tabpanel-details" aria-hidden="true" aria-labelledby="bug-TID-tab-details">
-              <div role="region" id="bug-TID-details" class="bug-details scrollable">
+              <div role="form" id="bug-TID-details" class="bug-details scrollable" aria-label="Bug Details">
                 <div class="bug-fieldset-wrapper">
                   <div class="col">
-                    <section role="group" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
+                    <section role="region" class="bug-fieldset" aria-label="Status Fieldset" data-category="status">
                       <header>
                         <h3>Status</h3>
                       </header>
@@ -452,7 +452,7 @@
                         </div>
                       </section>
                     </section>
-                    <section role="group" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
+                    <section role="region" class="bug-fieldset" aria-label="Affected Fieldset" data-category="affected">
                       <header>
                         <h3>Affected</h3>
                       </header>
@@ -497,7 +497,7 @@
                         </div>
                       </section>
                     </section>
-                    <section role="group" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
+                    <section role="region" class="bug-fieldset" aria-label="Participants Fieldset" data-category="participants">
                       <header>
                         <h3>Participants</h3>
                       </header>
@@ -529,7 +529,7 @@
                           </div>
                         </div>
                       </section>
-                      <section role="group" aria-label="QA" data-field="qa_contact">
+                      <section role="group" aria-label="QA Contact" data-field="qa_contact">
                         <h4>QA</h4>
                         <div class="row controls">
                           <div class="finder-outer"><label>Add:</label></div>
@@ -580,7 +580,7 @@
                     </section>
                   </div><!-- end .col -->
                   <div class="col">
-                    <section role="group" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
+                    <section role="region" class="bug-fieldset" aria-label="Notes Fieldset" data-category="notes">
                       <header>
                         <h3>Notes</h3>
                       </header>
@@ -641,7 +641,7 @@
                       </section>
                       <!-- Other custom fields: cf_crash_signature, cf_qa_whiteboard, etc. -->
                     </section>
-                    <section role="group" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
+                    <section role="region" class="bug-fieldset" aria-label="Dependencies Fieldset" data-category="dependencies">
                       <header>
                         <h3>Dependencies</h3>
                       </header>
@@ -662,12 +662,12 @@
                         </div>
                       </section>
                     </section>
-                    <section role="group" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
+                    <section role="region" class="bug-fieldset" aria-label="Flags Fieldset" data-category="flags">
                       <header>
                         <h3>Flags</h3>
                       </header>
                     </section>
-                    <section role="group" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
+                    <section role="region" class="bug-fieldset" aria-label="Tracking Flags Fieldset" data-category="tracking-flags">
                       <header>
                         <h3>Tracking Flags</h3>
                       </header>
@@ -686,24 +686,24 @@
                       <span role="checkbox" tabindex="0" aria-checked="false" aria-hidden="true">Show Obsolete</span>
                     </header>
                     <div class="scrollable" aria-dropeffect="none">
-                      <div role="listbox" tabindex="0" aria-live="true" aria-relevant="additions removals"></div>
+                      <div role="listbox" tabindex="0" aria-label="Attachment List" aria-live="true" aria-relevant="additions removals"></div>
                     </div>
-                    <div role="toolbar">
+                    <div role="toolbar" aria-label="Attachment Actions">
                       <div role="group">
-                        <span role="button" class="iconic" aria-label="Add attachments..." data-command="add-attachment" data-icon="+"></span>
-                        <span role="button" class="iconic" aria-label="Remove an attachment" aria-disabled="true" data-command="remove-attachment" data-icon="-"></span>
+                        <span role="button" class="iconic" tabindex="0" aria-label="Add attachments..." data-command="add-attachment" data-icon="+"></span>
+                        <span role="button" class="iconic" tabindex="0" aria-label="Remove an attachment" aria-disabled="true" data-command="remove-attachment" data-icon="-"></span>
                       </div>
-                      <input type="file" hidden multiple directory>
+                      <input type="file" hidden multiple directory aria-hidden="true">
                     </div>
                   </div>
-                  <div role="region" class="content scrollable">
+                  <div class="content scrollable">
                   </div>
                 </section>
               </div>
             </div><!-- end #bug-TID-tabpanel-attachments -->
             <div role="tabpanel" id="bug-TID-tabpanel-history" aria-hidden="true" aria-labelledby="bug-TID-tab-history">
-              <div role="region" class="bug-history scrollable">
-                <section role="group" itemscope itemtype="http://bzdeck.com/History" aria-label="History" data-field="history">
+              <div class="bug-history scrollable">
+                <section role="group" itemscope itemtype="http://bzdeck.com/History" aria-label="Bug History" data-field="history">
                   <h3>History</h3>
                   <table>
                     <thead>
@@ -725,18 +725,18 @@
           </div><!-- end #bug-TID-outline -->
         </div>
         <footer>
-          <div role="toolbar">
+          <div role="toolbar" aria-label="Bug Actions">
             <div role="status"></div>
-            <span role="button" class="cta" aria-disabled="true" data-command="submit">Save Changes</span>
+            <span role="button" class="cta" tabindex="0" aria-disabled="true" data-command="submit">Save Changes</span>
           </div><!-- end [role="toolbar"] -->
         </footer>
         <div class="att-drop-target" aria-dropeffect="none"><div><label>Drop text or files here to attach</label></div></div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-template -->
     <template id="bug-details-error-template">
-      <article role="article" id="bug-TID" itemscope itemtype="http://bzdeck.com/Bug" data-attrs="data-error-code">
+      <article role="article" id="bug-TID" itemscope itemtype="http://bzdeck.com/Bug" aria-labelledby="bug-TID-title" data-attrs="data-error-code">
         <header>
-          <h2>Bug <span itemprop="id"></span></h2>
+          <h2 id="bug-TID-title">Bug <span itemprop="id"></span></h2>
         </header>
         <div>
           <p role="status" itemprop="status"></p>
@@ -744,7 +744,7 @@
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-error-template -->
     <template id="preview-bug-details">
-      <div role="region" class="bug-details">
+      <div role="region" class="bug-details" aria-label="Bug Info">
         <dl>
           <dt>Filed</dt><dd><time itemprop="creation_time" data-relative="false"></time></dd>
           <dt>Modified</dt><dd><time itemprop="last_change_time" data-relative="false"></time></dd>
@@ -762,18 +762,18 @@
       </div><!-- end .bug-details -->
     </template><!-- end #preview-bug-details -->
     <template id="timeline-comment">
-      <article role="article" tabindex="0" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment">
-        <header>
+      <article role="article" id="TID" tabindex="0" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" aria-labelledby="TID-title" aria-describedby="TID-extract">
+        <header id="TID-header">
           <div class="meta">
             <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><span class="roles"></span><meta itemprop="email"></span>
-            <span itemprop="name"></span>
+            <span id="TID-title" itemprop="name"></span>
             <time itemprop="creation_time"></time>
           </div>
         </header>
-        <p itemprop="extract"></p>
-        <div itemprop="text"></div>
-        <footer>
-          <div role="toolbar">
+        <p id="TID-extract" itemprop="extract"></p>
+        <div id="TID-text" itemprop="text"></div>
+        <footer id="TID-footer">
+          <div role="toolbar" aria-label="Comment Actions">
             <div role="group">
               <span role="button" class="iconic text" tabindex="0" data-command="reply" data-icon="&#xF112;">Reply</span>
             </div>
@@ -782,7 +782,7 @@
       </article>
     </template><!-- end #timeline-comment -->
     <template id="timeline-change">
-      <article role="article" tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change">
+      <article role="group" tabindex="0" itemprop="change" itemscope itemtype="http://bzdeck.com/Change">
         <header>
           <div class="meta">
             <span role="link" itemprop="author" itemscope itemtype="http://bzdeck.com/User" data-attrs="title"><img alt="" itemprop="image"><strong itemprop="name"></strong><meta itemprop="email"></span>
@@ -793,10 +793,10 @@
       </article>
     </template><!-- end #timeline-change -->
     <template id="bug-comment-form">
-      <section role="group" id="bug-TID-comment-form" class="bug-comment-form" aria-label="Comment Form">
+      <section role="form" id="bug-TID-comment-form" class="bug-comment-form" aria-label="Comment Form">
         <header>
           <h4>Reply</h4>
-          <div role="tablist" id="bug-TID-comment-form-tablist" aria-level="2" data-removable="false" data-reorderable="false">
+          <div role="tablist" id="bug-TID-comment-form-tablist" aria-label="Comment Form Controls" aria-level="2" data-removable="false" data-reorderable="false">
             <div role="tab" id="bug-TID-comment-form-tab-comment" aria-controls="bug-TID-comment-form-tabpanel-comment" aria-selected="true"><label>Comment</label></div>
             <div role="tab" id="bug-TID-comment-form-tab-preview" aria-controls="bug-TID-comment-form-tabpanel-preview" aria-selected="false" aria-disabled="true"><label>Preview</label></div>
             <div role="tab" id="bug-TID-comment-form-tab-attachments" aria-controls="bug-TID-comment-form-tabpanel-attachments" aria-selected="false" aria-disabled="true"><label>Attachments</label></div>
@@ -821,19 +821,19 @@
         </header>
         <div>
           <div role="tabpanel" id="bug-TID-comment-form-tabpanel-comment" aria-hidden="false" aria-labelledby="bug-TID-comment-form-tab-comment">
-            <div role="group">
+            <div role="group" aria-label="Comment Editor">
               <span role="button" class="iconic" aria-label="Add attachments..." data-command="attach" data-icon="&#xF0C6;"></span>
               <textarea role="textbox" rows="1" placeholder="Leave a comment" aria-multiline="true"></textarea>
             </div>
           </div><!-- end #TID-tabpanel-comment -->
           <div role="tabpanel" id="bug-TID-comment-form-tabpanel-preview" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-preview">
-            <article role="article" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment">
+            <article role="article" itemprop="comment" itemscope itemtype="http://bzdeck.com/Comment" aria-label="Comment Preview">
               <div itemprop="text"></div>
             </article>
           </div><!-- end #TID-tabpanel-preview -->
           <div role="tabpanel" id="bug-TID-comment-form-tabpanel-attachments" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-attachments">
-            <div role="group">
-              <input type="file" hidden multiple directory>
+            <div role="group" aria-label="Attachments">
+              <input type="file" hidden multiple directory aria-hidden="true">
               <table>
                 <colgroup>
                   <col data-id="description">
@@ -847,7 +847,7 @@
             </div>
           </div><!-- end #TID-tabpanel-attachments -->
           <div role="tabpanel" id="bug-TID-comment-form-tabpanel-needinfo" aria-hidden="true" aria-labelledby="bug-TID-comment-form-tab-needinfo">
-            <div role="group">
+            <div role="group" aria-label="Need Info">
               <div class="requestee-finder-outer">
                 <label>Ask someone else:</label>
               </div>
@@ -900,15 +900,15 @@
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
       <section id="TID" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
-        <div role="tablist">
-          <div role="tab" aria-controls="TID-preview" aria-selected="true">Preview</div>
-          <div role="tab" aria-controls="TID-info" aria-selected="false">Info</div>
+        <div role="tablist" aria-label="Attachment Controls" aria-level="3">
+          <div role="tab" id="TID-preview-tab" aria-controls="TID-preview" aria-selected="true">Preview</div>
+          <div role="tab" id="TID-info-tab" aria-controls="TID-info" aria-selected="false">Info</div>
         </div>
-        <div role="tabpanel" id="TID-preview" class="scrollable" aria-hidden="false">
+        <div role="tabpanel" id="TID-preview" class="scrollable" aria-hidden="false" aria-labelledby="TID-preview-tab">
           <div class="preview"></div>
         </div><!-- end [role="tabpanel"] -->
-        <div role="tabpanel" id="TID-info" aria-hidden="true">
-          <div class="info">
+        <div role="tabpanel" id="TID-info" aria-hidden="true" aria-labelledby="TID-info-tab">
+          <div role="form" class="info" aria-label="Attachment Information">
             <section class="properties">
               <h5>Properties</h5>
               <ul>
@@ -988,7 +988,7 @@
       </aside>
     </template><!-- end #bug-tooltip -->
     <template id="person-finder">
-      <span role="combobox" class="person-finder" aria-autocomplete="none" aria-label="Need Info requestee finder" data-autoexpand="true" data-nobutton="true">
+      <span role="combobox" class="person-finder" aria-autocomplete="none" aria-label="Person Finder" data-autoexpand="true" data-nobutton="true">
         <span role="searchbox" contenteditable="true" spellcheck="false"></span>
         <div role="listbox"></div>
       </span>
@@ -1012,7 +1012,7 @@
       </div>
     </template><!-- end #bug-participant -->
     <template id="qrcode-auth-overlay-template">
-      <section role="region" id="qrcode-auth-overlay" aria-hidden="true">
+      <section role="region" id="qrcode-auth-overlay" aria-hidden="true" aria-label="QR Code Authentication">
         <header>
           <span role="button" class="iconic banner-nav-button" tabindex="0" aria-label="Back" data-icon="&#xF053;"></span>
           <h2>Scan QR Code</h2>
@@ -1027,13 +1027,13 @@
     </template><!-- end #qrcode-auth-overlay-template -->
   </head>
   <body>
-    <div role="document" id="app-landing">
+    <div role="document" id="app-landing" aria-label="Application Landing Page">
       <section id="app-login">
         <div>
           <h1>BzDeck</h1>
           <div>
             <p id="app-intro"><strong>BzDeck</strong> is a useful, experimental Bugzilla client demonstrating modern Web standard technologies. This app is currently optimized for <strong>bugzilla.mozilla.org</strong>. <a href="/about/">Learn more &raquo;</a></p>
-            <div role="form" aria-hidden="true">
+            <div role="form" aria-label="Sign-In Form" aria-hidden="true">
               <p><span role="button" class="cta" tabindex="0" data-id="bugzilla-auth">Sign in with Bugzilla</span></p>
               <p><span role="button" class="cta" tabindex="0" data-id="qrcode-auth">Sign in with QR code</span></p>
             </div>
@@ -1044,9 +1044,9 @@
         </div>
       </section><!-- end #app-login -->
     </div><!-- end #app-landing -->
-    <div role="application" id="app-container" aria-hidden="true">
-      <nav role="navigation" id="navigator">
-        <div role="region">
+    <div role="application" id="app-container" aria-hidden="true" aria-label="Application Body">
+      <nav role="navigation" id="navigator" aria-label="Global Navigation">
+        <div>
           <section id="navigator-account">
             <h2>Account</h2>
             <span role="button" id="main-menu-app-account" tabindex="0" aria-label="Profile" data-tooltip-position="right">
@@ -1059,11 +1059,11 @@
           </section><!-- end #navigator-account -->
           <section id="navigator-folders">
             <h2>Bugs</h2>
-            <div role="listbox" id="navigator-folder-list" tabindex="0" aria-multiselectable="false"></div>
+            <div role="listbox" id="navigator-folder-list" tabindex="0" aria-label="Subscription List" aria-multiselectable="false"></div>
           </section><!-- end #navigator-folders -->
           <section id="navigator-menu">
             <h2>Menu</h2>
-            <div role="menu" id="main-menu-app-menu">
+            <div role="menu" id="main-menu-app-menu" aria-label="Application Menu">
               <div role="menuitem" id="main-menu-app-settings" aria-label="Settings" data-command="show-settings" data-tooltip-position="right">
                 <span class="icon" aria-hidden="true"></span>
                 <label>Settings</label>
@@ -1073,16 +1073,16 @@
         </div>
       </nav><!-- end #navigator -->
       <div id="app-body">
-        <aside role="complementary" id="sidebar">
-          <section role="region" id="sidebar-list-panel" class="sidebar-panel" aria-hidden="false">
+        <aside role="complementary" id="sidebar" aria-label="Sidebar">
+          <section role="region" id="sidebar-list-panel" class="sidebar-panel" aria-hidden="false" aria-labelledby="sidebar-list-panel-title">
             <header>
               <span role="button" class="iconic banner-nav-button" tabindex="0" aria-label="Menu" data-icon="&#xF0C9;"></span>
-              <h3>Inbox</h3>
+              <h3 id="sidebar-list-panel-title">Inbox</h3>
             </header>
             <section role="grid" id="sidebar-list" class="bug-list" aria-live="true" aria-relevant="additions removals" aria-labelledby="sidebar-list-title" aria-multiselectable="true" aria-readonly="true" data-selection="rows">
             </section>
-            <section role="region" id="home-vertical-thread" class="bug-listbox-container">
-              <header role="toolbar">
+            <section id="home-vertical-thread" class="bug-listbox-container">
+              <header role="toolbar" aria-label="Bug List Actions">
                 <div role="radiogroup" class="filter" aria-label="Filter Bugs by Status">
                   <div role="radio" data-value="open">Open</div>
                   <div role="radio" data-value="closed">Closed</div>
@@ -1095,22 +1095,22 @@
                 </div>
               </header>
               <div class="scrollable">
-                <div role="listbox" tabindex="0" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
+                <div role="listbox" tabindex="0" aria-label="Bug List" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
               </div>
             </section>
             <footer aria-hidden="true">
               <div role="status"><span>No bugs found in this folder.</span></div>
             </footer>
           </section><!-- end #sidebar-list-panel -->
-          <section role="region" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true">
+          <section role="region" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true" aria-labelledby="sidebar-search-panel-title">
             <header>
-              <h3>Search</h3>
+              <h3 id="sidebar-search-panel-title">Search</h3>
             </header>
-            <div role="search" id="sidebar-search-container">
+            <div role="search" id="sidebar-search-container" aria-label="Quick Search">
               <section data-field="summary">
                 <h4>Summary</h4>
                 <div class="searchbar">
-                  <input role="searchbox" placeholder="Keywords" tabindex="0" itemprop="summary">
+                  <input role="searchbox" placeholder="Keywords" tabindex="0" itemprop="summary" aria-label="Summary">
                   <span role="button" class="iconic" aria-label="Clear" aria-hidden="true" data-command="clear" data-icon="&#xF057;"></span>
                 </div>
               </section>
@@ -1127,15 +1127,15 @@
                 </span>
               </section>
             </div>
-            <section role="region" id="sidebar-search-results" class="bug-listbox-container">
+            <section id="sidebar-search-results" class="bug-listbox-container">
               <div class="scrollable">
-                <div role="listbox" tabindex="0" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
+                <div role="listbox" tabindex="0" aria-label="Search Results" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
               </div>
             </section>
           </section><!-- end #sidebar-search-panel -->
         </aside><!-- end #sidebar -->
-        <main role="main">
-          <div role="tablist" id="main-tablist" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
+        <main role="main" aria-label="Main Application Region">
+          <div role="tablist" id="main-tablist" aria-label="Main Tabs" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
             <div role="tab" id="tab-home" title="Home" draggable="true" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></div>
           </div><!-- end #main-tablist -->
           <div id="main-tabpanels">
@@ -1145,7 +1145,7 @@
                   <h2>Inbox</h2>
                 </header>
                 <div>
-                  <div role="region" id="home-preview-pane" class="bug-container" aria-expanded="false"></div>
+                  <div id="home-preview-pane" class="bug-container" aria-expanded="false"></div>
                 </div>
               </section>
             </div><!-- end #tabpanel-home -->

@@ -200,8 +200,10 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       $comment.setAttribute('aria-expanded', 'false');
     }
 
-    this.$timeline.focus();
+    this.$comments_wrapper.setAttribute('aria-busy', 'true');
+    this.$comments_wrapper.querySelector('.read-comments-expander ~ [tabindex="0"]').focus();
     this.$comments_wrapper.replaceChild($fragment, this.$expander);
+    this.$comments_wrapper.removeAttribute('aria-busy');
 
     delete this.$expander;
   }
