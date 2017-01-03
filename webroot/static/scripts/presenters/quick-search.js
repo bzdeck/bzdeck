@@ -73,19 +73,20 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
       return;
     }
 
+    const query = { input, product, status };
     const params_bugs = new URLSearchParams();
     const params_users = new URLSearchParams();
 
     const return_bugs = async (remote, bugs) => {
       const results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
 
-      this.trigger('#ResultsAvailable', { category: 'bugs', remote, input, product, status, results });
+      this.trigger('#ResultsAvailable', { category: 'bugs', remote, query, results });
     };
 
     const return_users = async (remote, users) => {
       const results = await Promise.all(users.map(user => this.get_user_result(user)));
 
-      this.trigger('#ResultsAvailable', { category: 'users', remote, input, product, status, results });
+      this.trigger('#ResultsAvailable', { category: 'users', remote, query, results });
     };
 
     // Use the same query as https://bugzilla.mozilla.org/query.cgi?format=specific for a faster response

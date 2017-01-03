@@ -28,3 +28,35 @@
   font-size: 1.4rem;
   line-height: 1.2;
 }
+
+#sidebar-search-results .scrollable {
+  display: block;
+}
+
+#sidebar-search-results [role="listbox"]::before {
+  display: none; /* Hide the default throbber */
+}
+
+#sidebar-search-statusbar[aria-hidden="false"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+}
+
+#sidebar-search-statusbar [role="status"] {
+  position: absolute;
+  left: -99999px;
+}
+
+#sidebar-search-statusbar .icon {
+  display: block;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-image: -moz-image-rect(var(--base-sprite-image), 64, 256, 128, 192);
+  background-size: 2.4rem 2.4rem;
+}
+
+#sidebar-search-statusbar[aria-hidden="false"] .icon {
+  animation: throbber 2s linear 0s infinite;
+}
