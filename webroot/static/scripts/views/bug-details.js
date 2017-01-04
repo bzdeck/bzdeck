@@ -91,10 +91,10 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
       }
     }
 
+    this.render_tracking_flags();
     this.activate_widgets();
 
     new BzDeck.BugFlagsView(this.id, this.bug).render(this.$container.querySelector('[data-category="flags"]'));
-    this.render_tracking_flags();
   }
 
   /**
@@ -290,11 +290,10 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
 
       $fragment.appendChild(this.fill($flag.cloneNode(true), {
         name: field.description,
-        value,
       }, {
-        'aria-label': field.description,
+        'itemprop': name,
         'data-field': name,
-        'data-has-value': value !== '---',
+        'aria-label': field.description,
       }));
     }
 
