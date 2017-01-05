@@ -11,7 +11,7 @@
   display: none;
 }
 
-.bug-container > [itemtype$="Bug"] {
+.bug-container > [itemtype$="Bug"]:not([aria-hidden="true"]) {
   display: flex;
   flex-direction: column;
   position: relative;
