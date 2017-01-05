@@ -686,7 +686,7 @@
                       <span role="checkbox" tabindex="0" aria-checked="false" aria-hidden="true">Show Obsolete</span>
                     </header>
                     <div class="scrollable" aria-dropeffect="none">
-                      <div role="listbox" tabindex="0" aria-label="Attachment List" aria-live="true" aria-relevant="additions removals"></div>
+                      <div role="listbox" tabindex="0" aria-controls="bug-TID-attachment-content" aria-label="Attachment List" aria-live="true" aria-relevant="additions removals"></div>
                     </div>
                     <div role="toolbar" aria-label="Attachment Actions">
                       <div role="group">
@@ -696,7 +696,7 @@
                       <input type="file" hidden multiple directory aria-hidden="true">
                     </div>
                   </div>
-                  <div class="content scrollable">
+                  <div id="bug-TID-attachment-content" class="content scrollable">
                   </div>
                 </section>
               </div>
@@ -900,24 +900,32 @@
       </div>
     </template><!-- end #details-attachment-listitem -->
     <template id="details-attachment-content">
-      <section id="TID" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type">
+      <section id="TID" itemscope itemtype="http://bzdeck.com/Attachment" data-attrs="data-att-id data-att-hash data-content-type" aria-labelledby="TID-title">
+        <header>
+          <h4 id="TID-title">Attachment <span itemprop="id"></span> &ndash; <span itemprop="summary"></span></h4>
+        </header>
         <div role="tablist" aria-label="Attachment Controls" aria-level="3">
           <div role="tab" id="TID-preview-tab" aria-controls="TID-preview" aria-selected="true">Preview</div>
           <div role="tab" id="TID-info-tab" aria-controls="TID-info" aria-selected="false">Info</div>
         </div>
-        <div role="tabpanel" id="TID-preview" class="scrollable" aria-hidden="false" aria-labelledby="TID-preview-tab">
-          <div class="preview"></div>
+        <div role="tabpanel" id="TID-preview" aria-hidden="false" aria-labelledby="TID-preview-tab">
+          <div role="figure" class="preview scrollable" aria-labelledby="TID-title"></div>
         </div><!-- end [role="tabpanel"] -->
         <div role="tabpanel" id="TID-info" aria-hidden="true" aria-labelledby="TID-info-tab">
           <div role="form" class="info" aria-label="Attachment Information">
-            <section class="properties">
-              <h5>Properties</h5>
+            <section class="history">
+              <h5>History</h5>
               <ul>
                 <li><label>Created</label> <time itemprop="creation_time" data-relative="false"></time> by <span role="link" itemprop="creator" itemscope itemtype="http://bzdeck.com/User"><img alt="" itemprop="image"><span itemprop="name"></span><meta itemprop="email"></span></li>
                 <li><label>Modified</label> <time itemprop="last_change_time" data-relative="false"></time></li>
-                <li><label>Summary</label> <span role="textbox" contenteditable="true" itemprop="summary" aria-label="Summary" aria-required="true"></span></li>
-                <li><label>Name</label> <span role="textbox" contenteditable="true" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
-                <li><label>Type</label> <span role="textbox" contenteditable="true" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
+              </ul>
+            </section>
+            <section class="properties">
+              <h5>Properties</h5>
+              <ul>
+                <li><label>Description</label> <span role="textbox" contenteditable="true" itemprop="summary" aria-label="Summary" aria-required="true"></span></li>
+                <li><label>File Name</label> <span role="textbox" contenteditable="true" itemprop="file_name" aria-label="Name" aria-required="true"></span></li>
+                <li><label>MIME Type</label> <span role="textbox" contenteditable="true" itemprop="content_type" aria-label="Type" aria-required="true"></span></li>
                 <li><label>Size</label>
                   <span itemprop="size"></span>
                   <meta itemprop="is_patch"><span role="checkbox" tabindex="0" data-itemprop="is_patch">Patch</span>

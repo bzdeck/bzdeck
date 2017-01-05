@@ -10,13 +10,33 @@
   height: 100%;
 }
 
+[itemtype$="Attachment"][data-content-type] > header {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 1.6rem;
+  height: 4rem;
+}
+
+[itemtype$="Attachment"][data-content-type] > header h4 {
+  overflow: hidden;
+  font-size: 1.6rem;
+  font-weight: 300;
+  font-style: italic;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 [itemtype$="Attachment"][data-content-type] [role="tablist"] {
+  flex: none;
+  margin: 0 1.2rem;
   border-bottom: .1rem solid var(--secondary-region-border-color);
 }
 
 [itemtype$="Attachment"][data-content-type] [role="tab"] {
-  margin: 0 0 0 1.6rem;
-  padding: 1.2rem 1.2rem .8rem;
+  margin: 0 .4rem;
+  padding: .4rem .8rem;
   border-width: 0 0 .4rem;
   border-color: transparent;
   width: auto;
@@ -36,8 +56,11 @@
 }
 
 [itemtype$="Attachment"][data-content-type] .info h5 {
-  position: absolute;
-  text-indent: -99999px;
+  padding: .4rem 1.2rem;
+  color: var(--secondary-region-header-foreground-color);
+  background-color: var(--secondary-region-header-background-color);
+  font-size: 1.2rem;
+  line-height: 1.6rem;
 }
 
 [itemtype$="Attachment"][data-content-type] .properties meta {
@@ -54,26 +77,18 @@
   height: 1.6rem;
 }
 
-[itemtype$="Attachment"][data-content-type] .properties li {
+[itemtype$="Attachment"][data-content-type] section > ul li {
   display: flex;
   align-items: center;
-  margin: .4rem 0;
+  margin: .8rem 0;
   line-height: 1.5;
 }
 
-[itemtype$="Attachment"][data-content-type] .properties li:first-of-type {
-  margin-top: 0;
-}
-
-[itemtype$="Attachment"][data-content-type] .properties li:last-of-type {
-  margin-bottom: 0;
-}
-
-[itemtype$="Attachment"][data-content-type] .properties li > * {
+[itemtype$="Attachment"][data-content-type] section > ul li > * {
   margin: 0 .4rem;
 }
 
-[itemtype$="Attachment"][data-content-type] .properties li > label {
+[itemtype$="Attachment"][data-content-type] section > ul li > label {
   flex: none;
   display: inline-block;
   width: 6.4rem;
