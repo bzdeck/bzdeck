@@ -17,11 +17,11 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
     super(id); // Assign this.id
 
     this.$container = document.querySelector('#sidebar-search-panel');
-    this.$searchbar = this.$container.querySelector('#sidebar-search-container');
-    this.$searchbox = this.$searchbar.querySelector('[role="searchbox"]');
-    this.$clear_button = this.$searchbar.querySelector('[data-command="clear"]');
-    this.$products_cbox = this.$searchbar.querySelector('[data-field="product"] [role="combobox"]');
-    this.$status_cbox = this.$searchbar.querySelector('[data-field="status"] [role="combobox"]');
+    this.$form = this.$container.querySelector('#sidebar-search-form');
+    this.$searchbox = this.$form.querySelector('[role="searchbox"]');
+    this.$clear_button = this.$form.querySelector('[data-command="clear"]');
+    this.$products_cbox = this.$form.querySelector('[data-field="product"] [role="combobox"]');
+    this.$status_cbox = this.$form.querySelector('[data-field="status"] [role="combobox"]');
     this.$results = this.$container.querySelector('#sidebar-search-results');
     this.$results_listbox = this.$results.querySelector('[role="listbox"]');
     this.$statusbar = this.$container.querySelector('#sidebar-search-statusbar');

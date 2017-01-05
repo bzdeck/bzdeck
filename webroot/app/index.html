@@ -683,10 +683,10 @@
                   <div class="list">
                     <header>
                       <h4>0 Attachments</h4>
-                      <span role="checkbox" tabindex="0" aria-checked="false" aria-hidden="true">Show Obsolete</span>
+                      <span role="checkbox" tabindex="0" aria-checked="false" aria-controls="bug-TID-attachment-listbox" aria-hidden="true">Show Obsolete</span>
                     </header>
                     <div class="scrollable" aria-dropeffect="none">
-                      <div role="listbox" tabindex="0" aria-controls="bug-TID-attachment-content" aria-label="Attachment List" aria-live="true" aria-relevant="additions removals"></div>
+                      <div role="listbox" id="bug-TID-attachment-listbox" tabindex="0" aria-controls="bug-TID-attachment-content" aria-label="Attachment List" aria-live="true" aria-relevant="additions removals"></div>
                     </div>
                     <div role="toolbar" aria-label="Attachment Actions">
                       <div role="group">
@@ -1068,7 +1068,7 @@
           </section><!-- end #navigator-account -->
           <section id="navigator-folders">
             <h2>Bugs</h2>
-            <div role="listbox" id="navigator-folder-list" tabindex="0" aria-label="Subscription List" aria-multiselectable="false"></div>
+            <div role="listbox" id="navigator-folder-list" tabindex="0" aria-controls="sidebar" aria-label="Subscription List" aria-multiselectable="false"></div>
           </section><!-- end #navigator-folders -->
           <section id="navigator-menu">
             <h2>Menu</h2>
@@ -1092,30 +1092,30 @@
             </section>
             <section id="home-vertical-thread" class="bug-listbox-container">
               <header role="toolbar" aria-label="Bug List Actions">
-                <div role="radiogroup" class="filter" aria-label="Filter Bugs by Status">
+                <div role="radiogroup" class="filter" aria-controls="home-vertical-thread-listbox" aria-label="Filter Bugs by Status">
                   <div role="radio" data-value="open">Open</div>
                   <div role="radio" data-value="closed">Closed</div>
                   <div role="radio" data-value="all">All</div>
                 </div>
-                <span role="button" class="iconic" aria-label="Sort Bugs in Ascending Order" aria-pressed="false" data-command="sort"></span>
+                <span role="button" class="iconic" aria-controls="home-vertical-thread-listbox" aria-label="Sort Bugs in Ascending Order" aria-pressed="false" data-command="sort"></span>
                 <span role="button" class="iconic" aria-label="Show menu for the thread" aria-pressed="false" aria-haspopup="true" aria-owns="home-vertical-thread-menu" data-command="show-menu" data-icon="&#xF142;"></span>
                 <div role="menu" id="home-vertical-thread-menu" aria-expanded="false">
                   <div role="menuitem" id="home-vertical-thread-menu-mark-all-read" data-command="mark-all-read"><label>Mark All Bugs as Read</label></div>
                 </div>
               </header>
               <div class="scrollable">
-                <div role="listbox" tabindex="0" aria-label="Bug List" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
+                <div role="listbox" id="home-vertical-thread-listbox" tabindex="0" aria-controls="main" aria-label="Bug List" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
               </div>
             </section>
             <footer aria-hidden="true">
               <div role="status"><span>No bugs found in this folder.</span></div>
             </footer>
           </section><!-- end #sidebar-list-panel -->
-          <section role="region" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true" aria-labelledby="sidebar-search-panel-title">
+          <section role="search" id="sidebar-search-panel" class="sidebar-panel" aria-hidden="true" aria-labelledby="sidebar-search-panel-title">
             <header>
-              <h3 id="sidebar-search-panel-title">Search</h3>
+              <h3 id="sidebar-search-panel-title">Quick Search</h3>
             </header>
-            <div role="search" id="sidebar-search-container" aria-label="Quick Search">
+            <div id="sidebar-search-form">
               <section data-field="summary">
                 <h4>Summary</h4>
                 <div class="searchbar">
@@ -1136,18 +1136,18 @@
                 </span>
               </section>
             </div>
-            <section id="sidebar-search-results" class="bug-listbox-container">
+            <div id="sidebar-search-results" class="bug-listbox-container">
               <div class="scrollable">
-                <div role="listbox" tabindex="0" aria-label="Search Results" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
+                <div role="listbox" tabindex="0" aria-controls="main" aria-label="Search Results" aria-live="true" aria-relevant="additions removals" aria-multiselectable="true"></div>
                 <div id="sidebar-search-statusbar" aria-hidden="true">
                   <div role="status"></div>
                   <span class="icon throbber" aria-hidden="true"></span>
                 </div>
               </div>
-            </section>
+            </div>
           </section><!-- end #sidebar-search-panel -->
         </aside><!-- end #sidebar -->
-        <main role="main" aria-label="Main Application Region">
+        <main role="main" id="main" aria-label="Main Application Region">
           <div role="tablist" id="main-tablist" aria-label="Main Tabs" aria-level="1" aria-live="true" aria-relevant="additions removals" data-removable="true" data-reorderable="false">
             <div role="tab" id="tab-home" title="Home" draggable="true" aria-controls="tabpanel-home" aria-grabbed="false" aria-selected="true"><label>Home</label></div>
           </div><!-- end #main-tablist -->

@@ -2,27 +2,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#sidebar-search-container {
+#sidebar-search-form {
   padding: 0 1.6rem .8rem;
 }
 
-#sidebar-search-container section {
+#sidebar-search-form section {
   display: flex;
   align-items: center;
   position: relative;
   margin-bottom: .8rem;
 }
 
-#sidebar-search-container section h4 {
+#sidebar-search-form section h4 {
   flex: none;
   width: 10rem;
 }
 
-#sidebar-search-container section > :not(h4) {
+#sidebar-search-form section > :not(h4) {
   flex: auto;
 }
 
-#sidebar-search-container [role="searchbox"][itemprop="summary"] {
+#sidebar-search-form [role="searchbox"][itemprop="summary"] {
   box-sizing: border-box;
   width: 100%;
   font-size: 1.4rem;

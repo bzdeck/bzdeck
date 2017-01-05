@@ -251,11 +251,12 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
     $$button.bind('Pressed', event => {
       if (!$$menu) {
-        $$menu = this.build_menu(email);
+        $$menu = $$button.view.$$menu = this.build_menu(email);
 
         const $menu = $$menu.view.$container;
 
         $person.appendChild($menu);
+        $person.setAttribute('aria-haspopup', 'menu');
         $person.setAttribute('aria-owns', $menu.id);
 
         $$menu.bind('MenuOpened', event => {
