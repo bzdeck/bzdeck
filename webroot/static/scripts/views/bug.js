@@ -394,7 +394,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
    * Set a tooltip on each product name that shows the Bugzilla-defined description of that product.
    */
   set_product_tooltips () {
-    const config = BzDeck.host.data.config;
+    const config = BzDeck.host.data.config.bzapi;
     const strip_tags = str => FlareTail.util.String.strip_tags(str).replace(/\s*\(more\ info\)$/i, '');
     const classification = config.classification[this.bug.classification];
     const product = config.product[this.bug.product];

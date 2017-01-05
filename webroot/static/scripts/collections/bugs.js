@@ -209,7 +209,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
    * @todo Add support for Bugzilla quick search queries (#327).
    */
   async search_local (params) {
-    const all_statuses = BzDeck.host.data.config.field.status;
+    const all_statuses = BzDeck.host.data.config.bzapi.field.status;
     const products = params.getAll('product').filter(String);
     const statuses = params.getAll('status').filter(String);
     const words = params.get('content').trim().split(/\s+/).map(word => word.toLowerCase());

@@ -72,7 +72,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
     super(); // Assign this.id
 
     const default_cols = BzDeck.config.grid.default_columns;
-    const field = BzDeck.host.data.config.field;
+    const field = BzDeck.host.data.config.bzapi.field;
 
     const toggle_prop = prop => {
       for (const $item of this.$$grid.view.selected) {
@@ -361,7 +361,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     let _bugs = [...bugs.values()];
     const filter_condition = this.options.filter_condition || 'open';
     const sort_conditions = this.options.sort_conditions;
-    const statuses = BzDeck.host.data.config.field.status;
+    const statuses = BzDeck.host.data.config.bzapi.field.status;
     const filtered_bugs = {
       open: _bugs.filter(bug => statuses.open.includes(bug.status)),
       closed: _bugs.filter(bug => statuses.closed.includes(bug.status)),

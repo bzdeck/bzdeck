@@ -75,7 +75,7 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
    * @fires SearchPageView#SearchRequested
    */
   setup_basic_search_pane () {
-    const config = BzDeck.host.data.config;
+    const config = BzDeck.host.data.config.bzapi;
     const $pane = this.$basic_search_pane = this.$tabpanel.querySelector('[id$="-basic-search-pane"]');
 
     // Custom scrollbar

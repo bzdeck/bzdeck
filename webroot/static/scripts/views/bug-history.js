@@ -31,7 +31,7 @@ BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
    * @param {Array.<Object>} history - Bug's history property.
    */
   render (history) {
-    const conf_field = BzDeck.host.data.config.field;
+    const conf_field = BzDeck.host.data.config.bzapi.field;
     const $row = this.get_template('details-change');
 
     for (const hist of history) {

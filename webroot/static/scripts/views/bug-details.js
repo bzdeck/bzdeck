@@ -106,7 +106,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
    * @returns {Array.<Object>} Field values.
    */
   get_field_values (field_name, product_name = this.bug.product) {
-    const { field, product } = BzDeck.host.data.config;
+    const { field, product } = BzDeck.host.data.config.bzapi;
     const { component, version_detail, target_milestone_detail } = product[product_name];
     const values = {
       product: Object.keys(product).filter(name => product[name].is_active).sort(),
@@ -128,7 +128,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     this.subscribe('BugModel#FieldEdited', true);
 
     const can_editbugs = BzDeck.account.permissions.includes('editbugs');
-    const is_closed = value => BzDeck.host.data.config.field.status.closed.includes(value);
+    const is_closed = value => BzDeck.host.data.config.bzapi.field.status.closed.includes(value);
 
     // Iterate over the fields except the Flags section which is activated by BugFlagsView
     for (const $section of this.$container.querySelectorAll('[data-field]:not([itemtype$="/Flag"])')) {
@@ -274,7 +274,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
    * Render the Tracking Flags section on the bug info pane.
    */
   render_tracking_flags () {
-    const config = BzDeck.host.data.config;
+    const config = BzDeck.host.data.config.bzapi;
     const $outer = this.$container.querySelector('[data-category="tracking-flags"]');
     const $flag = this.get_template('details-tracking-flag');
     const $fragment = new DocumentFragment();

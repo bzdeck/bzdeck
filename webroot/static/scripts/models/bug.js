@@ -540,7 +540,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @param {*} value - Field value.
    */
   edit_field (name, value) {
-    const { field, product } = BzDeck.host.data.config;
+    const { field, product } = BzDeck.host.data.config.bzapi;
     const is_closed = value => field.status.closed.includes(value);
 
     if (['blocks', 'depends_on', 'see_also', 'dupe_of'].includes(name) &&
@@ -777,7 +777,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   attach_files (files) {
     const oversized_files = new Set();
-    const max_size = BzDeck.host.data.config.max_attachment_size;
+    const max_size = BzDeck.host.data.config.bzapi.max_attachment_size;
 
     for (const _file of files) {
       const worker = new SharedWorker('/static/scripts/workers/tasks.js');

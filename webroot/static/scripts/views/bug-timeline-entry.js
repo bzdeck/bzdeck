@@ -380,7 +380,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const $time = $change.querySelector('[itemprop="creation_time"]');
     const $how = $change.querySelector('[itemprop="how"]');
     const changer = await BzDeck.collections.users.get(changer_name, { name: changer_name });
-    const conf_field = BzDeck.host.data.config.field;
+    const conf_field = BzDeck.host.data.config.bzapi.field;
     const _field = conf_field[change.field_name] ||
                    // Bug 909055 - Field name mismatch in history: group vs groups
                    conf_field[change.field_name.replace(/s$/, '')] ||

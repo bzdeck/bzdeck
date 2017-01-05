@@ -45,7 +45,7 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
    * Initialize the searchbar available in the vertical layout.
    */
   init_searchbar () {
-    const _products = BzDeck.host.data.config.product;
+    const _products = BzDeck.host.data.config.bzapi.product;
     const products = Object.keys(_products).filter(name => _products[name].is_active).sort().map(value => ({ value }));
     const statuses = [
       { label: 'Open', value: '__open__', selected: true },

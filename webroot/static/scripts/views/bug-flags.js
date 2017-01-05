@@ -28,7 +28,7 @@ BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
    * @param {Number} [level=4] - aria-level for the label.
    */
   render ($outer, level = 4) {
-    const config = BzDeck.host.data.config;
+    const config = BzDeck.host.data.config.bzapi;
     const get_person = name => BzDeck.collections.users.get(name, { name }); // Promise
     const _flags = (this.att ? this.att.flags : this.bug.flags) || [];
     const $flag = this.get_template('details-flag');

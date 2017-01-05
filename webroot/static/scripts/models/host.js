@@ -107,6 +107,8 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @returns {Promise.<Object>} Bugzilla configuration data.
    * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other MozillaWiki}
    * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937 Bug 504937}
+   * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/field.html Bug Fields}
+   * @todo Drop BzAPI (#312)
    */
   async get_config () {
     if (!navigator.onLine) {
@@ -114,28 +116,34 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
       throw new Error('You have to go online to load data.'); // l10n
     }
 
-    if (this.data.config && new Date(this.data.config_retrieved || 0) > Date.now() - 1000 * 60 * 60 * 24) {
+    if (this.data.config && this.data.config.version === 2 &&
+        new Date(this.data.config.retrieved || 0) > Date.now() - 1000 * 60 * 60 * 24) {
       // The config data is still fresh, retrieved within 24 hours
       return this.data.config;
     }
 
-    let config;
+    let bzapi;
+    let fields;
 
     // Fetch the config via BzAPI
     try {
-      config = await FlareTail.util.Network.json(this.origin + '/bzapi/configuration?cached_ok=1');
+      [bzapi, fields] = await Promise.all([
+        FlareTail.util.Network.json(this.origin + '/bzapi/configuration?cached_ok=1'),
+        (await this.request('field/bug')).fields,
+      ]);
     } catch (error) {
       throw new Error('Bugzilla configuration could not be loaded. The instance might be offline.');
     }
 
-    if (!config || !config.version) {
+    if (!bzapi || !bzapi.version) {
       throw new Error('Bugzilla configuration could not be loaded. The retrieved data is collapsed.');
     }
 
-    const config_retrieved = this.data.config_retrieved = Date.now();
+    // Version 2 added fields
+    const config = { version: 2, retrieved: Date.now(), bzapi, fields };
 
     this.data.config = config;
-    this.datasource.get_store(this.store_name).save({ host: this.name, config, config_retrieved });
+    this.datasource.get_store(this.store_name).save({ host: this.name, config });
 
     return config;
   }
