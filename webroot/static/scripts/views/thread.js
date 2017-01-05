@@ -448,7 +448,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
 
     // Fetch unloaded bug details
     if (unloaded_bugs.length) {
-      BzDeck.collections.bugs.fetch(unloaded_bugs.map(bug => bug.id), false, true);
+      BzDeck.collections.bugs.fetch(unloaded_bugs.map(bug => bug.id), false);
     }
   }
 

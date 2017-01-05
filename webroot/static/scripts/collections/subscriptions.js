@@ -108,7 +108,7 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
       } else if (result.bugs.length) {
         const bug_ids = result.bugs.map(_bug => _bug.id);
 
-        _bugs = await BzDeck.collections.bugs.fetch(bug_ids, true, false);
+        _bugs = await BzDeck.collections.bugs.fetch(bug_ids, false);
         this.trigger('#Updated', { bug_ids });
       } else {
         _bugs = [];
