@@ -156,7 +156,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     }
 
     // The URLSearchParams can be too long if there are too many bugs. Split requests to avoid errors.
-    const ids_chunks = FlareTail.util.Array.chunk(ids, 100);
+    const ids_chunks = FlareTail.util.Array.chunk(ids, 200);
 
     const results_chunks = await Promise.all(ids_chunks.map(async ids => {
       const params = new URLSearchParams();
