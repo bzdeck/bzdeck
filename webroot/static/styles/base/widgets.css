@@ -133,6 +133,10 @@ span[role="textbox"] {
   width: auto;
 }
 
+[role="button"] [role^="menuitem"] {
+  pointer-events: auto;
+}
+
 [role="textbox"],
 [role="searchbox"] {
   border-color: var(--textbox-border-color);

@@ -598,12 +598,15 @@
                           </div>
                         </div>
                       </section>
-                      <section role="group" aria-label="Keywords" data-field="keyword">
+                      <section role="group" class="array-field" aria-label="Keywords" data-field="keywords">
                         <h4>Keywords</h4>
                         <div class="row">
-                          <div>
-                            <div role="button" tabindex="0" itemprop="keyword"></div>
+                          <div class="list">
+                            <div role="button" tabindex="0" itemprop="keyword" aria-pressed="false"></div>
                           </div>
+                          <span role="combobox" aria-label="Add Keyword" aria-autocomplete="list" aria-readonly="false">
+                            <span role="textbox" tabindex="0" aria-readonly="false"></span>
+                          </span>
                         </div>
                       </section>
                       <section role="group" aria-label="Whiteboard" data-field="whiteboard">
@@ -744,6 +747,9 @@
         </div>
       </article><!-- end #bug-TID -->
     </template><!-- end #bug-details-error-template -->
+    <template id="bug-keyword-button">
+      <div role="button" tabindex="0" itemprop="keyword" aria-pressed="false"></div>
+    </template>
     <template id="preview-bug-details">
       <div role="region" class="bug-details" aria-label="Bug Info">
         <dl>

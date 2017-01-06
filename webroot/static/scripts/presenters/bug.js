@@ -41,6 +41,8 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
     this.on('V#EditComment', data => this.bug.edit_comment(data.text));
     this.on('V#EditField', data => this.bug.edit_field(data.name, data.value));
     this.on('V#EditFlag', data => this.bug.edit_flag(data.flag, data.added));
+    this.on('V#AddFieldValue', data => this.bug.add_field_value(data.field, data.value));
+    this.on('V#RemoveFieldValue', data => this.bug.remove_field_value(data.field, data.value));
     this.on('V#AddParticipant', data => this.bug.add_participant(data.field, data.email));
     this.on('V#RemoveParticipant', data => this.bug.remove_participant(data.field, data.email));
 

@@ -110,10 +110,6 @@
   top: 2.8rem;
 }
 
-.bug-fieldset[data-category="participants"] [itemprop][itemtype$="User"] [role="menu"] [role="menuitem"] {
-  pointer-events: auto;
-}
-
 @media (min-width: 1024px) {
   [data-device="desktop"]:root .bug-fieldset[data-category="participants"][id|="bug"] {
     flex: none;

@@ -630,6 +630,66 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   }
 
   /**
+   * Called whenever the user attempted to add a new value to any multiple-value field. Cache and notify the changes.
+   * @param {String} field - keywords, cc, etc.
+   * @param {*} value - Any value to be added.
+   * @fires BugModel#FieldValueAdded
+   * @returns {Boolean} Whether the value is successfully added to the cache.
+   */
+  add_field_value (field, value) {
+    const change = Object.assign({}, this.changes[field] || {});
+
+    if ((change.remove || []).includes(value)) {
+      change.remove.splice(change.remove.indexOf(value), 1);
+    } else {
+      change.add = change.add || [];
+
+      if ((this.data[field] || []).includes(value) || change.add.includes(value)) {
+        return false;
+      }
+
+      change.add.push(value);
+    }
+
+    this.changes[field] = change;
+    this.cleanup_multiple_item_change(field);
+    this.trigger('#FieldValueAdded', { bug_id: this.id, field, value });
+    this.onedit();
+
+    return true;
+  }
+
+  /**
+   * Called whenever the user attempted to remove a value from any multiple-value field. Cache and notify the changes.
+   * @param {String} field - keywords, cc, etc.
+   * @param {*} value - Any value to be removed.
+   * @fires BugModel#FieldValueRemoved
+   * @returns {Boolean} Whether the value is successfully removed to the cache.
+   */
+  remove_field_value (field, value) {
+    const change = Object.assign({}, this.changes[field] || {});
+
+    if ((change.add || []).includes(value)) {
+      change.add.splice(change.add.indexOf(value), 1);
+    } else {
+      change.remove = change.remove || [];
+
+      if (!(this.data[field] || []).includes(value) || change.remove.includes(value)) {
+        return false;
+      }
+
+      change.remove.push(value);
+    }
+
+    this.changes[field] = change;
+    this.cleanup_multiple_item_change(field);
+    this.trigger('#FieldValueRemoved', { bug_id: this.id, field, value });
+    this.onedit();
+
+    return true;
+  }
+
+  /**
    * Called whenever a participant is added by the user. Cache the value and notify changes accordingly.
    * @param {String} field - assigned_to, qa_contact, mentor or cc.
    * @param {String} email - Account name of the participant to be added.
@@ -638,21 +698,9 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   add_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
-      const change = this.changes[field] || {};
-
-      if ((change.remove || []).includes(email)) {
-        change.remove.splice(change.remove.indexOf(email), 1);
-      } else {
-        change.add = change.add || [];
-
-        if ((this.data[field] || []).includes(email) || change.add.includes(email)) {
-          return false;
-        }
-
-        change.add.push(email);
+      if (!this.add_field_value(field, email)) {
+        return false;
       }
-
-      this.changes[field] = change;
     } else {
       if (this.changes[field] === email) {
         return false;
@@ -663,11 +711,11 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       } else {
         this.changes[field] = email;
       }
+
+      this.onedit();
     }
 
     this.trigger('#ParticipantAdded', { bug_id: this.id, field, email });
-    this.cleanup_multiple_item_change(field);
-    this.onedit();
 
     return true;
   }
@@ -681,31 +729,21 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   remove_participant (field, email) {
     if (['mentor', 'cc'].includes(field)) {
-      const change = this.changes[field] || {};
-
-      if ((change.add || []).includes(email)) {
-        change.add.splice(change.add.indexOf(email), 1);
+      if (!this.remove_field_value(field, email)) {
+        return false;
+      }
+    } else {
+      if (field === 'assigned_to' && this.data.assigned_to !== BzDeck.host.default_assignee) {
+        // Fall back to the default assignee
+        this.changes[field] = BzDeck.host.default_assignee;
       } else {
-        change.remove = change.remove || [];
-
-        if (!(this.data[field] || []).includes(email) || change.remove.includes(email)) {
-          return false;
-        }
-
-        change.remove.push(email);
+        delete this.changes[field];
       }
 
-      this.changes[field] = change;
-    } else if (field === 'assigned_to' && this.data.assigned_to !== BzDeck.host.default_assignee) {
-      // Fall back to the default assignee
-      this.changes[field] = BzDeck.host.default_assignee;
-    } else {
-      delete this.changes[field];
+      this.onedit();
     }
 
     this.trigger('#ParticipantRemoved', { bug_id: this.id, field, email });
-    this.cleanup_multiple_item_change(field);
-    this.onedit();
 
     return true;
   }

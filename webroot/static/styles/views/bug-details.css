@@ -176,8 +176,8 @@
   text-overflow: ellipsis;
 }
 
-.bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]):not(:last-child) {
-  margin-right: .8rem;
+.bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]) {
+  margin: 0 .4rem .4rem 0;
 }
 
 .bug-fieldset :not([role="combobox"]) > [role="button"]:not([itemscope]) .icon {

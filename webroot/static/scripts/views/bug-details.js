@@ -177,11 +177,15 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
         this.activate_url_widget($section);
       }
 
+      if (name === 'keywords') {
+        (new BzDeck.BugKeywordsView(this.id, this.bug, $section)).activate();
+      }
+
       if (name === 'dupe_of') {
         // Activate bug finder
       }
 
-      // Multiple value fields, including alias, keywords, see_also, depends_on, blocks
+      // Multiple value fields, including alias, see_also, depends_on, blocks
 
       // Activate Participants UI
       if (['creator', 'assigned_to', 'qa_contact', 'mentor', 'cc'].includes(name)) {
@@ -323,7 +327,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     }
 
     const $field = this.$container.querySelector(`[data-field="${name}"]`);
-    const $combobox = $field ? $field.querySelector('[role="combobox"]:not(.person-finder)') : undefined;
+    const $combobox = $field ? $field.querySelector('[role="combobox"][aria-readonly="true"]') : undefined;
     const $textbox = $combobox ? $combobox.querySelector('[role="textbox"]') : undefined;
 
     if ($combobox) {
