@@ -76,6 +76,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const $author = $entry.querySelector('[itemprop="author"]');
     const $roles = $author.querySelector('.roles');
     const $time = $entry.querySelector('[itemprop="creation_time"]');
+    const $tag_list = $entry.querySelector('footer .tags .list');
     const $reply_button = $entry.querySelector('[data-command="reply"]');
     const $comment_body = $entry.querySelector('[itemprop="text"]');
 
@@ -92,6 +93,15 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
           .textContent = count > 0 ? `Comment ${count}` : 'Description'; // l10n
     $comment_body.innerHTML = BzDeck.presenters.global.parse_comment(comment.text, !!comment.is_markdown);
     $entry.querySelector('[itemprop="extract"]').textContent = this.bug.get_extract(comment.id);
+
+    // Show tags
+    for (const tag of comment.tags) {
+      const $tag = document.createElement('div');
+
+      $tag.setAttribute('itemprop', 'tag');
+      $tag.textContent = tag;
+      $tag_list.appendChild($tag);
+    }
 
     const author = await BzDeck.collections.users.get(comment.creator, { name: comment.creator });
 
