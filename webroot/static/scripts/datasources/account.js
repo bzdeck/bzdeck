@@ -43,13 +43,21 @@ BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource
     }
 
     if (event.oldVersion < 2) {
+      const store = transaction.objectStore('bugs');
+
       // On Bugzilla 5.0 and later, the alias field is array and it's no longer unique
-      transaction.objectStore('bugs').deleteIndex('alias');
+      if (store.indexNames.contains('alias')) {
+        store.deleteIndex('alias');
+      }
     }
 
     if (event.oldVersion < 3) {
+      const store = transaction.objectStore('users');
+
       // User's ID can be undefined when they are not found in Bugzilla, so delete the index
-      transaction.objectStore('users').deleteIndex('id');
+      if (store.indexNames.contains('id')) {
+        store.deleteIndex('id');
+      }
     }
 
     return database;
