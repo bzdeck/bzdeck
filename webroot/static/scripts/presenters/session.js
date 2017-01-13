@@ -122,9 +122,12 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       const _account = { host: BzDeck.host.name, name, api_key, loaded: Date.now(), active: true, bugzilla: user };
       const account = BzDeck.account = new BzDeck.AccountModel(_account);
 
+      if (this.auth_callback_bc) {
+        this.auth_callback_bc.close();
+      }
+
       account.save();
       this.trigger('#UserFound');
-      this.auth_callback_bc.close();
       this.load_data();
     } catch (error) {
       this.trigger('#Error', { message: error.message || 'Failed to find your account.' }); // l10n
