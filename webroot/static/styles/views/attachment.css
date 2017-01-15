@@ -77,18 +77,18 @@
   height: 1.6rem;
 }
 
-[itemtype$="Attachment"][data-content-type] section > ul li {
+[itemtype$="Attachment"][data-content-type] ul.properties li {
   display: flex;
   align-items: center;
   margin: .8rem 0;
   line-height: 1.5;
 }
 
-[itemtype$="Attachment"][data-content-type] section > ul li > * {
+[itemtype$="Attachment"][data-content-type] ul.properties li > * {
   margin: 0 .4rem;
 }
 
-[itemtype$="Attachment"][data-content-type] section > ul li > label {
+[itemtype$="Attachment"][data-content-type] ul.properties li > label {
   flex: none;
   display: inline-block;
   width: 6.4rem;
