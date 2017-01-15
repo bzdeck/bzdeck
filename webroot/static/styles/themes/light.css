@@ -2,160 +2,35 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
- * Light Color Palette
- *
- * Note:
- * Foreground Colors should have odd values like *3*3*3 or *B*B*B
- * Background Colors should have even values like *4*4*4 or *C*C*C
- *
- * Swatches:
- * Foreground: #434343, #636363, #838383, #B3B3B3, #E3E3E3, #FBFBFB
- * Background: #545454, #646464, #7C7C7C, #CCC, #E4E4E4, #F4F4F4, #FCFCFC
- * Accent: #2383C3
- */
-
-/* ----------------------------------------------------------------------------------------------
- * Variables
- * ---------------------------------------------------------------------------------------------- */
-
 :root {
   --base-sprite-image: url(/static/images/themes/light/sprite.png);
 
-  --base-foreground-color-1: #434343;
-  --base-foreground-color-2: #636363;
-  --base-foreground-color-3: #838383;
-  --base-foreground-color-4: #B3B3B3;
-  --base-foreground-color-5: #E3E3E3;
-  --base-foreground-color-6: #FBFBFB;
-  --base-background-color-1: #444;
-  --base-background-color-2: #545454;
-  --base-background-color-3: #848484;
-  --base-background-color-4: #CCC;
-  --base-background-color-5: #E4E4E4;
-  --base-background-color-6: #F4F4F4;
-  --base-background-color-7: #FCFCFC;
+  --base-color-1: #434343;
+  --base-color-2: #636363;
+  --base-color-3: #838383;
+  --base-color-4: #B3B3B3;
+  --base-color-5: #C3C3C3;
+  --base-color-6: #E3E3E3;
+  --base-color-7: #F3F3F3;
+  --base-color-8: #FCFCFC;
+
   --base-accent-color-1: #2383C3; /* blue */
   --base-accent-color-1-a6: #2383C399;
   --base-accent-color-2: #DA2367; /* red */
 
-  --application-foreground-color: var(--base-foreground-color-2);
-  --application-background-color: var(--base-background-color-6);
-  --application-header-border-color: var(--base-background-color-1);
-  --application-header-foreground-color: var(--base-foreground-color-5);
-  --application-header-background-color: var(--base-background-color-1);
-  --secondary-application-header-foreground-color: var(--base-foreground-color-4);
-  --secondary-application-header-background-color: var(--base-background-color-2);
-
-  --region-border-color: var(--base-background-color-3);
-  --region-background-color: var(--base-background-color-5);
-  --region-header-border-color: var(--base-background-color-2);
-  --region-header-foreground-color: var(--base-foreground-color-5);
-  --region-header-background-color: var(--base-background-color-2);
-  --secondary-region-background-color: var(--base-background-color-6);
-  --secondary-region-border-color: var(--base-background-color-4);
-  --secondary-region-header-border-color: var(--base-background-color-3);
-  --secondary-region-header-foreground-color: var(--base-foreground-color-1);
-  --secondary-region-header-background-color: var(--base-background-color-4);
-
-  --button-border-color: var(--base-background-color-4);
-  --button-foreground-color: var(--base-foreground-color-2);
-  --button-background-color: var(--base-background-color-5);
-  --disabled-button-border-color: ; /* Unchanged */
-  --disabled-button-foreground-color: var(--base-foreground-color-4);
-  --disabled-button-background-color: ; /* Unchanged */
-  --hovered-button-border-color: ; /* Unchanged */
-  --hovered-button-foreground-color: ; /* Unchanged */
-  --hovered-button-background-color: ; /* Unchanged */
-  --pressed-button-border-color: ; /* Unchanged */
-  --pressed-button-foreground-color: var(--base-foreground-color-5);
-  --pressed-button-background-color: var(--base-background-color-4);
-  --highlighted-button-border-color: var(--base-accent-color-1);
-  --highlighted-button-foreground-color: var(--base-background-color-7);
-  --highlighted-button-background-color: var(--base-accent-color-1);
-  --alternate-button-border-color: var(--base-background-color-2);
-  --alternate-button-foreground-color: var(--base-foreground-color-5);
-  --alternate-button-background-color: var(--base-background-color-3);
-  --alternate-disabled-button-border-color: var(--base-background-color-4);
-  --alternate-disabled-button-foreground-color: var(--base-foreground-color-3);
-  --alternate-disabled-button-background-color: var(--base-background-color-4);
-  --alternate-hovered-button-border-color: ; /* Unchanged */
-  --alternate-hovered-button-foreground-color: ; /* Unchanged */
-  --alternate-hovered-button-background-color: ; /* Unchanged */
-  --alternate-pressed-button-border-color: ; /* Unchanged */
-  --alternate-pressed-button-foreground-color: var(--base-foreground-color-6);
-  --alternate-pressed-button-background-color: var(--base-background-color-3);
-
-  --tab-border-color: var(--base-background-color-4);
-  --tab-foreground-color: var(--base-foreground-color-2);
-  --tab-background-color: var(--base-background-color-5);
-  --selected-tab-border-color: ; /* Unchanged */
-  --selected-tab-foreground-color: var(--base-foreground-color-1);
-  --selected-tab-background-color: var(--base-background-color-4);
-  --hovered-tab-border-color: ; /* Unchanged */
-  --hovered-tab-foreground-color: var(--base-foreground-color-1);
-  --hovered-tab-background-color: ; /* Unchanged */
-
-  --textbox-border-color: var(--base-background-color-4);
-  --textbox-foreground-color: var(--base-foreground-color-2);
-  --textbox-background-color: var(--base-background-color-7);
-  --disabled-textbox-border-color: ; /* Unchanged */
-  --disabled-textbox-foreground-color: var(--base-foreground-color-4);
-  --disabled-textbox-background-color: ; /* Unchanged */
-  --active-textbox-border-color: var(--base-accent-color-1);
-  --active-textbox-foreground-color: var(--base-foreground-color-1);
-  --active-textbox-background-color: var(--base-background-color-7);
-
-  --grid-border-color: var(--base-background-color-4);
-  --grid-foreground-color: var(--base-foreground-color-2);
-  --grid-background-color: var(--base-background-color-7);
-  --grid-header-foreground-color: var(--base-foreground-color-2);
-  --grid-header-background-color: var(--base-background-color-6);
-  --selected-grid-header-foreground-color: var(--base-foreground-color-2);
-  --selected-grid-header-background-color: var(--base-background-color-6);
-  --grid-even-row-background-color: var(--base-background-color-6);
-  --secondary-grid-border-color: var(--base-background-color-5);
-
-  --control-border-color: var(--base-background-color-4);
-  --control-foreground-color: var(--base-foreground-color-2);
-  --control-background-color: var(--base-background-color-7);
-  --control-shadow-color: var(--base-background-color-1);
-  --selected-control-foreground-color: var(--base-foreground-color-6);
-  --selected-control-background-color: var(--base-accent-color-1);
-  --inactive-selected-control-foreground-color: var(--base-foreground-color-1);
-  --inactive-selected-control-background-color: var(--base-background-color-4);
-  --disabled-control-foreground-color: var(--base-foreground-color-4);
-  --focused-control-outline-color: var(--base-background-color-4);
-
-  --content-foreground-color: var(--base-foreground-color-1);
-  --content-background-color: var(--base-background-color-7);
-  --content-background-color-alpha: #FCFCFCCC;
-  --secondary-content-foreground-color: var(--base-foreground-color-2);
-
-  --selected-text-foreground-color: ; /* Unchanged */
-  --selected-text-background-color: var(--base-accent-color-1);
-  --inactive-selected-text-foreground-color: ; /* Unchanged */
-  --inactive-selected-text-background-color: var(--base-background-color-5);
-  --hyperlink-text-foreground-color: var(--base-accent-color-1);
+  --content-background-color-alpha: #FCFCFCCC; /* --base-color-8 */
 }
 
-/* ----------------------------------------------------------------------------------------------
- * General
- * ---------------------------------------------------------------------------------------------- */
-
 ins, del {
-  text-decoration-color: #636363CC; /* --secondary-content-foreground-color */
+  text-decoration-color: #838383CC; /* --secondary-content-foreground-color */
 }
 
 ::-moz-selection {
   background-color: #2383C366; /* --selected-text-background-color */
 }
 
-/* ----------------------------------------------------------------------------------------------
- * App Landing
- * ---------------------------------------------------------------------------------------------- */
-
-#app-landing {
-  color: var(--application-header-foreground-color);
-  background-color: var(--application-header-background-color);
+.patch[itemtype$="Attachment"][data-content-type] .preview tr {
+  --head-background-color: #F8F8FF;
+  --removed-background-color: #FFE4E4;
+  --added-background-color: #E1FEE2;
 }

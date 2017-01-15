@@ -164,15 +164,15 @@
 }
 
 .patch[itemtype$="Attachment"][data-content-type] .preview tr.head {
-  background-color: #F8F8FF;
+  background-color: var(--head-background-color);
 }
 
 .patch[itemtype$="Attachment"][data-content-type] .preview tr.removed {
-  background-color: #FFE4E4;
+  background-color: var(--removed-background-color);
 }
 
 .patch[itemtype$="Attachment"][data-content-type] .preview tr.added {
-  background-color: #E1FEE2;
+  background-color: var(--added-background-color);
 }
 
 .patch[itemtype$="Attachment"][data-content-type] .preview td {

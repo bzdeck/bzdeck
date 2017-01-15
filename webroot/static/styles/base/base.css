@@ -2,6 +2,123 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+:root {
+  --base-foreground-color-1: var(--base-color-1);
+  --base-foreground-color-2: var(--base-color-2);
+  --base-foreground-color-3: var(--base-color-3);
+  --base-foreground-color-4: var(--base-color-4);
+  --base-foreground-color-5: var(--base-color-5);
+  --base-foreground-color-6: var(--base-color-6);
+  --base-foreground-color-7: var(--base-color-7);
+  --base-foreground-color-8: var(--base-color-8);
+
+  --base-background-color-1: var(--base-color-8);
+  --base-background-color-2: var(--base-color-7);
+  --base-background-color-3: var(--base-color-6);
+  --base-background-color-4: var(--base-color-5);
+  --base-background-color-5: var(--base-color-4);
+  --base-background-color-6: var(--base-color-3);
+  --base-background-color-7: var(--base-color-2);
+  --base-background-color-8: var(--base-color-1);
+
+  --application-foreground-color: var(--base-foreground-color-2);
+  --application-background-color: var(--base-background-color-2);
+  --application-header-border-color: var(--base-background-color-8);
+  --application-header-foreground-color: var(--base-foreground-color-8);
+  --application-header-background-color: var(--base-background-color-8);
+  --secondary-application-header-foreground-color: var(--base-foreground-color-4);
+  --secondary-application-header-background-color: var(--base-background-color-7);
+
+  --region-border-color: var(--base-background-color-5);
+  --region-background-color: var(--base-background-color-3);
+  --region-header-border-color: var(--base-background-color-7);
+  --region-header-foreground-color: var(--base-foreground-color-6);
+  --region-header-background-color: var(--base-background-color-7);
+  --secondary-region-background-color: var(--base-background-color-2);
+  --secondary-region-border-color: var(--base-background-color-4);
+  --secondary-region-header-border-color: var(--base-background-color-5);
+  --secondary-region-header-foreground-color: var(--base-foreground-color-1);
+  --secondary-region-header-background-color: var(--base-background-color-4);
+
+  --button-border-color: var(--base-background-color-4);
+  --button-foreground-color: var(--base-foreground-color-2);
+  --button-background-color: var(--base-background-color-3);
+  --disabled-button-border-color: var(--button-border-color); /* Unchanged */
+  --disabled-button-foreground-color: var(--base-foreground-color-5);
+  --disabled-button-background-color: var(--button-background-color); /* Unchanged */
+  --hovered-button-border-color: var(--button-border-color); /* Unchanged */
+  --hovered-button-foreground-color: var(--button-foreground-color); /* Unchanged */
+  --hovered-button-background-color: var(--button-background-color); /* Unchanged */
+  --pressed-button-border-color: var(--button-border-color); /* Unchanged */
+  --pressed-button-foreground-color: var(--base-foreground-color-6);
+  --pressed-button-background-color: var(--base-background-color-4);
+  --highlighted-button-border-color: var(--base-accent-color-1);
+  --highlighted-button-foreground-color: var(--base-background-color-1);
+  --highlighted-button-background-color: var(--base-accent-color-1);
+  --alternate-button-border-color: var(--base-background-color-7);
+  --alternate-button-foreground-color: var(--base-foreground-color-6);
+  --alternate-button-background-color: var(--base-background-color-5);
+  --alternate-disabled-button-border-color: var(--base-background-color-4);
+  --alternate-disabled-button-foreground-color: var(--base-foreground-color-3);
+  --alternate-disabled-button-background-color: var(--base-background-color-4);
+  --alternate-hovered-button-border-color: var(--alternate-button-border-color); /* Unchanged */
+  --alternate-hovered-button-foreground-color: var(--alternate-button-foreground-color); /* Unchanged */
+  --alternate-hovered-button-background-color: var(--alternate-button-background-color); /* Unchanged */
+  --alternate-pressed-button-border-color: var(--alternate-button-border-color); /* Unchanged */
+  --alternate-pressed-button-foreground-color: var(--base-foreground-color-7);
+  --alternate-pressed-button-background-color: var(--base-background-color-6);
+
+  --tab-border-color: var(--base-background-color-4);
+  --tab-foreground-color: var(--base-foreground-color-2);
+  --tab-background-color: var(--base-background-color-3);
+  --selected-tab-border-color: var(--tab-border-color); /* Unchanged */
+  --selected-tab-foreground-color: var(--base-foreground-color-1);
+  --selected-tab-background-color: var(--base-background-color-4);
+  --hovered-tab-border-color: var(--tab-border-color); /* Unchanged */
+  --hovered-tab-foreground-color: var(--base-foreground-color-1);
+  --hovered-tab-background-color: var(--tab-background-color); /* Unchanged */
+
+  --textbox-border-color: var(--base-background-color-3);
+  --textbox-foreground-color: var(--base-foreground-color-2);
+  --textbox-background-color: var(--base-background-color-1);
+  --disabled-textbox-border-color: var(--textbox-border-color); /* Unchanged */
+  --disabled-textbox-foreground-color: var(--base-foreground-color-4);
+  --disabled-textbox-background-color: var(--textbox-background-color); /* Unchanged */
+  --active-textbox-border-color: var(--base-accent-color-1);
+  --active-textbox-foreground-color: var(--base-foreground-color-1);
+  --active-textbox-background-color: var(--base-background-color-1);
+
+  --grid-border-color: var(--base-background-color-4);
+  --grid-foreground-color: var(--base-foreground-color-2);
+  --grid-background-color: var(--base-background-color-1);
+  --grid-header-foreground-color: var(--base-foreground-color-2);
+  --grid-header-background-color: var(--base-background-color-2);
+  --selected-grid-header-foreground-color: var(--base-foreground-color-2);
+  --selected-grid-header-background-color: var(--base-background-color-2);
+  --grid-even-row-background-color: var(--base-background-color-2);
+  --secondary-grid-border-color: var(--base-background-color-3);
+
+  --control-border-color: var(--base-background-color-3);
+  --control-foreground-color: var(--base-foreground-color-2);
+  --control-background-color: var(--base-background-color-1);
+  --selected-control-foreground-color: var(--base-foreground-color-8);
+  --selected-control-background-color: var(--base-accent-color-1);
+  --inactive-selected-control-foreground-color: var(--base-foreground-color-1);
+  --inactive-selected-control-background-color: var(--base-background-color-3);
+  --disabled-control-foreground-color: var(--base-foreground-color-4);
+  --focused-control-outline-color: var(--base-background-color-4);
+
+  --content-foreground-color: var(--base-foreground-color-1);
+  --content-background-color: var(--base-background-color-1);
+  --secondary-content-foreground-color: var(--base-foreground-color-3);
+
+  --selected-text-foreground-color: var(--content-foreground-color); /* Unchanged */
+  --selected-text-background-color: var(--base-accent-color-1);
+  --inactive-selected-text-foreground-color: var(--content-foreground-color); /* Unchanged */
+  --inactive-selected-text-background-color: var(--base-background-color-3);
+  --hyperlink-text-foreground-color: var(--base-accent-color-1);
+}
+
 body {
   position: absolute;
   overflow: hidden;

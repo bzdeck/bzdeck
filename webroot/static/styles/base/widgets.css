@@ -10,7 +10,6 @@
   height: 1.6rem;
   color: var(--base-accent-color-1);
   background-color: var(--control-background-color);
-  box-shadow: inset 0 .1rem .2rem #0003;
 }
 
 [role="checkbox"]:focus .icon,
@@ -87,12 +86,9 @@ span[role="textbox"] {
   align-items: center;
   margin: .8rem auto 0;
   padding: .8rem .4rem;
-  border-color: var(--highlighted-button-border-color);
   border-radius: .8rem;
   width: 20rem;
   height: auto;
-  color: var(--highlighted-button-foreground-color);
-  background-color: var(--highlighted-button-background-color);
   background-repeat: repeat;
   font-size: 1.4rem;
   line-height: 1.25;
@@ -101,13 +97,10 @@ span[role="textbox"] {
   transition: all .2s;
 }
 
-.cta[role="button"]:active {
+.cta[role="button"][aria-disabled="false"] {
+  border-color: var(--highlighted-button-border-color);
+  color: var(--highlighted-button-foreground-color);
   background-color: var(--highlighted-button-background-color);
-  filter: brightness(1.1);
-}
-
-.cta[role="button"][aria-disabled="true"] {
-  filter: brightness(1.8) grayscale(100%);
 }
 
 .iconic[role="button"] {

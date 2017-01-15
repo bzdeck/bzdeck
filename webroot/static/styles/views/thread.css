@@ -152,7 +152,7 @@
   margin: 0 .2rem 0 0;
   border-radius: .2rem;
   padding: .1rem .6rem;
-  color: var(--base-foreground-color-6);
+  color: var(--base-foreground-color-8);
   background: var(--base-accent-color-2);
   font-size: 1.1rem;
   text-transform: uppercase;
@@ -160,7 +160,7 @@
 
 .bug-listbox-container [role="listbox"][aria-activedescendant] [role="option"][aria-selected="true"] .labels [itemprop="flag"] {
   color: var(--base-accent-color-1);
-  background: var(--base-background-color-7);
+  background: var(--base-background-color-1);
 }
 
 .bug-listbox-container .labels [itemprop="flag"]:empty {
