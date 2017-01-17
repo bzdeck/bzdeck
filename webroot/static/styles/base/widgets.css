@@ -97,7 +97,7 @@ span[role="textbox"] {
   transition: all .2s;
 }
 
-.cta[role="button"][aria-disabled="false"] {
+.cta[role="button"]:not([aria-disabled="true"]) {
   border-color: var(--highlighted-button-border-color);
   color: var(--highlighted-button-foreground-color);
   background-color: var(--highlighted-button-background-color);
