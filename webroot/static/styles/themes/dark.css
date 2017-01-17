@@ -27,6 +27,7 @@
   --hovered-tab-foreground-color: #C3C3C3;
   --active-textbox-foreground-color: #C3C3C3;
   --content-foreground-color: #B3B3B3;
+  --selected-control-foreground-color: #E3E3E3;
   --inactive-selected-control-foreground-color: #B3B3B3;
 }
 
