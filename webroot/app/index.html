@@ -383,7 +383,58 @@
                     <div role="feed" class="comments-wrapper" aria-label="Bug Timeline" aria-live="true" aria-relevant="additions"></div>
                   </section>
                 </div>
-              </div>
+              </div><!-- end .bug-timeline-wrapper -->
+              <div class="bug-outline scrollable">
+                <section role="region" class="bug-fieldset" aria-label="Status Outline">
+                  <header>
+                    <h3>Outline</h3>
+                  </header>
+                  <section role="group" aria-label="Status" data-field="status">
+                    <h4>Status</h4>
+                    <div class="row"><span itemprop="status"></span></div>
+                  </section>
+                  <section role="group" aria-hidden="true" aria-label="Resolution" data-field="resolution">
+                    <h4>Resolution</h4>
+                    <div class="row"><span itemprop="resolution"></span></div>
+                  </section>
+                  <section role="group" aria-hidden="true" aria-label="Duplicate of" data-field="dupe_of">
+                    <h4>Duplicate of</h4>
+                    <div class="row"><span itemprop="dupe_of"></span></div>
+                  </section>
+                  <section role="group" aria-label="Target Milestone" data-field="target_milestone">
+                    <h4>Milestone</h4>
+                    <div class="row"><span itemprop="target_milestone"></span></div>
+                  </section>
+                  <section role="group" aria-label="Severity" data-field="severity">
+                    <h4>Severity</h4>
+                    <div class="row"><span itemprop="severity"></span></div>
+                  </section>
+                  <section role="group" aria-label="Priority" data-field="priority">
+                    <h4>Priority</h4>
+                    <div class="row"><span itemprop="priority"></span></div>
+                  </section>
+                  <section role="group" aria-label="Product" data-field="product">
+                    <h4>Product</h4>
+                    <div class="row"><span itemprop="product"></span></div>
+                  </section>
+                  <section role="group" aria-label="Component" data-field="component">
+                    <h4>Component</h4>
+                    <div class="row"><span itemprop="component"></span></div>
+                  </section>
+                  <section role="group" aria-label="Version" data-field="version">
+                    <h4>Version</h4>
+                    <div class="row"><span itemprop="version"></span></div>
+                  </section>
+                  <section role="group" aria-label="Hardware" data-field="platform">
+                    <h4>Hardware</h4>
+                    <div class="row"><span itemprop="platform"></span></div>
+                  </section>
+                  <section role="group" aria-label="OS" data-field="op_sys">
+                    <h4>OS</h4>
+                    <div class="row"><span itemprop="op_sys"></span></div>
+                  </section>
+                </section>
+              </div><!-- end .bug-outline -->
             </div><!-- end #bug-TID-tabpanel-timeline -->
             <div role="tabpanel" id="bug-TID-tabpanel-details" aria-hidden="true" aria-labelledby="bug-TID-tab-details">
               <div role="form" id="bug-TID-details" class="bug-details scrollable" aria-label="Bug Details">
@@ -724,8 +775,6 @@
               </div>
             </div><!-- end #bug-TID-tabpanel-history -->
           </div><!-- end #bug-TID-tabpanels -->
-          <div id="bug-TID-outline" class="bug-outline scrollable">
-          </div><!-- end #bug-TID-outline -->
         </div>
         <footer>
           <div role="toolbar" aria-label="Bug Actions">

@@ -1,0 +1,40 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+.bug-outline {
+  flex: none;
+  width: 24rem !important;
+}
+
+.bug-outline .bug-fieldset > header {
+  margin-bottom: 1.2rem;
+}
+
+.bug-outline .bug-fieldset [data-field] {
+  position: relative;
+  margin: .8rem 1.2rem;
+  padding-left: 8rem;
+  line-height: 1;
+}
+
+.bug-outline .bug-fieldset [data-field] h4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7rem;
+  text-align: right;
+}
+
+.bug-outline .bug-fieldset [data-field] .row {
+  display: flex;
+  align-items: center;
+}
+
+.bug-outline .bug-fieldset [data-field] .row:not(:first-child) {
+  margin-top: .8rem;
+}
+
+.bug-outline .bug-fieldset [data-field] .row > * {
+  flex: auto;
+}

@@ -336,22 +336,8 @@
   padding-top: 4rem;
 }
 
-[data-device="desktop"]:root .bug-outline[aria-hidden="false"] {
+[data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [id$="tabpanel-timeline"][aria-hidden="false"] {
   display: flex;
-  flex-direction: row;
-  top: 4rem;
-  right: 0;
-  left: 70%;
-}
-
-[data-device="desktop"]:root .bug-container .bug-outline {
-  width: 30%;
-  flex-direction: column;
-}
-
-[data-device="desktop"]:root .bug-container .bug-outline > [role="region"] {
-  flex: none;
-  width: auto;
 }
 
 @media (min-width: 1024px) {
@@ -395,16 +381,6 @@
 
   [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] [role="tab"] label::before {
     display: none;
-  }
-
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [role="tabpanel"] {
-    left: 0;
-    right: 0;
-    width: auto;
-  }
-
-  [data-device="desktop"]:root [itemtype$="Bug"] > div > [role="tablist"] ~ [id$="tabpanels"] > [id$="tabpanel-timeline"] {
-    right: 30%;
   }
 }
 

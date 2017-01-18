@@ -476,7 +476,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     this.$tablist = this.$bug.querySelector('[role="tablist"]');
     this.$att_tab = this.$tablist.querySelector('[id$="-tab-attachments"]');
     this.$$tablist = new FlareTail.widgets.TabList(this.$tablist);
-    this.$outline = this.$bug.querySelector('.bug-outline');
 
     this.$$tablist.bind('Selected', event => {
       const $selected = event.detail.items[0];
@@ -484,11 +483,6 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
       // Scroll a tabpanel to top when the tab is selected
       $tabpanel.querySelector('.scrollable').scrollTop = 0;
-
-      // Desktop: Show the outline pane only when the timeline tab is selected
-      if (!mql.matches && FlareTail.env.device.desktop) {
-        this.$outline.setAttribute('aria-hidden', !$selected.matches('[id$="tab-timeline"]'));
-      }
     });
   }
 
