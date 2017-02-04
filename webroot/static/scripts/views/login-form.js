@@ -142,7 +142,7 @@ BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
 
       try {
         stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
-        $video.src = URL.createObjectURL(stream);
+        $video.srcObject = stream;
         $video.play();
         $scan_button.setAttribute('aria-disabled', 'false');
       } catch (error) {
