@@ -184,6 +184,7 @@ Object.defineProperty(BzDeck, 'compatible', {
       'Permissions' in window, // Firefox 45
       'animate' in Element.prototype, // Firefox 48
       // 'IntersectionObserver' in window, // Firefox 52, currently disabled for stability reasons
+      !FlareTail.env.platform.android, // Temporarily disable Android support (#412)
     ];
 
     return features.every(item => item);
