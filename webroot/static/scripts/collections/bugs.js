@@ -159,10 +159,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     const ids_chunks = FlareTail.util.Array.chunk(ids, 200);
 
     const results_chunks = await Promise.all(ids_chunks.map(async ids => {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(ids.map(id => ['ids', id]));
       let results;
-
-      ids.forEach(id => params.append('ids', id));
 
       try {
         results = await BzDeck.host.request(`bug_user_last_visit/${ids[0]}`, params);
