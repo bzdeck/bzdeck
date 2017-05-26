@@ -772,7 +772,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       this.trigger(subscribe ? '#FailedToSubscribe' : '#FailedToUnsubscribe', { bug_id: this.id });
     } else {
       this.trigger(subscribe ? '#Subscribed' : '#Unsubscribed', { bug_id: this.id });
-      this._fetch();
+      this.fetch();
     }
   }
 
@@ -1140,10 +1140,10 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
       this.uploads.length = 0;
       this.uploads.total = 0;
 
-      // The timeline will soon be updated via Bugzfeed. Fetch the bug only if Bugzfeed is not working for some reason
-      this._fetch();
-
       this.trigger('#SubmitSuccess', { bug_id: this.id });
+
+      // Fetch the bug to update the timeline
+      this.fetch();
     } catch (error) {
       // Failed to post at least one attachment
       this.trigger('#SubmitError', {
@@ -1242,16 +1242,5 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     const percentage = Math.round(uploaded / total * 100);
 
     this.trigger('#SubmitProgress', { bug_id: this.id, uploaded, total, percentage });
-  }
-
-  /**
-   * Retrieve the bug to update the timeline, when Bugzfeed is not working.
-   */
-  _fetch () {
-    const bugzfeed = BzDeck.models.bugzfeed;
-
-    if (!bugzfeed.connected || !bugzfeed.subscriptions.has(this.data.id)) {
-      this.fetch();
-    }
   }
 }

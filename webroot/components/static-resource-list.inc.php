@@ -84,7 +84,6 @@ $resources = (object) [
     '/static/scripts/models/account.js',
     '/static/scripts/models/attachment.js',
     '/static/scripts/models/bug.js',
-    '/static/scripts/models/bugzfeed.js',
     '/static/scripts/models/host.js',
     '/static/scripts/models/user.js',
     // Collections

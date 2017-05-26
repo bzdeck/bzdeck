@@ -20,8 +20,6 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     this.datasource = BzDeck.datasources.account;
     this.store_name = 'bugs';
     this.model = BzDeck.BugModel;
-
-    this.subscribe('BugzfeedModel#BugUpdated', true);
   }
 
   /**
@@ -286,16 +284,5 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     bugs.sort((a, b) => new Date(a._last_visit || 0) < new Date(b._last_visit || 0));
 
     return bugs;
-  }
-
-  /**
-   * Called whenever a bug is updated. Retrieve the latest data from Bugzilla.
-   * @listens BugzfeedModel#BugUpdated
-   * @param {Number} id - Bug ID.
-   */
-  async on_bug_updated ({ id } = {}) {
-    const bug = await this.get(id, { id });
-
-    bug.fetch();
   }
 }

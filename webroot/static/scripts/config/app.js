@@ -24,7 +24,6 @@ BzDeck.config = {
       timezone: 'America/Los_Angeles',
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla.mozilla.org',
-      websocket_endpoint: 'wss://bugzfeed.mozilla.org/',
       markdown_supported: false,
       user_agent_accepted: true,
     },
@@ -33,7 +32,6 @@ BzDeck.config = {
       timezone: 'America/Los_Angeles',
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-dev.allizom.org',
-      websocket_endpoint: 'wss://bugzfeed.mozilla.org/dev/',
       markdown_supported: false,
       user_agent_accepted: false,
     },
@@ -42,7 +40,6 @@ BzDeck.config = {
       timezone: 'America/Los_Angeles',
       default_assignee: 'nobody@mozilla.org',
       origin: 'https://bugzilla-merge.allizom.org',
-      websocket_endpoint: null,
       markdown_supported: true,
       user_agent_accepted: false,
     }

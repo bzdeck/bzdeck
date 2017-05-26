@@ -228,15 +228,6 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     }
 
     try {
-      const endpoint = BzDeck.host.websocket_endpoint;
-
-      BzDeck.models.bugzfeed = new BzDeck.BugzfeedModel();
-
-      // Connect to the push notification server if available
-      if (endpoint) {
-        BzDeck.models.bugzfeed.connect(endpoint);
-      }
-
       this.trigger('#StatusUpdate', { message: 'Loading complete.' }); // l10n
       this.login();
       this.bootstrapping = false;
@@ -273,7 +264,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   }
 
   /**
-   * Clean up the browsing session by terminating all timers and Bugzfeed subscriptions.
+   * Clean up the browsing session by terminating all timers.
    */
   clean () {
     // Terminate timers
@@ -282,8 +273,5 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     }
 
     BzDeck.presenters.global.timers.clear();
-
-    // Disconnect from the Bugzfeed server
-    BzDeck.models.bugzfeed.disconnect();
   }
 }

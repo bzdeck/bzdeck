@@ -593,7 +593,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Called whenever any bug field is updated on the remote Bugzilla instance. This may be called as part of the
-   * periodic fetches or Bugzfeed push notifications.
+   * periodic fetches.
    * @param {Proxy} bug - Updated BugModel instance.
    * @param {Map.<String, Object>} changes - Change details.
    */

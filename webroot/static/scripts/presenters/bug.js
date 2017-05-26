@@ -98,7 +98,6 @@ BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
       this.bug = bug;
       this.trigger('#BugDataAvailable', { container_id, id: this.bug_id, siblings: this.siblings });
       BzDeck.collections.users.add_from_bug(bug);
-      BzDeck.models.bugzfeed._subscribe([this.bug_id]);
     } else {
       if (bug.error && bug.error.code) {
         error_code = bug.error.code;
