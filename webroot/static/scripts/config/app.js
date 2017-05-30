@@ -180,8 +180,8 @@ Object.defineProperty(BzDeck, 'compatible', {
       'CacheStorage' in window, // Firefox 41
       'Permissions' in window, // Firefox 45
       'animate' in Element.prototype, // Firefox 48
-      // 'IntersectionObserver' in window, // Firefox 52, currently disabled for stability reasons
       (new URLSearchParams([['id', 1]])).toString() === 'id=1', // Firefox 53
+      'IntersectionObserver' in window, // Firefox 55
       !FlareTail.env.platform.android, // Temporarily disable Android support (#412)
     ];
 

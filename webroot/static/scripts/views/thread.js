@@ -284,14 +284,14 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
     });
 
     // Lazy avatar loading while scrolling
-    this.observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => {
+    this.observer = new IntersectionObserver(entries => entries.forEach(entry => {
       const $option = entry.target;
 
       if (entry.intersectionRatio > 0) {
         this.observer.unobserve($option);
         this.show_avatar($option);
       }
-    }), { root: this.$listbox_outer }) : undefined;
+    }), { root: this.$listbox_outer });
   }
 
   /**
@@ -425,13 +425,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       if (!$avatar.dataset.src) {
         $avatar.dataset.src = $avatar.src;
         $avatar.removeAttribute('src');
-
-        if (this.observer) {
-          // Defer loading of the avatar if the Intersection Observer API is available
-          this.observer.observe($option);
-        } else {
-          this.show_avatar($option);
-        }
+        this.observer.observe($option);
       }
 
       $fragment.appendChild($option);

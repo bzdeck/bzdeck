@@ -309,12 +309,12 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
       return $button;
     };
 
-    const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => {
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.intersectionRatio > 0) {
         observer.disconnect();
         load_attachment();
       }
-    }), { root: document.querySelector(`#bug-${this.bug.id}-${this.id}-timeline`) }) : undefined;
+    }), { root: document.querySelector(`#bug-${this.bug.id}-${this.id}-timeline`) });
 
     if ($media) {
       const pref = await BzDeck.prefs.get('ui.timeline.show_attachments');
@@ -322,11 +322,9 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
 
       if (pref === 0 || (pref === 1 && cellular)) {
         add_placeholder();
-      } else if (observer) {
-        // Defer loading of the attachment if the Intersection Observer API is available
-        observer.observe($outer);
       } else {
-        load_attachment();
+        // Defer loading of the attachment
+        observer.observe($outer);
       }
     } else {
       // TODO: support other attachment types
