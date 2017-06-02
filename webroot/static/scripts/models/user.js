@@ -121,10 +121,7 @@ BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
       return this.data;
     }
 
-    const params = new URLSearchParams();
-
-    params.append('names', this.email);
-
+    const params = new URLSearchParams({ names: this.email });
     const result = await BzDeck.host.request('user', params, { api_key: api_key || undefined });
 
     if (!result.users) {

@@ -37,8 +37,8 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
     // the issue, divide the array into chunks to retrieve 20 bugs per request, then divide each chunk again if failed.
     const ids_chunks = FlareTail.util.Array.chunk(ids, 20);
 
-    const _fetch = async (ids, method, param_str = '') => {
-      const params = new URLSearchParams(param_str);
+    const _fetch = async (ids, method, param_obj = {}) => {
+      const params = new URLSearchParams(param_obj);
       let path = `bug/${ids[0]}`;
       let result;
 
@@ -72,7 +72,7 @@ BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
       if (include_details) {
         fetchers.push(_fetch(ids, 'comment'),
                       _fetch(ids, 'history'),
-                      _fetch(ids, 'attachment', 'exclude_fields=data'));
+                      _fetch(ids, 'attachment', { exclude_fields: 'data' }));
       }
 
       return fetchers;

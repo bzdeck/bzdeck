@@ -104,8 +104,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Promise.<Proxy>} Proxified BugModel instance.
    */
   async fetch (include_metadata = true, include_details = true) {
-    const _fetch = async (method, param_str = '') => {
-      const params = new URLSearchParams(param_str);
+    const _fetch = async (method, param_obj = {}) => {
       let path = `bug/${this.id}`;
 
       if (method === 'last_visit') {
@@ -114,7 +113,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
         path += `/${method}`;
       }
 
-      return BzDeck.host.request(path, params);
+      return BzDeck.host.request(path, new URLSearchParams(param_obj));
     };
 
     const fetchers = [];
@@ -124,7 +123,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     fetchers.push(include_metadata ? _fetch('last_visit') : Promise.resolve());
 
     if (include_details) {
-      fetchers.push(_fetch('comment'), _fetch('history'), _fetch('attachment', 'exclude_fields=data'));
+      fetchers.push(_fetch('comment'), _fetch('history'), _fetch('attachment', { exclude_fields: 'data' }));
     }
 
     try {

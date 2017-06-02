@@ -72,7 +72,8 @@ BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
     });
 
     try {
-      const result = await BzDeck.host.request(`bug/attachment/${this.id}`, new URLSearchParams('include_fields=data'));
+      const params = new URLSearchParams({ include_fields: 'data' });
+      const result = await BzDeck.host.request(`bug/attachment/${this.id}`, params);
       const attachment = result.attachments[this.id];
       const data = attachment && attachment.data ? attachment.data : undefined;
 

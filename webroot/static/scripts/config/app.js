@@ -181,6 +181,7 @@ Object.defineProperty(BzDeck, 'compatible', {
       'Permissions' in window, // Firefox 45
       'animate' in Element.prototype, // Firefox 48
       (new URLSearchParams([['id', 1]])).toString() === 'id=1', // Firefox 53
+      (new URLSearchParams({ id: 1 })).toString() === 'id=1', // Firefox 54
       'IntersectionObserver' in window, // Firefox 55
       !FlareTail.env.platform.android, // Temporarily disable Android support (#412)
     ];

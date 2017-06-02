@@ -74,8 +74,8 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     }
 
     const query = { input, product, status };
-    const params_bugs = new URLSearchParams();
-    const params_users = new URLSearchParams();
+    const params_bugs = new URLSearchParams({ query_format: 'specific', comments: 0, content: input, product, status });
+    const params_users = new URLSearchParams({ match: input, limit: 10 });
 
     const return_bugs = async (remote, bugs) => {
       const results = await Promise.all(bugs.map(bug => this.get_bug_result(bug)));
@@ -90,16 +90,9 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
     };
 
     // Use the same query as https://bugzilla.mozilla.org/query.cgi?format=specific for a faster response
-    params_bugs.append('query_format', 'specific');
-    params_bugs.append('comments', '0');
-    params_bugs.append('content', input);
-    params_bugs.append('product', product);
-    params_bugs.append('status', status);
     (async () => return_bugs(false, await BzDeck.collections.bugs.search_local(params_bugs)))();
 
     /*
-    params_users.append('match', input);
-    params_users.append('limit', 10);
     (async () => return_users(false, await BzDeck.collections.users.search_local(params_users)))();
     */
 

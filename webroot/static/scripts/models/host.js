@@ -156,13 +156,10 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/user.html#get-user Bugzilla API}
    */
   async verify_account (name, api_key) {
-    const params = new URLSearchParams();
     let result;
 
-    params.append('names', name);
-
     try {
-      result = await this.request('user', params, { api_key });
+      result = await this.request('user', new URLSearchParams({ names: name }), { api_key });
     } catch (error) {
       throw new Error('Failed to find your account.'); // l10n
     }

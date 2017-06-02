@@ -191,12 +191,12 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
       const now = Date.now();
       const get_datetime = days => (new Date(now - 1000 * 60 * 60 * 24 * days)).toISOString();
       // Fetch only bugs changed in the last 14 days first to reduce the initial startup time
-      const params = firstrun ? new URLSearchParams(`chfieldfrom=${get_datetime(14)}`) : undefined;
+      const params = firstrun ? new URLSearchParams({ chfieldfrom: get_datetime(14) }) : undefined;
       const bugs = await BzDeck.collections.subscriptions.fetch(firstrun, params);
 
       if (firstrun) {
         // Fetch the remaining bugs changed within a year
-        const _params = new URLSearchParams(`chfieldfrom=${get_datetime(365)}&chfieldto=${get_datetime(14)}`);
+        const _params = new URLSearchParams({ chfieldfrom: get_datetime(365), chfieldto: get_datetime(14) });
         const _fetch = BzDeck.collections.subscriptions.fetch(true, _params);
 
         // If the first fetch returned no bugs, wait for the second fetch

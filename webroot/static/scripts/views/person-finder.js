@@ -79,10 +79,7 @@ BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
    */
   search_remote () {
     const value = this.value; // Keep this as local a variable for later use
-    const params = new URLSearchParams();
-
-    params.append('match', value);
-    params.append('limit', 10);
+    const params = new URLSearchParams({ match: value, limit: 10 });
 
     this.timer = window.setTimeout(async () => {
       const users = await BzDeck.collections.users.search_remote(params);
