@@ -93,7 +93,7 @@ BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
     attachments.forEach((att, index) => {
       this.attachments.set(att.id || att.hash, att);
 
-      this.$listbox.insertAdjacentElement('afterbegin', this.fill($listitem.cloneNode(true), {
+      this.$listbox.prepend(this.fill($listitem.cloneNode(true), {
         id: att.hash ? att.hash.substr(0, 7) : att.id,
         summary: att.summary,
         last_change_time: att.last_change_time,

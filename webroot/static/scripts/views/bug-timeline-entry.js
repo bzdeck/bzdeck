@@ -41,7 +41,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
         const $comment_body = $comment.querySelector('[itemprop="text"]');
 
         if (this.data.get('attachment')) {
-          $comment_body.insertAdjacentElement('afterend', await this.create_attachment_box());
+          $comment_body.after(await this.create_attachment_box());
         }
       }
 

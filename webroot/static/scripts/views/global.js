@@ -93,7 +93,7 @@ BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
         return FlareTail.util.Event.ignore(event);
       });
 
-      $header.insertAdjacentElement('afterbegin', $button);
+      $header.prepend($button);
     }
   }
 

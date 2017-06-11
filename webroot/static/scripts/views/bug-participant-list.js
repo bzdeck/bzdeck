@@ -167,7 +167,7 @@ BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.Base
 
       $person = this.fill(this.get_template('bug-participant'), participant.properties);
       $person.setAttribute('itemprop', this.field);
-      this.$list.insertAdjacentElement('afterbegin', $person);
+      this.$list.prepend($person);
       this.add_menu_to_person($person);
     })();
 

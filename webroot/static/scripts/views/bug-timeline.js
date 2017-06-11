@@ -146,7 +146,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
       $expander.setAttribute('role', 'button');
       $expander.addEventListener(click_event_type, event => this.expander_onclick(event), { once: true });
 
-      this.$comments_wrapper.insertAdjacentElement('afterbegin', $expander);
+      this.$comments_wrapper.prepend($expander);
     }
 
     this.$timeline.scrollTop = 0;

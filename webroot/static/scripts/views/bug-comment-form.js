@@ -178,7 +178,7 @@ BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
         $label.textContent = label;
       }
 
-      $finder_outer.insertAdjacentElement('beforebegin', $row);
+      $finder_outer.before($row);
     };
 
     // Remove the rows first if any

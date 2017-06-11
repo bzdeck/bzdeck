@@ -42,7 +42,7 @@ BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
 
       $icon.setAttribute('class', 'icon');
       $icon.setAttribute('aria-hidden', 'true');
-      $option.insertAdjacentElement('afterbegin', $icon);
+      $option.prepend($icon);
       $option.setAttribute('aria-label', $option.textContent);
       $option.setAttribute('data-tooltip-position', 'right');
     });
