@@ -101,25 +101,18 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
   }
 
   /**
-   * Get the Bugzilla configuration from cache. If it's not cached yet or older than 24 hours, retrieve the current
-   * config from the remote Bugzilla instance. The config is not yet available from the REST endpoint so use the BzAPI
-   * compat layer instead.
+   * Retrieve the current configuration from the remote Bugzilla instance. The comprehensive configuration is not yet
+   * available from the REST endpoint so use the BzAPI compat layer instead.
    * @returns {Promise.<Object>} Bugzilla configuration data.
    * @see {@link https://wiki.mozilla.org/Bugzilla:BzAPI:Methods#Other MozillaWiki}
    * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=504937 Bug 504937}
    * @see {@link https://bugzilla.readthedocs.io/en/latest/api/core/v1/field.html Bug Fields}
    * @todo Drop BzAPI (#312)
    */
-  async get_config () {
+  async fetch_config () {
     if (!navigator.onLine) {
       // Offline; give up
       throw new Error('You have to go online to load data.'); // l10n
-    }
-
-    if (this.data.config && this.data.config.version === 2 &&
-        new Date(this.data.config.retrieved || 0) > Date.now() - 1000 * 60 * 60 * 24) {
-      // The config data is still fresh, retrieved within 24 hours
-      return this.data.config;
     }
 
     let bzapi;
@@ -128,7 +121,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     // Fetch the config via BzAPI
     try {
       [bzapi, fields] = await Promise.all([
-        FlareTail.util.Network.json(this.origin + '/bzapi/configuration?cached_ok=1'),
+        FlareTail.util.Network.json(this.origin + '/bzapi/configuration'),
         (await this.request('field/bug')).fields,
       ]);
     } catch (error) {

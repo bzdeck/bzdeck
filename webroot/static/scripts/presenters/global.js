@@ -24,6 +24,9 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
       BzDeck.collections.subscriptions.fetch();
     }, 1000 * 60 * (BzDeck.config.debug ? 1 : 5)));
 
+    // Check for Bugzilla configuration updates once a day
+    this.timers.set('fetch_config', window.setInterval(() => BzDeck.host.fetch_config(), 1000 * 60 * 60 * 24));
+
     // Subscribe to events
     this.subscribe('BugModel#AnnotationUpdated', true);
     this.subscribe('AnyView#OpeningBugRequested', true);

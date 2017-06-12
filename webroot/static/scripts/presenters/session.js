@@ -209,7 +209,7 @@ BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
     };
 
     return Promise.all([
-      BzDeck.host.get_config(),
+      BzDeck.host.fetch_config(),
       fetch_bugs(),
     ]);
   }
