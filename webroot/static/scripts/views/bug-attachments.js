@@ -9,7 +9,6 @@
 BzDeck.BugAttachmentsView = class BugAttachmentsView extends BzDeck.BaseView {
   /**
    * Get a BugAttachmentsView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Number} bug_id - Corresponding bug ID.
    * @param {HTMLElement} $container - Container node to render the attachments.

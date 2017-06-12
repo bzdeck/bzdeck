@@ -10,7 +10,6 @@ BzDeck.SearchPageView = class SearchPageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Search Page View. Unlike other pages, this presenter doesn't check
    * existing tabs, because the user can open multiple search tabs at the same time.
-   * @constructor
    * @param {Number} id - 7-digit random identifier for the new instance.
    * @fires SearchPageView#SearchRequested
    * @returns {SearchPageView} New SearchPageView instance.

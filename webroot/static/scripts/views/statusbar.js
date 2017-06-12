@@ -9,7 +9,6 @@
 BzDeck.StatusbarView = class StatusbarView extends BzDeck.BaseView {
   /**
    * Get a StatusbarView instance.
-   * @constructor
    * @returns {StatusbarView} New StatusbarView instance.
    */
   constructor () {

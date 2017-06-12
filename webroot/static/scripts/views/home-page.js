@@ -9,7 +9,6 @@
 BzDeck.HomePageView = class HomePageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Home Page View. Select the specified Navigator folder.
-   * @constructor
    * @param {String} folder_id - One of the folder identifiers defined in the app config.
    * @returns {HomePageView} New HomePageView instance.
    */

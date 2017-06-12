@@ -9,7 +9,6 @@
 BzDeck.MarkdownEditor = class MarkdownEditor extends BzDeck.BaseView {
   /**
    * Get a MarkdownEditor instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $form - Form container element.
    * @returns {MarkdownEditor} New MarkdownEditor instance.

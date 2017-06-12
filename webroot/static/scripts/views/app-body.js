@@ -9,7 +9,6 @@
 BzDeck.AppBodyView = class AppBodyView extends BzDeck.BaseView {
   /**
    * Get a AppBodyView instance.
-   * @constructor
    * @returns {AppBodyView} New AppBodyView instance.
    */
   constructor () {

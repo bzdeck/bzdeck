@@ -9,7 +9,6 @@
 BzDeck.SidebarView = class SidebarView extends BzDeck.BaseView {
   /**
    * Get a SidebarView instance.
-   * @constructor
    * @returns {SidebarView} New SidebarView instance.
    */
   constructor () {

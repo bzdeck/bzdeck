@@ -12,7 +12,6 @@
 BzDeck.AttachmentModel = class AttachmentModel extends BzDeck.BaseModel {
   /**
    * Get an AttachmentModel instance.
-   * @constructor
    * @param {Object} data - Bugzilla's raw attachment object or unuploaded attachment object.
    * @returns {Proxy} Proxified AttachmentModel instance, so consumers can seamlessly access attachment
    *  properties via attachment.prop instead of attachment.data.prop.

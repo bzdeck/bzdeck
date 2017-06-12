@@ -9,7 +9,6 @@
 BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
   /**
    * Get a SidebarSearchView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @returns {SidebarSearchView} New SidebarSearchView instance.
    */

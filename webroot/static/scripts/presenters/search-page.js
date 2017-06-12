@@ -10,7 +10,6 @@
 BzDeck.SearchPagePresenter = class SearchPagePresenter extends BzDeck.BasePresenter {
   /**
    * Get a SearchPagePresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {SearchPagePresenter} New SearchPagePresenter instance.
    */

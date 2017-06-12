@@ -9,7 +9,6 @@
 BzDeck.BugHistoryView = class BugHistoryView extends BzDeck.BaseView {
   /**
    * Get a BugHistoryView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $container - Outer element to display the content.
    * @returns {BugHistoryView} New BugHistoryView instance.

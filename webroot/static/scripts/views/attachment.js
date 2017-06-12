@@ -10,7 +10,6 @@
 BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
   /**
    * Get a AttachmentView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @param {HTMLElement} $placeholder - Node to show the attachment.

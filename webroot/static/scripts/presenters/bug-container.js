@@ -10,7 +10,6 @@
 BzDeck.BugContainerPresenter = class BugContainerPresenter extends BzDeck.BasePresenter {
   /**
    * Get a BugContainerPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons
    *  or keyboard shortcuts. If the bug is on a thread, all bugs on the thread should be listed here.

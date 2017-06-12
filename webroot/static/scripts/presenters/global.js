@@ -10,7 +10,6 @@
 BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   /**
    * Get a GlobalPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {GlobalPresenter} New GlobalPresenter instance.
    */

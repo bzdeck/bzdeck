@@ -94,7 +94,6 @@ BzDeck.TooltipView = class TooltipView extends BzDeck.BaseView {
 BzDeck.BugTooltipView = class BugTooltipView extends BzDeck.TooltipView {
   /**
    * Initialize the Bug Tooltip View.
-   * @constructor
    * @param {...arguments} args - See BzDeck.TooltipView.prototype.constructor.
    * @fires AnyView#OpeningBugRequested
    * @returns {BugTooltipView} New BugTooltipView instance.

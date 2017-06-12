@@ -9,7 +9,6 @@
 BzDeck.SessionView = class SessionView extends BzDeck.BaseView {
   /**
    * Get a SessionView instance.
-   * @constructor
    * @returns {SessionView} New SessionView instance.
    */
   constructor () {

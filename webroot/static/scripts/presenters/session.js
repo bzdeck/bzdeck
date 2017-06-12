@@ -10,7 +10,6 @@
 BzDeck.SessionPresenter = class SessionPresenter extends BzDeck.BasePresenter {
   /**
    * Get a SessionPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {URLSearchParams} params - Search parameters.
    * @returns {SessionPresenter} New SessionPresenter instance.

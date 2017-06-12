@@ -10,7 +10,6 @@
 BzDeck.SidebarSearchPresenter = class SidebarSearchPresenter extends BzDeck.BasePresenter {
   /**
    * Get a SidebarSearchPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {SidebarSearchPresenter} New SidebarSearchPresenter instance.
    */

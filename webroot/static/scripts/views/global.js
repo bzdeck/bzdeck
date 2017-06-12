@@ -9,7 +9,6 @@
 BzDeck.GlobalView = class GlobalView extends BzDeck.BaseView {
   /**
    * Get a GlobalView instance. This should be called after user prefs are loaded.
-   * @constructor
    * @returns {GlobalView} New GlobalView instance.
    */
   constructor () {

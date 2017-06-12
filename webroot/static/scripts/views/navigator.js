@@ -9,7 +9,6 @@
 BzDeck.NavigatorView = class NavigatorView extends BzDeck.BaseView {
   /**
    * Get a NavigatorView instance.
-   * @constructor
    * @fires NavigatorView#FolderSelected
    * @fires NavigatorView#AppMenuItemSelected
    * @returns {NavigatorView} New NavigatorView instance.

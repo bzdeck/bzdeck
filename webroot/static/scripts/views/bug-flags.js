@@ -9,7 +9,6 @@
 BzDeck.BugFlagsView = class BugFlagsView extends BzDeck.BaseView {
   /**
    * Get a BugFlagsView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Relevant bug with the flags.
    * @param {Proxy} [att] - Relevant attachment.

@@ -11,7 +11,6 @@
 BzDeck.UserCollection = class UserCollection extends BzDeck.BaseCollection {
   /**
    * Get a UserCollection instance.
-   * @constructor
    * @returns {UserCollection} New UserCollection instance.
    */
   constructor () {

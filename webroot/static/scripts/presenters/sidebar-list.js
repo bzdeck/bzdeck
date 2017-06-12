@@ -10,7 +10,6 @@
 BzDeck.SidebarListPresenter = class SidebarListPresenter extends BzDeck.BasePresenter {
   /**
    * Get a SidebarListPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {SidebarListPresenter} New SidebarListPresenter instance.
    */

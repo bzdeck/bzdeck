@@ -10,7 +10,6 @@
 BzDeck.ProfilePagePresenter = class ProfilePagePresenter extends BzDeck.BasePresenter {
   /**
    * Get a ProfilePagePresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {String} email - Person's Bugzilla account name.
    * @returns {ProfilePagePresenter} New ProfilePagePresenter instance.

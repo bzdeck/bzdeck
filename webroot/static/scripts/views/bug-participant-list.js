@@ -10,7 +10,6 @@
 BzDeck.BugParticipantListView = class BugParticipantListView extends BzDeck.BaseView {
   /**
    * Get a BugParticipantListView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.

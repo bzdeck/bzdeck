@@ -10,7 +10,6 @@ BzDeck.AttachmentPageView = class AttachmentPageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Attachment Page View. If the specified attachment has an existing tab,
    * switch to it. Otherwise, open a new tab and try to load the attachment.
-   * @constructor
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @returns {AttachmentPageView} New AttachmentPageView instance.
    */

@@ -11,7 +11,6 @@
 BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
-   * @constructor
    * @param {Object} data - Bugzilla's raw bug object.
    * @returns {Proxy} Proxified BugModel instance, so consumers can seamlessly access bug properties via bug.prop
    *  instead of bug.data.prop.

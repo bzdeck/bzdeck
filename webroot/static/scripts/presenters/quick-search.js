@@ -10,7 +10,6 @@
 BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePresenter {
   /**
    * Get a QuickSearchPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {QuickSearchPresenter} New QuickSearchPresenter instance.
    */

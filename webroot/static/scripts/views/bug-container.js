@@ -10,7 +10,6 @@
 BzDeck.BugContainerView = class BugContainerView extends BzDeck.BaseView {
   /**
    * Get a BugContainerView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {HTMLElement} $container - The outer element.
    * @returns {BugContainerView} New BugContainerView instance.

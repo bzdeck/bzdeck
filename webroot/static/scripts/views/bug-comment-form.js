@@ -9,7 +9,6 @@
 BzDeck.BugCommentFormView = class BugCommentFormView extends BzDeck.BaseView {
   /**
    * Get a BugCommentFormView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Object} bug - BugModel instance.
    * @param {HTMLElement} $bug - Bug container element.

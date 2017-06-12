@@ -9,7 +9,6 @@
 BzDeck.PersonFinderView = class PersonFinderView extends BzDeck.BaseView {
   /**
    * Get a PersonFinderView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {String} combobox_id - ID of an element with the combobox role.
    * @param {Proxy} [bug] - Specific bug to search against.

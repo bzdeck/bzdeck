@@ -10,7 +10,6 @@
 BzDeck.AccountCollection = class AccountCollection extends BzDeck.BaseCollection {
   /**
    * Get an AccountCollection instance.
-   * @constructor
    * @returns {AccountCollection} New AccountCollection instance.
    */
   constructor () {

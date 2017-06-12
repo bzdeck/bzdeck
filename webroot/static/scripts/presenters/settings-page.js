@@ -10,7 +10,6 @@
 BzDeck.SettingsPagePresenter = class SettingsPagePresenter extends BzDeck.BasePresenter {
   /**
    * Get a SettingsPagePresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {SettingsPagePresenter} New SettingsPagePresenter instance.
    */

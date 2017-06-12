@@ -9,7 +9,6 @@
 BzDeck.MainView = class MainView extends BzDeck.BaseView {
   /**
    * Get a MainView instance.
-   * @constructor
    * @returns {MainView} New MainView instance.
    */
   constructor () {

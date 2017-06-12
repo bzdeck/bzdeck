@@ -12,7 +12,6 @@ BzDeck.SubscriptionCollection = class SubscriptionCollection extends BzDeck.Base
   /**
    * Get a SubscriptionCollection instance. This constructor is required to fire events in the member functions.
    * Otherwise `constructor.name` will be blank and `this.trigger` doesn't work.
-   * @constructor
    * @returns {SubscriptionCollection} New SubscriptionCollection instance.
    */
   constructor () {

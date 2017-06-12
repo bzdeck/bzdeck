@@ -9,7 +9,6 @@
 BzDeck.BugView = class BugView extends BzDeck.BaseView {
   /**
    * Get a BugView instance.
-   * @constructor
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.
    * @param {Array.<Number>} [siblings] - Optional bug ID list that can be navigated with the Back and Forward buttons

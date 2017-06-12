@@ -10,7 +10,6 @@
 BzDeck.AccountDataSource = class AccountDataSource extends BzDeck.BaseDataSource {
   /**
    * Get an AccountDataSource instance. This is necessary to call the constructor of the base Event class.
-   * @constructor
    * @returns {AccountDataSource} New AccountDataSource instance.
    */
   constructor () {

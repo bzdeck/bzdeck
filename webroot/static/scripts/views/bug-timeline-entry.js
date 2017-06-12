@@ -10,7 +10,6 @@
 BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView {
   /**
    * Get a BugTimelineEntryView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - Proxified BugModel instance.
    * @param {Map.<String, Object>} data - Prepared entry data including the comment, attachment and history (change) if

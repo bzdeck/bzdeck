@@ -10,7 +10,6 @@ BzDeck.ProfilePageView = class ProfilePageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Profile Page View. If the specified profile has an existing tab, switch
    * to it. Otherwise, open a new tab and try to load the user profile.
-   * @constructor
    * @param {String} email - Person's Bugzilla account name.
    * @fires ProfilePageView#ProfileRequested
    * @returns {ProfilePageView} New ProfilePageView instance.

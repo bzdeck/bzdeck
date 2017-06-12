@@ -10,7 +10,6 @@
 BzDeck.MainPresenter = class MainPresenter extends BzDeck.BasePresenter {
   /**
    * Get a MainPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {MainPresenter} New MainPresenter instance.
    */

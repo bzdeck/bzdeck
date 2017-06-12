@@ -10,7 +10,6 @@
 BzDeck.HomePagePresenter = class HomePagePresenter extends BzDeck.BasePresenter {
   /**
    * Get a HomePagePresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {HomePagePresenter} New HomePagePresenter instance.
    */

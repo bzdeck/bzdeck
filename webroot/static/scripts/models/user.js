@@ -11,7 +11,6 @@
 BzDeck.UserModel = class UserModel extends BzDeck.BaseModel {
   /**
    * Get an UserModel instance.
-   * @constructor
    * @param {Object} data - Profile object.
    * @param {String} data.name - User name, usually the same as email address.
    * @param {Object} [data.bugzilla] - Bugzilla's raw user data.

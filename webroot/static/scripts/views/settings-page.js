@@ -10,7 +10,6 @@ BzDeck.SettingsPageView = class SettingsPageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Settings Page View. If the Settings has an existing tab, switch to it.
    * Otherwise, open a new tab and load the content.
-   * @constructor
    * @returns {SettingsPageView} New SettingsPageView instance.
    */
   constructor () {

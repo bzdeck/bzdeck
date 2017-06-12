@@ -10,7 +10,6 @@ BzDeck.DetailsPageView = class DetailsPageView extends BzDeck.BaseView {
   /**
    * Called by the app router and initialize the Details Page View. If the specified bug has an existing tab, switch to
    * it. Otherwise, open a new tab and try to load the bug.
-   * @constructor
    * @param {Number} bug_id - ID of the bug to display.
    * @returns {DetailsPageView} New DetailsPageView instance.
    */

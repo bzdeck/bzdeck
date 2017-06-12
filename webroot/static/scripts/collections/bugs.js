@@ -11,7 +11,6 @@
 BzDeck.BugCollection = class BugCollection extends BzDeck.BaseCollection {
   /**
    * Get a BugCollection instance.
-   * @constructor
    * @returns {BugCollection} New BugCollection instance.
    */
   constructor () {

@@ -9,7 +9,6 @@
 BzDeck.BugArrayFieldView = class BugArrayFieldView extends BzDeck.BaseView {
   /**
    * Get a BugArrayFieldView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.
@@ -188,7 +187,6 @@ BzDeck.BugArrayFieldView = class BugArrayFieldView extends BzDeck.BaseView {
 BzDeck.BugKeywordsView = class BugKeywordsView extends BzDeck.BugArrayFieldView {
   /**
    * Get a BugKeywordsView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {Proxy} bug - BugModel instance.
    * @param {HTMLElement} $section - Outer <section> element of the field.

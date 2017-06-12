@@ -9,7 +9,6 @@
 BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
   /**
    * Get a SidebarListView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @returns {SidebarListView} New SidebarListView instance.
    */

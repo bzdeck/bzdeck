@@ -10,7 +10,6 @@
 BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresenter {
   /**
    * Get a NavigatorPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {NavigatorPresenter} New NavigatorPresenter instance.
    */
@@ -116,7 +115,7 @@ BzDeck.NavigatorPresenter = class NavigatorPresenter extends BzDeck.BasePresente
     if (['search'].includes(id)) {
       return;
     }
-    
+
     this.data.folder_id = id;
   }
 

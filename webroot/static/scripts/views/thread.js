@@ -9,7 +9,6 @@
 BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
   /**
    * Get a ThreadView instance. This is necessary to call the constructor of the base Event class.
-   * @constructor
    * @returns {ThreadView} New ThreadView instance.
    */
   constructor () {
@@ -60,7 +59,6 @@ BzDeck.ThreadView = class ThreadView extends BzDeck.BaseView {
 BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Get a ClassicThreadView instance.
-   * @constructor
    * @param {Object} consumer - View that contains the thread.
    * @param {String} name - Identifier for the thread.
    * @param {HTMLElement} $grid - Element to be activated as the new thread. Should have the grid role.
@@ -217,7 +215,6 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
 BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
   /**
    * Get a VerticalThreadView instance.
-   * @constructor
    * @param {Object} consumer - View that contains the thread.
    * @param {String} name - Identifier for the thread.
    * @param {HTMLElement} $container - Element that contains a child element with the listbox role.

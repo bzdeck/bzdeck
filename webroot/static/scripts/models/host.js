@@ -10,7 +10,6 @@
 BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
   /**
    * Get an BugModel instance.
-   * @constructor
    * @param {Object} data - Host data.
    * @returns {HostModel} New HostModel instance.
    */

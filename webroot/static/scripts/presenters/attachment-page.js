@@ -10,7 +10,6 @@
 BzDeck.AttachmentPagePresenter = class AttachmentPagePresenter extends BzDeck.BasePresenter {
   /**
    * Get a AttachmentPagePresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @returns {AttachmentPagePresenter} New AttachmentPagePresenter instance.
    */

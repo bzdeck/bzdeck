@@ -11,7 +11,6 @@
 BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseCollection {
   /**
    * Get an AttachmentCollection instance.
-   * @constructor
    * @returns {AttachmentCollection} New AttachmentCollection instance.
    */
   constructor () {

@@ -10,7 +10,6 @@
 BzDeck.AttachmentPresenter = class AttachmentPresenter extends BzDeck.BasePresenter {
   /**
    * Get a AttachmentPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {(Number|String)} att_id - Numeric ID for an existing file or md5 hash for an unuploaded file.
    * @returns {AttachmentPresenter} New AttachmentPresenter instance.

@@ -10,7 +10,6 @@
 BzDeck.GlobalDataSource = class GlobalDataSource extends BzDeck.BaseDataSource {
   /**
    * Get an GlobalDataSource instance. This is necessary to call the constructor of the base Event class.
-   * @constructor
    * @returns {GlobalDataSource} New GlobalDataSource instance.
    */
   constructor () {

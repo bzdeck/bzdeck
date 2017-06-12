@@ -10,7 +10,6 @@
 BzDeck.BugPresenter = class BugPresenter extends BzDeck.BasePresenter {
   /**
    * Get a BugPresenter instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the corresponding view.
    * @param {String} container_id - Unique instance identifier of the parent container view.
    * @param {Number} bug_id - Bug ID to show.

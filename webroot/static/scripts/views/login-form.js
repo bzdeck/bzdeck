@@ -9,7 +9,6 @@
 BzDeck.LoginFormView = class LoginFormView extends BzDeck.BaseView {
   /**
    * Get a LoginFormView instance.
-   * @constructor
    * @param {String} id - Unique instance identifier shared with the parent view.
    * @param {URLSearchParams} params - Query info in the current URL.
    * @returns {LoginFormView} New LoginFormView instance.
