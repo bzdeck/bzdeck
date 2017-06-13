@@ -130,8 +130,8 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     }
 
     new FlareTail.widgets.TabList(this.$attachment.querySelector('[role="tablist"]'));
-    new BzDeck.BugFlagsView(this.id, this.bug, this.attachment)
-        .render(this.$attachment.querySelector('.flags'), 6);
+    // new BzDeck.BugFlagsView(this.id, this.bug, this.attachment)
+    //     .render(this.$attachment.querySelector('.flags'), 6);
   }
 
   /**

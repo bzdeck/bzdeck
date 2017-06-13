@@ -93,7 +93,7 @@ BzDeck.BugDetailsView = class BugDetailsView extends BzDeck.BaseView {
     this.render_tracking_flags();
     this.activate_widgets();
 
-    new BzDeck.BugFlagsView(this.id, this.bug).render(this.$container.querySelector('[data-category="flags"]'));
+    // new BzDeck.BugFlagsView(this.id, this.bug).render(this.$container.querySelector('[data-category="flags"]'));
   }
 
   /**
