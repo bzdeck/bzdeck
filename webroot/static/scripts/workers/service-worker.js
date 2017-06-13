@@ -8,7 +8,7 @@
 importScripts('/service-worker-resources.js');
 
 // Cache version: this has to be updated whenever a file is modified
-const version = '2017-01-18';
+const version = '2017-06-13';
 
 // Virtual URLs to be resolved to the app's static base URL. This list should be synced with .htaccess
 const pattern = /^\/((attachment|bug|home|profile|search|settings).*)?$/;
