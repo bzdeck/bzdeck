@@ -131,7 +131,7 @@ BzDeck.QuickSearchPresenter = class QuickSearchPresenter extends BzDeck.BasePres
    * @returns {Promise.<Object>} User search result.
    */
   async get_user_result (user) {
-    return Object.assign({ type: 'user', id: user.email }, user.properties);
+    return { type: 'user', id: user.email, ...user.properties };
   }
 
   /**

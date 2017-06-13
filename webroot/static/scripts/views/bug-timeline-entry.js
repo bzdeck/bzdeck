@@ -341,7 +341,7 @@ BzDeck.BugTimelineEntryView = class BugTimelineEntryView extends BzDeck.BaseView
     const comment = this.data.get('comment');
     const history = this.data.get('history');
     // Clone the objects so that the original data won't be affected
-    const changes = history.changes.map(change => Object.assign({}, change))
+    const changes = history.changes.map(change => ({ ...change }))
                                    .filter(change => !['is_confirmed', 'cf_last_resolved'].includes(change.field_name));
     const changer_name = history.who;
     const time = history.when;

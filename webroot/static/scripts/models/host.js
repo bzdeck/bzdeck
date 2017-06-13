@@ -51,7 +51,7 @@ BzDeck.HostModel = class HostModel extends BzDeck.BaseModel {
     const headers = new Map();
 
     method = method || (data ? 'POST' : 'GET');
-    data = data ? Object.assign({}, data) : undefined; // Avoid DataCloneError by postMessage
+    data = data ? { ...data } : undefined; // Avoid DataCloneError by postMessage
 
     if (params) {
       url.search = params.toString();

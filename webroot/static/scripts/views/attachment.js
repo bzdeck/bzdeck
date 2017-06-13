@@ -44,12 +44,12 @@ BzDeck.AttachmentView = class AttachmentView extends BzDeck.BaseView {
     const prefix = `attachment-${this.att_id}-${FlareTail.util.Misc.hash()}`;
 
     // Override some properties with customized values
-    const properties = Object.assign({}, att.data, {
+    const properties = { ...att.data, ...({
       size: FlareTail.util.Number.format_file_size(att.size),
       creator: creator.properties,
       is_patch: !!att.is_patch,
       is_obsolete: !!att.is_obsolete,
-    });
+    }) };
 
     this.$attachment = this.fill(this.get_template('details-attachment-content', prefix), properties, {
       'data-att-id': att.id, // existing attachment

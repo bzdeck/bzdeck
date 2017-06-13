@@ -41,7 +41,7 @@ BzDeck.AttachmentCollection = class AttachmentCollection extends BzDeck.BaseColl
   /**
    * Cache data for an unuploaded attachment temporarily on memory. Add custom properties to make it easier to find the
    * cached attachment, track the upload status and update the view. Those properties are unenumerable so later dropped
-   * by Object.assign() before the data is sent through the API.
+   * by cloning the object before the data is sent through the API.
    * @param {Object} att - Raw attachment upload object for Bugzilla.
    * @param {Number} size - Actual file size.
    * @returns {Promise.<Proxy>} AttachmentModel instance.

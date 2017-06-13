@@ -180,7 +180,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     }
 
     // Deproxify cache and merge data
-    data = Object.assign({}, cache, data);
+    data = { ...cache, ...data };
 
     const cached_time = new Date(cache.last_change_time);
     const cmp_time = obj => new Date(obj.creation_time || obj.when) > cached_time;
@@ -497,7 +497,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    */
   onedit () {
     const { changes, att_changes, uploads, can_submit } = this;
-    const _changes = Object.assign({}, changes); // Deproxify for data transfer
+    const _changes = { ...changes }; // Deproxify for data transfer
 
     this.trigger('#BugEdited', { bug_id: this.id, changes: _changes, att_changes, uploads, can_submit });
   }
@@ -635,7 +635,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} Whether the value is successfully added to the cache.
    */
   add_field_value (field, value) {
-    const change = Object.assign({}, this.changes[field] || {});
+    const change = { ...this.changes[field] };
 
     if ((change.remove || []).includes(value)) {
       change.remove.splice(change.remove.indexOf(value), 1);
@@ -665,7 +665,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
    * @returns {Boolean} Whether the value is successfully removed to the cache.
    */
   remove_field_value (field, value) {
-    const change = Object.assign({}, this.changes[field] || {});
+    const change = { ...this.changes[field] };
 
     if ((change.add || []).includes(value)) {
       change.add.splice(change.add.indexOf(value), 1);
@@ -944,7 +944,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.uploads.push(attachment);
 
     this.trigger('#AttachmentAdded', { bug_id: this.id, id: attachment.id });
-    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => Object.assign({}, att)) });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => ({ ...att })) });
     this.onedit();
   }
 
@@ -965,7 +965,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     this.uploads.splice(index, 1);
 
     this.trigger('#AttachmentRemoved', { bug_id: this.id, index, hash });
-    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => Object.assign({}, att)) });
+    this.trigger('#UploadListUpdated', { bug_id: this.id, uploads: this.uploads.map(att => ({ ...att })) });
     this.onedit();
 
     return true;
@@ -1190,7 +1190,7 @@ BzDeck.BugModel = class BugModel extends BzDeck.BaseModel {
     try {
       const result = await BzDeck.host.request(`bug/${this.data.id}/attachment`, null, {
         method: 'POST',
-        data: Object.assign({}, attachment.data), // Clone the object to drop the custom properties (hash, uploaded)
+        data: { ...attachment.data }, // Clone the object to drop the custom properties (hash, uploaded)
         listeners: {
           progress: data => {
             if (!size) {
