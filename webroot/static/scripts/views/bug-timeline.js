@@ -38,6 +38,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
   /**
    * Assign some keyboard shortcuts on the timeline.
+   * @fires AnyView#BugPropChangeRequested
    */
   init_keyboard_shortcuts () {
     if (this.$timeline.hasAttribute('keyboard-shortcuts-enabled')) {
@@ -46,7 +47,7 @@ BzDeck.BugTimelineView = class BugTimelineView extends BzDeck.BaseView {
 
     FlareTail.util.Keybind.assign(this.$timeline, {
       // Toggle star
-      S: event => this.bug.starred = !this.bug.starred,
+      S: event => this.trigger('AnyView#BugPropChangeRequested', { id: this.bug.id, starred: !this.bug.starred }),
       // Reply
       R: event => document.querySelector(`#bug-${this.bug.id}-${this.id}-comment-form [role="textbox"]`).focus(),
       // Focus management

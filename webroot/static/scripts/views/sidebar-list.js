@@ -65,6 +65,7 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
 
   /**
    * Apply the Vertical layout to the home page.
+   * @fires AnyView#BugPropChangeRequested
    */
   apply_vertical_layout () {
     const mql = window.matchMedia('(max-width: 1023px)');
@@ -85,12 +86,14 @@ BzDeck.SidebarListView = class SidebarListView extends BzDeck.BaseView {
       mql.addListener(show_preview);
 
       // Star button
-      $listbox.addEventListener('mousedown', async event => {
+      $listbox.addEventListener('mousedown', event => {
         if (event.target.matches('[itemprop="starred"]')) {
-          const bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
-
-          bug.starred = event.target.matches('[content="false"]');
           event.stopPropagation();
+
+          this.trigger('AnyView#BugPropChangeRequested', {
+            id: Number(event.target.parentElement.dataset.id),
+            starred: event.target.matches('[content="false"]'),
+          });
         }
       });
 

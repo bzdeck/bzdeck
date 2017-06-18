@@ -119,6 +119,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
   /**
    * Update the thread with the specified bugs.
    * @param {Map.<Number, Proxy>} bugs - List of bugs to render.
+   * @fires AnyView#BugPropChangeRequested
    */
   async update (bugs) {
     this.bugs = bugs;
@@ -165,7 +166,7 @@ BzDeck.ClassicThreadView = class ClassicThreadView extends BzDeck.ThreadView {
       row.data = new Proxy(row.data, {
         set: (obj, prop, value) => {
           if (prop === 'starred') {
-            bug.starred = value;
+            this.trigger('AnyView#BugPropChangeRequested', { id: bug.id, starred: value });
           }
 
           obj[prop] = value;
@@ -220,6 +221,7 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
    * @param {HTMLElement} $container - Element that contains a child element with the listbox role.
    * @param {Object} options - Extra options for display.
    * @param {Object} options.sort_conditions - Thread sorting conditions.
+   * @fires AnyView#BugPropChangeRequested
    * @returns {VerticalThreadView} New VerticalThreadView instance.
    */
   constructor (consumer, name, $container, options) {
@@ -251,11 +253,10 @@ BzDeck.VerticalThreadView = class VerticalThreadView extends BzDeck.ThreadView {
       // Toggle star
       S: event => {
         for (const $item of this.$$listbox.view.selected) {
-          (async () => {
-            const bug = await BzDeck.collections.bugs.get(Number($item.dataset.id));
-
-            bug.starred = $item.querySelector('[itemprop="starred"]').matches('[content="false"]');
-          })();
+          this.trigger('AnyView#BugPropChangeRequested', {
+            id: Number($item.dataset.id),
+            starred: $item.querySelector('[itemprop="starred"]').matches('[content="false"]'),
+          });
         }
       },
       // Open the bug in a new tab

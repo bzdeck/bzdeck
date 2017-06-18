@@ -67,6 +67,7 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
 
   /**
    * Initialize the search results thread.
+   * @fires AnyView#BugPropChangeRequested
    */
   init_results () {
     this.thread = new BzDeck.VerticalThreadView(this, 'search', this.$results, {
@@ -75,12 +76,14 @@ BzDeck.SidebarSearchView = class SidebarSearchView extends BzDeck.BaseView {
     });
 
     // Star button
-    this.$results_listbox.addEventListener('mousedown', async event => {
+    this.$results_listbox.addEventListener('mousedown', event => {
       if (event.target.matches('[itemprop="starred"]')) {
-        const bug = await BzDeck.collections.bugs.get(Number(event.target.parentElement.dataset.id));
-
-        bug.starred = event.target.matches('[aria-checked="false"]');
         event.stopPropagation();
+
+        this.trigger('AnyView#BugPropChangeRequested', {
+          id: Number(event.target.parentElement.dataset.id),
+          starred: event.target.matches('[aria-checked="false"]'),
+        });
       }
     });
 

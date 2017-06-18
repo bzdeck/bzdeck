@@ -92,6 +92,7 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
 
   /**
    * Set up menu items on the toolbar.
+   * @fires AnyView#BugPropChangeRequested
    */
   setup_toolbar () {
     const $button = this.$bug.querySelector('[data-command="show-menu"]');
@@ -124,7 +125,9 @@ BzDeck.BugView = class BugView extends BzDeck.BaseView {
     };
 
     $star_button.setAttribute('aria-pressed', this.bug.starred);
-    (new FlareTail.widgets.Button($star_button)).bind('Pressed', event => this.bug.starred = event.detail.pressed);
+    (new FlareTail.widgets.Button($star_button)).bind('Pressed', event => {
+      this.trigger('AnyView#BugPropChangeRequested', { id: this.bug.id, starred: event.detail.pressed });
+    });
 
     $menu.addEventListener('MenuOpened', async event => {
       const collapsed = !!$timeline.querySelectorAll('.read-comments-expander, \

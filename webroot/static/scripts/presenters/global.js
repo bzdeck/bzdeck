@@ -28,6 +28,7 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
 
     // Subscribe to events
     this.subscribe('BugModel#AnnotationUpdated', true);
+    this.subscribe('AnyView#BugPropChangeRequested', true);
     this.subscribe('AnyView#OpeningBugRequested', true);
     this.subscribe('AnyView#OpeningAttachmentRequested', true);
     this.subscribe('AnyView#OpeningProfileRequested', true);
@@ -44,6 +45,21 @@ BzDeck.GlobalPresenter = class GlobalPresenter extends BzDeck.BasePresenter {
   on_annotation_updated ({ bug_id, type, value } = {}) {
     if (type === 'unread') {
       this.toggle_unread();
+    }
+  }
+
+  /**
+   * Called whenever a change to bug properties is requested by the user.
+   * @listens AnyView#BugPropChangeRequested
+   * @param {Number} id - Bug ID.
+   * @param {Object} props - Map of property names and new values.
+   * @todo Replace the property access with a function.
+   */
+  async on_bug_prop_change_requested ({ id, ...props } = {}) {
+    const bug = await BzDeck.collections.bugs.get(id);
+
+    for (const [key, value] of Object.entries(props)) {
+      bug[key] = value;
     }
   }
 
