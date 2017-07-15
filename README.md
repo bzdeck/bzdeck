@@ -8,6 +8,8 @@ A useful experimental Bugzilla client demonstrating modern Web application techn
 * [FlareTail.js](https://github.com/bzdeck/flaretail.js) integrated as a submodule
 * We are on [Facebook](https://www.facebook.com/BzDeck), [Twitter](https://twitter.com/BzDeck) and [Google+](https://www.google.com/+BzDeck)
 
+**Update**: We have decided to abandon BzDeck and instead bring all the UX innovations to Bugzilla to help make it a modernized, productive, competitive issue tracking system. See our [Project Update](https://github.com/bzdeck/bzdeck/wiki/Project-Update) for details.
+
 ## How to run the app locally
 
 BzDeck is mostly written in static HTML, CSS and JavaScript, but you need PHP as well to combine CSS/JavaScript files and handle the authentication explained below with a SQLite database.
